@@ -518,31 +518,37 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 cmds.addAll(resolver.buildResolutionCommands(i));
             }
         } else if (!GraphicsEnvironment.isHeadless()) {
-            // Build conflict resolution dialog
-            final CombinePrimitiveResolverDialog dialog = new CombinePrimitiveResolverDialog(Main.parent, tagModel, relModel);
+            UserCancelException canceled = GuiHelper.runInEDTAndWaitAndReturn(() -> {
+                // Build conflict resolution dialog
+                final CombinePrimitiveResolverDialog dialog = new CombinePrimitiveResolverDialog(Main.parent, tagModel, relModel);
 
-            // Ensure a proper title is displayed instead of a previous target (fix #7925)
-            if (targetPrimitives.size() == 1) {
-                dialog.setTargetPrimitive(targetPrimitives.iterator().next(), false);
-            } else {
-                dialog.setTargetPrimitive(null, false);
-            }
+                // Ensure a proper title is displayed instead of a previous target (fix #7925)
+                if (targetPrimitives.size() == 1) {
+                    dialog.setTargetPrimitive(targetPrimitives.iterator().next(), false);
+                } else {
+                    dialog.setTargetPrimitive(null, false);
+                }
 
-            // Resolve tag conflicts
-            GuiHelper.runInEDTAndWait(() -> {
-                tagModel.fireTableDataChanged();
-                relModel.fireTableDataChanged();
-                dialog.updateTitle();
+                // Resolve tag conflicts
+                GuiHelper.runInEDTAndWait(() -> {
+                    tagModel.fireTableDataChanged();
+                    relModel.fireTableDataChanged();
+                    dialog.updateTitle();
+                });
+                dialog.setVisible(true);
+                if (!dialog.isApplied()) {
+                    return new UserCancelException();
+                }
+
+                // Build commands
+                for (OsmPrimitive i : targetPrimitives) {
+                    dialog.setTargetPrimitive(i, false);
+                    cmds.addAll(dialog.buildResolutionCommands());
+                }
+                return null;
             });
-            dialog.setVisible(true);
-            if (!dialog.isApplied()) {
-                throw new UserCancelException();
-            }
-
-            // Build commands
-            for (OsmPrimitive i : targetPrimitives) {
-                dialog.setTargetPrimitive(i, false);
-                cmds.addAll(dialog.buildResolutionCommands());
+            if (canceled != null) {
+                throw canceled;
             }
         }
         return cmds;
