@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.FixCommand.evaluateObject;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -691,15 +690,19 @@ public class MapCSSTagChecker extends Test.TagTest {
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         for (Set<TagCheck> schecks : checksCol) {
             for (TagCheck check : schecks) {
-                if (Severity.OTHER.equals(check.getSeverity()) && !includeOtherSeverity) {
+                boolean ignoreError = Severity.OTHER.equals(check.getSeverity()) && !includeOtherSeverity;
+                // Do not run "information" level checks if not wanted, unless they also set a MapCSS class
+                if (ignoreError && check.setClassExpressions.isEmpty()) {
                     continue;
                 }
                 final Selector selector = check.whichSelectorMatchesEnvironment(env);
                 if (selector != null) {
                     check.rule.declaration.execute(env);
-                    final TestError error = check.getErrorForPrimitive(p, selector, env, new MapCSSTagCheckerAndRule(check.rule));
-                    if (error != null) {
-                        r.add(error);
+                    if (!ignoreError) {
+                        final TestError error = check.getErrorForPrimitive(p, selector, env, new MapCSSTagCheckerAndRule(check.rule));
+                        if (error != null) {
+                            r.add(error);
+                        }
                     }
                 }
             }
