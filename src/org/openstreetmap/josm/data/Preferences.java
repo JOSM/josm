@@ -986,7 +986,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
             return tr("Layer: {0}", tr(I18n.escape(m.group(1))));
         }
         String fullKey = COLOR_PREFIX + o;
-        return tr(I18n.escape(colornames.containsKey(fullKey) ? colornames.get(fullKey) : fullKey));
+        return colornames.containsKey(fullKey) ? tr(I18n.escape(colornames.get(fullKey))) : fullKey;
     }
 
     /**
