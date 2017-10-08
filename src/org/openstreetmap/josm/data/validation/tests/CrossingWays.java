@@ -29,7 +29,6 @@ import org.openstreetmap.josm.tools.Logging;
  * @author frsantos
  */
 public abstract class CrossingWays extends Test {
-    protected static final int CROSSING_WAYS = 601;
 
     static final String HIGHWAY = "highway";
     static final String RAILWAY = "railway";
@@ -40,16 +39,20 @@ public abstract class CrossingWays extends Test {
     /** The already detected ways in error */
     private final Map<List<Way>, List<WaySegment>> seenWays = new HashMap<>(50);
 
+    private final int code;
+
     /**
      * General crossing ways test.
      */
     public static class Ways extends CrossingWays {
 
+        protected static final int CROSSING_WAYS = 601;
+
         /**
          * Constructs a new crossing {@code Ways} test.
          */
         public Ways() {
-            super(tr("Crossing ways"));
+            super(tr("Crossing ways"), CROSSING_WAYS);
         }
 
         @Override
@@ -106,11 +109,13 @@ public abstract class CrossingWays extends Test {
      */
     public static class Boundaries extends CrossingWays {
 
+        protected static final int CROSSING_BOUNDARIES = 602;
+
         /**
          * Constructs a new crossing {@code Boundaries} test.
          */
         public Boundaries() {
-            super(tr("Crossing boundaries"));
+            super(tr("Crossing boundaries"), CROSSING_BOUNDARIES);
         }
 
         @Override
@@ -142,11 +147,13 @@ public abstract class CrossingWays extends Test {
      */
     public static class Barrier extends CrossingWays {
 
+        protected static final int CROSSING_BARRIERS = 603;
+
         /**
          * Constructs a new crossing {@code Barrier} test.
          */
         public Barrier() {
-            super(tr("Crossing barriers"));
+            super(tr("Crossing barriers"), CROSSING_BARRIERS);
         }
 
         @Override
@@ -169,6 +176,9 @@ public abstract class CrossingWays extends Test {
      * Self crossing ways test (for all the rest)
      */
     public static class SelfCrossing extends CrossingWays {
+
+        protected static final int CROSSING_SELF = 604;
+
         CrossingWays.Ways normalTest = new Ways();
         CrossingWays.Barrier barrierTest = new Barrier();
         CrossingWays.Boundaries boundariesTest = new Boundaries();
@@ -177,7 +187,7 @@ public abstract class CrossingWays extends Test {
          * Constructs a new SelfIntersection test.
          */
         public SelfCrossing() {
-            super(tr("Self crossing"));
+            super(tr("Self crossing"), CROSSING_SELF);
         }
 
         @Override
@@ -200,11 +210,13 @@ public abstract class CrossingWays extends Test {
     /**
      * Constructs a new {@code CrossingWays} test.
      * @param title The test title
-     * @since 6691
+     * @param code The test code
+     * @since 12958
      */
-    public CrossingWays(String title) {
+    public CrossingWays(String title, int code) {
         super(title, tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, " +
                 "but are not connected by a node."));
+        this.code = code;
     }
 
     @Override
@@ -289,7 +301,7 @@ public abstract class CrossingWays extends Test {
                         highlight.add(es2);
 
                         final String message = createMessage(es1.way, es2.way);
-                        errors.add(TestError.builder(this, Severity.WARNING, CROSSING_WAYS)
+                        errors.add(TestError.builder(this, Severity.WARNING, code)
                                 .message(message)
                                 .primitives(prims)
                                 .highlightWaySegments(highlight)
