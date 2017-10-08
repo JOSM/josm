@@ -95,7 +95,7 @@ import org.xml.sax.SAXException;
 public class Preferences extends AbstractPreferences implements IBaseDirectories {
 
     private static final String COLOR_PREFIX = "color.";
-    private static final Pattern COLOR_LAYER_PATTERN = Pattern.compile("layer (.+)");
+    private static final Pattern COLOR_LAYER_PATTERN = Pattern.compile("layer\\.(.+)");
     private static final Pattern COLOR_MAPPAINT_PATTERN = Pattern.compile("mappaint\\.(.+?)\\.(.+)");
 
     private static final String[] OBSOLETE_PREF_KEYS = {
