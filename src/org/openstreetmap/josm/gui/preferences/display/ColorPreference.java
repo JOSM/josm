@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -46,6 +48,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
@@ -77,6 +80,7 @@ public class ColorPreference implements SubPreferenceSetting {
         Color color;
 
         public ColorEntry(String key, String colorHtml) {
+            CheckParameterUtil.ensureParameterNotNull(key, "key");
             this.key = key;
             this.color = ColorHelper.html2color(colorHtml);
             if (this.color == null) {
@@ -84,9 +88,14 @@ public class ColorPreference implements SubPreferenceSetting {
             }
         }
 
+        public String getDisplay() {
+            return Main.pref.getColorName(key);
+        }
+
         @Override
         public int compareTo(ColorEntry o) {
-            return Collator.getInstance().compare(getName(key), getName(o.key));
+            if (o == null) return -1;
+            return Collator.getInstance().compare(getDisplay(), o.getDisplay());
         }
     }
 
@@ -108,6 +117,10 @@ public class ColorPreference implements SubPreferenceSetting {
             deleted.add(data.get(row));
             data.remove(row);
             fireTableDataChanged();
+        }
+
+        public ColorEntry getEntry(int row) {
+            return data.get(row);
         }
 
         public List<ColorEntry> getData() {
@@ -135,7 +148,7 @@ public class ColorPreference implements SubPreferenceSetting {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            return columnIndex == 0 ? getName(data.get(rowIndex).key) : data.get(rowIndex).color;
+            return columnIndex == 0 ? data.get(rowIndex) : data.get(rowIndex).color;
         }
 
         @Override
@@ -152,7 +165,7 @@ public class ColorPreference implements SubPreferenceSetting {
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             if (columnIndex == 1 && aValue instanceof Color) {
                 data.get(rowIndex).color = (Color) aValue;
-                fireTableCellUpdated(rowIndex, columnIndex);
+                fireTableRowsUpdated(rowIndex, rowIndex);
             }
         }
     }
@@ -210,10 +223,6 @@ public class ColorPreference implements SubPreferenceSetting {
         return colorMap;
     }
 
-    private static String getName(String o) {
-        return Main.pref.getColorName(o);
-    }
-
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
         fixColorPrefixes();
@@ -222,10 +231,11 @@ public class ColorPreference implements SubPreferenceSetting {
         colorEdit = new JButton(tr("Choose"));
         colorEdit.addActionListener(e -> {
             int sel = colors.getSelectedRow();
-            JColorChooser chooser = new JColorChooser((Color) colors.getValueAt(sel, 1));
+            ColorEntry ce = tableModel.getEntry(sel);
+            JColorChooser chooser = new JColorChooser(ce.color);
             int answer = JOptionPane.showConfirmDialog(
                     gui, chooser,
-                    tr("Choose a color for {0}", getName((String) colors.getValueAt(sel, 0))),
+                    tr("Choose a color for {0}", ce.getDisplay()),
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);
             if (answer == JOptionPane.OK_OPTION) {
@@ -235,17 +245,18 @@ public class ColorPreference implements SubPreferenceSetting {
         defaultSet = new JButton(tr("Set to default"));
         defaultSet.addActionListener(e -> {
             int sel = colors.getSelectedRow();
-            String name = (String) colors.getValueAt(sel, 0);
-            Color c = Main.pref.getDefaultColor(name);
+            ColorEntry ce = tableModel.getEntry(sel);
+            Color c = Main.pref.getDefaultColor(ce.key);
             if (c != null) {
                 colors.setValueAt(c, sel, 1);
             }
         });
         JButton defaultAll = new JButton(tr("Set all to default"));
         defaultAll.addActionListener(e -> {
-            for (int i = 0; i < colors.getRowCount(); ++i) {
-                String name = (String) colors.getValueAt(i, 0);
-                Color c = Main.pref.getDefaultColor(name);
+            List<ColorEntry> data = tableModel.getData();
+            for (int i = 0; i < data.size(); ++i) {
+                ColorEntry ce = data.get(i);
+                Color c = Main.pref.getDefaultColor(ce.key);
                 if (c != null) {
                     colors.setValueAt(c, i, 1);
                 }
@@ -278,6 +289,25 @@ public class ColorPreference implements SubPreferenceSetting {
             }
         });
         colors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        colors.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (value != null && comp instanceof JLabel) {
+                    JLabel label = (JLabel) comp;
+                    ColorEntry e = (ColorEntry) value;
+                    label.setText(e.getDisplay());
+                    if (!Objects.equals(e.color, Main.pref.getDefaultColor(e.key))) {
+                        label.setFont(label.getFont().deriveFont(Font.BOLD));
+                    } else {
+                        label.setFont(label.getFont().deriveFont(Font.PLAIN));
+                    }
+                    return label;
+                }
+                return comp;
+            }
+        });
         colors.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(
@@ -314,7 +344,7 @@ public class ColorPreference implements SubPreferenceSetting {
     }
 
     Boolean isRemoveColor(int row) {
-        return tableModel.getData().get(row).key.startsWith("layer.");
+        return tableModel.getEntry(row).key.startsWith("layer.");
     }
 
     /**
