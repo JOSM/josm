@@ -641,6 +641,8 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         final Map<String, String> all = new TreeMap<>();
         for (final Entry<String, Setting<?>> e : defaultsMap.entrySet()) {
             if (e.getKey().startsWith(COLOR_PREFIX) && e.getValue() instanceof StringSetting) {
+                if (e.getKey().startsWith(COLOR_PREFIX+"layer."))
+                    continue; // do not add unchanged layer colors
                 StringSetting d = (StringSetting) e.getValue();
                 if (d.getValue() != null) {
                     all.put(e.getKey().substring(6), d.getValue());

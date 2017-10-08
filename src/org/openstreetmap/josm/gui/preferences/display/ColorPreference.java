@@ -96,7 +96,7 @@ public class ColorPreference implements SubPreferenceSetting {
         Map<String, String> colorKeyListMappaint = new TreeMap<>();
         Map<String, String> colorKeyListLayer = new TreeMap<>();
         for (String key : colorMap.keySet()) {
-            if (key.startsWith("layer ")) {
+            if (key.startsWith("layer.")) {
                 colorKeyListLayer.put(getName(key), key);
             } else if (key.startsWith("mappaint.")) {
                 // use getName(key)+key, as getName() may be ambiguous
@@ -250,7 +250,7 @@ public class ColorPreference implements SubPreferenceSetting {
     }
 
     Boolean isRemoveColor(int row) {
-        return ((String) colors.getValueAt(row, 0)).startsWith("layer ");
+        return ((String) colors.getValueAt(row, 0)).startsWith("layer.");
     }
 
     /**
@@ -272,7 +272,7 @@ public class ColorPreference implements SubPreferenceSetting {
     public boolean ok() {
         boolean ret = false;
         for (String d : del) {
-            Config.getPref().put("color."+d, null);
+            Main.pref.putColor(d, null);
         }
         for (int i = 0; i < colors.getRowCount(); ++i) {
             String key = (String) colors.getValueAt(i, 0);
