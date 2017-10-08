@@ -231,11 +231,12 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                 }
 
                 errorsByDescription.forEach((description, errors) -> {
+                    boolean emptyDescription = description == null || description.isEmpty();
                     // Message node
                     final String msg;
                     if (groupNode != null) {
                         msg = tr("{0} ({1})", description, errors.size());
-                    } else if (description == null || description.isEmpty()) {
+                    } else if (emptyDescription) {
                         msg = tr("{0} ({1})", message, errors.size());
                     } else {
                         msg = tr("{0} - {1} ({2})", message, description, errors.size());
@@ -247,7 +248,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                         severityNode.add(messageNode);
                     }
 
-                    if (oldSelectedRows.contains(description)) {
+                    if (oldSelectedRows.contains(description) || (emptyDescription && oldSelectedRows.contains(message))) {
                         if (groupNode != null) {
                             expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode, messageNode}));
                         } else {
@@ -380,8 +381,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * Updates the current errors list
      */
     public void resetErrors() {
-        List<TestError> e = new ArrayList<>(errors);
-        setErrors(e);
+        setErrors(new ArrayList<>(errors));
     }
 
     /**

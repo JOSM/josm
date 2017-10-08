@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -318,7 +319,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (changed) {
             tree.resetErrors();
             OsmValidator.saveIgnoredErrors();
-            MainApplication.getMap().repaint();
+            MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(Layer::invalidate);
         }
     }
 
