@@ -22,8 +22,6 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
-import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
-import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -99,13 +97,13 @@ public class RenderingHelper {
      */
     public void render() throws IOException, IllegalDataException {
         // load the styles
+        ElemStyles elemStyles = new ElemStyles();
         MapCSSStyleSource.STYLE_SOURCE_LOCK.writeLock().lock();
         try {
-            MapPaintStyles.getStyles().clear();
             for (StyleData sd : styles) {
-                SourceEntry se = new SourceEntry(SourceType.MAP_PAINT_STYLE, sd.styleUrl,
-                            "cliRenderingStyle", "cli rendering style '" + sd.styleUrl + "'", true /* active */);
-                StyleSource source = MapPaintStyles.addStyle(se);
+                MapCSSStyleSource source = new MapCSSStyleSource(sd.styleUrl, "cliRenderingStyle", "cli rendering style '" + sd.styleUrl + "'");
+                source.loadStyleSource();
+                elemStyles.add(source);
                 if (!source.getErrors().isEmpty()) {
                     throw new IllegalDataException("Failed to load style file. Errors: " + source.getErrors());
                 }
@@ -155,7 +153,9 @@ public class RenderingHelper {
         Graphics2D g = image.createGraphics();
         g.setColor(PaintColors.getBackgroundColor());
         g.fillRect(0, 0, imgDimPx.width, imgDimPx.height);
-        new StyledMapRenderer(g, nc, false).render(ds, false, bounds);
+        StyledMapRenderer smr = new StyledMapRenderer(g, nc, false);
+        smr.setStyles(elemStyles);
+        smr.render(ds, false, bounds);
 
         // write to file
         String output = Optional.ofNullable(outputFile).orElse("out.png");

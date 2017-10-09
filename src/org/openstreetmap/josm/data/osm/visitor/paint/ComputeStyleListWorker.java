@@ -35,7 +35,7 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
     private final transient List<? extends OsmPrimitive> input;
     private final transient List<StyleRecord> output;
 
-    private final transient ElemStyles styles = MapPaintStyles.getStyles();
+    private final transient ElemStyles styles;
     private final int directExecutionTaskSize;
     private final double circum;
     private final NavigatableComponent nc;
@@ -54,11 +54,28 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
      */
     ComputeStyleListWorker(double circum, NavigatableComponent nc,
             final List<? extends OsmPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize) {
+        this(circum, nc, input, output, directExecutionTaskSize, MapPaintStyles.getStyles());
+    }
+
+    /**
+     * Constructs a new {@code ComputeStyleListWorker}.
+     * @param circum distance on the map in meters that 100 screen pixels represent
+     * @param nc navigatable component
+     * @param input the primitives to process
+     * @param output the list of styles to which styles will be added
+     * @param directExecutionTaskSize the threshold deciding whether to subdivide the tasks
+     * @param styles the {@link ElemStyles} instance used to generate primitive {@link StyleElement}s.
+     * @since 12964
+     */
+    ComputeStyleListWorker(double circum, NavigatableComponent nc,
+            final List<? extends OsmPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize,
+            ElemStyles styles) {
         this.circum = circum;
         this.nc = nc;
         this.input = input;
         this.output = output;
         this.directExecutionTaskSize = directExecutionTaskSize;
+        this.styles = styles;
         this.drawArea = circum <= Config.getPref().getInt("mappaint.fillareas", 10_000_000);
         this.drawMultipolygon = drawArea && Config.getPref().getBoolean("mappaint.multipolygon", true);
         this.drawRestriction = Config.getPref().getBoolean("mappaint.restriction", true);
@@ -74,7 +91,7 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
             for (int fromIndex = 0; fromIndex < input.size(); fromIndex += directExecutionTaskSize) {
                 final int toIndex = Math.min(fromIndex + directExecutionTaskSize, input.size());
                 tasks.add(new ComputeStyleListWorker(circum, nc, input.subList(fromIndex, toIndex),
-                        new ArrayList<>(directExecutionTaskSize), directExecutionTaskSize).fork());
+                        new ArrayList<>(directExecutionTaskSize), directExecutionTaskSize, styles).fork());
             }
             for (ForkJoinTask<List<StyleRecord>> task : tasks) {
                 output.addAll(task.join());

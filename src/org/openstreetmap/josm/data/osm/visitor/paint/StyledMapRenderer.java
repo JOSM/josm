@@ -64,6 +64,8 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.MapViewPositionAndRotation;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.VerticalTextAlignment;
@@ -260,6 +262,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private double scale;
 
     private MapPaintSettings paintSettings;
+    private ElemStyles styles;
 
     private Color highlightColorTransparent;
 
@@ -344,6 +347,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         super(g, nc, isInactiveMode);
         Component focusOwner = FocusManager.getCurrentManager().getFocusOwner();
         useWiderHighlight = !(focusOwner instanceof AbstractButton || focusOwner == nc);
+        this.styles = MapPaintStyles.getStyles();
+    }
+
+    /**
+     * Set the {@link ElemStyles} instance to use for this renderer.
+     * @param styles the {@code ElemStyles} instance to use
+     */
+    public void setStyles(ElemStyles styles) {
+        this.styles = styles;
     }
 
     private void displaySegments(MapViewPath path, Path2D orientationArrows, Path2D onewayArrows, Path2D onewayArrowsCasing,
@@ -1625,9 +1637,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             // Reason: Make sure, ElemStyles.getStyleCacheWithRange is not called for the same primitive in parallel threads.
             // (Could be synchronized, but try to avoid this for performance reasons.)
             THREAD_POOL.invoke(new ComputeStyleListWorker(circum, nc, relations, allStyleElems,
-                    Math.max(20, relations.size() / THREAD_POOL.getParallelism() / 3)));
+                    Math.max(20, relations.size() / THREAD_POOL.getParallelism() / 3), styles));
             THREAD_POOL.invoke(new ComputeStyleListWorker(circum, nc, new CompositeList<>(nodes, ways), allStyleElems,
-                    Math.max(100, (nodes.size() + ways.size()) / THREAD_POOL.getParallelism() / 3)));
+                    Math.max(100, (nodes.size() + ways.size()) / THREAD_POOL.getParallelism() / 3), styles));
 
             if (!benchmark.renderSort()) {
                 return;
