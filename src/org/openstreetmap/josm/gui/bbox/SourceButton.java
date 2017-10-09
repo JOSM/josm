@@ -4,13 +4,14 @@ package org.openstreetmap.josm.gui.bbox;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -22,7 +23,6 @@ import javax.swing.JToggleButton;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.gui.widgets.PopupMenuButton;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -33,9 +33,8 @@ public class SourceButton extends PopupMenuButton {
     protected class TileSourceButtonModel extends JToggleButton.ToggleButtonModel implements ActionListener {
         protected final TileSource tileSource;
 
-        public TileSourceButtonModel(TileSource tileSource_) {
-            super();
-            this.tileSource = tileSource_;
+        public TileSourceButtonModel(TileSource tileSource) {
+            this.tileSource = tileSource;
             this.addActionListener(this);
         }
 
@@ -56,17 +55,19 @@ public class SourceButton extends PopupMenuButton {
      * Constructs a new {@code SourceButton}.
      * @param slippyMapBBoxChooser parent slippy map
      * @param sources list of imagery sources to display
+     * @param showDownloadAreaButtonModel model for the "Show downloaded area" button
+     * @since 12955
      */
     public SourceButton(
-        SlippyMapBBoxChooser slippyMapBBoxChooser_,
-        Collection<TileSource> sources_,
-        ButtonModel showDownloadAreaButtonModel_
+        SlippyMapBBoxChooser slippyMapBBoxChooser,
+        Collection<TileSource> sources,
+        ButtonModel showDownloadAreaButtonModel
     ) {
         super(new ImageProvider("dialogs/layerlist").getResource().getImageIcon(new Dimension(16, 16)));
-        this.showDownloadAreaButtonModel = showDownloadAreaButtonModel_;
-        this.slippyMapBBoxChooser = slippyMapBBoxChooser_;
+        this.showDownloadAreaButtonModel = showDownloadAreaButtonModel;
+        this.slippyMapBBoxChooser = slippyMapBBoxChooser;
         this.setPreferredSize(new Dimension(24, 24));
-        this.setSources(sources_);
+        this.setSources(sources);
     }
 
     protected void generatePopupMenu() {
@@ -104,9 +105,8 @@ public class SourceButton extends PopupMenuButton {
      * @param sources The tile sources to display
      * @since 6364
      */
-    public final void setSources(Collection<TileSource> sources_) {
-        CheckParameterUtil.ensureParameterNotNull(sources_, "sources_");
-        this.sources = new ArrayList<TileSource>(sources_);
+    public final void setSources(Collection<TileSource> sources) {
+        this.sources = new ArrayList<>(Objects.requireNonNull(sources, "sources"));
         this.generatePopupMenu();
         if (this.sourceButtonGroup.getSelection() == null) {
             this.setSourceDefault();
@@ -123,6 +123,7 @@ public class SourceButton extends PopupMenuButton {
 
     /**
      * Get the currently-selected tile source.
+     * @return currently-selected tile source
      */
     public final TileSource getCurrentSource() {
         TileSourceButtonModel buttonModel = (TileSourceButtonModel) this.sourceButtonGroup.getSelection();
