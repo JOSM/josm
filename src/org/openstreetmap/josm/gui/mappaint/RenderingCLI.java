@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.mappaint;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,6 +15,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+
+import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.josm.CLIModule;
@@ -154,9 +158,9 @@ public class RenderingCLI implements CLIModule {
             DataSet ds = loadDataset();
             RenderingArea area = determineRenderingArea(ds);
             RenderingHelper rh = new RenderingHelper(ds, area.bounds, area.scale, argStyles);
-            rh.setOutputFile(argOutput);
             checkPreconditions(rh);
-            rh.render();
+            BufferedImage image = rh.render();
+            writeImageToFile(image);
         } catch (FileNotFoundException e) {
             if (Logging.isDebugEnabled()) {
                 e.printStackTrace();
@@ -560,5 +564,10 @@ public class RenderingCLI implements CLIModule {
                     tr("Image dimensions ({0}x{1}) exceeds maximum image size {2} (use option {3} to change limit)",
                             imgSize.width, imgSize.height, maxSize, "--max-image-size"));
         }
+    }
+
+    private void writeImageToFile(BufferedImage image) throws IOException {
+        String output = Optional.ofNullable(argOutput).orElse("out.png");
+        ImageIO.write(image, "png", new File(output));
     }
 }

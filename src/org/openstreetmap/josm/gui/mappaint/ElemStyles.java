@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -68,12 +70,26 @@ public class ElemStyles implements PreferenceChangedListener {
 
     private final Map<String, String> preferenceCache = new HashMap<>();
 
+    private static volatile Color backgroundColorCache;
+
     /**
      * Constructs a new {@code ElemStyles}.
      */
     public ElemStyles() {
         styleSources = new ArrayList<>();
         Config.getPref().addPreferenceChangeListener(this);
+        MapPaintStyles.addMapPaintSylesUpdateListener(new MapPaintStyles.MapPaintSylesUpdateListener() {
+            //TODO: Listen to wireframe map mode changes.
+            @Override
+            public void mapPaintStylesUpdated() {
+                backgroundColorCache = null;
+            }
+
+            @Override
+            public void mapPaintStyleEntryUpdated(int idx) {
+                mapPaintStylesUpdated();
+            }
+        });
     }
 
     /**
@@ -93,6 +109,21 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     public List<StyleSource> getStyleSources() {
         return Collections.<StyleSource>unmodifiableList(styleSources);
+    }
+
+    public Color getBackgroundColor() {
+        if (backgroundColorCache != null)
+            return backgroundColorCache;
+        for (StyleSource s : styleSources) {
+            if (!s.active) {
+                continue;
+            }
+            Color backgroundColorOverride = s.getBackgroundColorOverride();
+            if (backgroundColorOverride != null) {
+                backgroundColorCache = backgroundColorOverride;
+            }
+        }
+        return Optional.ofNullable(backgroundColorCache).orElseGet(PaintColors.BACKGROUND::get);
     }
 
     /**

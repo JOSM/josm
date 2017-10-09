@@ -3,24 +3,22 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.imageio.ImageIO;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -40,7 +38,8 @@ public class RenderingHelper {
     private final ProjectionBounds projBounds;
     private final double scale;
     private final Collection<StyleData> styles;
-    private String outputFile;
+    private Color backgroundColor;
+    private boolean fillBackground = true;
 
     /**
      * Data class to save style settings along with the corresponding style URL.
@@ -72,13 +71,25 @@ public class RenderingHelper {
     }
 
     /**
-     * Set the output file for rendering.
+     * Set the background color to use for rendering.
      *
-     * Default is {@code out.png}.
-     * @param outputFile the output file for rendering
+     * @param backgroundColor the background color to use, {@code} means
+     * to determine the background color automatically from the style
+     * @see #setFillBackground(boolean)
+     * @since 12966
      */
-    public void setOutputFile(String outputFile) {
-        this.outputFile = outputFile;
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    /**
+     * Decide if background should be filled or left transparent.
+     * @param fillBackground true, if background should be filled
+     * @see #setBackgroundColor(java.awt.Color)
+     * @since 12966
+     */
+    public void setFillBackground(boolean fillBackground) {
+        this.fillBackground = fillBackground;
     }
 
     Dimension getImageSize() {
@@ -92,10 +103,11 @@ public class RenderingHelper {
     /**
      * Invoke the renderer.
      *
+     * @return the rendered image
      * @throws IOException in case of an IOException
      * @throws IllegalDataException when illegal data is encountered (style has errors, etc.)
      */
-    public void render() throws IOException, IllegalDataException {
+    public BufferedImage render() throws IOException, IllegalDataException {
         // load the styles
         ElemStyles elemStyles = new ElemStyles();
         MapCSSStyleSource.STYLE_SOURCE_LOCK.writeLock().lock();
@@ -151,15 +163,26 @@ public class RenderingHelper {
         // render the data
         BufferedImage image = new BufferedImage(imgDimPx.width, imgDimPx.height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
-        g.setColor(PaintColors.getBackgroundColor());
-        g.fillRect(0, 0, imgDimPx.width, imgDimPx.height);
+
+        // Force all render hints to be defaults - do not use platform values
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        if (fillBackground) {
+            g.setColor(Optional.ofNullable(backgroundColor).orElse(elemStyles.getBackgroundColor()));
+            g.fillRect(0, 0, imgDimPx.width, imgDimPx.height);
+        }
         StyledMapRenderer smr = new StyledMapRenderer(g, nc, false);
         smr.setStyles(elemStyles);
         smr.render(ds, false, bounds);
-
-        // write to file
-        String output = Optional.ofNullable(outputFile).orElse("out.png");
-        ImageIO.write(image, "png", new File(output));
+        return image;
     }
 
 }
