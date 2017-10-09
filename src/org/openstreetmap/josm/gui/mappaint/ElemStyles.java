@@ -70,7 +70,7 @@ public class ElemStyles implements PreferenceChangedListener {
 
     private final Map<String, String> preferenceCache = new HashMap<>();
 
-    private static volatile Color backgroundColorCache;
+    private volatile Color backgroundColorCache;
 
     /**
      * Constructs a new {@code ElemStyles}.
