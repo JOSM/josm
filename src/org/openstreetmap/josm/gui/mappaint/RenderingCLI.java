@@ -3,23 +3,16 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.awt.Dimension;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-
-import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.josm.CLIModule;
@@ -32,15 +25,9 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
-import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
-import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
-import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.RenderingHelper.StyleData;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -141,21 +128,12 @@ public class RenderingCLI implements CLIModule {
     }
 
     /**
-     * Data class to save style settings along with the corresponding style url.
-     */
-    private static class StyleData {
-        public String styleUrl;
-        public Map<String, String> settings = new HashMap<>();
-    }
-
-    /**
      * Data class to hold return values for {@link #determineRenderingArea(DataSet)}.
      *
      * Package private access for unit tests.
      */
     static class RenderingArea {
         public Bounds bounds;
-        public ProjectionBounds projBounds;
         public double scale; // in east-north units per pixel (unlike the --scale option, which is in meter per meter)
     }
 
@@ -173,7 +151,12 @@ public class RenderingCLI implements CLIModule {
         try {
             parseArguments(argArray);
             initialize();
-            run();
+            DataSet ds = loadDataset();
+            RenderingArea area = determineRenderingArea(ds);
+            RenderingHelper rh = new RenderingHelper(ds, area.bounds, area.scale, argStyles);
+            rh.setOutputFile(argOutput);
+            checkPreconditions(rh);
+            rh.render();
         } catch (FileNotFoundException e) {
             if (Logging.isDebugEnabled()) {
                 e.printStackTrace();
@@ -550,100 +533,32 @@ public class RenderingCLI implements CLIModule {
 
         RenderingArea ra = new RenderingArea();
         ra.bounds = bounds;
-        ra.projBounds = pb;
         ra.scale = scale;
         return ra;
     }
 
-    private void run() throws FileNotFoundException, IllegalDataException, IOException {
-
+    private DataSet loadDataset() throws FileNotFoundException, IllegalDataException {
         if (argInput == null) {
             throw new IllegalArgumentException(tr("Missing argument - input data file ({0})", "--input|-i"));
         }
-        DataSet ds;
         try {
-            ds = OsmReader.parseDataSet(new FileInputStream(argInput), null);
+            return OsmReader.parseDataSet(new FileInputStream(argInput), null);
         } catch (IllegalDataException e) {
             throw new IllegalDataException(tr("In .osm data file ''{0}'' - ", argInput) + e.getMessage());
         }
-
-        RenderingArea area = determineRenderingArea(ds);
-        double widthEn = area.projBounds.maxEast - area.projBounds.minEast;
-        double heightEn = area.projBounds.maxNorth - area.projBounds.minNorth;
-        int widthPx = (int) Math.round(widthEn / area.scale);
-        int heightPx = (int) Math.round(heightEn / area.scale);
-        Logging.debug("image size (px): {0}x{1}", widthPx, heightPx);
-
-        int maxSize = Optional.ofNullable(argMaxImageSize).orElse(DEFAULT_MAX_IMAGE_SIZE);
-        if (maxSize != 0 && (widthPx > maxSize || heightPx > maxSize)) {
-            throw new IllegalArgumentException(
-                    tr("Image dimensions ({0}x{1}) exceeds maximum image size {2} (use option {3} to change limit)",
-                            widthPx, heightPx, maxSize, "--max-image-size"));
-        }
-
-        // load the styles
-        MapCSSStyleSource.STYLE_SOURCE_LOCK.writeLock().lock();
-        try {
-            MapPaintStyles.getStyles().clear();
-            if (argStyles.isEmpty())
-                throw new IllegalArgumentException(tr("Missing argument - at least one style expected ({0})", "--style"));
-            for (StyleData sd : argStyles) {
-                SourceEntry se = new SourceEntry(SourceType.MAP_PAINT_STYLE, sd.styleUrl,
-                            "cliRenderingStyle", "cli rendering style '" + sd.styleUrl + "'", true /* active */);
-                StyleSource source = MapPaintStyles.addStyle(se);
-                if (!source.getErrors().isEmpty()) {
-                    throw new IllegalDataException("Failed to load style file. Errors: " + source.getErrors());
-                }
-                for (String key : sd.settings.keySet()) {
-                    BooleanStyleSetting match = source.settings.stream()
-                            .filter(s -> s instanceof BooleanStyleSetting)
-                            .map(s -> (BooleanStyleSetting) s)
-                            .filter(bs -> bs.prefKey.endsWith(":" + key))
-                            .findFirst().orElse(null);
-                    if (match == null) {
-                        Logging.warn(tr("Style setting not found: ''{0}''", key));
-                    } else {
-                        boolean value = Boolean.parseBoolean(sd.settings.get(key));
-                        Logging.trace("setting applied: ''{0}:{1}''", key, value);
-                        match.setValue(value);
-                    }
-                }
-                if (!sd.settings.isEmpty()) {
-                    source.loadStyleSource(); // reload to apply settings
-                }
-            }
-        } finally {
-            MapCSSStyleSource.STYLE_SOURCE_LOCK.writeLock().unlock();
-        }
-
-        NavigatableComponent nc = new NavigatableComponent() {
-            {
-                setBounds(0, 0, widthPx, heightPx);
-                updateLocationState();
-            }
-
-            @Override
-            protected boolean isVisibleOnScreen() {
-                return true;
-            }
-
-            @Override
-            public Point getLocationOnScreen() {
-                return new Point(0, 0);
-            }
-        };
-        nc.zoomTo(area.projBounds.getCenter(), area.scale);
-
-        // render the data
-        BufferedImage image = new BufferedImage(widthPx, heightPx, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = image.createGraphics();
-        g.setColor(PaintColors.getBackgroundColor());
-        g.fillRect(0, 0, widthPx, heightPx);
-        new StyledMapRenderer(g, nc, false).render(ds, false, area.bounds);
-
-        // write to file
-        String output = Optional.ofNullable(argOutput).orElse("out.png");
-        ImageIO.write(image, "png", new File(output));
     }
 
+    private void checkPreconditions(RenderingHelper rh) {
+        if (argStyles.isEmpty())
+            throw new IllegalArgumentException(tr("Missing argument - at least one style expected ({0})", "--style"));
+
+        Dimension imgSize = rh.getImageSize();
+        Logging.debug("image size (px): {0}x{1}", imgSize.width, imgSize.height);
+        int maxSize = Optional.ofNullable(argMaxImageSize).orElse(DEFAULT_MAX_IMAGE_SIZE);
+        if (maxSize != 0 && (imgSize.width > maxSize || imgSize.height > maxSize)) {
+            throw new IllegalArgumentException(
+                    tr("Image dimensions ({0}x{1}) exceeds maximum image size {2} (use option {3} to change limit)",
+                            imgSize.width, imgSize.height, maxSize, "--max-image-size"));
+        }
+    }
 }
