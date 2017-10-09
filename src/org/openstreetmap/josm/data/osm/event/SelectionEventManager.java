@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
@@ -18,6 +19,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Similar like {@link DatasetEventManager}, just for selection events.
@@ -198,7 +200,11 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
 
     private static void fireEvent(List<ListenerInfo> listeners, SelectionChangeEvent event) {
         for (ListenerInfo listener: listeners) {
-            listener.fire(event);
+            try {
+                listener.fire(event);
+            } catch (DataIntegrityProblemException e) {
+                throw BugReport.intercept(e).put("event", event).put("listeners", listeners);
+            }
         }
     }
 
