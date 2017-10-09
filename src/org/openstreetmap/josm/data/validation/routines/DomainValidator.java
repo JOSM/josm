@@ -498,7 +498,6 @@ public final class DomainValidator extends AbstractValidator {
         "chat", // chat Sand Fields, LLC
         "cheap", // cheap Sand Cover, LLC
         "chintai", // chintai CHINTAI Corporation
-        "chloe", // chloe Richemont DNS Inc.
         "christmas", // christmas Uniregistry, Corp.
         "chrome", // chrome Charleston Road Registry Inc.
         "chrysler", // chrysler FCA US LLC.
