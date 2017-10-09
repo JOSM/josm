@@ -78,18 +78,6 @@ public class ElemStyles implements PreferenceChangedListener {
     public ElemStyles() {
         styleSources = new ArrayList<>();
         Config.getPref().addPreferenceChangeListener(this);
-        MapPaintStyles.addMapPaintSylesUpdateListener(new MapPaintStyles.MapPaintSylesUpdateListener() {
-            //TODO: Listen to wireframe map mode changes.
-            @Override
-            public void mapPaintStylesUpdated() {
-                backgroundColorCache = null;
-            }
-
-            @Override
-            public void mapPaintStyleEntryUpdated(int idx) {
-                mapPaintStylesUpdated();
-            }
-        });
     }
 
     /**
@@ -481,6 +469,7 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     void clear() {
         styleSources.clear();
+        invalidate();
     }
 
     /**
@@ -489,6 +478,7 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     void add(StyleSource style) {
         styleSources.add(style);
+        invalidate();
     }
 
     /**
@@ -497,7 +487,9 @@ public class ElemStyles implements PreferenceChangedListener {
      * @return {@code true} if this list contained the specified element
      */
     boolean remove(StyleSource style) {
-        return styleSources.remove(style);
+        boolean result = styleSources.remove(style);
+        invalidate();
+        return result;
     }
 
     /**
@@ -507,6 +499,11 @@ public class ElemStyles implements PreferenceChangedListener {
     void setStyleSources(Collection<StyleSource> sources) {
         styleSources.clear();
         styleSources.addAll(sources);
+        invalidate();
+    }
+
+    private void invalidate() {
+        backgroundColorCache = null;
     }
 
     /**
