@@ -4,10 +4,8 @@ package org.openstreetmap.josm.gui.mappaint;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,10 +36,6 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
-import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
-import org.openstreetmap.josm.data.preferences.sources.SourceType;
-import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -162,64 +157,19 @@ public class MapCSSRendererTest {
 
         // load the data
         DataSet dataSet = testConfig.getOsmDataSet();
+        dataSet.allPrimitives().stream().forEach(this::loadPrimitiveStyle);
+        dataSet.setSelected(dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("selected")).collect(Collectors.toList()));
 
-        // load the style
-        MapCSSStyleSource.STYLE_SOURCE_LOCK.writeLock().lock();
-        try {
-            MapPaintStyles.getStyles().clear();
-
-            MapCSSStyleSource source = new MapCSSStyleSource(testConfig.getStyleSourceEntry());
-            source.loadStyleSource();
-            if (!source.getErrors().isEmpty()) {
-                fail("Failed to load style file. Errors: " + source.getErrors());
-            }
-            MapPaintStyles.getStyles().setStyleSources(Arrays.asList(source));
-            MapPaintStyles.fireMapPaintSylesUpdated();
-            MapPaintStyles.getStyles().clearCached();
-
-        } finally {
-            MapCSSStyleSource.STYLE_SOURCE_LOCK.writeLock().unlock();
-        }
-
-        // create the renderer
-        BufferedImage image = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
-        NavigatableComponent nc = new NavigatableComponent() {
-            {
-                setBounds(0, 0, IMAGE_SIZE, IMAGE_SIZE);
-                updateLocationState();
-            }
-
-            @Override
-            protected boolean isVisibleOnScreen() {
-                return true;
-            }
-
-            @Override
-            public Point getLocationOnScreen() {
-                return new Point(0, 0);
-            }
-        };
         ProjectionBounds pb = new ProjectionBounds();
         pb.extend(Main.getProjection().latlon2eastNorth(testConfig.testArea.getMin()));
         pb.extend(Main.getProjection().latlon2eastNorth(testConfig.testArea.getMax()));
         double scale = (pb.maxEast - pb.minEast) / IMAGE_SIZE;
-        nc.zoomTo(pb.getCenter(), scale);
 
-        dataSet.allPrimitives().stream().forEach(this::loadPrimitiveStyle);
-        dataSet.setSelected(dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("selected")).collect(Collectors.toList()));
-
-        Graphics2D g = image.createGraphics();
-        // Force all render hints to be defaults - do not use platform values
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
-        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        new StyledMapRenderer(g, nc, false).render(dataSet, false, testConfig.testArea);
+        RenderingHelper.StyleData sd = new RenderingHelper.StyleData();
+        sd.styleUrl = testConfig.getStyleSourceUrl();
+        RenderingHelper rh = new RenderingHelper(dataSet, testConfig.testArea, scale, Collections.singleton(sd));
+        rh.setFillBackground(false);
+        BufferedImage image = rh.render();
 
         if (UPDATE_ALL) {
             ImageIO.write(image, "png", new File(testConfig.getTestDirectory() + "/reference.png"));
@@ -316,10 +266,8 @@ public class MapCSSRendererTest {
             return TestUtils.getTestDataRoot() + TEST_DATA_BASE + testDirectory;
         }
 
-        public SourceEntry getStyleSourceEntry() {
-            return new SourceEntry(SourceType.MAP_PAINT_STYLE, getTestDirectory() + "/style.mapcss",
-                    "test style", "a test style", true // active
-            );
+        public String getStyleSourceUrl() {
+            return getTestDirectory() + "/style.mapcss";
         }
 
         public DataSet getOsmDataSet() throws FileNotFoundException, IllegalDataException {

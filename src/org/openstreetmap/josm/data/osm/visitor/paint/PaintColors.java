@@ -4,14 +4,10 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Color;
-import java.util.List;
-import java.util.Optional;
 
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
-import org.openstreetmap.josm.gui.mappaint.StyleSource;
 
 /**
  * The colors used to paint the map, especially with the wireframe renderer
@@ -90,25 +86,6 @@ public enum PaintColors {
     private final ColorProperty baseProperty;
     private final CachingProperty<Color> property;
 
-    private static volatile Color backgroundColorCache;
-
-    private static final MapPaintSylesUpdateListener STYLE_OVERRIDE_LISTENER = new MapPaintSylesUpdateListener() {
-        //TODO: Listen to wireframe map mode changes.
-        @Override
-        public void mapPaintStylesUpdated() {
-            backgroundColorCache = null;
-        }
-
-        @Override
-        public void mapPaintStyleEntryUpdated(int idx) {
-            mapPaintStylesUpdated();
-        }
-    };
-
-    static {
-        MapPaintStyles.addMapPaintSylesUpdateListener(STYLE_OVERRIDE_LISTENER);
-    }
-
     PaintColors(String name, Color defaultColor) {
         baseProperty = new ColorProperty(name, defaultColor);
         property = baseProperty.cached();
@@ -137,19 +114,7 @@ public enum PaintColors {
      * @return the background color
      */
     public static Color getBackgroundColor() {
-        if (backgroundColorCache != null)
-            return backgroundColorCache;
-        List<StyleSource> sources = MapPaintStyles.getStyles().getStyleSources();
-        for (StyleSource s : sources) {
-            if (!s.active) {
-                continue;
-            }
-            Color backgroundColorOverride = s.getBackgroundColorOverride();
-            if (backgroundColorOverride != null) {
-                backgroundColorCache = backgroundColorOverride;
-            }
-        }
-        return Optional.ofNullable(backgroundColorCache).orElseGet(BACKGROUND::get);
+        return MapPaintStyles.getStyles().getBackgroundColor();
     }
 
     /**

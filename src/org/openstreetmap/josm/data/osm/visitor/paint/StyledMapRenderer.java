@@ -1371,7 +1371,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     public void getColors() {
         super.getColors();
         this.highlightColorTransparent = new Color(highlightColor.getRed(), highlightColor.getGreen(), highlightColor.getBlue(), 100);
-        this.backgroundColor = PaintColors.getBackgroundColor();
+        this.backgroundColor = styles.getBackgroundColor();
     }
 
     @Override
