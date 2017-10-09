@@ -75,6 +75,7 @@ public class MergeNodesAction extends JosmAction {
             return;
         Collection<OsmPrimitive> selection = getLayerManager().getEditDataSet().getAllSelected();
         List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
+        selectedNodes.removeIf(n -> n.isDeleted() || n.isIncomplete());
 
         if (selectedNodes.size() == 1) {
             MapView mapView = MainApplication.getMap().mapView;
