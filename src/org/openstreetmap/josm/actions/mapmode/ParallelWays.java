@@ -43,18 +43,14 @@ public class ParallelWays {
      * @param refWayIndex Need a reference way to determine the direction of the offset when we manage multiple ways
      */
     public ParallelWays(Collection<Way> sourceWays, boolean copyTags, int refWayIndex) {
-        // Possible/sensible to use PrimetiveDeepCopy here?
+        // Possible/sensible to use PrimitiveDeepCopy here?
 
         // Make a deep copy of the ways, keeping the copied ways connected
         // TODO: This assumes the first/last nodes of the ways are the only possible shared nodes.
         Map<Node, Node> splitNodeMap = new HashMap<>(sourceWays.size());
         for (Way w : sourceWays) {
-            if (!splitNodeMap.containsKey(w.firstNode())) {
-                splitNodeMap.put(w.firstNode(), copyNode(w.firstNode(), copyTags));
-            }
-            if (!splitNodeMap.containsKey(w.lastNode())) {
-                splitNodeMap.put(w.lastNode(), copyNode(w.lastNode(), copyTags));
-            }
+            copyNodeInMap(splitNodeMap, w.firstNode(), copyTags);
+            copyNodeInMap(splitNodeMap, w.lastNode(), copyTags);
         }
         ways = new ArrayList<>(sourceWays.size());
         for (Way w : sourceWays) {
@@ -121,6 +117,12 @@ public class ParallelWays {
             double dy = pts[i + 1].getY() - pts[i].getY();
             double len = Math.sqrt(dx * dx + dy * dy);
             normals[i] = new EastNorth(-dy / len, dx / len);
+        }
+    }
+
+    private static void copyNodeInMap(Map<Node, Node> splitNodeMap, Node node, boolean copyTags) {
+        if (!splitNodeMap.containsKey(node)) {
+            splitNodeMap.put(node, copyNode(node, copyTags));
         }
     }
 
