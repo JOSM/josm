@@ -30,8 +30,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
@@ -68,6 +70,9 @@ public class MapCSSRendererTest {
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
     private TestConfig testConfig;
+
+    // development flag - set to true in order to update all reference images
+    private static final boolean UPDATE_ALL = false;
 
     /**
      * The different configurations of this test.
@@ -194,7 +199,12 @@ public class MapCSSRendererTest {
                 return new Point(0, 0);
             }
         };
-        nc.zoomTo(testConfig.testArea);
+        ProjectionBounds pb = new ProjectionBounds();
+        pb.extend(Main.getProjection().latlon2eastNorth(testConfig.testArea.getMin()));
+        pb.extend(Main.getProjection().latlon2eastNorth(testConfig.testArea.getMax()));
+        double scale = (pb.maxEast - pb.minEast) / IMAGE_SIZE;
+        nc.zoomTo(pb.getCenter(), scale);
+
         dataSet.allPrimitives().stream().forEach(this::loadPrimitiveStyle);
         dataSet.setSelected(dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("selected")).collect(Collectors.toList()));
 
@@ -210,6 +220,11 @@ public class MapCSSRendererTest {
         g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         new StyledMapRenderer(g, nc, false).render(dataSet, false, testConfig.testArea);
+
+        if (UPDATE_ALL) {
+            ImageIO.write(image, "png", new File(testConfig.getTestDirectory() + "/reference.png"));
+            return;
+        }
 
         BufferedImage reference = testConfig.getReference();
 
