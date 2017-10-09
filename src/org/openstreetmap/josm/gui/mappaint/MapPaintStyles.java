@@ -45,6 +45,22 @@ public final class MapPaintStyles {
             "presets/misc/deprecated.svg",
             "misc/deprecated.png");
 
+    private static final ListenerList<MapPaintSylesUpdateListener> listeners = ListenerList.createUnchecked();
+
+    static {
+        listeners.addListener(new MapPaintSylesUpdateListener() {
+            @Override
+            public void mapPaintStylesUpdated() {
+                SwingUtilities.invokeLater(styles::clearCached);
+            }
+
+            @Override
+            public void mapPaintStyleEntryUpdated(int index) {
+                mapPaintStylesUpdated();
+            }
+        });
+    }
+
     private static ElemStyles styles = new ElemStyles();
 
     /**
@@ -438,22 +454,6 @@ public final class MapPaintStyles {
          * @param index The index of the entry.
          */
         void mapPaintStyleEntryUpdated(int index);
-    }
-
-    private static final ListenerList<MapPaintSylesUpdateListener> listeners = ListenerList.createUnchecked();
-
-    static {
-        listeners.addListener(new MapPaintSylesUpdateListener() {
-            @Override
-            public void mapPaintStylesUpdated() {
-                SwingUtilities.invokeLater(styles::clearCached);
-            }
-
-            @Override
-            public void mapPaintStyleEntryUpdated(int index) {
-                mapPaintStylesUpdated();
-            }
-        });
     }
 
     /**
