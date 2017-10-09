@@ -206,7 +206,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         // Transparently register as projection change listener. No need to explicitly remove
         // the listener, projection change listeners are managed as WeakReferences.
         Main.addProjectionChangeListener(this);
-        addSelectionListener((DataSelectionListener) e -> fireDreprecatedSelectionChange(e.getSelection()));
+        addSelectionListener((DataSelectionListener) e -> fireDeprecatedSelectionChange(e.getSelection()));
     }
 
     /**
@@ -681,10 +681,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      */
     @Deprecated
     public void fireSelectionChanged() {
-        fireDreprecatedSelectionChange(getAllSelected());
+        fireDeprecatedSelectionChange(getAllSelected());
     }
 
-    private static void fireDreprecatedSelectionChange(Collection<? extends OsmPrimitive> currentSelection) {
+    private static void fireDeprecatedSelectionChange(Collection<? extends OsmPrimitive> currentSelection) {
         for (SelectionChangedListener l : selListeners) {
             l.selectionChanged(currentSelection);
         }

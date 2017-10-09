@@ -158,6 +158,11 @@ public interface DataSelectionListener {
             }
             return added;
         }
+
+        @Override
+        public String toString() {
+            return "SelectionReplaceEvent [current=" + current + ", removed=" + removed + ", added=" + added + ']';
+        }
     }
 
     /**
@@ -201,6 +206,11 @@ public interface DataSelectionListener {
         @Override
         public Set<OsmPrimitive> getAdded() {
             return Collections.unmodifiableSet(add);
+        }
+
+        @Override
+        public String toString() {
+            return "SelectionAddEvent [add=" + add + ", current=" + current + ']';
         }
     }
 
@@ -246,6 +256,11 @@ public interface DataSelectionListener {
         @Override
         public Set<OsmPrimitive> getAdded() {
             return Collections.emptySet();
+        }
+
+        @Override
+        public String toString() {
+            return "SelectionRemoveEvent [remove=" + remove + ", current=" + current + ']';
         }
     }
 
@@ -296,6 +311,11 @@ public interface DataSelectionListener {
         @Override
         public Set<OsmPrimitive> getAdded() {
             return Collections.unmodifiableSet(add);
+        }
+
+        @Override
+        public String toString() {
+            return "SelectionToggleEvent [current=" + current + ", remove=" + remove + ", add=" + add + ']';
         }
     }
 }
