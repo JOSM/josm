@@ -177,18 +177,16 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
             // Relying on this allows components to not have to monitor layer changes.
             // If we would not do this, e.g. the move command would have a hard time tracking which layer
             // the last moved selection was in.
-            SelectionReplaceEvent event = new SelectionReplaceEvent(oldDataSet,
-                    new HashSet<>(oldDataSet.getAllSelected()), Stream.empty());
-            selectionChanged(event);
+            selectionChanged(new SelectionReplaceEvent(oldDataSet,
+                    new HashSet<>(oldDataSet.getAllSelected()), Stream.empty()));
             oldDataSet.removeSelectionListener(this);
         }
         DataSet newDataSet = e.getSource().getEditDataSet();
         if (newDataSet != null) {
             newDataSet.addSelectionListener(this);
             // Fake a selection add
-            SelectionReplaceEvent event = new SelectionReplaceEvent(newDataSet,
-                    Collections.emptySet(), newDataSet.getAllSelected().stream());
-            selectionChanged(event);
+            selectionChanged(new SelectionReplaceEvent(newDataSet,
+                    Collections.emptySet(), newDataSet.getAllSelected().stream()));
         }
     }
 

@@ -504,6 +504,8 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         if (referenceSegment == null)
             return false;
 
+        sourceWays.removeIf(w -> w.isIncomplete() || w.getNodesCount() == 0);
+
         if (!sourceWays.contains(referenceSegment.way)) {
             clearSourceWays();
             addSourceWay(referenceSegment.way);
