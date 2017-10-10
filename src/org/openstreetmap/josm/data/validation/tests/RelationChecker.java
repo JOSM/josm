@@ -243,15 +243,20 @@ public class RelationChecker extends Test {
             // no errors found till now. So member at least failed at matching the type
             // it could also fail at memberExpression, but we can't guess at which
 
-            // convert in localization friendly way to string of accepted types
-            String typesStr = types.stream().map(x -> tr(x.getName())).collect(Collectors.joining("/"));
+            // Do not raise an error for incomplete ways for which we expect them to be closed, as we cannot know
+            boolean ignored = member.getMember().isIncomplete() && OsmPrimitiveType.WAY.equals(member.getType())
+                    && !types.contains(TaggingPresetType.WAY) && types.contains(TaggingPresetType.CLOSEDWAY);
+            if (!ignored) {
+                // convert in localization friendly way to string of accepted types
+                String typesStr = types.stream().map(x -> tr(x.getName())).collect(Collectors.joining("/"));
 
-            errors.add(TestError.builder(this, Severity.WARNING, WRONG_TYPE)
-                    .message(ROLE_VERIF_PROBLEM_MSG,
+                errors.add(TestError.builder(this, Severity.WARNING, WRONG_TYPE)
+                        .message(ROLE_VERIF_PROBLEM_MSG,
                             marktr("Type ''{0}'' of relation member with role ''{1}'' does not match accepted types ''{2}'' in template {3}"),
                             member.getType(), member.getRole(), typesStr, name)
-                    .primitives(member.getMember().isUsable() ? member.getMember() : n)
-                    .build());
+                        .primitives(member.getMember().isUsable() ? member.getMember() : n)
+                        .build());
+            }
         }
         return false;
     }
