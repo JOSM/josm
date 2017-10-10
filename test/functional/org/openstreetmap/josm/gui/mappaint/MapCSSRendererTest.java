@@ -116,7 +116,23 @@ public class MapCSSRendererTest {
                 new TestConfig("way-repeat-image-clamp", AREA_DEFAULT),
 
                 /** Tests text along a way */
-                new TestConfig("way-text", AREA_DEFAULT)
+                new TestConfig("way-text", AREA_DEFAULT),
+
+                /** Another test for node shapes */
+                new TestConfig("node-shapes2").setImageWidth(600),
+                /** Tests default values for node shapes */
+                new TestConfig("node-shapes-default"),
+                /** Tests node shapes with both fill and stroke combined */
+                new TestConfig("node-shapes-combined"),
+                /** Another test for dashed ways */
+                new TestConfig("way-dashes2"),
+                /** Tests node text placement */
+                new TestConfig("node-text2"),
+                /** Tests relation link selector */
+                new TestConfig("relation-linkselector"),
+                /** Tests parent selector on relation */
+                new TestConfig("relation-parentselector")
+
                 ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());
     }
@@ -161,13 +177,13 @@ public class MapCSSRendererTest {
         dataSet.setSelected(dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("selected")).collect(Collectors.toList()));
 
         ProjectionBounds pb = new ProjectionBounds();
-        pb.extend(Main.getProjection().latlon2eastNorth(testConfig.testArea.getMin()));
-        pb.extend(Main.getProjection().latlon2eastNorth(testConfig.testArea.getMax()));
-        double scale = (pb.maxEast - pb.minEast) / IMAGE_SIZE;
+        pb.extend(Main.getProjection().latlon2eastNorth(testConfig.getTestArea().getMin()));
+        pb.extend(Main.getProjection().latlon2eastNorth(testConfig.getTestArea().getMax()));
+        double scale = (pb.maxEast - pb.minEast) / testConfig.imageWidth;
 
         RenderingHelper.StyleData sd = new RenderingHelper.StyleData();
         sd.styleUrl = testConfig.getStyleSourceUrl();
-        RenderingHelper rh = new RenderingHelper(dataSet, testConfig.testArea, scale, Collections.singleton(sd));
+        RenderingHelper rh = new RenderingHelper(dataSet, testConfig.getTestArea(), scale, Collections.singleton(sd));
         rh.setFillBackground(false);
         BufferedImage image = rh.render();
 
@@ -179,8 +195,8 @@ public class MapCSSRendererTest {
         BufferedImage reference = testConfig.getReference();
 
         // now compute differences:
-        assertEquals(IMAGE_SIZE, reference.getWidth());
-        assertEquals(IMAGE_SIZE, reference.getHeight());
+        assertEquals(image.getWidth(), reference.getWidth());
+        assertEquals(image.getHeight(), reference.getHeight());
 
         StringBuilder differences = new StringBuilder();
         ArrayList<Point> differencePoints = new ArrayList<>();
@@ -245,12 +261,23 @@ public class MapCSSRendererTest {
 
     private static class TestConfig {
         private final String testDirectory;
-        private final Bounds testArea;
+        private Bounds testArea;
         private final ArrayList<String> fonts = new ArrayList<>();
+        private DataSet ds;
+        private int imageWidth = IMAGE_SIZE;
 
         TestConfig(String testDirectory, Bounds testArea) {
             this.testDirectory = testDirectory;
             this.testArea = testArea;
+        }
+
+        TestConfig(String testDirectory) {
+            this.testDirectory = testDirectory;
+        }
+
+        public TestConfig setImageWidth(int imageWidth) {
+            this.imageWidth = imageWidth;
+            return this;
         }
 
         public TestConfig usesFont(String string) {
@@ -271,7 +298,17 @@ public class MapCSSRendererTest {
         }
 
         public DataSet getOsmDataSet() throws FileNotFoundException, IllegalDataException {
-            return OsmReader.parseDataSet(new FileInputStream(getTestDirectory() + "/data.osm"), null);
+            if (ds == null) {
+                ds = OsmReader.parseDataSet(new FileInputStream(getTestDirectory() + "/data.osm"), null);
+            }
+            return ds;
+        }
+
+        public Bounds getTestArea() throws FileNotFoundException, IllegalDataException {
+            if (testArea == null) {
+                testArea = getOsmDataSet().getDataSourceBounds().get(0);
+            }
+            return testArea;
         }
 
         @Override

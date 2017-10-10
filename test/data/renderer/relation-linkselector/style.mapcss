@@ -1,0 +1,9 @@
+canvas {
+    default-points: false;
+    default-lines: true;
+}
+
+relation[test=role1] >[outer] way[test=role1_outer] { width: 4; color: navy; }
+
+relation[test=role1] >[role=inner][index=5] way { width: 4; color: lime; }
+

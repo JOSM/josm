@@ -1,0 +1,9 @@
+/**
+ * Test default values.
+ * This should display a circle although neither size nor color are specified 
+ */
+node[test=circle]
+{
+    symbol-shape: circle;
+}
+

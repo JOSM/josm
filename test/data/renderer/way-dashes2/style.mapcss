@@ -1,0 +1,34 @@
+
+/**
+ * Dashes Test
+ * 1. Basic test - pattern should not be broken at way nodes
+ * 2. Transparent and with background color. The foreground and background dashes must not overlap.
+ * 3. Dashes offset - cuts off the first dash segment
+ */
+
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+way[test=dash1] {
+    width: 10;
+    color: blue;
+    dashes: 30,4,17,14;
+}
+way[test=dash2] {
+    width: 10;
+    color: blue;
+    opacity: 0.3;
+    dashes: 30,4,17,14;
+    dashes-background-color: gold;
+    dashes-background-opacity: 0.3;
+}
+way[test=dash3] {
+    width: 10;
+    color: blue;
+    dashes: 30,4,17,14;
+    dashes-background-color: gold;
+    dashes-offset:30;
+}
+
