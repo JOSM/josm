@@ -90,11 +90,12 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
         panel.add(scroll, GBC.eol().fill(GBC.BOTH).anchor(GBC.CENTER));
 
         List<String> items = new ArrayList<>(OVERPASS_WIZARD_HISTORY.get());
-        Collections.reverse(items);
-        queryWizard.setPossibleItems(items);
         if (!items.isEmpty()) {
             queryWizard.setText(items.get(0));
         }
+        // HistoryComboBox needs the reversed list
+        Collections.reverse(items);
+        queryWizard.setPossibleItems(items);
 
         setCancelButton(CANCEL + 1);
         setDefaultButton(BUILD_AN_EXECUTE_QUERY + 1);
