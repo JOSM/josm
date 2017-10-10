@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <bounds minlat='41.7560187' minlon='-93.6103883' maxlat='41.7575769' maxlon='-93.604712'/>
+  <node id='-39314' action='modify' lat='41.75638241559' lon='-93.60964855028'>
+    <tag k='test:stroke' v='circle' />
+  </node>
+  <node id='-39315' action='modify' lat='41.7563914204' lon='-93.6091112534'>
+    <tag k='test:stroke' v='square' />
+  </node>
+  <node id='-39316' action='modify' lat='41.75640042521' lon='-93.60857395653'>
+    <tag k='test:stroke' v='triangle' />
+  </node>
+  <node id='-39317' action='modify' lat='41.75640943002' lon='-93.60803665965'>
+    <tag k='test:stroke' v='pentagon' />
+  </node>
+  <node id='-39318' action='modify' lat='41.75641843483' lon='-93.60749936277'>
+    <tag k='test:stroke' v='hexagon' />
+  </node>
+  <node id='-39319' action='modify' lat='41.75642743963' lon='-93.6069620659'>
+    <tag k='test:stroke' v='heptagon' />
+  </node>
+  <node id='-39320' action='modify' lat='41.75643644444' lon='-93.60642476902'>
+    <tag k='test:stroke' v='octagon' />
+  </node>
+  <node id='-39321' action='modify' lat='41.75644544924' lon='-93.60588747214'>
+    <tag k='test:stroke' v='nonagon' />
+  </node>
+  <node id='-39322' action='modify' lat='41.75645445404' lon='-93.60535017527'>
+    <tag k='test:stroke' v='decagon' />
+  </node>
+  <node id='-39323' action='modify' lat='41.75701355701' lon='-93.60971846159'>
+    <tag k='test:fill' v='circle' />
+  </node>
+  <node id='-39324' action='modify' lat='41.75701165895' lon='-93.60916394128'>
+    <tag k='test:fill' v='square' />
+  </node>
+  <node id='-39325' action='modify' lat='41.75700976088' lon='-93.60860942097'>
+    <tag k='test:fill' v='triangle' />
+  </node>
+  <node id='-39326' action='modify' lat='41.75700786282' lon='-93.60805490066'>
+    <tag k='test:fill' v='pentagon' />
+  </node>
+  <node id='-39327' action='modify' lat='41.75700596475' lon='-93.60750038034'>
+    <tag k='test:fill' v='hexagon' />
+  </node>
+  <node id='-39328' action='modify' lat='41.75700406668' lon='-93.60694586003'>
+    <tag k='test:fill' v='heptagon' />
+  </node>
+  <node id='-39329' action='modify' lat='41.75700216862' lon='-93.60639133972'>
+    <tag k='test:fill' v='octagon' />
+  </node>
+  <node id='-39330' action='modify' lat='41.75700027055' lon='-93.6058368194'>
+    <tag k='test:fill' v='nonagon' />
+  </node>
+  <node id='-39331' action='modify' lat='41.75699837248' lon='-93.60528229909'>
+    <tag k='test:fill' v='decagon' />
+  </node>
+  <way id='-39312' action='modify'>
+    <nd ref='-39314' />
+    <nd ref='-39315' />
+    <nd ref='-39316' />
+    <nd ref='-39317' />
+    <nd ref='-39318' />
+    <nd ref='-39319' />
+    <nd ref='-39320' />
+    <nd ref='-39321' />
+    <nd ref='-39322' />
+  </way>
+  <way id='-39313' action='modify'>
+    <nd ref='-39323' />
+    <nd ref='-39324' />
+    <nd ref='-39325' />
+    <nd ref='-39326' />
+    <nd ref='-39327' />
+    <nd ref='-39328' />
+    <nd ref='-39329' />
+    <nd ref='-39330' />
+    <nd ref='-39331' />
+  </way>
+</osm>

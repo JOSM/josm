@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <bounds minlat='41.7559853' minlon='-93.6024805' maxlat='41.7575434' maxlon='-93.5980518'/>
+  <node id='-39470' action='modify' lat='41.75636723733' lon='-93.60203683129' />
+  <node id='-39471' action='modify' lat='41.75650110785' lon='-93.6003818548' />
+  <node id='-39472' action='modify' lat='41.75622182388' lon='-93.60012838418' />
+  <node id='-39473' action='modify' lat='41.75673969417' lon='-93.59863786848' />
+  <node id='-39474' action='modify' lat='41.75663695627' lon='-93.60204416544' />
+  <node id='-39475' action='modify' lat='41.75677082622' lon='-93.60038918895' />
+  <node id='-39476' action='modify' lat='41.75649154343' lon='-93.60013571833' />
+  <node id='-39477' action='modify' lat='41.75700941154' lon='-93.59864520264' />
+  <node id='-39478' action='modify' lat='41.75697509339' lon='-93.60200403126' />
+  <node id='-39479' action='modify' lat='41.75710896264' lon='-93.60034905477' />
+  <node id='-39480' action='modify' lat='41.75682968132' lon='-93.60009558416' />
+  <node id='-39481' action='modify' lat='41.75734754669' lon='-93.59860506846' />
+  <way id='-39467' action='modify'>
+    <nd ref='-39470' />
+    <nd ref='-39471' />
+    <nd ref='-39472' />
+    <nd ref='-39473' />
+    <tag k='test' v='dash3' />
+  </way>
+  <way id='-39468' action='modify'>
+    <nd ref='-39474' />
+    <nd ref='-39475' />
+    <nd ref='-39476' />
+    <nd ref='-39477' />
+    <tag k='test' v='dash2' />
+  </way>
+  <way id='-39469' action='modify'>
+    <nd ref='-39478' />
+    <nd ref='-39479' />
+    <nd ref='-39480' />
+    <nd ref='-39481' />
+    <tag k='test' v='dash1' />
+  </way>
+</osm>

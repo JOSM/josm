@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <bounds minlat='41.7560187' minlon='-93.6103883' maxlat='41.7575693' maxlon='-93.6072576'/>
+  <node id='-39943' action='modify' lat='41.75635918892' lon='-93.60905658745' />
+  <node id='-39944' action='modify' lat='41.75634450998' lon='-93.60827933401' />
+  <node id='-39945' action='modify' lat='41.75660873045' lon='-93.60777756279' />
+  <node id='-39946' action='modify' lat='41.75677444751' lon='-93.60775757557' />
+  <node id='-39947' action='modify' lat='41.75677019799' lon='-93.60818094749' />
+  <node id='-39948' action='modify' lat='41.75710047122' lon='-93.60873191196' />
+  <node id='-39949' action='modify' lat='41.75704175611' lon='-93.60927303778' />
+  <node id='-39950' action='modify' lat='41.75695368333' lon='-93.60960755192' />
+  <node id='-39951' action='modify' lat='41.75671148257' lon='-93.60939110159' />
+  <node id='-39952' action='modify' lat='41.75686561043' lon='-93.6086040095' />
+  <node id='-39953' action='modify' lat='41.75730597371' lon='-93.60890900768' />
+  <node id='-39954' action='modify' lat='41.75732065244' lon='-93.60947964946' />
+  <node id='-39955' action='modify' lat='41.75709313184' lon='-93.60997158202' />
+  <node id='-39956' action='modify' lat='41.75683386746' lon='-93.61006910765' />
+  <node id='-39957' action='modify' lat='41.7569169863' lon='-93.60787594931' />
+  <node id='-39958' action='modify' lat='41.75704175611' lon='-93.60797433582' />
+  <node id='-39959' action='modify' lat='41.75723258004' lon='-93.60840723647' />
+  <node id='-39960' action='modify' lat='41.75651331763' lon='-93.60989287281' />
+  <node id='-39961' action='modify' lat='41.75637001464' lon='-93.6095653687' />
+  <way id='-39936' action='modify'>
+    <nd ref='-39943' />
+    <nd ref='-39944' />
+    <nd ref='-39945' />
+    <nd ref='-39946' />
+  </way>
+  <way id='-39937' action='modify'>
+    <nd ref='-39947' />
+    <nd ref='-39948' />
+    <nd ref='-39949' />
+  </way>
+  <way id='-39938' action='modify'>
+    <nd ref='-39949' />
+    <nd ref='-39950' />
+    <nd ref='-39951' />
+    <nd ref='-39952' />
+    <nd ref='-39947' />
+  </way>
+  <way id='-39939' action='modify'>
+    <nd ref='-39953' />
+    <nd ref='-39954' />
+    <nd ref='-39955' />
+    <nd ref='-39956' />
+    <tag k='test' v='role1_outer' />
+  </way>
+  <way id='-39940' action='modify'>
+    <nd ref='-39946' />
+    <nd ref='-39957' />
+    <nd ref='-39958' />
+    <nd ref='-39959' />
+    <nd ref='-39953' />
+  </way>
+  <way id='-39942' action='modify'>
+    <nd ref='-39956' />
+    <nd ref='-39960' />
+    <nd ref='-39961' />
+    <nd ref='-39943' />
+    <tag k='test' v='role1_outer' />
+  </way>
+  <relation id='-39941' action='modify'>
+    <member type='way' ref='-39942' role='outer' />
+    <member type='way' ref='-39939' role='' />
+    <member type='way' ref='-39940' role='' />
+    <member type='way' ref='-39936' role='outer' />
+    <member type='way' ref='-39937' role='inner' />
+    <member type='way' ref='-39938' role='inner' />
+    <tag k='landuse' v='meadow' />
+    <tag k='test' v='role1' />
+    <tag k='type' v='multipolygon' />
+  </relation>
+</osm>

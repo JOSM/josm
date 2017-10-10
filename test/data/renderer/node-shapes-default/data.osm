@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <bounds minlat='41.7545168' minlon='-93.61016' maxlat='41.7551668' maxlon='-93.6085557'/>
+  <node id='-39427' action='modify' lat='41.75486163968' lon='-93.60957807591'>
+    <tag k='test' v='circle' />
+  </node>
+</osm>

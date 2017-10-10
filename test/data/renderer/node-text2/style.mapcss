@@ -1,0 +1,55 @@
+
+/**
+ * Text placement test
+ */
+node[test=text-placement]::* {
+    font-size: 10;
+    text: auto;
+    symbol-shape: square;
+    symbol-size: 50;
+    symbol-fill-opacity: 0.0;
+}
+node[test=text-placement]::above_center {
+    text-anchor-vertical: above;
+    text-anchor-horizontal: center;
+    text-color: gold;
+}
+node[test=text-placement]::top_left {
+    text-anchor-vertical: top;
+    text-anchor-horizontal: left;
+    text-color: yellow;
+}
+node[test=text-placement]::top_right {
+    text-anchor-vertical: top;
+    text-anchor-horizontal: right;
+    text-color: green;
+}
+node[test=text-placement]::center_center {
+    text-anchor-vertical: center;
+    text-anchor-horizontal: center;
+    text-color: white;
+}
+node[test=text-placement]::center_right {
+    text-anchor-vertical: center;
+    text-anchor-horizontal: right;
+    text-color: magenta;
+}
+node[test=text-placement]::bottom_left {
+    text-anchor-vertical: bottom;
+    text-anchor-horizontal: left;
+    text-color: blue;
+}
+node[test=text-placement]::bottom_right {
+    text-anchor-vertical: bottom;
+    text-anchor-horizontal: right;
+    text-color: lime;
+}
+node[test=text-placement]::below_center {
+    text-anchor-vertical: below;
+    text-anchor-horizontal: center;
+    text-color: red;
+}
+node[test=text-placement] {
+    symbol-fill-color: blue;
+    symbol-fill-opacity: 0.4;
+}

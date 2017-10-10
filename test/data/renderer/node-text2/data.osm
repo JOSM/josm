@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <bounds minlat='41.7526653' minlon='-93.6021445' maxlat='41.7535976' maxlon='-93.6005355'/>
+  <node id='-39599' action='modify' lat='41.75314999445' lon='-93.60127346601'>
+    <tag k='name' v='Hgmpf' />
+    <tag k='test' v='text-placement' />
+  </node>
+</osm>
