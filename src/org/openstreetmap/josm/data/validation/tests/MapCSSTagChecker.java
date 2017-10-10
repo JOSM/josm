@@ -500,15 +500,20 @@ public class MapCSSTagChecker extends Test.TagTest {
             if (fixCommands.isEmpty() && !deletion) {
                 return null;
             }
-            final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
-            Collection<Command> cmds = new LinkedList<>();
-            for (FixCommand fixCommand : fixCommands) {
-                cmds.add(fixCommand.createCommand(p, matchingSelector));
+            try {
+                final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
+                Collection<Command> cmds = new LinkedList<>();
+                for (FixCommand fixCommand : fixCommands) {
+                    cmds.add(fixCommand.createCommand(p, matchingSelector));
+                }
+                if (deletion && !p.isDeleted()) {
+                    cmds.add(new DeleteCommand(p));
+                }
+                return new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(p, matchingSelector)), cmds);
+            } catch (IllegalArgumentException e) {
+                Logging.error(e);
+                return null;
             }
-            if (deletion && !p.isDeleted()) {
-                cmds.add(new DeleteCommand(p));
-            }
-            return new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(p, matchingSelector)), cmds);
         }
 
         /**
