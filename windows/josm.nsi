@@ -291,6 +291,15 @@ SectionEnd
 
 SectionGroup $(JOSM_SEC_PLUGINS_GROUP) SecPluginsGroup
 
+Section $(JOSM_SEC_IMAGERY_OFFSET_DB_PLUGIN) SecImageryOffsetDbPlugin
+;-------------------------------------------
+SectionIn 1 2
+SetShellVarContext current
+SetOutPath $APPDATA\JOSM\plugins
+File "../../dist/imagery_offset_db.jar"
+StrCpy $plugins "$plugins<entry value='imagery_offset_db'/>"
+SectionEnd
+
 Section $(JOSM_SEC_TURNRESTRICTIONS_PLUGIN) SecTurnrestrictionsPlugin
 ;-------------------------------------------
 SectionIn 1 2
@@ -439,6 +448,7 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecJosm} $(JOSM_SECDESC_JOSM)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsGroup} $(JOSM_SECDESC_PLUGINS_GROUP)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecImageryOffsetDbPlugin} $(JOSM_SECDESC_IMAGERY_OFFSET_DB_PLUGIN)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTurnrestrictionsPlugin} $(JOSM_SECDESC_TURNRESTRICTIONS_PLUGIN)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecStartMenu} $(JOSM_SECDESC_STARTMENU)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDesktopIcon} $(JOSM_SECDESC_DESKTOP_ICON)
