@@ -145,11 +145,9 @@ public abstract class AbstractToStringProperty<T> extends AbstractProperty<T> {
         return new ChildProperty<>(this, key);
     }
 
-    /**
-     * Creates a new {@link CachingProperty} instance for this property.
-     * @return The new caching property instance.
-     */
+    @Override
     public CachingProperty<T> cached() {
-        return new CachingProperty<>(this);
+        // Removing this implementation breaks binary compatibility
+        return super.cached();
     }
 }
