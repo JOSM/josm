@@ -12,6 +12,7 @@ import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -70,7 +71,7 @@ public abstract class CrossingWays extends Test {
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
             if (w1 == w2)
                 return false;
-            if (!Objects.equals(getLayer(w1), getLayer(w2))) {
+            if (!Objects.equals(OsmUtils.getLayer(w1), OsmUtils.getLayer(w2))) {
                 return true;
             }
             if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
@@ -163,7 +164,7 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            return !Objects.equals(getLayer(w1), getLayer(w2));
+            return !Objects.equals(OsmUtils.getLayer(w1), OsmUtils.getLayer(w2));
         }
 
         @Override
@@ -231,14 +232,6 @@ public abstract class CrossingWays extends Test {
         super.endTest();
         cellSegments.clear();
         seenWays.clear();
-    }
-
-    static String getLayer(OsmPrimitive w) {
-        String layer1 = w.get("layer");
-        if ("0".equals(layer1)) {
-            layer1 = null; // 0 is default value for layer.
-        }
-        return layer1;
     }
 
     static boolean isCoastline(OsmPrimitive w) {

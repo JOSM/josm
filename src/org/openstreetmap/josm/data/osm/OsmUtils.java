@@ -138,4 +138,18 @@ public final class OsmUtils {
         }
         return p;
     }
+
+    /**
+     * Returns the layer value of primitive (null for layer 0).
+     * @param w OSM primitive
+     * @return the value of "layer" key, or null if absent or set to 0 (default value)
+     * @since 12986
+     */
+    public static String getLayer(OsmPrimitive w) {
+        String layer1 = w.get("layer");
+        if ("0".equals(layer1)) {
+            layer1 = null; // 0 is default value for layer.
+        }
+        return layer1;
+    }
 }
