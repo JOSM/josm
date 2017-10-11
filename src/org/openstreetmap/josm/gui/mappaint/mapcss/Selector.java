@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
@@ -15,6 +16,7 @@ import java.util.regex.PatternSyntaxException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -257,14 +259,19 @@ public interface Selector {
         }
 
         private final class CrossingFinder extends AbstractFinder {
+
+            private final String layer;
+
             private CrossingFinder(Environment e) {
                 super(e);
                 CheckParameterUtil.ensureThat(e.osm instanceof Way, "Only ways are supported");
+                layer = OsmUtils.getLayer(e.osm);
             }
 
             @Override
             public void visit(Way w) {
-                if (e.child == null && left.matches(new Environment(w).withParent(e.osm))
+                if (e.child == null && Objects.equals(layer, OsmUtils.getLayer(w))
+                    && left.matches(new Environment(w).withParent(e.osm))
                     && e.osm instanceof Way && Geometry.PolygonIntersection.CROSSING.equals(
                             Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))) {
                     e.child = w;

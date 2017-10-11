@@ -254,6 +254,9 @@ public final class AlignInLineAction extends JosmAction {
             nodes.addAll(w.getNodes());
             lines.put(w, new Line(w));
         }
+        if (nodes.isEmpty()) {
+            throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
+        }
         Collection<Command> cmds = new ArrayList<>(nodes.size());
         List<Way> referers = new ArrayList<>(ways.size());
         for (Node n: nodes) {
@@ -267,8 +270,7 @@ public final class AlignInLineAction extends JosmAction {
                 if (way.isFirstLastNode(n)) continue;
                 cmds.add(lines.get(way).projectionCommand(n));
             } else if (referers.size() == 2) {
-                Command cmd = lines.get(referers.get(0)).intersectionCommand(n, lines.get(referers.get(1)));
-                cmds.add(cmd);
+                cmds.add(lines.get(referers.get(0)).intersectionCommand(n, lines.get(referers.get(1))));
             } else
                 throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
         }
