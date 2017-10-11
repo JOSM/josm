@@ -16,7 +16,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
@@ -55,8 +53,6 @@ import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
-import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
-import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
@@ -99,7 +95,6 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     private static final Pattern COLOR_MAPPAINT_PATTERN = Pattern.compile("mappaint\\.(.+?)\\.(.+)");
 
     private static final String[] OBSOLETE_PREF_KEYS = {
-      "imagery.layers.addedIds", /* remove entry after June 2017 */
       "projection", /* remove entry after Nov. 2017 */
       "projection.sub", /* remove entry after Nov. 2017 */
     };
@@ -1560,82 +1555,10 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param loadedVersion JOSM version when the preferences file was written
      */
     private void removeObsolete(int loadedVersion) {
-        // drop in March 2017
-        removeUrlFromEntries(loadedVersion, 10063,
-                "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries",
-                "resource://data/validator/power.mapcss");
-        // drop in March 2017
-        if (loadedVersion < 11058) {
-            migrateOldColorKeys();
-        }
-        // drop in September 2017
-        if (loadedVersion < 11424) {
-            addNewerDefaultEntry(
-                    "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries",
-                    "resource://data/validator/territories.mapcss");
-        }
-
         for (String key : OBSOLETE_PREF_KEYS) {
             if (settingsMap.containsKey(key)) {
                 settingsMap.remove(key);
                 Logging.info(tr("Preference setting {0} has been removed since it is no longer used.", key));
-            }
-        }
-    }
-
-    private void migrateOldColorKeys() {
-        settingsMap.keySet().stream()
-                .filter(key -> key.startsWith(COLOR_PREFIX))
-                .flatMap(this::searchOldColorKey)
-                .collect(Collectors.toList()) // to avoid ConcurrentModificationException
-                .forEach(entry -> {
-                    final String oldKey = entry.getKey();
-                    final String newKey = entry.getValue();
-                    Logging.info("Migrating old color key {0} => {1}", oldKey, newKey);
-                    put(newKey, get(oldKey));
-                    put(oldKey, null);
-                });
-    }
-
-    private Stream<AbstractMap.SimpleImmutableEntry<String, String>> searchOldColorKey(String key) {
-        final String newKey = ColorProperty.getColorKey(key.substring(COLOR_PREFIX.length()));
-        return key.equals(newKey) || settingsMap.containsKey(newKey)
-                ? Stream.empty()
-                : Stream.of(new AbstractMap.SimpleImmutableEntry<>(key, newKey));
-    }
-
-    private void removeUrlFromEntries(int loadedVersion, int versionMax, String key, String urlPart) {
-        if (loadedVersion < versionMax) {
-            Setting<?> setting = settingsMap.get(key);
-            if (setting instanceof MapListSetting) {
-                List<Map<String, String>> l = new LinkedList<>();
-                boolean modified = false;
-                for (Map<String, String> map: ((MapListSetting) setting).getValue()) {
-                    String url = map.get("url");
-                    if (url != null && url.contains(urlPart)) {
-                        modified = true;
-                    } else {
-                        l.add(map);
-                    }
-                }
-                if (modified) {
-                    putListOfMaps(key, l);
-                }
-            }
-        }
-    }
-
-    private void addNewerDefaultEntry(String key, final String url) {
-        Setting<?> setting = settingsMap.get(key);
-        if (setting instanceof MapListSetting) {
-            List<Map<String, String>> l = new ArrayList<>(((MapListSetting) setting).getValue());
-            if (l.stream().noneMatch(x -> x.containsValue(url))) {
-                ValidatorPrefHelper helper = ValidatorPrefHelper.INSTANCE;
-                Optional<ExtendedSourceEntry> val = helper.getDefault().stream().filter(x -> url.equals(x.url)).findFirst();
-                if (val.isPresent()) {
-                    l.add(helper.serialize(val.get()));
-                }
-                putListOfMaps(key, l);
             }
         }
     }

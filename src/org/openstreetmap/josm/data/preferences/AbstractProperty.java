@@ -233,6 +233,15 @@ public abstract class AbstractProperty<T> {
     }
 
     /**
+     * Creates a new {@link CachingProperty} instance for this property.
+     * @return The new caching property instance.
+     * @since 12983
+     */
+    public CachingProperty<T> cached() {
+        return new CachingProperty<>(this);
+    }
+
+    /**
      * Adds a listener that listens only for changes to this preference key.
      * @param listener The listener to add.
      * @since 10824
