@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListe
 public class CachingProperty<T> extends AbstractProperty<T> implements ValueChangeListener<T> {
 
     private T cache;
-    private boolean cacheActive;
+    private boolean cacheValid;
     private final AbstractProperty<T> toCache;
 
     /**
@@ -29,9 +29,9 @@ public class CachingProperty<T> extends AbstractProperty<T> implements ValueChan
 
     @Override
     public synchronized T get() {
-        if (!cacheActive) {
+        if (!cacheValid) {
             cache = toCache.get();
-            cacheActive = true;
+            cacheValid = true;
         }
         return cache;
     }
@@ -43,6 +43,6 @@ public class CachingProperty<T> extends AbstractProperty<T> implements ValueChan
 
     @Override
     public synchronized void valueChanged(ValueChangeEvent<? extends T> e) {
-        cacheActive = false;
+        cacheValid = false;
     }
 }
