@@ -3517,6 +3517,7 @@
             <check key="trolleybus" text="Trolleybus" />
             <check key="share_taxi" text="Share taxi" />
             <check key="subway" text="Subway" />
+            <check key="light_rail" text="Light Rail" />
             <check key="monorail" text="Monorail" />
             <check key="funicular" text="Funicular" />
             <check key="aerialway" text="Aerialway" />

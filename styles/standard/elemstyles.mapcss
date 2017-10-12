@@ -3710,6 +3710,10 @@ node[public_transport=stop_position][train=yes] {
     icon-image: "presets/transport/train.svg";
     set icon_z17;
 }
+node[public_transport=stop_position][light_rail=yes] {
+    icon-image: "presets/transport/railway/light_rail.svg";
+    set icon_z17;
+}
 node[public_transport=stop_position][tram=yes] {
     icon-image: "presets/transport/railway/tram.svg";
     set icon_z17;
