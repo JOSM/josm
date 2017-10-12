@@ -140,7 +140,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
          * @return true if the color is at its default value, false if it is customized by the user.
          */
         public boolean isDefault() {
-            return info.getValue() == null || Objects.equals(info.getValue(),  info.getDefaultValue());
+            return info.getValue() == null || Objects.equals(info.getValue(), info.getDefaultValue());
         }
 
         /**

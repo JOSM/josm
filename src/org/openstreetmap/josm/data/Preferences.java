@@ -1005,7 +1005,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param colName name of the colour
      * @param def default value
      * @return a Color object for the configured colour, or the default value if none configured.
-     * @deprecated Use a {@link ColorProperty} instead.
+     * @deprecated Use a {@link NamedColorProperty} instead.
      */
     @Deprecated
     public synchronized Color getColor(String colName, Color def) {
@@ -1044,8 +1044,8 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param specName name of the special colour settings
      * @param def default value
      * @return a Color object for the configured colour, or the default value if none configured.
-     * @deprecated Use a {@link ColorProperty} instead.
-     * You can replace this by: <code>new ColorProperty(colName, def).getChildColor(specName)</code>
+     * @deprecated Use a {@link NamedColorProperty} instead.
+     * You can replace this by: <code>new NamedColorProperty(colName, def).getChildColor(specName)</code>
      */
     @Deprecated
     public synchronized Color getColor(String colName, String specName, Color def) {
@@ -1094,7 +1094,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param colKey The color name
      * @param val The color
      * @return true if the setting was modified
-     * @see ColorProperty#put(Color)
+     * @see NamedColorProperty#put(Color)
      * @deprecated (since 12987) no longer supported (see {@link NamedColorProperty})
      */
     @Deprecated

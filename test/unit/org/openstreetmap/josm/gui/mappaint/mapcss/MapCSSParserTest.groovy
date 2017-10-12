@@ -5,7 +5,6 @@ import java.awt.Color
 import org.junit.Before
 import org.junit.Test
 import org.openstreetmap.josm.JOSMFixture
-import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.Node
@@ -307,7 +306,6 @@ class MapCSSParserTest {
         getParser("{color: testcolour1#88DD22}").declaration().instructions.get(0).execute(e)
         def expected = new Color(0x88DD22)
         assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
-        assert Main.pref.getDefaultColor("mappaint.mapcss.testcolour1") == expected
     }
 
     @Test
@@ -316,7 +314,6 @@ class MapCSSParserTest {
         getParser("{color: testcolour2#12345678}").declaration().instructions.get(0).execute(e)
         def expected = new Color(0x12, 0x34, 0x56, 0x78)
         assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
-        assert Main.pref.getDefaultColor("mappaint.mapcss.testcolour2") == expected
     }
 
     @Test
