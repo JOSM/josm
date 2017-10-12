@@ -1080,7 +1080,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * Gets the default color that was registered with the preference
      * @param colKey The color name
      * @return The color
+     * @deprecated (since 12989) no longer supported
      */
+    @Deprecated
     public synchronized Color getDefaultColor(String colKey) {
         StringSetting col = Utils.cast(defaultsMap.get(COLOR_PREFIX+colKey), StringSetting.class);
         String colStr = col == null ? null : col.getValue();

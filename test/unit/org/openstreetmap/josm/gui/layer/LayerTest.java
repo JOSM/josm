@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -51,8 +51,8 @@ public class LayerTest {
 
         AbstractProperty<Color> color = new LayerManagerTest.TestLayer() {
             @Override
-            protected ColorProperty getBaseColorProperty() {
-                return new ColorProperty("x", Color.BLACK);
+            protected NamedColorProperty getBaseColorProperty() {
+                return new NamedColorProperty("x", Color.BLACK);
             }
         }.getColorProperty();
 
@@ -100,7 +100,7 @@ public class LayerTest {
         testLayer = new LayerManagerTest.TestLayer() {
             @Override
             public AbstractProperty<Color> getColorProperty() {
-                return new ColorProperty("test", Color.RED);
+                return new NamedColorProperty("test", Color.RED);
             }
         };
 

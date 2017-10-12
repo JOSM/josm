@@ -30,6 +30,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -62,7 +65,7 @@ import org.openstreetmap.josm.tools.I18n;
  * GUI preference to let the user customize named colors.
  * @see NamedColorProperty
  */
-public class ColorPreference implements SubPreferenceSetting {
+public class ColorPreference implements SubPreferenceSetting, ListSelectionListener, TableModelListener {
 
     /**
      * Factory used to create a new {@code ColorPreference}.
@@ -319,7 +322,7 @@ public class ColorPreference implements SubPreferenceSetting {
         defaultSet.addActionListener(e -> {
             int sel = colors.getSelectedRow();
             ColorEntry ce = tableModel.getEntry(sel);
-            Color c = Main.pref.getDefaultColor(ce.key);
+            Color c = ce.info.getDefaultValue();
             if (c != null) {
                 colors.setValueAt(c, sel, 1);
             }
@@ -329,7 +332,7 @@ public class ColorPreference implements SubPreferenceSetting {
             List<ColorEntry> data = tableModel.getData();
             for (int i = 0; i < data.size(); ++i) {
                 ColorEntry ce = data.get(i);
-                Color c = Main.pref.getDefaultColor(ce.key);
+                Color c = ce.info.getDefaultValue();
                 if (c != null) {
                     colors.setValueAt(c, i, 1);
                 }
@@ -344,15 +347,7 @@ public class ColorPreference implements SubPreferenceSetting {
         colorEdit.setEnabled(false);
         defaultSet.setEnabled(false);
 
-        colors = new JTable(tableModel) {
-            @Override public void valueChanged(ListSelectionEvent e) {
-                super.valueChanged(e);
-                int sel = getSelectedRow();
-                remove.setEnabled(sel >= 0 && isRemoveColor(sel));
-                colorEdit.setEnabled(sel >= 0);
-                defaultSet.setEnabled(sel >= 0);
-            }
-        };
+        colors = new JTable(tableModel);
         colors.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent me) {
@@ -401,6 +396,9 @@ public class ColorPreference implements SubPreferenceSetting {
         colors.setToolTipText(tr("Colors used by different objects in JOSM."));
         colors.setPreferredScrollableViewportSize(new Dimension(100, 112));
 
+        colors.getSelectionModel().addListSelectionListener(this);
+        colors.getModel().addTableModelListener(this);
+
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JScrollPane scrollpane = new JScrollPane(colors);
@@ -416,8 +414,8 @@ public class ColorPreference implements SubPreferenceSetting {
         gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
     }
 
-    Boolean isRemoveColor(int row) {
-        return tableModel.getEntry(row).info.getCategory().equals(NamedColorProperty.COLOR_CATEGORY_LAYER);
+    private boolean isRemoveColor(ColorEntry ce) {
+        return ce.info.getCategory().equals(NamedColorProperty.COLOR_CATEGORY_LAYER);
     }
 
     /**
@@ -442,7 +440,7 @@ public class ColorPreference implements SubPreferenceSetting {
             d.toProperty().remove();
         }
         for (ColorEntry e : tableModel.getData()) {
-            if (!e.isDefault()) {
+            if (e.info.getValue() != null) {
                 if (e.toProperty().put(e.info.getValue())
                         && e.key.startsWith("mappaint.")) {
                     ret = true;
@@ -461,5 +459,23 @@ public class ColorPreference implements SubPreferenceSetting {
     @Override
     public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
         return gui.getDisplayPreference();
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        updateEnabledState();
+    }
+
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        updateEnabledState();
+    }
+
+    private void updateEnabledState() {
+        int sel = colors.getSelectedRow();
+        ColorEntry ce = sel >= 0 ? tableModel.getEntry(sel) : null;
+        remove.setEnabled(ce != null && isRemoveColor(ce));
+        colorEdit.setEnabled(ce != null);
+        defaultSet.setEnabled(ce != null && !ce.isDefault());
     }
 }
