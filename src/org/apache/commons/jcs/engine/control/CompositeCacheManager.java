@@ -736,8 +736,8 @@ public class CompositeCacheManager
                 if ( log.isDebugEnabled() )
                 {
                     log.debug( "Release called, but " + clients + " remain" );
-                    return;
                 }
+                return;
             }
 
             if ( log.isDebugEnabled() )
