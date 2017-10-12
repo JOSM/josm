@@ -58,7 +58,7 @@ public class LayerTest {
 
         assertEquals(Color.BLACK, color.get());
         assertEquals(Color.BLACK, color.getDefaultValue());
-        assertEquals("color.layer.test.layer", color.getKey());
+        assertEquals("clr.layer.Test Layer.x", color.getKey());
     }
 
     /**
