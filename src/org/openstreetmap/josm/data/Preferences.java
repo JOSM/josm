@@ -42,22 +42,23 @@ import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.spi.preferences.ListListSetting;
-import org.openstreetmap.josm.spi.preferences.ListSetting;
+import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.preferences.LongProperty;
-import org.openstreetmap.josm.spi.preferences.MapListSetting;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
+import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
+import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
+import org.openstreetmap.josm.spi.preferences.IPreferences;
+import org.openstreetmap.josm.spi.preferences.ListListSetting;
+import org.openstreetmap.josm.spi.preferences.ListSetting;
+import org.openstreetmap.josm.spi.preferences.MapListSetting;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
-import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
-import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
@@ -142,7 +143,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
 
     /**
      * Maps color keys to human readable color name
+     * @deprecated (since 12987) no longer supported
      */
+    @Deprecated
     protected final SortedMap<String, String> colornames = new TreeMap<>();
 
     /**
@@ -250,6 +253,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param pref existing preferences to copy
      * @since 12634
      */
+    @SuppressWarnings("deprecation")
     public Preferences(Preferences pref) {
         settingsMap.putAll(pref.settingsMap);
         defaultsMap.putAll(pref.defaultsMap);
@@ -629,9 +633,43 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     }
 
     /**
+     * Get all named colors, including customized and the default ones.
+     * @return a map of all named colors (maps preference key to {@link ColorInfo})
+     */
+    public synchronized Map<String, ColorInfo> getAllNamedColors() {
+        final Map<String, ColorInfo> all = new TreeMap<>();
+        for (final Entry<String, Setting<?>> e : settingsMap.entrySet()) {
+            if (!e.getKey().startsWith(NamedColorProperty.NAMED_COLOR_PREFIX))
+                continue;
+            Utils.instanceOfAndCast(e.getValue(), ListSetting.class)
+                    .map(d -> d.getValue())
+                    .map(lst -> ColorInfo.fromPref(lst, false))
+                    .ifPresent(info -> all.put(e.getKey(), info));
+        }
+        for (final Entry<String, Setting<?>> e : defaultsMap.entrySet()) {
+            if (!e.getKey().startsWith(NamedColorProperty.NAMED_COLOR_PREFIX))
+                continue;
+            Utils.instanceOfAndCast(e.getValue(), ListSetting.class)
+                    .map(d -> d.getValue())
+                    .map(lst -> ColorInfo.fromPref(lst, true))
+                    .ifPresent(infoDef -> {
+                        ColorInfo info = all.get(e.getKey());
+                        if (info == null) {
+                            all.put(e.getKey(), infoDef);
+                        } else {
+                            info.setDefaultValue(infoDef.getDefaultValue());
+                        }
+                    });
+        }
+        return all;
+    }
+
+    /**
      * Gets all known colors (preferences starting with the color prefix)
      * @return All colors
+     * @deprecated (since 12987) replaced by {@link #getAllNamedColors()}
      */
+    @Deprecated
     public synchronized Map<String, String> getAllColors() {
         final Map<String, String> all = new TreeMap<>();
         for (final Entry<String, Setting<?>> e : defaultsMap.entrySet()) {
@@ -974,7 +1012,11 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         return getColor(colName, null, def);
     }
 
-    /* only for preferences */
+    /**
+     * only for preferences
+     * @deprecated (since 12987) no longer supported
+     */
+    @Deprecated
     public synchronized String getColorName(String o) {
         Matcher m = COLOR_LAYER_PATTERN.matcher(o);
         if (m.matches()) {
@@ -1007,7 +1049,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      */
     @Deprecated
     public synchronized Color getColor(String colName, String specName, Color def) {
-        String colKey = ColorProperty.getColorKey(colName);
+        String colKey = org.openstreetmap.josm.data.preferences.ColorProperty.getColorKey(colName);
         registerColor(colKey, colName);
         String colStr = specName != null ? get(COLOR_PREFIX+specName) : "";
         if (colStr.isEmpty()) {
@@ -1025,7 +1067,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param colKey The key
      * @param colName The name of the color.
      * @since 10824
+     * @deprecated (since 12987) no longer supported
      */
+    @Deprecated
     public void registerColor(String colKey, String colName) {
         if (!colKey.equals(colName)) {
             colornames.put(colKey, colName);
@@ -1049,7 +1093,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param val The color
      * @return true if the setting was modified
      * @see ColorProperty#put(Color)
+     * @deprecated (since 12987) no longer supported (see {@link NamedColorProperty})
      */
+    @Deprecated
     public synchronized boolean putColor(String colKey, Color val) {
         return put(COLOR_PREFIX+colKey, val != null ? ColorHelper.color2html(val, true) : null);
     }
@@ -1432,6 +1478,11 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     @Deprecated
     public static <T> T deserializeStruct(Map<String, String> hash, Class<T> klass) {
         return StructUtils.deserializeStruct(hash, klass);
+    }
+
+    @Override
+    public Set<String> getKeySet() {
+        return Collections.unmodifiableSet(settingsMap.keySet());
     }
 
     /**

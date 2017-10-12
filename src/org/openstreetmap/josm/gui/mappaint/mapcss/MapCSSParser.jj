@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
@@ -1133,7 +1133,12 @@ Object literal() :
 {
         LOOKAHEAD(2)
         pref=ident() t=<HEXCOLOR>
-        { return new ColorProperty("mappaint." + (sheet == null ? "MapCSS" : sheet.title) + "." + pref, t.image).get(); }
+        {
+            return new NamedColorProperty(
+                    NamedColorProperty.COLOR_CATEGORY_MAPPAINT,
+                    sheet == null ? "MapCSS" : sheet.title, pref,
+                    ColorHelper.html2color(t.image)).get();
+        }
     |
         t=<IDENT> { return new Keyword(t.image); }
     |

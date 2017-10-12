@@ -23,7 +23,7 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 
 /**
  * Cell renderer of tags table.
@@ -32,18 +32,18 @@ import org.openstreetmap.josm.data.preferences.ColorProperty;
 public class PropertiesCellRenderer extends DefaultTableCellRenderer {
 
     private static final CachingProperty<Color> SELECTED_FG
-            = new ColorProperty(marktr("Discardable key: selection Foreground"), Color.GRAY).cached();
+            = new NamedColorProperty(marktr("Discardable key: selection Foreground"), Color.GRAY).cached();
     private static final CachingProperty<Color> SELECTED_BG;
     private static final CachingProperty<Color> NORMAL_FG
-            = new ColorProperty(marktr("Discardable key: foreground"), Color.GRAY).cached();
+            = new NamedColorProperty(marktr("Discardable key: foreground"), Color.GRAY).cached();
     private static final CachingProperty<Color> NORMAL_BG;
     private static final CachingProperty<Boolean> DISCARDABLE
             = new BooleanProperty("display.discardable-keys", false).cached();
 
     static {
-        SELECTED_BG = new ColorProperty(marktr("Discardable key: selection Background"),
+        SELECTED_BG = new NamedColorProperty(marktr("Discardable key: selection Background"),
                 Optional.ofNullable(UIManager.getColor("Table.selectionBackground")).orElse(Color.BLUE)).cached();
-        NORMAL_BG = new ColorProperty(marktr("Discardable key: background"),
+        NORMAL_BG = new NamedColorProperty(marktr("Discardable key: background"),
                 Optional.ofNullable(UIManager.getColor("Table.background")).orElse(Color.WHITE)).cached();
     }
 

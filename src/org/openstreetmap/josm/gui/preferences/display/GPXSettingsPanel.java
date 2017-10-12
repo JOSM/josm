@@ -25,6 +25,7 @@ import javax.swing.JSlider;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.PreferencesUtils;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker.TemplateEntryProperty;
@@ -328,7 +329,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
                 final Color color;
                 // ask the GPX draw for the correct color of that layer ( if there is one )
                 if (null != layerName) {
-                    color = GpxDrawHelper.DEFAULT_COLOR.getChildColor(layerName).get();
+                    color = GpxDrawHelper.DEFAULT_COLOR.getChildColor(
+                            NamedColorProperty.COLOR_CATEGORY_LAYER, layerName, GpxDrawHelper.DEFAULT_COLOR.getName()).get();
                 } else {
                     color = GpxDrawHelper.DEFAULT_COLOR.getDefaultValue();
                 }

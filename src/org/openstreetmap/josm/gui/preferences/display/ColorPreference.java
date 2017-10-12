@@ -12,11 +12,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -33,7 +34,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.gui.MapScaler;
 import org.openstreetmap.josm.gui.MapStatus;
@@ -51,10 +54,13 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.I18n;
 
 /**
  * Color preferences.
+ *
+ * GUI preference to let the user customize named colors.
+ * @see NamedColorProperty
  */
 public class ColorPreference implements SubPreferenceSetting {
 
@@ -77,19 +83,70 @@ public class ColorPreference implements SubPreferenceSetting {
 
     private static class ColorEntry {
         String key;
-        Color color;
+        ColorInfo info;
 
-        ColorEntry(String key, String colorHtml) {
+        ColorEntry(String key, ColorInfo info) {
             CheckParameterUtil.ensureParameterNotNull(key, "key");
+            CheckParameterUtil.ensureParameterNotNull(info, "info");
             this.key = key;
-            this.color = ColorHelper.html2color(colorHtml);
-            if (this.color == null) {
-                Logging.warn("Unable to get color from '"+colorHtml+"' for color preference '"+key+'\'');
+            this.info = info;
+        }
+
+        /**
+         * Get a description of the color based on the given info.
+         * @return a description of the color
+         */
+        public String getDisplay() {
+            switch (info.getCategory()) {
+                case NamedColorProperty.COLOR_CATEGORY_LAYER:
+                    String v = null;
+                    if (info.getSource() != null) {
+                        v = info.getSource();
+                    }
+                    if (!info.getName().isEmpty()) {
+                        if (v == null) {
+                            v = tr(I18n.escape(info.getName()));
+                        } else {
+                            v += " - " + tr(I18n.escape(info.getName()));
+                        }
+                    }
+                    return tr("Layer: {0}", v);
+                case NamedColorProperty.COLOR_CATEGORY_MAPPAINT:
+                    if (info.getSource() != null)
+                        return tr("Paint style {0}: {1}", tr(I18n.escape(info.getSource())), tr(info.getName()));
+                    // fall through
+                default:
+                    if (info.getSource() != null)
+                        return tr(I18n.escape(info.getSource())) + " - " + tr(I18n.escape(info.getName()));
+                    else
+                        return tr(I18n.escape(info.getName()));
             }
         }
 
-        public String getDisplay() {
-            return Main.pref.getColorName(key);
+        /**
+         * Get the color value to display.
+         * Either value (if set) or default value.
+         * @return the color value to display
+         */
+        public Color getDisplayColor() {
+            return Optional.ofNullable(info.getValue()).orElse(info.getDefaultValue());
+        }
+
+        /**
+         * Check if color has been customized by the user or not.
+         * @return true if the color is at its default value, false if it is customized by the user.
+         */
+        public boolean isDefault() {
+            return info.getValue() == null || Objects.equals(info.getValue(),  info.getDefaultValue());
+        }
+
+        /**
+         * Convert to a {@link NamedColorProperty}.
+         * @return a {@link NamedColorProperty}
+         */
+        public NamedColorProperty toProperty() {
+            return new NamedColorProperty(info.getCategory(), info.getSource(),
+                    info.getName(), info.getDefaultValue());
         }
     }
 
@@ -142,7 +199,7 @@ public class ColorPreference implements SubPreferenceSetting {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            return columnIndex == 0 ? data.get(rowIndex) : data.get(rowIndex).color;
+            return columnIndex == 0 ? data.get(rowIndex) : data.get(rowIndex).getDisplayColor();
         }
 
         @Override
@@ -158,7 +215,7 @@ public class ColorPreference implements SubPreferenceSetting {
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             if (columnIndex == 1 && aValue instanceof Color) {
-                data.get(rowIndex).color = (Color) aValue;
+                data.get(rowIndex).info.setValue((Color) aValue);
                 fireTableRowsUpdated(rowIndex, rowIndex);
             }
         }
@@ -168,51 +225,73 @@ public class ColorPreference implements SubPreferenceSetting {
      * Set the colors to be shown in the preference table. This method creates a table model if
      * none exists and overwrites all existing values.
      * @param colorMap the map holding the colors
-     * (key = color id (without prefixes, so only <code>background</code>; not <code>color.background</code>),
-     * value = html representation of the color.
+     * (key = preference key, value = {@link ColorInfo} instance)
      */
-    public void setColorModel(Map<String, String> colorMap) {
+    public void setColors(Map<String, ColorInfo> colorMap) {
         if (tableModel == null) {
             tableModel = new ColorTableModel();
         }
-
         tableModel.clear();
+
         // fill model with colors:
-        List<ColorEntry> colorKeyList = new ArrayList<>();
-        List<ColorEntry> colorKeyListMappaint = new ArrayList<>();
-        List<ColorEntry> colorKeyListLayer = new ArrayList<>();
-        for (Map.Entry<String, String> e : colorMap.entrySet()) {
-            String key = e.getKey();
-            String html = e.getValue();
-            if (key.startsWith("layer.")) {
-                colorKeyListLayer.add(new ColorEntry(key, html));
-            } else if (key.startsWith("mappaint.")) {
-                colorKeyListMappaint.add(new ColorEntry(key, html));
-            } else {
-                colorKeyList.add(new ColorEntry(key, html));
-            }
-        }
-        addColorRows(colorKeyList);
-        addColorRows(colorKeyListMappaint);
-        addColorRows(colorKeyListLayer);
+        colorMap.entrySet().stream()
+                .map(e -> new ColorEntry(e.getKey(), e.getValue()))
+                .sorted((e1, e2) -> {
+                    int cat = Integer.compare(
+                            getCategroyPriority(e1.info.getCategory()),
+                            getCategroyPriority(e2.info.getCategory()));
+                    if (cat != 0) return cat;
+                    return Collator.getInstance().compare(e1.getDisplay(), e2.getDisplay());
+                })
+                .forEach(tableModel::addEntry);
+
         if (this.colors != null) {
             this.colors.repaint();
         }
+
     }
 
-    private void addColorRows(List<ColorEntry> entries) {
-        Collections.sort(entries, (e1, e2) -> Collator.getInstance().compare(e1.getDisplay(), e2.getDisplay()));
-        entries.forEach(tableModel::addEntry);
+    private static int getCategroyPriority(String category) {
+        switch (category) {
+            case NamedColorProperty.COLOR_CATEGORY_GENERAL: return 1;
+            case NamedColorProperty.COLOR_CATEGORY_MAPPAINT: return 2;
+            case NamedColorProperty.COLOR_CATEGORY_LAYER: return 3;
+            default: return 4;
+        }
+    }
+
+    /**
+     * Set the colors to be shown in the preference table. This method creates a table model if
+     * none exists and overwrites all existing values.
+     * @param colorMap the map holding the colors
+     * (key = color id (without prefixes, so only <code>background</code>; not <code>color.background</code>),
+     * value = html representation of the color.
+     * @deprecated (since 12987) replaced by {@link #setColors(java.util.Map)}
+     */
+    @Deprecated
+    public void setColorModel(Map<String, String> colorMap) {
+        setColors(colorMap.entrySet().stream().collect(Collectors.toMap(e->e.getKey(), e->
+            new ColorInfo(NamedColorProperty.COLOR_CATEGORY_GENERAL, null, e.getKey(), ColorHelper.html2color(e.getValue()), null))));
+    }
+
+    /**
+     * Returns a map with the colors in the table (key = preference key, value = color info).
+     * @return a map holding the colors.
+     */
+    public Map<String, ColorInfo> getColors() {
+        return tableModel.getData().stream().collect(Collectors.toMap(e -> e.key, e -> e.info));
     }
 
     /**
      * Returns a map with the colors in the table (key = color name without prefix, value = html color code).
      * @return a map holding the colors.
+     * @deprecated replaced by {@link #getColors()}
      */
+    @Deprecated
     public Map<String, String> getColorModel() {
         Map<String, String> colorMap = new HashMap<>();
         for (ColorEntry e : tableModel.getData()) {
-            colorMap.put(e.key, ColorHelper.color2html(e.color));
+            colorMap.put(e.key, ColorHelper.color2html(e.getDisplayColor()));
         }
         return colorMap;
     }
@@ -220,13 +299,13 @@ public class ColorPreference implements SubPreferenceSetting {
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
         fixColorPrefixes();
-        setColorModel(Main.pref.getAllColors());
+        setColors(Main.pref.getAllNamedColors());
 
         colorEdit = new JButton(tr("Choose"));
         colorEdit.addActionListener(e -> {
             int sel = colors.getSelectedRow();
             ColorEntry ce = tableModel.getEntry(sel);
-            JColorChooser chooser = new JColorChooser(ce.color);
+            JColorChooser chooser = new JColorChooser(ce.getDisplayColor());
             int answer = JOptionPane.showConfirmDialog(
                     gui, chooser,
                     tr("Choose a color for {0}", ce.getDisplay()),
@@ -292,7 +371,7 @@ public class ColorPreference implements SubPreferenceSetting {
                     JLabel label = (JLabel) comp;
                     ColorEntry e = (ColorEntry) value;
                     label.setText(e.getDisplay());
-                    if (!Objects.equals(e.color, Main.pref.getDefaultColor(e.key))) {
+                    if (!e.isDefault()) {
                         label.setFont(label.getFont().deriveFont(Font.BOLD));
                     } else {
                         label.setFont(label.getFont().deriveFont(Font.PLAIN));
@@ -338,7 +417,7 @@ public class ColorPreference implements SubPreferenceSetting {
     }
 
     Boolean isRemoveColor(int row) {
-        return tableModel.getEntry(row).key.startsWith("layer.");
+        return tableModel.getEntry(row).info.getCategory().equals(NamedColorProperty.COLOR_CATEGORY_LAYER);
     }
 
     /**
@@ -360,11 +439,14 @@ public class ColorPreference implements SubPreferenceSetting {
     public boolean ok() {
         boolean ret = false;
         for (ColorEntry d : tableModel.getDeleted()) {
-            Main.pref.putColor(d.key, null);
+            d.toProperty().remove();
         }
         for (ColorEntry e : tableModel.getData()) {
-            if (Main.pref.putColor(e.key, e.color) && e.key.startsWith("mappaint.")) {
-                ret = true;
+            if (!e.isDefault()) {
+                if (e.toProperty().put(e.info.getValue())
+                        && e.key.startsWith("mappaint.")) {
+                    ret = true;
+                }
             }
         }
         OsmDataLayer.createHatchTexture();

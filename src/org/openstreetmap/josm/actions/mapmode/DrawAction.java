@@ -47,11 +47,11 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.paint.ArrowPaintHelper;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
-import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
+import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
@@ -109,12 +109,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
             = new BooleanProperty("draw.anglesnap.showAngle", true).cached();
 
     static final CachingProperty<Color> SNAP_HELPER_COLOR
-            = new ColorProperty(marktr("draw angle snap"), Color.ORANGE).cached();
+            = new NamedColorProperty(marktr("draw angle snap"), Color.ORANGE).cached();
 
     static final CachingProperty<Color> HIGHLIGHT_COLOR
-            = new ColorProperty(marktr("draw angle snap highlight"), ORANGE_TRANSPARENT).cached();
+            = new NamedColorProperty(marktr("draw angle snap highlight"), ORANGE_TRANSPARENT).cached();
 
-    static final AbstractToStringProperty<Color> RUBBER_LINE_COLOR
+    static final AbstractProperty<Color> RUBBER_LINE_COLOR
             = PaintColors.SELECTED.getProperty().getChildColor(marktr("helper line"));
 
     static final CachingProperty<Boolean> DRAW_HELPER_LINE

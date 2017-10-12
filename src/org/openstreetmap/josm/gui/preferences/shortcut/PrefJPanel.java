@@ -44,7 +44,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -159,10 +159,10 @@ public class PrefJPanel extends JPanel {
 
     private class ShortcutTableCellRenderer extends DefaultTableCellRenderer {
 
-        private final transient ColorProperty SHORTCUT_BACKGROUND_USER_COLOR = new ColorProperty(
+        private final transient NamedColorProperty SHORTCUT_BACKGROUND_USER_COLOR = new NamedColorProperty(
                 marktr("Shortcut Background: User"),
                 new Color(200, 255, 200));
-        private final transient ColorProperty SHORTCUT_BACKGROUND_MODIFIED_COLOR = new ColorProperty(
+        private final transient NamedColorProperty SHORTCUT_BACKGROUND_MODIFIED_COLOR = new NamedColorProperty(
                 marktr("Shortcut Background: Modified"),
                 new Color(255, 255, 200));
 

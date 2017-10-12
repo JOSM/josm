@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
@@ -1730,4 +1731,21 @@ public final class Utils {
             consumer.accept((T) o);
         }
     }
+
+    /**
+     * Helper method to replace the "<code>instanceof</code>-check and cast" pattern.
+     *
+     * @param <T> the type for the instanceof check and cast
+     * @param o the object to check and cast
+     * @param klass the class T
+     * @return {@link Optional} containing the result of the cast, if it is possible, an empty
+     * Optional otherwise
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Optional<T> instanceOfAndCast(Object o, Class<T> klass) {
+        if (klass.isInstance(o))
+            return Optional.of((T) o);
+        return Optional.empty();
+    }
+
 }

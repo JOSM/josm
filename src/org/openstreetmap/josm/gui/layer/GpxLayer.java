@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -99,7 +99,7 @@ public class GpxLayer extends Layer {
     }
 
     @Override
-    protected ColorProperty getBaseColorProperty() {
+    protected NamedColorProperty getBaseColorProperty() {
         return GpxDrawHelper.DEFAULT_COLOR;
     }
 

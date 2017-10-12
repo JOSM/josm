@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import java.awt.Color;
 
 import org.openstreetmap.josm.data.preferences.CachingProperty;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 
 /**
@@ -83,11 +83,11 @@ public enum PaintColors {
      */
     private final String name;
     private final Color defaultColor;
-    private final ColorProperty baseProperty;
+    private final NamedColorProperty baseProperty;
     private final CachingProperty<Color> property;
 
     PaintColors(String name, Color defaultColor) {
-        baseProperty = new ColorProperty(name, defaultColor);
+        baseProperty = new NamedColorProperty(name, defaultColor);
         property = baseProperty.cached();
         this.name = name;
         this.defaultColor = defaultColor;
@@ -122,7 +122,7 @@ public enum PaintColors {
      * @return The property that is used to access the color.
      * @since 10874
      */
-    public ColorProperty getProperty() {
+    public NamedColorProperty getProperty() {
         return baseProperty;
     }
 }

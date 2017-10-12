@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.spi.preferences;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Preferences implementation that keeps all settings in memory.
@@ -37,6 +39,11 @@ public class MemoryPreferences extends AbstractPreferences {
             return result;
         }
         return def;
+    }
+
+    @Override
+    public Set<String> getKeySet() {
+        return Collections.unmodifiableSet(settings.keySet());
     }
 
     @Override

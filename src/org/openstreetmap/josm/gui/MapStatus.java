@@ -70,8 +70,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor.ProgressMonitorDialog;
@@ -79,6 +79,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ImageLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -109,28 +110,28 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
      * Property for map status background color.
      * @since 6789
      */
-    public static final ColorProperty PROP_BACKGROUND_COLOR = new ColorProperty(
-            marktr("Status bar background"), "#b8cfe5");
+    public static final NamedColorProperty PROP_BACKGROUND_COLOR = new NamedColorProperty(
+            marktr("Status bar background"), ColorHelper.html2color("#b8cfe5"));
 
     /**
      * Property for map status background color (active state).
      * @since 6789
      */
-    public static final ColorProperty PROP_ACTIVE_BACKGROUND_COLOR = new ColorProperty(
-            marktr("Status bar background: active"), "#aaff5e");
+    public static final NamedColorProperty PROP_ACTIVE_BACKGROUND_COLOR = new NamedColorProperty(
+            marktr("Status bar background: active"), ColorHelper.html2color("#aaff5e"));
 
     /**
      * Property for map status foreground color.
      * @since 6789
      */
-    public static final ColorProperty PROP_FOREGROUND_COLOR = new ColorProperty(
+    public static final NamedColorProperty PROP_FOREGROUND_COLOR = new NamedColorProperty(
             marktr("Status bar foreground"), Color.black);
 
     /**
      * Property for map status foreground color (active state).
      * @since 6789
      */
-    public static final ColorProperty PROP_ACTIVE_FOREGROUND_COLOR = new ColorProperty(
+    public static final NamedColorProperty PROP_ACTIVE_FOREGROUND_COLOR = new NamedColorProperty(
             marktr("Status bar foreground: active"), Color.black);
 
     /**

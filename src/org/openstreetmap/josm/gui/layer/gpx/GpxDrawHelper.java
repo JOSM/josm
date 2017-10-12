@@ -42,7 +42,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -68,7 +68,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      * The color that is used for drawing GPX points.
      * @since 10824
      */
-    public static final ColorProperty DEFAULT_COLOR = new ColorProperty(marktr("gps point"), Color.magenta);
+    public static final NamedColorProperty DEFAULT_COLOR = new NamedColorProperty(marktr("gps point"), Color.magenta);
 
     private final GpxData data;
     private final GpxLayer layer;
@@ -265,7 +265,10 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      */
     public Color getColor(String layerName, boolean ignoreCustom) {
         if (ignoreCustom || getColorMode(layerName) == ColorMode.NONE) {
-            return DEFAULT_COLOR.getChildColor(specName(layerName)).get();
+            return DEFAULT_COLOR.getChildColor(
+                    NamedColorProperty.COLOR_CATEGORY_LAYER,
+                    layerName,
+                    DEFAULT_COLOR.getName()).get();
         } else {
             return null;
         }
