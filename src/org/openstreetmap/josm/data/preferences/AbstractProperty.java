@@ -190,7 +190,7 @@ public abstract class AbstractProperty<T> {
      * @return true if {@code Main.pref} contains this property.
      */
     public boolean isSet() {
-        return !getPreferences().get(key).isEmpty();
+        return getPreferences().getKeySet().contains(key);
     }
 
     /**
@@ -205,7 +205,7 @@ public abstract class AbstractProperty<T> {
      * Removes this property from JOSM preferences (i.e replace it by its default value).
      */
     public void remove() {
-        put(getDefaultValue());
+        getPreferences().put(key, null);
     }
 
     /**

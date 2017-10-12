@@ -37,7 +37,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -78,7 +78,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     public AudioMarker syncAudioMarker;
 
     private static final Color DEFAULT_COLOR = Color.magenta;
-    private static final ColorProperty COLOR_PROPERTY = new ColorProperty(marktr("gps marker"), DEFAULT_COLOR);
+    private static final NamedColorProperty COLOR_PROPERTY = new NamedColorProperty(marktr("gps marker"), DEFAULT_COLOR);
 
     /**
      * Constructs a new {@code MarkerLayer}.
@@ -162,7 +162,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     @Override
-    protected ColorProperty getBaseColorProperty() {
+    protected NamedColorProperty getBaseColorProperty() {
         return COLOR_PROPERTY;
     }
 

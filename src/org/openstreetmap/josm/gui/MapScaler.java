@@ -14,7 +14,7 @@ import javax.accessibility.AccessibleContext;
 import javax.accessibility.AccessibleValue;
 import javax.swing.JComponent;
 
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.help.Helpful;
 
 /**
@@ -28,7 +28,7 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
     private static final int PADDING_LEFT = 5;
     private static final int PADDING_RIGHT = 50;
 
-    private static final ColorProperty SCALER_COLOR = new ColorProperty(marktr("scale"), Color.WHITE);
+    private static final NamedColorProperty SCALER_COLOR = new NamedColorProperty(marktr("scale"), Color.WHITE);
 
     /**
      * Constructs a new {@code MapScaler}.

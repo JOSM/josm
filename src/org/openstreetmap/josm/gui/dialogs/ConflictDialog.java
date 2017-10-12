@@ -51,7 +51,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -77,8 +77,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class ConflictDialog extends ToggleDialog implements ActiveLayerChangeListener, IConflictListener, DataSelectionListener {
 
-    private static final ColorProperty CONFLICT_COLOR = new ColorProperty(marktr("conflict"), Color.GRAY);
-    private static final ColorProperty BACKGROUND_COLOR = new ColorProperty(marktr("background"), Color.BLACK);
+    private static final NamedColorProperty CONFLICT_COLOR = new NamedColorProperty(marktr("conflict"), Color.GRAY);
+    private static final NamedColorProperty BACKGROUND_COLOR = new NamedColorProperty(marktr("background"), Color.BLACK);
 
     /** the collection of conflicts displayed by this conflict dialog */
     private transient ConflictCollection conflicts;

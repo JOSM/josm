@@ -4,6 +4,7 @@ package org.openstreetmap.josm.spi.preferences;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface for preference handling.
@@ -233,4 +234,9 @@ public interface IPreferences {
      */
     boolean putListOfMaps(String key, List<Map<String, String>> value);
 
+    /**
+     * Get the set of all keys that are mapped to a value in this preferences.
+     * @return the set of all keys
+     */
+    Set<String> getKeySet();
 }

@@ -10,7 +10,9 @@ import org.openstreetmap.josm.tools.ColorHelper;
 /**
  * A property containing a {@link Color} value.
  * @since 5464
+ * @deprecated (since 12987) replaced by {@link NamedColorProperty}
  */
+@Deprecated
 public class ColorProperty extends AbstractToStringProperty<Color> {
 
     private final String name;

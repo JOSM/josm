@@ -28,7 +28,7 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListener;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -203,10 +203,9 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * @since 10824
      */
     public AbstractProperty<Color> getColorProperty() {
-        ColorProperty base = getBaseColorProperty();
+        NamedColorProperty base = getBaseColorProperty();
         if (base != null) {
-            // cannot cache this - name may change.
-            return base.getChildColor("layer " + getName());
+            return base.getChildColor(NamedColorProperty.COLOR_CATEGORY_LAYER, getName(), base.getName());
         } else {
             return null;
         }
@@ -217,7 +216,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * @return The property or <code>null</code> if this layer is not colored.
      * @since 10824
      */
-    protected ColorProperty getBaseColorProperty() {
+    protected NamedColorProperty getBaseColorProperty() {
         return null;
     }
 

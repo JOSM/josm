@@ -59,7 +59,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
@@ -247,7 +247,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
          */
         private static class ImageryURLTableCellRenderer extends DefaultTableCellRenderer {
 
-            private static final ColorProperty IMAGERY_BACKGROUND_COLOR = new ColorProperty(
+            private static final NamedColorProperty IMAGERY_BACKGROUND_COLOR = new NamedColorProperty(
                     marktr("Imagery Background: Default"),
                     new Color(200, 255, 200));
 

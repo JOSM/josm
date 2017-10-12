@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Color;
 
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 
 /**
  * Conflict color constants.
@@ -81,10 +81,10 @@ public enum ConflictColors {
     /** Conflict foreground: remove member */
     FGCOLOR_MEMBER_REMOVE(marktr("Conflict foreground: remove member"), Color.black);
 
-    private final ColorProperty property;
+    private final NamedColorProperty property;
 
     ConflictColors(String name, Color defaultColor) {
-        property = new ColorProperty(name, defaultColor);
+        property = new NamedColorProperty(name, defaultColor);
     }
 
     /**

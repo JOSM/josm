@@ -6,18 +6,18 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.tools.Logging;
 
 /** The error severity */
 public enum Severity {
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     /** Error messages */
-    ERROR(1, tr("Errors"), /* ICON(data/) */"error",       new ColorProperty(marktr("validation error"), Color.RED).get()),
+    ERROR(1, tr("Errors"), /* ICON(data/) */"error",       new NamedColorProperty(marktr("validation error"), Color.RED).get()),
     /** Warning messages */
-    WARNING(2, tr("Warnings"), /* ICON(data/) */"warning", new ColorProperty(marktr("validation warning"), Color.YELLOW).get()),
+    WARNING(2, tr("Warnings"), /* ICON(data/) */"warning", new NamedColorProperty(marktr("validation warning"), Color.YELLOW).get()),
     /** Other messages */
-    OTHER(3, tr("Other"), /* ICON(data/) */"other",        new ColorProperty(marktr("validation other"), Color.CYAN).get());
+    OTHER(3, tr("Other"), /* ICON(data/) */"other",        new NamedColorProperty(marktr("validation other"), Color.CYAN).get());
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /** Numeric ordering of the severities, 1 being major, 3 being minor */

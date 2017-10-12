@@ -80,8 +80,8 @@ import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -152,8 +152,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
      */
     public static final StringProperty PROPERTY_SAVE_EXTENSION = new StringProperty("save.extension.osm", "osm");
 
-    private static final ColorProperty PROPERTY_BACKGROUND_COLOR = new ColorProperty(marktr("background"), Color.BLACK);
-    private static final ColorProperty PROPERTY_OUTSIDE_COLOR = new ColorProperty(marktr("outside downloaded area"), Color.YELLOW);
+    private static final NamedColorProperty PROPERTY_BACKGROUND_COLOR = new NamedColorProperty(marktr("background"), Color.BLACK);
+    private static final NamedColorProperty PROPERTY_OUTSIDE_COLOR = new NamedColorProperty(marktr("outside downloaded area"), Color.YELLOW);
 
     /** List of recent relations */
     private final Map<Relation, Void> recentRelations = new LruCache(PROPERTY_RECENT_RELATIONS_NUMBER.get()+1);

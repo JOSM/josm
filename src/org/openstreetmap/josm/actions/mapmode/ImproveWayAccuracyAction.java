@@ -36,7 +36,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -160,7 +160,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     @Override
     protected void readPreferences() {
-        guideColor = new ColorProperty(marktr("improve way accuracy helper line"), Color.RED).get();
+        guideColor = new NamedColorProperty(marktr("improve way accuracy helper line"), Color.RED).get();
     }
 
     @Override

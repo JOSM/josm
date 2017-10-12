@@ -44,7 +44,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -309,8 +309,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     protected void readPreferences() {
         initialMoveDelay = Config.getPref().getInt("edit.initial-move-delay", 200);
         initialMoveThreshold = Config.getPref().getInt("extrude.initial-move-threshold", 1);
-        mainColor = new ColorProperty(marktr("Extrude: main line"), Color.RED).get();
-        helperColor = new ColorProperty(marktr("Extrude: helper line"), Color.ORANGE).get();
+        mainColor = new NamedColorProperty(marktr("Extrude: main line"), Color.RED).get();
+        helperColor = new NamedColorProperty(marktr("Extrude: helper line"), Color.ORANGE).get();
         helperStrokeDash = GuiHelper.getCustomizedStroke(Config.getPref().get("extrude.stroke.helper-line", "1 4"));
         helperStrokeRA = new BasicStroke(1);
         symbolSize = Config.getPref().getDouble("extrude.angle-symbol-radius", 8);

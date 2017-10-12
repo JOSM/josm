@@ -34,7 +34,7 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
@@ -104,7 +104,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     private static final CachingProperty<Double> SNAP_DISTANCE_IMPERIAL = new DoubleProperty(prefKey("snap-distance-imperial"), 1).cached();
     private static final CachingProperty<Double> SNAP_DISTANCE_CHINESE  = new DoubleProperty(prefKey("snap-distance-chinese"), 1).cached();
     private static final CachingProperty<Double> SNAP_DISTANCE_NAUTICAL = new DoubleProperty(prefKey("snap-distance-nautical"), 0.1).cached();
-    private static final CachingProperty<Color> MAIN_COLOR = new ColorProperty(marktr("make parallel helper line"), Color.RED).cached();
+    private static final CachingProperty<Color> MAIN_COLOR = new NamedColorProperty(marktr("make parallel helper line"), Color.RED).cached();
 
     private static final CachingProperty<Map<Modifier, Boolean>> SNAP_MODIFIER_COMBO
             = new KeyboardModifiersProperty(prefKey("snap-modifier-combo"),             "?sC").cached();

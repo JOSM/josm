@@ -11,7 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 
 /**
@@ -20,7 +20,7 @@ import org.openstreetmap.josm.gui.MainApplication;
  */
 public class AutoFilterButton extends JButton {
 
-    private static final ColorProperty PROP_COLOR = new ColorProperty("auto.filter.button.color", new Color(0, 160, 160));
+    private static final NamedColorProperty PROP_COLOR = new NamedColorProperty("auto.filter.button.color", new Color(0, 160, 160));
 
     private final AutoFilter filter;
 
