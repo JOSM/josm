@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator.RequestorType;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -194,8 +195,10 @@ public abstract class OsmServerReader extends OsmConnection {
                 throw ote;
             }
             try {
-                if (response.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+                if (response.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    CredentialsManager.getInstance().purgeCredentialsCache(RequestorType.SERVER);
                     throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED, null, null);
+                }
 
                 if (response.getResponseCode() == HttpURLConnection.HTTP_PROXY_AUTH)
                     throw new OsmTransferCanceledException("Proxy Authentication Required");

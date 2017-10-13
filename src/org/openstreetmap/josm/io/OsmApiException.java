@@ -14,6 +14,25 @@ public class OsmApiException extends OsmTransferException {
     private String errorHeader;
     private String errorBody;
     private String accessedUrl;
+    private String login;
+
+    /**
+     * Constructs an {@code OsmApiException} with the specified response code, error header and error body
+     * @param responseCode The HTTP response code replied by the OSM server.
+     * See {@link java.net.HttpURLConnection HttpURLConnection} for predefined HTTP response code values
+     * @param errorHeader The error header, as transmitted in the {@code Error} field of the HTTP response header
+     * @param errorBody The error body, as transmitted in the HTTP response body
+     * @param accessedUrl The complete URL accessed when this error occured
+     * @param login the login used to connect to OSM API (can be null)
+     * @since 12992
+     */
+    public OsmApiException(int responseCode, String errorHeader, String errorBody, String accessedUrl, String login) {
+        this.responseCode = responseCode;
+        this.errorHeader = errorHeader;
+        this.errorBody = errorBody;
+        this.accessedUrl = accessedUrl;
+        this.login = login;
+    }
 
     /**
      * Constructs an {@code OsmApiException} with the specified response code, error header and error body
@@ -25,10 +44,7 @@ public class OsmApiException extends OsmTransferException {
      * @since 5584
      */
     public OsmApiException(int responseCode, String errorHeader, String errorBody, String accessedUrl) {
-        this.responseCode = responseCode;
-        this.errorHeader = errorHeader;
-        this.errorBody = errorBody;
-        this.accessedUrl = accessedUrl;
+        this(responseCode, errorHeader, errorBody, accessedUrl, null);
     }
 
     /**
@@ -197,5 +213,23 @@ public class OsmApiException extends OsmTransferException {
      */
     public String getAccessedUrl() {
         return accessedUrl;
+    }
+
+    /**
+     * Sets the login used to connect to OSM API.
+     * @param login the login used to connect to OSM API
+     * @since 12992
+     */
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    /**
+     * Replies the login used to connect to OSM API.
+     * @return the login used to connect to OSM API, or {@code null}
+     * @since 12992
+     */
+    public String getLogin() {
+        return login;
     }
 }

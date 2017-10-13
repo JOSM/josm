@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -29,7 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -126,9 +126,9 @@ public class CredentialDialog extends JDialog {
 
     protected JPanel createButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout());
-        pnl.add(new SideButton(new OKAction()));
-        pnl.add(new SideButton(new CancelAction()));
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/Password"))));
+        pnl.add(new JButton(new OKAction()));
+        pnl.add(new JButton(new CancelAction()));
+        pnl.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/Password"))));
         return pnl;
     }
 
@@ -265,7 +265,6 @@ public class CredentialDialog extends JDialog {
             gc.gridy = 5;
             gc.weighty = 1.0;
             add(new JPanel(), gc);
-
         }
 
         public CredentialPanel(CredentialDialog owner) {
@@ -374,8 +373,7 @@ public class CredentialDialog extends JDialog {
         @Override
         public void focusGained(FocusEvent e) {
             if (e.getSource() instanceof JTextField) {
-                JTextField tf = (JTextField) e.getSource();
-                tf.selectAll();
+                ((JTextField) e.getSource()).selectAll();
             }
         }
     }
@@ -409,8 +407,7 @@ public class CredentialDialog extends JDialog {
                     nextTF.selectAll();
                     return;
                 } else {
-                    OKAction okAction = owner.new OKAction();
-                    okAction.actionPerformed(null);
+                    owner.new OKAction().actionPerformed(null);
                 }
             }
         }
@@ -420,11 +417,11 @@ public class CredentialDialog extends JDialog {
         OKAction() {
             putValue(NAME, tr("Authenticate"));
             putValue(SHORT_DESCRIPTION, tr("Authenticate with the supplied username and password"));
-            putValue(SMALL_ICON, ImageProvider.get("ok"));
+            new ImageProvider("ok").getResource().attachImageIcon(this);
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             setCanceled(false);
             setVisible(false);
         }
@@ -434,7 +431,7 @@ public class CredentialDialog extends JDialog {
         CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SHORT_DESCRIPTION, tr("Cancel authentication"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            new ImageProvider("cancel").getResource().attachImageIcon(this);
         }
 
         public void cancel() {
@@ -443,7 +440,7 @@ public class CredentialDialog extends JDialog {
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             cancel();
         }
     }

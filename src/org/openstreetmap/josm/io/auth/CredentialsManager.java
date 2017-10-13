@@ -42,8 +42,15 @@ public class CredentialsManager implements CredentialsAgent {
 
     private static CredentialsAgentFactory agentFactory;
 
+    /**
+     * Credentials agent factory.
+     */
     @FunctionalInterface
     public interface CredentialsAgentFactory {
+        /**
+         * Returns the credentials agent instance.
+         * @return the credentials agent instance
+         */
         CredentialsAgent getCredentialsAgent();
     }
 
@@ -146,5 +153,10 @@ public class CredentialsManager implements CredentialsAgent {
     @Override
     public Component getPreferencesDecorationPanel() {
         return delegate.getPreferencesDecorationPanel();
+    }
+
+    @Override
+    public void purgeCredentialsCache(RequestorType requestorType) {
+        delegate.purgeCredentialsCache(requestorType);
     }
 }

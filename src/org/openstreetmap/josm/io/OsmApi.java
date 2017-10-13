@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.Authenticator.RequestorType;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -703,10 +705,11 @@ public class OsmApi extends OsmConnection {
                         throw new ChangesetClosedException(errorBody, ChangesetClosedException.Source.UPLOAD_DATA);
                     else
                         throw new OsmApiException(retCode, errorHeader, errorBody);
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
                 case HttpURLConnection.HTTP_FORBIDDEN:
-                    OsmApiException e = new OsmApiException(retCode, errorHeader, errorBody);
-                    e.setAccessedUrl(activeConnection.getURL().toString());
-                    throw e;
+                    CredentialsManager.getInstance().purgeCredentialsCache(RequestorType.SERVER);
+                    throw new OsmApiException(retCode, errorHeader, errorBody, activeConnection.getURL().toString(),
+                            doAuthenticate ? retrieveBasicAuthorizationLogin(client) : null);
                 default:
                     throw new OsmApiException(retCode, errorHeader, errorBody);
                 }

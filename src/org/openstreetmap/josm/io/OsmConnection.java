@@ -30,6 +30,9 @@ import oauth.signpost.exception.OAuthException;
  * @author imi
  */
 public class OsmConnection {
+
+    private static final String BASIC_AUTH = "Basic ";
+
     protected boolean cancel;
     protected HttpClient activeConnection;
     protected OAuthParameters oauthParameters;
@@ -74,6 +77,30 @@ public class OsmConnection {
     }
 
     /**
+     * Retrieves login from basic authentication header, if set.
+     *
+     * @param con the connection
+     * @return login from basic authentication header, or {@code null}
+     * @throws OsmTransferException if something went wrong. Check for nested exceptions
+     * @since 12992
+     */
+    protected String retrieveBasicAuthorizationLogin(HttpClient con) throws OsmTransferException {
+        String auth = con.getRequestHeader("Authorization");
+        if (auth != null && auth.startsWith(BASIC_AUTH)) {
+            try {
+                String[] token = new String(Base64.getDecoder().decode(auth.substring(BASIC_AUTH.length())),
+                        StandardCharsets.UTF_8).split(":");
+                if (token.length == 2) {
+                    return token[0];
+                }
+            } catch (IllegalArgumentException e) {
+                Logging.error(e);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Adds an authentication header for basic authentication
      *
      * @param con the connection
@@ -97,7 +124,7 @@ public class OsmConnection {
                 String username = response.getUsername() == null ? "" : response.getUsername();
                 String password = response.getPassword() == null ? "" : String.valueOf(response.getPassword());
                 String token = username + ':' + password;
-                con.setHeader("Authorization", "Basic "+Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8)));
+                con.setHeader("Authorization", BASIC_AUTH + Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8)));
             }
         }
     }

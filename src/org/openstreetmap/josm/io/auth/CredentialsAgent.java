@@ -73,6 +73,14 @@ public interface CredentialsAgent {
     void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException;
 
     /**
+     * Purges the internal credentials cache for the given requestor type.
+     * @param requestorType the type of service.
+     * {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY} for a proxy server
+     * @since 12992
+     */
+    void purgeCredentialsCache(RequestorType requestorType);
+
+    /**
      * Provide a Panel that is shown below the API password / username fields
      * in the JOSM Preferences. (E.g. a warning that password is saved unencrypted.)
      * @return Panel
