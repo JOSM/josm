@@ -265,7 +265,7 @@ public final class ExceptionUtil {
                 + "Authentication at the OSM server with the username ''{0}'' failed.<br>"
                 + "Please check the username and the password in the JOSM preferences."
                 + "</html>",
-                CredentialsManager.getInstance().getUsername()
+                e.getLogin() != null ? e.getLogin() : CredentialsManager.getInstance().getUsername()
         );
     }
 

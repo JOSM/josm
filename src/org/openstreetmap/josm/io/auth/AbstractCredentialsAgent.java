@@ -61,10 +61,8 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
         final CredentialsAgentResponse response = new CredentialsAgentResponse();
 
         /*
-         * Last request was successful and there was no credentials stored
-         * in file (or only the username is stored).
-         * -> Try to recall credentials that have been entered
-         * manually in this session.
+         * Last request was successful and there was no credentials stored in file (or only the username is stored).
+         * -> Try to recall credentials that have been entered manually in this session.
          */
         if (!noSuccessWithLastResponse && memoryCredentialsCache.containsKey(requestorType) &&
                 (credentials == null || credentials.getPassword() == null || credentials.getPassword().length == 0)) {
@@ -88,23 +86,22 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
                         response.getUsername(),
                         response.getPassword()
                 ));
-            /*
-             * User decides not to save credentials to file. Keep it
-             * in memory so we don't have to ask over and over again.
-             */
             } else {
-                PasswordAuthentication pa = new PasswordAuthentication(response.getUsername(), response.getPassword());
-                memoryCredentialsCache.put(requestorType, pa);
+                // User decides not to save credentials to file. Keep it in memory so we don't have to ask over and over again.
+                memoryCredentialsCache.put(requestorType, new PasswordAuthentication(response.getUsername(), response.getPassword()));
             }
-        /*
-         * We got it from file.
-         */
         } else {
+            // We got it from file.
             response.setUsername(username);
             response.setPassword(password.toCharArray());
             response.setCanceled(false);
         }
         return response;
+    }
+
+    @Override
+    public final void purgeCredentialsCache(RequestorType requestorType) {
+        memoryCredentialsCache.remove(requestorType);
     }
 
     /**
