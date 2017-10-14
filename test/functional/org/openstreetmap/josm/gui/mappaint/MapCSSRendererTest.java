@@ -229,7 +229,7 @@ public class MapCSSRendererTest {
             ImageIO.write(image, "png", new File(testConfig.getTestDirectory() + "/test-output.png"));
 
             // Add a nice image that highlights the differences:
-            BufferedImage diffImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage diffImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
             for (Point p : differencePoints) {
                 diffImage.setRGB(p.x, p.y, 0xffff0000);
             }
