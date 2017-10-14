@@ -7877,6 +7877,20 @@
             <text key="name" text="Name" />
         </item> <!-- Palaeontological Site -->
         <separator/>
+        <item name="Grave" icon="presets/misc/grave.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:cemetery=grave" />
+            <space />
+            <key key="cemetery" value="grave" />
+            <text key="name" text="Name" />
+        </item> <!-- Grave -->
+        <item name="Tomb" icon="presets/misc/tomb.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=tomb" />
+            <space />
+            <key key="historic" value="tomb" />
+            <combo key="tomb" text="Type" values="tumulus,rock-cut,hypogeum,war_grave,mausoleum,columbarium,crypt,pyramid,sarcophagus,vault" values_context="tomb" values_searchable="true" />
+            <text key="name" text="Name" />
+        </item> <!-- Tomb -->
+        <separator/>
         <item name="Monument" icon="presets/sightseeing/monument.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=monument"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:historic=monument"

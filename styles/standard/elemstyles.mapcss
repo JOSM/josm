@@ -3153,6 +3153,7 @@ node[tourism=information][information=board] {
 area[historic=castle],
 area[historic=monument],
 area[historic=memorial],
+area[historic=tomb],
 area[historic=archaeological_site],
 area[historic=ruins],
 area[historic=battlefield],
@@ -3172,6 +3173,10 @@ node[historic=monument] {
 }
 node[historic=memorial] {
     icon-image: "presets/sightseeing/memorial.svg";
+    set icon_z17;
+}
+node[historic=tomb] {
+    icon-image: "presets/misc/tomb.svg";
     set icon_z17;
 }
 node[historic=archaeological_site] {
@@ -3292,6 +3297,13 @@ area[landuse=religious] {
 }
 area[landuse=cemetery] {
     fill-color: cemetery#b1efc8;
+}
+area[cemetery=grave] {
+    fill-color: grave#663300;
+}
+node[cemetery=grave] {
+    icon-image: "presets/misc/grave.svg";
+    set icon_z17;
 }
 area[landuse=village_green] {
     fill-color: green#b1e0c2;
