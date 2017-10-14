@@ -131,7 +131,10 @@ public class MapCSSRendererTest {
                 /** Tests relation link selector */
                 new TestConfig("relation-linkselector"),
                 /** Tests parent selector on relation */
-                new TestConfig("relation-parentselector")
+                new TestConfig("relation-parentselector"),
+
+                /** Tests evaluation of expressions */
+                new TestConfig("eval").setImageWidth(600)
 
                 ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());
