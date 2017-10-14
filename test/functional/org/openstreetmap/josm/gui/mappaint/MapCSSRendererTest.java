@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -81,7 +82,8 @@ public class MapCSSRendererTest {
                 new TestConfig("node-shapes", AREA_DEFAULT),
 
                 /** Text for nodes */
-                new TestConfig("node-text", AREA_DEFAULT).usesFont("DejaVu Sans"),
+                new TestConfig("node-text", AREA_DEFAULT).usesFont("DejaVu Sans")
+                        .setThresholdPixels(100).setThresholdTotalColorDiff(100),
 
                 /** Tests that StyledMapRenderer#drawWay respects width */
                 new TestConfig("way-width", AREA_DEFAULT),
@@ -102,7 +104,7 @@ public class MapCSSRendererTest {
                 new TestConfig("area-fill-image", AREA_DEFAULT),
 
                 /** Tests area label drawing/placement */
-                new TestConfig("area-text", AREA_DEFAULT),
+                new TestConfig("area-text", AREA_DEFAULT).setThresholdPixels(50).setThresholdTotalColorDiff(50),
 
                 /** Tests area icon drawing/placement */
                 new TestConfig("area-icon", AREA_DEFAULT),
@@ -116,7 +118,7 @@ public class MapCSSRendererTest {
                 new TestConfig("way-repeat-image-clamp", AREA_DEFAULT),
 
                 /** Tests text along a way */
-                new TestConfig("way-text", AREA_DEFAULT),
+                new TestConfig("way-text", AREA_DEFAULT).setThresholdPixels(20).setThresholdTotalColorDiff(40),
 
                 /** Another test for node shapes */
                 new TestConfig("node-shapes2").setImageWidth(600),
@@ -127,14 +129,14 @@ public class MapCSSRendererTest {
                 /** Another test for dashed ways */
                 new TestConfig("way-dashes2"),
                 /** Tests node text placement */
-                new TestConfig("node-text2"),
+                new TestConfig("node-text2").setThresholdPixels(30).setThresholdTotalColorDiff(50),
                 /** Tests relation link selector */
                 new TestConfig("relation-linkselector"),
                 /** Tests parent selector on relation */
                 new TestConfig("relation-parentselector"),
 
                 /** Tests evaluation of expressions */
-                new TestConfig("eval").setImageWidth(600)
+                new TestConfig("eval").setImageWidth(600).setThresholdPixels(100).setThresholdTotalColorDiff(100)
 
                 ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());
@@ -203,6 +205,7 @@ public class MapCSSRendererTest {
 
         StringBuilder differences = new StringBuilder();
         ArrayList<Point> differencePoints = new ArrayList<>();
+        int colorDiffSum = 0;
 
         for (int y = 0; y < reference.getHeight(); y++) {
             for (int x = 0; x < reference.getWidth(); x++) {
@@ -210,6 +213,7 @@ public class MapCSSRendererTest {
                 int result = image.getRGB(x, y);
                 if (!colorsAreSame(expected, result)) {
                     differencePoints.add(new Point(x, y));
+                    int colorDiff = colorDiff(new Color(expected, true), new Color(result, true));
                     if (differences.length() < 500) {
                         differences.append("\nDifference at ")
                         .append(x)
@@ -218,13 +222,17 @@ public class MapCSSRendererTest {
                         .append(": Expected ")
                         .append(Integer.toHexString(expected))
                         .append(" but got ")
-                        .append(Integer.toHexString(result));
+                        .append(Integer.toHexString(result))
+                        .append(" (color diff is ")
+                        .append(colorDiff)
+                        .append(")");
                     }
+                    colorDiffSum += colorDiff;
                 }
             }
         }
 
-        if (differencePoints.size() > 0) {
+        if (differencePoints.size() > testConfig.thresholdPixels || colorDiffSum > testConfig.thresholdTotalColorDiff) {
             // You can use this to debug:
             ImageIO.write(image, "png", new File(testConfig.getTestDirectory() + "/test-output.png"));
 
@@ -235,8 +243,13 @@ public class MapCSSRendererTest {
             }
             ImageIO.write(diffImage, "png", new File(testConfig.getTestDirectory() + "/test-differences.png"));
 
-            fail(MessageFormat.format("Images for test {0} differ at {1} points: {2}",
-                    testConfig.testDirectory, differencePoints.size(), differences.toString()));
+            if (differencePoints.size() > testConfig.thresholdPixels) {
+                fail(MessageFormat.format("Images for test {0} differ at {1} points, threshold is {2}: {3}",
+                        testConfig.testDirectory, differencePoints.size(), testConfig.thresholdPixels, differences.toString()));
+            } else {
+                fail(MessageFormat.format("Images for test {0} differ too much in color, value is {1}, permitted threshold is {2}: {3}",
+                        testConfig.testDirectory, colorDiffSum, testConfig.thresholdTotalColorDiff, differences.toString()));
+            }
         }
     }
 
@@ -245,6 +258,11 @@ public class MapCSSRendererTest {
         if (n.isKeyTrue("disabled")) {
             n.setDisabledState(false);
         }
+    }
+
+    private int colorDiff(Color c1, Color c2) {
+        return Math.abs(c1.getAlpha() - c2.getAlpha()) + Math.abs(c1.getRed() - c2.getRed())
+                + Math.abs(c1.getGreen() - c2.getGreen()) + Math.abs(c1.getBlue() - c2.getBlue());
     }
 
     /**
@@ -268,6 +286,8 @@ public class MapCSSRendererTest {
         private final ArrayList<String> fonts = new ArrayList<>();
         private DataSet ds;
         private int imageWidth = IMAGE_SIZE;
+        private int thresholdPixels;
+        private int thresholdTotalColorDiff;
 
         TestConfig(String testDirectory, Bounds testArea) {
             this.testDirectory = testDirectory;
@@ -280,6 +300,30 @@ public class MapCSSRendererTest {
 
         public TestConfig setImageWidth(int imageWidth) {
             this.imageWidth = imageWidth;
+            return this;
+        }
+
+        /**
+         * Set the number of pixels that can differ.
+         *
+         * Needed due to somewhat platform dependent font rendering.
+         * @param thresholdPixels the number of pixels that can differ
+         * @return this object, for convenience
+         */
+        public TestConfig setThresholdPixels(int thresholdPixels) {
+            this.thresholdPixels = thresholdPixels;
+            return this;
+        }
+
+        /**
+         * Set the threshold for total color difference.
+         * Every difference in any color component (and alpha) will be added up and must not exceed this threshold.
+         * Needed due to somewhat platform dependent font rendering.
+         * @param thresholdTotalColorDiff he threshold for total color difference
+         * @return this object, for convenience
+         */
+        public TestConfig setThresholdTotalColorDiff(int thresholdTotalColorDiff) {
+            this.thresholdTotalColorDiff = thresholdTotalColorDiff;
             return this;
         }
 
