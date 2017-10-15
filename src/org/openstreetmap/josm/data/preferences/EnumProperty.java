@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * A property containing an {@code Enum} value.
@@ -22,7 +22,7 @@ public class EnumProperty<T extends Enum<T>> extends ParametrizedEnumProperty<T>
     public EnumProperty(String key, Class<T> enumClass, T defaultValue) {
         super(enumClass, defaultValue);
         this.key = key;
-        if (Main.pref != null) {
+        if (Config.getPref() != null) {
             get();
         }
     }
