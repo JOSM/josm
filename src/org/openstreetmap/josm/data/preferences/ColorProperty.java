@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.preferences;
 import java.awt.Color;
 import java.util.Locale;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 
@@ -35,7 +36,7 @@ public class ColorProperty extends AbstractToStringProperty<Color> {
         super(getColorKey(colName), defaultValue);
         CheckParameterUtil.ensureParameterNotNull(defaultValue, "defaultValue");
         this.name = colName;
-        getPreferences().registerColor(getColorKey(colName), colName);
+        Main.pref.registerColor(getColorKey(colName), colName);
     }
 
     @Override
