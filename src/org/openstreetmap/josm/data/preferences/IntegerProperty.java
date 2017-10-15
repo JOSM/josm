@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * A property containing an {@code Integer} value.
  * @since 3246
@@ -16,7 +14,7 @@ public class IntegerProperty extends AbstractToStringProperty<Integer> {
      */
     public IntegerProperty(String key, int defaultValue) {
         super(key, defaultValue);
-        if (Main.pref != null) {
+        if (getPreferences() != null) {
             get();
         }
     }

@@ -3,8 +3,6 @@ package org.openstreetmap.josm.data.preferences;
 
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * A property containing a {@code List} of {@code String} as value.
  */
@@ -17,7 +15,7 @@ public class ListProperty extends AbstractProperty<List<String>> {
      */
     public ListProperty(String key, List<String> defaultValue) {
         super(key, defaultValue);
-        if (Main.pref != null) {
+        if (getPreferences() != null) {
             get();
         }
     }

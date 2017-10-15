@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data.preferences;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * A property containing a {@code Collection} of {@code String} as value.
  * @deprecated use {@link ListProperty}
@@ -20,7 +18,7 @@ public class CollectionProperty extends AbstractProperty<Collection<String>> {
      */
     public CollectionProperty(String key, Collection<String> defaultValue) {
         super(key, defaultValue);
-        if (Main.pref != null) {
+        if (getPreferences() != null) {
             get();
         }
     }
