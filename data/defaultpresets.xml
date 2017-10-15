@@ -10084,6 +10084,16 @@
             <reference ref="name_wikipedia" />
             <reference ref="population_postcode_website" />
         </item> <!-- Suburb -->
+        <item name="Quarter" icon="presets/place/quarter.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=quarter"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:place=quarter"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:place=quarter" />
+            <space />
+            <key key="place" value="quarter" />
+            <reference ref="name_wikipedia" />
+            <text key="population" text="Population" />
+            <text key="website" text="Website" />
+        </item> <!-- Quarter -->
         <item name="Neighbourhood" icon="presets/place/neighbourhood.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=neighbourhood"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:place=neighbourhood"

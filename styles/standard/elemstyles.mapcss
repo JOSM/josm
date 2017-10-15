@@ -4580,6 +4580,7 @@ node[place=city],
 node[place=town],
 node[place=suburb],
 node[place=village],
+node[place=quarter],
 node[place=neighbourhood],
 node[place=hamlet],
 node[place=isolated_dwelling],
@@ -4617,6 +4618,10 @@ node[place=suburb] {
 }
 node[place=village] {
     icon-image: "presets/place/village.svg";
+    z-index: 2.5;
+}
+node[place=quarter] {
+    icon-image: "presets/place/quarter.svg";
     z-index: 2.5;
 }
 node[place=neighbourhood] {
