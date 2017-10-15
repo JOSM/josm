@@ -91,6 +91,7 @@ way[lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1],
 }
 
 /* {0.key} without {1.tag} */
+*[switch                       ][!power],
 *[transformer                  ][!power],
 way[fence_type                 ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
@@ -144,6 +145,7 @@ way[power=cable                ][!voltage],
 *[power=generator              ][!voltage][generator:output:electricity],
 *[power=plant                  ][!voltage][plant:output:electricity],
 *[power=substation             ][!substation],
+*[power=switch                 ][!switch],
 *[power=transformer            ][!transformer],
 *[amenity=parking              ][!parking],
 *[amenity=parking_entrance     ][!parking] {
@@ -151,7 +153,7 @@ way[power=cable                ][!voltage],
   group: tr("missing tag");
   assertMatch: "way power=line";
   assertNoMatch: "way power=line voltage=1";
-  assertNoMatch: "way power=switch";
+  assertMatch: "way power=switch";
   assertMatch: "way power=substation";
   assertMatch: "way power=substation transformer=foobar";
   assertNoMatch: "way power=substation substation=foobar";

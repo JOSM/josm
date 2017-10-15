@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="12"
+   viewBox="0 0 16 12"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="capital12.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="8"
+     inkscape:cx="-6.5823956"
+     inkscape:cy="-7.3402775"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1040.3622)">
+    <path
+       style="fill:#ff59f9;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.97307134;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 8.5380631,1049.6846 c -0.603283,-2.4222 1.9922899,-1.3924 3.2209819,0 0.756162,0.511 1.507072,0.3248 2.257945,0.1345 1.957005,-0.36 1.461761,-3.0218 1.379903,-3.4492 -0.277846,-0.8432 -0.22161,-1.061 -1.438908,-2.1021 -1.073374,-0.499 -2.076717,-0.1483 -2.459486,-0.4388 -0.707308,-0.3481 0.356589,-2.2339 -1.187385,-2.3689 -2.8155432,0.2884 -3.877829,0.1299 -4.0699413,-0.067 -1.060499,-0.6232 -1.1916803,-0.7814 -2.4885151,-0.1017 -1.6245177,1.2331 -1.0990479,2.7364 -1.2962578,4.0287 -0.3541192,1.4112 -1.97341599,2.4273 -1.95745343,3.1791 -0.20462469,2.8006 1.90658613,2.653 2.27351833,2.9443 1.051048,0.4388 6.4448484,0.9064 6.6276018,-0.5853 -3.162e-4,-0.6497 -0.7628576,-0.6939 -0.8620034,-1.1738 z"
+       id="path4145"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccccc" />
+  </g>
+</svg>
