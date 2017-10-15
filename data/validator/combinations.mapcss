@@ -91,7 +91,6 @@ way[lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1],
 }
 
 /* {0.key} without {1.tag} */
-*[switch                       ][!power],
 *[transformer                  ][!power],
 way[fence_type                 ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
