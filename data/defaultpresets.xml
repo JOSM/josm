@@ -342,6 +342,18 @@
             <reference ref="voltage_frequency" />
         </optional>
     </chunk>
+    <chunk id="power_pole">
+        <text key="height" text="Height (meters)" />
+        <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+        <check key="location:transition" text="Location transition" disable_off="true" />
+        <reference ref="ref_operator_branch" />
+    </chunk>
+    <chunk id="optional_rating_phases">
+        <optional>
+            <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
+            <combo key="phases" text="Phases" values="1,3" length="1" />
+        </optional>
+    </chunk>
     <chunk id="optional_bridge">
         <optional>
             <text key="name" text="Name" />
@@ -7582,10 +7594,7 @@
             <key key="power" value="transformer" />
             <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,yes" match="key" values_context="power" />
             <reference ref="power_extra" />
-            <optional>
-                <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
-                <combo key="phases" text="Phases" values="1,3" length="1" />
-            </optional>
+            <reference ref="optional_rating_phases" />
         </item> <!-- Power Transformer -->
         <item name="Power Switchgear" icon="presets/power/switchgear.svg" type="closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switchgear"
@@ -7732,11 +7741,29 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=pole" />
             <space />
             <key key="power" value="pole" />
-            <text key="height" text="Height (meters)" />
-            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
-            <check key="location:transition" text="Location transition" disable_off="true" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="power_pole" />
         </item> <!-- Pole -->
+        <item name="Pole with Switch" icon="presets/power/pole_switch.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=pole"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=pole"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=pole"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=pole"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=pole"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=pole"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=pole" />
+            <space />
+            <key key="power" value="pole" />
+            <label text="Pole Attributes:" />
+            <reference ref="power_pole" />
+            <space />
+            <label text="Switch Attributes:" />
+            <combo key="switch" text="Type" values="mechanical,circuit_breaker,disconnector,earthing" match="key!" values_context="power" />
+            <optional>
+                <reference ref="voltage" />
+                <reference ref="cables" />
+            </optional>
+        </item> <!-- Pole with Switch -->
         <item name="Pole with Transformer" icon="presets/power/pole_transformer.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=pole"
@@ -7749,19 +7776,13 @@
             <space />
             <key key="power" value="pole" />
             <label text="Pole Attributes:" />
-            <text key="height" text="Height (meters)" />
-            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
-            <check key="location:transition" text="Location transition" disable_off="true" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="power_pole" />
             <space />
             <label text="Transformer Attributes:" />
             <key key="transformer" value="distribution" match="key!" />
             <reference ref="voltage_frequency" />
-            <optional>
-                <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
-                <combo key="phases" text="Phases" values="1,3" length="1" />
-            </optional>
-        </item> <!-- Pole with Transformer-->
+            <reference ref="optional_rating_phases" />
+        </item> <!-- Pole with Transformer -->
         <item name="Insulator" icon="presets/power/insulator.svg" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=insulator"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=insulator" />

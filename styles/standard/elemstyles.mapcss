@@ -1146,6 +1146,10 @@ node[power=pole] {
     icon-image: "presets/power/pole.svg";
     set icon_z17;
 }
+node[power=pole][switch] {
+    icon-image: "presets/power/pole_switch.svg";
+    set icon_z17;
+}
 node[power=pole][transformer=distribution] {
     icon-image: "presets/power/pole_transformer.svg";
     set icon_z17;
