@@ -169,7 +169,7 @@ public abstract class AbstractProperty<T> {
     }
 
     /**
-     * Store the default value to {@link Preferences}.
+     * Store the default value to the preferences.
      */
     protected void storeDefaultValue() {
         if (getPreferences() != null) {
