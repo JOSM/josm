@@ -1,15 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.template_engine;
 
+/**
+ * {@link TemplateEntry} that concatenates several templates.
+ */
 public final class CompoundTemplateEntry implements TemplateEntry {
 
-    public static TemplateEntry fromArray(TemplateEntry... entry) {
-        if (entry.length == 0)
+    /**
+     * Factory method to concatenate several {@code TemplateEntry}s.
+     *
+     * If the number of entries is 0 or 1, the result may not be a {@code CompoundTemplateEntry},
+     * but optimized to a static text or the single entry itself.
+     * @param entries the {@code TemplateEntry}s to concatenate
+     * @return a {@link TemplateEntry} that concatenates all the entries
+     */
+    public static TemplateEntry fromArray(TemplateEntry... entries) {
+        if (entries.length == 0)
             return new StaticText("");
-        else if (entry.length == 1)
-            return entry[0];
+        else if (entries.length == 1)
+            return entries[0];
         else
-            return new CompoundTemplateEntry(entry);
+            return new CompoundTemplateEntry(entries);
     }
 
     private CompoundTemplateEntry(TemplateEntry... entries) {

@@ -7,6 +7,11 @@ import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.Token;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.TokenType;
 
+/**
+ * Exception thrown in case of an error during template parsing.
+ *
+ * Usually caused by invalid user input.
+ */
 public class ParseError extends Exception {
 
     private final transient Token unexpectedToken;

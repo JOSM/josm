@@ -2,12 +2,30 @@
 package org.openstreetmap.josm.tools.template_engine;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+/**
+ * {@link TemplateEntry} that applies other templates based on conditions.
+ * <p>
+ * It goes through a number of template entries and executes the first one that is valid.
+ */
 public class Condition implements TemplateEntry {
 
-    private final List<TemplateEntry> entries = new ArrayList<>();
+    private final List<TemplateEntry> entries;
 
+    public Condition(Collection<TemplateEntry> entries) {
+        this.entries = new ArrayList<>(entries);
+    }
+
+    public Condition() {
+        this.entries = new ArrayList<>();
+    }
+
+    /**
+     * @deprecated (since 13003) use constructor {@link #Condition(java.util.Collection)} to set the entries
+     */
+    @Deprecated
     public List<TemplateEntry> getEntries() {
         return entries;
     }

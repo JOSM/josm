@@ -5,6 +5,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class converts a template string (stream of characters) into a stream of tokens.
+ *
+ * The result of the tokenization (also called lexical analysis) serves as input for the
+ * parser {@link TemplateParser}.
+ */
 public class Tokenizer {
 
     public static class Token {
@@ -51,6 +57,10 @@ public class Tokenizer {
     private Token currentToken;
     private final StringBuilder text = new StringBuilder();
 
+    /**
+     * Creates a new {@link Tokenizer}
+     * @param template the template as a user input string
+     */
     public Tokenizer(String template) {
         this.template = template;
         getChar();
