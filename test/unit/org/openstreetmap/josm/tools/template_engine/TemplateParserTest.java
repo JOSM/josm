@@ -58,10 +58,10 @@ public class TemplateParserTest {
     @Test
     public void testConditionWhitespace() throws ParseError {
         TemplateParser parser = new TemplateParser("?{ '{name} {desc}' | '{name}' | '{desc}'    }");
-        Condition condition = new Condition();
-        condition.getEntries().add(CompoundTemplateEntry.fromArray(new Variable("name"), new StaticText(" "), new Variable("desc")));
-        condition.getEntries().add(new Variable("name"));
-        condition.getEntries().add(new Variable("desc"));
+        Condition condition = new Condition(Arrays.asList(
+            CompoundTemplateEntry.fromArray(new Variable("name"), new StaticText(" "), new Variable("desc")),
+            new Variable("name"),
+            new Variable("desc")));
         ReflectionAssert.assertReflectionEquals(condition, parser.parse());
     }
 
@@ -72,10 +72,10 @@ public class TemplateParserTest {
     @Test
     public void testConditionNoWhitespace() throws ParseError {
         TemplateParser parser = new TemplateParser("?{'{name} {desc}'|'{name}'|'{desc}'}");
-        Condition condition = new Condition();
-        condition.getEntries().add(CompoundTemplateEntry.fromArray(new Variable("name"), new StaticText(" "), new Variable("desc")));
-        condition.getEntries().add(new Variable("name"));
-        condition.getEntries().add(new Variable("desc"));
+        Condition condition = new Condition(Arrays.asList(
+                CompoundTemplateEntry.fromArray(new Variable("name"), new StaticText(" "), new Variable("desc")),
+                new Variable("name"),
+                new Variable("desc")));
         ReflectionAssert.assertReflectionEquals(condition, parser.parse());
     }
 
@@ -91,10 +91,10 @@ public class TemplateParserTest {
     @Test
     public void testConditionSearchExpression() throws ParseError, SearchParseError {
         TemplateParser parser = new TemplateParser("?{ admin_level = 2 'NUTS 1' | admin_level = 4 'NUTS 2' |  '{admin_level}'}");
-        Condition condition = new Condition();
-        condition.getEntries().add(new SearchExpressionCondition(compile("admin_level = 2"), new StaticText("NUTS 1")));
-        condition.getEntries().add(new SearchExpressionCondition(compile("admin_level = 4"), new StaticText("NUTS 2")));
-        condition.getEntries().add(new Variable("admin_level"));
+        Condition condition = new Condition(Arrays.asList(
+                new SearchExpressionCondition(compile("admin_level = 2"), new StaticText("NUTS 1")),
+                new SearchExpressionCondition(compile("admin_level = 4"), new StaticText("NUTS 2")),
+                new Variable("admin_level")));
         ReflectionAssert.assertReflectionEquals(condition, parser.parse());
     }
 

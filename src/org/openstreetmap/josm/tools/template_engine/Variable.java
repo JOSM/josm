@@ -24,7 +24,7 @@ public class Variable implements TemplateEntry {
     /**
      * Constructs a new {@code Variable}.
      * @param variableName the variable name (i.e. the key in the data provider key-value mapping);
-     * will be considered "special" if the variable name starts with {@link SPECIAL_VARIABLE_PREFIX}
+     * will be considered "special" if the variable name starts with {@link #SPECIAL_VARIABLE_PREFIX}
      */
     public Variable(String variableName) {
         if (variableName.toLowerCase(Locale.ENGLISH).startsWith(SPECIAL_VARIABLE_PREFIX)) {
