@@ -85,11 +85,11 @@ way[highway=cycleway][cycleway=lane] {
   assertNoMatch: "way highway=footway";
 }
 
-/* footway, see #10851, #10976 */
-way[footway=left][/footway:/],
-way[footway=right][/footway:/],
-way[footway=both][/footway:/],
-way[footway=no][/footway:/] {
+/* footway, see #10851, #10976, #15439 */
+way[footway=left][/^footway:/],
+way[footway=right][/^footway:/],
+way[footway=both][/^footway:/],
+way[footway=no][/^footway:/] {
   throwWarning: tr("{0} is deprecated, use {1} instead. Also check similar tags like {2}", "{0.tag}", "sidewalk", "{1.key}");
   group: tr("deprecated tagging");
   set not_fixable_footway;
@@ -126,10 +126,10 @@ way[footway][footway!=sidewalk][footway!=crossing]!.fixable_footway!.not_fixable
   assertMatch: "way footway=bar";
 }
 
-/* #11270, #9297 */
+/* #11270, #9297, #15439 */
 way[railway =~ /^(light_rail|miniature|narrow_gauge|preserved|rail)$/][!highway] > node { set .is_in_railway }
 way[highway =~ /^(bridleway|cycleway|footway|path|steps)$/] > node { set .is_in_minor_road }
-way[highway =~ /^(bus_guideway|living_street|motorway|pedestrian|primary|raceway|residential|road|secondary|service|tertiary|track|trunk|unclassified)/] > node { set .is_in_major_road }
+way[highway =~ /^(bus_guideway|living_street|motorway|motorway_link|pedestrian|primary|primary_link|raceway|residential|road|secondary|secondary_link|service|tertiary|tertiary_link|track|trunk|trunk_link|unclassified)$/] > node { set .is_in_major_road }
 node[railway!=crossing].is_in_railway.is_in_minor_road!.is_in_major_road {
   throwWarning: tr("pedestrian railway crossing without {0}", "{0.tag}");
   group: tr("missing tag");

@@ -6,12 +6,13 @@
   assertNoMatch: "way ref.1=foo";
 }
 
-*[layer =~ /\+.*/] {
+*[layer =~ /^\+\d/] {
   throwWarning: tr("layer tag with + sign");
   fixAdd: concat("layer=", replace(tag("layer"), "+", ""));
   assertMatch: "node layer=+1";
   assertNoMatch: "node layer=1";
   assertNoMatch: "node layer=-1";
+  assertNoMatch: "node layer=+foo";
 }
 
 *[layer][layer !~ /^0$|^(-|\+)?[1-5]$/] {

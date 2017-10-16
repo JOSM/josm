@@ -1,5 +1,5 @@
 *[access][highway=proposed],
-*[motor_vehicle?][vehicle!=no][access!=no][bicycle_road!=yes][highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street/],
+*[motor_vehicle?][vehicle!=no][access!=no][bicycle_road!=yes][highway =~ /^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|service|living_street)$/],
 *[bridge=no],
 *[building=no],
 *[elevation="0"],
