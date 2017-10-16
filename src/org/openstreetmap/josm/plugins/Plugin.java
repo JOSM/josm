@@ -139,9 +139,9 @@ public abstract class Plugin implements MapFrameListener {
 
     /**
      * @return The directory for the plugin to store all kind of stuff.
-     * @deprecated (since 13007) to get the same directory as this method, use {@code getPluginDirectories().getUserDataDirectory(false)}.
+     * @deprecated (since 13007) to get the same directory as this method, use {@code getPluginDirs().getUserDataDirectory(false)}.
      * However, for files that can be characterized as cache or preferences, you are encouraged to use the appropriate
-     * {@link IBaseDirectories} method from {@link #getPluginDirectories()}.
+     * {@link IBaseDirectories} method from {@link #getPluginDirs()}.
      */
     @Deprecated
     public String getPluginDir() {
