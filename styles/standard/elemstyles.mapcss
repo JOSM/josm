@@ -3254,6 +3254,9 @@ area[landuse=greenhouse_horticulture],
 area[landuse=plant_nursery] {
     fill-color: green#b1e0c2;
 }
+area[landuse=salt_pond] {
+    fill-color: salt_pond#eeeeee;
+}
 area[landuse=aquaculture] {
     fill-color: aquaculture#189dff;
 }

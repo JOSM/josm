@@ -10659,6 +10659,15 @@
             <reference ref="genus_species_taxon" />
             <reference ref="optional_name_operator" />
         </item> <!-- Plant Nursery -->
+        <item name="Salt Pond" icon="presets/landuse/salt_pond.svg" type="closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=salt_pond"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=salt_pond"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=salt_pond"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=salt_pond" />
+            <space />
+            <key key="landuse" value="salt_pond" />
+            <reference ref="optional_name_operator" />
+        </item> <!-- Salt Pond -->
         <item name="Aquaculture" icon="presets/landuse/aquaculture.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=aquaculture"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=aquaculture"
