@@ -112,6 +112,24 @@ way[route=bus] {
   throwError: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
 }
 
+/* #14395 */
+way >[index=1] node,
+way >[index=-1] node {
+  set first_last_node;
+}
+way[highway][area!=yes][!tunnel][!covered] > node {
+  set node_in_highway;
+}
+way[building][building!=no] > node.node_in_highway!.first_last_node {
+  throwWarning: tr("node connects highway and building");
+}
+
+/* #15035, must not warn for node 3815077900*/
+node[man_made!=monitoring_station][at(0.0,0.0)] {
+  throwError: tr("Object at Position 0.00E 0.00N. There is nothing at this position except an already mapped weather buoy.");
+  fixDeleteObject: this;
+}
+
 /* #12502 */
 node[leisure=park][natural=tree] {
   throwWarning: tr("{0} together with {1} on a node. Remove {0}.", "{0.tag}", "{1.tag}");
@@ -246,7 +264,7 @@ way[waterway] > node.node_in_bridge {
   throwWarning: tr("node connects waterway and bridge");
 }
 
-/* #11128, #14812 */
+/* #11128, #14812, #15032 */
 way[highway] > node[tourism=information][information=guidepost] {
   set guidepost;
   throwOther: tr("{0} node connected to a highway", "{1.tag}");
@@ -256,7 +274,8 @@ way[highway] > node[building][!entrance],
 way[highway] > node[leisure][!entrance][leisure!=slipway],
 way[highway] > node[office][!entrance],
 way[highway] > node[shop][!entrance],
-way[highway] > node[tourism][!entrance][tourism!=viewpoint]!.guidepost {
+way[highway] > node[tourism][!entrance][tourism!=viewpoint]!.guidepost.first_last_node:connection,
+way[highway] > node[tourism][!entrance][tourism!=viewpoint]!.guidepost!.first_last_node {
   throwWarning: tr("{0} node connected to a highway", "{0.key}");
 }
 
@@ -318,24 +337,6 @@ area:closed[waterway = ditch][area!=no],
 area:closed[waterway = stream][area!=no],
 area:closed[waterway = river][area!=no] {
   throwWarning: tr("{0} is the tag for the linear waterway. To tag the water area use {1} + {2} instead.", "{1.tag}", "natural=water", "water=*");
-}
-
-/* #14395 */
-way >[index=1] node,
-way >[index=-1] node {
-  set first_last_node;
-}
-way[highway][area!=yes][!tunnel][!covered] > node {
-  set node_in_highway;
-}
-way[building][building!=no] > node.node_in_highway!.first_last_node {
-  throwWarning: tr("node connects highway and building");
-}
-
-/* #15035, must not warn for node 3815077900*/
-node[man_made!=monitoring_station][at(0.0,0.0)] {
-  throwError: tr("Object at Position 0.00E 0.00N. There is nothing at this position except an already mapped weather buoy.");
-  fixDeleteObject: this;
 }
 
 /* #15097 */

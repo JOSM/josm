@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,6 +20,9 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -52,6 +57,50 @@ public abstract class Plugin implements MapFrameListener {
      */
     private PluginInformation info;
 
+    private final IBaseDirectories pluginBaseDirectories = new PluginBaseDirectories();
+
+    private class PluginBaseDirectories implements IBaseDirectories {
+        private File preferencesDir;
+        private File cacheDir;
+        private File userdataDir;
+
+        @Override
+        public File getPreferencesDirectory(boolean createIfMissing) {
+            if (preferencesDir == null) {
+                preferencesDir = Config.getDirs().getPreferencesDirectory(createIfMissing).toPath()
+                        .resolve("plugins").resolve(info.name).toFile();
+            }
+            if (createIfMissing && !preferencesDir.exists() && !preferencesDir.mkdirs()) {
+                Logging.error(tr("Failed to create missing plugin preferences directory: {0}", preferencesDir.getAbsoluteFile()));
+            }
+            return preferencesDir;
+        }
+
+        @Override
+        public File getUserDataDirectory(boolean createIfMissing) {
+            if (userdataDir == null) {
+                userdataDir = Config.getDirs().getUserDataDirectory(createIfMissing).toPath()
+                        .resolve("plugins").resolve(info.name).toFile();
+            }
+            if (createIfMissing && !userdataDir.exists() && !userdataDir.mkdirs()) {
+                Logging.error(tr("Failed to create missing plugin user data directory: {0}", userdataDir.getAbsoluteFile()));
+            }
+            return userdataDir;
+        }
+
+        @Override
+        public File getCacheDirectory(boolean createIfMissing) {
+            if (cacheDir == null) {
+                cacheDir = Config.getDirs().getCacheDirectory(createIfMissing).toPath()
+                        .resolve("plugins").resolve(info.name).toFile();
+            }
+            if (createIfMissing && !cacheDir.exists() && !cacheDir.mkdirs()) {
+                Logging.error(tr("Failed to create missing plugin cache directory: {0}", cacheDir.getAbsoluteFile()));
+            }
+            return cacheDir;
+        }
+    }
+
     /**
      * Creates the plugin
      *
@@ -80,8 +129,21 @@ public abstract class Plugin implements MapFrameListener {
     }
 
     /**
-     * @return The directory for the plugin to store all kind of stuff.
+     * Get the directories where this plugin can store various files.
+     * @return the directories where this plugin can store files
+     * @since 13007
      */
+    public IBaseDirectories getPluginDirs() {
+        return pluginBaseDirectories;
+    }
+
+    /**
+     * @return The directory for the plugin to store all kind of stuff.
+     * @deprecated (since 13007) to get the same directory as this method, use {@code getPluginDirectories().getUserDataDirectory(false)}.
+     * However, for files that can be characterized as cache or preferences, you are encouraged to use the appropriate
+     * {@link IBaseDirectories} method from {@link #getPluginDirectories()}.
+     */
+    @Deprecated
     public String getPluginDir() {
         return new File(Main.pref.getPluginsDirectory(), info.name).getPath();
     }
