@@ -4,15 +4,28 @@ package org.openstreetmap.josm.tools.template_engine;
 import java.util.Collection;
 import java.util.Locale;
 
+/**
+ * {@link TemplateEntry} that inserts the value of a variable.
+ * <p>
+ * Variables starting with "special:" form a separate namespace and
+ * provide actions other than simple key-value lookup.
+ * <p>
+ * A variable with no mapping for a given data provider will be considered not "valid"
+ * (see {@link TemplateEntry#isValid(TemplateEngineDataProvider)}).
+ */
 public class Variable implements TemplateEntry {
 
     private static final String SPECIAL_VARIABLE_PREFIX = "special:";
     private static final String SPECIAL_VALUE_EVERYTHING = "everything";
 
-
     private final String variableName;
     private final boolean special;
 
+    /**
+     * Constructs a new {@code Variable}.
+     * @param variableName the variable name (i.e. the key in the data provider key-value mapping);
+     * will be considered "special" if the variable name starts with {@link SPECIAL_VARIABLE_PREFIX}
+     */
     public Variable(String variableName) {
         if (variableName.toLowerCase(Locale.ENGLISH).startsWith(SPECIAL_VARIABLE_PREFIX)) {
             this.variableName = variableName.substring(SPECIAL_VARIABLE_PREFIX.length());
@@ -58,6 +71,11 @@ public class Variable implements TemplateEntry {
         return '{' + (special ? SPECIAL_VARIABLE_PREFIX : "") + variableName + '}';
     }
 
+    /**
+     * Check if this variable is special.
+     *
+     * @return true if this variable is special
+     */
     public boolean isSpecial() {
         return special;
     }

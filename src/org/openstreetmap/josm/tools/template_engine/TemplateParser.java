@@ -25,7 +25,7 @@ public class TemplateParser {
 
     /**
      * Constructs a new {@code TemplateParser}.
-     * @param template template to parse
+     * @param template template string to parse
      */
     public TemplateParser(String template) {
         this.tokenizer = new Tokenizer(template);
@@ -87,7 +87,7 @@ public class TemplateParser {
 
     private TemplateEntry parseCondition() throws ParseError {
         check(TokenType.CONDITION_START);
-        Condition result = new Condition();
+        Collection<TemplateEntry> conditionEntries = new ArrayList<>();
         while (true) {
 
             TemplateEntry condition;
@@ -97,10 +97,10 @@ public class TemplateParser {
             check(TokenType.APOSTROPHE);
             String searchText = searchExpression.getText().trim();
             if (searchText.isEmpty()) {
-                result.getEntries().add(condition);
+                conditionEntries.add(condition);
             } else {
                 try {
-                    result.getEntries().add(new SearchExpressionCondition(
+                    conditionEntries.add(new SearchExpressionCondition(
                             SearchCompiler.compile(searchText), condition));
                 } catch (SearchParseError e) {
                     throw new ParseError(searchExpression.getPosition(), e);
@@ -111,7 +111,7 @@ public class TemplateParser {
             Token token = tokenizer.lookAhead();
             if (token.getType() == TokenType.END) {
                 tokenizer.nextToken();
-                return result;
+                return new Condition(conditionEntries);
             } else {
                 check(TokenType.PIPE);
             }
