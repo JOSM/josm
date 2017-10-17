@@ -115,10 +115,12 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         changesetPanel.add(changesetButton, BorderLayout.CENTER);
         final BasicArrowButton arrowButton = new BasicArrowButton(BasicArrowButton.SOUTH);
         arrowButton.addActionListener(action -> {
-            final OpenChangesetPopupMenu popupMenu = new OpenChangesetPopupMenu(changesetDialogAction.id);
-            popupMenu.insert(changesetDialogAction, 0);
-            ((AbstractButton) popupMenu.getComponent(0)).setText(tr("Open Changeset Manager"));
-            popupMenu.show(arrowButton);
+            if (changesetDialogAction != null) { // fix #15444
+                final OpenChangesetPopupMenu popupMenu = new OpenChangesetPopupMenu(changesetDialogAction.id);
+                popupMenu.insert(changesetDialogAction, 0);
+                ((AbstractButton) popupMenu.getComponent(0)).setText(tr("Open Changeset Manager"));
+                popupMenu.show(arrowButton);
+            }
         });
         changesetPanel.add(arrowButton, BorderLayout.EAST);
         pnlUserAndChangeset.add(changesetPanel, GBC.std().fill().weight(0, 0));
