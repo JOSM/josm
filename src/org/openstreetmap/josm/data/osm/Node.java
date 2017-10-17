@@ -41,17 +41,6 @@ public final class Node extends OsmPrimitive implements INode {
      */
     private Object eastNorthCacheKey;
 
-    /**
-     * Determines if this node has valid coordinates.
-     * @return {@code true} if this node has valid coordinates
-     * @since 7828
-     */
-    @Override
-    public boolean isLatLonKnown() {
-        // We cannot use default implementation - if we remove this implementation, we will break binary compatibility.
-        return !Double.isNaN(lat) && !Double.isNaN(lon);
-    }
-
     @Override
     public void setCoor(LatLon coor) {
         updateCoor(coor, null);

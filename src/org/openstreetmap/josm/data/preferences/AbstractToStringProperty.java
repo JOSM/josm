@@ -145,9 +145,4 @@ public abstract class AbstractToStringProperty<T> extends AbstractProperty<T> {
         return new ChildProperty<>(this, key);
     }
 
-    @Override
-    public CachingProperty<T> cached() {
-        // Removing this implementation breaks binary compatibility
-        return super.cached();
-    }
 }

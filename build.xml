@@ -256,6 +256,7 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/compress/compressors/pack200/**"/>
             <exclude name="org/apache/commons/compress/compressors/snappy/**"/>
             <exclude name="org/apache/commons/compress/compressors/z/**"/>
+            <exclude name="org/apache/commons/compress/compressors/zstandard/**"/>
             <exclude name="org/apache/commons/compress/parallel/**"/>
             <exclude name="org/apache/commons/compress/utils/ArchiveUtils.java"/>
             <exclude name="org/apache/commons/jcs/JCS.java"/>
