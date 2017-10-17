@@ -193,7 +193,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
     public static final String LZ4_FRAMED = "lz4-framed";
 
     /**
-     * Constant (value {@value}) used to identify the ZStandard compression
+     * Constant (value {@value}) used to identify the Zstandard compression
      * algorithm. Not supported as an output stream type.
      *
      * @since 1.16
@@ -571,7 +571,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
             if (ZSTANDARD.equalsIgnoreCase(name)) {
                 if (!ZstdUtils.isZstdCompressionAvailable()) {
-                    throw new CompressorException("ZStandard compression is not available.");
+                    throw new CompressorException("Zstandard compression is not available.");
                 }
                 return new ZstdCompressorInputStream(in);
             }
