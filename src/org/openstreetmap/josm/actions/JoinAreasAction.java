@@ -108,7 +108,7 @@ public class JoinAreasAction extends JosmAction {
          * @param way outer way
          */
         public Multipolygon(Way way) {
-            outerWay = way;
+            outerWay = Objects.requireNonNull(way, "way");
             innerWays = new ArrayList<>();
         }
 
@@ -535,11 +535,6 @@ public class JoinAreasAction extends JosmAction {
         //user canceled, do nothing.
 
         try {
-            // see #11026 - Because <ways> is a dynamic filtered (on ways) of a filtered (on selected objects) collection,
-            // retrieve effective dataset before joining the ways (which affects the selection, thus, the <ways> collection)
-            // Dataset retrieving allows to call this code without relying on Main.getCurrentDataSet(), thus, on a mapview instance
-            ds = ways.iterator().next().getDataSet();
-
             // Do the job of joining areas
             JoinAreasResult result = joinAreas(areas);
 
@@ -600,6 +595,13 @@ public class JoinAreasAction extends JosmAction {
      * @throws UserCancelException if user cancels the operation
      */
     public JoinAreasResult joinAreas(List<Multipolygon> areas) throws UserCancelException {
+
+        // see #11026 - Because <ways> is a dynamic filtered (on ways) of a filtered (on selected objects) collection,
+        // retrieve effective dataset before joining the ways (which affects the selection, thus, the <ways> collection)
+        // Dataset retrieving allows to call this code without relying on Main.getCurrentDataSet(), thus, on a mapview instance
+        if (!areas.isEmpty()) {
+            ds = areas.iterator().next().getOuterWay().getDataSet();
+        }
 
         boolean hasChanges = false;
 
