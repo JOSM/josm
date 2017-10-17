@@ -55,6 +55,8 @@ import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 import org.apache.commons.compress.compressors.xz.XZUtils;
 import org.apache.commons.compress.compressors.z.ZCompressorInputStream;
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream;
+import org.apache.commons.compress.compressors.zstandard.ZstdUtils;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.compress.utils.ServiceLoaderIterator;
@@ -191,6 +193,14 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
     public static final String LZ4_FRAMED = "lz4-framed";
 
     /**
+     * Constant (value {@value}) used to identify the ZStandard compression
+     * algorithm. Not supported as an output stream type.
+     *
+     * @since 1.16
+     */
+    public static final String ZSTANDARD = "zst";
+
+    /**
      * Constructs a new sorted map from input stream provider names to provider
      * objects.
      *
@@ -279,7 +289,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
     public static String getBrotli() {
         return BROTLI;
     }
-    
+
     public static String getBzip2() {
         return BZIP2;
     }
@@ -326,6 +336,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     public static String getLZ4Block() {
         return LZ4_BLOCK;
+    }
+
+    public static String getZstandard() {
+        return ZSTANDARD;
     }
 
     static void putAll(final Set<String> names, final CompressorStreamProvider provider,
@@ -555,6 +569,13 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
                 return new XZCompressorInputStream(in, actualDecompressConcatenated, memoryLimitInKb);
             }
 
+            if (ZSTANDARD.equalsIgnoreCase(name)) {
+                if (!ZstdUtils.isZstdCompressionAvailable()) {
+                    throw new CompressorException("ZStandard compression is not available.");
+                }
+                return new ZstdCompressorInputStream(in);
+            }
+
             if (LZMA.equalsIgnoreCase(name)) {
                 if (!LZMAUtils.isLZMACompressionAvailable()) {
                     throw new CompressorException("LZMA compression is not available");
@@ -701,7 +722,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
     @Override
     public Set<String> getInputStreamCompressorNames() {
         return Sets.newHashSet(GZIP, BROTLI, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_RAW, SNAPPY_FRAMED, Z, LZ4_BLOCK,
-            LZ4_FRAMED);
+            LZ4_FRAMED, ZSTANDARD);
     }
 
     @Override
