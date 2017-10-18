@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateForma
 import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -114,7 +115,7 @@ public abstract class Main {
     /**
      * Global application preferences
      */
-    public static final Preferences pref = new Preferences();
+    public static final Preferences pref = new Preferences(JosmBaseDirectories.getInstance());
 
     /**
      * The MapFrame.

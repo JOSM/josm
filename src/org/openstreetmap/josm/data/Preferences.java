@@ -41,7 +41,6 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ColorInfo;
-import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
@@ -463,7 +462,7 @@ public class Preferences extends AbstractPreferences {
      * @return The user preferences file (preferences.xml)
      */
     public File getPreferenceFile() {
-        return new File(getPreferencesDirectory(false), "preferences.xml");
+        return new File(dirs.getPreferencesDirectory(false), "preferences.xml");
     }
 
     /**
@@ -471,7 +470,7 @@ public class Preferences extends AbstractPreferences {
      * @return the cache file for default preferences
      */
     public File getDefaultsCacheFile() {
-        return new File(getCacheDirectory(true), "default_preferences.xml");
+        return new File(dirs.getCacheDirectory(true), "default_preferences.xml");
     }
 
     /**
@@ -479,7 +478,7 @@ public class Preferences extends AbstractPreferences {
      * @return The user plugin directory
      */
     public File getPluginsDirectory() {
-        return new File(getUserDataDirectory(false), "plugins");
+        return new File(dirs.getUserDataDirectory(false), "plugins");
     }
 
     /**
@@ -518,8 +517,8 @@ public class Preferences extends AbstractPreferences {
      */
     public Collection<String> getAllPossiblePreferenceDirs() {
         Set<String> locations = new HashSet<>();
-        addPossibleResourceDir(locations, getPreferencesDirectory(false).getPath());
-        addPossibleResourceDir(locations, getUserDataDirectory(false).getPath());
+        addPossibleResourceDir(locations, dirs.getPreferencesDirectory(false).getPath());
+        addPossibleResourceDir(locations, dirs.getUserDataDirectory(false).getPath());
         addPossibleResourceDir(locations, System.getenv("JOSM_RESOURCES"));
         addPossibleResourceDir(locations, System.getProperty("josm.resources"));
         if (Main.isPlatformWindows()) {
@@ -817,7 +816,7 @@ public class Preferences extends AbstractPreferences {
     public void init(boolean reset) {
         initSuccessful = false;
         // get the preferences.
-        File prefDir = getPreferencesDirectory(false);
+        File prefDir = dirs.getPreferencesDirectory(false);
         if (prefDir.exists()) {
             if (!prefDir.isDirectory()) {
                 Logging.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.",
