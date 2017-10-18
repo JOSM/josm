@@ -178,17 +178,17 @@ public class APIDataSetTest {
 
 
         APIDataSet apiDataSet = new APIDataSet();
-        // add r1 first to test functionality of APIDataSet#adjustRelationUploadOrder()
-        apiDataSet.getPrimitivesToDelete().add(r1);
-        apiDataSet.getPrimitivesToDelete().add(r2);
-        apiDataSet.getPrimitivesToDelete().add(r3);
         apiDataSet.getPrimitivesToDelete().add(r4);
+        apiDataSet.getPrimitivesToDelete().add(r3);
+        apiDataSet.getPrimitivesToDelete().add(r2);
+        // add r1 last to test functionality of APIDataSet#adjustRelationUploadOrder()
+        apiDataSet.getPrimitivesToDelete().add(r1);
         apiDataSet.adjustRelationUploadOrder();
         List<OsmPrimitive> toDelete = apiDataSet.getPrimitivesToDelete();
 
         assertEquals(4, toDelete.size());
-        assertTrue(toDelete.indexOf(r2) < toDelete.indexOf(r1));
-        assertTrue(toDelete.indexOf(r3) < toDelete.indexOf(r1));
+        assertTrue(toDelete.indexOf(r1) < toDelete.indexOf(r2));
+        assertTrue(toDelete.indexOf(r1) < toDelete.indexOf(r3));
     }
 
     @Test // for ticket #9656
