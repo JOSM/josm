@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,7 +12,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -45,6 +41,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ColorInfo;
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
@@ -59,6 +56,7 @@ import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
@@ -89,7 +87,7 @@ import org.xml.sax.SAXException;
  * @author imi
  * @since 74
  */
-public class Preferences extends AbstractPreferences implements IBaseDirectories {
+public class Preferences extends AbstractPreferences {
 
     private static final String COLOR_PREFIX = "color.";
     private static final Pattern COLOR_LAYER_PATTERN = Pattern.compile("layer\\.(.+)");
@@ -102,22 +100,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
 
     private static final long MAX_AGE_DEFAULT_PREFERENCES = TimeUnit.DAYS.toSeconds(50);
 
-    /**
-     * Internal storage for the preference directory.
-     * Do not access this variable directly!
-     * @see #getPreferencesDirectory()
-     */
-    private File preferencesDir;
-
-    /**
-     * Internal storage for the cache directory.
-     */
-    private File cacheDir;
-
-    /**
-     * Internal storage for the user data directory.
-     */
-    private File userdataDir;
+    private final IBaseDirectories dirs;
 
     /**
      * Determines if preferences file is saved each time a property is changed.
@@ -245,7 +228,16 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * Constructs a new {@code Preferences}.
      */
     public Preferences() {
-        // Default constructor
+        this.dirs = Config.getDirs();
+    }
+
+    /**
+     * Constructs a new {@code Preferences}.
+     *
+     * @param dirs the directories to use for saving the preferences
+     */
+    public Preferences(IBaseDirectories dirs) {
+        this.dirs = dirs;
     }
 
     /**
@@ -255,6 +247,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      */
     @SuppressWarnings("deprecation")
     public Preferences(Preferences pref) {
+        this(pref.dirs);
         settingsMap.putAll(pref.settingsMap);
         defaultsMap.putAll(pref.defaultsMap);
         colornames.putAll(pref.colornames);
@@ -419,6 +412,14 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     }
 
     /**
+     * Get the base directories associated with this preference instance.
+     * @return the base directories
+     */
+    public IBaseDirectories getDirs() {
+        return dirs;
+    }
+
+    /**
      * Returns the user defined preferences directory, containing the preferences.xml file
      * @return The user defined preferences directory, containing the preferences.xml file
      * @since 7834
@@ -429,32 +430,12 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         return getPreferencesDirectory(false);
     }
 
-    @Override
+    /**
+     * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
+     */
+    @Deprecated
     public File getPreferencesDirectory(boolean createIfMissing) {
-        if (preferencesDir == null) {
-            String path;
-            path = System.getProperty("josm.pref");
-            if (path != null) {
-                preferencesDir = new File(path).getAbsoluteFile();
-            } else {
-                path = System.getProperty("josm.home");
-                if (path != null) {
-                    preferencesDir = new File(path).getAbsoluteFile();
-                } else {
-                    preferencesDir = Main.platform.getDefaultPrefDirectory();
-                }
-            }
-        }
-        if (createIfMissing && !preferencesDir.exists() && !preferencesDir.mkdirs()) {
-            Logging.warn(tr("Failed to create missing preferences directory: {0}", preferencesDir.getAbsoluteFile()));
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Failed to create missing preferences directory: {0}</html>", preferencesDir.getAbsoluteFile()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-        return preferencesDir;
+        return dirs.getPreferencesDirectory(createIfMissing);
     }
 
     /**
@@ -469,32 +450,12 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         return getUserDataDirectory(false);
     }
 
-    @Override
+    /**
+     * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
+     */
+    @Deprecated
     public File getUserDataDirectory(boolean createIfMissing) {
-        if (userdataDir == null) {
-            String path;
-            path = System.getProperty("josm.userdata");
-            if (path != null) {
-                userdataDir = new File(path).getAbsoluteFile();
-            } else {
-                path = System.getProperty("josm.home");
-                if (path != null) {
-                    userdataDir = new File(path).getAbsoluteFile();
-                } else {
-                    userdataDir = Main.platform.getDefaultUserDataDirectory();
-                }
-            }
-        }
-        if (createIfMissing && !userdataDir.exists() && !userdataDir.mkdirs()) {
-            Logging.warn(tr("Failed to create missing user data directory: {0}", userdataDir.getAbsoluteFile()));
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Failed to create missing user data directory: {0}</html>", userdataDir.getAbsoluteFile()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-        return userdataDir;
+        return dirs.getUserDataDirectory(createIfMissing);
     }
 
     /**
@@ -534,36 +495,12 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         return getCacheDirectory(true);
     }
 
-    @Override
+    /**
+     * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
+     */
+    @Deprecated
     public File getCacheDirectory(boolean createIfMissing) {
-        if (cacheDir == null) {
-            String path = System.getProperty("josm.cache");
-            if (path != null) {
-                cacheDir = new File(path).getAbsoluteFile();
-            } else {
-                path = System.getProperty("josm.home");
-                if (path != null) {
-                    cacheDir = new File(path, "cache");
-                } else {
-                    path = get("cache.folder", null);
-                    if (path != null) {
-                        cacheDir = new File(path).getAbsoluteFile();
-                    } else {
-                        cacheDir = Main.platform.getDefaultCacheDirectory();
-                    }
-                }
-            }
-        }
-        if (createIfMissing && !cacheDir.exists() && !cacheDir.mkdirs()) {
-            Logging.warn(tr("Failed to create missing cache directory: {0}", cacheDir.getAbsoluteFile()));
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Failed to create missing cache directory: {0}</html>", cacheDir.getAbsoluteFile()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-        return cacheDir;
+        return dirs.getCacheDirectory(createIfMissing);
     }
 
     private static void addPossibleResourceDir(Set<String> locations, String s) {
@@ -781,8 +718,6 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         if (!defaults) {
             /* currently unused, but may help to fix configuration issues in future */
             putInt("josm.version", Version.getInstance().getVersion());
-
-            updateSystemProperties();
         }
 
         File backupFile = new File(prefFile + "_backup");
@@ -836,7 +771,6 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         reader.parse();
         settingsMap.clear();
         settingsMap.putAll(reader.getSettings());
-        updateSystemProperties();
         removeObsolete(reader.getVersion());
     }
 
@@ -983,9 +917,6 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      */
     public void resetToInitialState() {
         resetToDefault();
-        preferencesDir = null;
-        cacheDir = null;
-        userdataDir = null;
         saveOnPut = true;
         initSuccessful = false;
     }
@@ -1501,37 +1432,6 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      */
     public Map<String, Setting<?>> getAllDefaults() {
         return new TreeMap<>(defaultsMap);
-    }
-
-    /**
-     * Updates system properties with the current values in the preferences.
-     */
-    public void updateSystemProperties() {
-        if ("true".equals(get("prefer.ipv6", "auto")) && !"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
-            // never set this to false, only true!
-            Logging.info(tr("Try enabling IPv6 network, prefering IPv6 over IPv4 (only works on early startup)."));
-        }
-        Utils.updateSystemProperty("http.agent", Version.getInstance().getAgentString());
-        Utils.updateSystemProperty("user.language", get("language"));
-        // Workaround to fix a Java bug. This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
-        // Force AWT toolkit to update its internal preferences (fix #6345).
-        // Does not work anymore with Java 9, to remove with Java 9 migration
-        if (Utils.getJavaVersion() < 9 && !GraphicsEnvironment.isHeadless()) {
-            try {
-                Field field = Toolkit.class.getDeclaredField("resources");
-                Utils.setObjectsAccessible(field);
-                field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
-            } catch (ReflectiveOperationException | RuntimeException e) { // NOPMD
-                // Catch RuntimeException in order to catch InaccessibleObjectException, new in Java 9
-                Logging.warn(e);
-            }
-        }
-        // Possibility to disable SNI (not by default) in case of misconfigured https servers
-        // See #9875 + http://stackoverflow.com/a/14884941/2257172
-        // then https://josm.openstreetmap.de/ticket/12152#comment:5 for details
-        if (getBoolean("jdk.tls.disableSNIExtension", false)) {
-            Utils.updateSystemProperty("jsse.enableSNIExtension", "false");
-        }
     }
 
     /**

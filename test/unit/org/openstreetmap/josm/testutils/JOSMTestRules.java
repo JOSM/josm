@@ -19,6 +19,7 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -30,6 +31,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -39,7 +41,6 @@ import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This class runs a test in an environment that resembles the one used by the JOSM main application.
@@ -277,7 +278,7 @@ public class JOSMTestRules implements TestRule {
         cleanUpFromJosmFixture();
 
         Config.setPreferencesInstance(Main.pref);
-        Config.setBaseDirectoriesProvider(Main.pref);
+        Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
         // Set log level to info

@@ -10,10 +10,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.Authenticator;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -37,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
@@ -89,6 +92,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.data.projection.ProjectionCLI;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileSource;
@@ -147,6 +151,8 @@ import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -925,14 +931,20 @@ public class MainApplication extends Main {
 
         Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
         Config.setPreferencesInstance(Main.pref);
-        Config.setBaseDirectoriesProvider(Main.pref);
+        Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
 
         args.getPreferencesToSet().forEach(Main.pref::put);
 
         if (!language.isPresent()) {
             I18n.set(Config.getPref().get("language", null));
         }
-        Main.pref.updateSystemProperties();
+        updateSystemProperties();
+        Main.pref.addPreferenceChangeListener(new PreferenceChangedListener() {
+            @Override
+            public void preferenceChanged(PreferenceChangeEvent e) {
+                updateSystemProperties();
+            }
+        });
 
         checkIPv6();
 
@@ -1068,6 +1080,38 @@ public class MainApplication extends Main {
             // but they don't seem to break anything and are difficult to fix
             Logging.info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
+        }
+    }
+
+    /**
+     * Updates system properties with the current values in the preferences.
+     */
+    private static void updateSystemProperties() {
+        if ("true".equals(Config.getPref().get("prefer.ipv6", "auto"))
+                && !"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
+            // never set this to false, only true!
+            Logging.info(tr("Try enabling IPv6 network, prefering IPv6 over IPv4 (only works on early startup)."));
+        }
+        Utils.updateSystemProperty("http.agent", Version.getInstance().getAgentString());
+        Utils.updateSystemProperty("user.language", Config.getPref().get("language"));
+        // Workaround to fix a Java bug. This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
+        // Force AWT toolkit to update its internal preferences (fix #6345).
+        // Does not work anymore with Java 9, to remove with Java 9 migration
+        if (Utils.getJavaVersion() < 9 && !GraphicsEnvironment.isHeadless()) {
+            try {
+                Field field = Toolkit.class.getDeclaredField("resources");
+                Utils.setObjectsAccessible(field);
+                field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
+            } catch (ReflectiveOperationException | RuntimeException e) { // NOPMD
+                // Catch RuntimeException in order to catch InaccessibleObjectException, new in Java 9
+                Logging.warn(e);
+            }
+        }
+        // Possibility to disable SNI (not by default) in case of misconfigured https servers
+        // See #9875 + http://stackoverflow.com/a/14884941/2257172
+        // then https://josm.openstreetmap.de/ticket/12152#comment:5 for details
+        if (Config.getPref().getBoolean("jdk.tls.disableSNIExtension", false)) {
+            Utils.updateSystemProperty("jsse.enableSNIExtension", "false");
         }
     }
 

@@ -23,12 +23,12 @@ import org.openstreetmap.josm.CLIModule;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.mappaint.RenderingHelper.StyleData;
@@ -418,7 +418,7 @@ public class RenderingCLI implements CLIModule {
     void initialize() {
         Logging.setLogLevel(getLogLevel());
 
-        Config.setBaseDirectoriesProvider(new Preferences()); // for right-left-hand traffic cache file
+        Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance()); // for right-left-hand traffic cache file
         Config.setPreferencesInstance(new MemoryPreferences());
         Config.getPref().putBoolean("mappaint.auto_reload_local_styles", false); // unnecessary to listen for external changes
         String projCode = Optional.ofNullable(argProjection).orElse("epsg:3857");

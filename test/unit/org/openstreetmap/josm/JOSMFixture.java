@@ -15,6 +15,7 @@ import java.util.TimeZone;
 
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainApplicationTest;
@@ -97,7 +98,7 @@ public class JOSMFixture {
         System.setProperty("josm.home", josmHome);
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Config.setPreferencesInstance(Main.pref);
-        Config.setBaseDirectoriesProvider(Main.pref);
+        Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         Main.pref.resetToInitialState();
         Main.pref.enableSaveOnPut(false);
         I18n.init();
