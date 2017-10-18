@@ -212,12 +212,12 @@ public class APIDataSet {
         relationsToAdd.removeAll(noProblemRelations);
 
         RelationUploadDependencyGraph graph = new RelationUploadDependencyGraph(relationsToAdd, true);
-        newToAdd.addAll(graph.computeUploadOrder());
+        newToAdd.addAll(graph.computeUploadOrder(false));
         toAdd = newToAdd;
 
         List<OsmPrimitive> newToDelete = new LinkedList<>();
         graph = new RelationUploadDependencyGraph(Utils.filteredCollection(toDelete, Relation.class), false);
-        newToDelete.addAll(graph.computeUploadOrder());
+        newToDelete.addAll(graph.computeUploadOrder(true));
         newToDelete.addAll(Utils.filteredCollection(toDelete, Way.class));
         newToDelete.addAll(Utils.filteredCollection(toDelete, Node.class));
         toDelete = newToDelete;
@@ -304,7 +304,7 @@ public class APIDataSet {
             }
         }
 
-        public List<Relation> computeUploadOrder() throws CyclicUploadDependencyException {
+        public List<Relation> computeUploadOrder(boolean reverse) throws CyclicUploadDependencyException {
             visited = new HashSet<>();
             uploadOrder = new LinkedList<>();
             Stack<Relation> path = new Stack<>();
@@ -312,7 +312,11 @@ public class APIDataSet {
                 visit(path, relation);
             }
             List<Relation> ret = new ArrayList<>(relations);
-            ret.sort(Comparator.comparingInt(uploadOrder::indexOf));
+            Comparator<? super Relation> cmpr = Comparator.comparingInt(uploadOrder::indexOf);
+            if (reverse) {
+                cmpr = cmpr.reversed();
+            }
+            ret.sort(cmpr);
             return ret;
         }
     }
