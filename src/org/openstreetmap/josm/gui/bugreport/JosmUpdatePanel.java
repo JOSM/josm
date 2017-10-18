@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -14,10 +15,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.WikiReader;
 
 /**
  * This is a panel that displays the current JOSM version and the ability to update JOSM.
@@ -60,7 +61,9 @@ public class JosmUpdatePanel extends JPanel {
 
     private static int getTestedVersion() {
         try {
-            String testedString = new WikiReader().read(Main.getJOSMWebsite() + "/tested");
+            CachedFile testedVersion = new CachedFile(Main.getJOSMWebsite() + "/tested");
+            testedVersion.setMaxAge(60 * 15); // 15 Minutes
+            String testedString = new String(testedVersion.getByteContent(), StandardCharsets.ISO_8859_1);
             return Integer.parseInt(testedString.trim());
         } catch (NumberFormatException | IOException e) {
             Logging.log(Logging.LEVEL_WARN, "Unable to detect current tested version of JOSM:", e);
