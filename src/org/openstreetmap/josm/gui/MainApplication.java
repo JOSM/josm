@@ -929,9 +929,9 @@ public class MainApplication extends Main {
             Logging.info(tr("Enabled detailed debug level (trace)"));
         }
 
-        Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
         Config.setPreferencesInstance(Main.pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
+        Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
 
         args.getPreferencesToSet().forEach(Main.pref::put);
 
