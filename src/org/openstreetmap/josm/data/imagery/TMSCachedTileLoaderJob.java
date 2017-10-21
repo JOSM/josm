@@ -159,38 +159,38 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         boolean status = result.equals(LoadResult.SUCCESS);
 
         try {
-                tile.finishLoading(); // whatever happened set that loading has finished
-                // set tile metadata
-                if (this.attributes != null) {
-                    for (Entry<String, String> e: this.attributes.getMetadata().entrySet()) {
-                        tile.putValue(e.getKey(), e.getValue());
-                    }
+            tile.finishLoading(); // whatever happened set that loading has finished
+            // set tile metadata
+            if (this.attributes != null) {
+                for (Entry<String, String> e: this.attributes.getMetadata().entrySet()) {
+                    tile.putValue(e.getKey(), e.getValue());
                 }
+            }
 
-                switch(result) {
-                case SUCCESS:
-                    handleNoTileAtZoom();
-                    if (attributes != null) {
-                        int httpStatusCode = attributes.getResponseCode();
-                        if (httpStatusCode >= 400 && !isNoTileAtZoom()) {
-                            if (attributes.getErrorMessage() == null) {
-                                tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
-                            } else {
-                                tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
-                            }
-                            status = false;
+            switch(result) {
+            case SUCCESS:
+                handleNoTileAtZoom();
+                if (attributes != null) {
+                    int httpStatusCode = attributes.getResponseCode();
+                    if (httpStatusCode >= 400 && !isNoTileAtZoom()) {
+                        if (attributes.getErrorMessage() == null) {
+                            tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
+                        } else {
+                            tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
                         }
+                        status = false;
                     }
-                    status &= tryLoadTileImage(object); //try to keep returned image as background
-                    break;
-                case FAILURE:
-                    tile.setError("Problem loading tile");
-                    tryLoadTileImage(object);
-                    break;
-                case CANCELED:
-                    tile.loadingCanceled();
-                    // do nothing
                 }
+                status &= tryLoadTileImage(object); //try to keep returned image as background
+                break;
+            case FAILURE:
+                tile.setError("Problem loading tile");
+                tryLoadTileImage(object);
+                break;
+            case CANCELED:
+                tile.loadingCanceled();
+                // do nothing
+            }
 
             // always check, if there is some listener interested in fact, that tile has finished loading
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
@@ -269,7 +269,11 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         if (object != null) {
             byte[] content = object.getContent();
             if (content.length > 0) {
-                tile.loadImage(new ByteArrayInputStream(content));
+                try {
+                    tile.loadImage(new ByteArrayInputStream(content));
+                } catch (UnsatisfiedLinkError e) {
+                    throw new IOException(e);
+                }
                 if (tile.getImage() == null) {
                     tile.setError(tr("Could not load image from tile server"));
                     return false;
