@@ -24,10 +24,14 @@ public final class WaySegment implements Comparable<WaySegment> {
      * Constructs a new {@code WaySegment}.
      * @param w The way
      * @param i The node lower index
+     * @throws IllegalArgumentException in case of invalid index
      */
     public WaySegment(Way w, int i) {
         way = w;
         lowerIndex = i;
+        if (i < 0 || i >= w.getNodesCount() - 1) {
+            throw new IllegalArgumentException(toString());
+        }
     }
 
     /**
