@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -20,6 +21,7 @@ import org.openstreetmap.josm.actions.upload.UploadHook;
 import org.openstreetmap.josm.actions.upload.ValidateUploadHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.UploadDialog;
@@ -245,12 +247,22 @@ public class UploadAction extends JosmAction {
                 return;
         }
 
+        // Any hooks want to change the changeset tags?
+        Changeset cs = UploadDialog.getUploadDialog().getChangeset();
+        Map<String, String> changesetTags = cs.getKeys();
+        for (UploadHook hook : UPLOAD_HOOKS) {
+            hook.modifyChangesetTags(changesetTags);
+        }
+        for (UploadHook hook : LATE_UPLOAD_HOOKS) {
+            hook.modifyChangesetTags(changesetTags);
+        }
+
         MainApplication.worker.execute(
                 new UploadPrimitivesTask(
                         UploadDialog.getUploadDialog().getUploadStrategySpecification(),
                         layer,
                         apiData,
-                        UploadDialog.getUploadDialog().getChangeset()
+                        cs
                 )
         );
     }
