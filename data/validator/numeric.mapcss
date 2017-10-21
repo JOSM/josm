@@ -7,7 +7,7 @@
 }
 
 *[layer =~ /^\+\d/] {
-  throwWarning: tr("layer tag with + sign");
+  throwWarning: tr("{0} value with + sign", "{0.key}");
   fixAdd: concat("layer=", replace(tag("layer"), "+", ""));
   assertMatch: "node layer=+1";
   assertNoMatch: "node layer=1";
@@ -16,10 +16,12 @@
 }
 
 *[layer][layer !~ /^0$|^(-|\+)?[1-5]$/] {
-  throwWarning: tr("layer should be between -5 and 5");
+  throwWarning: tr("{0} should be an integer value between -5 and 5", "{0.key}");
   assertMatch: "node layer=-50";
   assertMatch: "node layer=6";
-  assertMatch: "node layer=+100";
+  assertMatch: "node layer=+10";
+  assertMatch: "node layer=0.5";
+  assertMatch: "node layer=0;1";
   assertNoMatch: "node layer=-5";
   assertNoMatch: "node layer=0";
   assertNoMatch: "node layer=2";
