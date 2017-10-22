@@ -666,16 +666,16 @@ public final class Way extends OsmPrimitive implements IWay {
         }
         return false;
     }
-    
+
     /**
-     * Replies true if all nodes of the way are drawable, false otherwise.
-     * @return true if all nodes of the way are drawable, false otherwise.
-     * @since 12876
+     * Replies true if all nodes of the way have known lat/lon, false otherwise.
+     * @return true if all nodes of the way have known lat/lon, false otherwise
+     * @since 13033
      */
-    public boolean hasOnlyDrawableNodes() {
+    public boolean hasOnlyLocatableNodes() {
         Node[] nodes = this.nodes;
         for (Node node : nodes) {
-            if (!node.isDrawable())
+            if (!node.isLatLonKnown())
                 return false;
         }
         return true;
@@ -688,7 +688,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     @Override
     public boolean isDrawable() {
-        return super.isDrawable() && hasOnlyDrawableNodes();
+        return super.isDrawable() && hasOnlyLocatableNodes();
     }
 
     /**
