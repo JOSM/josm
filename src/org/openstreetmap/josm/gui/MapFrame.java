@@ -109,8 +109,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
     /**
      * The view control displayed.
-     * <p>
-     * Accessing this is discouraged. Use the {@link LayerManager} to access map data.
      */
     public final MapView mapView;
 
