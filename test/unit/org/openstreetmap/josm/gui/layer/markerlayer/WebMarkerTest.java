@@ -34,7 +34,7 @@ public class WebMarkerTest {
     public void testWebMarker() throws MalformedURLException {
         WebMarker marker = new WebMarker(
                 LatLon.ZERO,
-                new URL("http://something.com"),
+                new URL("http://example.com"),
                 new MarkerLayer(new GpxData(), null, null, null),
                 1d, 2d);
         marker.actionPerformed(null);
