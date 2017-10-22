@@ -493,6 +493,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
             return LZ4_FRAMED;
         }
 
+        if (ZstdUtils.matches(signature, signatureLength)) {
+            return ZSTANDARD;
+        }
+
         throw new CompressorException("No Compressor found for the stream signature.");
     }
     /**

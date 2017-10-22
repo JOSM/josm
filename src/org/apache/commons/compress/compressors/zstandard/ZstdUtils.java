@@ -29,6 +29,20 @@ public class ZstdUtils {
         DONT_CACHE, CACHED_AVAILABLE, CACHED_UNAVAILABLE
     }
 
+    /**
+     * Zstandard Frame Magic Bytes.
+     */
+    private static final byte[] ZSTANDARD_FRAME_MAGIC = {
+        (byte) 0x28, (byte) 0xB5, (byte) 0x2F, (byte) 0xFD
+    };
+
+    /**
+     * Skippable Frame Magic Bytes - the three common bytes.
+     */
+    private static final byte[] SKIPPABLE_FRAME_MAGIC = {
+                     (byte) 0x2A, (byte) 0x4D, (byte) 0x18
+    };
+
     private static volatile CachedAvailability cachedZstdAvailability;
 
     static {
@@ -79,6 +93,44 @@ public class ZstdUtils {
             cachedZstdAvailability = hasZstd ? CachedAvailability.CACHED_AVAILABLE
                 : CachedAvailability.CACHED_UNAVAILABLE;
         }
+    }
+
+    /**
+     * Checks if the signature matches what is expected for a Zstandard file.
+     *
+     * @param   signature     the bytes to check
+     * @param   length        the number of bytes to check
+     * @return true if signature matches the Ztstandard or skippable
+     * frame magic bytes, false otherwise
+     */
+    public static boolean matches(final byte[] signature, final int length) {
+        if (length < ZSTANDARD_FRAME_MAGIC.length) {
+            return false;
+        }
+
+        boolean isZstandard = true;
+        for (int i = 0; i < ZSTANDARD_FRAME_MAGIC.length; ++i) {
+            if (signature[i] != ZSTANDARD_FRAME_MAGIC[i]) {
+                isZstandard = false;
+                break;
+            }
+        }
+        if (isZstandard) {
+            return true;
+        }
+
+        if (0x50 == (signature[0] & 0xF0)) {
+            // skippable frame
+            for (int i = 0; i < SKIPPABLE_FRAME_MAGIC.length; ++i) {
+                if (signature[i + 1] != SKIPPABLE_FRAME_MAGIC[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     // only exists to support unit tests
