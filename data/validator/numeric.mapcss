@@ -126,7 +126,7 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
   assertNoMatch: "way maxspeed=variable";
 }
 
-*[distance][distance !~ /^(([0-9]+\.?[0-9]*( (km|mi|nmi))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
+*[distance][distance !~ /^(([0-9]+\.?[0-9]*( (m|km|mi|nmi))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
   throwWarning: tr("{0}: kilometers is default; period is separator; if units, put space then unit", "distance");
   assertMatch: "way distance=something";
   assertMatch: "way distance=-5";
