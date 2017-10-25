@@ -792,7 +792,6 @@ public final class DomainValidator extends AbstractValidator {
         "house", // house Sugar Park, LLC
         "how", // how Charleston Road Registry Inc.
         "hsbc", // hsbc HSBC Holdings PLC
-        "htc", // htc HTC corporation
         "hughes", // hughes Hughes Satellite Systems Corporation
         "hyatt", // hyatt Hyatt GTLD, L.L.C.
         "hyundai", // hyundai Hyundai Motor Company

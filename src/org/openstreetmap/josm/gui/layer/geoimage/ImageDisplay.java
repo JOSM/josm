@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -27,6 +28,7 @@ import javax.swing.JComponent;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ExifReader;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -460,6 +462,10 @@ public class ImageDisplay extends JComponent {
         }
     }
 
+    /**
+     * Sets the On-Screen-Display text.
+     * @param text text to display on top of the image
+     */
     public void setOsdText(String text) {
         this.osdText = text;
         repaint();
@@ -477,6 +483,10 @@ public class ImageDisplay extends JComponent {
             file = this.file;
             visibleRect = this.visibleRect;
             errorLoading = this.errorLoading;
+        }
+
+        if (g instanceof Graphics2D) {
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         }
 
         Dimension size = getSize();
@@ -501,10 +511,20 @@ public class ImageDisplay extends JComponent {
                     (int) ((size.height - noImageSize.getHeight()) / 2));
         } else {
             Rectangle target = calculateDrawImageRectangle(visibleRect, size);
-            g.drawImage(image,
-                    target.x, target.y, target.x + target.width, target.y + target.height,
-                    visibleRect.x, visibleRect.y, visibleRect.x + visibleRect.width, visibleRect.y + visibleRect.height,
-                    null);
+            // See https://community.oracle.com/docs/DOC-983611 - The Perils of Image.getScaledInstance()
+            // Pre-scale image when downscaling by more than two times to avoid aliasing from default algorithm
+            if (selectedRect == null && (target.width < visibleRect.width/2 || target.height < visibleRect.height/2)) {
+                BufferedImage buffImage = ImageProvider.toBufferedImage(image);
+                g.drawImage(ImageProvider.createScaledImage(buffImage, target.width, target.height, RenderingHints.VALUE_INTERPOLATION_BILINEAR),
+                        target.x, target.y, target.x + target.width, target.y + target.height,
+                        visibleRect.x, visibleRect.y, visibleRect.x + target.width, visibleRect.y + target.height,
+                        null);
+            } else {
+                g.drawImage(image,
+                        target.x, target.y, target.x + target.width, target.y + target.height,
+                        visibleRect.x, visibleRect.y, visibleRect.x + visibleRect.width, visibleRect.y + visibleRect.height,
+                        null);
+            }
             if (selectedRect != null) {
                 Point topLeft = img2compCoord(visibleRect, selectedRect.x, selectedRect.y, size);
                 Point bottomRight = img2compCoord(visibleRect,
