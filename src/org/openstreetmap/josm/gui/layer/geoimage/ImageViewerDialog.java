@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -334,6 +335,13 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
             }
             DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
+            // Make sure date/time format includes milliseconds
+            if (dtf instanceof SimpleDateFormat) {
+                String pattern = ((SimpleDateFormat) dtf).toPattern();
+                if (!pattern.contains(".SSS")) {
+                    dtf = new SimpleDateFormat(pattern.replace(":ss", ":ss.SSS"));
+                }
+            }
             if (entry.hasExifTime()) {
                 osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifTime())));
             }
