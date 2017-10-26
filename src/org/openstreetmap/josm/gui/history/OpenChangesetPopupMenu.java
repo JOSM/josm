@@ -55,15 +55,18 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
             new ChangesetViewerEntry(tr("Open {0}", "achavi (Augmented OSM Change Viewer)"), "https://overpass-api.de/achavi/?changeset={0}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSMCha (OSM Changeset Analyzer)"), "https://osmcha.mapbox.com/changesets/{0}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer"), "http://osmhv.openstreetmap.de/changeset.jsp?id={0}"),
-            new ChangesetViewerEntry(tr("Open {0}", "WhoDidIt (OSM Changeset Analyzer)"), "http://simon04.dev.openstreetmap.org/whodidit/index.html?changeset={0}&show=1")
+            new ChangesetViewerEntry(tr("Open {0}", "WhoDidIt (OSM Changeset Analyzer)"),
+                    "http://simon04.dev.openstreetmap.org/whodidit/index.html?changeset={0}&show=1")
     );
 
     /**
      * Auxiliary class to save a link to a history viewer in the preferences.
      */
     public static class ChangesetViewerEntry {
+        /** Name to be displayed in popup menu */
         @StructEntry
         public String name;
+        /** Templated service url. <code>{0}</code> will be replaced by changeset id */
         @StructEntry
         public String url;
 
@@ -79,8 +82,7 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
         }
 
         Action toAction(final long changesetId) {
-            final String url = MessageFormat.format(this.url, Long.toString(changesetId));
-            return new OpenBrowserAction(name, url);
+            return new OpenBrowserAction(name, MessageFormat.format(this.url, Long.toString(changesetId)));
         }
     }
 
