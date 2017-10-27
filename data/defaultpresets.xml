@@ -1015,16 +1015,8 @@
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Roundabout -->
         <item name="Ford" icon="presets/vehicle/ford.svg" type="node,way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Key:ford"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:ford"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:ford"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Key:ford"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:ford"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:ford"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:ford"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:ford"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:ford"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:ford" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:ford=yes"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:ford=yes" />
             <combo key="ford" text="Ford" values="yes,stepping_stones" default="yes" values_searchable="true" match="keyvalue!" />
             <optional>
                 <text key="name" text="Name" />
@@ -1176,9 +1168,19 @@
             </optional>
         </item> <!-- Dedicated Cycleway -->
         <item name="Segregated Foot- and Cycleway" icon="presets/transport/way/segregated_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=path"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=path"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=path"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=path"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=path"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=path"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:highway=path"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=path"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:highway=path"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=path"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:highway=path"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=path" />
             <key key="highway" value="path" />
             <key key="bicycle" value="designated" />
             <key key="foot" value="designated" />
@@ -1190,9 +1192,19 @@
             </optional>
         </item> <!-- Segregated Foot- and Cycleway -->
         <item name="Combined Foot- and Cycleway" icon="presets/transport/way/combined_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=path"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=path"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=path"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=path"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=path"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=path"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:highway=path"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=path"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:highway=path"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=path"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:highway=path"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=path" />
             <key key="highway" value="path" />
             <key key="bicycle" value="designated" />
             <key key="foot" value="designated" />
@@ -3987,6 +3999,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=chalet"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=chalet"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=chalet"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:tourism=chalet"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=chalet"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=chalet"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:tourism=chalet"
@@ -7864,6 +7877,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=archaeological_site"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:historic=archaeological_site"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=archaeological_site"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:historic=archaeological_site"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:historic=archaeological_site"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:historic=archaeological_site"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:historic=archaeological_site"
@@ -7901,13 +7915,25 @@
         </item> <!-- Palaeontological Site -->
         <separator/>
         <item name="Grave" icon="presets/misc/grave.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:cemetery=grave" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:cemetery=grave"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:cemetery=grave"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:cemetery=grave"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:cemetery=grave"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:cemetery=grave"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:cemetery=grave"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:cemetery=grave" />
             <space />
             <key key="cemetery" value="grave" />
             <text key="name" text="Name" />
         </item> <!-- Grave -->
         <item name="Tomb" icon="presets/misc/tomb.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=tomb" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=tomb"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:historic=tomb"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=tomb"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:historic=tomb"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:historic=tomb"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:historic=tomb"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:historic=tomb" />
             <space />
             <key key="historic" value="tomb" />
             <combo key="tomb" text="Type" values="tumulus,rock-cut,hypogeum,war_grave,mausoleum,columbarium,crypt,pyramid,sarcophagus,vault" values_context="tomb" values_searchable="true" />
@@ -9406,7 +9432,9 @@
     <item name="Foundation" icon="presets/office/foundation.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=foundation"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:office=foundation"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:office=foundation" />
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:office=foundation"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=foundation"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:office=foundation" />
         <space />
         <key key="office" value="foundation" />
         <reference ref="name_brand_operator_oh_wheelchair" />
@@ -10663,7 +10691,12 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=salt_pond"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=salt_pond"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=salt_pond"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=salt_pond" />
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:landuse=salt_pond"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=salt_pond"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=salt_pond"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=salt_pond"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:landuse=salt_pond"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=salt_pond" />
             <space />
             <key key="landuse" value="salt_pond" />
             <reference ref="optional_name_operator" />
@@ -10864,6 +10897,7 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=industrial"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=industrial"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:landuse=industrial"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=industrial"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=industrial"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:landuse=industrial"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=industrial"
