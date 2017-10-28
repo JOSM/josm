@@ -36,8 +36,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
-import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -277,7 +277,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 int index = nodes.indexOf(candidateNode);
 
                 // Only draw line if node is not first and/or last
-                if (index != 0 && index != (nodes.size() - 1)) {
+                if (index > 0 && index < (nodes.size() - 1)) {
                     p1 = nodes.get(index - 1);
                     p2 = nodes.get(index + 1);
                 } else if (targetWay.isClosed()) {
