@@ -609,20 +609,6 @@ relation[/^..$/][!to] {
   assertMatch: "node f=b";
 }
 
-/* see #11344 */
-*[tower=air_to_ground] {
-  throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "tower=transition";
-  group: tr("deprecated tagging");
-  fixAdd: "tower=transition";
-}
-*[pole=air_to_ground] {
-  throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "pole=transition";
-  group: tr("deprecated tagging");
-  fixAdd: "pole=transition";
-}
-
 /* see #11439 */
 *[sport=hockey] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -1003,7 +989,8 @@ way[waterway=canal][service][service !~ /^(irrigation|transportation|water_power
   group: tr("deprecated tagging");
 }
 
-/* #13101 */
+/* #11344, #13101, #15480 */
+node[pole=air_to_ground],
 node[pole=transition] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "location:transition=yes";
@@ -1011,6 +998,7 @@ node[pole=transition] {
   fixAdd: "location:transition=yes";
   fixRemove: "pole";
 }
+node[tower=air_to_ground],
 node[tower=transition] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "location:transition=yes";
