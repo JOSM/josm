@@ -768,8 +768,9 @@ public final class ConditionFactory {
         }
 
         static boolean selected(Environment e) { // NO_UCD (unused code)
-            Cascade c = e.mc.getCascade(e.layer);
-            c.setDefaultSelectedHandling(false);
+            if (e.mc != null) {
+                e.mc.getCascade(e.layer).setDefaultSelectedHandling(false);
+            }
             return e.osm.isSelected();
         }
     }
