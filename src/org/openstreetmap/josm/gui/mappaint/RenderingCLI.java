@@ -20,7 +20,6 @@ import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.josm.CLIModule;
-import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -36,6 +35,8 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.MemoryPreferences;
+import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 
@@ -262,7 +263,7 @@ public class RenderingCLI implements CLIModule {
                     break;
                 case SCALE:
                     try {
-                        argScale = Double.parseDouble(getopt.getOptarg());
+                        argScale = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
                                 tr("Expected floating point number for option {0}, but got ''{1}''", "--scale", getopt.getOptarg()));
@@ -284,7 +285,7 @@ public class RenderingCLI implements CLIModule {
                     break;
                 case WIDTH_M:
                     try {
-                        argWidthM = Double.parseDouble(getopt.getOptarg());
+                        argWidthM = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
                                 tr("Expected floating point number for option {0}, but got ''{1}''", "--width-m", getopt.getOptarg()));
@@ -294,7 +295,7 @@ public class RenderingCLI implements CLIModule {
                     break;
                 case HEIGHT_M:
                     try {
-                        argHeightM = Double.parseDouble(getopt.getOptarg());
+                        argHeightM = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
                                 tr("Expected floating point number for option {0}, but got ''{1}''", "--height-m", getopt.getOptarg()));

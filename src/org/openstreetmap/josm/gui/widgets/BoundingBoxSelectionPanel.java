@@ -19,6 +19,8 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
 /**
@@ -98,15 +100,16 @@ public class BoundingBoxSelectionPanel extends JPanel {
     public Bounds getBoundingBox() {
         double minlon, minlat, maxlon, maxlat;
         try {
-            minlat = Double.parseDouble(tfLatLon[0].getText().trim());
-            minlon = Double.parseDouble(tfLatLon[1].getText().trim());
-            maxlat = Double.parseDouble(tfLatLon[2].getText().trim());
-            maxlon = Double.parseDouble(tfLatLon[3].getText().trim());
+            minlat = JosmDecimalFormatSymbolsProvider.parseDouble(tfLatLon[0].getText().trim());
+            minlon = JosmDecimalFormatSymbolsProvider.parseDouble(tfLatLon[1].getText().trim());
+            maxlat = JosmDecimalFormatSymbolsProvider.parseDouble(tfLatLon[2].getText().trim());
+            maxlon = JosmDecimalFormatSymbolsProvider.parseDouble(tfLatLon[3].getText().trim());
         } catch (NumberFormatException e) {
+            Logging.trace(e);
             return null;
         }
         if (!LatLon.isValidLon(minlon) || !LatLon.isValidLon(maxlon)
-                || !LatLon.isValidLat(minlat) || !LatLon.isValidLat(maxlat))
+         || !LatLon.isValidLat(minlat) || !LatLon.isValidLat(maxlat))
             return null;
         if (minlon > maxlon)
             return null;
@@ -144,9 +147,10 @@ public class BoundingBoxSelectionPanel extends JPanel {
         public void validate() {
             double value = 0;
             try {
-                value = Double.parseDouble(getComponent().getText());
+                value = JosmDecimalFormatSymbolsProvider.parseDouble(getComponent().getText());
             } catch (NumberFormatException ex) {
                 feedbackInvalid(tr("The string ''{0}'' is not a valid double value.", getComponent().getText()));
+                Logging.trace(ex);
                 return;
             }
             if (!LatLon.isValidLat(value)) {
@@ -159,8 +163,9 @@ public class BoundingBoxSelectionPanel extends JPanel {
         @Override
         public boolean isValid() {
             try {
-                return LatLon.isValidLat(Double.parseDouble(getComponent().getText()));
+                return LatLon.isValidLat(JosmDecimalFormatSymbolsProvider.parseDouble(getComponent().getText()));
             } catch (NumberFormatException ex) {
+                Logging.trace(ex);
                 return false;
             }
         }
@@ -180,9 +185,10 @@ public class BoundingBoxSelectionPanel extends JPanel {
         public void validate() {
             double value = 0;
             try {
-                value = Double.parseDouble(getComponent().getText());
+                value = JosmDecimalFormatSymbolsProvider.parseDouble(getComponent().getText());
             } catch (NumberFormatException ex) {
                 feedbackInvalid(tr("The string ''{0}'' is not a valid double value.", getComponent().getText()));
+                Logging.trace(ex);
                 return;
             }
             if (!LatLon.isValidLon(value)) {
@@ -195,8 +201,9 @@ public class BoundingBoxSelectionPanel extends JPanel {
         @Override
         public boolean isValid() {
             try {
-                return LatLon.isValidLon(Double.parseDouble(getComponent().getText()));
+                return LatLon.isValidLon(JosmDecimalFormatSymbolsProvider.parseDouble(getComponent().getText()));
             } catch (NumberFormatException ex) {
+                Logging.trace(ex);
                 return false;
             }
         }

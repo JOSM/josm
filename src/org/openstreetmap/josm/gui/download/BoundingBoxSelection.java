@@ -29,6 +29,8 @@ import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateForma
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
 /**
@@ -139,7 +141,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         double[] values = new double[4];
         for (int i = 0; i < 4; i++) {
             try {
-                values[i] = Double.parseDouble(latlon[i].getText());
+                values[i] = JosmDecimalFormatSymbolsProvider.parseDouble(latlon[i].getText());
             } catch (NumberFormatException ex) {
                 return null;
             }
@@ -198,7 +200,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         protected void check() {
             double value = 0;
             try {
-                value = Double.parseDouble(tfLatValue.getText());
+                value = JosmDecimalFormatSymbolsProvider.parseDouble(tfLatValue.getText());
             } catch (NumberFormatException ex) {
                 setErrorMessage(tfLatValue, tr("The string ''{0}'' is not a valid double value.", tfLatValue.getText()));
                 return;
@@ -231,7 +233,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         protected void check() {
             double value = 0;
             try {
-                value = Double.parseDouble(tfLonValue.getText());
+                value = JosmDecimalFormatSymbolsProvider.parseDouble(tfLonValue.getText());
             } catch (NumberFormatException ex) {
                 setErrorMessage(tfLonValue, tr("The string ''{0}'' is not a valid double value.", tfLonValue.getText()));
                 return;
@@ -288,11 +290,12 @@ public class BoundingBoxSelection implements DownloadSelection {
         protected Bounds build() {
             double minlon, minlat, maxlon, maxlat;
             try {
-                minlat = Double.parseDouble(latlon[0].getText().trim());
-                minlon = Double.parseDouble(latlon[1].getText().trim());
-                maxlat = Double.parseDouble(latlon[2].getText().trim());
-                maxlon = Double.parseDouble(latlon[3].getText().trim());
+                minlat = JosmDecimalFormatSymbolsProvider.parseDouble(latlon[0].getText().trim());
+                minlon = JosmDecimalFormatSymbolsProvider.parseDouble(latlon[1].getText().trim());
+                maxlat = JosmDecimalFormatSymbolsProvider.parseDouble(latlon[2].getText().trim());
+                maxlon = JosmDecimalFormatSymbolsProvider.parseDouble(latlon[3].getText().trim());
             } catch (NumberFormatException e) {
+                Logging.trace(e);
                 return null;
             }
             if (!LatLon.isValidLon(minlon) || !LatLon.isValidLon(maxlon)

@@ -1,7 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.spi.DecimalFormatSymbolsProvider;
 import java.util.Locale;
 
@@ -26,5 +28,26 @@ public class JosmDecimalFormatSymbolsProvider extends DecimalFormatSymbolsProvid
     @Override
     public Locale[] getAvailableLocales() {
         return I18n.getAvailableTranslations();
+    }
+
+    /**
+     * Returns a new {@code double} initialized to the value represented by the specified {@code String},
+     * allowing both dot and comma decimal separators.
+     *
+     * @param  s   the string to be parsed.
+     * @return the {@code double} value represented by the string argument.
+     * @throws NullPointerException  if the string is null
+     * @throws NumberFormatException if the string does not contain a parsable {@code double}.
+     * @see    Double#parseDouble(String)
+     * @since 13050
+     */
+    public static double parseDouble(String s) throws NumberFormatException {
+        String text = s;
+        NumberFormat format = DecimalFormat.getInstance();
+        if (format instanceof DecimalFormat) {
+            char decimalSeparator = ((DecimalFormat) format).getDecimalFormatSymbols().getDecimalSeparator();
+            text = text.replace('.', decimalSeparator).replace(',', decimalSeparator);
+        }
+        return Double.parseDouble(text);
     }
 }

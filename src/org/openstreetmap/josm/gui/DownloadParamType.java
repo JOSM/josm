@@ -77,7 +77,7 @@ public enum DownloadParamType {
         /**
          * Download area specified on the command line as bounds string.
          * @param rawGps Flag to download raw GPS tracks
-         * @param s The bounds parameter
+         * @param s The bounds parameter. Coordinates must use dot decimal separator as comma is used to delimit values
          * @return the complete download task (including post-download handler), or {@code null}
          */
         private List<Future<?>> downloadFromParamBounds(final boolean rawGps, String s) {

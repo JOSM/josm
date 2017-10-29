@@ -357,7 +357,7 @@ public class LatLonDialog extends ExtendedDialog {
 
     /**
      * Parses a east/north coordinate string
-     * @param s The coordinates
+     * @param s The coordinates. Dot has to be used as decimal separator, as comma can be used to delimit values
      * @return The east/north coordinates or <code>null</code> on error.
      */
     public static EastNorth parseEastNorth(String s) {

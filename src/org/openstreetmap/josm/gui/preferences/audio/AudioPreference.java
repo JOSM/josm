@@ -133,17 +133,17 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
     @Override
     public boolean ok() {
         Config.getPref().putBoolean("audio.menuinvisible", !audioMenuVisible.isSelected());
-        Config.getPref().putBoolean("marker.traceaudio", markerAudioTraceVisible.isSelected());
-        Config.getPref().putBoolean("marker.buttonlabels", markerButtonLabels.isSelected());
-        Config.getPref().putBoolean("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints.isSelected());
-        Config.getPref().putBoolean("marker.audiofromuntimedwaypoints", audioMarkersFromUntimedWaypoints.isSelected());
-        Config.getPref().putBoolean("marker.audiofromnamedtrackpoints", audioMarkersFromNamedTrackpoints.isSelected());
-        Config.getPref().putBoolean("marker.audiofromwavtimestamps", audioMarkersFromWavTimestamps.isSelected());
-        Config.getPref().putBoolean("marker.audiofromstart", audioMarkersFromStart.isSelected());
-        Config.getPref().put("audio.forwardbackamount", audioForwardBackAmount.getText());
-        Config.getPref().put("audio.fastfwdmultiplier", audioFastForwardMultiplier.getText());
-        Config.getPref().put("audio.leadin", audioLeadIn.getText());
-        Config.getPref().put("audio.calibration", audioCalibration.getText());
+        saveBoolean("marker.traceaudio", markerAudioTraceVisible);
+        saveBoolean("marker.buttonlabels", markerButtonLabels);
+        saveBoolean("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints);
+        saveBoolean("marker.audiofromuntimedwaypoints", audioMarkersFromUntimedWaypoints);
+        saveBoolean("marker.audiofromnamedtrackpoints", audioMarkersFromNamedTrackpoints);
+        saveBoolean("marker.audiofromwavtimestamps", audioMarkersFromWavTimestamps);
+        saveBoolean("marker.audiofromstart", audioMarkersFromStart);
+        saveDouble("audio.forwardbackamount", audioForwardBackAmount);
+        saveDouble("audio.fastfwdmultiplier", audioFastForwardMultiplier);
+        saveDouble("audio.leadin", audioLeadIn);
+        saveDouble("audio.calibration", audioCalibration);
         return false;
     }
 }
