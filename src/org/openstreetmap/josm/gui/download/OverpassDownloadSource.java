@@ -123,7 +123,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
                 }
             });
 
-            this.overpassQueryList = new UserQueryList(this, this.overpassQuery, "download.overpass.query");
+            this.overpassQueryList = new UserQueryList(this, this.overpassQuery, "download.overpass.queries");
             this.overpassQueryList.setPreferredSize(new Dimension(350, 300));
 
             EditSnippetAction edit = new EditSnippetAction();

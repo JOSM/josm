@@ -3179,10 +3179,6 @@ node[historic=memorial] {
     icon-image: "presets/sightseeing/memorial.svg";
     set icon_z17;
 }
-node[historic=tomb] {
-    icon-image: "presets/misc/tomb.svg";
-    set icon_z17;
-}
 node[historic=archaeological_site] {
     icon-image: "presets/sightseeing/archaeological.svg";
     set icon_z17;
@@ -3209,6 +3205,17 @@ node[historic=wayside_shrine] {
 }
 node[historic=boundary_stone] {
     icon-image: "presets/landmark/boundary_stone.svg";
+    set icon_z17;
+}
+area[cemetery=grave] {
+    fill-color: grave#663300;
+}
+node[cemetery=grave] {
+    icon-image: "presets/misc/grave.svg";
+    set icon_z17;
+}
+node[historic=tomb] {
+    icon-image: "presets/misc/tomb.svg";
     set icon_z17;
 }
 
@@ -3304,13 +3311,6 @@ area[landuse=religious] {
 }
 area[landuse=cemetery] {
     fill-color: cemetery#b1efc8;
-}
-area[cemetery=grave] {
-    fill-color: grave#663300;
-}
-node[cemetery=grave] {
-    icon-image: "presets/misc/grave.svg";
-    set icon_z17;
 }
 area[landuse=village_green] {
     fill-color: green#b1e0c2;
