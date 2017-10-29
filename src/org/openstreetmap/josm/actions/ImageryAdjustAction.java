@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -262,11 +263,10 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             int semicolon = ostr.indexOf(';');
             if (layer != null && semicolon >= 0 && semicolon + 1 < ostr.length()) {
                 try {
-                    // here we assume that Double.parseDouble() needs '.' as a decimal separator
-                    String easting = ostr.substring(0, semicolon).trim().replace(',', '.');
-                    String northing = ostr.substring(semicolon + 1).trim().replace(',', '.');
-                    double dx = Double.parseDouble(easting);
-                    double dy = Double.parseDouble(northing);
+                    String easting = ostr.substring(0, semicolon).trim();
+                    String northing = ostr.substring(semicolon + 1).trim();
+                    double dx = JosmDecimalFormatSymbolsProvider.parseDouble(easting);
+                    double dy = JosmDecimalFormatSymbolsProvider.parseDouble(northing);
                     tempOffset.setDisplacement(new EastNorth(dx, dy));
                     layer.getDisplaySettings().setOffsetBookmark(tempOffset);
                 } catch (NumberFormatException nfe) {

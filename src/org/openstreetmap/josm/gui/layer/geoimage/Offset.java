@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -57,7 +58,7 @@ public final class Offset {
                 if (offset.startsWith("+")) {
                     offset = offset.substring(1);
                 }
-                return Offset.milliseconds(Math.round(Double.parseDouble(offset) * 1000));
+                return Offset.milliseconds(Math.round(JosmDecimalFormatSymbolsProvider.parseDouble(offset) * 1000));
             } catch (NumberFormatException nfe) {
                 throw (ParseException) new ParseException(error, 0).initCause(nfe);
             }
