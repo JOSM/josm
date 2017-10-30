@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,10 +21,13 @@
 
 package com.drew.lang;
 
-import com.drew.lang.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.StringValue;
 
 /**
  * Base class for random access data reading operations of common data types.
@@ -35,7 +38,6 @@ import java.io.UnsupportedEncodingException;
  * Concrete implementations include:
  * <ul>
  *     <li>{@link ByteArrayReader}</li>
- *     <li>{@link RandomAccessStreamReader}</li>
  * </ul>
  *
  * @author Drew Noakes https://drewnoakes.com
@@ -43,6 +45,8 @@ import java.io.UnsupportedEncodingException;
 public abstract class RandomAccessReader
 {
     private boolean _isMotorolaByteOrder = true;
+
+    public abstract int toUnshiftedOffset(int localOffset);
 
     /**
      * Gets the byte value at the specified byte <code>index</code>.
@@ -56,7 +60,7 @@ public abstract class RandomAccessReader
      * @throws BufferBoundsException if the requested byte is beyond the end of the underlying data source
      * @throws IOException if the byte is unable to be read
      */
-    protected abstract byte getByte(int index) throws IOException;
+    public abstract byte getByte(int index) throws IOException;
 
     /**
      * Returns the required number of bytes from the specified index from the underlying source.
@@ -88,11 +92,11 @@ public abstract class RandomAccessReader
     /**
      * Returns the length of the data source in bytes.
      * <p>
-     * This is a simple operation for implementations (such as {@link RandomAccessFileReader} and
+     * This is a simple operation for implementations (such as
      * {@link ByteArrayReader}) that have the entire data source available.
      * <p>
-     * Users of this method must be aware that sequentially accessed implementations such as
-     * {@link RandomAccessStreamReader} will have to read and buffer the entire data source in
+     * Users of this method must be aware that sequentially accessed implementations
+     * will have to read and buffer the entire data source in
      * order to determine the length.
      *
      * @return the length of the data source, in bytes.
@@ -206,12 +210,12 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (short) (((short)getByte(index    ) << 8 & (short)0xFF00) |
-                            ((short)getByte(index + 1)      & (short)0xFF));
+            return (short) ((getByte(index    ) << 8 & (short)0xFF00) |
+                            (getByte(index + 1)      & (short)0xFF));
         } else {
             // Intel ordering - LSB first
-            return (short) (((short)getByte(index + 1) << 8 & (short)0xFF00) |
-                            ((short)getByte(index    )      & (short)0xFF));
+            return (short) ((getByte(index + 1) << 8 & (short)0xFF00) |
+                            (getByte(index    )      & (short)0xFF));
         }
     }
 
@@ -228,14 +232,14 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return (((int)getByte(index    )) << 16 & 0xFF0000) |
-                   (((int)getByte(index + 1)) << 8  & 0xFF00) |
-                   (((int)getByte(index + 2))       & 0xFF);
+            return ((getByte(index    )) << 16 & 0xFF0000) |
+                   ((getByte(index + 1)) << 8  & 0xFF00) |
+                   ((getByte(index + 2))       & 0xFF);
         } else {
             // Intel ordering - LSB first (little endian)
-            return (((int)getByte(index + 2)) << 16 & 0xFF0000) |
-                   (((int)getByte(index + 1)) << 8  & 0xFF00) |
-                   (((int)getByte(index    ))       & 0xFF);
+            return ((getByte(index + 2)) << 16 & 0xFF0000) |
+                   ((getByte(index + 1)) << 8  & 0xFF00) |
+                   ((getByte(index    ))       & 0xFF);
         }
     }
 
@@ -255,13 +259,13 @@ public abstract class RandomAccessReader
             return (((long)getByte(index    )) << 24 & 0xFF000000L) |
                    (((long)getByte(index + 1)) << 16 & 0xFF0000L) |
                    (((long)getByte(index + 2)) << 8  & 0xFF00L) |
-                   (((long)getByte(index + 3))       & 0xFFL);
+                   ((getByte(index + 3))       & 0xFFL);
         } else {
             // Intel ordering - LSB first (little endian)
             return (((long)getByte(index + 3)) << 24 & 0xFF000000L) |
                    (((long)getByte(index + 2)) << 16 & 0xFF0000L) |
                    (((long)getByte(index + 1)) << 8  & 0xFF00L) |
-                   (((long)getByte(index    ))       & 0xFFL);
+                   ((getByte(index    ))       & 0xFFL);
         }
     }
 
@@ -311,7 +315,7 @@ public abstract class RandomAccessReader
                    ((long)getByte(index + 4) << 24 & 0xFF000000L) |
                    ((long)getByte(index + 5) << 16 & 0xFF0000L) |
                    ((long)getByte(index + 6) << 8  & 0xFF00L) |
-                   ((long)getByte(index + 7)       & 0xFFL);
+                   (getByte(index + 7)       & 0xFFL);
         } else {
             // Intel ordering - LSB first
             return ((long)getByte(index + 7) << 56 & 0xFF00000000000000L) |
@@ -321,7 +325,7 @@ public abstract class RandomAccessReader
                    ((long)getByte(index + 3) << 24 & 0xFF000000L) |
                    ((long)getByte(index + 2) << 16 & 0xFF0000L) |
                    ((long)getByte(index + 1) << 8  & 0xFF00L) |
-                   ((long)getByte(index    )       & 0xFFL);
+                   (getByte(index    )       & 0xFFL);
         }
     }
 
@@ -364,13 +368,19 @@ public abstract class RandomAccessReader
     }
 
     @NotNull
-    public String getString(int index, int bytesRequested) throws IOException
+    public StringValue getStringValue(int index, int bytesRequested, @Nullable Charset charset) throws IOException
     {
-        return new String(getBytes(index, bytesRequested));
+        return new StringValue(getBytes(index, bytesRequested), charset);
     }
 
     @NotNull
-    public String getString(int index, int bytesRequested, String charset) throws IOException
+    public String getString(int index, int bytesRequested, @NotNull Charset charset) throws IOException
+    {
+        return new String(getBytes(index, bytesRequested), charset.name());
+    }
+
+    @NotNull
+    public String getString(int index, int bytesRequested, @NotNull String charset) throws IOException
     {
         byte[] bytes = getBytes(index, bytesRequested);
         try {
@@ -391,17 +401,44 @@ public abstract class RandomAccessReader
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    public String getNullTerminatedString(int index, int maxLengthBytes) throws IOException
+    public String getNullTerminatedString(int index, int maxLengthBytes, @NotNull Charset charset) throws IOException
     {
-        // NOTE currently only really suited to single-byte character strings
+        return new String(getNullTerminatedBytes(index, maxLengthBytes), charset.name());
+    }
 
-        byte[] bytes = getBytes(index, maxLengthBytes);
+    @NotNull
+    public StringValue getNullTerminatedStringValue(int index, int maxLengthBytes, @Nullable Charset charset) throws IOException
+    {
+        byte[] bytes = getNullTerminatedBytes(index, maxLengthBytes);
+
+        return new StringValue(bytes, charset);
+    }
+
+    /**
+     * Returns the sequence of bytes punctuated by a <code>\0</code> value.
+     *
+     * @param index The index within the buffer at which to start reading the string.
+     * @param maxLengthBytes The maximum number of bytes to read. If a <code>\0</code> byte is not reached within this limit,
+     * the returned array will be <code>maxLengthBytes</code> long.
+     * @return The read byte array, excluding the null terminator.
+     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
+     */
+    @NotNull
+    public byte[] getNullTerminatedBytes(int index, int maxLengthBytes) throws IOException
+    {
+        byte[] buffer = getBytes(index, maxLengthBytes);
 
         // Count the number of non-null bytes
         int length = 0;
-        while (length < bytes.length && bytes[length] != '\0')
+        while (length < buffer.length && buffer[length] != 0)
             length++;
 
-        return new String(bytes, 0, length);
+        if (length == maxLengthBytes)
+            return buffer;
+
+        byte[] bytes = new byte[length];
+        if (length > 0)
+            System.arraycopy(buffer, 0, bytes, 0, length);
+        return bytes;
     }
 }
