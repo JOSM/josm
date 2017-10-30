@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ public class JpegSegmentData
      * @param segmentType  the type of the segment being added
      * @param segmentBytes the byte array holding data for the segment being added
      */
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void addSegment(byte segmentType, @NotNull byte[] segmentBytes)
     {
         getOrCreateSegmentList(segmentType).add(segmentBytes);
@@ -205,6 +206,7 @@ public class JpegSegmentData
      * @param segmentType identifies the required segment
      * @param occurrence  the zero-based index of the segment occurrence to remove.
      */
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void removeSegmentOccurrence(@NotNull JpegSegmentType segmentType, int occurrence)
     {
         removeSegmentOccurrence(segmentType.byteValue, occurrence);
@@ -217,6 +219,7 @@ public class JpegSegmentData
      * @param segmentType identifies the required segment
      * @param occurrence  the zero-based index of the segment occurrence to remove.
      */
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void removeSegmentOccurrence(byte segmentType, int occurrence)
     {
         final List<byte[]> segmentList = _segmentDataMap.get(segmentType);
