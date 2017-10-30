@@ -24,7 +24,6 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A panel for configuring whether JOSM shall update plugins at startup.
@@ -183,24 +182,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
                         Config.getPref().get("pluginmanager.time-based-update.policy", "ask"))).orElse(Policy.ASK))
                 .setSelected(true);
 
-        String pref = Config.getPref().get("pluginmanager.warntime", null);
-        int days = 0;
-        if (pref != null) {
-            // remove legacy preference
-            Config.getPref().put("pluginmanager.warntime", null);
-            try {
-                days = Integer.parseInt(pref.trim());
-            } catch (NumberFormatException e) {
-                // ignore - load from preference pluginmanager.time-based-update.interval
-                Logging.trace(e);
-            }
-            if (days <= 0) {
-                days = PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL;
-            }
-        }
-        if (days == 0) {
-            days = Config.getPref().getInt("pluginmanager.time-based-update.interval", PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL);
-        }
+        int days = Config.getPref().getInt("pluginmanager.time-based-update.interval", PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL);
         tfUpdateInterval.setText(Integer.toString(days));
     }
 
