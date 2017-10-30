@@ -266,22 +266,8 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         ProxyPolicy pp = Optional.ofNullable(ProxyPolicy.fromName(Config.getPref().get(DefaultProxySelector.PROXY_POLICY, null)))
                 .orElse(ProxyPolicy.NO_PROXY);
         rbProxyPolicy.get(pp).setSelected(true);
-        String value = Config.getPref().get("proxy.host", null);
-        if (value != null) {
-            // legacy support
-            tfProxyHttpHost.setText(value);
-            Config.getPref().put("proxy.host", null);
-        } else {
-            tfProxyHttpHost.setText(Config.getPref().get(DefaultProxySelector.PROXY_HTTP_HOST, ""));
-        }
-        value = Config.getPref().get("proxy.port", null);
-        if (value != null) {
-            // legacy support
-            tfProxyHttpPort.setText(value);
-            Config.getPref().put("proxy.port", null);
-        } else {
-            tfProxyHttpPort.setText(Config.getPref().get(DefaultProxySelector.PROXY_HTTP_PORT, ""));
-        }
+        tfProxyHttpHost.setText(Config.getPref().get(DefaultProxySelector.PROXY_HTTP_HOST, ""));
+        tfProxyHttpPort.setText(Config.getPref().get(DefaultProxySelector.PROXY_HTTP_PORT, ""));
         tfProxySocksHost.setText(Config.getPref().get(DefaultProxySelector.PROXY_SOCKS_HOST, ""));
         tfProxySocksPort.setText(Config.getPref().get(DefaultProxySelector.PROXY_SOCKS_PORT, ""));
 

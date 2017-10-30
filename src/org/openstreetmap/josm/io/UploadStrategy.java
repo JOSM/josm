@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Locale;
 
-import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -67,10 +66,9 @@ public enum UploadStrategy {
     /**
      * Replies the upload strategy currently configured in the preferences.
      *
-     * First checks for the preference key <pre>osm-server.upload-strategy</pre>. If not
-     * present, checks for the legacy preference key <pre>osm-server.atomic-upload</pre>.
+     * Checks for the preference key <pre>osm-server.upload-strategy</pre>.
      *
-     * If both are missing or if the preference value is illegal, {@link #DEFAULT_UPLOAD_STRATEGY}
+     * If missing or if the preference value is illegal, {@link #DEFAULT_UPLOAD_STRATEGY}
      * is replied.
      *
      * @return the upload strategy currently configured in the preferences.
@@ -78,23 +76,7 @@ public enum UploadStrategy {
     public static UploadStrategy getFromPreferences() {
         String v = Config.getPref().get("osm-server.upload-strategy", null);
         if (v == null) {
-            // legacy support. Until 12/2009 we had osm-server.atomic-upload only.
-            // If we still find "osm-server.atomic-upload" we use it and remove it.
-            // When the preferences are saved the next time, "osm-server.upload-strategy"
-            // will be inserted.
-            v = Config.getPref().get("osm-server.atomic-upload", null);
-            if (v != null) {
-                PreferencesUtils.removeFromList(Config.getPref(), "osm-server.atomic-upload", v);
-            } else {
-                v = "";
-            }
-            v = v.trim().toLowerCase(Locale.ENGLISH);
-            if ("true".equals(v))
-                return SINGLE_REQUEST_STRATEGY;
-            else if ("false".equals(v))
-                return INDIVIDUAL_OBJECTS_STRATEGY;
-            else
-                return DEFAULT_UPLOAD_STRATEGY;
+            return DEFAULT_UPLOAD_STRATEGY;
         }
         UploadStrategy strategy = fromPreference(v);
         if (strategy == null) {
