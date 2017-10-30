@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -828,16 +829,19 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 MainApplication.undoRedo.undo();
             }
         }
-        int max = Config.getPref().getInt("warn.move.maxelements", 20), limit = max;
+        Set<Node> nodes = new HashSet<>();
+        int max = Config.getPref().getInt("warn.move.maxelements", 20);
         for (OsmPrimitive osm : getLayerManager().getEditDataSet().getSelected()) {
             if (osm instanceof Way) {
-                limit -= ((Way) osm).getNodes().size();
+                nodes.addAll(((Way) osm).getNodes());
+            } else if (osm instanceof Node) {
+                nodes.add((Node) osm);
             }
-            if (--limit < 0) {
+            if (nodes.size() > max) {
                 break;
             }
         }
-        if (limit < 0) {
+        if (nodes.size() > max) {
             final ExtendedDialog ed = new ConfirmMoveDialog();
             ed.setContent(
                     /* for correct i18n of plural forms - see #9110 */
