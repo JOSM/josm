@@ -545,6 +545,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     public void actionPerformed(ActionEvent ae) {
         // Construct the list of loaded GPX tracks
         Collection<Layer> layerLst = MainApplication.getLayerManager().getLayers();
+        gpxLst.clear();
         GpxDataWrapper defaultItem = null;
         for (Layer cur : layerLst) {
             if (cur instanceof GpxLayer) {
@@ -573,6 +574,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
         cbGpx = new JosmComboBox<>(gpxLst.toArray(new GpxDataWrapper[gpxLst.size()]));
         if (defaultItem != null) {
             cbGpx.setSelectedItem(defaultItem);
+        } else {
+            // select first GPX track associated to a file
+            for (GpxDataWrapper item : gpxLst) {
+                if (item.file != null) {
+                    cbGpx.setSelectedItem(item);
+                    break;
+                }
+            }
         }
         cbGpx.addActionListener(statusBarUpdaterWithRepaint);
         panelCb.add(cbGpx);
