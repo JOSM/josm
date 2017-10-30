@@ -363,6 +363,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             elevation = tmp.elevation;
             gpsTime = tmp.gpsTime;
             exifImgDir = tmp.exifImgDir;
+            isNewGpsData = tmp.isNewGpsData;
             tmp = null;
         }
     }
