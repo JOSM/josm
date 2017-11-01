@@ -75,7 +75,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         DELETE,
         /** exiting JOSM */
         EXIT,
-        /* restarting JOSM */
+        /** restarting JOSM */
         RESTART
     }
 
