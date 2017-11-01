@@ -66,7 +66,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
     }
 
     TaggingPresetSearchPrimitiveDialog() {
-        super(Main.parent, tr("Presets"), tr("Search"), tr("Cancel"));
+        super(Main.parent, tr("Search for objects by preset"), tr("Search"), tr("Cancel"));
         selector = new TaggingPresetSelector(false, false);
         setContent(selector, false);
         selector.setDblClickListener(e -> buttonAction(0, null));
