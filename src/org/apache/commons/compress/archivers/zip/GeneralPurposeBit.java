@@ -20,7 +20,7 @@ package org.apache.commons.compress.archivers.zip;
 /**
  * Parser/encoder for the "general purpose bit" field in ZIP's local
  * file and central directory headers.
- * 
+ *
  * @since 1.1
  * @NotThreadSafe
  */
@@ -196,7 +196,7 @@ public final class GeneralPurposeBit implements Cloneable {
 
     /**
      * Parses the supported flags from the given archive data.
-     * 
+     *
      * @param data local file header or a central directory entry.
      * @param offset offset at which the general purpose bit starts
      * @return parsed flags

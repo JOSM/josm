@@ -35,7 +35,7 @@ public final class IOUtils {
 
     private static final int COPY_BUF_SIZE = 8024;
     private static final int SKIP_BUF_SIZE = 4096;
-    
+
     // This buffer does not need to be synchronised because it is write only; the contents are ignored
     // Does not affect Immutability
     private static final byte[] SKIP_BUF = new byte[SKIP_BUF_SIZE];
@@ -83,7 +83,7 @@ public final class IOUtils {
         }
         return count;
     }
-    
+
     /**
      * Skips the given number of bytes by repeatedly invoking skip on
      * the given input stream if necessary.
@@ -109,7 +109,7 @@ public final class IOUtils {
             }
             numToSkip -= skipped;
         }
-            
+
         while (numToSkip > 0) {
             final int read = readFully(input, SKIP_BUF, 0,
                                  (int) Math.min(numToSkip, SKIP_BUF_SIZE));

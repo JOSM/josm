@@ -21,7 +21,7 @@ package org.apache.commons.compress.archivers.zip;
 
 /**
  * Circular byte buffer.
- * 
+ *
  * @author Emmanuel Bourg
  * @since 1.7
  */
@@ -29,7 +29,7 @@ class CircularBuffer {
 
     /** Size of the buffer */
     private final int size;
-    
+
     /** The buffer */
     private final byte[] buffer;
 
@@ -73,7 +73,7 @@ class CircularBuffer {
 
     /**
      * Copy a previous interval in the buffer to the current position.
-     * 
+     *
      * @param distance the distance from the current write position
      * @param length   the number of bytes to copy
      */

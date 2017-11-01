@@ -35,7 +35,7 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
     private static final int MAGIC_2b = 0x5e;
     private static final int MAGIC_2c = 0x9c;
     private static final int MAGIC_2d = 0xda;
-    
+
     private final InputStream in;
     private final Inflater inflater;
 
@@ -62,7 +62,7 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
         inflater = new Inflater(!parameters.withZlibHeader());
         in = new InflaterInputStream(inputStream, inflater);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int read() throws IOException {
@@ -100,18 +100,18 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
             inflater.end();
         }
     }
-    
+
     /**
      * Checks if the signature matches what is expected for a zlib / deflated file
      *  with the zlib header.
-     * 
+     *
      * @param signature
      *            the bytes to check
      * @param length
      *            the number of bytes to check
      * @return true, if this stream is zlib / deflate compressed with a header
      * stream, false otherwise
-     * 
+     *
      * @since 1.10
      */
     public static boolean matches(final byte[] signature, final int length) {

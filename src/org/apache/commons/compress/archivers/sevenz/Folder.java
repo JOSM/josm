@@ -70,7 +70,7 @@ class Folder {
         }
         return -1;
     }
-    
+
     int findBindPairForOutStream(final int index) {
         for (int i = 0; i < bindPairs.length; i++) {
             if (bindPairs[i].outIndex == index) {
@@ -79,7 +79,7 @@ class Folder {
         }
         return -1;
     }
-    
+
     long getUnpackSize() {
         if (totalOutputStreams == 0) {
             return 0;

@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  * Creates Archive {@link ArchiveInputStream}s and {@link ArchiveOutputStream}s.
- * 
+ *
  * @since 1.13
  */
 public interface ArchiveStreamProvider {
@@ -33,7 +33,7 @@ public interface ArchiveStreamProvider {
     /**
      * Creates an archive input stream from an archiver name and an input
      * stream.
-     * 
+     *
      * @param name
      *            the archive name, i.e.
      *            {@value org.apache.commons.compress.archivers.ArchiveStreamFactory#AR},
@@ -63,7 +63,7 @@ public interface ArchiveStreamProvider {
     /**
      * Creates an archive output stream from an archiver name and an output
      * stream.
-     * 
+     *
      * @param name
      *            the archive name, i.e.
      *            {@value org.apache.commons.compress.archivers.ArchiveStreamFactory#AR},
@@ -89,14 +89,14 @@ public interface ArchiveStreamProvider {
 
     /**
      * Gets all the input stream archive names for this provider
-     * 
+     *
      * @return all the input archive names for this provider
      */
     Set<String> getInputStreamArchiveNames();
 
     /**
      * Gets all the output stream archive names for this provider
-     * 
+     *
      * @return all the output archive names for this provider
      */
     Set<String> getOutputStreamArchiveNames();

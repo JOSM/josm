@@ -127,7 +127,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @param recordSize the record size to use
      */
     public TarArchiveInputStream(final InputStream is, final int blockSize, final int recordSize) {
-        this(is, blockSize, recordSize, null);      
+        this(is, blockSize, recordSize, null);
     }
 
     /**
@@ -189,7 +189,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
         return (int) (entrySize - entryOffset);
     }
 
-    
+
     /**
      * Skips over and discards <code>n</code> bytes of data from this input
      * stream. The <code>skip</code> method may, for a variety of reasons, end
@@ -198,8 +198,8 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * or end of entry before <code>n</code> bytes have been skipped; are only
      * two possibilities. The actual number of bytes skipped is returned. If
      * <code>n</code> is negative, no bytes are skipped.
-     * 
-     * 
+     *
+     *
      * @param n
      *            the number of bytes to be skipped.
      * @return the actual number of bytes skipped.
@@ -213,7 +213,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
         }
 
         final long available = entrySize - entryOffset;
-        final long skipped = is.skip(Math.min(n, available)); 
+        final long skipped = is.skip(Math.min(n, available));
         count(skipped);
         entryOffset += skipped;
         return skipped;
@@ -332,7 +332,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
 
         return currEntry;
     }
-    
+
     /**
      * The last record block should be written at the full size, so skip any
      * additional space used to fill a record after an entry
@@ -414,7 +414,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
     protected boolean isEOFRecord(final byte[] record) {
         return record == null || ArchiveUtils.isArrayZero(record, recordSize);
     }
-    
+
     /**
      * Read a record from the input stream and return the data.
      *
@@ -551,7 +551,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
     public ArchiveEntry getNextEntry() throws IOException {
         return getNextTarEntry();
     }
-    
+
     /**
      * Tries to read the next record rewinding the stream if it is not a EOF record.
      *
@@ -604,9 +604,9 @@ public class TarArchiveInputStream extends ArchiveInputStream {
         }
 
         numToRead = Math.min(numToRead, available());
-        
+
         totalRead = is.read(buf, offset, numToRead);
-        
+
         if (totalRead == -1) {
             if (numToRead > 0) {
                 throw new IOException("Truncated TAR archive");
@@ -636,7 +636,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
 
     /**
      * Get the current TAR Archive Entry that this input stream is processing
-     * 
+     *
      * @return The current Archive Entry
      */
     public TarArchiveEntry getCurrentEntry() {

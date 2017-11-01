@@ -358,7 +358,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      */
     private void processZip64Extra(final ZipLong size, final ZipLong cSize) {
         final Zip64ExtendedInformationExtraField z64 =
-            (Zip64ExtendedInformationExtraField) 
+            (Zip64ExtendedInformationExtraField)
             current.entry.getExtraField(Zip64ExtendedInformationExtraField.HEADER_ID);
         current.usesZip64 = z64 != null;
         if (!current.hasDataDescriptor) {
@@ -410,7 +410,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         if (offset > buffer.length || length < 0 || offset < 0 || buffer.length - offset < length) {
             throw new ArrayIndexOutOfBoundsException();
         }
-        
+
         ZipUtil.checkRequestedFeatures(current.entry);
         if (!supportsDataDescriptorFor(current.entry)) {
             throw new UnsupportedZipFeatureException(UnsupportedZipFeatureException.Feature.DATA_DESCRIPTOR,
@@ -430,11 +430,11 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
             throw new UnsupportedZipFeatureException(ZipMethod.getMethodByCode(current.entry.getMethod()),
                     current.entry);
         }
-        
+
         if (read >= 0) {
             current.crc.update(buffer, offset, read);
         }
-        
+
         return read;
     }
 
@@ -1069,7 +1069,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
 
         /** the number of bytes already returned */
         private long pos = 0;
-    
+
         /**
          * Creates a new <code>BoundedInputStream</code> that wraps the given input
          * stream and limits it to a certain size.
@@ -1124,7 +1124,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
             pos += skippedBytes;
             return skippedBytes;
         }
-    
+
         @Override
         public int available() throws IOException {
             if (max >= 0 && pos >= max) {

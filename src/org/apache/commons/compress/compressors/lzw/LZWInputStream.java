@@ -59,7 +59,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
     public void close() throws IOException {
         in.close();
     }
-    
+
     @Override
     public int read() throws IOException {
         final int ret = read(oneByte);
@@ -68,7 +68,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
         }
         return 0xff & oneByte[0];
     }
-    
+
     @Override
     public int read(final byte[] b, final int off, final int len) throws IOException {
         int bytesRead = readFromStack(b, off, len);
@@ -164,7 +164,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
         }
         return (int) in.readBits(codeSize);
     }
-    
+
     /**
      * Adds a new entry if the maximum table size hasn't been exceeded
      * and returns the new index.

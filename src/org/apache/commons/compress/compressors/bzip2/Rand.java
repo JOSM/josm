@@ -81,7 +81,7 @@ final class Rand {
 
     /**
      * Return the random number at a specific index.
-     * 
+     *
      * @param i the index
      * @return the random number
      */

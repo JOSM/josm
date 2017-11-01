@@ -29,7 +29,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
  * ChangeSet collects and performs changes to an archive.
  * Putting delete changes in this ChangeSet from multiple threads can
  * cause conflicts.
- * 
+ *
  * @NotThreadSafe
  */
 public final class ChangeSet {
@@ -37,8 +37,8 @@ public final class ChangeSet {
     private final Set<Change> changes = new LinkedHashSet<>();
 
     /**
-     * Deletes the file with the filename from the archive. 
-     * 
+     * Deletes the file with the filename from the archive.
+     *
      * @param filename
      *            the filename of the file to delete
      */
@@ -47,8 +47,8 @@ public final class ChangeSet {
     }
 
     /**
-     * Deletes the directory tree from the archive. 
-     * 
+     * Deletes the directory tree from the archive.
+     *
      * @param dirName
      *            the name of the directory tree to delete
      */
@@ -58,7 +58,7 @@ public final class ChangeSet {
 
     /**
      * Adds a new archive entry to the archive.
-     * 
+     *
      * @param pEntry
      *            the entry to add
      * @param pInput
@@ -72,7 +72,7 @@ public final class ChangeSet {
      * Adds a new archive entry to the archive.
      * If replace is set to true, this change will replace all other additions
      * done in this ChangeSet and all existing entries in the original stream.
-     * 
+     *
      * @param pEntry
      *            the entry to add
      * @param pInput
@@ -86,7 +86,7 @@ public final class ChangeSet {
 
     /**
      * Adds an addition change.
-     * 
+     *
      * @param pChange
      *            the change which should result in an addition
      */
@@ -120,7 +120,7 @@ public final class ChangeSet {
 
     /**
      * Adds an delete change.
-     * 
+     *
      * @param pChange
      *            the change which should result in a deletion
      */

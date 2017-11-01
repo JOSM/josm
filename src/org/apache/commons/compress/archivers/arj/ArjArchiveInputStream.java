@@ -47,7 +47,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
     private final MainHeader mainHeader;
     private LocalFileHeader currentLocalFileHeader = null;
     private InputStream currentInputStream = null;
-    
+
     /**
      * Constructs the ArjInputStream, taking ownership of the inputStream that is passed in.
      * @param inputStream the underlying stream, whose ownership is taken
@@ -82,7 +82,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
             throws ArchiveException {
         this(inputStream, "CP437");
     }
-    
+
     @Override
     public void close() throws IOException {
         in.close();
@@ -105,7 +105,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         count(4);
         return Integer.reverseBytes(value);
     }
-    
+
     private String readString(final DataInputStream dataIn) throws IOException {
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int nextByte;
@@ -118,13 +118,13 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         // intentionally using the default encoding as that's the contract for a null charsetName
         return new String(buffer.toByteArray());
     }
-    
+
     private void readFully(final DataInputStream dataIn, final byte[] b)
         throws IOException {
         dataIn.readFully(b);
         count(b.length);
     }
-    
+
     private byte[] readHeader() throws IOException {
         boolean found = false;
         byte[] basicHeaderBytes = null;
@@ -153,7 +153,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         } while (!found);
         return basicHeaderBytes;
     }
-    
+
     private MainHeader readMainHeader() throws IOException {
         final byte[] basicHeaderBytes = readHeader();
         if (basicHeaderBytes == null) {
@@ -161,13 +161,13 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         }
         final DataInputStream basicHeader = new DataInputStream(
                 new ByteArrayInputStream(basicHeaderBytes));
-        
+
         final int firstHeaderSize = basicHeader.readUnsignedByte();
         final byte[] firstHeaderBytes = new byte[firstHeaderSize - 1];
         basicHeader.readFully(firstHeaderBytes);
         final DataInputStream firstHeader = new DataInputStream(
                 new ByteArrayInputStream(firstHeaderBytes));
-        
+
         final MainHeader hdr = new MainHeader();
         hdr.archiverVersionNumber = firstHeader.readUnsignedByte();
         hdr.minVersionToExtract = firstHeader.readUnsignedByte();
@@ -185,7 +185,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
         pushedBackBytes(20); // count has already counted them via readFully
         hdr.encryptionVersion = firstHeader.readUnsignedByte();
         hdr.lastChapter = firstHeader.readUnsignedByte();
-        
+
         if (firstHeaderSize >= 33) {
             hdr.arjProtectionFactor = firstHeader.readUnsignedByte();
             hdr.arjFlags2 = firstHeader.readUnsignedByte();
@@ -195,7 +195,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
 
         hdr.name = readString(basicHeader);
         hdr.comment = readString(basicHeader);
-        
+
         final  int extendedHeaderSize = read16(in);
         if (extendedHeaderSize > 0) {
             hdr.extendedHeaderBytes = new byte[extendedHeaderSize];
@@ -207,10 +207,10 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
                 throw new IOException("Extended header CRC32 verification failure");
             }
         }
-        
+
         return hdr;
     }
-    
+
     private LocalFileHeader readLocalFileHeader() throws IOException {
         final byte[] basicHeaderBytes = readHeader();
         if (basicHeaderBytes == null) {
@@ -265,7 +265,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
             }
         }
     }
-    
+
     private void readExtraData(final int firstHeaderSize, final DataInputStream firstHeader,
                                final LocalFileHeader localFileHeader) throws IOException {
         if (firstHeaderSize >= 33) {
@@ -294,7 +294,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
                 (0xff & signature[0]) == ARJ_MAGIC_1 &&
                 (0xff & signature[1]) == ARJ_MAGIC_2;
     }
-    
+
     /**
      * Gets the archive's recorded name.
      * @return the archive's name
@@ -302,7 +302,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
     public String getArchiveName() {
         return mainHeader.name;
     }
-    
+
     /**
      * Gets the archive's comment.
      * @return the archive's comment
@@ -310,7 +310,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
     public String getArchiveComment() {
         return mainHeader.comment;
     }
-    
+
     @Override
     public ArjArchiveEntry getNextEntry() throws IOException {
         if (currentInputStream != null) {
@@ -320,7 +320,7 @@ public class ArjArchiveInputStream extends ArchiveInputStream {
             currentLocalFileHeader = null;
             currentInputStream = null;
         }
-        
+
         currentLocalFileHeader = readLocalFileHeader();
         if (currentLocalFileHeader != null) {
             currentInputStream = new BoundedInputStream(in, currentLocalFileHeader.compressedSize);

@@ -59,10 +59,10 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
 
     /**
      * Constructor using the default buffer size of 32k.
-     * 
+     *
      * @param is
      *            An InputStream to read compressed data from
-     * 
+     *
      * @throws IOException if reading fails
      */
     public SnappyCompressorInputStream(final InputStream is) throws IOException {
@@ -71,12 +71,12 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
 
     /**
      * Constructor using a configurable buffer size.
-     * 
+     *
      * @param is
      *            An InputStream to read compressed data from
      * @param blockSize
      *            The block size used in compression
-     * 
+     *
      * @throws IOException if reading fails
      */
     public SnappyCompressorInputStream(final InputStream is, final int blockSize)
@@ -249,9 +249,9 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
      * are more bytes to be read. In other words, an uncompressed length of 64
      * would be stored as 0x40, and an uncompressed length of 2097150 (0x1FFFFE)
      * would be stored as 0xFE 0xFF 0x7F.
-     * 
+     *
      * @return The size of the uncompressed data
-     * 
+     *
      * @throws IOException
      *             Could not read a byte
      */
@@ -272,7 +272,7 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
 
     /**
      * Get the uncompressed size of the stream
-     * 
+     *
      * @return the uncompressed size
      */
     @Override

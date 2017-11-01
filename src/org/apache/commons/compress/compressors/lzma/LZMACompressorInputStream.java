@@ -113,13 +113,13 @@ public class LZMACompressorInputStream extends CompressorInputStream {
 
     /**
      * Checks if the signature matches what is expected for an lzma file.
-     * 
+     *
      * @param signature
      *            the bytes to check
      * @param length
      *            the number of bytes to check
      * @return true, if this stream is an lzma  compressed stream, false otherwise
-     * 
+     *
      * @since 1.10
      */
     public static boolean matches(final byte[] signature, final int length) {

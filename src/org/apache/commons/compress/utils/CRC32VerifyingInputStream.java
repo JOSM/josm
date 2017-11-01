@@ -27,7 +27,7 @@ import java.util.zip.CRC32;
  * @since 1.6
  */
 public class CRC32VerifyingInputStream extends ChecksumVerifyingInputStream {
-    
+
     /**
      * @param in the stream to wrap
      * @param size the of the stream's content

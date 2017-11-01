@@ -29,9 +29,9 @@ import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * Implements the "ar" archive format as an input stream.
- * 
+ *
  * @NotThreadSafe
- * 
+ *
  */
 public class ArArchiveInputStream extends ArchiveInputStream {
 
@@ -63,7 +63,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
 
     /**
      * Constructs an Ar input stream with the referenced stream
-     * 
+     *
      * @param pInput
      *            the ar input stream
      */
@@ -74,7 +74,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
 
     /**
      * Returns the next AR entry in this stream.
-     * 
+     *
      * @return the next AR entry.
      * @throws IOException
      *             if the entry could not be read
@@ -167,7 +167,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
 
     /**
      * Get an extended name from the GNU extended name buffer.
-     * 
+     *
      * @param offset pointer to entry within the buffer
      * @return the extended file name; without trailing "/" if present.
      * @throws IOException if name not found or buffer not set up
@@ -213,7 +213,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.apache.commons.compress.archivers.ArchiveInputStream#getNextEntry()
      */
@@ -224,7 +224,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.io.InputStream#close()
      */
     @Override
@@ -238,7 +238,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.io.InputStream#read(byte[], int, int)
      */
     @Override
@@ -261,7 +261,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
     /**
      * Checks if the signature matches ASCII "!&lt;arch&gt;" followed by a single LF
      * control character
-     * 
+     *
      * @param signature
      *            the bytes to check
      * @param length
@@ -366,7 +366,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
      * <p>A header references an extended filename by storing a "/"
      * followed by a decimal offset to the start of the filename in
      * the extended filename data section.</p>
-     * 
+     *
      * <p>The format of the "//" file itself is simply a list of the
      * long filenames, each separated by one or more LF
      * characters. Note that the decimal offsets are number of

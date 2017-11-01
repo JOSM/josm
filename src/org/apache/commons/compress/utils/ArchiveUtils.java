@@ -13,7 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 
 package org.apache.commons.compress.utils;
@@ -42,7 +42,7 @@ public class ArchiveUtils {
      * -    2000 main.c
      * d     100 testfiles
      * </pre>
-     * 
+     *
      * @param entry the entry
      * @return the representation of the entry
      */
@@ -62,7 +62,7 @@ public class ArchiveUtils {
 
     /**
      * Check if buffer contents matches Ascii String.
-     * 
+     *
      * @param expected expected string
      * @param buffer the buffer
      * @param offset offset to read from
@@ -83,7 +83,7 @@ public class ArchiveUtils {
 
     /**
      * Check if buffer contents matches Ascii String.
-     * 
+     *
      * @param expected the expected strin
      * @param buffer the buffer
      * @return {@code true} if buffer is the same as the expected string
@@ -95,7 +95,7 @@ public class ArchiveUtils {
     /**
      * Convert a string to Ascii bytes.
      * Used for comparing "magic" strings which need to be independent of the default Locale.
-     * 
+     *
      * @param inputString string to convert
      * @return the bytes
      */
@@ -110,7 +110,7 @@ public class ArchiveUtils {
 
     /**
      * Convert an input byte array to a String using the ASCII character set.
-     * 
+     *
      * @param inputBytes bytes to convert
      * @return the bytes, interpreted as an Ascii string
      */
@@ -125,7 +125,7 @@ public class ArchiveUtils {
 
     /**
      * Convert an input byte array to a String using the ASCII character set.
-     * 
+     *
      * @param inputBytes input byte array
      * @param offset offset within array
      * @param length length of array
@@ -142,7 +142,7 @@ public class ArchiveUtils {
 
     /**
      * Compare byte buffers, optionally ignoring trailing nulls
-     * 
+     *
      * @param buffer1 first buffer
      * @param offset1 first offset
      * @param length1 first length
@@ -186,7 +186,7 @@ public class ArchiveUtils {
 
     /**
      * Compare byte buffers
-     * 
+     *
      * @param buffer1 the first buffer
      * @param offset1 the first offset
      * @param length1 the first length
@@ -203,7 +203,7 @@ public class ArchiveUtils {
 
     /**
      * Compare byte buffers
-     * 
+     *
      * @param buffer1 the first buffer
      * @param buffer2 the second buffer
      * @return {@code true} if buffer1 and buffer2 have same contents
@@ -214,9 +214,9 @@ public class ArchiveUtils {
 
     /**
      * Compare byte buffers, optionally ignoring trailing nulls
-     * 
+     *
      * @param buffer1 the first buffer
-     * @param buffer2 the second buffer 
+     * @param buffer2 the second buffer
      * @param ignoreTrailingNulls whether to ignore tariling nulls
      * @return {@code true} if buffer1 and buffer2 have same contents
      */
@@ -226,7 +226,7 @@ public class ArchiveUtils {
 
     /**
      * Compare byte buffers, ignoring trailing nulls
-     * 
+     *
      * @param buffer1 the first buffer
      * @param offset1 the first offset
      * @param length1 the first length
@@ -240,10 +240,10 @@ public class ArchiveUtils {
             final byte[] buffer2, final int offset2, final int length2){
         return isEqual(buffer1, offset1, length1, buffer2, offset2, length2, true);
     }
-    
+
     /**
      * Returns true if the first N bytes of an array are all zero
-     * 
+     *
      * @param a
      *            The array to check
      * @param size

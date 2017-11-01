@@ -20,9 +20,9 @@ package org.apache.commons.compress.archivers.cpio;
 
 /**
  * All constants needed by CPIO.
- * 
- * based on code from the jRPM project (jrpm.sourceforge.net) 
- * 
+ *
+ * based on code from the jRPM project (jrpm.sourceforge.net)
+ *
  */
 public interface CpioConstants {
     /** magic number of a cpio entry in the new format */
@@ -136,7 +136,7 @@ public interface CpioConstants {
 
     /**
      * The default block size.
-     * 
+     *
      * @since 1.1
      */
     int BLOCK_SIZE = 512;

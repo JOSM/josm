@@ -37,7 +37,7 @@ import org.apache.commons.compress.utils.IOUtils;
  * This class is thread safe and can be used multiple times.
  * It operates on a copy of the ChangeSet. If the ChangeSet changes,
  * a new Performer must be created.
- * 
+ *
  * @ThreadSafe
  * @Immutable
  */
@@ -55,10 +55,10 @@ public class ChangeSetPerformer {
     /**
      * Performs all changes collected in this ChangeSet on the input stream and
      * streams the result to the output stream. Perform may be called more than once.
-     * 
+     *
      * This method finishes the stream, no other entries should be added
      * after that.
-     * 
+     *
      * @param in
      *            the InputStream to perform the changes on
      * @param out
@@ -75,10 +75,10 @@ public class ChangeSetPerformer {
     /**
      * Performs all changes collected in this ChangeSet on the ZipFile and
      * streams the result to the output stream. Perform may be called more than once.
-     * 
+     *
      * This method finishes the stream, no other entries should be added
      * after that.
-     * 
+     *
      * @param in
      *            the ZipFile to perform the changes on
      * @param out
@@ -96,10 +96,10 @@ public class ChangeSetPerformer {
     /**
      * Performs all changes collected in this ChangeSet on the input entries and
      * streams the result to the output stream.
-     * 
+     *
      * This method finishes the stream, no other entries should be added
      * after that.
-     * 
+     *
      * @param entryIterator
      *            the entries to perform the changes on
      * @param out
@@ -163,8 +163,8 @@ public class ChangeSetPerformer {
         for (final Iterator<Change> it = workingSet.iterator(); it.hasNext();) {
             final Change change = it.next();
 
-            if (change.type() == Change.TYPE_ADD && 
-                !change.isReplaceMode() && 
+            if (change.type() == Change.TYPE_ADD &&
+                !change.isReplaceMode() &&
                 !results.hasBeenAdded(change.getEntry().getName())) {
                 copyStream(change.getInput(), out, change.getEntry());
                 it.remove();
@@ -179,7 +179,7 @@ public class ChangeSetPerformer {
      * Checks if an ArchiveEntry is deleted later in the ChangeSet. This is
      * necessary if an file is added with this ChangeSet, but later became
      * deleted in the same set.
-     * 
+     *
      * @param entry
      *            the entry to check
      * @return true, if this entry has an deletion change later, false otherwise
@@ -205,7 +205,7 @@ public class ChangeSetPerformer {
 
     /**
      * Copies the ArchiveEntry to the Output stream
-     * 
+     *
      * @param in
      *            the stream to read the data from
      * @param out

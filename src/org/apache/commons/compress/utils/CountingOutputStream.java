@@ -52,7 +52,7 @@ public class CountingOutputStream extends FilterOutputStream {
     /**
      * Increments the counter of already written bytes.
      * Doesn't increment if the EOF has been hit (written == -1)
-     * 
+     *
      * @param written the number of bytes written
      */
     protected void count(final long written) {

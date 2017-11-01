@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 /**
  * Binary tree of positive values.
- * 
+ *
  * @author Emmanuel Bourg
  * @since 1.7
  */
@@ -34,11 +34,11 @@ class BinaryTree {
 
     /** Value in the array indicating an undefined node */
     private static final int UNDEFINED = -1;
-    
+
     /** Value in the array indicating a non leaf node */
     private static final int NODE = -2;
 
-    /** 
+    /**
      * The array representing the binary tree. The root is at index 0,
      * the left children are at 2*i+1 and the right children at 2*i+2.
      */
@@ -51,7 +51,7 @@ class BinaryTree {
 
     /**
      * Adds a leaf to the tree.
-     * 
+     *
      * @param node   the index of the node where the path is appended
      * @param path   the path to the leaf (bits are parsed from the right to the left)
      * @param depth  the number of nodes in the path
@@ -68,7 +68,7 @@ class BinaryTree {
         } else {
             // mark the current node as a non leaf node
             tree[node] = NODE;
-            
+
             // move down the path recursively
             final int nextChild = 2 * node + 1 + (path & 1);
             addLeaf(nextChild, path >>> 1, depth - 1, value);
@@ -77,7 +77,7 @@ class BinaryTree {
 
     /**
      * Reads a value from the specified bit stream.
-     * 
+     *
      * @param stream
      * @return the value decoded, or -1 if the end of the stream is reached
      */
@@ -102,7 +102,7 @@ class BinaryTree {
             }
         }
     }
-    
+
 
     /**
      * Decodes the packed binary tree from the specified stream.
@@ -119,7 +119,7 @@ class BinaryTree {
 
         /** The maximum bit length for a value (16 or lower) */
         int maxLength = 0;
-        
+
         final int[] originalBitLengths = new int[totalNumberOfValues];
         int pos = 0;
         for (final byte b : encodedTree) {
@@ -130,7 +130,7 @@ class BinaryTree {
             for (int j = 0; j < numberOfValues; j++) {
                 originalBitLengths[pos++] = bitLength;
             }
-            
+
             maxLength = Math.max(maxLength, bitLength);
         }
 
@@ -139,7 +139,7 @@ class BinaryTree {
         for (int k = 0; k < permutation.length; k++) {
             permutation[k] = k;
         }
-        
+
         int c = 0;
         final int[] sortedBitLengths = new int[originalBitLengths.length];
         for (int k = 0; k < originalBitLengths.length; k++) {
@@ -149,10 +149,10 @@ class BinaryTree {
                 if (originalBitLengths[l] == k) {
                     // put the value at the current position in the sorted array...
                     sortedBitLengths[c] = k;
-                    
+
                     // ...and memorize the permutation
-                    permutation[c] = l; 
-                    
+                    permutation[c] = l;
+
                     c++;
                 }
             }
@@ -173,10 +173,10 @@ class BinaryTree {
             }
             codes[permutation[i]] = code;
         }
-        
+
         // build the tree
         final BinaryTree tree = new BinaryTree(maxLength);
-        
+
         for (int k = 0; k < codes.length; k++) {
             final int bitLength = originalBitLengths[k];
             if (bitLength > 0) {

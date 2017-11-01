@@ -20,18 +20,18 @@ package org.apache.commons.compress.archivers;
 
 /**
  * Exception thrown by ArchiveStreamFactory if a format is requested/detected that doesn't support streaming.
- * 
+ *
  * @since 1.8
  */
 public class StreamingNotSupportedException extends ArchiveException {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private final String format;
 
     /**
      * Creates a new StreamingNotSupportedException.
-     * 
+     *
      * @param format the format that has been requested/detected.
      */
     public StreamingNotSupportedException(final String format) {
@@ -41,11 +41,11 @@ public class StreamingNotSupportedException extends ArchiveException {
 
     /**
      * Returns the format that has been requested/detected.
-     * 
+     *
      * @return the format that has been requested/detected.
      */
     public String getFormat() {
         return format;
     }
-    
+
 }

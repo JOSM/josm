@@ -344,7 +344,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     /**
      * Constructs a new {@code BZip2CompressorOutputStream} with a blocksize of 900k.
      *
-     * @param out 
+     * @param out
      *            the destination stream.
      *
      * @throws IOException
@@ -516,7 +516,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
     /**
      * Writes magic bytes like BZ on the first position of the stream
-     * and bytes indiciating the file-format, which is 
+     * and bytes indiciating the file-format, which is
      * huffmanised, followed by a digit indicating blockSize100k.
      * @throws IOException if the magic bytes could not been written
      */

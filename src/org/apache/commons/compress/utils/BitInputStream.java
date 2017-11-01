@@ -44,7 +44,7 @@ public class BitInputStream implements Closeable {
     private int bitsCachedSize = 0;
 
     /**
-     * Constructor taking an InputStream and its bit arrangement. 
+     * Constructor taking an InputStream and its bit arrangement.
      * @param in the InputStream
      * @param byteOrder the bit arrangement across byte boundaries,
      *      either BIG_ENDIAN (aaaaabbb bb000000) or LITTLE_ENDIAN (bbbaaaaa 000000bb)
@@ -67,7 +67,7 @@ public class BitInputStream implements Closeable {
         bitsCached = 0;
         bitsCachedSize = 0;
     }
-    
+
     /**
      * Returns at most 63 bits read from the underlying stream.
      *

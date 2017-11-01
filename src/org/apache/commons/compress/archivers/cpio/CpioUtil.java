@@ -20,7 +20,7 @@ package org.apache.commons.compress.archivers.cpio;
 
 /**
  * Package private utility class for Cpio
- * 
+ *
  * @Immutable
  */
 class CpioUtil {
@@ -35,7 +35,7 @@ class CpioUtil {
     /**
      * Converts a byte array to a long. Halfwords can be swapped by setting
      * swapHalfWord=true.
-     * 
+     *
      * @param number
      *            An array of bytes containing a number
      * @param swapHalfWord
@@ -71,12 +71,12 @@ class CpioUtil {
     }
 
     /**
-     * Converts a long number to a byte array 
+     * Converts a long number to a byte array
      * Halfwords can be swapped by setting swapHalfWord=true.
-     * 
-     * @param number 
+     *
+     * @param number
      *            the input long number to be converted
-     * 
+     *
      * @param length
      *            The length of the returned array
      * @param swapHalfWord

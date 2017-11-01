@@ -28,9 +28,9 @@ import java.io.InputStream;
  * method.
  * <p>
  * The algorithm is described in the ZIP File Format Specification.
- * 
+ *
  * @see <a href="http://www.pkware.com/documents/casestudies/APPNOTE.TXT">ZIP File Format Specification</a>
- * 
+ *
  * @author Emmanuel Bourg
  * @since 1.7
  */
@@ -38,7 +38,7 @@ class ExplodingInputStream extends InputStream {
 
     /** The underlying stream containing the compressed data */
     private final InputStream in;
-    
+
     /** The stream of bits read from the input stream */
     private BitStream bits;
 
@@ -85,7 +85,7 @@ class ExplodingInputStream extends InputStream {
 
     /**
      * Reads the encoded binary trees and prepares the bit stream.
-     * 
+     *
      * @throws IOException
      */
     private void init() throws IOException {
@@ -96,7 +96,7 @@ class ExplodingInputStream extends InputStream {
 
             lengthTree = BinaryTree.decode(in, 64);
             distanceTree = BinaryTree.decode(in, 64);
-            
+
             bits = new BitStream(in);
         }
     }
@@ -116,7 +116,7 @@ class ExplodingInputStream extends InputStream {
      */
     private void fillBuffer() throws IOException {
         init();
-        
+
         final int bit = bits.nextBit();
         if (bit == 1) {
             // literal value
@@ -131,7 +131,7 @@ class ExplodingInputStream extends InputStream {
                 // end of stream reached, nothing left to decode
                 return;
             }
-            
+
             buffer.put(literal);
 
         } else if (bit == 0) {
@@ -144,7 +144,7 @@ class ExplodingInputStream extends InputStream {
                 return;
             }
             final int distance = distanceHigh << distanceLowSize | distanceLow;
-            
+
             int length = lengthTree.read(bits);
             if (length == 63) {
                 length += bits.nextBits(8);

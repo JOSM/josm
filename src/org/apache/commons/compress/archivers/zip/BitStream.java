@@ -38,7 +38,7 @@ class BitStream extends BitInputStream {
 
     /**
      * Returns the next bit.
-     * 
+     *
      * @return The next bit (0 or 1) or -1 if the end of the stream has been reached
      */
     int nextBit() throws IOException {

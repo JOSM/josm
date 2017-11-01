@@ -27,7 +27,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 
 /**
  * An entry in a 7z archive.
- * 
+ *
  * @NotThreadSafe
  * @since 1.6
  */
@@ -48,7 +48,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     private long crc, compressedCrc;
     private long size, compressedSize;
     private Iterable<? extends SevenZMethodConfiguration> contentMethods;
-    
+
     public SevenZArchiveEntry() {
     }
 
@@ -61,7 +61,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public String getName() {
         return name;
     }
-    
+
     /**
      * Set this entry's name.
      *
@@ -96,7 +96,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public boolean isDirectory() {
         return isDirectory;
     }
-    
+
     /**
      * Sets whether or not this entry represents a directory.
      *
@@ -105,10 +105,10 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public void setDirectory(final boolean isDirectory) {
         this.isDirectory = isDirectory;
     }
-    
+
     /**
      * Indicates whether this is an "anti-item" used in differential backups,
-     * meaning it should delete the same file from a previous backup. 
+     * meaning it should delete the same file from a previous backup.
      * @return true if it is an anti-item, false otherwise
      */
     public boolean isAntiItem() {
@@ -118,7 +118,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     /**
      * Sets whether this is an "anti-item" used in differential backups,
      * meaning it should delete the same file from a previous backup.
-     * @param isAntiItem true if it is an anti-item, false otherwise 
+     * @param isAntiItem true if it is an anti-item, false otherwise
      */
     public void setAntiItem(final boolean isAntiItem) {
         this.isAntiItem = isAntiItem;
@@ -131,7 +131,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public boolean getHasCreationDate() {
         return hasCreationDate;
     }
-    
+
     /**
      * Sets whether this entry has got a creation date at all.
      * @param hasCreationDate whether the entry has got a creation date
@@ -139,7 +139,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public void setHasCreationDate(final boolean hasCreationDate) {
         this.hasCreationDate = hasCreationDate;
     }
-    
+
     /**
      * Gets the creation date.
      * @throws UnsupportedOperationException if the entry hasn't got a
@@ -153,7 +153,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
         throw new UnsupportedOperationException(
                 "The entry doesn't have this timestamp");
     }
-    
+
     /**
      * Sets the creation date using NTFS time (100 nanosecond units
      * since 1 January 1601)
@@ -162,7 +162,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public void setCreationDate(final long ntfsCreationDate) {
         this.creationDate = ntfsCreationDate;
     }
-    
+
     /**
      * Sets the creation date,
      * @param creationDate the creation date
@@ -205,7 +205,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
         throw new UnsupportedOperationException(
                 "The entry doesn't have this timestamp");
     }
-    
+
     /**
      * Sets the last modified date using NTFS time (100 nanosecond
      * units since 1 January 1601)
@@ -214,7 +214,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public void setLastModifiedDate(final long ntfsLastModifiedDate) {
         this.lastModifiedDate = ntfsLastModifiedDate;
     }
-    
+
     /**
      * Sets the last modified date,
      * @param lastModifiedDate the last modified date
@@ -225,7 +225,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
             this.lastModifiedDate = javaTimeToNtfsTime(lastModifiedDate);
         }
     }
-    
+
     /**
      * Returns whether this entry has got an access date at all.
      * @return whether this entry has got an access date at all.
@@ -255,7 +255,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
         throw new UnsupportedOperationException(
                 "The entry doesn't have this timestamp");
     }
-    
+
     /**
      * Sets the access date using NTFS time (100 nanosecond units
      * since 1 January 1601)
@@ -264,7 +264,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public void setAccessDate(final long ntfsAccessDate) {
         this.accessDate = ntfsAccessDate;
     }
-    
+
     /**
      * Sets the access date,
      * @param accessDate the access date
@@ -411,7 +411,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     public long getSize() {
         return size;
     }
-    
+
     /**
      * Set this entry's file size.
      *
@@ -429,7 +429,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
     long getCompressedSize() {
         return compressedSize;
     }
-    
+
     /**
      * Set this entry's compressed file size.
      *
@@ -497,7 +497,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
         final long realTime = ntfsEpoch.getTimeInMillis() + (ntfsTime / (10*1000));
         return new Date(realTime);
     }
-    
+
     /**
      * Converts Java time to NTFS time.
      * @param date the Java time

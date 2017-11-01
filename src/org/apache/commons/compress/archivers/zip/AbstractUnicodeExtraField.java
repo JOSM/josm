@@ -39,7 +39,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
     /**
      * Assemble as unicode extension from the name/comment and
      * encoding of the original zip entry.
-     * 
+     *
      * @param text The file name or comment.
      * @param bytes The encoded of the filename or comment in the zip
      * file.
@@ -63,7 +63,7 @@ public abstract class AbstractUnicodeExtraField implements ZipExtraField {
     /**
      * Assemble as unicode extension from the name/comment and
      * encoding of the original zip entry.
-     * 
+     *
      * @param text The file name or comment.
      * @param bytes The encoded of the filename or comment in the zip
      * file.

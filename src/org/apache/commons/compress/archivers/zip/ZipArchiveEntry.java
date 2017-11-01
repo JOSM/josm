@@ -176,7 +176,7 @@ public class ZipArchiveEntry extends java.util.zip.ZipEntry
      * @param entryName name of the entry
      */
     public ZipArchiveEntry(final File inputFile, final String entryName) {
-        this(inputFile.isDirectory() && !entryName.endsWith("/") ? 
+        this(inputFile.isDirectory() && !entryName.endsWith("/") ?
              entryName + "/" : entryName);
         if (inputFile.isFile()){
             setSize(inputFile.length());

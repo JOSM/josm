@@ -988,7 +988,7 @@ public class ZipFile implements Closeable {
     /**
      * Skips the given number of bytes or throws an EOFException if
      * skipping failed.
-     */ 
+     */
     private void skipBytes(final int count) throws IOException {
         long currentPosition = archive.position();
         long newPosition = currentPosition + count;

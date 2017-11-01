@@ -59,7 +59,7 @@ public class ZCompressorInputStream extends LZWInputStream {
     public ZCompressorInputStream(final InputStream inputStream) throws IOException {
         this(inputStream, -1);
     }
-    
+
     private void clearEntries() {
         setTableSize((1 << 8) + (blockMode ? 1 : 0));
     }
@@ -78,7 +78,7 @@ public class ZCompressorInputStream extends LZWInputStream {
         }
         return code;
     }
-    
+
     private void reAlignReading() throws IOException {
         // "compress" works in multiples of 8 symbols, each codeBits bits long.
         // When codeBits changes, the remaining unused symbols in the current
@@ -93,7 +93,7 @@ public class ZCompressorInputStream extends LZWInputStream {
         }
         in.clearBitCache();
     }
-    
+
     /**
      * {@inheritDoc}
      * <p><strong>This method is only protected for technical reasons
@@ -151,17 +151,17 @@ public class ZCompressorInputStream extends LZWInputStream {
             return expandCodeToOutputStack(code, addedUnfinishedEntry);
         }
     }
-    
+
     /**
      * Checks if the signature matches what is expected for a Unix compress file.
-     * 
+     *
      * @param signature
      *            the bytes to check
      * @param length
      *            the number of bytes to check
      * @return true, if this stream is a Unix compress compressed
      * stream, false otherwise
-     * 
+     *
      * @since 1.9
      */
     public static boolean matches(final byte[] signature, final int length) {

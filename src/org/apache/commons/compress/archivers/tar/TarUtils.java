@@ -147,7 +147,7 @@ public class TarUtils {
         return result;
     }
 
-    /** 
+    /**
      * Compute the value contained in a byte buffer.  If the most
      * significant bit of the first byte in the buffer is set, this
      * bit is ignored and the rest of the buffer is interpreted as a
@@ -303,7 +303,7 @@ public class TarUtils {
     /**
      * Copy a name into a buffer.
      * Copies characters from the name into the buffer
-     * starting at the specified offset. 
+     * starting at the specified offset.
      * If the buffer is longer than the name, the buffer
      * is filled with trailing NULs.
      * If the name is longer than the buffer,
@@ -332,7 +332,7 @@ public class TarUtils {
     /**
      * Copy a name into a buffer.
      * Copies characters from the name into the buffer
-     * starting at the specified offset. 
+     * starting at the specified offset.
      * If the buffer is longer than the name, the buffer
      * is filled with trailing NULs.
      * If the name is longer than the buffer,
@@ -369,7 +369,7 @@ public class TarUtils {
 
     /**
      * Fill buffer with unsigned octal number, padded with leading zeroes.
-     * 
+     *
      * @param value number to convert to octal - treated as unsigned
      * @param buffer destination buffer
      * @param offset starting offset in buffer
@@ -407,7 +407,7 @@ public class TarUtils {
      * Uses {@link #formatUnsignedOctalString} to format
      * the value as an octal string with leading zeros.
      * The converted number is followed by space and NUL
-     * 
+     *
      * @param value The value to write
      * @param buf The buffer to receive the output
      * @param offset The starting offset into the buffer
@@ -428,11 +428,11 @@ public class TarUtils {
 
     /**
      * Write an octal long integer into a buffer.
-     * 
+     *
      * Uses {@link #formatUnsignedOctalString} to format
      * the value as an octal string with leading zeros.
      * The converted number is followed by a space.
-     * 
+     *
      * @param value The value to write as octal
      * @param buf The destinationbuffer.
      * @param offset The starting offset into the buffer.
@@ -453,11 +453,11 @@ public class TarUtils {
     /**
      * Write an long integer into a buffer as an octal string if this
      * will fit, or as a binary number otherwise.
-     * 
+     *
      * Uses {@link #formatUnsignedOctalString} to format
      * the value as an octal string with leading zeros.
      * The converted number is followed by a space.
-     * 
+     *
      * @param value The value to write into the buffer.
      * @param buf The destination buffer.
      * @param offset The starting offset into the buffer.
@@ -530,7 +530,7 @@ public class TarUtils {
 
     /**
      * Writes an octal value into a buffer.
-     * 
+     *
      * Uses {@link #formatUnsignedOctalString} to format
      * the value as an octal string with leading zeros.
      * The converted number is followed by NUL and then space.

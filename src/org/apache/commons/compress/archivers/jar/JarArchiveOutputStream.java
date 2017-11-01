@@ -30,7 +30,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
  * Subclass that adds a special extra field to the very first entry
  * which allows the created archive to be used as an executable jar on
  * Solaris.
- * 
+ *
  * @NotThreadSafe
  */
 public class JarArchiveOutputStream extends ZipArchiveOutputStream {
@@ -43,7 +43,7 @@ public class JarArchiveOutputStream extends ZipArchiveOutputStream {
 
     /**
      * Create and instance that wraps the output stream using the provided encoding.
-     * 
+     *
      * @param out the output stream to wrap
      * @param encoding the encoding to use. Use null for the platform default.
      * @since 1.10

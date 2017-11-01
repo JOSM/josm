@@ -242,7 +242,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * whether to use the general purpose bit flag when writing UTF-8
      * filenames or not.
      */
-    private boolean useUTF8Flag = true; 
+    private boolean useUTF8Flag = true;
 
     /**
      * Whether to encode non-encodable file names as UTF-8.
@@ -428,7 +428,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * this mode is not valid when the output stream is not seekable
      * and the uncompressed size is unknown when {@link
      * #putArchiveEntry} is called.</p>
-     * 
+     *
      * <p>If no entry inside the resulting archive requires Zip64
      * extensions then {@link Zip64Mode#Never Never} will create the
      * smallest archive.  {@link Zip64Mode#AsNeeded AsNeeded} will
@@ -498,7 +498,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * Writes all necessary data for this entry.
      * @throws IOException on error
      * @throws Zip64RequiredException if the entry's uncompressed or
-     * compressed size exceeds 4 GByte and {@link #setUseZip64} 
+     * compressed size exceeds 4 GByte and {@link #setUseZip64}
      * is {@link Zip64Mode#Never}.
      */
     @Override
@@ -716,10 +716,10 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      * @throws ClassCastException if entry is not an instance of ZipArchiveEntry
      * @throws Zip64RequiredException if the entry's uncompressed or
-     * compressed size is known to exceed 4 GByte and {@link #setUseZip64} 
+     * compressed size is known to exceed 4 GByte and {@link #setUseZip64}
      * is {@link Zip64Mode#Never}.
      */
     @Override

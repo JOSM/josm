@@ -75,7 +75,7 @@ class Coders {
         }
         return cb.decode(archiveName, is, uncompressedLength, coder, password);
     }
-    
+
     static OutputStream addEncoder(final OutputStream out, final SevenZMethod method,
                                    final Object options) throws IOException {
         final CoderBase cb = findByMethod(method);
@@ -89,7 +89,7 @@ class Coders {
         @Override
         InputStream decode(final String archiveName, final InputStream in, final long uncompressedLength,
                 final Coder coder, final byte[] password) throws IOException {
-            return in; 
+            return in;
         }
         @Override
         OutputStream encode(final OutputStream out, final Object options) {
@@ -115,14 +115,14 @@ class Coders {
                                       e);
             }
         }
-        
+
         @SuppressWarnings("resource")
         @Override
         OutputStream encode(final OutputStream out, final Object options) {
             return new FlushShieldFilterOutputStream(opts.getOutputStream(new FinishableWrapperOutputStream(out)));
         }
     }
-    
+
     static class DeflateDecoder extends CoderBase {
         DeflateDecoder() {
             super(Number.class);

@@ -28,7 +28,7 @@ import org.apache.commons.compress.utils.ArchiveUtils;
 
 /**
  * Implements the "ar" archive format as an output stream.
- * 
+ *
  * @NotThreadSafe
  */
 public class ArArchiveOutputStream extends ArchiveOutputStream {
@@ -110,7 +110,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
         haveUnclosedEntry = true;
     }
 
-    private long fill( final long pOffset, final long pNewOffset, final char pFill ) throws IOException { 
+    private long fill( final long pOffset, final long pNewOffset, final char pFill ) throws IOException {
         final long diff = pNewOffset - pOffset;
 
         if (diff > 0) {
@@ -137,7 +137,7 @@ public class ArArchiveOutputStream extends ArchiveOutputStream {
         if (LONGFILE_ERROR == longFileMode && n.length() > 16) {
             throw new IOException("filename too long, > 16 chars: "+n);
         }
-        if (LONGFILE_BSD == longFileMode && 
+        if (LONGFILE_BSD == longFileMode &&
             (n.length() > 16 || n.contains(" "))) {
             mustAppendName = true;
             offset += write(ArArchiveInputStream.BSD_LONGNAME_PREFIX

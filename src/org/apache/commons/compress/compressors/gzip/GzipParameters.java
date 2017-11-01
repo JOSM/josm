@@ -23,7 +23,7 @@ import java.util.zip.Deflater;
 
 /**
  * Parameters for the GZIP compressor.
- * 
+ *
  * @since 1.7
  */
 public class GzipParameters {
@@ -40,8 +40,8 @@ public class GzipParameters {
 
     /**
      * Sets the compression level.
-     * 
-     * @param compressionLevel the compression level (between 0 and 9) 
+     *
+     * @param compressionLevel the compression level (between 0 and 9)
      * @see Deflater#NO_COMPRESSION
      * @see Deflater#BEST_SPEED
      * @see Deflater#DEFAULT_COMPRESSION
@@ -60,7 +60,7 @@ public class GzipParameters {
 
     /**
      * Sets the modification time of the compressed file.
-     * 
+     *
      * @param modificationTime the modification time, in milliseconds
      */
     public void setModificationTime(final long modificationTime) {
@@ -73,7 +73,7 @@ public class GzipParameters {
 
     /**
      * Sets the name of the compressed file.
-     * 
+     *
      * @param filename the name of the file without the directory path
      */
     public void setFilename(final String filename) {
@@ -112,7 +112,7 @@ public class GzipParameters {
      *   <li>13: Acorn RISCOS</li>
      *   <li>255: Unknown</li>
      * </ul>
-     * 
+     *
      * @param operatingSystem the code of the operating system
      */
     public void setOperatingSystem(final int operatingSystem) {

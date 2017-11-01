@@ -27,7 +27,7 @@ import java.io.OutputStream;
  * {@link #write(byte[], int, int)} method to improve performance.
  * They should also override {@link #close()} to ensure that any necessary
  * trailers are added.
- * 
+ *
  * <p>The normal sequence of calls when working with ArchiveOutputStreams is:</p>
  * <ul>
  *   <li>Create ArchiveOutputStream object,</li>
@@ -58,7 +58,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * Writes the headers for an archive entry to the output stream.
      * The caller must then write the content to the stream and call
      * {@link #closeArchiveEntry()} to complete the process.
-     * 
+     *
      * @param entry describes the entry
      * @throws IOException if an I/O error occurs
      */
@@ -74,18 +74,18 @@ public abstract class ArchiveOutputStream extends OutputStream {
     /**
      * Finishes the addition of entries to this stream, without closing it.
      * Additional data can be written, if the format supports it.
-     * 
+     *
      * @throws IOException if the user forgets to close the entry.
      */
     public abstract void finish() throws IOException;
 
     /**
      * Create an archive entry using the inputFile and entryName provided.
-     * 
+     *
      * @param inputFile the file to create the entry from
      * @param entryName name to use for the entry
      * @return the ArchiveEntry set up with details from the file
-     * 
+     *
      * @throws IOException if an I/O error occurs
      */
     public abstract ArchiveEntry createArchiveEntry(File inputFile, String entryName) throws IOException;
@@ -99,7 +99,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
      *
      * <p>MUST be overridden if the {@link #write(byte[], int, int)} method
      * is not overridden; may be overridden otherwise.
-     * 
+     *
      * @param b The byte to be written.
      * @throws IOException on error
      */
@@ -112,7 +112,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
     /**
      * Increments the counter of already written bytes.
      * Doesn't increment if EOF has been hit ({@code written == -1}).
-     * 
+     *
      * @param written the number of bytes written
      */
     protected void count(final int written) {
@@ -122,7 +122,7 @@ public abstract class ArchiveOutputStream extends OutputStream {
     /**
      * Increments the counter of already written bytes.
      * Doesn't increment if EOF has been hit ({@code written == -1}).
-     * 
+     *
      * @param written the number of bytes written
      * @since 1.1
      */

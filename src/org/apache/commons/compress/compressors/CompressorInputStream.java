@@ -26,7 +26,7 @@ public abstract class CompressorInputStream extends InputStream {
     /**
      * Increments the counter of already read bytes.
      * Doesn't increment if the EOF has been hit (read == -1)
-     * 
+     *
      * @param read the number of bytes read
      *
      * @since 1.1
@@ -38,7 +38,7 @@ public abstract class CompressorInputStream extends InputStream {
     /**
      * Increments the counter of already read bytes.
      * Doesn't increment if the EOF has been hit (read == -1)
-     * 
+     *
      * @param read the number of bytes read
      */
     protected void count(final long read) {
@@ -49,7 +49,7 @@ public abstract class CompressorInputStream extends InputStream {
 
     /**
      * Decrements the counter of already read bytes.
-     * 
+     *
      * @param pushedBack the number of bytes pushed back.
      * @since 1.7
      */

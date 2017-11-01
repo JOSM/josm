@@ -32,7 +32,7 @@ public class ChecksumVerifyingInputStream extends InputStream {
     private long bytesRemaining;
     private final long expectedChecksum;
     private final Checksum checksum;
-    
+
     public ChecksumVerifyingInputStream(final Checksum checksum, final InputStream in,
                                         final long size, final long expectedChecksum) {
         this.checksum = checksum;

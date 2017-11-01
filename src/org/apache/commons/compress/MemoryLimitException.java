@@ -31,7 +31,7 @@ import java.io.IOException;
 public class MemoryLimitException extends IOException {
 
     private static final long serialVersionUID = 1L;
-    
+
     //long instead of int to account for overflow for corrupt files
     private final long memoryNeededInKb;
     private final int memoryLimitInKb;

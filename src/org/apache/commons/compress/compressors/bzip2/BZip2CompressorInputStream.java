@@ -35,7 +35,7 @@ import org.apache.commons.compress.utils.CloseShieldFilterInputStream;
 
 /**
  * An input stream that decompresses from the BZip2 format to be read as any other stream.
- * 
+ *
  * @NotThreadSafe
  */
 public class BZip2CompressorInputStream extends CompressorInputStream implements
@@ -101,7 +101,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
      * Constructs a new BZip2CompressorInputStream which decompresses bytes
      * read from the specified stream. This doesn't suppprt decompressing
      * concatenated .bz2 files.
-     * 
+     *
      * @param in the InputStream from which this object should be created
      * @throws IOException
      *             if the stream content is malformed or an I/O error occurs.
@@ -147,7 +147,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.io.InputStream#read(byte[], int, int)
      */
     @Override
@@ -878,7 +878,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
         /**
          * Initializes the {@link #tt} array.
-         * 
+         *
          * This method is called when the required length of the array is known.
          * I don't initialize it at construction time to avoid unneccessary
          * memory allocation when compressing small files.
@@ -901,13 +901,13 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
     /**
      * Checks if the signature matches what is expected for a bzip2 file.
-     * 
+     *
      * @param signature
      *            the bytes to check
      * @param length
      *            the number of bytes to check
      * @return true, if this stream is a bzip2 compressed stream, false otherwise
-     * 
+     *
      * @since 1.1
      */
     public static boolean matches(final byte[] signature, final int length) {

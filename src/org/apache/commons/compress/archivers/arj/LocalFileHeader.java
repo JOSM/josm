@@ -35,17 +35,17 @@ class LocalFileHeader {
     int fileAccessMode;
     int firstChapter;
     int lastChapter;
-    
+
     int extendedFilePosition;
     int dateTimeAccessed;
     int dateTimeCreated;
     int originalSizeEvenForVolumes;
-    
+
     String name;
     String comment;
-    
+
     byte[][] extendedHeaders = null;
-    
+
     static class Flags {
         static final int GARBLED = 0x01;
         static final int VOLUME = 0x04;
@@ -53,7 +53,7 @@ class LocalFileHeader {
         static final int PATHSYM = 0x10;
         static final int BACKUP = 0x20;
     }
-    
+
     static class FileTypes {
         static final int BINARY = 0;
         static final int SEVEN_BIT_TEXT = 1;
@@ -61,7 +61,7 @@ class LocalFileHeader {
         static final int VOLUME_LABEL = 4;
         static final int CHAPTER_LABEL = 5;
     }
-    
+
     static class Methods {
         static final int STORED = 0;
         static final int COMPRESSED_MOST = 1;

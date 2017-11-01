@@ -19,7 +19,7 @@
 package org.apache.commons.compress.archivers;
 
 /**
- * Archiver related Exception 
+ * Archiver related Exception
  */
 public class ArchiveException extends Exception {
 
@@ -29,7 +29,7 @@ public class ArchiveException extends Exception {
     /**
      * Constructs a new exception with the specified detail message. The cause
      * is not initialized.
-     * 
+     *
      * @param message
      *            the detail message
      */
@@ -39,7 +39,7 @@ public class ArchiveException extends Exception {
 
     /**
      * Constructs a new exception with the specified detail message and cause.
-     * 
+     *
      * @param message
      *            the detail message
      * @param cause

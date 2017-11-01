@@ -29,7 +29,7 @@ import org.apache.commons.compress.compressors.CompressorOutputStream;
 
 /**
  * An output stream that compresses using the Pack200 format.
- * 
+ *
  * @NotThreadSafe
  * @since 1.3
  */

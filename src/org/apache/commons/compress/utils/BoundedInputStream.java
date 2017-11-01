@@ -28,7 +28,7 @@ import java.io.InputStream;
 public class BoundedInputStream extends InputStream {
     private final InputStream in;
     private long bytesRemaining;
-    
+
     /**
      * Creates the stream that will at most read the given amount of
      * bytes from the given stream.
@@ -39,7 +39,7 @@ public class BoundedInputStream extends InputStream {
         this.in = in;
         bytesRemaining = size;
     }
-    
+
     @Override
     public int read() throws IOException {
         if (bytesRemaining > 0) {

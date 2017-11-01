@@ -66,7 +66,7 @@ import org.apache.commons.compress.utils.IOUtils;
  * encrypted, neither file names nor file
  * contents can be read, but the use of
  * encryption isn't plausibly deniable.
- * 
+ *
  * @NotThreadSafe
  * @since 1.6
  */
@@ -672,7 +672,7 @@ public class SevenZFile implements Closeable {
             files[i] = new SevenZArchiveEntry();
         }
         BitSet isEmptyStream = null;
-        BitSet isEmptyFile = null; 
+        BitSet isEmptyFile = null;
         BitSet isAnti = null;
         while (true) {
             final int propertyType = getUnsignedByte(header);
@@ -839,7 +839,7 @@ public class SevenZFile implements Closeable {
         streamMap.packStreamOffsets = new long[numPackSizes];
         for (int i = 0; i < numPackSizes; i++) {
             streamMap.packStreamOffsets[i] = nextPackStreamOffset;
-            nextPackStreamOffset += archive.packSizes[i]; 
+            nextPackStreamOffset += archive.packSizes[i];
         }
 
         streamMap.folderFirstFileIndex = new int[numFolders];
@@ -945,7 +945,7 @@ public class SevenZFile implements Closeable {
 
     /**
      * Reads a byte of data.
-     * 
+     *
      * @return the byte read, or -1 if end of input is reached
      * @throws IOException
      *             if an I/O error has occurred
@@ -976,7 +976,7 @@ public class SevenZFile implements Closeable {
 
     /**
      * Reads data into an array of bytes.
-     * 
+     *
      * @param b the array to write data to
      * @return the number of bytes read, or -1 if end of input is reached
      * @throws IOException
@@ -988,7 +988,7 @@ public class SevenZFile implements Closeable {
 
     /**
      * Reads data into an array of bytes.
-     * 
+     *
      * @param b the array to write data to
      * @param off offset into the buffer to start filling at
      * @param len of bytes to read

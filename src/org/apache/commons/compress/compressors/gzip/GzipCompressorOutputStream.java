@@ -35,7 +35,7 @@ import org.apache.commons.compress.utils.CharsetNames;
  * over the standard {@link GZIPOutputStream} class by allowing
  * the configuration of the compression level and the header metadata (filename,
  * comment, modification time, operating system and extra flags).
- * 
+ *
  * @see <a href="http://tools.ietf.org/html/rfc1952">GZIP File Format Specification</a>
  */
 public class GzipCompressorOutputStream extends CompressorOutputStream {
@@ -75,27 +75,27 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * @param out the stream to compress to
      * @param parameters the parameters to use
      * @throws IOException if writing fails
-     * 
+     *
      * @since 1.7
      */
     public GzipCompressorOutputStream(final OutputStream out, final GzipParameters parameters) throws IOException {
         this.out = out;
         this.deflater = new Deflater(parameters.getCompressionLevel(), true);
-        
+
         writeHeader(parameters);
     }
 
     private void writeHeader(final GzipParameters parameters) throws IOException {
         final String filename = parameters.getFilename();
         final String comment = parameters.getComment();
-        
+
         final ByteBuffer buffer = ByteBuffer.allocate(10);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.putShort((short) GZIPInputStream.GZIP_MAGIC);
         buffer.put((byte) Deflater.DEFLATED); // compression method (8: deflate)
         buffer.put((byte) ((filename != null ? FNAME : 0) | (comment != null ? FCOMMENT : 0))); // flags
         buffer.putInt((int) (parameters.getModificationTime() / 1000));
-        
+
         // extra flags
         final int compressionLevel = parameters.getCompressionLevel();
         if (compressionLevel == Deflater.BEST_COMPRESSION) {
@@ -105,16 +105,16 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
         } else {
             buffer.put((byte) 0);
         }
-        
+
         buffer.put((byte) parameters.getOperatingSystem());
-        
+
         out.write(buffer.array());
-        
+
         if (filename != null) {
             out.write(filename.getBytes(CharsetNames.ISO_8859_1));
             out.write(0);
         }
-        
+
         if (comment != null) {
             out.write(comment.getBytes(CharsetNames.ISO_8859_1));
             out.write(0);
@@ -137,7 +137,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @since 1.1
      */
     @Override
@@ -147,7 +147,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @since 1.1
      */
     @Override
@@ -157,11 +157,11 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
 
         } else if (length > 0) {
             deflater.setInput(buffer, offset, length);
-            
+
             while (!deflater.needsInput()) {
                 deflate();
             }
-            
+
             crc.update(buffer, offset, length);
         }
     }
@@ -175,7 +175,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * Finishes writing compressed data to the underlying stream without closing it.
-     * 
+     *
      * @since 1.7
      * @throws IOException on error
      */
@@ -186,14 +186,14 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
             while (!deflater.finished()) {
                 deflate();
             }
-            
+
             writeTrailer();
         }
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @since 1.7
      */
     @Override

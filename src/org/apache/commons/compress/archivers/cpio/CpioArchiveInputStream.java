@@ -58,9 +58,9 @@ import org.apache.commons.compress.utils.IOUtils;
  * </pre>
  * <p>
  * Note: This implementation should be compatible to cpio 2.5
- * 
+ *
  * <p>This class uses mutable fields and is not considered to be threadsafe.
- * 
+ *
  * <p>Based on code from the jRPM project (jrpm.sourceforge.net)
  */
 
@@ -100,7 +100,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      * Construct the cpio input stream with a blocksize of {@link
      * CpioConstants#BLOCK_SIZE BLOCK_SIZE} and expecting ASCII file
      * names.
-     * 
+     *
      * @param in
      *            The cpio stream
      */
@@ -111,7 +111,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
     /**
      * Construct the cpio input stream with a blocksize of {@link
      * CpioConstants#BLOCK_SIZE BLOCK_SIZE}.
-     * 
+     *
      * @param in
      *            The cpio stream
      * @param encoding
@@ -127,7 +127,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      * Construct the cpio input stream with a blocksize of {@link
      * CpioConstants#BLOCK_SIZE BLOCK_SIZE} expecting ASCII file
      * names.
-     * 
+     *
      * @param in
      *            The cpio stream
      * @param blockSize
@@ -140,7 +140,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
 
     /**
      * Construct the cpio input stream with a blocksize of {@link CpioConstants#BLOCK_SIZE BLOCK_SIZE}.
-     * 
+     *
      * @param in
      *            The cpio stream
      * @param blockSize
@@ -163,7 +163,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
      * <p>
      * Programs should not count on this method to return the actual number of
      * bytes that could be read without blocking.
-     * 
+     *
      * @return 1 before EOF and 0 after EOF has reached for current entry.
      * @throws IOException
      *             if an I/O error has occurred or if a CPIO file error has
@@ -180,7 +180,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
 
     /**
      * Closes the CPIO input stream.
-     * 
+     *
      * @throws IOException
      *             if an I/O error has occurred
      */
@@ -195,7 +195,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
     /**
      * Closes the current CPIO entry and positions the stream for reading the
      * next entry.
-     * 
+     *
      * @throws IOException
      *             if an I/O error has occurred or if a CPIO file error has
      *             occurred
@@ -210,7 +210,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
 
     /**
      * Check to make sure that this stream has not been closed
-     * 
+     *
      * @throws IOException
      *             if the stream is already closed
      */
@@ -223,7 +223,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
     /**
      * Reads the next CPIO file entry and positions stream at the beginning of
      * the entry data.
-     * 
+     *
      * @return the CpioArchiveEntry just read
      * @throws IOException
      *             if an I/O error has occurred or if a CPIO file error has
@@ -283,7 +283,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
     /**
      * Reads from the current CPIO entry into an array of bytes. Blocks until
      * some input is available.
-     * 
+     *
      * @param b
      *            the buffer into which the data is read
      * @param off
@@ -464,7 +464,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
 
     /**
      * Skips specified number of bytes in the current CPIO entry.
-     * 
+     *
      * @param n
      *            the number of bytes to skip
      * @return the actual number of bytes skipped
@@ -520,15 +520,15 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
 
     /**
      * Checks if the signature matches one of the following magic values:
-     * 
+     *
      * Strings:
      *
      * "070701" - MAGIC_NEW
      * "070702" - MAGIC_NEW_CRC
      * "070707" - MAGIC_OLD_ASCII
-     * 
+     *
      * Octal Binary value:
-     * 
+     *
      * 070707 - MAGIC_OLD_BINARY (held as a short) = 0x71C7 or 0xC771
      * @param signature data to match
      * @param length length of data

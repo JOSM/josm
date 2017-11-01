@@ -32,7 +32,7 @@ import org.apache.commons.compress.compressors.CompressorInputStream;
 /**
  * An input stream that decompresses from the Pack200 format to be read
  * as any other stream.
- * 
+ *
  * <p>The {@link CompressorInputStream#getCount getCount} and {@link
  * CompressorInputStream#getBytesRead getBytesRead} methods always
  * return 0.</p>
@@ -257,7 +257,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
     /**
      * Checks if the signature matches what is expected for a pack200
      * file (0xCAFED00D).
-     * 
+     *
      * @param signature
      *            the bytes to check
      * @param length

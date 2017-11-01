@@ -55,9 +55,9 @@ import org.apache.commons.compress.utils.Sets;
  * the InputStream. In order to add other implementations, you should extend
  * ArchiveStreamFactory and override the appropriate methods (and call their
  * implementation from super of course).
- * 
+ *
  * Compressing a ZIP-File:
- * 
+ *
  * <pre>
  * final OutputStream out = Files.newOutputStream(output.toPath());
  * ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, out);

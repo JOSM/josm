@@ -25,10 +25,10 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 
 /**
  * Represents an archive entry in the "ar" format.
- * 
+ *
  * Each AR archive starts with "!&lt;arch&gt;" followed by a LF. After these 8 bytes
  * the archive entries are listed. The format of an entry header is as it follows:
- * 
+ *
  * <pre>
  * START BYTE   END BYTE    NAME                    FORMAT      LENGTH
  * 0            15          File name               ASCII       16
@@ -39,14 +39,14 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
  * 48           57          File size (bytes)       Decimal     10
  * 58           59          File magic              \140\012    2
  * </pre>
- * 
+ *
  * This specifies that an ar archive entry header contains 60 bytes.
- * 
+ *
  * Due to the limitation of the file name length to 16 bytes GNU and
  * BSD has their own variants of this format. Currently Commons
  * Compress can read but not write the GNU variant.  It fully supports
  * the BSD variant.
- * 
+ *
  * @see <a href="http://www.freebsd.org/cgi/man.cgi?query=ar&sektion=5">ar man page</a>
  *
  * @Immutable
@@ -68,7 +68,7 @@ public class ArArchiveEntry implements ArchiveEntry {
     private final int userId;
     private final int groupId;
     private final int mode;
-    private static final int DEFAULT_MODE = 33188; // = (octal) 0100644 
+    private static final int DEFAULT_MODE = 33188; // = (octal) 0100644
     private final long lastModified;
     private final long length;
 

@@ -107,7 +107,7 @@ class TapeInputStream extends FilterInputStream {
     /**
      * {@inheritDoc}
      *
-     * <p>reads the full given length unless EOF is reached.</p> 
+     * <p>reads the full given length unless EOF is reached.</p>
      *
      * @param len length to read, must be a multiple of the stream's
      * record size
@@ -157,7 +157,7 @@ class TapeInputStream extends FilterInputStream {
     /**
      * Skip bytes. Same as read but without the arraycopy.
      *
-     * <p>skips the full given length unless EOF is reached.</p> 
+     * <p>skips the full given length unless EOF is reached.</p>
      *
      * @param len length to read, must be a multiple of the stream's
      * record size

@@ -413,7 +413,7 @@ public class DumpArchiveInputStream extends ArchiveInputStream {
      * @return  full path for specified archive entry, or null if there's a gap.
      */
     private String getPath(final DumpArchiveEntry entry) {
-        // build the stack of elements. It's possible that we're 
+        // build the stack of elements. It's possible that we're
         // still missing an intermediate value and if so we
         final Stack<String> elements = new Stack<>();
         Dirent dirent = null;

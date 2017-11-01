@@ -66,7 +66,7 @@ public class CLI {
         EXTRACT("Extracting") {
             private final byte[] buf = new byte[8192];
             @Override
-            public void takeAction(final SevenZFile archive, final SevenZArchiveEntry entry) 
+            public void takeAction(final SevenZFile archive, final SevenZArchiveEntry entry)
                 throws IOException {
                 final File outFile = new File(entry.getName());
                 if (entry.isDirectory()) {
@@ -111,7 +111,7 @@ public class CLI {
         }
         public abstract void takeAction(SevenZFile archive, SevenZArchiveEntry entry)
             throws IOException;
-    }        
+    }
 
     public static void main(final String[] args) throws Exception {
         if (args.length == 0) {

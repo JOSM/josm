@@ -40,7 +40,7 @@ class MainHeader {
     String name;
     String comment;
     byte[] extendedHeaderBytes = null;
-    
+
     static class Flags {
         static final int GARBLED = 0x01;
         static final int OLD_SECURED_NEW_ANSI_PAGE = 0x02;
@@ -52,7 +52,7 @@ class MainHeader {
         static final int ALTNAME = 0x80;
     }
 
-    
+
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();

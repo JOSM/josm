@@ -60,7 +60,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
 
     /** The underlying stream to read compressed data from */
     private final PushbackInputStream in;
-    
+
     /** The dialect to expect */
     private final FramedSnappyDialect dialect;
 
@@ -308,7 +308,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
      * Checks if the signature matches what is expected for a .sz file.
      *
      * <p>.sz files start with a chunk with tag 0xff and content sNaPpY.</p>
-     * 
+     *
      * @param signature the bytes to check
      * @param length    the number of bytes to check
      * @return          true if this is a .sz stream, false otherwise

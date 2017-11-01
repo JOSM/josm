@@ -259,7 +259,7 @@ public abstract class ZipUtil {
      * <p>If the field is null or the CRCs don't match, return null
      * instead.</p>
      */
-    private static 
+    private static
         String getUnicodeStringIfOriginalMatches(final AbstractUnicodeExtraField f,
                                                  final byte[] orig) {
         if (f != null) {

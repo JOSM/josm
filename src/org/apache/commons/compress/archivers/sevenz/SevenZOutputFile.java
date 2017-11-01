@@ -125,7 +125,7 @@ public class SevenZOutputFile implements Closeable {
 
     /**
      * Closes the archive, calling {@link #finish} if necessary.
-     * 
+     *
      * @throws IOException on error
      */
     @Override
@@ -138,11 +138,11 @@ public class SevenZOutputFile implements Closeable {
 
     /**
      * Create an archive entry using the inputFile and entryName provided.
-     * 
+     *
      * @param inputFile file to create an entry from
      * @param entryName the name to use
      * @return the ArchiveEntry set up with details from the file
-     * 
+     *
      * @throws IOException on error
      */
     public SevenZArchiveEntry createArchiveEntry(final File inputFile,
@@ -159,7 +159,7 @@ public class SevenZOutputFile implements Closeable {
      *
      * The caller must then write the content to the archive and call
      * {@link #closeArchiveEntry()} to complete the process.
-     * 
+     *
      * @param archiveEntry describes the entry
      * @throws IOException on error
      */
@@ -240,7 +240,7 @@ public class SevenZOutputFile implements Closeable {
 
     /**
      * Finishes the addition of entries to this archive, without closing it.
-     * 
+     *
      * @throws IOException if archive is already closed.
      */
     public void finish() throws IOException {

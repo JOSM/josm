@@ -80,7 +80,7 @@ public abstract class PKWareExtraHeader implements ZipExtraField {
     protected PKWareExtraHeader(final ZipShort headerId) {
         this.headerId = headerId;
     }
-    
+
     /**
      * Get the header id.
      *
@@ -193,7 +193,7 @@ public abstract class PKWareExtraHeader implements ZipExtraField {
             setLocalFileDataData(tmp);
         }
     }
-    
+
     /**
      * Encryption algorithm.
      *

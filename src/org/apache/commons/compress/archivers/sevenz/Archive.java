@@ -46,10 +46,10 @@ class Archive {
     }
 
     private static String lengthOf(final long[] a) {
-        return a == null ? "(null)" : String.valueOf(a.length); 
+        return a == null ? "(null)" : String.valueOf(a.length);
     }
 
     private static String lengthOf(final Object[] a) {
-        return a == null ? "(null)" : String.valueOf(a.length); 
+        return a == null ? "(null)" : String.valueOf(a.length);
     }
 }

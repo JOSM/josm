@@ -56,9 +56,9 @@ import org.apache.commons.compress.utils.CharsetNames;
  * </pre>
  *
  * <p>Note: This implementation should be compatible to cpio 2.5</p>
- * 
+ *
  * <p>This class uses mutable fields and is not considered threadsafe.</p>
- * 
+ *
  * <p>based on code from the jRPM project (jrpm.sourceforge.net)</p>
  */
 public class CpioArchiveOutputStream extends ArchiveOutputStream implements
@@ -101,7 +101,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * Construct the cpio output stream with a specified format, a
      * blocksize of {@link CpioConstants#BLOCK_SIZE BLOCK_SIZE} and
      * using ASCII as the file name encoding.
-     * 
+     *
      * @param out
      *            The cpio stream
      * @param format
@@ -114,25 +114,25 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
     /**
      * Construct the cpio output stream with a specified format using
      * ASCII as the file name encoding.
-     * 
+     *
      * @param out
      *            The cpio stream
      * @param format
      *            The format of the stream
      * @param blockSize
      *            The block size of the archive.
-     * 
+     *
      * @since 1.1
      */
     public CpioArchiveOutputStream(final OutputStream out, final short format,
                                    final int blockSize) {
         this(out, format, blockSize, CharsetNames.US_ASCII);
-    }        
+    }
 
     /**
      * Construct the cpio output stream with a specified format using
      * ASCII as the file name encoding.
-     * 
+     *
      * @param out
      *            The cpio stream
      * @param format
@@ -142,7 +142,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * @param encoding
      *            The encoding of file names to write - use null for
      *            the platform's default.
-     * 
+     *
      * @since 1.6
      */
     public CpioArchiveOutputStream(final OutputStream out, final short format,
@@ -167,7 +167,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
     /**
      * Construct the cpio output stream. The format for this CPIO stream is the
      * "new" format using ASCII encoding for file names
-     * 
+     *
      * @param out
      *            The cpio stream
      */
@@ -178,7 +178,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
     /**
      * Construct the cpio output stream. The format for this CPIO stream is the
      * "new" format.
-     * 
+     *
      * @param out
      *            The cpio stream
      * @param encoding
@@ -192,7 +192,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
 
     /**
      * Check to make sure that this stream has not been closed
-     * 
+     *
      * @throws IOException
      *             if the stream is already closed
      */
@@ -208,7 +208,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * current time will be used if the entry has no set modification time and
      * the default header format will be used if no other format is specified in
      * the entry.
-     * 
+     *
      * @param entry
      *            the CPIO cpioEntry to be written
      * @throws IOException
@@ -367,7 +367,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
     }
 
     /*(non-Javadoc)
-     * 
+     *
      * @see
      * org.apache.commons.compress.archivers.ArchiveOutputStream#closeArchiveEntry
      * ()
@@ -402,7 +402,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
     /**
      * Writes an array of bytes to the current CPIO entry data. This method will
      * block until all the bytes are written.
-     * 
+     *
      * @param b
      *            the data to be written
      * @param off
@@ -444,7 +444,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      * Finishes writing the contents of the CPIO output stream without closing
      * the underlying stream. Use this method when applying multiple filters in
      * succession to the same output stream.
-     * 
+     *
      * @throws IOException
      *             if an I/O exception has occurred or if a CPIO file error has
      *             occurred
@@ -475,7 +475,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
 
     /**
      * Closes the CPIO output stream as well as the stream being filtered.
-     * 
+     *
      * @throws IOException
      *             if an I/O error has occurred or if a CPIO file error has
      *             occurred
@@ -548,7 +548,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
 
     /**
      * Creates a new ArchiveEntry. The entryName must be an ASCII encoded string.
-     * 
+     *
      * @see org.apache.commons.compress.archivers.ArchiveOutputStream#createArchiveEntry(java.io.File, java.lang.String)
      */
     @Override

@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * Creates Compressor {@link CompressorInputStream}s and
  * {@link CompressorOutputStream}s.
- * 
+ *
  * @since 1.13
  */
 public interface CompressorStreamProvider {
@@ -34,7 +34,7 @@ public interface CompressorStreamProvider {
     /**
      * Creates a compressor input stream from a compressor name and an input
      * stream.
-     * 
+     *
      * @param name
      *            of the compressor, i.e.
      *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#GZIP},
@@ -66,7 +66,7 @@ public interface CompressorStreamProvider {
     /**
      * Creates a compressor output stream from an compressor name and an output
      * stream.
-     * 
+     *
      * @param name
      *            the compressor name, i.e.
      *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#GZIP},
@@ -88,14 +88,14 @@ public interface CompressorStreamProvider {
 
     /**
      * Gets all the input stream compressor names for this provider
-     * 
+     *
      * @return all the input compressor names for this provider
      */
     Set<String> getInputStreamCompressorNames();
 
     /**
      * Gets all the output stream compressor names for this provider
-     * 
+     *
      * @return all the output compressor names for this provider
      */
     Set<String> getOutputStreamCompressorNames();

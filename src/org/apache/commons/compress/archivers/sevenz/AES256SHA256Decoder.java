@@ -36,7 +36,7 @@ class AES256SHA256Decoder extends CoderBase {
         return new InputStream() {
             private boolean isInitialized = false;
             private CipherInputStream cipherInputStream = null;
-                
+
             private CipherInputStream init() throws IOException {
                 if (isInitialized) {
                     return cipherInputStream;
@@ -99,17 +99,17 @@ class AES256SHA256Decoder extends CoderBase {
                         generalSecurityException);
                     }
             }
-                
+
             @Override
             public int read() throws IOException {
                 return init().read();
             }
-                
+
             @Override
             public int read(final byte[] b, final int off, final int len) throws IOException {
                 return init().read(b, off, len);
             }
-                
+
             @Override
             public void close() {
             }

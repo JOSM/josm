@@ -25,11 +25,11 @@ import org.apache.commons.compress.compressors.CompressorInputStream;
 /**
  * {@link CompressorInputStream} implementation to decode Brotli encoded stream.
  * Library relies on <a href="https://github.com/google/brotli">Google brotli</a>
- * 
+ *
  * @since 1.14
  */
 public class BrotliCompressorInputStream extends CompressorInputStream {
-    
+
     private final org.brotli.dec.BrotliInputStream decIS;
 
     public BrotliCompressorInputStream(final InputStream in) throws IOException {

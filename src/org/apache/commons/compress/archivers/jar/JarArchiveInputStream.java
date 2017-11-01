@@ -27,14 +27,14 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 
 /**
  * Implements an input stream that can read entries from jar files.
- * 
+ *
  * @NotThreadSafe
  */
 public class JarArchiveInputStream extends ZipArchiveInputStream {
 
     /**
      * Creates an instance from the input stream using the default encoding.
-     * 
+     *
      * @param inputStream the input stream to wrap
      */
     public JarArchiveInputStream( final InputStream inputStream ) {
@@ -43,7 +43,7 @@ public class JarArchiveInputStream extends ZipArchiveInputStream {
 
     /**
      * Creates an instance from the input stream using the specified encoding.
-     * 
+     *
      * @param inputStream the input stream to wrap
      * @param encoding the encoding to use
      * @since 1.10
@@ -65,7 +65,7 @@ public class JarArchiveInputStream extends ZipArchiveInputStream {
     /**
      * Checks if the signature matches what is expected for a jar file
      * (in this case it is the same as for a zip file).
-     * 
+     *
      * @param signature
      *            the bytes to check
      * @param length

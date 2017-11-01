@@ -57,7 +57,7 @@ public class CountingInputStream extends FilterInputStream {
     /**
      * Increments the counter of already read bytes.
      * Doesn't increment if the EOF has been hit (read == -1)
-     * 
+     *
      * @param read the number of bytes read
      */
     protected final void count(final long read) {

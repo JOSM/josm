@@ -24,7 +24,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 
 /**
  * Change holds meta information about a change.
- * 
+ *
  * @Immutable
  */
 class Change {
@@ -59,7 +59,7 @@ class Change {
 
     /**
      * Construct a change which adds an entry.
-     * 
+     *
      * @param pEntry the entry details
      * @param pInput the InputStream for the entry data
      */
