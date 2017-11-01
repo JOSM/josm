@@ -60,9 +60,8 @@ public class JosmUpdatePanel extends JPanel {
     }
 
     private static int getTestedVersion() {
-        try {
-            CachedFile testedVersion = new CachedFile(Main.getJOSMWebsite() + "/tested");
-            testedVersion.setMaxAge(60 * 15); // 15 Minutes
+        try (CachedFile testedVersion = new CachedFile(Main.getJOSMWebsite() + "/tested")) {
+            testedVersion.setMaxAge(60L * 15); // 15 Minutes
             String testedString = new String(testedVersion.getByteContent(), StandardCharsets.ISO_8859_1);
             return Integer.parseInt(testedString.trim());
         } catch (NumberFormatException | IOException e) {

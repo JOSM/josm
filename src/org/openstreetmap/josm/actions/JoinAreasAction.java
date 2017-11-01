@@ -600,7 +600,7 @@ public class JoinAreasAction extends JosmAction {
         // retrieve effective dataset before joining the ways (which affects the selection, thus, the <ways> collection)
         // Dataset retrieving allows to call this code without relying on Main.getCurrentDataSet(), thus, on a mapview instance
         if (!areas.isEmpty()) {
-            ds = areas.iterator().next().getOuterWay().getDataSet();
+            ds = areas.get(0).getOuterWay().getDataSet();
         }
 
         boolean hasChanges = false;
