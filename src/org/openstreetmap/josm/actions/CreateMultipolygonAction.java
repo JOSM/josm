@@ -449,8 +449,13 @@ public class CreateMultipolygonAction extends JosmAction {
                     fixed = true;
                 }
             }
-            if (fixed && !relation.isNew())
-                commands.add(new ChangeCommand(relation, r2));
+            if (fixed && !relation.isNew()) {
+                DataSet ds = relation.getDataSet();
+                if (ds == null) {
+                    ds = MainApplication.getLayerManager().getEditDataSet();
+                }
+                commands.add(new ChangeCommand(ds, relation, r2));
+            }
         }
 
         return commands;
