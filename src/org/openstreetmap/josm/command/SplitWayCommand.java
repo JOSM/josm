@@ -442,13 +442,20 @@ public class SplitWayCommand extends SequenceCommand {
     }
 
     static OsmPrimitive findVia(Relation r, String type) {
-        for (RelationMember rmv : r.getMembers()) {
-            if (("restriction".equals(type) && "via".equals(rmv.getRole()))
-             || ("destination_sign".equals(type) && rmv.hasRole("sign", "intersection"))) {
-                return rmv.getMember();
-            }
+        switch (type) {
+        case "restriction":
+            return findRelationMember(r, "via").orElse(null);
+        case "destination_sign":
+            // Prefer intersection over sign, see #12347
+            return findRelationMember(r, "intersection").orElse(findRelationMember(r, "sign").orElse(null));
+        default:
+            return null;
         }
-        return null;
+    }
+
+    static Optional<OsmPrimitive> findRelationMember(Relation r, String role) {
+        return r.getMembers().stream().filter(rmv -> role.equals(rmv.getRole()))
+                .map(RelationMember::getMember).findAny();
     }
 
     /**
