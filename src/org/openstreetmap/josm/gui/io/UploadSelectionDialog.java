@@ -20,6 +20,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -35,7 +36,6 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -54,7 +54,7 @@ public class UploadSelectionDialog extends JDialog {
     private final OsmPrimitiveList lstDeletedPrimitives = new OsmPrimitiveList();
     private JSplitPane spLists;
     private boolean canceled;
-    private SideButton btnContinue;
+    private JButton btnContinue;
 
     /**
      * Constructs a new {@code UploadSelectionDialog}.
@@ -88,14 +88,14 @@ public class UploadSelectionDialog extends JDialog {
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout());
         ContinueAction continueAction = new ContinueAction();
-        btnContinue = new SideButton(continueAction);
+        btnContinue = new JButton(continueAction);
         pnl.add(btnContinue);
         btnContinue.setFocusable(true);
         lstDeletedPrimitives.getSelectionModel().addListSelectionListener(continueAction);
         lstSelectedPrimitives.getSelectionModel().addListSelectionListener(continueAction);
 
-        pnl.add(new SideButton(new CancelAction()));
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/UploadSelection"))));
+        pnl.add(new JButton(new CancelAction()));
+        pnl.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/UploadSelection"))));
         return pnl;
     }
 
