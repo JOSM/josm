@@ -1226,6 +1226,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         setChangesetId(data.getChangesetId());
         setDeleted(data.isDeleted());
         setModified(data.isModified());
+        setVisible(data.isVisible());
         setIncomplete(data.isIncomplete());
         version = data.getVersion();
     }
