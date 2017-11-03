@@ -44,3 +44,10 @@ area:closed[aeroway=helipad][area?] {
 way >:sameTags node:tagged {
   throwWarning: tr("Nodes duplicating parent way tags");
 }
+
+/* #15477 */
+*[payment:cash][payment:coins][payment:notes] {
+  throwWarning: tr("{0} together with {1} and {2}. Remove {0}.", "{0.key}", "{1.key}", "{2.key}");
+  group: tr("unnecessary tag");
+  fixRemove: "payment:cash";
+}
