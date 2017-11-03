@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -32,6 +33,7 @@ public class ToggleUploadDiscouragedLayerAction extends AbstractAction implement
         super(tr("Discourage upload"), ImageProvider.get("no_upload"));
         this.layer = layer;
         setEnabled(layer.isUploadable());
+        putValue("help", ht("/Action/EncourageDiscourageUpload"));
     }
 
     @Override
