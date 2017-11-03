@@ -204,7 +204,7 @@ node[tag("power") = parent_tag("power")] ∈ *[power] {
   group: tr("{0} inside {1}", "power", "power");
 }
 
-/* isolated nodes which should be part of a way, see #10825 */
+/* isolated nodes which should be part of a way, see #10825, #15478 */
 node:unconnected:in-downloaded-area[entrance],
 node:unconnected:in-downloaded-area[traffic_calming],
 node:unconnected:in-downloaded-area[highway=passing_place],
@@ -217,6 +217,8 @@ node:unconnected:in-downloaded-area[highway=give_way],
 node:unconnected:in-downloaded-area[highway=traffic_signals],
 node:unconnected:in-downloaded-area[highway=crossing],
 node:unconnected:in-downloaded-area[crossing],
+node:unconnected:in-downloaded-area[highway=milestone],
+node:unconnected:in-downloaded-area[railway=milestone],
 node:unconnected:in-downloaded-area[railway=crossing],
 node:unconnected:in-downloaded-area[railway=level_crossing],
 node:unconnected:in-downloaded-area[railway=buffer_stop],
