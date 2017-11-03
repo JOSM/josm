@@ -10,8 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -139,9 +139,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     public JMapViewer(TileCache tileCache) {
         tileSource = new OsmTileSource.Mapnik();
         tileController = new TileController(tileSource, tileCache, this);
-        mapMarkerList = Collections.synchronizedList(new LinkedList<MapMarker>());
-        mapPolygonList = Collections.synchronizedList(new LinkedList<MapPolygon>());
-        mapRectangleList = Collections.synchronizedList(new LinkedList<MapRectangle>());
+        mapMarkerList = Collections.synchronizedList(new ArrayList<MapMarker>());
+        mapPolygonList = Collections.synchronizedList(new ArrayList<MapPolygon>());
+        mapRectangleList = Collections.synchronizedList(new ArrayList<MapRectangle>());
         mapMarkersVisible = true;
         mapRectanglesVisible = true;
         mapPolygonsVisible = true;
@@ -769,7 +769,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     protected void paintPolygon(Graphics g, MapPolygon polygon) {
         List<? extends ICoordinate> coords = polygon.getPoints();
         if (coords != null && coords.size() >= 3) {
-            List<Point> points = new LinkedList<>();
+            List<Point> points = new ArrayList<>();
             for (ICoordinate c : coords) {
                 Point p = getMapPosition(c, false);
                 if (p == null) {
@@ -781,7 +781,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             if (scrollWrapEnabled) {
                 int tilesize = tileSource.getTileSize();
                 int mapSize = tilesize << zoom;
-                List<Point> pointsWrapped = new LinkedList<>(points);
+                List<Point> pointsWrapped = new ArrayList<>(points);
                 boolean keepWrapping = true;
                 while (keepWrapping) {
                     for (Point p : pointsWrapped) {
@@ -792,7 +792,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                     }
                     polygon.paint(g, pointsWrapped);
                 }
-                pointsWrapped = new LinkedList<>(points);
+                pointsWrapped = new ArrayList<>(points);
                 keepWrapping = true;
                 while (keepWrapping) {
                     for (Point p : pointsWrapped) {
