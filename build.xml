@@ -39,7 +39,7 @@
         </condition>
         <!-- For Java9-specific stuff -->
         <condition property="isJava9">
-            <matches string="${ant.java.version}" pattern="(1.)?9" />
+            <matches string="${ant.java.version}" pattern="(1.)?(9|1[0-9])" />
         </condition>
         <path id="test.classpath">
             <fileset dir="${test.dir}/lib">
@@ -337,7 +337,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xep:FutureReturnValueIgnored:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:FloatingPointLiteralPrecision:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:ShortCircuitBoolean:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
-            <compilerarg value="-Xep:LiteralClassName:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xep:JdkObsolete:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg line="-Xmaxwarns 1000"/>
             <exclude name="org/openstreetmap/josm/io/audio/JavaFxMediaPlayer.java" if:set="noJavaFX"/>
         </javac>
@@ -538,16 +538,13 @@ Build-Date: ${build.tstamp}
             <html destdir="${test.dir}/report/jacoco"/>
         </jacoco:report>
     </target>
-    <!-- Proguard does not support Java 9 : http://sourceforge.net/p/proguard/bugs/551/ -->
-    <target name="dist-optimized" depends="dist" unless="isJava9">
+    <target name="dist-optimized" depends="dist">
         <taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar"/>
         <proguard>
         -injars ${dist.jar}
         -outjars ${dist-optimized.jar}
 
-        -libraryjars ${java.home}/lib/rt.jar
-        -libraryjars ${java.home}/lib/jce.jar
-        -libraryjars ${java.home}/lib/ext/jfxrt.jar
+        -libraryjars ${java.home}/lib
 
         -dontoptimize
         -dontobfuscate
