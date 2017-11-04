@@ -376,13 +376,15 @@ public final class TaggingPresetReader {
             } catch (SAXException | IllegalArgumentException e) {
                 Logging.error(e);
                 Logging.error(source);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        "<html>" + tr("Error parsing {0}: ", source) + "<br><br><table width=600>" +
-                                Utils.escapeReservedCharactersHTML(e.getMessage()) + "</table></html>",
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                        );
+                if (displayErrMsg) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            "<html>" + tr("Error parsing {0}: ", source) + "<br><br><table width=600>" +
+                                    Utils.escapeReservedCharactersHTML(e.getMessage()) + "</table></html>",
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                            );
+                }
             }
         }
         return allPresets;
