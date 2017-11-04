@@ -670,6 +670,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          * @param result The result collection, including the initial collection.
          * @param foundMatches The number of matches added to the result.
          * @param setting The setting used.
+         * @param parent parent component
          */
         void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting, Component parent);
     }

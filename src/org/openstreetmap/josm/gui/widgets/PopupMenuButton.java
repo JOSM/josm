@@ -5,8 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Path2D;
 
 import javax.swing.Action;
@@ -22,6 +22,7 @@ public class PopupMenuButton extends JButton implements ActionListener {
     private JPopupMenu menu;
 
     /**
+     * Constructs a new {@code PopupMenuButton}.
      * @see JButton#JButton()
      */
     public PopupMenuButton() {
@@ -30,6 +31,8 @@ public class PopupMenuButton extends JButton implements ActionListener {
     }
 
     /**
+     * Constructs a new {@code PopupMenuButton}.
+     * @param a the <code>Action</code> used to specify the new button
      * @see JButton#JButton(Action)
      */
     public PopupMenuButton(Action a) {
@@ -38,6 +41,8 @@ public class PopupMenuButton extends JButton implements ActionListener {
     }
 
     /**
+     * Constructs a new {@code PopupMenuButton}.
+     * @param i the Icon image to display on the button
      * @see JButton#JButton(Icon)
      */
     public PopupMenuButton(Icon i) {
@@ -46,6 +51,8 @@ public class PopupMenuButton extends JButton implements ActionListener {
     }
 
     /**
+     * Constructs a new {@code PopupMenuButton}.
+     * @param t the text of the button
      * @see JButton#JButton(String)
      */
     public PopupMenuButton(String t) {
@@ -54,6 +61,9 @@ public class PopupMenuButton extends JButton implements ActionListener {
     }
 
     /**
+     * Constructs a new {@code PopupMenuButton}.
+     * @param t the text of the button
+     * @param i the Icon image to display on the button
      * @see JButton#JButton(String, Icon)
      */
     public PopupMenuButton(String t, Icon i) {
@@ -63,6 +73,7 @@ public class PopupMenuButton extends JButton implements ActionListener {
 
     /**
      * Pass-through to {@link JButton#JButton()} allowing associated popup menu to be set
+     * @param m the associated popup menu
      */
     public PopupMenuButton(JPopupMenu m) {
         super();
@@ -71,6 +82,8 @@ public class PopupMenuButton extends JButton implements ActionListener {
 
     /**
      * Pass-through to {@link JButton#JButton(Action)} allowing associated popup menu to be set
+     * @param a the <code>Action</code> used to specify the new button
+     * @param m the associated popup menu
      */
     public PopupMenuButton(Action a, JPopupMenu m) {
         super(a);
@@ -79,6 +92,8 @@ public class PopupMenuButton extends JButton implements ActionListener {
 
     /**
      * Pass-through to {@link JButton#JButton(Icon)} allowing associated popup menu to be set
+     * @param i the Icon image to display on the button
+     * @param m the associated popup menu
      */
     public PopupMenuButton(Icon i, JPopupMenu m) {
         super(i);
@@ -87,6 +102,8 @@ public class PopupMenuButton extends JButton implements ActionListener {
 
     /**
      * Pass-through to {@link JButton#JButton(String)} allowing associated popup menu to be set
+     * @param t the text of the button
+     * @param m the associated popup menu
      */
     public PopupMenuButton(String t, JPopupMenu m) {
         super(t);
@@ -95,6 +112,9 @@ public class PopupMenuButton extends JButton implements ActionListener {
 
     /**
      * Pass-through to {@link JButton#JButton(String, Icon)} allowing associated popup menu to be set
+     * @param t the text of the button
+     * @param i the Icon image to display on the button
+     * @param m the associated popup menu
      */
     public PopupMenuButton(String t, Icon i, JPopupMenu m) {
         super(t, i);
@@ -112,6 +132,7 @@ public class PopupMenuButton extends JButton implements ActionListener {
 
     /**
      * Get the popup menu associated with this button
+     * @return the popup menu associated with this button
      */
     public JPopupMenu getPopupMenu() {
         return this.menu;
