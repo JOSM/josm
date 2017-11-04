@@ -3,6 +3,7 @@ package org.openstreetmap.josm.command.conflict;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -32,6 +33,7 @@ public class RelationMemberConflictResolverCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(RelationMemberConflictResolverCommand.class).usingGetClass()
             .withPrefabValues(Relation.class,
                     new Relation(1), new Relation(2))

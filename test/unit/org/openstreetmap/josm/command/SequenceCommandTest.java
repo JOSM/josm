@@ -16,6 +16,7 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -213,6 +214,7 @@ public class SequenceCommandTest {
     @Test
     public void testEqualsContract() {
         DataSet ds = new DataSet();
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(SequenceCommand.class).usingGetClass()
             .withPrefabValues(Command.class,
                 new AddCommand(ds, new Node(1)), new AddCommand(ds, new Node(2)))

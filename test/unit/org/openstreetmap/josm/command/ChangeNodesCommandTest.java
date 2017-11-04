@@ -14,6 +14,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -124,6 +125,7 @@ public class ChangeNodesCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ChangeNodesCommand.class).usingGetClass()
             .withPrefabValues(Way.class,
                 new Way(1), new Way(2))

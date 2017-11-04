@@ -7,8 +7,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Unit tests of {@link MultiMap} class.
@@ -20,6 +22,7 @@ public class MultiMapTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(MultiMap.class).usingGetClass().verify();
     }
 

@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -57,6 +58,7 @@ public class NoteTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(Note.class).usingGetClass()
             .withIgnoredFields("latLon", "createdAt", "closedAt", "state", "comments")
             .suppress(Warning.NONFINAL_FIELDS)

@@ -5,6 +5,7 @@ import java.awt.color.ColorSpace;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -28,6 +29,7 @@ public class WayPointTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(WayPoint.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .withIgnoredFields("customColoring", "dir", "drawLine", "east", "north", "eastNorthCacheKey")

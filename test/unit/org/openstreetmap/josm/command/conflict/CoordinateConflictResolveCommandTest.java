@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -89,6 +90,7 @@ public class CoordinateConflictResolveCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(CoordinateConflictResolveCommand.class).usingGetClass()
             .withPrefabValues(Conflict.class,
                     new Conflict<>(new Node(), new Node()), new Conflict<>(new Way(), new Way()))

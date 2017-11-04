@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -95,6 +96,7 @@ public class AutoCompletionPriorityTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(AutoCompletionPriority.class).usingGetClass()
             .verify();
     }

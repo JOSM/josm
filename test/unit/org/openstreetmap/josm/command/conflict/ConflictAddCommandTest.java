@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -72,6 +73,7 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ConflictAddCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                     new DataSet(), new DataSet())

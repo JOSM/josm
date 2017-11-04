@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.junit.Assume;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -326,6 +327,19 @@ public final class TestUtils {
                     .findFirst().orElse(null);
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Use to assume that EqualsVerifier is working with the current JVM.
+     */
+    public static void assumeWorkingEqualsVerifier() {
+        try {
+            // Workaround to https://github.com/jqno/equalsverifier/issues/177
+            // Inspired by https://issues.apache.org/jira/browse/SOLR-11606
+            nl.jqno.equalsverifier.internal.lib.bytebuddy.ClassFileVersion.ofThisVm();
+        } catch (IllegalArgumentException e) {
+            Assume.assumeNoException(e);
         }
     }
 }

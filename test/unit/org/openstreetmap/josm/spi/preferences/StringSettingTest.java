@@ -3,6 +3,7 @@ package org.openstreetmap.josm.spi.preferences;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -24,6 +25,7 @@ public class StringSettingTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(StringSetting.class).usingGetClass()
             .withIgnoredFields("isNew", "time")
             .verify();

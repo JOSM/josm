@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -16,6 +17,7 @@ public class PairTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(Pair.class).suppress(Warning.NONFINAL_FIELDS).verify();
     }
 }

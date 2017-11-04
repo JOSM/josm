@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -54,6 +55,7 @@ public class PrefEntryTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(PrefEntry.class).usingGetClass()
             .withIgnoredFields("value", "defaultValue", "isDefault", "changed")
             .verify();

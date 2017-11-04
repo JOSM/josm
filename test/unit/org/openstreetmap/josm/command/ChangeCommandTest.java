@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
@@ -153,6 +154,7 @@ public class ChangeCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ChangeCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                 new DataSet(), new DataSet())

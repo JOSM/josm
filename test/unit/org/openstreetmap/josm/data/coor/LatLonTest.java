@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -145,6 +146,7 @@ public class LatLonTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(LatLon.class).usingGetClass()
             .withPrefabValues(DecimalFormat.class, new DecimalFormat("00.0"), new DecimalFormat("00.000"))
             .verify();

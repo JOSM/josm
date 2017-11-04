@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.tagging.ac;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager.UserInputTag;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -26,6 +27,7 @@ public class AutoCompletionManagerTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(UserInputTag.class).usingGetClass()
             .verify();
     }

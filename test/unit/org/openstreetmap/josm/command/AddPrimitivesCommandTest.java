@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -284,6 +285,7 @@ public class AddPrimitivesCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(AddPrimitivesCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                 new DataSet(), new DataSet())
