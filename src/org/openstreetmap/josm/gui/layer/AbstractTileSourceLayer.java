@@ -1349,7 +1349,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     /**
-     * Data container to hold information about a {@link TileSet} class.
+     * Data container to hold information about a {@code TileSet} class.
      */
     private static class TileSetInfo {
         boolean hasVisibleTiles;
