@@ -170,6 +170,22 @@ public final class TestUtils {
     }
 
     /**
+     * Returns a private static field value.
+     * @param cls object class
+     * @param fieldName private field name
+     * @return private field value
+     * @throws ReflectiveOperationException if a reflection operation error occurs
+     */
+    public static Object getPrivateStaticField(Class<?> cls, String fieldName) throws ReflectiveOperationException {
+        Field f = cls.getDeclaredField(fieldName);
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            f.setAccessible(true);
+            return null;
+        });
+        return f.get(null);
+    }
+
+    /**
      * Returns an instance of {@link AbstractProgressMonitor} which keeps track of the monitor state,
      * but does not show the progress.
      * @return a progress monitor
