@@ -14,15 +14,24 @@ public class Condition implements TemplateEntry {
 
     private final List<TemplateEntry> entries;
 
+    /**
+     * Constructs a new {@code Condition} with predefined template entries.
+     * @param entries template entries
+     */
     public Condition(Collection<TemplateEntry> entries) {
         this.entries = new ArrayList<>(entries);
     }
 
+    /**
+     * Constructs a new {@code Condition}.
+     */
     public Condition() {
         this.entries = new ArrayList<>();
     }
 
     /**
+     * Returns template entries.
+     * @return template entries
      * @deprecated (since 13003) use constructor {@link #Condition(java.util.Collection)} to set the entries
      */
     @Deprecated

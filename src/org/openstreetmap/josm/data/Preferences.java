@@ -38,14 +38,17 @@ import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
+import org.openstreetmap.josm.io.OfflineAccessException;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
 import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.spi.preferences.ListListSetting;
@@ -53,9 +56,6 @@ import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.spi.preferences.MapListSetting;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
-import org.openstreetmap.josm.io.OfflineAccessException;
-import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
@@ -335,6 +335,8 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
+     * @param key preference key
+     * @return listener list for this key
      * @deprecated deprecated private method
      */
     @Deprecated
@@ -382,6 +384,9 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
+     * @param key preference key
+     * @param oldValue old value
+     * @param newValue new value
      * @deprecated deprecated private method
      */
     @Deprecated
@@ -430,6 +435,9 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
+     * @param createIfMissing if true, automatically creates this directory,
+     * in case it is missing
+     * @return the preferences directory
      * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
      */
     @Deprecated
@@ -450,6 +458,9 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
+     * @param createIfMissing if true, automatically creates this directory,
+     * in case it is missing
+     * @return the user data directory
      * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
      */
     @Deprecated
@@ -495,6 +506,9 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
+     * @param createIfMissing if true, automatically creates this directory,
+     * in case it is missing
+     * @return the cache directory
      * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
      */
     @Deprecated
@@ -944,6 +958,8 @@ public class Preferences extends AbstractPreferences {
 
     /**
      * only for preferences
+     * @param o color key
+     * @return translated color name
      * @deprecated (since 12987) no longer supported
      */
     @Deprecated
