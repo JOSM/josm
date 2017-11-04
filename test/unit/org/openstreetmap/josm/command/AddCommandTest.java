@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -130,6 +131,7 @@ public class AddCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(AddCommand.class).usingGetClass()
             .withPrefabValues(OsmPrimitive.class,
                 new Node(1), new Node(2))

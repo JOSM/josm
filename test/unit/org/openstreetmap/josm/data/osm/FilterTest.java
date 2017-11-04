@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
@@ -241,6 +242,7 @@ public class FilterTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(FilterPreferenceEntry.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.gpx;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -26,6 +27,7 @@ public class WithAttributesTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(WithAttributes.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();

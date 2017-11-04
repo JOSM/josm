@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -26,6 +27,7 @@ public class StorageTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(Storage.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .withIgnoredFields("arrayCopyNecessary", "hash", "mask", "modCount", "safeIterator", "size")

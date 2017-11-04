@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import oauth.signpost.OAuthConsumer;
@@ -33,6 +34,7 @@ public class OAuthTokenTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(OAuthToken.class).usingGetClass().verify();
     }
 }

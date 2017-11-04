@@ -11,6 +11,7 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -122,6 +123,7 @@ public class RemoveNodesCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(RemoveNodesCommand.class).usingGetClass()
             .withPrefabValues(Way.class,
                 new Way(1), new Way(2))

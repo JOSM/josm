@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferenceTest;
 import org.openstreetmap.josm.plugins.PluginHandler.DeprecatedPlugin;
 import org.openstreetmap.josm.plugins.PluginHandler.PluginInformationAction;
@@ -39,6 +40,7 @@ public class PluginHandlerTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(DeprecatedPlugin.class).usingGetClass().verify();
     }
 

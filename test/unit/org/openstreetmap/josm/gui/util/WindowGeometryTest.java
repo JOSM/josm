@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.util.WindowGeometry.WindowGeometryException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -146,6 +147,7 @@ public class WindowGeometryTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(WindowGeometry.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();

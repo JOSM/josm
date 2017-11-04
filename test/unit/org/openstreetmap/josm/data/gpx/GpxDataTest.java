@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -444,6 +445,7 @@ public class GpxDataTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(GpxData.class).usingGetClass()
             .withIgnoredFields("attr", "creator", "fromServer", "storageFile", "listeners", "tracks", "routes", "waypoints", "proxy")
             .withPrefabValues(WayPoint.class, new WayPoint(LatLon.NORTH_POLE), new WayPoint(LatLon.SOUTH_POLE))

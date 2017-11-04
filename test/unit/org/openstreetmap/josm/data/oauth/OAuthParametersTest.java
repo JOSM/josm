@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
@@ -60,6 +61,7 @@ public class OAuthParametersTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(OAuthParameters.class).usingGetClass().verify();
     }
 }

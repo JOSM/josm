@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.gpx;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -26,6 +27,7 @@ public class ImmutableGpxTrackSegmentTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ImmutableGpxTrackSegment.class).usingGetClass()
             .withIgnoredFields("bounds", "length")
             .withPrefabValues(WayPoint.class, new WayPoint(LatLon.NORTH_POLE), new WayPoint(LatLon.SOUTH_POLE))

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -145,6 +146,7 @@ public class ChangeRelationMemberRoleCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ChangeRelationMemberRoleCommand.class).usingGetClass()
             .withPrefabValues(Relation.class,
                 new Relation(1), new Relation(2))
