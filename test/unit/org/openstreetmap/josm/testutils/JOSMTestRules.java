@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.testutils;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -56,6 +57,7 @@ public class JOSMTestRules implements TestRule {
     private boolean usePreferences = false;
     private APIType useAPI = APIType.NONE;
     private String i18n = null;
+    private TileSourceRule tileSourceRule;
     private boolean platform;
     private boolean useProjection;
     private boolean useProjectionNadGrids;
@@ -242,6 +244,37 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
+     * Replace imagery sources with a default set of mock tile sources
+     *
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules fakeImagery() {
+        return this.fakeImagery(
+            new TileSourceRule(
+                true,
+                true,
+                true,
+                new TileSourceRule.ColorSource(Color.WHITE, "White Tiles", 256),
+                new TileSourceRule.ColorSource(Color.BLACK, "Black Tiles", 256),
+                new TileSourceRule.ColorSource(Color.MAGENTA, "Magenta Tiles", 256),
+                new TileSourceRule.ColorSource(Color.GREEN, "Green Tiles", 256)
+            )
+        );
+    }
+
+    /**
+     * Replace imagery sources with those from specific mock tile server setup
+     * @param tileSourceRule Tile source rule
+     *
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules fakeImagery(TileSourceRule tileSourceRule) {
+        this.preferences();
+        this.tileSourceRule = tileSourceRule;
+        return this;
+    }
+
+    /**
      * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
      *         {@link Main#menu}, {@link Main#toolbar} global variables in this test.
      * @return this instance, for easy chaining
@@ -256,13 +289,27 @@ public class JOSMTestRules implements TestRule {
     @Override
     public Statement apply(Statement base, Description description) {
         Statement statement = base;
+        // counter-intuitively, Statements which need to have their setup routines performed *after* another one need to
+        // be added into the chain *before* that one, so that it ends up on the "inside".
         if (timeout > 0) {
             // TODO: new DisableOnDebug(timeout)
             statement = new FailOnTimeoutStatement(statement, timeout);
         }
+
+        // this half of TileSourceRule's initialization must happen after josm is set up
+        if (this.tileSourceRule != null) {
+            statement = this.tileSourceRule.applyRegisterLayers(statement, description);
+        }
+
         statement = new CreateJosmEnvironment(statement);
         if (josmHome != null) {
             statement = josmHome.apply(statement, description);
+        }
+
+        // run mock tile server as the outermost Statement (started first) so it can hopefully be initializing in
+        // parallel with other setup
+        if (this.tileSourceRule != null) {
+            statement = this.tileSourceRule.applyRunServer(statement, description);
         }
         return statement;
     }
@@ -406,6 +453,13 @@ public class JOSMTestRules implements TestRule {
         SelectionEventManager eventManager = SelectionEventManager.getInstance();
         MainApplication.getLayerManager().resetState();
         eventManager.resetState();
+    }
+
+    /**
+     * @return TileSourceRule which is automatically started by this rule
+     */
+    public TileSourceRule getTileSourceRule() {
+        return this.tileSourceRule;
     }
 
     /**
