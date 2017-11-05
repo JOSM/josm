@@ -4098,7 +4098,7 @@
             <space />
             <key key="tourism" value="caravan_site" />
             <reference ref="name_operator" />
-            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5" />
             <reference ref="wheelchair" />
             <space />
             <text key="capacity" text="Number of places" />
@@ -4111,7 +4111,7 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Caravan Site/RV Park -->
-        <item name="Camping Site" icon="presets/accommodation/camping.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Campsite" icon="presets/accommodation/camping.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=camp_site"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=camp_site"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=camp_site"
@@ -4124,14 +4124,21 @@
             <space />
             <key key="tourism" value="camp_site" />
             <reference ref="name_operator" />
-            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
-            <reference ref="wheelchair" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5" />
+            <checkgroup columns="2">
+                <check key="tents" text="Tents allowed" />
+                <check key="caravans" text="Caravans allowed" />
+            </checkgroup>
+            <checkgroup columns="2">
+                <check key="backcountry" text="Backcountry" />
+                <check key="group_only" text="Group only access" />
+            </checkgroup>
             <combo key="sanitary_dump_station" text="Dump Station" values="yes,public,customers,no" />
-            <space />
-            <reference ref="internet_smoking" />
+            <reference ref="wheelchair" />
+            <reference ref="internet" />
             <space />
             <reference ref="link_contact_address_payment" />
-        </item> <!-- Camping Site -->
+        </item> <!-- Campsite -->
     </group> <!-- Accommodation -->
     <group name="Food+Drinks" icon="presets/food/restaurant.svg">
         <item name="Restaurant" icon="presets/food/restaurant.svg" type="node,closedway,multipolygon" preset_name_label="true">
