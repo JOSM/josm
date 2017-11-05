@@ -254,10 +254,20 @@ way[waterway=weir][bridge=yes][highway] {
   throwWarning: tr("incomplete object: only {0}", "{0.key}");
   group: tr("missing tag");
 }
-/* only {0.key} and {1.key}, see #11104 */
+/* only {0.key} and {1.key} */
 *[name][area][eval(number_of_tags()) = 2],
 *[name][ref][eval(number_of_tags()) = 2] {
   throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.key}");
+  group: tr("missing tag");
+}
+/* only {0.tag}, #15269 */
+*[tourism=attraction][eval(number_of_tags()) = 1] {
+  throwWarning: tr("incomplete object: only {0}", "{0.tag}");
+  group: tr("missing tag");
+}
+/* only {0.key} and {1.tag} */
+*[name][tourism=attraction][eval(number_of_tags()) = 2] {
+  throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.tag}");
   group: tr("missing tag");
 }
 
