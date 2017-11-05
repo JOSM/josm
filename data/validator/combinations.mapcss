@@ -115,6 +115,8 @@ way[cutline                    ][man_made!=cutline],
 }
 
 /* {0.tag} without {1.key} (warning level) */
+way[boundary=administrative][!admin_level],
+relation[boundary=administrative][!admin_level],
 relation[route=bicycle][!network][type=route],
 relation[route=hiking][!network][type=route],
 relation[route=foot][!network][type=route],
