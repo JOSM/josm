@@ -161,7 +161,7 @@
         <reference ref="oh_wheelchair" />
     </chunk>
     <chunk id="cuisine">
-    <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;coffee_shop;sushi;steak_house;fish_and_chips;chicken;american;ice_cream;international;seafood;spanish;vietnamese;fish;noodle;barbecue;vegetarian;korean" values_searchable="true" />
+    <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;coffee_shop;sushi;steak_house;fish_and_chips;chicken;american;ice_cream;international;seafood;spanish;vietnamese;fish;noodle;barbecue;vegetarian;korean;donut;mediterranean;friture;crepe" values_searchable="true" />
     </chunk>
     <chunk id="internet">
         <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
