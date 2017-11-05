@@ -42,13 +42,11 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
 
     private static final MultipolygonCache INSTANCE = new MultipolygonCache();
 
-    private final Map<DataSet, Map<Relation, Multipolygon>> cache;
+    private final Map<DataSet, Map<Relation, Multipolygon>> cache = new ConcurrentHashMap<>(); // see ticket 11833
 
-    private final Collection<PolyData> selectedPolyData;
+    private final Collection<PolyData> selectedPolyData = new ArrayList<>();
 
     private MultipolygonCache() {
-        this.cache = new ConcurrentHashMap<>(); // see ticket 11833
-        this.selectedPolyData = new ArrayList<>();
         Main.addProjectionChangeListener(this);
         DataSet.addSelectionListener(this);
         MainApplication.getLayerManager().addLayerChangeListener(this);
@@ -91,9 +89,11 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
             if (multipolygon == null || forceRefresh) {
                 multipolygon = new Multipolygon(r);
                 map2.put(r, multipolygon);
-                for (PolyData pd : multipolygon.getCombinedPolygons()) {
-                    if (pd.isSelected()) {
-                        selectedPolyData.add(pd);
+                synchronized (this) {
+                    for (PolyData pd : multipolygon.getCombinedPolygons()) {
+                        if (pd.isSelected()) {
+                            selectedPolyData.add(pd);
+                        }
                     }
                 }
             }
@@ -293,7 +293,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
     }
 
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public synchronized void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
 
         for (Iterator<PolyData> it = selectedPolyData.iterator(); it.hasNext();) {
             it.next().setSelected(false);
