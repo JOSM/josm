@@ -4414,6 +4414,7 @@ node[mountain_pass?] {
 
 way[boundary=protected_area]::core_boundary,
 way[boundary=administrative]::core_boundary,
+relation[boundary=administrative] > way::core_boundary,
 way[boundary=postal_code]::core_boundary,
 way[boundary=political]::core_boundary,
 way[boundary=maritime]::core_boundary,
@@ -4424,55 +4425,30 @@ way[boundary=national_park]::core_boundary {
     color: boundary#FF6600;
     dashes: 9,9;
 }
-way[boundary=administrative][admin_level=9]::core_boundary,
-relation[boundary=administrative][admin_level=9] > way::core_boundary,
-way[boundary=administrative][admin_level=10]::core_boundary,
-relation[boundary=administrative][admin_level=10] > way::core_boundary {
-    z-index: 2;
-    modifier: false;
-    width: 1;
-    color: boundary#FF6600;
-    dashes: 9,9;
-}
+/* admin_level >=9 use the default width of 1 defined above */
 way[boundary=administrative][admin_level=7]::core_boundary,
 relation[boundary=administrative][admin_level=7] > way::core_boundary,
 way[boundary=administrative][admin_level=8]::core_boundary,
 relation[boundary=administrative][admin_level=8] > way::core_boundary {
-    z-index: 2;
-    modifier: false;
     width: 2;
-    color: boundary#FF6600;
-    dashes: 9,9;
 }
 way[boundary=administrative][admin_level=5]::core_boundary,
 relation[boundary=administrative][admin_level=5] > way::core_boundary,
 way[boundary=administrative][admin_level=6]::core_boundary,
 relation[boundary=administrative][admin_level=6] > way::core_boundary {
-    z-index: 2;
-    modifier: false;
     width: 3;
-    color: boundary#FF6600;
-    dashes: 9,9;
 }
 way[boundary=administrative][admin_level=3]::core_boundary,
 relation[boundary=administrative][admin_level=3] > way::core_boundary,
 way[boundary=administrative][admin_level=4]::core_boundary,
 relation[boundary=administrative][admin_level=4] > way::core_boundary {
-    z-index: 2;
-    modifier: false;
     width: 4;
-    color: boundary#FF6600;
-    dashes: 9,9;
 }
 way[boundary=administrative][admin_level=1]::core_boundary,
 relation[boundary=administrative][admin_level=1] > way::core_boundary,
 way[boundary=administrative][admin_level=2]::core_boundary,
 relation[boundary=administrative][admin_level=2] > way::core_boundary {
-    z-index: 2;
-    modifier: false;
     width: 5;
-    color: boundary#FF6600;
-    dashes: 9,9;
 }
 node[boundary=national],
 node[boundary=administrative],
