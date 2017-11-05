@@ -4424,50 +4424,50 @@ way[boundary=national_park]::core_boundary {
     color: boundary#FF6600;
     dashes: 9,9;
 }
-way[admin_level=9]::core_boundary,
-relation[admin_level=9] > way::core_boundary,
-way[admin_level=10]::core_boundary,
-relation[admin_level=10] > way::core_boundary {
+way[boundary=administrative][admin_level=9]::core_boundary,
+relation[boundary=administrative][admin_level=9] > way::core_boundary,
+way[boundary=administrative][admin_level=10]::core_boundary,
+relation[boundary=administrative][admin_level=10] > way::core_boundary {
     z-index: 2;
     modifier: false;
     width: 1;
     color: boundary#FF6600;
     dashes: 9,9;
 }
-way[admin_level=7]::core_boundary,
-relation[admin_level=7] > way::core_boundary,
-way[admin_level=8]::core_boundary,
-relation[admin_level=8] > way::core_boundary {
+way[boundary=administrative][admin_level=7]::core_boundary,
+relation[boundary=administrative][admin_level=7] > way::core_boundary,
+way[boundary=administrative][admin_level=8]::core_boundary,
+relation[boundary=administrative][admin_level=8] > way::core_boundary {
     z-index: 2;
     modifier: false;
     width: 2;
     color: boundary#FF6600;
     dashes: 9,9;
 }
-way[admin_level=5]::core_boundary,
-relation[admin_level=5] > way::core_boundary,
-way[admin_level=6]::core_boundary,
-relation[admin_level=6] > way::core_boundary {
+way[boundary=administrative][admin_level=5]::core_boundary,
+relation[boundary=administrative][admin_level=5] > way::core_boundary,
+way[boundary=administrative][admin_level=6]::core_boundary,
+relation[boundary=administrative][admin_level=6] > way::core_boundary {
     z-index: 2;
     modifier: false;
     width: 3;
     color: boundary#FF6600;
     dashes: 9,9;
 }
-way[admin_level=3]::core_boundary,
-relation[admin_level=3] > way::core_boundary,
-way[admin_level=4]::core_boundary,
-relation[admin_level=4] > way::core_boundary {
+way[boundary=administrative][admin_level=3]::core_boundary,
+relation[boundary=administrative][admin_level=3] > way::core_boundary,
+way[boundary=administrative][admin_level=4]::core_boundary,
+relation[boundary=administrative][admin_level=4] > way::core_boundary {
     z-index: 2;
     modifier: false;
     width: 4;
     color: boundary#FF6600;
     dashes: 9,9;
 }
-way[admin_level=1]::core_boundary,
-relation[admin_level=1] > way::core_boundary,
-way[admin_level=2]::core_boundary,
-relation[admin_level=2] > way::core_boundary {
+way[boundary=administrative][admin_level=1]::core_boundary,
+relation[boundary=administrative][admin_level=1] > way::core_boundary,
+way[boundary=administrative][admin_level=2]::core_boundary,
+relation[boundary=administrative][admin_level=2] > way::core_boundary {
     z-index: 2;
     modifier: false;
     width: 5;

@@ -47,6 +47,11 @@ node[natural=tree_row] {
   assertMatch: "node bridge=viaduct";
 }
 
+/* {0} on a node, should be a way or relation */
+node[boundary=administrative] {
+  throwWarning: tr("{0} on a node. Should be used on a way or relation.", "{0.tag}");
+}
+
 /* {0} on a node, should be an area; see ticket #10679 */
 node[area=yes],
 node[landuse],
