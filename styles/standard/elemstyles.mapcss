@@ -380,8 +380,11 @@ way[barrier=kerb] {
     width: 2;
     color: barrier#F0F050;
 }
-way[barrier=retaining_wall],
 way[barrier=kerb] {
+    repeat-image: "presets/barrier/kerb_pattern.svg";
+    repeat-image-align: top;
+}
+way[barrier=retaining_wall] {
     repeat-image: "presets/misc/cliff_pattern.svg";
     repeat-image-align: top;
 }
