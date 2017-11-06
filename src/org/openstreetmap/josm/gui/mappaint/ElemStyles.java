@@ -88,6 +88,7 @@ public class ElemStyles implements PreferenceChangedListener {
         GuiHelper.runInEDT(() -> {
             cacheIdx++;
             preferenceCache.clear();
+            backgroundColorCache = null;
         });
     }
 
@@ -469,7 +470,6 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     void clear() {
         styleSources.clear();
-        invalidate();
     }
 
     /**
@@ -478,7 +478,6 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     void add(StyleSource style) {
         styleSources.add(style);
-        invalidate();
     }
 
     /**
@@ -488,7 +487,6 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     boolean remove(StyleSource style) {
         boolean result = styleSources.remove(style);
-        invalidate();
         return result;
     }
 
@@ -499,11 +497,6 @@ public class ElemStyles implements PreferenceChangedListener {
     void setStyleSources(Collection<StyleSource> sources) {
         styleSources.clear();
         styleSources.addAll(sources);
-        invalidate();
-    }
-
-    private void invalidate() {
-        backgroundColorCache = null;
     }
 
     /**
