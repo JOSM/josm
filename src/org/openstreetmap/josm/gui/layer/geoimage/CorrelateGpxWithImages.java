@@ -1192,7 +1192,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     curImg.tmp.setSpeed(speed);
                     curImg.tmp.setElevation(curElevation);
                     curImg.tmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
-                    curImg.flagNewGpsData();
+                    curImg.tmp.flagNewGpsData();
                     ret++;
                 }
                 i--;
@@ -1218,7 +1218,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     curImg.tmp.setElevation(prevElevation + (curElevation - prevElevation) * timeDiff);
                 }
                 curImg.tmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
-                curImg.flagNewGpsData();
+                curImg.tmp.flagNewGpsData();
 
                 ret++;
             }
