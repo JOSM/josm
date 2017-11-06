@@ -509,7 +509,7 @@ public final class ExpressionFactory {
         /**
          * Returns the OSM id of the object's parent.
          * <p>
-         * Parent must be matched by parent selector.
+         * Parent must be matched by child selector.
          * @param env the environment
          * @return the OSM id of the object's parent, if available, or {@code null}
          * @see OsmPrimitive#getUniqueId()
