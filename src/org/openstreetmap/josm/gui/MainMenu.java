@@ -730,12 +730,6 @@ public class MainMenu extends JMenuBar {
             fullscreenToggleAction.addButtonModel(fullscreen.getModel());
         }
 
-        // -- dialogs panel toggle action
-        final JCheckBoxMenuItem dialogsToggle = new JCheckBoxMenuItem(dialogsToggleAction);
-        dialogsToggle.setAccelerator(dialogsToggleAction.getShortcut().getKeyStroke());
-        dialogsToggleAction.addButtonModel(dialogsToggle.getModel());
-        viewMenu.add(dialogsToggle);
-
         add(viewMenu, jumpToAct, true);
         viewMenu.addSeparator();
         add(viewMenu, info);
@@ -749,6 +743,12 @@ public class MainMenu extends JMenuBar {
         viewMenu.add(new PreferenceToggleAction(tr("Edit toolbar"),
                 tr("Toggles the visibility of the edit toolbar (i.e., the vertical tool)"),
                 "sidetoolbar.visible", true).getCheckbox());
+        // -- dialogs panel toggle action
+        final JCheckBoxMenuItem dialogsToggle = new JCheckBoxMenuItem(dialogsToggleAction);
+        dialogsToggle.setAccelerator(dialogsToggleAction.getShortcut().getKeyStroke());
+        dialogsToggleAction.addButtonModel(dialogsToggle.getModel());
+        viewMenu.add(dialogsToggle);
+        viewMenu.addSeparator();
         // -- expert mode toggle action
         final JCheckBoxMenuItem expertItem = new JCheckBoxMenuItem(ExpertToggleAction.getInstance());
         viewMenu.add(expertItem);
