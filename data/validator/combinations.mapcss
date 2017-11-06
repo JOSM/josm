@@ -14,7 +14,7 @@ way[sac_scale                  ][!highway],
 way[sidewalk                   ][!highway],
 way[step_count                 ][!highway],
 way[tracktype                  ][!highway],
-way[trail_visibility           ][!highway][!abandoned:highway],
+way[trail_visibility           ][!highway], /* #15029 */
 way[trolley_wire               ][!highway],
 way[zip_left                   ][!highway],
 way[zip_right                  ][!highway],
