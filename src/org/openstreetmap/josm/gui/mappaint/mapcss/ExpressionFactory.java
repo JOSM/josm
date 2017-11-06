@@ -507,6 +507,18 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Returns the OSM id of the object's parent.
+         * <p>
+         * Parent must be matched by parent selector.
+         * @param env the environment
+         * @return the OSM id of the object's parent, if available, or {@code null}
+         * @see OsmPrimitive#getUniqueId()
+         */
+        public static long parent_osm_id(final Environment env) { // NO_UCD (unused code)
+            return env.parent == null ? null : env.parent.getUniqueId();
+        }
+
+        /**
          * Determines whether the object has a tag with the given key.
          * @param env the environment
          * @param key the OSM key
