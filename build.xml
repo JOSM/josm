@@ -31,6 +31,8 @@
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
         <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
         <property name="java.lang.version" value="1.8" />
+        <property name="jacoco.inclbootstrapclasses" value="false" />
+        <property name="jacoco.inclnolocationclasses" value="false" />
         <!-- build parameter: compression level (ant -Dclevel=N)
                  N ranges from 0 (no compression) to 9 (maximum compression)
                  default: 9 -->
@@ -454,7 +456,8 @@ Build-Date: ${build.tstamp}
         <attribute name="coverage" default="true"/>
         <sequential>
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
-            <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="org.openstreetmap.josm.*${additionalCoverage}">
+            <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="org.openstreetmap.josm.*${additionalCoverage}"
+            	inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}">
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
                     <jvmarg value="--add-modules" if:set="isJava9" />
