@@ -454,7 +454,7 @@ Build-Date: ${build.tstamp}
         <attribute name="coverage" default="true"/>
         <sequential>
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
-            <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="org.openstreetmap.josm.*">
+            <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="org.openstreetmap.josm.*${additionalCoverage}">
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
                     <jvmarg value="--add-modules" if:set="isJava9" />
