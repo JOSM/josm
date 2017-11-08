@@ -158,9 +158,10 @@ public final class User {
      * Adds a user name to the list if it is not there, yet.
      *
      * @param name User name
+     * @throws NullPointerException if name is null
      */
     public void addName(String name) {
-        names.add(name);
+        names.add(Objects.requireNonNull(name, "name"));
     }
 
     /**
@@ -169,6 +170,7 @@ public final class User {
      * Rationale: A user can change its name multiple times and after reading various (outdated w.r.t. user name)
      * data files it is unclear which is the up-to-date user name.
      * @param name the preferred user name to set
+     * @throws NullPointerException if name is null
      */
     public void setPreferredName(String name) {
         if (names.size() == 1 && names.contains(name)) {
@@ -176,7 +178,7 @@ public final class User {
         }
         final Collection<String> allNames = new LinkedHashSet<>(names);
         names.clear();
-        names.add(name);
+        names.add(Objects.requireNonNull(name, "name"));
         names.addAll(allNames);
     }
 

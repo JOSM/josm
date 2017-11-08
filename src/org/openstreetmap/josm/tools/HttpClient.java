@@ -13,6 +13,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -113,6 +114,9 @@ public final class HttpClient {
 
         if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
             Logging.info("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
+            if (Logging.isTraceEnabled() && requestBody.length > 0) {
+                Logging.trace("BODY: {0}", new String(requestBody, StandardCharsets.UTF_8));
+            }
             connection.setFixedLengthStreamingMode(requestBody.length);
             connection.setDoOutput(true);
             try (OutputStream out = new BufferedOutputStream(
