@@ -69,7 +69,9 @@ public final class User {
     public static synchronized User createOsmUser(long uid, String name) {
 
         if (lastUser != null && lastUser.getId() == uid) {
-            lastUser.setPreferredName(name);
+            if (name != null) {
+                lastUser.setPreferredName(name);
+            }
             return lastUser;
         }
 
