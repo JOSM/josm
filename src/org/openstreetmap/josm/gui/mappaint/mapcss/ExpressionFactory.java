@@ -514,7 +514,7 @@ public final class ExpressionFactory {
          * @return the OSM id of the object's parent, if available, or {@code null}
          * @see OsmPrimitive#getUniqueId()
          */
-        public static long parent_osm_id(final Environment env) { // NO_UCD (unused code)
+        public static Long parent_osm_id(final Environment env) { // NO_UCD (unused code)
             return env.parent == null ? null : env.parent.getUniqueId();
         }
 
