@@ -426,19 +426,19 @@ way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered
   group: tr("suspicious tag combination");
 }
 
-/* #13144 */
-*[unisex=yes][female=yes][male!=yes],
-*[unisex=yes][male=yes][female!=yes] {
+/* #13144, #15536 */
+*[unisex=yes][female=yes][male!=yes][shop=hairdresser],
+*[unisex=yes][male=yes][female!=yes][shop=hairdresser] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
 }
-*[unisex=yes][female=yes][male=yes] {
+*[unisex=yes][female=yes][male=yes][shop=hairdresser] {
   throwWarning: tr("{0} together with {1} and {2}. Remove {1} and {2}", "{0.tag}", "{1.tag}", "{2.tag}");
   group: tr("suspicious tag combination");
   fixRemove: "female";
   fixRemove: "male";
 }
-*[female=yes][male=yes][!unisex][shop=hairdresser] { /* for toilets male=yes female=yes unisex=no combination is valid */
+*[female=yes][male=yes][!unisex][shop=hairdresser] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   suggestAlternative: "unisex=yes";
   group: tr("suspicious tag combination");
