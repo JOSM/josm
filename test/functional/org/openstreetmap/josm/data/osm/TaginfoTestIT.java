@@ -37,7 +37,7 @@ public class TaginfoTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
+    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20000);
 
     /**
      * Checks that popular tags are known (i.e included in internal presets, or deprecated, or explicitely ignored)

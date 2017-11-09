@@ -185,8 +185,8 @@ public interface IPrimitive extends Tagged, PrimitiveId {
     void setRawTimestamp(int timestamp);
 
     /**
-     * Determines if this primitive has no timestam information.
-     * @return {@code true} if this primitive has no timestam information
+     * Determines if this primitive has no timestamp information.
+     * @return {@code true} if this primitive has no timestamp information
      * @see #getTimestamp
      * @see #getRawTimestamp
      */
