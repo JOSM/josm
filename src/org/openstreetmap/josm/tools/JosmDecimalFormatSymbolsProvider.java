@@ -41,7 +41,7 @@ public class JosmDecimalFormatSymbolsProvider extends DecimalFormatSymbolsProvid
      * @see    Double#parseDouble(String)
      * @since 13050
      */
-    public static double parseDouble(String s) throws NumberFormatException {
+    public static double parseDouble(String s) {
         String text = s;
         NumberFormat format = DecimalFormat.getInstance();
         if (format instanceof DecimalFormat) {
