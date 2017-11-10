@@ -42,7 +42,7 @@ public class ExpertToggleAction extends ToggleAction {
     }
 
     /**
-     * Register a expert mode change listener
+     * Register a expert mode change listener.
      *
      * @param listener the listener. Ignored if null.
      */
@@ -50,6 +50,11 @@ public class ExpertToggleAction extends ToggleAction {
         addExpertModeChangeListener(listener, false);
     }
 
+    /**
+     * Register a expert mode change listener, and optionnally fires it.
+     * @param listener the listener. Ignored if null.
+     * @param fireWhenAdding if true, the listener will be fired immediately after added
+     */
     public static synchronized void addExpertModeChangeListener(ExpertModeChangeListener listener, boolean fireWhenAdding) {
         if (listener == null) return;
         listeners.addWeakListener(listener);

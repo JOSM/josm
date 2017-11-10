@@ -22,6 +22,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class DownloadPrimitiveAction extends JosmAction {
 
+    /**
+     * Action shortcut (ctrl-shift-O by default), made public in order to be used from {@code GettingStarted} page.
+     */
     public static final Shortcut SHORTCUT = Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")),
             KeyEvent.VK_O, Shortcut.CTRL_SHIFT);
 
@@ -36,7 +39,6 @@ public class DownloadPrimitiveAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         DownloadObjectDialog dialog = new DownloadObjectDialog();
         if (dialog.showDialog().getValue() != dialog.getContinueButtonIndex()) return;
 
@@ -44,6 +46,7 @@ public class DownloadPrimitiveAction extends JosmAction {
     }
 
     /**
+     * Submits the download task for the given primitive ids.
      * @param newLayer if the data should be downloaded into a new layer
      * @param ids List of primitive id to download
      * @param downloadReferrers if the referrers of the object should be downloaded as well, i.e., parent relations, and for nodes,

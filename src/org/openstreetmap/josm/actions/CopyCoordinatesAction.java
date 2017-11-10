@@ -19,6 +19,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class CopyCoordinatesAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code CopyCoordinatesAction}.
+     */
     public CopyCoordinatesAction() {
         super(tr("Copy Coordinates"), null,
                 tr("Copy coordinates of selected nodes to clipboard."),
