@@ -20,6 +20,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -307,8 +308,7 @@ public final class AlignInLineAction extends JosmAction {
                 EastNorth c = node.getEastNorth();
                 double[] angle = new double[4];
                 for (int i = 0; i < 4; i++) {
-                    EastNorth p = neighbors.get(i).getEastNorth();
-                    angle[i] = Math.atan2(p.north() - c.north(), p.east() - c.east());
+                    angle[i] = PolarCoor.computeAngle(neighbors.get(i).getEastNorth(), c);
                 }
                 double[] deltaAngle = new double[3];
                 for (int i = 0; i < 3; i++) {
