@@ -25,6 +25,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -574,7 +575,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         public static double polar(EastNorth en1, EastNorth en2) {
-            return Math.atan2(en2.north() - en1.north(), en2.east() - en1.east());
+            return PolarCoor.computeAngle(en2, en1);
         }
     }
 

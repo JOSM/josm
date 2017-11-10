@@ -24,6 +24,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -107,8 +108,7 @@ public final class CreateCircleAction extends JosmAction {
         private final Node node;
 
         PolarNode(EastNorth center, Node n) {
-            EastNorth pt = n.getEastNorth();
-            this.a = Math.atan2(pt.north() - center.north(), pt.east() - center.east());
+            this.a = PolarCoor.computeAngle(n.getEastNorth(), center);
             this.node = n;
         }
     }

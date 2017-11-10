@@ -20,6 +20,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -51,61 +52,17 @@ public final class AlignInCircleAction extends JosmAction {
         putValue("help", ht("/Action/AlignInCircle"));
     }
 
-    private static double distance(EastNorth n, EastNorth m) {
-        double easd, nord;
-        easd = n.east() - m.east();
-        nord = n.north() - m.north();
-        return Math.sqrt(easd * easd + nord * nord);
+    /**
+     * Create a {@link MoveCommand} to move a node to a PolarCoor.
+     * @param n Node to move
+     * @param coor polar coordinate where to move the node
+     * @return new MoveCommand
+     * @since 13107
+     */
+    public static MoveCommand createMoveCommand(Node n, PolarCoor coor) {
+        EastNorth en = coor.toEastNorth();
+        return new MoveCommand(n, en.east() - n.getEastNorth().east(), en.north() - n.getEastNorth().north());
     }
-
-    public static class PolarCoor {
-        private double radius;
-        private double angle;
-        private EastNorth origin = new EastNorth(0, 0);
-        private double azimuth;
-
-        PolarCoor(double radius, double angle) {
-            this(radius, angle, new EastNorth(0, 0), 0);
-        }
-
-        PolarCoor(double radius, double angle, EastNorth origin, double azimuth) {
-            this.radius = radius;
-            this.angle = angle;
-            this.origin = origin;
-            this.azimuth = azimuth;
-        }
-
-        PolarCoor(EastNorth en) {
-            this(en, new EastNorth(0, 0), 0);
-        }
-
-        PolarCoor(EastNorth en, EastNorth origin, double azimuth) {
-            radius = distance(en, origin);
-            angle = Math.atan2(en.north() - origin.north(), en.east() - origin.east());
-            this.origin = origin;
-            this.azimuth = azimuth;
-        }
-
-        /**
-         * Converts this {@code PolarCoor} to an {@link EastNorth} instance.
-         * @return a new {@code EastNorth} instance
-         */
-        public EastNorth toEastNorth() {
-            return new EastNorth(radius * Math.cos(angle - azimuth) + origin.east(), radius * Math.sin(angle - azimuth)
-                    + origin.north());
-        }
-
-        /**
-         * Create a MoveCommand to move a node to this PolarCoor.
-         * @param n Node to move
-         * @return new MoveCommand
-         */
-        public MoveCommand createMoveCommand(Node n) {
-            EastNorth en = toEastNorth();
-            return new MoveCommand(n, en.east() - n.getEastNorth().east(), en.north() - n.getEastNorth().north());
-        }
-    }
-
 
     /**
      * Perform AlignInCircle action.
@@ -187,13 +144,13 @@ public final class AlignInCircleAction extends JosmAction {
                 center = outside.get(0).getEastNorth();
             } else if (outside.size() == 1 && inside.size() == 1) {
                 center = outside.get(0).getEastNorth();
-                radius = distance(center, inside.get(0).getEastNorth());
+                radius = center.distance(inside.get(0).getEastNorth());
             } else if (inside.size() == 2 && outside.isEmpty()) {
                 // 2 nodes inside, define diameter
                 EastNorth en0 = inside.get(0).getEastNorth();
                 EastNorth en1 = inside.get(1).getEastNorth();
                 center = new EastNorth((en0.east() + en1.east()) / 2, (en0.north() + en1.north()) / 2);
-                radius = distance(en0, en1) / 2;
+                radius = en0.distance(en1) / 2;
             }
 
             fixNodes.addAll(inside);
@@ -238,7 +195,7 @@ public final class AlignInCircleAction extends JosmAction {
         // relative to the distance from the N or S poles.
         if (radius == 0) {
             for (Node n : nodes) {
-                radius += distance(center, n.getEastNorth());
+                radius += center.distance(n.getEastNorth());
             }
             radius = radius / nodes.size();
         }
@@ -264,23 +221,22 @@ public final class AlignInCircleAction extends JosmAction {
                     break;
             }
             Node first = nodes.get(i % nodeCount);
-            PolarCoor pcFirst = new PolarCoor(first.getEastNorth(), center, 0);
-            pcFirst.radius = radius;
-            cmds.add(pcFirst.createMoveCommand(first));
+            PolarCoor pcFirst = new PolarCoor(radius, PolarCoor.computeAngle(first.getEastNorth(), center), center);
+            cmds.add(createMoveCommand(first, pcFirst));
             if (j > i + 1) {
                 double delta;
                 if (j == i + nodeCount) {
                     delta = 2 * Math.PI / nodeCount;
                 } else {
-                    PolarCoor pcLast = new PolarCoor(nodes.get(j % nodeCount).getEastNorth(), center, 0);
+                    PolarCoor pcLast = new PolarCoor(nodes.get(j % nodeCount).getEastNorth(), center);
                     delta = pcLast.angle - pcFirst.angle;
                     if (delta < 0) // Assume each PolarCoor.angle is in range ]-pi; pi]
                         delta += 2*Math.PI;
                     delta /= j - i;
                 }
                 for (int k = i+1; k < j; k++) {
-                    PolarCoor p = new PolarCoor(radius, pcFirst.angle + (k-i)*delta, center, 0);
-                    cmds.add(p.createMoveCommand(nodes.get(k % nodeCount)));
+                    PolarCoor p = new PolarCoor(radius, pcFirst.angle + (k-i)*delta, center);
+                    cmds.add(createMoveCommand(nodes.get(k % nodeCount), p));
                 }
             }
             i = j; // Update start point for next iteration

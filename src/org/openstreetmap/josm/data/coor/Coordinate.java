@@ -116,6 +116,6 @@ abstract class Coordinate implements Serializable {
         if (obj == null || getClass() != obj.getClass()) return false;
         Coordinate that = (Coordinate) obj;
         return Double.compare(that.x, x) == 0 &&
-                Double.compare(that.y, y) == 0;
+               Double.compare(that.y, y) == 0;
     }
 }
