@@ -172,7 +172,10 @@ public final class AlignInLineAction extends JosmAction {
             return;
 
         try {
-            MainApplication.undoRedo.add(buildCommand());
+            Command cmd = buildCommand(getLayerManager().getEditDataSet());
+            if (cmd != null) {
+                MainApplication.undoRedo.add(cmd);
+            }
         } catch (InvalidSelection except) {
             Logging.debug(except);
             new Notification(except.getMessage())
@@ -183,12 +186,12 @@ public final class AlignInLineAction extends JosmAction {
 
     /**
      * Builds "align in line" command depending on the selected objects.
+     * @param ds data set in which the command operates
      * @return the resulting command to execute to perform action
      * @throws InvalidSelection if a polygon is selected, or if a node is used by 3 or more ways
-     * @since 12562
+     * @since 13108
      */
-    public Command buildCommand() throws InvalidSelection {
-        DataSet ds = getLayerManager().getEditDataSet();
+    public Command buildCommand(DataSet ds) throws InvalidSelection {
         List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
         List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
         selectedWays.removeIf(OsmPrimitive::isIncomplete);
@@ -275,7 +278,7 @@ public final class AlignInLineAction extends JosmAction {
             } else
                 throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
         }
-        return new SequenceCommand(tr("Align Nodes in Line"), cmds);
+        return cmds.isEmpty() ? null : new SequenceCommand(tr("Align Nodes in Line"), cmds);
     }
 
     /**

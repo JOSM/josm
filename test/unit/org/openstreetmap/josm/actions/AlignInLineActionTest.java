@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,7 +16,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -55,7 +55,6 @@ public final class AlignInLineActionTest {
     @Test
     public void testNodesOpenWay() throws InvalidSelection {
         DataSet dataSet = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         // Create test points, lower left is (0,0).
         //
@@ -66,20 +65,13 @@ public final class AlignInLineActionTest {
         Node point2 = new Node(new EastNorth(3, 1));
         Node point3 = new Node(new EastNorth(1, 1));
 
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
+        // Create an open way.
+        createWay(dataSet, point1, point2, point3);
 
-            // Create an open way.
-            createWay(dataSet, point1, point2, point3);
+        // Select nodes to align.
+        dataSet.addSelected(point1, point2, point3);
 
-            // Select nodes to align.
-            dataSet.addSelected(point1, point2, point3);
-
-            action.buildCommand().executeCommand();
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        action.buildCommand(dataSet).executeCommand();
 
         // Points 1 and 3 are the extremities and must not have moved. Only point 2 must have moved.
         assertCoordEq(point1, 0, 2);
@@ -95,7 +87,6 @@ public final class AlignInLineActionTest {
     @Test
     public void testNodesClosedWay() throws InvalidSelection {
         DataSet dataSet = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         // Create test points, lower left is (0,0).
         //
@@ -107,19 +98,12 @@ public final class AlignInLineActionTest {
         Node point3 = new Node(new EastNorth(2, 2));
         Node point4 = new Node(new EastNorth(0, 2));
 
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
+        // Create a closed way.
+        createWay(dataSet, point1, point2, point3, point4, point1);
+        // Select nodes to align (point1 must be in the second position to exhibit the bug).
+        dataSet.addSelected(point4, point1, point2);
 
-            // Create a closed way.
-            createWay(dataSet, point1, point2, point3, point4, point1);
-            // Select nodes to align (point1 must be in the second position to exhibit the bug).
-            dataSet.addSelected(point4, point1, point2);
-
-            action.buildCommand().executeCommand();
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        action.buildCommand(dataSet).executeCommand();
 
         // Only point 1 must have moved.
         assertCoordEq(point1, 1, 1);
@@ -136,7 +120,6 @@ public final class AlignInLineActionTest {
     @Test
     public void testNodesOpenWays() throws InvalidSelection {
         DataSet dataSet = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         // Create test points, lower left is (0,0).
         //
@@ -148,22 +131,15 @@ public final class AlignInLineActionTest {
         Node point3 = new Node(new EastNorth(0, 1));
         Node point4 = new Node(new EastNorth(2, 0));
 
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
+        // Create 2 ways.
+        createWay(dataSet, point1, point2);
+        createWay(dataSet, point3, point4);
 
-            // Create 2 ways.
-            createWay(dataSet, point1, point2);
-            createWay(dataSet, point3, point4);
+        // Select nodes to align.
+        dataSet.addSelected(point1, point2, point3, point4);
 
-            // Select nodes to align.
-            dataSet.addSelected(point1, point2, point3, point4);
-
-            // Points must align between points 1 and 4.
-            action.buildCommand().executeCommand();
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        // Points must align between points 1 and 4.
+        action.buildCommand(dataSet).executeCommand();
 
         assertCoordEq(point1, 0, 2);
         assertCoordEq(point2, 1.5, 0.5);
@@ -172,12 +148,35 @@ public final class AlignInLineActionTest {
     }
 
     /**
+     * Test case: only a two-nodes way selected.
+     * @throws InvalidSelection never
+     */
+    @Test
+    public void testSimpleWay() throws InvalidSelection {
+        DataSet dataSet = new DataSet();
+
+        // Create test points, lower left is (0,0).
+        //
+        // 1 - -
+        // - - 2
+        Node point1 = new Node(new EastNorth(0, 2));
+        Node point2 = new Node(new EastNorth(2, 1));
+
+        // Creates and select a single way.
+        dataSet.addSelected(createWay(dataSet, point1, point2));
+
+        // No command must be created (nothing to do)
+        assertNull(action.buildCommand(dataSet));
+    }
+
+    /**
      * Create a way made of the provided nodes and select nodes.
      *
      * @param dataSet Dataset in which adding nodes.
      * @param nodes List of nodes to add to dataset.
+     * @return created way
      */
-    private void createWay(DataSet dataSet, Node... nodes) {
+    private Way createWay(DataSet dataSet, Node... nodes) {
         Way way = new Way();
         dataSet.addPrimitive(way);
 
@@ -188,6 +187,7 @@ public final class AlignInLineActionTest {
 
             way.addNode(node);
         }
+        return way;
     }
 
     /**
