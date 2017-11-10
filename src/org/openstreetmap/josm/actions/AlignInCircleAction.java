@@ -86,6 +86,10 @@ public final class AlignInCircleAction extends JosmAction {
             this.azimuth = azimuth;
         }
 
+        /**
+         * Converts this {@code PolarCoor} to an {@link EastNorth} instance.
+         * @return a new {@code EastNorth} instance
+         */
         public EastNorth toEastNorth() {
             return new EastNorth(radius * Math.cos(angle - azimuth) + origin.east(), radius * Math.sin(angle - azimuth)
                     + origin.north());

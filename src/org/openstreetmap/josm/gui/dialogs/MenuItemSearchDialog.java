@@ -119,7 +119,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
     public static class Action extends JosmAction {
 
         // CHECKSTYLE.OFF: LineLength
-        /** Action shortcut (ctrl / space by default */
+        /** Action shortcut (ctrl / space by default), made public in order to be used from {@code GettingStarted} page. */
         public static final Shortcut SHORTCUT = Shortcut.registerShortcut("help:search-items", "Search menu items", KeyEvent.VK_SPACE, Shortcut.CTRL);
         // CHECKSTYLE.ON: LineLength
 
