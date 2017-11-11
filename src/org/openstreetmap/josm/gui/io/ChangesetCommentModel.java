@@ -1,7 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
 
@@ -33,5 +36,14 @@ public class ChangesetCommentModel extends ChangeNotifier {
      */
     public String getComment() {
         return comment == null ? "" : comment;
+    }
+
+    /**
+     * Extracts the list of hashtags from the comment text.
+     * @return the list of hashtags from the comment text. Can be empty, but not null.
+     * @since 13109
+     */
+    public List<String> findHashTags() {
+        return Arrays.stream(comment.split("\\s")).filter(s -> s.length() >= 2 && s.charAt(0) == '#').collect(Collectors.toList());
     }
 }
