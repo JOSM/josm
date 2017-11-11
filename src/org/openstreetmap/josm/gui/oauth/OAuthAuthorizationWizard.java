@@ -34,8 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.Main;
@@ -51,7 +49,6 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
-import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -136,7 +133,7 @@ public class OAuthAuthorizationWizard extends JDialog {
                         + "on your behalf (<a href=\"{0}\">more info...</a>).", "http://oauth.net/")
                         + "</body></html>"
         );
-        pnlMessage.getEditorPane().addHyperlinkListener(new ExternalBrowserLauncher());
+        pnlMessage.enableClickableHyperlinks();
         pnl.add(pnlMessage, gc);
 
         // the authorisation procedure
@@ -420,15 +417,6 @@ public class OAuthAuthorizationWizard extends JDialog {
         @Override
         public void windowClosing(WindowEvent e) {
             new CancelAction().cancel();
-        }
-    }
-
-    static class ExternalBrowserLauncher implements HyperlinkListener {
-        @Override
-        public void hyperlinkUpdate(HyperlinkEvent e) {
-            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                OpenBrowser.displayUrl(e.getDescription());
-            }
         }
     }
 }

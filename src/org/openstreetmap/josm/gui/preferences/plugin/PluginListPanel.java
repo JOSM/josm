@@ -14,12 +14,10 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.plugins.PluginInformation;
-import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
  * A panel displaying the list of known plugins.
@@ -156,11 +154,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
 
             HtmlPanel description = new HtmlPanel();
             description.setText(pi.getDescriptionAsHtml());
-            description.getEditorPane().addHyperlinkListener(e -> {
-                if (e.getEventType() == EventType.ACTIVATED) {
-                    OpenBrowser.displayUrl(e.getURL().toString());
-                }
-            });
+            description.enableClickableHyperlinks();
             lblPlugin.setLabelFor(description);
 
             gbc.gridx = 1;
