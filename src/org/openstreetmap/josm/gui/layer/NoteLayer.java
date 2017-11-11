@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -17,11 +18,14 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JToolTip;
+import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.notes.Note;
@@ -31,6 +35,7 @@ import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.osm.NoteData.NoteDataUpdateListener;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -39,6 +44,7 @@ import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.UploadNoteLayerTask;
 import org.openstreetmap.josm.gui.io.importexport.NoteExporter;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -54,6 +60,10 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class NoteLayer extends AbstractModifiableLayer implements MouseListener, NoteDataUpdateListener {
 
     private final NoteData noteData;
+
+    private Note displayedNote;
+    private HtmlPanel displayedPanel;
+    private JWindow displayedWindow;
 
     /**
      * Create a new note layer with a set of notes
@@ -80,6 +90,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
     public synchronized void destroy() {
         MainApplication.getMap().mapView.removeMouseListener(this);
         noteData.removeNoteDataUpdateListener(this);
+        hideNoteWindow();
         super.destroy();
     }
 
@@ -136,60 +147,104 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             int height = icon.getIconHeight();
             g.drawImage(icon.getImage(), p.x - (width / 2), p.y - height, MainApplication.getMap().mapView);
         }
-        if (noteData.getSelectedNote() != null) {
-            StringBuilder sb = new StringBuilder("<html>");
-            sb.append(tr("Note"))
-              .append(' ').append(noteData.getSelectedNote().getId());
-            for (NoteComment comment : noteData.getSelectedNote().getComments()) {
-                String commentText = comment.getText();
-                //closing a note creates an empty comment that we don't want to show
-                if (commentText != null && !commentText.trim().isEmpty()) {
-                    sb.append("<hr/>");
-                    String userName = XmlWriter.encode(comment.getUser().getName());
-                    if (userName == null || userName.trim().isEmpty()) {
-                        userName = "&lt;Anonymous&gt;";
-                    }
-                    sb.append(userName);
-                    sb.append(" on ");
-                    sb.append(DateUtils.getDateFormat(DateFormat.MEDIUM).format(comment.getCommentTimestamp()));
-                    sb.append(":<br/>");
-                    String htmlText = XmlWriter.encode(comment.getText(), true);
-                    htmlText = htmlText.replace("&#xA;", "<br/>"); //encode method leaves us with entity instead of \n
-                    htmlText = htmlText.replace("/", "/\u200b"); //zero width space to wrap long URLs (see #10864)
-                    sb.append(htmlText);
-                }
-            }
-            sb.append("</html>");
-            JToolTip toolTip = new JToolTip();
-            toolTip.setTipText(sb.toString());
-            Point p = mv.getPoint(noteData.getSelectedNote().getLatLon());
-
-            g.setColor(ColorHelper.html2color(Config.getPref().get("color.selected")));
-            g.drawRect(p.x - (iconWidth / 2), p.y - iconHeight,
-                    iconWidth - 1, iconHeight - 1);
-
-            int tx = p.x + (iconWidth / 2) + 5;
-            int ty = p.y - iconHeight - 1;
-            g.translate(tx, ty);
-
-            //Carried over from the OSB plugin. Not entirely sure why it is needed
-            //but without it, the tooltip doesn't get sized correctly
-            for (int x = 0; x < 2; x++) {
-                Dimension d = toolTip.getUI().getPreferredSize(toolTip);
-                d.width = Math.min(d.width, mv.getWidth() / 2);
-                if (d.width > 0 && d.height > 0) {
-                    toolTip.setSize(d);
-                    try {
-                        toolTip.paint(g);
-                    } catch (IllegalArgumentException e) {
-                        // See #11123 - https://bugs.openjdk.java.net/browse/JDK-6719550
-                        // Ignore the exception, as Netbeans does: http://hg.netbeans.org/main-silver/rev/c96f4d5fbd20
-                        Logging.log(Logging.LEVEL_ERROR, e);
-                    }
-                }
-            }
-            g.translate(-tx, -ty);
+        Note selectedNote = noteData.getSelectedNote();
+        if (selectedNote != null) {
+            paintSelectedNote(g, mv, iconHeight, iconWidth, selectedNote);
+        } else {
+            hideNoteWindow();
         }
+    }
+
+    private void hideNoteWindow() {
+        if (displayedWindow != null) {
+            displayedWindow.setVisible(false);
+            displayedWindow.dispose();
+            displayedWindow = null;
+            displayedPanel = null;
+            displayedNote = null;
+        }
+    }
+
+    private void paintSelectedNote(Graphics2D g, MapView mv, final int iconHeight, final int iconWidth, Note selectedNote) {
+        Point p = mv.getPoint(selectedNote.getLatLon());
+
+        g.setColor(ColorHelper.html2color(Config.getPref().get("color.selected")));
+        g.drawRect(p.x - (iconWidth / 2), p.y - iconHeight, iconWidth - 1, iconHeight - 1);
+
+        if (displayedNote != null && !displayedNote.equals(selectedNote)) {
+            hideNoteWindow();
+        }
+
+        Point screenloc = mv.getLocationOnScreen();
+        int tx = screenloc.x + p.x + (iconWidth / 2) + 5;
+        int ty = screenloc.y + p.y - iconHeight - 1;
+
+        String text = getNoteToolTip(selectedNote);
+
+        if (displayedWindow == null) {
+            displayedPanel = new HtmlPanel(text);
+            displayedPanel.setBackground(UIManager.getColor("ToolTip.background"));
+            displayedPanel.setForeground(UIManager.getColor("ToolTip.foreground"));
+            displayedPanel.setFont(UIManager.getFont("ToolTip.font"));
+            displayedPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+            displayedPanel.enableClickableHyperlinks();
+            fixPanelSize(mv, text);
+            displayedWindow = new JWindow((MainFrame) Main.parent);
+            displayedWindow.add(displayedPanel);
+        } else {
+            displayedPanel.setText(text);
+            fixPanelSize(mv, text);
+        }
+
+        displayedWindow.pack();
+        displayedWindow.setLocation(tx, ty);
+        displayedWindow.setVisible(true);
+        displayedNote = selectedNote;
+    }
+
+    private void fixPanelSize(MapView mv, String text) {
+        Dimension d = displayedPanel.getPreferredSize();
+        if (d.width > mv.getWidth() / 2) {
+            // To make sure long notes such as https://www.openstreetmap.org/note/278197 are displayed correctly
+            displayedPanel.setText(text.replaceAll("\\. ([\\p{Lower}\\p{Upper}\\p{Punct}])", "\\.<br>$1"));
+        }
+    }
+
+    /**
+     * Returns the HTML-formatted tooltip text for the given note.
+     * @param note note to display
+     * @return the HTML-formatted tooltip text for the given note
+     * @since 13111
+     */
+    public static String getNoteToolTip(Note note) {
+        StringBuilder sb = new StringBuilder("<html>");
+        sb.append(tr("Note"))
+          .append(' ').append(note.getId());
+        for (NoteComment comment : note.getComments()) {
+            String commentText = comment.getText();
+            //closing a note creates an empty comment that we don't want to show
+            if (commentText != null && !commentText.trim().isEmpty()) {
+                sb.append("<hr/>");
+                String userName = XmlWriter.encode(comment.getUser().getName());
+                if (userName == null || userName.trim().isEmpty()) {
+                    userName = "&lt;Anonymous&gt;";
+                }
+                sb.append(userName)
+                  .append(" on ")
+                  .append(DateUtils.getDateFormat(DateFormat.MEDIUM).format(comment.getCommentTimestamp()))
+                  .append(":<br>");
+                String htmlText = XmlWriter.encode(comment.getText(), true);
+                // encode method leaves us with entity instead of \n
+                htmlText = htmlText.replace("&#xA;", "<br>");
+                // convert URLs to proper HTML links
+                htmlText = htmlText.replaceAll("(https?://\\S+)", "<a href=\"$1\">$1</a>");
+                sb.append(htmlText);
+            }
+        }
+        sb.append("</html>");
+        String result = sb.toString();
+        Logging.debug(result);
+        return result;
     }
 
     @Override

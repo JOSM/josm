@@ -4,12 +4,17 @@ package org.openstreetmap.josm.gui.widgets;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Optional;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.StyleSheet;
+
+import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
  * This panel can be used to display larger sections of formatted text in
@@ -21,6 +26,13 @@ import javax.swing.text.html.StyleSheet;
  * @since 2688
  */
 public class HtmlPanel extends JPanel {
+
+    private static final HyperlinkListener defaultHyperlinkListener = e -> {
+        if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
+            OpenBrowser.displayUrl(e.getURL().toString());
+        }
+    };
+
     private JosmEditorPane jepMessage;
 
     protected final void build() {
@@ -86,5 +98,15 @@ public class HtmlPanel extends JPanel {
      */
     public final void setText(String text) {
         jepMessage.setText(Optional.ofNullable(text).orElse(""));
+    }
+
+    /**
+     * Opens hyperlinks on click.
+     * @since 13111
+     */
+    public final void enableClickableHyperlinks() {
+        if (!Arrays.asList(jepMessage.getHyperlinkListeners()).contains(defaultHyperlinkListener)) {
+            jepMessage.addHyperlinkListener(defaultHyperlinkListener);
+        }
     }
 }
