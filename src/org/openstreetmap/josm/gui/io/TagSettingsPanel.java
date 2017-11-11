@@ -47,7 +47,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         this.changesetCommentModel = changesetCommentModel;
         this.changesetSourceModel = changesetSourceModel;
         this.changesetReviewModel = changesetReviewModel;
-        changesetCommentModel.addChangeListener(new ChangesetCommentChangeListener("comment"));
+        changesetCommentModel.addChangeListener(new ChangesetCommentChangeListener("comment", "hashtags"));
         changesetSourceModel.addChangeListener(new ChangesetCommentChangeListener("source"));
         changesetReviewModel.addChangeListener(new ChangesetReviewChangeListener());
         build();
@@ -134,18 +134,32 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     class ChangesetCommentChangeListener implements ChangeListener {
 
         private final String key;
+        private final String hashtagsKey;
 
         ChangesetCommentChangeListener(String key) {
+            this(key, null);
+        }
+
+        ChangesetCommentChangeListener(String key, String hashtagsKey) {
             this.key = key;
+            this.hashtagsKey = hashtagsKey;
         }
 
         @Override
         public void stateChanged(ChangeEvent e) {
             if (e.getSource() instanceof ChangesetCommentModel) {
-                String newValue = ((ChangesetCommentModel) e.getSource()).getComment();
+                ChangesetCommentModel model = ((ChangesetCommentModel) e.getSource());
+                String newValue = model.getComment();
                 String oldValue = Optional.ofNullable(getTagEditorValue(key)).orElse("");
                 if (!oldValue.equals(newValue)) {
                     setProperty(key, newValue);
+                    if (hashtagsKey != null) {
+                        String newHashTags = String.join(";", model.findHashTags());
+                        String oldHashTags = Optional.ofNullable(getTagEditorValue(hashtagsKey)).orElse("");
+                        if (!oldHashTags.equals(newHashTags)) {
+                            setProperty(hashtagsKey, newHashTags);
+                        }
+                    }
                 }
             }
         }
