@@ -126,6 +126,11 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
         }
     }
 
+    @Override
+    public boolean hasOutstandingTasks() {
+        return downloadExecutor.getTaskCount() > downloadExecutor.getCompletedTaskCount();
+    }
+
     /**
      * Sets the download executor that will be used to download tiles instead of default one.
      * You can use {@link #getNewThreadPoolExecutor} to create a new download executor with separate
