@@ -21,7 +21,7 @@ public class AutoCompletionItem implements Comparable<AutoCompletionItem> {
     /** the priority of this item */
     private AutoCompletionPriority priority;
     /** the value of this item */
-    private String value;
+    private final String value;
 
     /**
      * Constructs a new {@code AutoCompletionItem} with the given value and priority.
@@ -78,10 +78,12 @@ public class AutoCompletionItem implements Comparable<AutoCompletionItem> {
      * sets the value
      * @param value the value; must not be null
      * @throws IllegalArgumentException if value if null
+     * @deprecated value is now final, set it when constructing the object
      */
+    @Deprecated
     public void setValue(String value) {
         CheckParameterUtil.ensureParameterNotNull(value, "value");
-        this.value = value;
+        throw new UnsupportedOperationException("setValue() is no longer supported");
     }
 
     @Override

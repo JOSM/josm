@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.tagging.ac;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -17,25 +18,49 @@ import java.util.stream.Collectors;
  */
 public class AutoCompletionSet extends TreeSet<AutoCompletionItem> {
 
+    // Keep a separate tree set of values for determining fast if a value is present
+    private final Set<String> values = new TreeSet<>();
+
     @Override
     public boolean add(AutoCompletionItem e) {
         // Is there already an item for the value?
-        Optional<AutoCompletionItem> result = stream().filter(i -> i.getValue().equals(e.getValue())).findFirst();
-        if (result.isPresent()) {
-            AutoCompletionItem item = result.get();
-            // yes: merge priorities
-            AutoCompletionPriority newPriority = item.getPriority().mergeWith(e.getPriority());
-            // if needed, remove/re-add the updated item to maintain set ordering
-            if (!item.getPriority().equals(newPriority)) {
-                remove(item);
-                item.setPriority(newPriority);
-                return add(item);
+        String value = e.getValue();
+        if (contains(value)) { // Fast
+            Optional<AutoCompletionItem> result = stream().filter(i -> i.getValue().equals(e.getValue())).findFirst(); // Slow
+            if (result.isPresent()) {
+                AutoCompletionItem item = result.get();
+                // yes: merge priorities
+                AutoCompletionPriority newPriority = item.getPriority().mergeWith(e.getPriority());
+                // if needed, remove/re-add the updated item to maintain set ordering
+                if (!item.getPriority().equals(newPriority)) {
+                    super.remove(item);
+                    item.setPriority(newPriority);
+                    return super.add(item);
+                } else {
+                    return false;
+                }
             } else {
-                return false;
+                // Should never happen if values is correctly synchronized with this set
+                throw new IllegalStateException(value);
             }
         } else {
+            values.add(value);
             return super.add(e);
         }
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        if (o instanceof AutoCompletionItem) {
+            values.remove(((AutoCompletionItem) o).getValue());
+        }
+        return super.remove(o);
+    }
+
+    @Override
+    public void clear() {
+        values.clear();
+        super.clear();
     }
 
     /**
@@ -73,7 +98,7 @@ public class AutoCompletionSet extends TreeSet<AutoCompletionItem> {
      * @return true, if value is in the list; false, otherwise
      */
     public boolean contains(String value) {
-        return stream().anyMatch(i -> i.getValue().equals(value));
+        return values.contains(value);
     }
 
     /**
@@ -82,6 +107,6 @@ public class AutoCompletionSet extends TreeSet<AutoCompletionItem> {
      * @return {@code true} if an element was removed
      */
     public boolean remove(String key) {
-        return removeIf(i -> i.getValue().equals(key));
+        return values.remove(key) && removeIf(i -> i.getValue().equals(key));
     }
 }

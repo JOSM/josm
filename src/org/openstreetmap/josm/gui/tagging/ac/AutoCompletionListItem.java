@@ -85,7 +85,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
      * @throws IllegalArgumentException if value if null
      */
     public void setValue(String value) {
-        item.setValue(value);
+        throw new UnsupportedOperationException("setValue() is no longer supported");
     }
 
     @Override
