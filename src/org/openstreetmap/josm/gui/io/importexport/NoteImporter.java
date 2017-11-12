@@ -24,7 +24,11 @@ import org.xml.sax.SAXException;
  */
 public class NoteImporter extends FileImporter {
 
-    private static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
+    /**
+     * The Notes file filter (*.osn files).
+     * @since 13114
+     */
+    public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
             "osn", "osn", tr("Note Files"), true);
 
     /** Create an importer for note dump files */
