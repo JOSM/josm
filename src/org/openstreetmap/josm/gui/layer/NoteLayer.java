@@ -188,6 +188,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             displayedPanel.enableClickableHyperlinks();
             fixPanelSize(mv, text);
             displayedWindow = new JWindow((MainFrame) Main.parent);
+            displayedWindow.setAutoRequestFocus(false);
             displayedWindow.add(displayedPanel);
         } else {
             displayedPanel.setText(text);
