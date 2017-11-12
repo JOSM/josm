@@ -90,7 +90,7 @@ public class AutosaveTaskTest {
     @Test
     public void testGetNewLayerFile() throws IOException {
         Files.createDirectories(task.getAutosaveDir());
-        AutosaveLayerInfo info = new AutosaveLayerInfo(new OsmDataLayer(new DataSet(), "layer", null));
+        AutosaveLayerInfo<?> info = new AutosaveLayerInfo<>(new OsmDataLayer(new DataSet(), "layer", null));
         Date fixed = Date.from(ZonedDateTime.of(2016, 1, 1, 1, 2, 3, 456_000_000, ZoneId.systemDefault()).toInstant());
 
         AutosaveTask.PROP_INDEX_LIMIT.put(5);
