@@ -25,6 +25,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.actions.SaveActionBase;
+import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
@@ -48,6 +49,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     private static final GBC DEFAULT_CELL_STYLE = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
     private final transient CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
+    private String extension = "osm";
     private File value;
 
     /** constructor that sets the default on each element **/
@@ -89,6 +91,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         sb.append("<html>")
           .append(addLblLayerName(info));
         if (info.isSavable()) {
+            extension = info.getLayer() instanceof NoteLayer ? "osn" : "osm";
             add(btnFileChooser, GBC.std());
             sb.append("<br>")
               .append(addLblFilename(info));
@@ -110,6 +113,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
           .append(addLblLayerName(info));
 
         if (info.isSavable()) {
+            extension = info.getLayer() instanceof NoteLayer ? "osn" : "osm";
             add(btnFileChooser, GBC.std());
             add(tfFilename, GBC.eol().fill(GBC.HORIZONTAL).insets(1, 0, 0, 0));
             tfFilename.selectAll();
@@ -241,7 +245,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            File f = SaveActionBase.createAndOpenSaveFileChooser(tr("Select filename"), "osm");
+            File f = SaveActionBase.createAndOpenSaveFileChooser(tr("Select filename"), extension);
             if (f != null) {
                 tfFilename.setText(f.toString());
                 stopCellEditing();

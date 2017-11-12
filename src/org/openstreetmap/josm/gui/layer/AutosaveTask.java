@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.NoteData;
+import org.openstreetmap.josm.data.osm.NoteData.NoteDataUpdateListener;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
@@ -37,6 +39,8 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.io.importexport.NoteExporter;
+import org.openstreetmap.josm.gui.io.importexport.NoteImporter;
 import org.openstreetmap.josm.gui.io.importexport.OsmExporter;
 import org.openstreetmap.josm.gui.io.importexport.OsmImporter;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
@@ -49,7 +53,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Saves data layers periodically so they can be recovered in case of a crash.
+ * Saves data and note layers periodically so they can be recovered in case of a crash.
  *
  * There are 2 directories
  *  - autosave dir: copies of the currently open data layers are saved here every
@@ -67,7 +71,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since  3378 (creation)
  * @since 10386 (new LayerChangeListener interface)
  */
-public class AutosaveTask extends TimerTask implements LayerChangeListener, Listener {
+public class AutosaveTask extends TimerTask implements LayerChangeListener, Listener, NoteDataUpdateListener {
 
     private static final char[] ILLEGAL_CHARACTERS = {'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'};
     private static final String AUTOSAVE_DIR = "autosave";
@@ -98,20 +102,21 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
      */
     public static final BooleanProperty PROP_NOTIFICATION = new BooleanProperty("autosave.notification", false);
 
-    protected static final class AutosaveLayerInfo {
-        private final OsmDataLayer layer;
+    protected static final class AutosaveLayerInfo<T extends AbstractModifiableLayer> {
+        private final T layer;
         private String layerName;
         private String layerFileName;
         private final Deque<File> backupFiles = new LinkedList<>();
 
-        AutosaveLayerInfo(OsmDataLayer layer) {
+        AutosaveLayerInfo(T layer) {
             this.layer = layer;
         }
     }
 
     private final DataSetListenerAdapter datasetAdapter = new DataSetListenerAdapter(this);
     private final Set<DataSet> changedDatasets = new HashSet<>();
-    private final List<AutosaveLayerInfo> layersInfo = new ArrayList<>();
+    private final Set<NoteData> changedNoteData = new HashSet<>();
+    private final List<AutosaveLayerInfo<?>> layersInfo = new ArrayList<>();
     private final Object layersLock = new Object();
     private final Deque<File> deletedLayers = new LinkedList<>();
 
@@ -166,12 +171,12 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         return result;
     }
 
-    private void setLayerFileName(AutosaveLayerInfo layer) {
+    private void setLayerFileName(AutosaveLayerInfo<?> layer) {
         int index = 0;
         while (true) {
             String filename = getFileName(layer.layer.getName(), index);
             boolean foundTheSame = false;
-            for (AutosaveLayerInfo info: layersInfo) {
+            for (AutosaveLayerInfo<?> info: layersInfo) {
                 if (info != layer && filename.equals(info.layerFileName)) {
                     foundTheSame = true;
                     break;
@@ -187,12 +192,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    protected File getNewLayerFile(AutosaveLayerInfo layer, Date now, int startIndex) {
+    protected File getNewLayerFile(AutosaveLayerInfo<?> layer, Date now, int startIndex) {
         int index = startIndex;
         while (true) {
             String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
                     layer.layerFileName, now, index == 0 ? "" : ('_' + Integer.toString(index)));
-            File result = new File(autosaveDir, filename + '.' + Config.getPref().get("autosave.extension", "osm"));
+            File result = new File(autosaveDir, filename + '.' +
+                    (layer.layer instanceof NoteLayer ?
+                            Config.getPref().get("autosave.notes.extension", "osn") :
+                            Config.getPref().get("autosave.extension", "osm")));
             try {
                 if (index > PROP_INDEX_LIMIT.get())
                     throw new IOException("index limit exceeded");
@@ -219,17 +227,33 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    private void savelayer(AutosaveLayerInfo info) {
+    private void savelayer(AutosaveLayerInfo<?> info) {
         if (!info.layer.getName().equals(info.layerName)) {
             setLayerFileName(info);
             info.layerName = info.layer.getName();
         }
-        if (changedDatasets.remove(info.layer.data)) {
-            File file = getNewLayerFile(info, new Date(), 0);
-            if (file != null) {
-                info.backupFiles.add(file);
-                new OsmExporter().exportData(file, info.layer, true /* no backup with appended ~ */);
+        try {
+            if (info.layer instanceof OsmDataLayer) {
+                OsmDataLayer dataLayer = (OsmDataLayer) info.layer;
+                if (changedDatasets.remove(dataLayer.data)) {
+                    File file = getNewLayerFile(info, new Date(), 0);
+                    if (file != null) {
+                        info.backupFiles.add(file);
+                        new OsmExporter().exportData(file, info.layer, true /* no backup with appended ~ */);
+                    }
+                }
+            } else if (info.layer instanceof NoteLayer) {
+                NoteLayer noteLayer = (NoteLayer) info.layer;
+                if (changedNoteData.remove(noteLayer.getNoteData())) {
+                    File file = getNewLayerFile(info, new Date(), 0);
+                    if (file != null) {
+                        info.backupFiles.add(file);
+                        new NoteExporter().exportData(file, info.layer);
+                    }
+                }
             }
+        } catch (IOException e) {
+            Logging.error(e);
         }
         while (info.backupFiles.size() > PROP_FILES_PER_LAYER.get()) {
             File oldFile = info.backupFiles.remove();
@@ -243,10 +267,11 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public void run() {
         synchronized (layersLock) {
             try {
-                for (AutosaveLayerInfo info: layersInfo) {
+                for (AutosaveLayerInfo<?> info: layersInfo) {
                     savelayer(info);
                 }
                 changedDatasets.clear();
+                changedNoteData.clear();
                 if (PROP_NOTIFICATION.get() && !layersInfo.isEmpty()) {
                     GuiHelper.runInEDT(this::displayNotification);
                 }
@@ -272,7 +297,14 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private void registerNewlayer(OsmDataLayer layer) {
         synchronized (layersLock) {
             layer.data.addDataSetListener(datasetAdapter);
-            layersInfo.add(new AutosaveLayerInfo(layer));
+            layersInfo.add(new AutosaveLayerInfo<>(layer));
+        }
+    }
+
+    private void registerNewlayer(NoteLayer layer) {
+        synchronized (layersLock) {
+            layer.getNoteData().addNoteDataUpdateListener(this);
+            layersInfo.add(new AutosaveLayerInfo<>(layer));
         }
     }
 
@@ -280,6 +312,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public void layerAdded(LayerAddEvent e) {
         if (e.getAddedLayer() instanceof OsmDataLayer) {
             registerNewlayer((OsmDataLayer) e.getAddedLayer());
+        } else if (e.getAddedLayer() instanceof NoteLayer) {
+            registerNewlayer((NoteLayer) e.getAddedLayer());
         }
     }
 
@@ -289,25 +323,35 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             synchronized (layersLock) {
                 OsmDataLayer osmLayer = (OsmDataLayer) e.getRemovedLayer();
                 osmLayer.data.removeDataSetListener(datasetAdapter);
-                Iterator<AutosaveLayerInfo> it = layersInfo.iterator();
-                while (it.hasNext()) {
-                    AutosaveLayerInfo info = it.next();
-                    if (info.layer == osmLayer) {
+                cleanupLayer(osmLayer);
+            }
+        } else if (e.getRemovedLayer() instanceof NoteLayer) {
+            synchronized (layersLock) {
+                NoteLayer noteLayer = (NoteLayer) e.getRemovedLayer();
+                noteLayer.getNoteData().removeNoteDataUpdateListener(this);
+                cleanupLayer(noteLayer);
+            }
+        }
+    }
 
-                        savelayer(info);
-                        File lastFile = info.backupFiles.pollLast();
-                        if (lastFile != null) {
-                            moveToDeletedLayersFolder(lastFile);
-                        }
-                        for (File file: info.backupFiles) {
-                            if (Utils.deleteFile(file)) {
-                                Utils.deleteFile(getPidFile(file));
-                            }
-                        }
+    private void cleanupLayer(AbstractModifiableLayer removedLayer) {
+        Iterator<AutosaveLayerInfo<?>> it = layersInfo.iterator();
+        while (it.hasNext()) {
+            AutosaveLayerInfo<?> info = it.next();
+            if (info.layer == removedLayer) {
 
-                        it.remove();
+                savelayer(info);
+                File lastFile = info.backupFiles.pollLast();
+                if (lastFile != null) {
+                    moveToDeletedLayersFolder(lastFile);
+                }
+                for (File file: info.backupFiles) {
+                    if (Utils.deleteFile(file)) {
+                        Utils.deleteFile(getPidFile(file));
                     }
                 }
+
+                it.remove();
             }
         }
     }
@@ -315,6 +359,16 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     @Override
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         changedDatasets.add(event.getDataset());
+    }
+
+    @Override
+    public void noteDataUpdated(NoteData data) {
+        changedNoteData.add(data);
+    }
+
+    @Override
+    public void selectedNoteChanged(NoteData noteData) {
+        // Do nothing
     }
 
     protected File getPidFile(File osmFile) {
@@ -328,7 +382,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
      */
     public List<File> getUnsavedLayersFiles() {
         List<File> result = new ArrayList<>();
-        File[] files = autosaveDir.listFiles(OsmImporter.FILE_FILTER);
+        File[] files = autosaveDir.listFiles((FileFilter)
+                pathname -> OsmImporter.FILE_FILTER.accept(pathname) || NoteImporter.FILE_FILTER.accept(pathname));
         if (files == null)
             return result;
         for (File file: files) {

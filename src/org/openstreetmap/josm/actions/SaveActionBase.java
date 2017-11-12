@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
@@ -104,8 +105,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 }
             }
             if (!exported) {
-                JOptionPane.showMessageDialog(Main.parent, tr("No Exporter found! Nothing saved."), tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE);
+                GuiHelper.runInEDTAndWait(() ->
+                    JOptionPane.showMessageDialog(Main.parent, tr("No Exporter found! Nothing saved."), tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE));
                 return false;
             } else if (canceled) {
                 return false;
