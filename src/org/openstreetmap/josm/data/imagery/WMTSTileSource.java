@@ -55,6 +55,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
@@ -357,7 +358,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      */
     private Collection<Layer> getCapabilities() throws IOException {
         try (CachedFile cf = new CachedFile(baseUrl); InputStream in = cf.setHttpHeaders(headers).
-                setMaxAge(7 * CachedFile.DAYS).
+                setMaxAge(Config.getPref().getLong("wmts.capabilities.cache.max_age", 7 * CachedFile.DAYS)).
                 setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince).
                 getInputStream()) {
             byte[] data = Utils.readBytesFromStream(in);
