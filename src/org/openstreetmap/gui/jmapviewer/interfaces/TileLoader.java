@@ -26,4 +26,15 @@ public interface TileLoader {
      * to loading = false / loaded = false
      */
     void cancelOutstandingTasks();
+
+    /**
+     * Determines whether this {@link TileLoader} has tasks which have not completed.
+     * @return whether this {@link TileLoader} has tasks which have not completed. This answer may well be
+     * "approximate" given that many implementations will be using mechanisms where a queue's state can change
+     * during the computation.
+     */
+    default boolean hasOutstandingTasks() {
+        // default implementation supplied just to make transition easier for external implementors
+        throw new UnsupportedOperationException("Not implemented");
+    }
 }

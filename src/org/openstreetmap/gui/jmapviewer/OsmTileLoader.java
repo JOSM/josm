@@ -177,6 +177,11 @@ public class OsmTileLoader implements TileLoader {
     }
 
     @Override
+    public boolean hasOutstandingTasks() {
+        return jobDispatcher.getTaskCount() > jobDispatcher.getCompletedTaskCount();
+    }
+
+    @Override
     public void cancelOutstandingTasks() {
         jobDispatcher.getQueue().clear();
     }
