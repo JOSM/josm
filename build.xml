@@ -726,6 +726,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.slf4j.*"/>
             <ignore classname="org.springframework.*"/>
             <ignore classname="org.testng.*"/>
+            <ignore classname="org.w3c.*"/>
             <ignore classname="org.zeromq.*"/>
             <!-- plugins used by another ones -->
             <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
