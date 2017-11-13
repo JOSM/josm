@@ -39,7 +39,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * This class represents the capabilites of a WMS imagery server.
+ * This class represents the capabilities of a WMS imagery server.
  */
 public class WMSImagery {
 
@@ -103,7 +103,7 @@ public class WMSImagery {
 
         /**
          * The data that caused this exception.
-         * @return The server response to the capabilites request.
+         * @return The server response to the capabilities request.
          */
         public String getIncomingData() {
             return incomingData;

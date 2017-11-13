@@ -22,7 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Represents the OSM API server capabilities.
  *
- * Example capabilites document:
+ * Example capabilities document:
  * <pre>
  * &lt;osm version="0.6" generator="OpenStreetMap server"&gt;
  *   &lt;api&gt;

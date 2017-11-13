@@ -331,7 +331,7 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Populates the an {@link AutoCompletionList} with the currently cached values for some given tags
+     * Populates the {@link AutoCompletionList} with the currently cached values for some given tags
      *
      * @param list the list to populate
      * @param keys the tag keys
