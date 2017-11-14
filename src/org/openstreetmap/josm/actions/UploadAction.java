@@ -138,16 +138,18 @@ public class UploadAction extends JosmAction {
         putValue("help", ht("/Action/Upload"));
     }
 
-    /**
-     * Refreshes the enabled state
-     *
-     */
     @Override
     protected void updateEnabledState() {
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
         setEnabled(editLayer != null && editLayer.isUploadable());
     }
 
+    /**
+     * Check whether the preconditions are met to upload data from a given layer, if applicable.
+     * @param layer layer to check
+     * @return {@code true} if the preconditions are met, or not applicable
+     * @see #checkPreUploadConditions(AbstractModifiableLayer, APIDataSet)
+     */
     public static boolean checkPreUploadConditions(AbstractModifiableLayer layer) {
         return checkPreUploadConditions(layer,
                 layer instanceof OsmDataLayer ? new APIDataSet(((OsmDataLayer) layer).data) : null);

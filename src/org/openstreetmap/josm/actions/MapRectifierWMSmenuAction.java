@@ -52,6 +52,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
         private JRadioButton btn;
 
         /**
+         * Constructs a new {@code RectifierService}.
          * @param name Name of the rectifing service
          * @param url URL to the service where users can register, upload, etc.
          * @param wmsUrl URL to the WMS server where JOSM will grab the images. Insert __s__ where the ID should be placed
