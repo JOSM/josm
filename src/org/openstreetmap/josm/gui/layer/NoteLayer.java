@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -56,6 +57,21 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @since 7522
  */
 public class NoteLayer extends AbstractModifiableLayer implements MouseListener, NoteDataUpdateListener {
+
+    /**
+     * Pattern to detect end of sentences followed by another one, or a link, in western script.
+     * Group 1 (capturing): period, interrogation mark, exclamation mark
+     * Group non capturing: at least one horizontal or vertical whitespace
+     * Group 2 (capturing): a letter (any script), or any punctuation
+     */
+    private static final Pattern SENTENCE_MARKS_WESTERN = Pattern.compile("([\\.\\?\\!])(?:[\\h\\v]+)([\\p{L}\\p{Punct}])");
+
+    /**
+     * Pattern to detect end of sentences followed by another one, or a link, in eastern script.
+     * Group 1 (capturing): ideographic full stop
+     * Group 2 (capturing): a letter (any script), or any punctuation
+     */
+    private static final Pattern SENTENCE_MARKS_EASTERN = Pattern.compile("(\\u3002)([\\p{L}\\p{Punct}])");
 
     private final NoteData noteData;
 
@@ -204,9 +220,19 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
     private void fixPanelSize(MapView mv, String text) {
         Dimension d = displayedPanel.getPreferredSize();
         if (d.width > mv.getWidth() / 2) {
-            // To make sure long notes such as https://www.openstreetmap.org/note/278197 are displayed correctly
-            displayedPanel.setText(text.replaceAll("\\. ([\\p{Lower}\\p{Upper}\\p{Punct}])", "\\.<br>$1"));
+            // To make sure long notes are displayed correctly
+            displayedPanel.setText(insertLineBreaks(text));
         }
+    }
+
+    /**
+     * Inserts HTML line breaks ({@code <br>} at the end of each sentence mark
+     * (period, interrogation mark, exclamation mark, ideographic full stop).
+     * @param longText a long text that does not fit on a single line without exceeding half of the map view
+     * @return text with line breaks
+     */
+    static String insertLineBreaks(String longText) {
+        return SENTENCE_MARKS_WESTERN.matcher(SENTENCE_MARKS_EASTERN.matcher(longText).replaceAll("$1<br>$2")).replaceAll("$1<br>$2");
     }
 
     /**
