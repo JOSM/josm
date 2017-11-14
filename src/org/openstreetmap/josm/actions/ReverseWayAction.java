@@ -141,6 +141,7 @@ public final class ReverseWayAction extends JosmAction {
     }
 
     /**
+     * Reverses a given way.
      * @param w the way
      * @return the reverse command and the tag correction commands
      * @throws UserCancelException if user cancels a reverse warning dialog

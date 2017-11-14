@@ -63,6 +63,7 @@ public class SplitWayAction extends JosmAction {
         private final List<Way> newWays;
 
         /**
+         * Constructs a new {@code SplitWayResult}.
          * @param command The command to be performed to split the way (which is saved for later retrieval with {@link #getCommand})
          * @param newSelection The new list of selected primitives ids (which is saved for later retrieval with {@link #getNewSelection})
          * @param originalWay The original way being split (which is saved for later retrieval with {@link #getOriginalWay})
