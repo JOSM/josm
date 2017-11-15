@@ -1,9 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.spi.DecimalFormatSymbolsProvider;
 import java.util.Locale;
 
@@ -42,12 +40,6 @@ public class JosmDecimalFormatSymbolsProvider extends DecimalFormatSymbolsProvid
      * @since 13050
      */
     public static double parseDouble(String s) {
-        String text = s;
-        NumberFormat format = DecimalFormat.getInstance();
-        if (format instanceof DecimalFormat) {
-            char decimalSeparator = ((DecimalFormat) format).getDecimalFormatSymbols().getDecimalSeparator();
-            text = text.replace('.', decimalSeparator).replace(',', decimalSeparator);
-        }
-        return Double.parseDouble(text);
+        return Double.parseDouble(s.replace(',', '.'));
     }
 }
