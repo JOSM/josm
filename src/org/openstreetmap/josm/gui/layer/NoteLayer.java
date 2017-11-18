@@ -270,7 +270,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
                 // encode method leaves us with entity instead of \n
                 htmlText = htmlText.replace("&#xA;", "<br>");
                 // convert URLs to proper HTML links
-                htmlText = htmlText.replaceAll("(https?://\\S+)", "<a href=\"$1\">$1</a>");
+                htmlText = htmlText.replaceAll("(https?://[^\\s\\(\\)<>]+)", "<a href=\"$1\">$1</a>");
                 sb.append(htmlText);
             }
         }
