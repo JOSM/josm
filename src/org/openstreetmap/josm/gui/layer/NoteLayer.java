@@ -10,6 +10,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -172,6 +174,9 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
     private void hideNoteWindow() {
         if (displayedWindow != null) {
             displayedWindow.setVisible(false);
+            for (MouseWheelListener listener : displayedWindow.getMouseWheelListeners()) {
+                displayedWindow.removeMouseWheelListener(listener);
+            }
             displayedWindow.dispose();
             displayedWindow = null;
             displayedPanel = null;
@@ -206,6 +211,9 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             displayedWindow = new JWindow((MainFrame) Main.parent);
             displayedWindow.setAutoRequestFocus(false);
             displayedWindow.add(displayedPanel);
+            // Forward mouse wheel scroll event to MapMover
+            displayedWindow.addMouseWheelListener(e -> mv.getMapMover().mouseWheelMoved(
+                    (MouseWheelEvent) SwingUtilities.convertMouseEvent(displayedWindow, e, mv)));
         } else {
             displayedPanel.setText(text);
             fixPanelSize(mv, text);
