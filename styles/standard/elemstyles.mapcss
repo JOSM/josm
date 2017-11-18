@@ -480,46 +480,57 @@ way[motorroad=yes]::core_motorroad {
 }
 way[highway=motorway] {
     width: 3;
+    z-index: 0.13; /* #15483 */
     color: motorway#809bc0;
 }
 way[highway=motorway_link] {
     width: 3;
+    z-index: 0.12;
     color: motorway#809bc0;
 }
 way[highway=trunk] {
     width: 3;
+    z-index: 0.11;
     color: trunk#7fc97f;
 }
 way[highway=trunk_link] {
     width: 3;
+    z-index: 0.10;
     color: trunk#7fc97f;
 }
 way[highway=primary] {
     width: 3;
+    z-index: 0.09;
     color: primary#fb805f;
 }
 way[highway=primary_link] {
     width: 3;
+    z-index: 0.08;
     color: primary#fb805f;
 }
 way[highway=secondary] {
     width: 3;
+    z-index: 0.07;
     color: secondary#fdbf6f;
 }
 way[highway=secondary_link] {
     width: 3;
+    z-index: 0.06;
     color: secondary#fdbf6f;
 }
 way[highway=tertiary] {
     width: 2;
+    z-index: 0.05;
     color: tertiary#f7f496;
 }
 way[highway=tertiary_link] {
     width: 2;
+    z-index: 0.04;
     color: tertiary#f7f496;
 }
 way[highway=unclassified] {
     width: 2;
+    z-index: 0.03;
     color: street#c0c0c0;
 }
 way[highway=escape] {
@@ -542,10 +553,12 @@ way[highway=track] {
 }
 way[highway=residential] {
     width: 2;
+    z-index: 0.02;
     color: street#c0c0c0;
 }
 way[highway=living_street] {
     width: 2;
+    z-index: 0.01;
     dashes: 9,9;
     dashes-background-color: livingdashed#00ff00;
     color: street#c0c0c0;
