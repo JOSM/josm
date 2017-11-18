@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay.VisRect;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -29,16 +30,16 @@ public class ImageDisplayTest {
     @Test
     public void testCalculateDrawImageRectangle() {
         assertEquals(new Rectangle(),
-                ImageDisplay.calculateDrawImageRectangle(new Rectangle(), new Dimension()));
+                ImageDisplay.calculateDrawImageRectangle(new VisRect(), new Dimension()));
         assertEquals(new Rectangle(0, 0, 10, 5),
-                ImageDisplay.calculateDrawImageRectangle(new Rectangle(0, 0, 10, 5), new Dimension(10, 5)));
+                ImageDisplay.calculateDrawImageRectangle(new VisRect(0, 0, 10, 5), new Dimension(10, 5)));
         assertEquals(new Rectangle(0, 0, 10, 5),
-                ImageDisplay.calculateDrawImageRectangle(new Rectangle(0, 0, 20, 10), new Dimension(10, 5)));
+                ImageDisplay.calculateDrawImageRectangle(new VisRect(0, 0, 20, 10), new Dimension(10, 5)));
         assertEquals(new Rectangle(0, 0, 20, 10),
-                ImageDisplay.calculateDrawImageRectangle(new Rectangle(0, 0, 10, 5), new Dimension(20, 10)));
+                ImageDisplay.calculateDrawImageRectangle(new VisRect(0, 0, 10, 5), new Dimension(20, 10)));
         assertEquals(new Rectangle(5, 0, 24, 12),
-                ImageDisplay.calculateDrawImageRectangle(new Rectangle(0, 0, 10, 5), new Dimension(35, 12)));
+                ImageDisplay.calculateDrawImageRectangle(new VisRect(0, 0, 10, 5), new Dimension(35, 12)));
         assertEquals(new Rectangle(0, 1, 8, 4),
-                ImageDisplay.calculateDrawImageRectangle(new Rectangle(0, 0, 10, 5), new Dimension(8, 6)));
+                ImageDisplay.calculateDrawImageRectangle(new VisRect(0, 0, 10, 5), new Dimension(8, 6)));
     }
 }
