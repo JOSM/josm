@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
@@ -24,11 +25,13 @@ import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.io.AsynchronousUploadPrimitivesTask;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -56,6 +59,8 @@ public class UploadAction extends JosmAction {
      */
     private static final List<UploadHook> UPLOAD_HOOKS = new LinkedList<>();
     private static final List<UploadHook> LATE_UPLOAD_HOOKS = new LinkedList<>();
+
+    private static final String IS_ASYNC_UPLOAD_ENABLED = "asynchronous.upload";
 
     static {
         /**
@@ -259,14 +264,24 @@ public class UploadAction extends JosmAction {
             hook.modifyChangesetTags(changesetTags);
         }
 
-        MainApplication.worker.execute(
-                new UploadPrimitivesTask(
-                        UploadDialog.getUploadDialog().getUploadStrategySpecification(),
-                        layer,
-                        apiData,
-                        cs
-                )
-        );
+        if (Config.getPref().getBoolean(IS_ASYNC_UPLOAD_ENABLED, true)) {
+            Optional<AsynchronousUploadPrimitivesTask> asyncUploadTask = AsynchronousUploadPrimitivesTask.createAsynchronousUploadTask(
+                    UploadDialog.getUploadDialog().getUploadStrategySpecification(),
+                    layer,
+                    apiData,
+                    cs);
+
+            if (asyncUploadTask.isPresent()) {
+                MainApplication.worker.execute(asyncUploadTask.get());
+            }
+        } else {
+            MainApplication.worker.execute(
+                    new UploadPrimitivesTask(
+                            UploadDialog.getUploadDialog().getUploadStrategySpecification(),
+                            layer,
+                            apiData,
+                            cs));
+        }
     }
 
     @Override
