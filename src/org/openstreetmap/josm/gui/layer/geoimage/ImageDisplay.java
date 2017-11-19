@@ -66,8 +66,8 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
     private static final BooleanProperty AGPIFO_STYLE2 =
         new BooleanProperty("geoimage.agpifo-style-drag-and-zoom", false);
-    private static int DRAG_BUTTON;
-    private static int ZOOM_BUTTON;
+    private static int dragButton;
+    private static int zoomButton;
 
     /** Alternative to mouse wheel zoom; esp. handy if no mouse wheel is present **/
     private static final BooleanProperty ZOOM_ON_CLICK =
@@ -86,31 +86,39 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         new BooleanProperty("geoimage.bilinear-downsampling-progressive", true);
     private static final BooleanProperty BILIN_UPSAMP =
         new BooleanProperty("geoimage.bilinear-upsampling", false);
-    private static double BILIN_UPPER;
-    private static double BILIN_LOWER;
+    private static double bilinUpper;
+    private static double bilinLower;
 
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e == null ||
-            e.getKey().equals(AGPIFO_STYLE2.getKey()))
-        {
-            DRAG_BUTTON = AGPIFO_STYLE2.get() ? 1 : 3;
-            ZOOM_BUTTON = DRAG_BUTTON == 1 ? 3 : 1;
+            e.getKey().equals(AGPIFO_STYLE2.getKey())) {
+            dragButton = AGPIFO_STYLE2.get() ? 1 : 3;
+            zoomButton = dragButton == 1 ? 3 : 1;
         }
         if (e == null ||
             e.getKey().equals(MAX_ZOOM.getKey()) ||
             e.getKey().equals(BILIN_DOWNSAMP.getKey()) ||
-            e.getKey().equals(BILIN_UPSAMP.getKey()))
-        {
-            BILIN_UPPER = (BILIN_UPSAMP.get() ? 2*MAX_ZOOM.get() : (BILIN_DOWNSAMP.get() ? 0.5 : 0));
-            BILIN_LOWER = (BILIN_DOWNSAMP.get() ? 0 : 1);
+            e.getKey().equals(BILIN_UPSAMP.getKey())) {
+            bilinUpper = (BILIN_UPSAMP.get() ? 2*MAX_ZOOM.get() : (BILIN_DOWNSAMP.get() ? 0.5 : 0));
+            bilinLower = (BILIN_DOWNSAMP.get() ? 0 : 1);
         }
     }
 
-    /** Manage the visible rectangle of an image with full bounds stored in init. **/
+    /**
+     * Manage the visible rectangle of an image with full bounds stored in init.
+     * @since 13127
+     */
     public static class VisRect extends Rectangle {
         private final Rectangle init;
 
+        /**
+         * Constructs a new {@code VisRect}.
+         * @param     x the specified X coordinate
+         * @param     y the specified Y coordinate
+         * @param     width  the width of the rectangle
+         * @param     height the height of the rectangle
+         */
         public VisRect(int x, int y, int width, int height) {
             super(x, y, width, height);
             init = new Rectangle(this);
@@ -121,11 +129,18 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             init = peer.init;
         }
 
+        /**
+         * Constructs a new {@code VisRect} from another one.
+         * @param v rectangle to copy
+         */
         public VisRect(VisRect v) {
             super(v);
             init = v.init;
         }
 
+        /**
+         * Constructs a new empty {@code VisRect}.
+         */
         public VisRect() {
             this(0, 0, 0, 0);
         }
@@ -268,15 +283,15 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         private Point mousePointInImg;
 
         private boolean mouseIsDragging(MouseEvent e) {
-            return (DRAG_BUTTON == 1 && SwingUtilities.isLeftMouseButton(e)) ||
-                   (DRAG_BUTTON == 2 && SwingUtilities.isMiddleMouseButton(e)) ||
-                   (DRAG_BUTTON == 3 && SwingUtilities.isRightMouseButton(e));
+            return (dragButton == 1 && SwingUtilities.isLeftMouseButton(e)) ||
+                   (dragButton == 2 && SwingUtilities.isMiddleMouseButton(e)) ||
+                   (dragButton == 3 && SwingUtilities.isRightMouseButton(e));
         }
 
         private boolean mouseIsZoomSelecting(MouseEvent e) {
-            return (ZOOM_BUTTON == 1 && SwingUtilities.isLeftMouseButton(e)) ||
-                   (ZOOM_BUTTON == 2 && SwingUtilities.isMiddleMouseButton(e)) ||
-                   (ZOOM_BUTTON == 3 && SwingUtilities.isRightMouseButton(e));
+            return (zoomButton == 1 && SwingUtilities.isLeftMouseButton(e)) ||
+                   (zoomButton == 2 && SwingUtilities.isMiddleMouseButton(e)) ||
+                   (zoomButton == 3 && SwingUtilities.isRightMouseButton(e));
         }
 
         private boolean isAtMaxZoom(Rectangle visibleRect) {
@@ -635,7 +650,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             Rectangle target = calculateDrawImageRectangle(visibleRect, size);
             double scale = target.width / (double) r.width; // pixel ratio is 1:1
 
-            if (selectedRect == null && BILIN_LOWER < scale && scale < BILIN_UPPER) {
+            if (selectedRect == null && bilinLower < scale && scale < bilinUpper) {
                 BufferedImage bi = ImageProvider.toBufferedImage(image, r);
                 r.x = r.y = 0;
 

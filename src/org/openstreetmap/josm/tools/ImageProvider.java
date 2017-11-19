@@ -616,14 +616,11 @@ public class ImageProvider {
      * A <code>java.awt.image.MultiResolutionImage</code> is a Java 9 {@link Image}
      * implementation, which adds support for HiDPI displays. The effect will be
      * that in HiDPI mode, when GUI elements are scaled by a factor 1.5, 2.0, etc.,
-     * the images are not just up-scaled, but a higher resolution version of the
-     * image is rendered instead.
+     * the images are not just up-scaled, but a higher resolution version of the image is rendered instead.
      * <p>
-     * Use {@link HiDPISupport#getBaseImage(java.awt.Image)} to extract the original
-     * image from a multi-resolution image.
+     * Use {@link HiDPISupport#getBaseImage(java.awt.Image)} to extract the original image from a multi-resolution image.
      * <p>
-     * See {@link HiDPISupport#processMRImage} for how to process the image without
-     * removing the multi-resolution magic.
+     * See {@link HiDPISupport#processMRImage} for how to process the image without removing the multi-resolution magic.
      * @param multiResolution true, if multi-resolution image is requested
      * @return the current object, for convenience
      */
@@ -820,7 +817,6 @@ public class ImageProvider {
         synchronized (cache) {
             // This method is called from different thread and modifying HashMap concurrently can result
             // for example in loops in map entries (ie freeze when such entry is retrieved)
-            // Yes, it did happen to me :-)
             if (name == null)
                 return null;
 
@@ -910,8 +906,7 @@ public class ImageProvider {
                         // getImageUrl() does a ton of "stat()" calls and gets expensive
                         // and redundant when you have a whole ton of objects. So,
                         // index the cache by the name of the icon we're looking for
-                        // and don't bother to create a URL unless we're actually
-                        // creating the image.
+                        // and don't bother to create a URL unless we're actually creating the image.
                         URL path = getImageUrl(fullName);
                         if (path == null) {
                             continue;
@@ -1617,8 +1612,7 @@ public class ImageProvider {
      * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
      * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
      *
-     * @return a <code>BufferedImage</code> containing the decoded
-     * contents of the input, or <code>null</code>.
+     * @return a <code>BufferedImage</code> containing the decoded contents of the input, or <code>null</code>.
      *
      * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
      * @throws IOException if an error occurs during reading.
@@ -1672,8 +1666,7 @@ public class ImageProvider {
      * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
      * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
      *
-     * @return a <code>BufferedImage</code> containing the decoded
-     * contents of the input, or <code>null</code>.
+     * @return a <code>BufferedImage</code> containing the decoded contents of the input, or <code>null</code>.
      *
      * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
      * @throws IOException if an error occurs during reading.
@@ -1716,8 +1709,7 @@ public class ImageProvider {
      * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
      * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
      *
-     * @return a <code>BufferedImage</code> containing the decoded
-     * contents of the input, or <code>null</code>.
+     * @return a <code>BufferedImage</code> containing the decoded contents of the input, or <code>null</code>.
      *
      * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
      * @throws IOException if an error occurs during reading.
@@ -1986,16 +1978,12 @@ public class ImageProvider {
      */
     public static BufferedImage toBufferedImage(Image image, Rectangle crop_area) {
         BufferedImage buffImage = null;
-
         Rectangle r = new Rectangle(image.getWidth(null), image.getHeight(null));
         if (r.intersection(crop_area).equals(crop_area)) {
             buffImage = new BufferedImage(crop_area.width, crop_area.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = buffImage.createGraphics();
-            g2.drawImage(image,
-                0, 0, crop_area.width, crop_area.height,
-                crop_area.x, crop_area.y,
-                crop_area.x + crop_area.width, crop_area.y + crop_area.height,
-                null);
+            g2.drawImage(image, 0, 0, crop_area.width, crop_area.height,
+                crop_area.x, crop_area.y, crop_area.x + crop_area.width, crop_area.y + crop_area.height, null);
             g2.dispose();
         }
         return buffImage;
