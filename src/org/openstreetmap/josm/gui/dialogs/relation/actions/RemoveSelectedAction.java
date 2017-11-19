@@ -26,7 +26,7 @@ public class RemoveSelectedAction extends AddFromSelectionAction {
     public RemoveSelectedAction(MemberTableModel memberTableModel, SelectionTableModel selectionTableModel, OsmDataLayer layer) {
         super(null, memberTableModel, null, selectionTableModel, null, layer, null);
         putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected objects"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "deletemembers"));
+        new ImageProvider("dialogs/relation", "deletemembers").getResource().attachImageIcon(this, true);
         updateEnabledState();
     }
 

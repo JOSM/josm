@@ -38,7 +38,8 @@ public class RenameLayerAction extends AbstractAction {
      * @param layer layer to rename
      */
     public RenameLayerAction(File file, Layer layer) {
-        super(tr("Rename layer"), ImageProvider.get("dialogs", "edit"));
+        super(tr("Rename layer"));
+        new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
         this.file = file;
         this.layer = layer;
         this.putValue("help", ht("/Action/RenameLayer"));

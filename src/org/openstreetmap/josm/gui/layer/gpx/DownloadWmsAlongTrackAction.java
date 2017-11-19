@@ -42,7 +42,8 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
      * @param data that represents GPX track, along which data should be downloaded
      */
     public DownloadWmsAlongTrackAction(final GpxData data) {
-        super(tr("Precache imagery tiles along this track"), ImageProvider.get("downloadalongtrack"));
+        super(tr("Precache imagery tiles along this track"));
+        new ImageProvider("downloadalongtrack").getResource().attachImageIcon(this, true);
         this.data = data;
     }
 

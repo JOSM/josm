@@ -616,7 +616,8 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
          * Constructs a new {@code ToolbarButtonAction}.
          */
         public ToolbarButtonAction() {
-            super("", ImageProvider.get("dialogs", "pin"));
+            super("");
+            new ImageProvider("dialogs", "pin").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Add or remove toolbar button"));
             List<String> t = new LinkedList<>(ToolbarPreferences.getToolString());
             toolbarIndex = t.indexOf(getToolbarString());

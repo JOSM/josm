@@ -179,7 +179,7 @@ public class PlaceSelection implements DownloadSelection {
 
         SearchAction() {
             putValue(NAME, tr("Search ..."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
+            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Click to start searching for places"));
             updateEnabledState();
         }

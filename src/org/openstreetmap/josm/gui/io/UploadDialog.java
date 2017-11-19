@@ -42,13 +42,10 @@ import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -60,6 +57,9 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.UploadStrategy;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -432,7 +432,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         UploadAction(IUploadDialog dialog) {
             this.dialog = dialog;
             putValue(NAME, tr("Upload Changes"));
-            putValue(SMALL_ICON, ImageProvider.get("upload"));
+            new ImageProvider("upload").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Upload the changed primitives"));
         }
 
@@ -587,7 +587,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         CancelAction(IUploadDialog dialog) {
             this.dialog = dialog;
             putValue(NAME, tr("Cancel"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            new ImageProvider("cancel").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Cancel the upload and resume editing"));
         }
 

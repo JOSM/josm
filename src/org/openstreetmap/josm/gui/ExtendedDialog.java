@@ -551,7 +551,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
         HelpAction() {
             putValue(SHORT_DESCRIPTION, tr("Show help information"));
             putValue(NAME, tr("Help"));
-            putValue(SMALL_ICON, ImageProvider.get("help"));
+            new ImageProvider("help").getResource().attachImageIcon(this, true);
             setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
         }
 

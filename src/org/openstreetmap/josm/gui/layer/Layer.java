@@ -542,7 +542,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
          * @param layer The layer to save.
          */
         public LayerSaveAction(Layer layer) {
-            putValue(SMALL_ICON, ImageProvider.get("save"));
+            new ImageProvider("save").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Save the current data."));
             putValue(NAME, tr("Save"));
             setEnabled(true);
@@ -566,7 +566,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
          * @param layer The layer that should be saved.
          */
         public LayerSaveAsAction(Layer layer) {
-            putValue(SMALL_ICON, ImageProvider.get("save_as"));
+            new ImageProvider("save_as").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Save the current data to a new file."));
             putValue(NAME, tr("Save As..."));
             setEnabled(true);
@@ -590,7 +590,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
          * @param layer The layer
          */
         public LayerGpxExportAction(Layer layer) {
-            putValue(SMALL_ICON, ImageProvider.get("exportgpx"));
+            new ImageProvider("exportgpx").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Export the data to GPX file."));
             putValue(NAME, tr("Export to GPX..."));
             setEnabled(true);

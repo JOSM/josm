@@ -27,7 +27,7 @@ public class AddSelectedAfterSelection extends AddFromSelectionAction {
     public AddSelectedAfterSelection(MemberTableModel memberTableModel, SelectionTableModel selectionTableModel, IRelationEditor editor) {
         super(null, memberTableModel, null, selectionTableModel, null, null, editor);
         putValue(SHORT_DESCRIPTION, tr("Add all objects selected in the current dataset after the last selected member"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyaftercurrentright"));
+        new ImageProvider("dialogs/conflict", "copyaftercurrentright").getResource().attachImageIcon(this, true);
         updateEnabledState();
     }
 

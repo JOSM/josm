@@ -44,7 +44,7 @@ public final class DuplicateAction extends AbstractAction implements IEnabledSta
     public DuplicateAction(LayerListModel model) {
         this.model = model;
         putValue(NAME, tr("Duplicate"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "duplicatelayer"));
+        new ImageProvider("dialogs", "duplicatelayer").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Duplicate this layer"));
         putValue("help", HelpUtil.ht("/Dialog/LayerList#DuplicateLayer"));
         updateEnabledState();

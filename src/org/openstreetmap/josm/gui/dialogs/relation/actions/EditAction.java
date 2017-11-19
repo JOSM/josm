@@ -31,7 +31,7 @@ public class EditAction extends AbstractRelationEditorAction {
     public EditAction(MemberTable memberTable, MemberTableModel memberTableModel, OsmDataLayer layer) {
         super(memberTable, memberTableModel, null, layer, null);
         putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+        new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
         updateEnabledState();
     }
 

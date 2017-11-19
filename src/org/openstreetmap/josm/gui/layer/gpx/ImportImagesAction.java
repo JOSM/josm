@@ -35,7 +35,8 @@ public class ImportImagesAction extends AbstractAction {
      * @param layer The layer this action should be for
      */
     public ImportImagesAction(final GpxLayer layer) {
-        super(tr("Import images"), ImageProvider.get("dialogs/geoimage"));
+        super(tr("Import images"));
+        new ImageProvider("dialogs/geoimage").getResource().attachImageIcon(this, true);
         this.layer = layer;
         putValue("help", ht("/Action/ImportImages"));
     }

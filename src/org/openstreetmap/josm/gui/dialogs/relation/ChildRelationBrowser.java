@@ -176,7 +176,7 @@ public class ChildRelationBrowser extends JPanel {
     class EditAction extends AbstractAction implements TreeSelectionListener {
         EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
             putValue(NAME, tr("Edit"));
             refreshEnabled();
         }
@@ -221,7 +221,7 @@ public class ChildRelationBrowser extends JPanel {
     class DownloadAllChildRelationsAction extends AbstractAction {
         DownloadAllChildRelationsAction() {
             putValue(SHORT_DESCRIPTION, tr("Download all child relations (recursively)"));
-            putValue(SMALL_ICON, ImageProvider.get("download"));
+            new ImageProvider("download").getResource().attachImageIcon(this, true);
             putValue(NAME, tr("Download All Children"));
         }
 
@@ -244,8 +244,7 @@ public class ChildRelationBrowser extends JPanel {
         DownloadSelectedAction() {
             putValue(SHORT_DESCRIPTION, tr("Download selected relations"));
             // FIXME: replace with better icon
-            //
-            putValue(SMALL_ICON, ImageProvider.get("download"));
+            new ImageProvider("download").getResource().attachImageIcon(this, true);
             putValue(NAME, tr("Download Selected Children"));
             updateEnabledState();
         }

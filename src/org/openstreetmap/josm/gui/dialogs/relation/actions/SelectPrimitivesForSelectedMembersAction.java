@@ -26,7 +26,7 @@ public class SelectPrimitivesForSelectedMembersAction extends AbstractRelationEd
     public SelectPrimitivesForSelectedMembersAction(MemberTable memberTable, MemberTableModel memberTableModel, OsmDataLayer layer) {
         super(memberTable, memberTableModel, null, layer, null);
         putValue(SHORT_DESCRIPTION, tr("Select objects for selected relation members"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectprimitives"));
+        new ImageProvider("dialogs/relation", "selectprimitives").getResource().attachImageIcon(this, true);
         updateEnabledState();
     }
 

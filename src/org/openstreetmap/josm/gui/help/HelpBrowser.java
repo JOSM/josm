@@ -430,7 +430,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
         OpenInBrowserAction(IHelpBrowser browser) {
             super(browser);
             putValue(SHORT_DESCRIPTION, tr("Open the current help page in an external browser"));
-            putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
+            new ImageProvider("help", "internet").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -448,7 +448,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
         EditAction(IHelpBrowser browser) {
             super(browser);
             putValue(SHORT_DESCRIPTION, tr("Edit the current help page"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -488,7 +488,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
         ReloadAction(IHelpBrowser browser) {
             super(browser);
             putValue(SHORT_DESCRIPTION, tr("Reload the current help page"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -507,7 +507,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
             super(browser);
             browser.getHistory().addChangeListener(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the previous page"));
-            putValue(SMALL_ICON, ImageProvider.get("help", "previous"));
+            new ImageProvider("help", "previous").getResource().attachImageIcon(this, true);
             setEnabled(browser.getHistory().canGoBack());
         }
 
@@ -532,7 +532,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
             super(browser);
             browser.getHistory().addChangeListener(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the next page"));
-            putValue(SMALL_ICON, ImageProvider.get("help", "next"));
+            new ImageProvider("help", "next").getResource().attachImageIcon(this, true);
             setEnabled(browser.getHistory().canGoForward());
         }
 
@@ -556,7 +556,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
         HomeAction(IHelpBrowser browser) {
             super(browser);
             putValue(SHORT_DESCRIPTION, tr("Go to the JOSM help home page"));
-            putValue(SMALL_ICON, ImageProvider.get("help", "home"));
+            new ImageProvider("help", "home").getResource().attachImageIcon(this, true);
         }
 
         @Override

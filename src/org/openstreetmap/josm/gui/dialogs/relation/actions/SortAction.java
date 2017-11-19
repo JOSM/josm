@@ -25,7 +25,7 @@ public class SortAction extends AbstractRelationEditorAction {
      */
     public SortAction(MemberTable memberTable, MemberTableModel memberTableModel) {
         super(memberTable, memberTableModel, null);
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
+        new ImageProvider("dialogs", "sort").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Sort"));
         Shortcut sc = Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_END, Shortcut.ALT);
         sc.setAccelerator(this);

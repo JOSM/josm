@@ -502,7 +502,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 default:
                     break;
                 }
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", icon));
+                new ImageProvider("dialogs", icon).getResource().attachImageIcon(this, true);
                 this.type = type;
             }
 
@@ -550,7 +550,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             RemoveEntryAction() {
                 putValue(NAME, tr("Remove"));
                 putValue(SHORT_DESCRIPTION, tr("Remove entry"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+                new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
                 updateEnabledState();
             }
 
@@ -580,7 +580,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             ActivateAction() {
                 putValue(NAME, tr("Activate"));
                 putValue(SHORT_DESCRIPTION, tr("copy selected defaults"));
-                putValue(SMALL_ICON, ImageProvider.get("preferences", "activate-down"));
+                new ImageProvider("preferences", "activate-down").getResource().attachImageIcon(this, true);
             }
 
             protected void updateEnabledState() {
@@ -646,7 +646,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
              */
             ReloadAction() {
                 putValue(SHORT_DESCRIPTION, tr("Update default entries"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+                new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this, true);
             }
 
             @Override

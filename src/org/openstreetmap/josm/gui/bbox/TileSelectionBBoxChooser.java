@@ -505,7 +505,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
 
         class ApplyTileAddressAction extends AbstractAction {
             ApplyTileAddressAction() {
-                putValue(SMALL_ICON, ImageProvider.get("apply"));
+                new ImageProvider("apply").getResource().attachImageIcon(this, true);
                 putValue(SHORT_DESCRIPTION, tr("Apply the tile address"));
             }
 

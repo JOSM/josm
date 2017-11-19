@@ -62,7 +62,6 @@ import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -100,6 +99,7 @@ import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -1125,7 +1125,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         HelpAction() {
             putValue(NAME, tr("Go to OSM wiki for tag help"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help for selected object"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
+            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
             putValue(ACCELERATOR_KEY, getKeyStroke());
         }
 

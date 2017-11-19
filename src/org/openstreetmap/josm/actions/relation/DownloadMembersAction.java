@@ -27,7 +27,7 @@ public class DownloadMembersAction extends AbstractRelationAction {
     public DownloadMembersAction() {
         putValue(SHORT_DESCRIPTION, tr("Download all members of the selected relations"));
         putValue(NAME, tr("Download members"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "downloadincomplete"));
+        new ImageProvider("dialogs", "downloadincomplete").getResource().attachImageIcon(this, true);
         putValue("help", ht("/Dialog/RelationList#DownloadMembers"));
     }
 

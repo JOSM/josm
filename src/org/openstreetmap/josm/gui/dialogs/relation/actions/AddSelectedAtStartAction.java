@@ -27,7 +27,7 @@ public class AddSelectedAtStartAction extends AddFromSelectionAction {
     public AddSelectedAtStartAction(MemberTableModel memberTableModel, SelectionTableModel selectionTableModel, IRelationEditor editor) {
         super(null, memberTableModel, null, selectionTableModel, null, null, editor);
         putValue(SHORT_DESCRIPTION, tr("Add all objects selected in the current dataset before the first member"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copystartright"));
+        new ImageProvider("dialogs/conflict", "copystartright").getResource().attachImageIcon(this, true);
         updateEnabledState();
     }
 

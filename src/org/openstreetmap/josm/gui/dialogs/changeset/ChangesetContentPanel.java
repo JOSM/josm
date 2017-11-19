@@ -294,7 +294,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         DownloadObjectAction() {
             putValue(NAME, tr("Download objects"));
-            putValue(SMALL_ICON, ImageProvider.get("downloadprimitive"));
+            new ImageProvider("downloadprimitive").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Download the current version of the selected objects"));
             updateEnabledState();
         }

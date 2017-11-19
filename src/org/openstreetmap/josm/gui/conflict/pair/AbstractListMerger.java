@@ -17,7 +17,6 @@ import java.util.Collection;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -41,6 +40,7 @@ import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 
 /**
  * A UI component for resolving conflicts in two lists of entries of type T.
@@ -421,10 +421,11 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     abstract static class CopyAction extends AbstractAction implements ListSelectionListener {
 
         protected CopyAction(String iconName, String actionName, String shortDescription) {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", iconName);
-            putValue(Action.SMALL_ICON, icon);
+            ImageResource icon = new ImageProvider("dialogs/conflict", iconName).getResource();
             if (icon == null) {
                 putValue(Action.NAME, actionName);
+            } else {
+                icon.attachImageIcon(this, true);
             }
             putValue(Action.SHORT_DESCRIPTION, shortDescription);
             setEnabled(false);
@@ -626,8 +627,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyAllLeft extends AbstractAction implements ChangeListener, PropertyChangeListener {
 
         CopyAllLeft() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallleft");
-            putValue(Action.SMALL_ICON, icon);
+            new ImageProvider("dialogs/conflict", "useallleft").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Copy all my elements to the target"));
         }
 
@@ -655,8 +655,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyAllRight extends AbstractAction implements ChangeListener, PropertyChangeListener {
 
         CopyAllRight() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallright");
-            putValue(Action.SMALL_ICON, icon);
+            new ImageProvider("dialogs/conflict", "useallright").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Copy all their elements to the target"));
         }
 
@@ -684,10 +683,11 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class MoveUpMergedAction extends AbstractAction implements ListSelectionListener {
 
         MoveUpMergedAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "moveup");
-            putValue(Action.SMALL_ICON, icon);
+            ImageResource icon = new ImageProvider("dialogs/conflict", "moveup").getResource();
             if (icon == null) {
                 putValue(Action.NAME, tr("Up"));
+            } else {
+                icon.attachImageIcon(this, true);
             }
             putValue(Action.SHORT_DESCRIPTION, tr("Move up the selected entries by one position."));
             setEnabled(false);
@@ -716,10 +716,11 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class MoveDownMergedAction extends AbstractAction implements ListSelectionListener {
 
         MoveDownMergedAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "movedown");
-            putValue(Action.SMALL_ICON, icon);
+            ImageResource icon = new ImageProvider("dialogs/conflict", "movedown").getResource();
             if (icon == null) {
                 putValue(Action.NAME, tr("Down"));
+            } else {
+                icon.attachImageIcon(this, true);
             }
             putValue(Action.SHORT_DESCRIPTION, tr("Move down the selected entries by one position."));
             setEnabled(false);
@@ -748,10 +749,11 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class RemoveMergedAction extends AbstractAction implements ListSelectionListener {
 
         RemoveMergedAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "remove");
-            putValue(Action.SMALL_ICON, icon);
+            ImageResource icon = new ImageProvider("dialogs/conflict", "remove").getResource();
             if (icon == null) {
                 putValue(Action.NAME, tr("Remove"));
+            } else {
+                icon.attachImageIcon(this, true);
             }
             putValue(Action.SHORT_DESCRIPTION, tr("Remove the selected entries from the list of merged elements."));
             setEnabled(false);

@@ -57,7 +57,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
      * @param layer The associated GPX layer
      */
     public ChooseTrackVisibilityAction(final GpxLayer layer) {
-        super(tr("Choose visible tracks"), ImageProvider.get("dialogs/filter"));
+        super(tr("Choose visible tracks"));
+        new ImageProvider("dialogs/filter").getResource().attachImageIcon(this, true);
         this.layer = layer;
         putValue("help", ht("/Action/ChooseTrackVisibility"));
     }

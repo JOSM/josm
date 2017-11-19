@@ -154,7 +154,7 @@ public class VersionTable extends JTable implements ChangeListener {
             super(true);
             putValue(NAME, tr("Changeset info"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the changeset"));
-            putValue(SMALL_ICON, ImageProvider.get("data/changeset"));
+            new ImageProvider("data/changeset").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -191,7 +191,7 @@ public class VersionTable extends JTable implements ChangeListener {
             super(true);
             putValue(NAME, tr("User info"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the user"));
-            putValue(SMALL_ICON, ImageProvider.get("data/user"));
+            new ImageProvider("data/user").getResource().attachImageIcon(this, true);
         }
 
         @Override

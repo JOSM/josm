@@ -44,7 +44,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         Shortcut sc = Shortcut.registerShortcut("relationeditor:refresh", tr("Relation Editor: Refresh"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
         // CHECKSTYLE.ON: LineLength
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tr("Refresh relation from data layer"), sc));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/refresh"));
+        new ImageProvider("dialogs/refresh").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Refresh"));
         if (editor instanceof JComponent) {
             ((JComponent) editor).getRootPane().getActionMap().put("refresh", this);

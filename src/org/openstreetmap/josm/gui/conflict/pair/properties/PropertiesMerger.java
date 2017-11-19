@@ -345,7 +345,7 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
 
     class KeepMyCoordinatesAction extends AbstractAction implements ChangeListener {
         KeepMyCoordinatesAction() {
-            putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeepmine"));
+            new ImageProvider("dialogs/conflict", "tagkeepmine").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Keep my coordinates"));
         }
 
@@ -362,7 +362,7 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
 
     class KeepTheirCoordinatesAction extends AbstractAction implements ChangeListener {
         KeepTheirCoordinatesAction() {
-            putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeeptheir"));
+            new ImageProvider("dialogs/conflict", "tagkeeptheir").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Keep their coordinates"));
         }
 
@@ -379,7 +379,7 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
 
     class UndecideCoordinateConflictAction extends AbstractAction implements ChangeListener {
         UndecideCoordinateConflictAction() {
-            putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagundecide"));
+            new ImageProvider("dialogs/conflict", "tagundecide").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Undecide conflict between different coordinates"));
         }
 
@@ -396,7 +396,7 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
 
     class KeepMyDeletedStateAction extends AbstractAction implements ChangeListener {
         KeepMyDeletedStateAction() {
-            putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeepmine"));
+            new ImageProvider("dialogs/conflict", "tagkeepmine").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Keep my deleted state"));
         }
 
@@ -413,7 +413,7 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
 
     class KeepTheirDeletedStateAction extends AbstractAction implements ChangeListener {
         KeepTheirDeletedStateAction() {
-            putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeeptheir"));
+            new ImageProvider("dialogs/conflict", "tagkeeptheir").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Keep their deleted state"));
         }
 
@@ -430,7 +430,7 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
 
     class UndecideDeletedStateConflictAction extends AbstractAction implements ChangeListener {
         UndecideDeletedStateConflictAction() {
-            putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagundecide"));
+            new ImageProvider("dialogs/conflict", "tagundecide").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Undecide conflict between deleted state"));
         }
 

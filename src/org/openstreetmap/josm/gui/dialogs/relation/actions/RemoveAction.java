@@ -26,7 +26,7 @@ public class RemoveAction extends AbstractRelationEditorAction {
      */
     public RemoveAction(MemberTable memberTable, MemberTableModel memberTableModel, String actionMapKey) {
         super(memberTable, memberTableModel, actionMapKey);
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+        new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Remove"));
         Shortcut sc = Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"), KeyEvent.VK_DELETE, Shortcut.ALT);
         sc.setAccelerator(this);

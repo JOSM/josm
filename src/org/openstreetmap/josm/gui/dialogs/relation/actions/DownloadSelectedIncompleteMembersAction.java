@@ -34,7 +34,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationEdi
             OsmDataLayer layer, IRelationEditor editor) {
         super(memberTable, memberTableModel, actionMapKey, layer, editor);
         putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
+        new ImageProvider("dialogs/relation", "downloadincompleteselected").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Download Members"));
         updateEnabledState();
     }

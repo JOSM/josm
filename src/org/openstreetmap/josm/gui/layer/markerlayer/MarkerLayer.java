@@ -483,7 +483,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         private final transient MarkerLayer layer;
 
         public ShowHideMarkerText(MarkerLayer layer) {
-            super(tr("Show Text/Icons"), ImageProvider.get("dialogs", "showhide"));
+            super(tr("Show Text/Icons"));
+            new ImageProvider("dialogs", "showhide").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the marker text and icons."));
             putValue("help", ht("/Action/ShowHideTextIcons"));
             this.layer = layer;
@@ -514,7 +515,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
          * Constructs a new {@code SynchronizeAudio} action.
          */
         SynchronizeAudio() {
-            super(tr("Synchronize Audio"), ImageProvider.get("audio-sync"));
+            super(tr("Synchronize Audio"));
+            new ImageProvider("audio-sync").getResource().attachImageIcon(this, true);
             putValue("help", ht("/Action/SynchronizeAudio"));
         }
 
@@ -551,7 +553,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     private class MoveAudio extends AbstractAction {
 
         MoveAudio() {
-            super(tr("Make Audio Marker at Play Head"), ImageProvider.get("addmarkers"));
+            super(tr("Make Audio Marker at Play Head"));
+            new ImageProvider("addmarkers").getResource().attachImageIcon(this, true);
             putValue("help", ht("/Action/MakeAudioMarkerAtPlayHead"));
         }
 

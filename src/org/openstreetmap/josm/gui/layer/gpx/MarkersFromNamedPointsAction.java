@@ -25,7 +25,8 @@ public class MarkersFromNamedPointsAction extends AbstractAction {
      * @param layer The layer this action is for
      */
     public MarkersFromNamedPointsAction(final GpxLayer layer) {
-        super(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
+        super(tr("Markers From Named Points"));
+        new ImageProvider("addmarkers").getResource().attachImageIcon(this, true);
         this.layer = layer;
         putValue("help", ht("/Action/MarkersFromNamedPoints"));
     }
