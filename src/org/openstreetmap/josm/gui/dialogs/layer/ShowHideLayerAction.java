@@ -38,7 +38,7 @@ public final class ShowHideLayerAction extends AbstractAction implements IEnable
     public ShowHideLayerAction(LayerListModel model) {
         this.model = model;
         putValue(NAME, tr("Show/hide"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
+        new ImageProvider("dialogs", "showhide").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
         putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
         multikeyShortcut = Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",

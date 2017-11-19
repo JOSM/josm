@@ -306,7 +306,9 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         private Integer id;
 
         OpenChangesetDialogAction(Class<? extends JComponent> componentToSelect) {
-            super(tr("Changeset"), new ImageProvider("dialogs/changeset", "changesetmanager").resetMaxSize(new Dimension(16, 16)).get());
+            super(tr("Changeset"));
+            new ImageProvider("dialogs/changeset", "changesetmanager").resetMaxSize(new Dimension(16, 16))
+                .getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
             this.componentToSelect = componentToSelect;
         }

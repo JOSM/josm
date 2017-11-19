@@ -34,7 +34,7 @@ public class ApplyAction extends SavingAction implements PropertyChangeListener 
             IRelationEditor editor) {
         super(memberTable, memberTableModel, tagModel, layer, editor, null);
         putValue(SHORT_DESCRIPTION, tr("Apply the current updates"));
-        putValue(SMALL_ICON, ImageProvider.get("save"));
+        new ImageProvider("save").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Apply"));
         updateEnabledState();
         memberTableModel.addTableModelListener(this);

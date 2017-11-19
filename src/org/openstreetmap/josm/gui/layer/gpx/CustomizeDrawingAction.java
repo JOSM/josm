@@ -53,7 +53,8 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
     }
 
     private CustomizeDrawingAction() {
-        super(tr("Customize track drawing"), ImageProvider.get("mapmode/addsegment"));
+        super(tr("Customize track drawing"));
+        new ImageProvider("mapmode/addsegment").getResource().attachImageIcon(this, true);
         putValue("help", ht("/Action/GPXLayerCustomizeLineDrawing"));
     }
 

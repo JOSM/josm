@@ -16,7 +16,6 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -32,6 +31,7 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 
 /**
  * UI component for resolving conflicts in the tag sets of two {@link OsmPrimitive}s.
@@ -179,9 +179,9 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
      */
     class KeepMineAction extends AbstractAction implements ListSelectionListener {
         KeepMineAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagkeepmine");
+            ImageResource icon = new ImageProvider("dialogs/conflict", "tagkeepmine").getResource();
             if (icon != null) {
-                putValue(Action.SMALL_ICON, icon);
+                icon.attachImageIcon(this, true);
                 putValue(Action.NAME, "");
             } else {
                 putValue(Action.NAME, ">");
@@ -211,9 +211,9 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
      */
     class KeepTheirAction extends AbstractAction implements ListSelectionListener {
         KeepTheirAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagkeeptheir");
+            ImageResource icon = new ImageProvider("dialogs/conflict", "tagkeeptheir").getResource();
             if (icon != null) {
-                putValue(Action.SMALL_ICON, icon);
+                icon.attachImageIcon(this, true);
                 putValue(Action.NAME, "");
             } else {
                 putValue(Action.NAME, ">");
@@ -309,9 +309,9 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
     class UndecideAction extends AbstractAction implements ListSelectionListener {
 
         UndecideAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagundecide");
+            ImageResource icon = new ImageProvider("dialogs/conflict", "tagundecide").getResource();
             if (icon != null) {
-                putValue(Action.SMALL_ICON, icon);
+                icon.attachImageIcon(this, true);
                 putValue(Action.NAME, "");
             } else {
                 putValue(Action.NAME, tr("Undecide"));

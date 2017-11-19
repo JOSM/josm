@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -94,7 +93,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         Dimension buttonDim = new Dimension(26, 26);
 
-        ImageAction prevAction = new ImageAction(COMMAND_PREVIOUS, ImageProvider.get("dialogs", "previous"), tr("Previous"));
+        ImageAction prevAction = new ImageAction(COMMAND_PREVIOUS, new ImageProvider("dialogs", "previous"), tr("Previous"));
         btnPrevious = new JButton(prevAction);
         btnPrevious.setPreferredSize(buttonDim);
         Shortcut scPrev = Shortcut.registerShortcut(
@@ -106,7 +105,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnPrevious.setEnabled(false);
 
         final String removePhoto = tr("Remove photo from layer");
-        ImageAction delAction = new ImageAction(COMMAND_REMOVE, ImageProvider.get("dialogs", "delete"), removePhoto);
+        ImageAction delAction = new ImageAction(COMMAND_REMOVE, new ImageProvider("dialogs", "delete"), removePhoto);
         JButton btnDelete = new JButton(delAction);
         btnDelete.setPreferredSize(buttonDim);
         Shortcut scDelete = Shortcut.registerShortcut(
@@ -116,7 +115,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnDelete.getActionMap().put(removePhoto, delAction);
 
         ImageAction delFromDiskAction = new ImageAction(COMMAND_REMOVE_FROM_DISK,
-                ImageProvider.get("dialogs", "geoimage/deletefromdisk"), tr("Delete image file from disk"));
+                new ImageProvider("dialogs", "geoimage/deletefromdisk"), tr("Delete image file from disk"));
         JButton btnDeleteFromDisk = new JButton(delFromDiskAction);
         btnDeleteFromDisk.setPreferredSize(buttonDim);
         Shortcut scDeleteFromDisk = Shortcut.registerShortcut(
@@ -126,7 +125,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnDeleteFromDisk.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), deleteImage);
         btnDeleteFromDisk.getActionMap().put(deleteImage, delFromDiskAction);
 
-        ImageAction copyPathAction = new ImageAction(COMMAND_COPY_PATH, ImageProvider.get("copy"), tr("Copy image path"));
+        ImageAction copyPathAction = new ImageAction(COMMAND_COPY_PATH, new ImageProvider("copy"), tr("Copy image path"));
         JButton btnCopyPath = new JButton(copyPathAction);
         btnCopyPath.setPreferredSize(buttonDim);
         Shortcut scCopyPath = Shortcut.registerShortcut(
@@ -136,7 +135,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnCopyPath.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scCopyPath.getKeyStroke(), copyImage);
         btnCopyPath.getActionMap().put(copyImage, copyPathAction);
 
-        ImageAction nextAction = new ImageAction(COMMAND_NEXT, ImageProvider.get("dialogs", "next"), tr("Next"));
+        ImageAction nextAction = new ImageAction(COMMAND_NEXT, new ImageProvider("dialogs", "next"), tr("Next"));
         btnNext = new JButton(nextAction);
         btnNext.setPreferredSize(buttonDim);
         Shortcut scNext = Shortcut.registerShortcut(
@@ -159,15 +158,15 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         );
 
         tbCentre = new JToggleButton(new ImageAction(COMMAND_CENTERVIEW,
-                ImageProvider.get("dialogs", "centreview"), tr("Center view")));
+                new ImageProvider("dialogs", "centreview"), tr("Center view")));
         tbCentre.setPreferredSize(buttonDim);
 
         JButton btnZoomBestFit = new JButton(new ImageAction(COMMAND_ZOOM,
-                ImageProvider.get("dialogs", "zoom-best-fit"), tr("Zoom best fit and 1:1")));
+                new ImageProvider("dialogs", "zoom-best-fit"), tr("Zoom best fit and 1:1")));
         btnZoomBestFit.setPreferredSize(buttonDim);
 
         btnCollapse = new JButton(new ImageAction(COMMAND_COLLAPSE,
-                ImageProvider.get("dialogs", "collapse"), tr("Move dialog to the side pane")));
+                new ImageProvider("dialogs", "collapse"), tr("Move dialog to the side pane")));
         btnCollapse.setPreferredSize(new Dimension(20, 20));
         btnCollapse.setAlignmentY(Component.TOP_ALIGNMENT);
 
@@ -212,10 +211,12 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     class ImageAction extends AbstractAction {
         private final String action;
 
-        ImageAction(String action, ImageIcon icon, String toolTipText) {
+        ImageAction(String action, ImageProvider provider, String toolTipText) {
             this.action = action;
             putValue(SHORT_DESCRIPTION, toolTipText);
-            putValue(SMALL_ICON, icon);
+            if (provider != null) {
+                provider.getResource().attachImageIcon(this, true);
+            }
         }
 
         @Override

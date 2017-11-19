@@ -68,7 +68,7 @@ public abstract class AbstractTableListEditor<T> extends AbstractListEditor<T> {
         NewEntryAction() {
             putValue(NAME, tr("New"));
             putValue(SHORT_DESCRIPTION, tr("add entry"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+            new ImageProvider("dialogs", "add").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -81,7 +81,7 @@ public abstract class AbstractTableListEditor<T> extends AbstractListEditor<T> {
         RemoveEntryAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, tr("Remove the selected entry"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 

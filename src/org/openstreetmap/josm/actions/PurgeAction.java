@@ -159,7 +159,7 @@ public class PurgeAction extends JosmAction {
             JButton addToSelection = new JButton(new AbstractAction() {
                 {
                     putValue(SHORT_DESCRIPTION, tr("Add to selection"));
-                    putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+                    new ImageProvider("dialogs", "select").getResource().attachImageIcon(this, true);
                 }
 
                 @Override

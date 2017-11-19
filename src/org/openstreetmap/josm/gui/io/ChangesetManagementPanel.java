@@ -294,7 +294,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     class RefreshAction extends AbstractAction {
         RefreshAction() {
             putValue(SHORT_DESCRIPTION, tr("Load the list of your open changesets from the server"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -309,7 +309,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
      */
     class CloseChangesetAction extends AbstractAction implements ItemListener {
         CloseChangesetAction() {
-            putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
+            new ImageProvider("closechangeset").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Close the currently selected open changeset"));
             refreshEnabledState();
         }

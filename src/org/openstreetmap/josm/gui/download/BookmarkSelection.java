@@ -179,7 +179,7 @@ public class BookmarkSelection implements DownloadSelection {
     class AddAction extends AbstractAction {
         AddAction() {
             putValue(NAME, tr("Create bookmark"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "bookmark-new"));
+            new ImageProvider("dialogs", "bookmark-new").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Add a bookmark for the currently selected download area"));
         }
 
@@ -214,7 +214,7 @@ public class BookmarkSelection implements DownloadSelection {
          * Constructs a new {@code RemoveAction}.
          */
         RemoveAction() {
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Remove the currently selected bookmarks"));
             updateEnabledState();
         }
@@ -245,7 +245,7 @@ public class BookmarkSelection implements DownloadSelection {
          * Constructs a new {@code RenameAction}.
          */
         RenameAction() {
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Rename the currently selected bookmark"));
             updateEnabledState();
         }
@@ -287,7 +287,7 @@ public class BookmarkSelection implements DownloadSelection {
          * Constructs a new {@code RefreshAction}.
          */
         RefreshAction() {
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangeset"));
+            new ImageProvider("dialogs/changeset", "downloadchangeset").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Download bookmarks for my {0} last changesets", BookmarkList.MAX_CHANGESET_BOOKMARKS.get()));
             setEnabled(!UserIdentityManager.getInstance().isAnonymous());
         }

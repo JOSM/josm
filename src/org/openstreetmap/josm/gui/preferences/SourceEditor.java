@@ -1053,7 +1053,7 @@ public abstract class SourceEditor extends JPanel {
 
         MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
-            putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
+            new ImageProvider("dialogs", isDown ? "down" : "up").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
             updateEnabledState();
         }

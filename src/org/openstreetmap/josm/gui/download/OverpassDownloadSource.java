@@ -285,8 +285,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
              * Constructs a new {@code AddSnippetAction}.
              */
             AddSnippetAction() {
-                super();
-                putValue(SMALL_ICON, ImageProvider.get(ACTION_IMG_SUBDIR, "add"));
+                new ImageProvider(ACTION_IMG_SUBDIR, "add").getResource().attachImageIcon(this, true);
                 putValue(SHORT_DESCRIPTION, tr("Add new snippet"));
             }
 
@@ -305,8 +304,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
              * Constructs a new {@code RemoveSnippetAction}.
              */
             RemoveSnippetAction() {
-                super();
-                putValue(SMALL_ICON, ImageProvider.get(ACTION_IMG_SUBDIR, "delete"));
+                new ImageProvider(ACTION_IMG_SUBDIR, "delete").getResource().attachImageIcon(this, true);
                 putValue(SHORT_DESCRIPTION, tr("Delete selected snippet"));
                 checkEnabled();
             }
@@ -339,7 +337,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
              */
             EditSnippetAction() {
                 super();
-                putValue(SMALL_ICON, ImageProvider.get(ACTION_IMG_SUBDIR, "edit"));
+                new ImageProvider(ACTION_IMG_SUBDIR, "edit").getResource().attachImageIcon(this, true);
                 putValue(SHORT_DESCRIPTION, tr("Edit selected snippet"));
                 checkEnabled();
             }

@@ -27,7 +27,8 @@ public class ShowThumbnailAction extends AbstractAction implements LayerAction {
      * @param layer image layer
      */
     public ShowThumbnailAction(GeoImageLayer layer) {
-        super(tr("Show thumbnails"), ImageProvider.get("dialogs/geoimage/togglegit"));
+        super(tr("Show thumbnails"));
+        new ImageProvider("dialogs/geoimage/togglegit").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Show image thumbnails instead of icons."));
         this.layer = layer;
     }

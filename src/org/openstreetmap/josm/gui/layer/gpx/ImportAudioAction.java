@@ -68,7 +68,8 @@ public class ImportAudioAction extends AbstractAction {
      * @param layer The associated GPX layer
      */
     public ImportAudioAction(final GpxLayer layer) {
-        super(tr("Import Audio"), ImageProvider.get("importaudio"));
+        super(tr("Import Audio"));
+        new ImageProvider("importaudio").getResource().attachImageIcon(this, true);
         this.layer = layer;
         putValue("help", ht("/Action/ImportAudio"));
     }

@@ -25,7 +25,7 @@ public class SelectedMembersForSelectionAction extends AddFromSelectionAction {
     public SelectedMembersForSelectionAction(MemberTableModel memberTableModel, SelectionTableModel selectionTableModel, OsmDataLayer layer) {
         super(null, memberTableModel, null, selectionTableModel, null, layer, null);
         putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectmembers"));
+        new ImageProvider("dialogs/relation", "selectmembers").getResource().attachImageIcon(this, true);
         updateEnabledState();
     }
 

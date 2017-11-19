@@ -40,7 +40,8 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
      * @param l list of layers
      */
     public CustomizeColor(List<Layer> l) {
-        super(tr("Customize Color"), ImageProvider.get("colorchooser"));
+        super(tr("Customize Color"));
+        new ImageProvider("colorchooser").getResource().attachImageIcon(this, true);
         colors = l.stream().map(Layer::getColorProperty).collect(Collectors.toList());
         CheckParameterUtil.ensureThat(colors.stream().allMatch(Objects::nonNull), "All layers must have colors.");
         putValue("help", ht("/Action/LayerCustomizeColor"));

@@ -22,7 +22,7 @@ public class SortBelowAction extends AbstractRelationEditorAction {
      */
     public SortBelowAction(MemberTable memberTable, MemberTableModel memberTableModel) {
         super(memberTable, memberTableModel, null);
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort_below"));
+        new ImageProvider("dialogs", "sort_below").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Sort below"));
         putValue(SHORT_DESCRIPTION, tr("Sort the selected relation members and all members below"));
         updateEnabledState();

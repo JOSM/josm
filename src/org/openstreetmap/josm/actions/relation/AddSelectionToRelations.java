@@ -30,7 +30,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
     * Constructs a new <code>AddSelectionToRelation</code>.
     */
     public AddSelectionToRelations() {
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyendright"));
+        new ImageProvider("dialogs/conflict", "copyendright").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Add all objects selected in the current dataset after the last member"));
     }
 

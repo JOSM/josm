@@ -239,7 +239,7 @@ public class NodeListViewer extends JPanel {
         ZoomToNodeAction() {
             putValue(NAME, tr("Zoom to node"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to this node in the current data layer"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "zoomin"));
+            new ImageProvider("dialogs", "zoomin").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -284,7 +284,7 @@ public class NodeListViewer extends JPanel {
         ShowHistoryAction() {
             putValue(NAME, tr("Show history"));
             putValue(SHORT_DESCRIPTION, tr("Open a history browser with the history of this node"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
+            new ImageProvider("dialogs", "history").getResource().attachImageIcon(this, true);
         }
 
         @Override

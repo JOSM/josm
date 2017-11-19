@@ -106,7 +106,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @param layer The image layer
      */
     public CorrelateGpxWithImages(GeoImageLayer layer) {
-        super(tr("Correlate to GPX"), ImageProvider.get("dialogs/geoimage/gpx2img"));
+        super(tr("Correlate to GPX"));
+        new ImageProvider("dialogs/geoimage/gpx2img").getResource().attachImageIcon(this, true);
         this.yLayer = layer;
     }
 

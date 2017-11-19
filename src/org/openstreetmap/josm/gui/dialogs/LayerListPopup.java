@@ -43,7 +43,8 @@ public class LayerListPopup extends JPopupMenu {
          * @param layer The layer
          */
         public InfoAction(Layer layer) {
-            super(tr("Info"), ImageProvider.get("info"));
+            super(tr("Info"));
+            new ImageProvider("info").getResource().attachImageIcon(this, true);
             putValue("help", ht("/Action/LayerInfo"));
             this.layer = layer;
         }

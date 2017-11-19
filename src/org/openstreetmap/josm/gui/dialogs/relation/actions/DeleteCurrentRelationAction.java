@@ -28,7 +28,7 @@ public class DeleteCurrentRelationAction extends AbstractRelationEditorAction im
     public DeleteCurrentRelationAction(OsmDataLayer layer, IRelationEditor editor) {
         super(null, null, null, layer, editor);
         putValue(SHORT_DESCRIPTION, tr("Delete the currently edited relation"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+        new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Delete"));
         updateEnabledState();
     }

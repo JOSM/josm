@@ -26,7 +26,7 @@ public class MoveDownAction extends AbstractRelationEditorAction {
      */
     public MoveDownAction(MemberTable memberTable, MemberTableModel memberTableModel, String actionMapKey) {
         super(memberTable, memberTableModel, actionMapKey);
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "movedown"));
+        new ImageProvider("dialogs", "movedown").getResource().attachImageIcon(this, true);
         Shortcut sc = Shortcut.registerShortcut("relationeditor:movedown", tr("Relation Editor: Move Down"), KeyEvent.VK_DOWN, Shortcut.ALT);
         sc.setAccelerator(this);
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tr("Move the currently selected members down"), sc));

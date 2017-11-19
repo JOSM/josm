@@ -39,7 +39,7 @@ public class DownloadIncompleteMembersAction extends AbstractRelationEditorActio
             KeyEvent.VK_HOME, Shortcut.ALT);
         sc.setAccelerator(this);
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tr("Download all incomplete members"), sc));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincomplete"));
+        new ImageProvider("dialogs/relation", "downloadincomplete").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Download Members"));
         updateEnabledState();
     }

@@ -859,7 +859,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
          * Constructs a new {@code ConvertToGpxLayerAction}.
          */
         public ConvertToGpxLayerAction() {
-            super(tr("Convert to GPX layer"), ImageProvider.get("converttogpx"));
+            super(tr("Convert to GPX layer"));
+            new ImageProvider("converttogpx").getResource().attachImageIcon(this, true);
             putValue("help", ht("/Action/ConvertToGpxLayer"));
         }
 

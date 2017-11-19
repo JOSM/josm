@@ -55,7 +55,8 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
      * @param layer source layer
      */
     protected ConvertToDataLayerAction(final T layer) {
-        super(tr("Convert to data layer"), ImageProvider.get("converttoosm"));
+        super(tr("Convert to data layer"));
+        new ImageProvider("converttoosm").getResource().attachImageIcon(this, true);
         this.layer = layer;
         putValue("help", ht("/Action/ConvertToDataLayer"));
     }

@@ -64,7 +64,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
     private String osdText;
 
-    private static final BooleanProperty AGPIFO_STYLE2 =
+    private static final BooleanProperty AGPIFO_STYLE =
         new BooleanProperty("geoimage.agpifo-style-drag-and-zoom", false);
     private static int dragButton;
     private static int zoomButton;
@@ -92,8 +92,8 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e == null ||
-            e.getKey().equals(AGPIFO_STYLE2.getKey())) {
-            dragButton = AGPIFO_STYLE2.get() ? 1 : 3;
+            e.getKey().equals(AGPIFO_STYLE.getKey())) {
+            dragButton = AGPIFO_STYLE.get() ? 1 : 3;
             zoomButton = dragButton == 1 ? 3 : 1;
         }
         if (e == null ||
