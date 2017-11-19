@@ -20,6 +20,7 @@ import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay.VisRect;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.Logging;
@@ -140,7 +141,7 @@ public class ThumbsLoader implements Runnable {
         }
 
         Rectangle targetSize = ImageDisplay.calculateDrawImageRectangle(
-                new Rectangle(0, 0, ww, hh),
+                new VisRect(0, 0, ww, hh),
                 new Rectangle(0, 0, maxSize, maxSize));
         BufferedImage scaledBI = new BufferedImage(targetSize.width, targetSize.height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = scaledBI.createGraphics();

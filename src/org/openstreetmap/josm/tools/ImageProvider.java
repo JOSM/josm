@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
@@ -1420,15 +1421,15 @@ public class ImageProvider {
         do {
             if (w > targetWidth) {
                 w /= 2;
-                if (w < targetWidth) {
-                    w = targetWidth;
-                }
+            }
+            if (w < targetWidth) {
+                w = targetWidth;
             }
             if (h > targetHeight) {
                 h /= 2;
-                if (h < targetHeight) {
-                    h = targetHeight;
-                }
+            }
+            if (h < targetHeight) {
+                h = targetHeight;
             }
             BufferedImage tmp = new BufferedImage(w, h, type);
             Graphics2D g2 = tmp.createGraphics();
@@ -1974,5 +1975,29 @@ public class ImageProvider {
             g2.dispose();
             return buffImage;
         }
+    }
+
+    /**
+     * Converts an {@link Rectangle} area of {@link Image} to a {@link BufferedImage} instance.
+     * @param image image to convert
+     * @param crop_area rectangle to crop image with
+     * @return a {@code BufferedImage} instance for the cropped area of {@code Image}.
+     * @since 13127
+     */
+    public static BufferedImage toBufferedImage(Image image, Rectangle crop_area) {
+        BufferedImage buffImage = null;
+
+        Rectangle r = new Rectangle(image.getWidth(null), image.getHeight(null));
+        if (r.intersection(crop_area).equals(crop_area)) {
+            buffImage = new BufferedImage(crop_area.width, crop_area.height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = buffImage.createGraphics();
+            g2.drawImage(image,
+                0, 0, crop_area.width, crop_area.height,
+                crop_area.x, crop_area.y,
+                crop_area.x + crop_area.width, crop_area.y + crop_area.height,
+                null);
+            g2.dispose();
+        }
+        return buffImage;
     }
 }
