@@ -26,12 +26,12 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class MenuItemSearchDialog extends ExtendedDialog {
 
-    private final Selector selector;
+    private final MenuItemSelector selector;
     private static final MenuItemSearchDialog INSTANCE = new MenuItemSearchDialog(MainApplication.getMenu());
 
     private MenuItemSearchDialog(MainMenu menu) {
         super(Main.parent, tr("Search menu items"), tr("Select"), tr("Cancel"));
-        this.selector = new Selector(menu);
+        this.selector = new MenuItemSelector(menu);
         this.selector.setDblClickListener(e -> buttonAction(0, null));
         setContent(selector, false);
         setPreferredSize(new Dimension(600, 300));
@@ -62,11 +62,11 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
         }
     }
 
-    private static class Selector extends SearchTextResultListPanel<JMenuItem> {
+    private static class MenuItemSelector extends SearchTextResultListPanel<JMenuItem> {
 
         private final MainMenu menu;
 
-        Selector(MainMenu menu) {
+        MenuItemSelector(MainMenu menu) {
             super();
             this.menu = menu;
             lsResult.setCellRenderer(new CellRenderer());
@@ -102,6 +102,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
                     .map(JosmAction::getShortcut)
                     .map(Shortcut::getKeyStroke)
                     .ifPresent(item::setAccelerator);
+            item.setArmed(isSelected);
             if (isSelected) {
                 item.setBackground(list.getSelectionBackground());
                 item.setForeground(list.getSelectionForeground());
