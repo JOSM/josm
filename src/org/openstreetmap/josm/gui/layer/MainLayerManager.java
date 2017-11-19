@@ -1,13 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
@@ -205,13 +210,23 @@ public class MainLayerManager extends LayerManager {
     }
 
     /**
-     * Set the active layer. If the layer is an OsmDataLayer, the edit layer is also changed.
+     * Set the active layer, unless the layer is read-only.
+     * If the layer is an OsmDataLayer, the edit layer is also changed.
      * @param layer The active layer.
      */
     public void setActiveLayer(final Layer layer) {
         // we force this on to the EDT Thread to make events fire from there.
         // The synchronization lock needs to be held by the EDT.
-        GuiHelper.runInEDTAndWaitWithException(() -> realSetActiveLayer(layer));
+        if (layer instanceof OsmDataLayer && ((OsmDataLayer) layer).isReadOnly()) {
+            GuiHelper.runInEDT(() ->
+                    JOptionPane.showMessageDialog(
+                            MainApplication.parent,
+                            tr("Trying to set a read only data layer as edit layer"),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE));
+        } else {
+            GuiHelper.runInEDTAndWaitWithException(() -> realSetActiveLayer(layer));
+        }
     }
 
     protected synchronized void realSetActiveLayer(final Layer layer) {
@@ -309,16 +324,27 @@ public class MainLayerManager extends LayerManager {
      * @return the currently active layer (may be null)
      */
     public synchronized Layer getActiveLayer() {
-        return activeLayer;
+        if (activeLayer instanceof OsmDataLayer) {
+            if (!((OsmDataLayer) activeLayer).isReadOnly()) {
+                return activeLayer;
+            } else {
+                return null;
+            }
+        } else {
+            return activeLayer;
+        }
     }
 
     /**
-     * Replies the current edit layer, if any
+     * Replies the current edit layer, if present and not readOnly
      *
      * @return the current edit layer. May be null.
      */
     public synchronized OsmDataLayer getEditLayer() {
-        return editLayer;
+        if (editLayer != null && !editLayer.isReadOnly())
+            return editLayer;
+        else
+            return null;
     }
 
     /**
@@ -377,5 +403,45 @@ public class MainLayerManager extends LayerManager {
 
         activeLayerChangeListeners.clear();
         layerAvailabilityListeners.clear();
+    }
+
+    /**
+     * Prepares an OsmDataLayer for upload. The layer to be uploaded is locked and
+     * if the layer to be uploaded is the current editLayer then editLayer is reset
+     * to null for disallowing any changes to the layer. An ActiveLayerChangeEvent
+     * is fired to notify the listeners
+     *
+     * @param layer The OsmDataLayer to be uploaded
+     */
+    public void prepareLayerForUpload(OsmDataLayer layer) {
+
+        GuiHelper.assertCallFromEdt();
+        layer.setReadOnly();
+
+        // Reset only the edit layer as empty
+        if (editLayer == layer) {
+            ActiveLayerChangeEvent activeLayerChangeEvent = new ActiveLayerChangeEvent(this, editLayer, activeLayer);
+            editLayer = null;
+            fireActiveLayerChange(activeLayerChangeEvent);
+        }
+    }
+
+    /**
+     * Post upload processing of the OsmDataLayer.
+     * If the current edit layer is empty this function sets the layer uploaded as the
+     * current editLayer. An ActiveLayerChangeEvent is fired to notify the listeners
+     *
+     * @param layer The OsmDataLayer uploaded
+     */
+    public void processLayerAfterUpload(OsmDataLayer layer) {
+        GuiHelper.assertCallFromEdt();
+        layer.unsetReadOnly();
+
+        // Set the layer as edit layer if the edit layer is empty.
+        if (editLayer == null) {
+            ActiveLayerChangeEvent layerChangeEvent = new ActiveLayerChangeEvent(this, editLayer, activeLayer);
+            editLayer = layer;
+            fireActiveLayerChange(layerChangeEvent);
+        }
     }
 }

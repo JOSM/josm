@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
@@ -129,6 +130,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
 
     private boolean requiresSaveToFile;
     private boolean requiresUploadToServer;
+    /** Flag used to know if the layer should not be editable */
+    private final AtomicBoolean isReadOnly = new AtomicBoolean(false);
 
     /**
      * List of validation errors in this layer.
@@ -419,6 +422,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         ImageProvider base = getBaseIconProvider().setMaxSize(ImageSizes.LAYER);
         if (isUploadDiscouraged() || data.getUploadPolicy() == UploadPolicy.BLOCKED) {
             base.addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0));
+        }
+
+        if (isReadOnly()) {
+            // If the layer is read only then change the default icon to a clock
+            base = new ImageProvider("clock").setMaxSize(ImageSizes.LAYER);
         }
         return base.get();
     }
@@ -1142,5 +1150,31 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
             data.setName(name);
         }
         super.setName(name);
+    }
+
+    /**
+     * Sets the isReadOnly flag for the OsmDataLayer as true
+     */
+    public void setReadOnly() {
+        if (!isReadOnly.compareAndSet(false, true)) {
+            Logging.warn("Trying to set readOnly flag on a readOnly layer ", this.getName());
+        }
+    }
+
+    /**
+     * Sets the isReadOnly flag for the OsmDataLayer as false
+     */
+    public void unsetReadOnly() {
+        if (!isReadOnly.compareAndSet(true, false)) {
+            Logging.warn("Trying to unset readOnly flag on a non-readOnly layer ", this.getName());
+        }
+    }
+
+    /**
+     * Returns the value of the isReadOnly flag for the OsmDataLayer
+     * @return isReadOnly
+     */
+    public boolean isReadOnly() {
+        return isReadOnly.get();
     }
 }
