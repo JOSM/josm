@@ -75,7 +75,9 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
                 if (old != null) {
                     sysSel.setContents(old, null);
                 }
-            } else {
+            } else if (e != null && e.getOppositeComponent() != null) {
+                // Select all characters when the change of focus occurs inside JOSM only.
+                // When switching from another application, it is annoying, see #13747
                 editorComponent.selectAll();
             }
         }

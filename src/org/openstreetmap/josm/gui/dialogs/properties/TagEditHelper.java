@@ -634,13 +634,13 @@ public class TagEditHelper {
            FocusAdapter focus = new FocusAdapter() {
                @Override
                public void focusGained(FocusEvent e) {
-                   String key = keys.getEditor().getItem().toString();
-
-                   List<AutoCompletionItem> valueList = autocomplete.getTagValues(getAutocompletionKeys(key), comparator);
                    Logging.trace("Focus gained by {0}, e={1}", values, e);
-                   values.setPossibleAcItems(valueList);
-                   values.getEditor().selectAll();
-                   objKey = key;
+                   String key = keys.getEditor().getItem().toString();
+                   if (!Objects.equals(key, objKey)) {
+                       values.setPossibleAcItems(autocomplete.getTagValues(getAutocompletionKeys(key), comparator));
+                       values.getEditor().selectAll();
+                       objKey = key;
+                   }
                }
            };
            editor.addFocusListener(focus);
