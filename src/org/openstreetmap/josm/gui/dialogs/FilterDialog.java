@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -45,6 +46,7 @@ import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.util.MultikeyActionsHandler;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction;
+import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -113,6 +115,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
     protected void build() {
         userTable = new UserTable(filterModel);
 
+        userTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         userTable.getColumnModel().getColumn(0).setMaxWidth(1);
@@ -127,6 +130,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         userTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
         userTable.setDefaultRenderer(String.class, new StringRenderer());
+        userTable.setDefaultEditor(String.class, new DefaultCellEditor(new DisableShortcutsOnFocusGainedTextField()));
 
         SideButton addButton = new SideButton(new AbstractAction() {
             {
