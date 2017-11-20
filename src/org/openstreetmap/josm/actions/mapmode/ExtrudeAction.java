@@ -1094,10 +1094,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                         g2.setColor(helperColor);
                         g2.setStroke(helperStrokeDash);
                         // Draw a guideline along the normal.
-                        Line2D normline;
                         Point2D centerpoint = mv.getPoint2D(p1.interpolate(p2, .5));
-                        normline = createSemiInfiniteLine(centerpoint, normalUnitVector, g2);
-                        g2.draw(normline);
+                        g2.draw(createSemiInfiniteLine(centerpoint, normalUnitVector, g2));
                         // Draw right angle marker on initial position, only when moving at right angle
                         if (activeMoveDirection.perpendicular) {
                             // EastNorth units per pixel
@@ -1190,7 +1188,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * @return created line
      */
     private static Line2D createSemiInfiniteLine(Point2D start, Point2D unitvector, Graphics2D g) {
-        Rectangle bounds = g.getDeviceConfiguration().getBounds();
+        Rectangle bounds = g.getClipBounds();
         try {
             AffineTransform invtrans = g.getTransform().createInverse();
             Point2D widthpoint = invtrans.deltaTransform(new Point2D.Double(bounds.width, 0), null);
