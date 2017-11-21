@@ -98,11 +98,11 @@ abstract class Coordinate implements Serializable {
      * @param r size
      * @return BBox around this coordinate
      * @since 6203
-     * @deprecated no longer supported
+     * @deprecated use {@link BBox#BBox(double, double, double)} instead
      */
     @Deprecated
     public BBox toBBox(final double r) {
-        return new BBox(x - r, y - r, x + r, y + r);
+        return new BBox(x, y, r);
     }
 
     @Override

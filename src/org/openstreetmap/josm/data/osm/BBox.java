@@ -65,7 +65,20 @@ public class BBox {
     }
 
     /**
-     * Create minimal  BBox so that {@code this.bounds(ax,ay)} and {@code this.bounds(bx,by)} will both return true
+     * Creates bbox around the coordinate (x, y).
+     * Coordinate defines center of bbox, its edge will be 2*r.
+     *
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param r size
+     * @since 13140
+     */
+    public BBox(double x, double y, double r) {
+        this(x - r, y - r, x + r, y + r);
+    }
+
+    /**
+     * Create minimal BBox so that {@code this.bounds(ax,ay)} and {@code this.bounds(bx,by)} will both return true
      * @param ax left or right X value (-180 .. 180)
      * @param ay top or bottom Y value (-90 .. 90)
      * @param bx left or right X value (-180 .. 180)
