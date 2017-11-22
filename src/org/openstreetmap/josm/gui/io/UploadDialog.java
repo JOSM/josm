@@ -111,6 +111,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     public UploadDialog() {
         super(GuiHelper.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
         build();
+        pack();
     }
 
     /**
@@ -206,9 +207,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         addWindowListener(new WindowEventHandler());
 
-
-        // make sure the configuration panels listen to each other
-        // changes
+        // make sure the configuration panels listen to each other changes
         //
         pnlChangesetManagement.addPropertyChangeListener(this);
         pnlChangesetManagement.addPropertyChangeListener(
@@ -603,18 +602,20 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     /**
      * Listens to window closing events and processes them as cancel events.
      * Listens to window open events and initializes user input
-     *
      */
     class WindowEventHandler extends WindowAdapter {
+        private boolean activatedOnce;
+
         @Override
         public void windowClosing(WindowEvent e) {
             setCanceled(true);
         }
 
         @Override
-        public void windowActivated(WindowEvent arg0) {
-            if (tpConfigPanels.getSelectedIndex() == 0) {
+        public void windowActivated(WindowEvent e) {
+            if (!activatedOnce && tpConfigPanels.getSelectedIndex() == 0) {
                 pnlBasicUploadSettings.initEditingOfUploadComment();
+                activatedOnce = true;
             }
         }
     }
