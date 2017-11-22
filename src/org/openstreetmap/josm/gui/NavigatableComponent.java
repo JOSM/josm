@@ -696,8 +696,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
         if (!initial) {
             repaint();
+            refreshMouse();
             fireZoomChanged();
         }
+    }
+
+    protected void refreshMouse() {
+        // To be overriden by subclasses handling mouse events
     }
 
     /**
