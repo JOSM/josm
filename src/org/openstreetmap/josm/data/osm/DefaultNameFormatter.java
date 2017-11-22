@@ -185,13 +185,13 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             } else {
                 preset.nameTemplate.appendText(name, node);
             }
-            if (node.getCoor() != null) {
-                name.append(" \u200E(").append(CoordinateFormatManager.getDefaultFormat().latToString(node)).append(", ")
+            if (node.isLatLonKnown() && Config.getPref().getBoolean("osm-primitives.showcoor")) {
+                name.append(" \u200E(")
+                    .append(CoordinateFormatManager.getDefaultFormat().latToString(node)).append(", ")
                     .append(CoordinateFormatManager.getDefaultFormat().lonToString(node)).append(')');
             }
         }
         decorateNameWithId(name, node);
-
 
         String result = name.toString();
         for (NameFormatterHook hook: formatHooks) {
