@@ -32,7 +32,7 @@ public final class AsynchronousUploadPrimitivesTask extends UploadPrimitivesTask
     /**
      * Static instance
      */
-    private static AsynchronousUploadPrimitivesTask asynchronousUploadPrimitivesTask = null;
+    private static AsynchronousUploadPrimitivesTask asynchronousUploadPrimitivesTask;
 
     /**
      * Member fields
