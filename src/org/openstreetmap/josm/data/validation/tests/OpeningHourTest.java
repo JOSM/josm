@@ -56,9 +56,9 @@ public class OpeningHourTest extends Test.TagTest {
                 // fake country/state to not get errors on holidays
                 ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
                 ENGINE.eval(
-                        "var oh = function (value, mode, locale) {" +
+                        "var oh = function (value, tag_key, locale) {" +
                         " try {" +
-                        "    var r = new opening_hours(value, nominatimJSON, {mode: mode, locale: locale});" +
+                        "    var r = new opening_hours(value, nominatimJSON, {tag_key: tag_key, locale: locale});" +
                         "    r.getErrors = function() {return [];};" +
                         "    return r;" +
                         "  } catch (err) {" +
@@ -75,17 +75,20 @@ public class OpeningHourTest extends Test.TagTest {
         }
     }
 
-    enum CheckMode {
-        TIME_RANGE(0), POINTS_IN_TIME(1), BOTH(2);
-        private final int code;
-
-        CheckMode(int code) {
-            this.code = code;
-        }
-    }
-
-    protected Object parse(String value, CheckMode mode, String locale) throws ScriptException, NoSuchMethodException {
-        return ((Invocable) ENGINE).invokeFunction("oh", value, mode.code, locale);
+    /**
+     * Parses the opening hour syntax of the {@code value} given according to
+     * <a href="https://github.com/ypid/opening_hours.js">opening_hours.js</a> and returns an object on which
+     * methods can be called to extract information.
+     * @param value the opening hour value to be checked
+     * @param tagKey the OSM key (should be "opening_hours", "collection_times" or "service_times")
+     * @param locale the locale code used for localizing messages
+     * @return The value returned by the underlying method. Usually a {@code jdk.nashorn.api.scripting.ScriptObjectMirror}
+     * @throws ScriptException if an error occurs during invocation of the underlying method
+     * @throws NoSuchMethodException if underlying method with given name or matching argument types cannot be found
+     * @since 13145
+     */
+    public Object parse(String value, String tagKey, String locale) throws ScriptException, NoSuchMethodException {
+        return ((Invocable) ENGINE).invokeFunction("oh", value, tagKey, locale);
     }
 
     @SuppressWarnings("unchecked")
@@ -176,11 +179,10 @@ public class OpeningHourTest extends Test.TagTest {
      * validation errors or an empty list. Null values result in an empty list.
      * @param key the OSM key (should be "opening_hours", "collection_times" or "service_times"). Used in error message
      * @param value the opening hour value to be checked.
-     * @param mode whether to validate {@code value} as a time range, or points in time, or both.
      * @return a list of {@link TestError} or an empty list
      */
-    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode) {
-        return checkOpeningHourSyntax(key, value, mode, false, LanguageInfo.getJOSMLocaleCode());
+    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value) {
+        return checkOpeningHourSyntax(key, value, false, LanguageInfo.getJOSMLocaleCode());
     }
 
     /**
@@ -189,19 +191,18 @@ public class OpeningHourTest extends Test.TagTest {
      * validation errors or an empty list. Null values result in an empty list.
      * @param key the OSM key (should be "opening_hours", "collection_times" or "service_times").
      * @param value the opening hour value to be checked.
-     * @param mode whether to validate {@code value} as a time range, or points in time, or both.
      * @param ignoreOtherSeverity whether to ignore errors with {@link Severity#OTHER}.
      * @param locale the locale code used for localizing messages
      * @return a list of {@link TestError} or an empty list
      */
-    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode,
+    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value,
             boolean ignoreOtherSeverity, String locale) {
         if (ENGINE == null || value == null || value.isEmpty()) {
             return Collections.emptyList();
         }
         final List<OpeningHoursTestError> errors = new ArrayList<>();
         try {
-            final Object r = parse(value, mode, locale);
+            final Object r = parse(value, key, locale);
             String prettifiedValue = null;
             try {
                 prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
@@ -242,28 +243,16 @@ public class OpeningHourTest extends Test.TagTest {
         return key + " - " + msg;
     }
 
-    /**
-     * Checks for a correct usage of the opening hour syntax of the {@code value} given, in time range mode, according to
-     * <a href="https://github.com/ypid/opening_hours.js">opening_hours.js</a> and returns a list containing
-     * validation errors or an empty list. Null values result in an empty list.
-     * @param key the OSM key (should be "opening_hours", "collection_times" or "service_times"). Used in error message
-     * @param value the opening hour value to be checked.
-     * @return a list of {@link TestError} or an empty list
-     */
-    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value) {
-        return checkOpeningHourSyntax(key, value, "opening_hours".equals(key) ? CheckMode.TIME_RANGE : CheckMode.BOTH);
-    }
-
-    protected void check(final OsmPrimitive p, final String key, CheckMode mode) {
-        for (OpeningHoursTestError e : checkOpeningHourSyntax(key, p.get(key), mode)) {
+    protected void check(final OsmPrimitive p, final String key) {
+        for (OpeningHoursTestError e : checkOpeningHourSyntax(key, p.get(key))) {
             errors.add(e.getTestError(p, key));
         }
     }
 
     @Override
     public void check(final OsmPrimitive p) {
-        check(p, "opening_hours", CheckMode.TIME_RANGE);
-        check(p, "collection_times", CheckMode.BOTH);
-        check(p, "service_times", CheckMode.BOTH);
+        check(p, "opening_hours");
+        check(p, "collection_times");
+        check(p, "service_times");
     }
 }

@@ -198,7 +198,7 @@ public class ConditionalKeys extends Test.TagTest {
                 for (final String condition : conditional.conditions) {
                     if (condition.matches(".*[0-9]:[0-9]{2}.*")) {
                         final List<OpeningHourTest.OpeningHoursTestError> errors = openingHourTest.checkOpeningHourSyntax(
-                                "", condition, OpeningHourTest.CheckMode.TIME_RANGE, true, LanguageInfo.getJOSMLocaleCode());
+                                "", condition, true, LanguageInfo.getJOSMLocaleCode());
                         if (!errors.isEmpty()) {
                             return errors.get(0).getMessage();
                         }

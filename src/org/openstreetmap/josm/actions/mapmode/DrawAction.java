@@ -965,6 +965,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     }
 
     /**
+     * Replies the parent way of a node, if it is the end of exactly one usable way.
      * @param n node
      * @return If the node is the end of exactly one way, return this.
      *  <code>null</code> otherwise.

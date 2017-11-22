@@ -200,11 +200,24 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             this.hcb = hcb;
         }
 
+        /**
+         * Adds the title (prefix) label at the beginning of the row. Should be called only once.
+         * @param title English title
+         * @return {@code this} for easy chaining
+         */
         public SearchKeywordRow addTitle(String title) {
             add(new JLabel(tr("{0}: ", title)));
             return this;
         }
 
+        /**
+         * Adds an example keyword label at the end of the row. Can be called several times.
+         * @param displayText displayed HTML text
+         * @param insertText optional: if set, makes the label clickable, and {@code insertText} will be inserted in search string
+         * @param description optional: HTML text to be displayed in the tooltip
+         * @param examples optional: examples joined as HTML list in the tooltip
+         * @return {@code this} for easy chaining
+         */
         public SearchKeywordRow addKeyword(String displayText, final String insertText, String description, String... examples) {
             JLabel label = new JLabel("<html>"
                     + "<style>td{border:1px solid gray; font-weight:normal;}</style>"
