@@ -32,6 +32,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -55,8 +56,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -66,8 +66,11 @@ import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.coor.conversion.ProjectedCoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
@@ -79,11 +82,14 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ImageLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -99,7 +105,8 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public final class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener {
+public final class MapStatus extends JPanel implements
+    Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener, SelectionChangedListener {
 
     private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Config.getPref().get("statusbar.decimal-format", "0.0"));
     private static final AbstractProperty<Double> DISTANCE_THRESHOLD = new DoubleProperty("statusbar.distance-threshold", 0.01).cached();
@@ -946,6 +953,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         progressBar.addMouseListener(new ShowMonitorDialogMouseAdapter());
 
         Config.getPref().addPreferenceChangeListener(this);
+        SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
 
         mvComponentAdapter = new ComponentAdapter() {
             @Override
@@ -1107,6 +1115,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
     public void destroy() {
         SystemOfMeasurement.removeSoMChangeListener(this);
         Config.getPref().removePreferenceChangeListener(this);
+        SelectionEventManager.getInstance().removeSelectionListener(this);
         mv.removeComponentListener(mvComponentAdapter);
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background
@@ -1151,5 +1160,24 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
     private static int getNameLabelCharacterCount(Component parent) {
         int w = parent != null ? parent.getWidth() : 800;
         return Math.min(80, 20 + Math.max(0, w-1280) * 60 / (1920-1280));
+    }
+
+    @Override
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        if (newSelection.size() == 2) {
+            Iterator<? extends OsmPrimitive> it = newSelection.iterator();
+            OsmPrimitive n1 = it.next();
+            OsmPrimitive n2 = it.next();
+            // show distance between two selected nodes with coordinates
+            if (n1 instanceof Node && n2 instanceof Node) {
+                LatLon c1 = ((Node) n1).getCoor();
+                LatLon c2 = ((Node) n2).getCoor();
+                if (c1 != null && c2 != null) {
+                    setDist(c1.greatCircleDistance(c2));
+                    return;
+                }
+            }
+        }
+        setDist(new SubclassFilteredCollection<OsmPrimitive, Way>(newSelection, Way.class::isInstance));
     }
 }

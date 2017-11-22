@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +42,6 @@ import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembers
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
@@ -66,7 +64,6 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
@@ -84,7 +81,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -617,23 +613,6 @@ public class SelectionListDialog extends ToggleDialog {
                     fireContentsChanged(this, 0, getSize());
                     if (selection != null) {
                         remember(selection);
-                        MapFrame map = MainApplication.getMap();
-                        if (selection.size() == 2) {
-                            Iterator<? extends OsmPrimitive> it = selection.iterator();
-                            OsmPrimitive n1 = it.next();
-                            OsmPrimitive n2 = it.next();
-                            // show distance between two selected nodes with coordinates
-                            if (n1 instanceof Node && n2 instanceof Node) {
-                                LatLon c1 = ((Node) n1).getCoor();
-                                LatLon c2 = ((Node) n2).getCoor();
-                                if (c1 != null && c2 != null) {
-                                    map.statusLine.setDist(c1.greatCircleDistance(c2));
-                                    return;
-                                }
-                            }
-                        }
-                        map.statusLine.setDist(
-                                new SubclassFilteredCollection<OsmPrimitive, Way>(selection, Way.class::isInstance));
                     }
                 }
             });
@@ -694,7 +673,7 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         /* ------------------------------------------------------------------------ */
-        /* interface SelectionChangeListener                                        */
+        /* interface SelectionChangedListener                                       */
         /* ------------------------------------------------------------------------ */
         @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {

@@ -81,6 +81,7 @@ public class LafPreference implements SubPreferenceSetting {
     VerticallyScrollablePanel panel;
     private final JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private final JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
+    private final JCheckBox showCoor = new JCheckBox(tr("Show node coordinates in selection lists"));
     private final JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
     private final JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
     private final JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
@@ -131,6 +132,10 @@ public class LafPreference implements SubPreferenceSetting {
         showID.setToolTipText(tr("Show object ID in selection lists"));
         showID.setSelected(Config.getPref().getBoolean("osm-primitives.showid", false));
 
+        // Show Coordinates in selection
+        showCoor.setToolTipText(tr("Show node coordinates in selection lists"));
+        showCoor.setSelected(Config.getPref().getBoolean("osm-primitives.showcoor", false));
+
         // Show localized names
         showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
         showLocalizedName.setSelected(Config.getPref().getBoolean("osm-primitives.localize-name", true));
@@ -141,6 +146,7 @@ public class LafPreference implements SubPreferenceSetting {
         ExpertToggleAction.addVisibilitySwitcher(modeless);
 
         panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(showCoor, GBC.eop().insets(20, 0, 0, 0));
         panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
         panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
 
@@ -204,6 +210,7 @@ public class LafPreference implements SubPreferenceSetting {
         boolean mod = false;
         Config.getPref().putBoolean("draw.splashscreen", showSplashScreen.isSelected());
         Config.getPref().putBoolean("osm-primitives.showid", showID.isSelected());
+        Config.getPref().putBoolean("osm-primitives.showcoor", showCoor.isSelected());
         Config.getPref().putBoolean("osm-primitives.localize-name", showLocalizedName.isSelected());
         MapFrame.MODELESS.put(modeless.isSelected());
         Config.getPref().putBoolean(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
