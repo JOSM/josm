@@ -909,16 +909,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         super.repaint();
     }
 
-    @Override
-    protected void refreshMouse() {
-        if (lastMEvent.getWhen() > 0) {
-            // This fake movement allows to keep consistent state between mouse position and hilighted primitives, status bar, etc.
-            // When the map is not moved by mouse (for example with keyboard shortcuts)
-            dispatchEvent(new MouseEvent(this, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0,
-                    lastMEvent.getX(), lastMEvent.getY(), 0, false));
-        }
-    }
-
     /**
      * Returns the layer manager.
      * @return the layer manager

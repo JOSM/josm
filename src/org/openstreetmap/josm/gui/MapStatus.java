@@ -13,7 +13,9 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
@@ -75,6 +77,7 @@ import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor.ProgressMonitorDialog;
@@ -106,7 +109,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public final class MapStatus extends JPanel implements
-    Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener, SelectionChangedListener {
+    Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener, SelectionChangedListener, ZoomChangeListener {
 
     private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Config.getPref().get("statusbar.decimal-format", "0.0"));
     private static final AbstractProperty<Double> DISTANCE_THRESHOLD = new DoubleProperty("statusbar.distance-threshold", 0.01).cached();
@@ -881,27 +884,9 @@ public final class MapStatus extends JPanel implements
             public void mouseMoved(MouseEvent e) {
                 if (mv.getCenter() == null)
                     return;
-                // Do not update the view if ctrl is pressed.
-                if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
-                    ICoordinateFormat mCord = CoordinateFormatManager.getDefaultFormat();
-                    LatLon p = mv.getLatLon(e.getX(), e.getY());
-                    latText.setText(mCord.latToString(p));
-                    lonText.setText(mCord.lonToString(p));
-                    if (Objects.equals(previousCoordinateFormat, mCord)) {
-                        // do nothing
-                    } else if (ProjectedCoordinateFormat.INSTANCE.equals(mCord)) {
-                        latText.setIcon("northing");
-                        lonText.setIcon("easting");
-                        latText.setToolTipText(tr("The northing at the mouse pointer."));
-                        lonText.setToolTipText(tr("The easting at the mouse pointer."));
-                        previousCoordinateFormat = mCord;
-                    } else {
-                        latText.setIcon("lat");
-                        lonText.setIcon("lon");
-                        latText.setToolTipText(tr("The geographic latitude at the mouse pointer."));
-                        lonText.setToolTipText(tr("The geographic longitude at the mouse pointer."));
-                        previousCoordinateFormat = mCord;
-                    }
+                // Do not update the view if ctrl or right button is pressed.
+                if ((e.getModifiersEx() & (MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK)) == 0) {
+                    updateLatLonText(e.getX(), e.getY());
                 }
             }
         });
@@ -937,6 +922,7 @@ public final class MapStatus extends JPanel implements
         }
 
         SystemOfMeasurement.addSoMChangeListener(this);
+        NavigatableComponent.addZoomChangeListener(this);
 
         latText.addMouseListener(jumpToOnLeftClick);
         lonText.addMouseListener(jumpToOnLeftClick);
@@ -968,6 +954,28 @@ public final class MapStatus extends JPanel implements
         thread = new Thread(collector, "Map Status Collector");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private void updateLatLonText(int x, int y) {
+        LatLon p = mv.getLatLon(x, y);
+        ICoordinateFormat mCord = CoordinateFormatManager.getDefaultFormat();
+        latText.setText(mCord.latToString(p));
+        lonText.setText(mCord.lonToString(p));
+        if (Objects.equals(previousCoordinateFormat, mCord)) {
+            // do nothing
+        } else if (ProjectedCoordinateFormat.INSTANCE.equals(mCord)) {
+            latText.setIcon("northing");
+            lonText.setIcon("easting");
+            latText.setToolTipText(tr("The northing at the mouse pointer."));
+            lonText.setToolTipText(tr("The easting at the mouse pointer."));
+            previousCoordinateFormat = mCord;
+        } else {
+            latText.setIcon("lat");
+            lonText.setIcon("lon");
+            latText.setToolTipText(tr("The geographic latitude at the mouse pointer."));
+            lonText.setToolTipText(tr("The geographic longitude at the mouse pointer."));
+            previousCoordinateFormat = mCord;
+        }
     }
 
     @Override
@@ -1114,6 +1122,7 @@ public final class MapStatus extends JPanel implements
     @Override
     public void destroy() {
         SystemOfMeasurement.removeSoMChangeListener(this);
+        NavigatableComponent.removeZoomChangeListener(this);
         Config.getPref().removePreferenceChangeListener(this);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         mv.removeComponentListener(mvComponentAdapter);
@@ -1179,5 +1188,14 @@ public final class MapStatus extends JPanel implements
             }
         }
         setDist(new SubclassFilteredCollection<OsmPrimitive, Way>(newSelection, Way.class::isInstance));
+    }
+
+    @Override
+    public void zoomChanged() {
+        PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+        if (pointerInfo != null) {
+            Point mp = pointerInfo.getLocation();
+            updateLatLonText(mp.x, mp.y);
+        }
     }
 }
