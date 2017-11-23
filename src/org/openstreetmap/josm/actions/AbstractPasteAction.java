@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.Transferable;
@@ -74,11 +75,14 @@ public abstract class AbstractPasteAction extends JosmAction implements FlavorLi
         // But this does not work if the shortcut is changed to a single key (see #9055)
         // Observed behaviour: getActionCommand() returns Action.NAME when triggered via menu, but shortcut text when triggered with it
         if (e != null && !getValue(NAME).equals(e.getActionCommand())) {
-            final Point mp = MouseInfo.getPointerInfo().getLocation();
-            final Point tl = mapView.getLocationOnScreen();
-            final Point pos = new Point(mp.x-tl.x, mp.y-tl.y);
-            if (mapView.contains(pos)) {
-                mPosition = mapView.getEastNorth(pos.x, pos.y);
+            final PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+            if (pointerInfo != null) {
+                final Point mp = pointerInfo.getLocation();
+                final Point tl = mapView.getLocationOnScreen();
+                final Point pos = new Point(mp.x-tl.x, mp.y-tl.y);
+                if (mapView.contains(pos)) {
+                    mPosition = mapView.getEastNorth(pos.x, pos.y);
+                }
             }
         }
         return mPosition;
