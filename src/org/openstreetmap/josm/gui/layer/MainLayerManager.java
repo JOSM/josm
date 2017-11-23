@@ -396,6 +396,16 @@ public class MainLayerManager extends LayerManager {
         return ret;
     }
 
+    /**
+     * Invalidates current edit layer, if any. Does nothing of there is no edit layer.
+     * @since 13150
+     */
+    public void invalidateEditLayer() {
+        if (editLayer != null) {
+            editLayer.invalidate();
+        }
+    }
+
     @Override
     protected synchronized void realResetState() {
         // active and edit layer are unset automatically
