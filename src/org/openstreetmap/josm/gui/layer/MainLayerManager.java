@@ -397,7 +397,7 @@ public class MainLayerManager extends LayerManager {
     }
 
     /**
-     * Invalidates current edit layer, if any. Does nothing of there is no edit layer.
+     * Invalidates current edit layer, if any. Does nothing if there is no edit layer.
      * @since 13150
      */
     public void invalidateEditLayer() {
