@@ -20,7 +20,6 @@ import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
@@ -199,10 +198,7 @@ public class FilterModel {
     }
 
     private static void updateMap() {
-        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-        if (editLayer != null) {
-            editLayer.invalidate();
-        }
+        MainApplication.getLayerManager().invalidateEditLayer();
     }
 
     /**

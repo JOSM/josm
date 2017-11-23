@@ -90,7 +90,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
         DatasetEventManager.getInstance().removeDatasetListener(this);
         MapFrame.removeMapModeChangeListener(this);
         filterModel.model.clearFilterFlags();
-        MainApplication.getMap().mapView.repaint();
+        MainApplication.getLayerManager().invalidateEditLayer();
     }
 
     private static final Shortcut ENABLE_FILTER_SHORTCUT

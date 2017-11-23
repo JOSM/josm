@@ -427,6 +427,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 4));
                     g.draw(area);
                     g.setClip(oldClip);
+                    g.setStroke(new BasicStroke());
                 }
             } else {
                 Image img = fillImage.getImage(disabled);
