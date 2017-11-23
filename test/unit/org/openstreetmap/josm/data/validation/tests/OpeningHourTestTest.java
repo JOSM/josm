@@ -76,9 +76,9 @@ public class OpeningHourTestTest {
      */
     @Test
     public void testI18n() {
-        assertTrue(openingHourTest.checkOpeningHourSyntax("opening_hours", ".", false, "de")
+        assertTrue(openingHourTest.checkOpeningHourSyntax("opening_hours", ".", null, false, "de")
                 .get(0).toString().contains("Unerwartetes Zeichen"));
-        assertFalse(openingHourTest.checkOpeningHourSyntax("opening_hours", ".", false, "en")
+        assertFalse(openingHourTest.checkOpeningHourSyntax("opening_hours", ".", null, false, "en")
                 .get(0).toString().contains("Unerwartetes Zeichen"));
     }
 

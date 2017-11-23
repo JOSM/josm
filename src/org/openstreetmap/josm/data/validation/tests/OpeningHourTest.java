@@ -56,9 +56,13 @@ public class OpeningHourTest extends Test.TagTest {
                 // fake country/state to not get errors on holidays
                 ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
                 ENGINE.eval(
-                        "var oh = function (value, tag_key, locale) {" +
+                        "var oh = function (value, tag_key, mode, locale) {" +
                         " try {" +
-                        "    var r = new opening_hours(value, nominatimJSON, {tag_key: tag_key, locale: locale});" +
+                        "    var conf = {tag_key: tag_key, locale: locale};" +
+                        "    if (mode > -1) {" +
+                        "      conf.mode = mode;" +
+                        "    }" +
+                        "    var r = new opening_hours(value, nominatimJSON, conf);" +
                         "    r.getErrors = function() {return [];};" +
                         "    return r;" +
                         "  } catch (err) {" +
@@ -76,19 +80,40 @@ public class OpeningHourTest extends Test.TagTest {
     }
 
     /**
+     * In OSM, the syntax originally designed to describe opening hours, is now used to describe a few other things as well.
+     * Some of those other tags work with points in time instead of time ranges.
+     * To support this the mode can be specified.
+     * @since 13147
+     */
+    public enum CheckMode {
+        /** time ranges (opening_hours, lit, …) default */
+        TIME_RANGE(0),
+        /** points in time */
+        POINTS_IN_TIME(1),
+        /** both (time ranges and points in time, used by collection_times, service_times, …) */
+        BOTH(2);
+        private final int code;
+
+        CheckMode(int code) {
+            this.code = code;
+        }
+    }
+
+    /**
      * Parses the opening hour syntax of the {@code value} given according to
      * <a href="https://github.com/ypid/opening_hours.js">opening_hours.js</a> and returns an object on which
      * methods can be called to extract information.
      * @param value the opening hour value to be checked
      * @param tagKey the OSM key (should be "opening_hours", "collection_times" or "service_times")
+     * @param mode whether to validate {@code value} as a time range, or points in time, or both. Can be null
      * @param locale the locale code used for localizing messages
      * @return The value returned by the underlying method. Usually a {@code jdk.nashorn.api.scripting.ScriptObjectMirror}
      * @throws ScriptException if an error occurs during invocation of the underlying method
      * @throws NoSuchMethodException if underlying method with given name or matching argument types cannot be found
-     * @since 13145
+     * @since 13147
      */
-    public Object parse(String value, String tagKey, String locale) throws ScriptException, NoSuchMethodException {
-        return ((Invocable) ENGINE).invokeFunction("oh", value, tagKey, locale);
+    public Object parse(String value, String tagKey, CheckMode mode, String locale) throws ScriptException, NoSuchMethodException {
+        return ((Invocable) ENGINE).invokeFunction("oh", value, tagKey, mode != null ? mode.code : -1, locale);
     }
 
     @SuppressWarnings("unchecked")
@@ -182,7 +207,7 @@ public class OpeningHourTest extends Test.TagTest {
      * @return a list of {@link TestError} or an empty list
      */
     public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value) {
-        return checkOpeningHourSyntax(key, value, false, LanguageInfo.getJOSMLocaleCode());
+        return checkOpeningHourSyntax(key, value, null, false, LanguageInfo.getJOSMLocaleCode());
     }
 
     /**
@@ -191,18 +216,19 @@ public class OpeningHourTest extends Test.TagTest {
      * validation errors or an empty list. Null values result in an empty list.
      * @param key the OSM key (should be "opening_hours", "collection_times" or "service_times").
      * @param value the opening hour value to be checked.
+     * @param mode whether to validate {@code value} as a time range, or points in time, or both. Can be null
      * @param ignoreOtherSeverity whether to ignore errors with {@link Severity#OTHER}.
      * @param locale the locale code used for localizing messages
      * @return a list of {@link TestError} or an empty list
      */
-    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value,
+    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode,
             boolean ignoreOtherSeverity, String locale) {
         if (ENGINE == null || value == null || value.isEmpty()) {
             return Collections.emptyList();
         }
         final List<OpeningHoursTestError> errors = new ArrayList<>();
         try {
-            final Object r = parse(value, key, locale);
+            final Object r = parse(value, key, mode, locale);
             String prettifiedValue = null;
             try {
                 prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
