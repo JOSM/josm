@@ -84,8 +84,8 @@
     </chunk>
     <chunk id="barrier_5">
         <optional text="Allowed traffic:">
-            <check key="foot" text="Foot" default="on"/>
-            <check key="bicycle" text="Bicycle" default="on"/>
+            <check key="foot" text="Foot"/>
+            <check key="bicycle" text="Bicycle"/>
             <check key="horse" text="Horse" />
             <check key="motorcycle" text="Motorcycle" />
             <check key="motorcar" text="Motorcar" />
@@ -93,15 +93,15 @@
     </chunk>
     <chunk id="barrier_4">
         <optional text="Allowed traffic:">
-            <check key="foot" text="Foot" default="on"/>
-            <check key="bicycle" text="Bicycle" default="on"/>
+            <check key="foot" text="Foot"/>
+            <check key="bicycle" text="Bicycle"/>
             <check key="horse" text="Horse" />
             <check key="motorcycle" text="Motorcycle" />
         </optional>
     </chunk>
     <chunk id="barrier_2">
         <optional text="Allowed traffic:">
-            <check key="foot" text="Foot" default="on"/>
+            <check key="foot" text="Foot"/>
             <check key="bicycle" text="Bicycle"/>
         </optional>
     </chunk>
