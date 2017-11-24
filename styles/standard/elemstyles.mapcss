@@ -4190,8 +4190,8 @@ way[natural=coastline] {
     width: 2;
     color: water#0000ff;
     right-casing-color: water#0000ff;
-    right-casing-width: 5;
-    right-casing-opacity: 0.30;
+    right-casing-width: 8;
+    right-casing-opacity: 0.35;
 }
 area[natural=mud] {
     fill-color: mud#cba762;
