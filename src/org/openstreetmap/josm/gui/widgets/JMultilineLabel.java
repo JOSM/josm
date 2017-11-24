@@ -45,12 +45,27 @@ public class JMultilineLabel extends JEditorPane {
      * @param allBold If {@code true}, makes all text to be displayed in bold
      */
     public JMultilineLabel(String text, boolean allBold) {
+        this(text, allBold, false);
+    }
+
+    /**
+     * Constructs a normal label but adds HTML tags if not already done so.
+     * Supports both newline characters (<code>\n</code>) as well as the HTML
+     * <code>&lt;br&gt;</code> to insert new lines.
+     *
+     * Use setMaxWidth to limit the width of the label.
+     * @param text The text to display
+     * @param allBold If {@code true}, makes all text to be displayed in bold
+     * @param focusable indicates whether this label is focusable
+     * @since 13157
+     */
+    public JMultilineLabel(String text, boolean allBold, boolean focusable) {
         JosmEditorPane.makeJLabelLike(this, allBold);
         String html = text.trim().replaceAll("\n", "<br>");
         if (!html.startsWith("<html>")) {
             html = "<html>" + html + "</html>";
         }
-        setFocusable(false);
+        setFocusable(focusable);
         super.setText(html);
     }
 
