@@ -4,8 +4,10 @@ package org.openstreetmap.josm.data.projection.proj;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -69,6 +71,14 @@ import org.openstreetmap.josm.tools.Utils;
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/transverse_mercator.html">"Transverse_Mercator" on RemoteSensing.org</A>
  */
 public class TransverseMercator extends AbstractProj {
+
+    /** Earth emispheres **/
+    public enum Hemisphere {
+        /** North emisphere */
+        North,
+        /** South emisphere */
+        South
+    }
 
     /**
      * Contants used for the forward and inverse transform for the eliptical
@@ -221,5 +231,16 @@ public class TransverseMercator extends AbstractProj {
     @Override
     public Bounds getAlgorithmBounds() {
         return new Bounds(-89, -7, 89, 7, false);
+    }
+
+    /**
+     * Determines the UTM zone of a given lat/lon.
+     * @param ll lat/lon to locate in the UTM grid.
+     * @return the UTM zone of {@code ll}
+     * @since 13167
+     */
+    public static Pair<Integer, Hemisphere> locateUtmZone(LatLon ll) {
+        return new Pair<>((int) Math.floor((ll.lon() + 180d) / 6d) + 1,
+                ll.lat() > 0 ? Hemisphere.North : Hemisphere.South);
     }
 }

@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import org.openstreetmap.josm.data.projection.proj.TransverseMercator.Hemisphere;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -24,14 +25,6 @@ import org.openstreetmap.josm.tools.Logging;
  * @see <a href="https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system">UTM</a>
  */
 public class UTMProjectionChoice extends ListProjectionChoice {
-
-    /** Earth emispheres **/
-    public enum Hemisphere {
-        /** North emisphere */
-        North,
-        /** South emisphere */
-        South
-    }
 
     private static final Hemisphere DEFAULT_HEMISPHERE = Hemisphere.North;
 
