@@ -12,6 +12,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -1192,10 +1193,12 @@ public final class MapStatus extends JPanel implements
 
     @Override
     public void zoomChanged() {
-        PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-        if (pointerInfo != null) {
-            Point mp = pointerInfo.getLocation();
-            updateLatLonText(mp.x, mp.y);
+        if (!GraphicsEnvironment.isHeadless()) {
+            PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+            if (pointerInfo != null) {
+                Point mp = pointerInfo.getLocation();
+                updateLatLonText(mp.x, mp.y);
+            }
         }
     }
 }
