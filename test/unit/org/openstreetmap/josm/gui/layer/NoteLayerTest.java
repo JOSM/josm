@@ -55,4 +55,23 @@ public class NoteLayerTest {
                      "<html>Note 230617<hr/>deckkun on Aug 27, 2014:<br>筑紫が丘への抜け道？<hr/>Rakkka on Jul 20, 2017:<br>地図を修正するためのメモではないように見えますが、解決してもよろしいでしょうか？<hr/>&lt;anonymous&gt; on Jul 21, 2017:<br>そうです。一部未舗装があり、急な坂があります。細い部分もあるので自動車は無理です。<hr/>Rakkka on Jul 21, 2017:<br>この地点から北西へ伸びている道路のことですよね。自動車道になっているので、自動車が通れないなら直さないといけませんが、通れない部分がわからないので、メモは残しておきます。<hr/>&lt;anonymous&gt; on Jul 21, 2017:<br>そうです。マーク地点からですと白百合学園までは行けますが、そこから筑紫が丘六丁目7に出る付近は資材置き場があり、狭く、もしかしたら一部私有地内の通行になるのかも。軽自動車なら行ける幅だと思いますが。ストリートマップでイメージは掴めると思います。</html>"));
         // CHECKSTYLE.ON: LineLength
     }
+
+    /**
+     * Unit test of {@link NoteLayer#replaceLinks}.
+     */
+    @Test
+    public void testReplaceLinks() {
+        // empty string
+        assertEquals("", NoteLayer.replaceLinks(""));
+        // no link
+        assertEquals("no http link", NoteLayer.replaceLinks("no http link"));
+        // just one link
+        assertEquals("<a href=\"https://www.example.com/test\">https://www.example.com/\u200btest</a>",
+                NoteLayer.replaceLinks("https://www.example.com/test"));
+        // CHECKSTYLE.OFF: LineLength
+        // text with several links (with and without slash)
+        assertEquals("foo <a href=\"https://foo.example.com/test\">https://foo.example.com/\u200btest</a> bar <a href=\"https://bar.example.com\">https://bar.example.com</a> baz",
+                NoteLayer.replaceLinks("foo https://foo.example.com/test bar https://bar.example.com baz"));
+        // CHECKSTYLE.ON: LineLength
+    }
 }
