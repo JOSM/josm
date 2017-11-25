@@ -4357,6 +4357,7 @@
             <space />
             <key key="tourism" value="viewpoint" />
             <text key="name" text="Name" />
+            <combo key="direction" text="Direction" delimiter="|" values="N|E|S|W|NE|NNE-S|180|90-270|270-90|0-360|70-110;250-290" values_no_i18n="true" values_sort="false" />
             <!--<check key="man_made" value="tower" text="Look-Out Tower" />-->
         </item> <!-- Viewpoint -->
         <separator/>
