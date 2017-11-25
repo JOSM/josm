@@ -68,6 +68,9 @@ public class NoteLayerTest {
         // just one link
         assertEquals("<a href=\"https://www.example.com/test\">https://www.example.com/\u200btest</a>",
                 NoteLayer.replaceLinks("https://www.example.com/test"));
+        // link with dot
+        assertEquals("<a href=\"https://www.example.com\">https://www.example.com</a>.",
+                NoteLayer.replaceLinks("https://www.example.com."));
         // CHECKSTYLE.OFF: LineLength
         // text with several links (with and without slash)
         assertEquals("foo <a href=\"https://foo.example.com/test\">https://foo.example.com/\u200btest</a> bar <a href=\"https://bar.example.com\">https://bar.example.com</a> baz",
