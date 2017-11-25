@@ -996,7 +996,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         invalidate();
         setRequiresSaveToFile(true);
-        setRequiresUploadToServer(true);
+        setRequiresUploadToServer(event.getDataset().requiresUploadToServer());
     }
 
     @Override

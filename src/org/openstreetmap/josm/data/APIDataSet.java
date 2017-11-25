@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -37,6 +38,35 @@ public class APIDataSet {
     private List<OsmPrimitive> toAdd;
     private List<OsmPrimitive> toUpdate;
     private List<OsmPrimitive> toDelete;
+
+    /**
+     * The type of operation we can perform with OSM API on a primitive.
+     * @since 13161
+     */
+    public enum APIOperation {
+        /** Add a new primitive */
+        ADD,
+        /** Update an existing primitive */
+        UPDATE,
+        /** Delete an existing primitive */
+        DELETE;
+
+        /**
+         * Determines the API operation to perform on a primitive.
+         * @param osm OSM primitive
+         * @return the API operation to perform on {@code osm}
+         */
+        public static APIOperation of(OsmPrimitive osm) {
+            if (osm.isNewOrUndeleted() && !osm.isDeleted()) {
+                return ADD;
+            } else if (osm.isModified() && !osm.isDeleted()) {
+                return UPDATE;
+            } else if (osm.isDeleted() && !osm.isNew() && osm.isModified() && osm.isVisible()) {
+                return DELETE;
+            }
+            return null;
+        }
+    }
 
     /**
      * creates a new empty data set
@@ -68,12 +98,11 @@ public class APIDataSet {
         toDelete.clear();
 
         for (OsmPrimitive osm :primitives) {
-            if (osm.isNewOrUndeleted() && !osm.isDeleted()) {
-                toAdd.add(osm);
-            } else if (osm.isModified() && !osm.isDeleted()) {
-                toUpdate.add(osm);
-            } else if (osm.isDeleted() && !osm.isNew() && osm.isModified() && osm.isVisible()) {
-                toDelete.add(osm);
+            switch (APIOperation.of(osm)) {
+                case ADD: toAdd.add(osm); break;
+                case UPDATE: toUpdate.add(osm); break;
+                case DELETE: toDelete.add(osm); break;
+                default: Logging.trace("Ignored primitive {0}", osm);
             }
         }
         final Comparator<OsmPrimitive> orderingNodesWaysRelations = OsmPrimitiveComparator.orderingNodesWaysRelations();
