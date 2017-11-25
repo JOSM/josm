@@ -19,7 +19,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
+import org.openstreetmap.josm.data.projection.proj.TransverseMercator.Hemisphere;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -211,9 +214,13 @@ public class InspectPrimitiveDataText {
             add(tr("Coordinates: "),
                     Double.toString(n.lat()), ", ",
                     Double.toString(n.lon()));
+            EastNorth en = n.getEastNorth();
             add(tr("Coordinates (projected): "),
-                    Double.toString(n.getEastNorth().east()), ", ",
-                    Double.toString(n.getEastNorth().north()));
+                    Double.toString(en.east()), ", ",
+                    Double.toString(en.north()));
+            Pair<Integer, Hemisphere> utmZone = TransverseMercator.locateUtmZone(n.getCoor());
+            String utmLabel = tr("UTM Zone");
+            add(utmLabel, utmLabel.endsWith(":") ? " " : ": ", Integer.toString(utmZone.a), utmZone.b.toString().substring(0, 1));
         }
     }
 
