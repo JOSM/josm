@@ -42,12 +42,20 @@ import org.openstreetmap.josm.tools.UserCancelException;
  * Abstract base class for automatic tag corrections.
  *
  * Subclasses call applyCorrections() with maps of the requested
- * corrections and a dialog is pesented to the user to
+ * corrections and a dialog is presented to the user to
  * confirm these changes.
  * @param <P> The type of OSM primitive to correct
  */
 public abstract class TagCorrector<P extends OsmPrimitive> {
 
+    /**
+     * Executes the tag correction.
+     * @param oldprimitive old primitive
+     * @param primitive new primitive
+     * @return A list of commands
+     * @throws UserCancelException If the user canceled
+     * @see #applyCorrections(DataSet, Map, Map, String)
+     */
     public abstract Collection<Command> execute(P oldprimitive, P primitive) throws UserCancelException;
 
     private static final String[] APPLICATION_OPTIONS = new String[] {

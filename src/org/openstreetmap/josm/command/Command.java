@@ -44,7 +44,7 @@ public abstract class Command implements PseudoCommand {
     public static final int IS_INCOMPLETE = 2;
 
     private static final class CloneVisitor implements OsmPrimitiveVisitor {
-        public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<>();
+        final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<>();
 
         @Override
         public void visit(Node n) {

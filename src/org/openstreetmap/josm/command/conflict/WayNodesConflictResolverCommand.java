@@ -30,6 +30,7 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
     private final List<Node> mergedNodeList;
 
     /**
+     * Constructs a new {@code WayNodesConflictResolverCommand}.
      * @param conflict the conflict data set
      * @param mergedNodeList the list of merged nodes
      */

@@ -428,7 +428,7 @@ public class SplitWayAction extends JosmAction {
      * @param wayChunks the list of way chunks into the way is split. Must not be null.
      * @param selection The list of currently selected primitives
      * @return the result from the split operation
-     * @deprecated to be removed end of 2017. Use {@link #splitWay(Way, List, Collection)} instead
+     * @deprecated to be removed end of 2017. Use {@link SplitWayCommand#splitWay} instead
      */
     @Deprecated
     public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks,
@@ -449,7 +449,7 @@ public class SplitWayAction extends JosmAction {
      * @param selection The list of currently selected primitives
      * @return the result from the split operation
      * @since 12718
-     * @deprecated to be removed end of 2017. Use {@link #splitWay(Way, List, Collection)} instead
+     * @deprecated to be removed end of 2017. Use {@link SplitWayCommand#splitWay} instead
      */
     @Deprecated
     public static SplitWayResult splitWay(Way way, List<List<Node>> wayChunks,
@@ -474,7 +474,7 @@ public class SplitWayAction extends JosmAction {
      * @param splitStrategy The strategy used to determine which way chunk should reuse the old id and its history
      * @return the result from the split operation
      * @since 8954
-     * @deprecated to be removed end of 2017. Use {@link #splitWay(Way, List, Collection, Strategy)} instead
+     * @deprecated to be removed end of 2017. Use {@link SplitWayCommand#splitWay} instead
      */
     @Deprecated
     public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks,
@@ -533,7 +533,7 @@ public class SplitWayAction extends JosmAction {
      * @param atNodes the list of nodes where the way is split. Must not be null.
      * @param selection The list of currently selected primitives
      * @return the result from the split operation
-     * @deprecated to be removed end of 2017. Use {@link #split(Way, List, Collection)} instead
+     * @deprecated to be removed end of 2017. Use {@link SplitWayCommand#split} instead
      */
     @Deprecated
     public static SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection) {
@@ -555,7 +555,7 @@ public class SplitWayAction extends JosmAction {
      * @param selection The list of currently selected primitives
      * @return the result from the split operation
      * @since 12718
-     * @deprecated to be removed end of 2017. Use {@link #splitWay(Way, List, Collection)} instead
+     * @deprecated to be removed end of 2017. Use {@link SplitWayCommand#split} instead
      */
     @Deprecated
     public static SplitWayResult split(Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection) {

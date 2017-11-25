@@ -189,6 +189,12 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         return true;
     }
 
+    /**
+     * Returns the subset of irreversible ways.
+     * @param ways all ways
+     * @return the subset of irreversible ways
+     * @see #isReversible(Way)
+     */
     public static List<Way> irreversibleWays(List<Way> ways) {
         List<Way> newWays = new ArrayList<>(ways);
         for (Way way : ways) {
@@ -199,6 +205,11 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         return newWays;
     }
 
+    /**
+     * Inverts sign of a numeric value.
+     * @param value numeric value
+     * @return opposite numeric value
+     */
     public static String invertNumber(String value) {
         Pattern pattern = Pattern.compile("^([+-]?)(\\d.*)$", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(value);
