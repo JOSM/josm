@@ -98,11 +98,14 @@ public class APIDataSet {
         toDelete.clear();
 
         for (OsmPrimitive osm :primitives) {
-            switch (APIOperation.of(osm)) {
-                case ADD: toAdd.add(osm); break;
-                case UPDATE: toUpdate.add(osm); break;
-                case DELETE: toDelete.add(osm); break;
-                default: Logging.trace("Ignored primitive {0}", osm);
+            APIOperation op = APIOperation.of(osm);
+            if (op != null) {
+                switch (op) {
+                    case ADD: toAdd.add(osm); break;
+                    case UPDATE: toUpdate.add(osm); break;
+                    case DELETE: toDelete.add(osm); break;
+                    default: Logging.trace("Ignored primitive {0} -> {1}", osm, op);
+                }
             }
         }
         final Comparator<OsmPrimitive> orderingNodesWaysRelations = OsmPrimitiveComparator.orderingNodesWaysRelations();
