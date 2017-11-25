@@ -1229,7 +1229,8 @@
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=footway"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:highway=footway"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=footway"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=footway" />
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=footway"
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:highway=footway" />
             <key key="highway" value="footway" />
             <optional>
                 <combo key="footway" text="Type" values="sidewalk,crossing" values_context="footway" />
@@ -1639,6 +1640,7 @@
         <item name="Highway milestone" icon="presets/vehicle/milestone.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=milestone"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=milestone"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=milestone"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=milestone"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=milestone"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=milestone"
@@ -1915,6 +1917,7 @@
         <item name="Entrance (Barrier Opening)" icon="presets/barrier/entrance.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=entrance"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:barrier=entrance"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=entrance"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:barrier=entrance"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=entrance"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=entrance"
@@ -4825,6 +4828,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=museum"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=museum"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=museum"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:tourism=museum"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=museum"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:tourism=museum"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=museum"
@@ -6182,6 +6186,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=track"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:leisure=track"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=track"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=track"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=track"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:leisure=track"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=track"
@@ -6382,7 +6387,8 @@
         </item> <!-- Archery -->
         <item name="Track and Field Athletics" icon="presets/sport/athletics.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sports=athletics"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:sport=athletics" />
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:sport=athletics"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=athletics" />
             <space />
             <key key="sport" value="athletics" />
             <text key="name" text="Name" />
@@ -8027,6 +8033,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=boundary_stone"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:historic=boundary_stone"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=boundary_stone"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:historic=boundary_stone"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:historic=boundary_stone"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:historic=boundary_stone"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:historic=boundary_stone"
@@ -9344,6 +9351,7 @@
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=administrative"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:office=administrative"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=administrative"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:office=administrative"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:office=administrative"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:office=administrative"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=administrative" />
@@ -9453,6 +9461,7 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:office=government"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=government"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:office=government"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=government"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:office=government"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:office=government"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:office=government"
@@ -11339,6 +11348,7 @@
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:route=bicycle"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:route=bicycle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:route=bicycle"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:route=bicycle"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:route=bicycle" />
                 <space/>
                 <key key="type" value="route"/>
