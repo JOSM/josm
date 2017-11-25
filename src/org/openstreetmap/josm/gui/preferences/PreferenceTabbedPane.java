@@ -503,12 +503,11 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 Logging.warn("Ignoring preferences "+setting);
             }
         }
-        try {
-            if (sel != null) {
-                setSelectedComponent(sel);
+        if (sel != null) {
+            int index = indexOfComponent(sel);
+            if (index > -1) {
+                setSelectedIndex(index);
             }
-        } catch (IllegalArgumentException e) {
-            Logging.warn(e);
         }
     }
 
