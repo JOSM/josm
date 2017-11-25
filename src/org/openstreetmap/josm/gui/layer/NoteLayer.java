@@ -24,9 +24,12 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicHTML;
+import javax.swing.text.View;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveActionBase;
@@ -226,10 +229,26 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
     }
 
     private void fixPanelSize(MapView mv, String text) {
-        Dimension d = displayedPanel.getPreferredSize();
-        if (d.width > mv.getWidth() / 2) {
+        int maxWidth = mv.getWidth() * 2/3;
+        JEditorPane pane = displayedPanel.getEditorPane();
+        if (pane.getPreferredSize().width > maxWidth && Config.getPref().getBoolean("note.text.break-on-sentence-mark", false)) {
             // To make sure long notes are displayed correctly
             displayedPanel.setText(insertLineBreaks(text));
+        }
+        // If still too large, enforce maximum size
+        Dimension d = pane.getPreferredSize();
+        if (d.width > maxWidth) {
+            View v = (View) pane.getClientProperty(BasicHTML.propertyKey);
+            if (v == null) {
+                BasicHTML.updateRenderer(pane, text);
+                v = (View) pane.getClientProperty(BasicHTML.propertyKey);
+            }
+            if (v != null) {
+                v.setSize(maxWidth, 0);
+                int w = (int) Math.ceil(v.getPreferredSpan(View.X_AXIS)) + 30;
+                int h = (int) Math.ceil(v.getPreferredSpan(View.Y_AXIS)) + 10;
+                pane.setPreferredSize(new Dimension(w, h));
+            }
         }
     }
 
