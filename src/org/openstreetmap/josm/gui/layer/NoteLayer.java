@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
@@ -77,6 +78,10 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
      * Group 2 (capturing): a letter (any script), or any punctuation
      */
     private static final Pattern SENTENCE_MARKS_EASTERN = Pattern.compile("(\\u3002)([\\p{L}\\p{Punct}])");
+
+    private static final Pattern HTTP_LINK = Pattern.compile("(https?://[^\\s\\(\\)<>]+)");
+    private static final Pattern HTML_LINK = Pattern.compile("<a href=\"[^\"]+\">([^<]+)</a>");
+    private static final Pattern SLASH = Pattern.compile("([^/])/([^/])");
 
     private final NoteData noteData;
 
@@ -230,14 +235,16 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
 
     private void fixPanelSize(MapView mv, String text) {
         int maxWidth = mv.getWidth() * 2/3;
+        int maxHeight = mv.getHeight() * 2/3;
         JEditorPane pane = displayedPanel.getEditorPane();
-        if (pane.getPreferredSize().width > maxWidth && Config.getPref().getBoolean("note.text.break-on-sentence-mark", false)) {
+        Dimension d = pane.getPreferredSize();
+        if ((d.width > maxWidth || d.height > maxHeight) && Config.getPref().getBoolean("note.text.break-on-sentence-mark", false)) {
             // To make sure long notes are displayed correctly
             displayedPanel.setText(insertLineBreaks(text));
         }
         // If still too large, enforce maximum size
-        Dimension d = pane.getPreferredSize();
-        if (d.width > maxWidth) {
+        d = pane.getPreferredSize();
+        if (d.width > maxWidth || d.height > maxHeight) {
             View v = (View) pane.getClientProperty(BasicHTML.propertyKey);
             if (v == null) {
                 BasicHTML.updateRenderer(pane, text);
@@ -289,13 +296,34 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
                 // encode method leaves us with entity instead of \n
                 htmlText = htmlText.replace("&#xA;", "<br>");
                 // convert URLs to proper HTML links
-                htmlText = htmlText.replaceAll("(https?://[^\\s\\(\\)<>]+)", "<a href=\"$1\">$1</a>");
+                htmlText = replaceLinks(htmlText);
                 sb.append(htmlText);
             }
         }
         sb.append("</html>");
         String result = sb.toString();
         Logging.debug(result);
+        return result;
+    }
+
+    static String replaceLinks(String htmlText) {
+        String result = HTTP_LINK.matcher(htmlText).replaceAll("<a href=\"$1\">$1</a>");
+        Matcher m1 = HTML_LINK.matcher(result);
+        if (m1.find()) {
+            int last = 0;
+            StringBuffer sb = new StringBuffer(); // Switch to StringBuilder when switching to Java 9
+            do {
+                sb.append(result, last, m1.start());
+                last = m1.end();
+                String link = m1.group(0);
+                Matcher m2 = SLASH.matcher(link).region(link.indexOf('>'), link.lastIndexOf('<'));
+                while (m2.find()) {
+                    m2.appendReplacement(sb, "$1/\u200b$2"); //zero width space to wrap long URLs (see #10864, #15550)
+                }
+                m2.appendTail(sb);
+            } while (m1.find());
+            result = sb.append(result, last, result.length()).toString();
+        }
         return result;
     }
 
