@@ -246,9 +246,11 @@ public class ParallelScatterZipCreator {
         // It is important that all threads terminate before we go on, ensure happens-before relationship
         compressionDoneAt = System.currentTimeMillis();
 
-        for (final ScatterZipOutputStream scatterStream : streams) {
-            scatterStream.writeTo(targetStream);
-            scatterStream.close();
+        synchronized (streams) {
+            for (final ScatterZipOutputStream scatterStream : streams) {
+                scatterStream.writeTo(targetStream);
+                scatterStream.close();
+            }
         }
 
         scatterDoneAt = System.currentTimeMillis();
