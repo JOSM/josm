@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.APIDataSet.APIOperation;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
@@ -1129,6 +1130,19 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     public boolean isModified() {
         for (OsmPrimitive p: allPrimitives) {
             if (p.isModified())
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Replies true if there is at least one primitive in this dataset which requires to be uploaded to server.
+     * @return true if there is at least one primitive in this dataset which requires to be uploaded to server
+     * @since 13161
+     */
+    public boolean requiresUploadToServer() {
+        for (OsmPrimitive p: allPrimitives) {
+            if (APIOperation.of(p) != null)
                 return true;
         }
         return false;
