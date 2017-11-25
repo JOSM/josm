@@ -81,6 +81,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
 
     private static final Pattern HTTP_LINK = Pattern.compile("(https?://[^\\s\\(\\)<>]+)");
     private static final Pattern HTML_LINK = Pattern.compile("<a href=\"[^\"]+\">([^<]+)</a>");
+    private static final Pattern HTML_LINK_MARK = Pattern.compile("<a href=\"([^\"]+)([\\.\\?\\!])\">([^<]+)(?:[\\.\\?\\!])</a>");
     private static final Pattern SLASH = Pattern.compile("([^/])/([^/])");
 
     private final NoteData noteData;
@@ -202,9 +203,11 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             hideNoteWindow();
         }
 
-        Point screenloc = mv.getLocationOnScreen();
-        int tx = screenloc.x + p.x + (iconWidth / 2) + 5;
-        int ty = screenloc.y + p.y - iconHeight - 1;
+        int xl = p.x - (iconWidth / 2) - 5;
+        int xr = p.x + (iconWidth / 2) + 5;
+        int yb = p.y - iconHeight - 1;
+        int yt = p.y + (iconHeight / 2) + 2;
+        Point pTooltip;
 
         String text = getNoteToolTip(selectedNote);
 
@@ -215,7 +218,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             displayedPanel.setFont(UIManager.getFont("ToolTip.font"));
             displayedPanel.setBorder(BorderFactory.createLineBorder(Color.black));
             displayedPanel.enableClickableHyperlinks();
-            fixPanelSize(mv, text);
+            pTooltip = fixPanelSizeAndLocation(mv, text, xl, xr, yt, yb);
             displayedWindow = new JWindow((MainFrame) Main.parent);
             displayedWindow.setAutoRequestFocus(false);
             displayedWindow.add(displayedPanel);
@@ -224,18 +227,22 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
                     (MouseWheelEvent) SwingUtilities.convertMouseEvent(displayedWindow, e, mv)));
         } else {
             displayedPanel.setText(text);
-            fixPanelSize(mv, text);
+            pTooltip = fixPanelSizeAndLocation(mv, text, xl, xr, yt, yb);
         }
 
         displayedWindow.pack();
-        displayedWindow.setLocation(tx, ty);
+        displayedWindow.setLocation(pTooltip);
         displayedWindow.setVisible(mv.contains(p));
         displayedNote = selectedNote;
     }
 
-    private void fixPanelSize(MapView mv, String text) {
-        int maxWidth = mv.getWidth() * 2/3;
-        int maxHeight = mv.getHeight() * 2/3;
+    private Point fixPanelSizeAndLocation(MapView mv, String text, int xl, int xr, int yt, int yb) {
+        int leftMaxWidth = (int) (0.95 * xl);
+        int rightMaxWidth = (int) (0.95 * mv.getWidth() - xr);
+        int topMaxHeight = (int) (0.95 * yt);
+        int bottomMaxHeight = (int) (0.95 * mv.getHeight() - yb);
+        int maxWidth = Math.max(leftMaxWidth, rightMaxWidth);
+        int maxHeight = Math.max(topMaxHeight, bottomMaxHeight);
         JEditorPane pane = displayedPanel.getEditorPane();
         Dimension d = pane.getPreferredSize();
         if ((d.width > maxWidth || d.height > maxHeight) && Config.getPref().getBoolean("note.text.break-on-sentence-mark", false)) {
@@ -252,11 +259,17 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             }
             if (v != null) {
                 v.setSize(maxWidth, 0);
-                int w = (int) Math.ceil(v.getPreferredSpan(View.X_AXIS)) + 30;
+                int w = (int) Math.ceil(v.getPreferredSpan(View.X_AXIS));
                 int h = (int) Math.ceil(v.getPreferredSpan(View.Y_AXIS)) + 10;
                 pane.setPreferredSize(new Dimension(w, h));
             }
         }
+        d = pane.getPreferredSize();
+        // place tooltip on left or right side of icon, based on its width
+        Point screenloc = mv.getLocationOnScreen();
+        return new Point(
+                screenloc.x + (d.width > rightMaxWidth && d.width <= leftMaxWidth ? xl - d.width : xr),
+                screenloc.y + (d.height > bottomMaxHeight && d.height <= topMaxHeight ? yt - d.height - 10 : yb));
     }
 
     /**
@@ -308,6 +321,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
 
     static String replaceLinks(String htmlText) {
         String result = HTTP_LINK.matcher(htmlText).replaceAll("<a href=\"$1\">$1</a>");
+        result = HTML_LINK_MARK.matcher(result).replaceAll("<a href=\"$1\">$3</a>$2");
         Matcher m1 = HTML_LINK.matcher(result);
         if (m1.find()) {
             int last = 0;
