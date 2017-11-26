@@ -129,8 +129,13 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     protected final void init() {
         addFocusListener(
                 new FocusAdapter() {
-                    @Override public void focusGained(FocusEvent e) {
-                        selectAll();
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        if (e != null && e.getOppositeComponent() != null) {
+                            // Select all characters when the change of focus occurs inside JOSM only.
+                            // When switching from another application, it is annoying, see #13747
+                            selectAll();
+                        }
                         applyFilter(getText());
                     }
                 }
@@ -138,7 +143,6 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
 
         addKeyListener(
                 new KeyAdapter() {
-
                     @Override
                     public void keyReleased(KeyEvent e) {
                         if (getText().isEmpty()) {
