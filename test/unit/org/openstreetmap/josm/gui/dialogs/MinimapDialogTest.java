@@ -54,7 +54,8 @@ public class MinimapDialogTest {
         assertFalse(dlg.isVisible());
     }
 
-    private static void assertSingleSelectedSourceLabel(JPopupMenu menu, String label) {
+    protected void assertSingleSelectedSourceLabel(String label) {
+        JPopupMenu menu = this.sourceButton.getPopupMenu();
         boolean found = false;
         for (Component c: menu.getComponents()) {
             if (JPopupMenu.Separator.class.isInstance(c)) {
@@ -72,7 +73,8 @@ public class MinimapDialogTest {
         assertTrue("Selected source not found in menu", found);
     }
 
-    private static JMenuItem getSourceMenuItemByLabel(JPopupMenu menu, String label) {
+    protected JMenuItem getSourceMenuItemByLabel(String label) {
+        JPopupMenu menu = this.sourceButton.getPopupMenu();
         for (Component c: menu.getComponents()) {
             if (JPopupMenu.Separator.class.isInstance(c)) {
                 break;
@@ -88,6 +90,7 @@ public class MinimapDialogTest {
     protected MinimapDialog minimap;
     protected SlippyMapBBoxChooser slippyMap;
     protected SourceButton sourceButton;
+    protected Callable<Boolean> slippyMapTasksFinished;
 
     protected static BufferedImage paintedSlippyMap;
 
@@ -98,7 +101,9 @@ public class MinimapDialogTest {
         this.slippyMap = (SlippyMapBBoxChooser) TestUtils.getPrivateField(this.minimap, "slippyMap");
         this.sourceButton = (SourceButton) TestUtils.getPrivateField(this.slippyMap, "iSourceButton");
 
-        // get dlg in a paintable state
+        this.slippyMapTasksFinished = () -> !this.slippyMap.getTileController().getTileLoader().hasOutstandingTasks();
+
+        // get minimap in a paintable state
         this.minimap.addNotify();
         this.minimap.doLayout();
     }
@@ -125,10 +130,6 @@ public class MinimapDialogTest {
         this.slippyMap.paintAll(g);
     }
 
-    protected Callable<Boolean> slippyMapTasksFinished() {
-        return () -> !this.slippyMap.getTileController().getTileLoader().hasOutstandingTasks();
-    }
-
     /**
      * Tests to switch imagery source.
      * @throws Exception if any error occurs
@@ -143,31 +144,31 @@ public class MinimapDialogTest {
         // an initial paint operation is required to trigger the tile fetches
         this.paintSlippyMap();
 
-        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished());
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
 
         this.paintSlippyMap();
 
         assertEquals(0xffffffff, paintedSlippyMap.getRGB(0, 0));
 
-        assertSingleSelectedSourceLabel(this.sourceButton.getPopupMenu(), "White Tiles");
+        this.assertSingleSelectedSourceLabel("White Tiles");
 
-        getSourceMenuItemByLabel(this.sourceButton.getPopupMenu(), "Magenta Tiles").doClick();
-        assertSingleSelectedSourceLabel(this.sourceButton.getPopupMenu(), "Magenta Tiles");
+        this.getSourceMenuItemByLabel("Magenta Tiles").doClick();
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
         // call paint to trigger new tile fetch
         this.paintSlippyMap();
 
-        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished());
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
 
         this.paintSlippyMap();
 
         assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
 
-        getSourceMenuItemByLabel(this.sourceButton.getPopupMenu(), "Green Tiles").doClick();
-        assertSingleSelectedSourceLabel(this.sourceButton.getPopupMenu(), "Green Tiles");
+        this.getSourceMenuItemByLabel("Green Tiles").doClick();
+        this.assertSingleSelectedSourceLabel("Green Tiles");
         // call paint to trigger new tile fetch
         this.paintSlippyMap();
 
-        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished());
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
 
         this.paintSlippyMap();
 
@@ -186,19 +187,19 @@ public class MinimapDialogTest {
 
         this.setUpMiniMap();
 
-        assertSingleSelectedSourceLabel(this.sourceButton.getPopupMenu(), "Green Tiles");
+        this.assertSingleSelectedSourceLabel("Green Tiles");
 
         // an initial paint operation is required to trigger the tile fetches
         this.paintSlippyMap();
 
-        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished());
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
 
         this.paintSlippyMap();
 
         assertEquals(0xff00ff00, paintedSlippyMap.getRGB(0, 0));
 
-        getSourceMenuItemByLabel(this.sourceButton.getPopupMenu(), "Magenta Tiles").doClick();
-        assertSingleSelectedSourceLabel(this.sourceButton.getPopupMenu(), "Magenta Tiles");
+        this.getSourceMenuItemByLabel("Magenta Tiles").doClick();
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
 
         assertEquals("Magenta Tiles", Main.pref.get("slippy_map_chooser.mapstyle", "Fail"));
     }
@@ -213,12 +214,12 @@ public class MinimapDialogTest {
 
         this.setUpMiniMap();
 
-        assertSingleSelectedSourceLabel(this.sourceButton.getPopupMenu(), "White Tiles");
+        this.assertSingleSelectedSourceLabel("White Tiles");
 
         // an initial paint operation is required to trigger the tile fetches
         this.paintSlippyMap();
 
-        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished());
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
 
         this.paintSlippyMap();
 
