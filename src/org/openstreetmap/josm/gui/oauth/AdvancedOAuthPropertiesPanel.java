@@ -15,7 +15,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -274,27 +273,6 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     }
 
     /**
-     * Initializes the panel from the values in the preferences <code>preferences</code>.
-     *
-     * @param pref the preferences. Must not be null.
-     * @throws IllegalArgumentException if pref is null
-     * @deprecated (since 12928) replaced by {@link #initialize(java.lang.String)}
-     */
-    @Deprecated
-    public void initFromPreferences(Preferences pref) {
-        CheckParameterUtil.ensureParameterNotNull(pref, "pref");
-        setApiUrl(pref.get("osm-server.url"));
-        boolean useDefault = pref.getBoolean("oauth.settings.use-default", true);
-        ilUseDefault.setEnabled(false);
-        if (useDefault) {
-            resetToDefaultSettings();
-        } else {
-            setAdvancedParameters(OAuthParameters.createFromPreferences(pref));
-        }
-        ilUseDefault.setEnabled(true);
-    }
-
-    /**
      * Remembers the current values in the preferences <code>pref</code>.
      */
     public void rememberPreferences() {
@@ -303,24 +281,6 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             new OAuthParameters(null, null, null, null, null, null, null).rememberPreferences();
         } else {
             getAdvancedParameters().rememberPreferences();
-        }
-    }
-
-    /**
-     * Remembers the current values in the preferences <code>pref</code>.
-     *
-     * @param pref the preferences. Must not be null.
-     * @throws IllegalArgumentException if pref is null.
-     * @deprecated (since 12928) replaced by {@link #rememberPreferences()}
-     */
-    @Deprecated
-    public void rememberPreferences(Preferences pref) {
-        CheckParameterUtil.ensureParameterNotNull(pref, "pref");
-        pref.putBoolean("oauth.settings.use-default", cbUseDefaults.isSelected());
-        if (cbUseDefaults.isSelected()) {
-            new OAuthParameters(null, null, null, null, null, null, null).rememberPreferences(pref);
-        } else {
-            getAdvancedParameters().rememberPreferences(pref);
         }
     }
 

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.oauth;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -164,34 +163,6 @@ public class OAuthAccessTokenHolder {
     }
 
     /**
-     * Initializes the content of this holder from the Access Token managed by the
-     * credential manager.
-     *
-     * @param pref the preferences. Must not be null.
-     * @param cm the credential manager. Must not be null.
-     * @throws IllegalArgumentException if cm is null
-     * @deprecated (since 12928) replaced by {@link #init(org.openstreetmap.josm.io.auth.CredentialsAgent)}
-     */
-    @Deprecated
-    public void init(Preferences pref, CredentialsAgent cm) {
-        CheckParameterUtil.ensureParameterNotNull(pref, "pref");
-        CheckParameterUtil.ensureParameterNotNull(cm, "cm");
-        OAuthToken token = null;
-        try {
-            token = cm.lookupOAuthAccessToken();
-        } catch (CredentialsAgentException e) {
-            Logging.error(e);
-            Logging.warn(tr("Failed to retrieve OAuth Access Token from credential manager"));
-            Logging.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
-        }
-        saveToPreferences = pref.getBoolean("oauth.access-token.save-to-preferences", true);
-        if (token != null) {
-            accessTokenKey = token.getKey();
-            accessTokenSecret = token.getSecret();
-        }
-    }
-
-    /**
      * Saves the content of this holder to the preferences and a credential store managed
      * by a credential manager.
      *
@@ -201,34 +172,6 @@ public class OAuthAccessTokenHolder {
     public void save(CredentialsAgent cm) {
         CheckParameterUtil.ensureParameterNotNull(cm, "cm");
         Config.getPref().putBoolean("oauth.access-token.save-to-preferences", saveToPreferences);
-        try {
-            if (!saveToPreferences) {
-                cm.storeOAuthAccessToken(null);
-            } else {
-                cm.storeOAuthAccessToken(new OAuthToken(accessTokenKey, accessTokenSecret));
-            }
-        } catch (CredentialsAgentException e) {
-            Logging.error(e);
-            Logging.warn(tr("Failed to store OAuth Access Token to credentials manager"));
-            Logging.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
-        }
-    }
-
-    /**
-     * Saves the content of this holder to the preferences and a credential store managed
-     * by a credential manager.
-     *
-     * @param preferences the preferences. Must not be null.
-     * @param cm the credentials manager. Must not be null.
-     * @throws IllegalArgumentException if preferences is null
-     * @throws IllegalArgumentException if cm is null
-     * @deprecated (since 12928) replaced by {@link #save(org.openstreetmap.josm.io.auth.CredentialsAgent)}
-     */
-    @Deprecated
-    public void save(Preferences preferences, CredentialsAgent cm) {
-        CheckParameterUtil.ensureParameterNotNull(preferences, "preferences");
-        CheckParameterUtil.ensureParameterNotNull(cm, "cm");
-        preferences.putBoolean("oauth.access-token.save-to-preferences", saveToPreferences);
         try {
             if (!saveToPreferences) {
                 cm.storeOAuthAccessToken(null);

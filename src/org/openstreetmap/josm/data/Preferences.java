@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,11 +35,7 @@ import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorInfo;
-import org.openstreetmap.josm.data.preferences.DoubleProperty;
-import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
@@ -50,10 +44,7 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
-import org.openstreetmap.josm.spi.preferences.IPreferences;
-import org.openstreetmap.josm.spi.preferences.ListListSetting;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
-import org.openstreetmap.josm.spi.preferences.MapListSetting;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -136,92 +127,9 @@ public class Preferences extends AbstractPreferences {
      */
     protected boolean initSuccessful;
 
-    /**
-     * Event triggered when a preference entry value changes.
-     * @deprecated use {@link org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent}
-     */
-    @Deprecated
-    public interface PreferenceChangeEvent {
-        /**
-         * Returns the preference key.
-         * @return the preference key
-         */
-        String getKey();
-
-        /**
-         * Returns the old preference value.
-         * @return the old preference value
-         */
-        Setting<?> getOldValue();
-
-        /**
-         * Returns the new preference value.
-         * @return the new preference value
-         */
-        Setting<?> getNewValue();
-    }
-
-    /**
-     * Listener to preference change events.
-     * @since 10600 (functional interface)
-     * @deprecated use {@link org.openstreetmap.josm.spi.preferences.PreferenceChangedListener}
-     */
-    @FunctionalInterface
-    @Deprecated
-    public interface PreferenceChangedListener {
-        /**
-         * Trigerred when a preference entry value changes.
-         * @param e the preference change event
-         */
-        void preferenceChanged(PreferenceChangeEvent e);
-    }
-
-    /**
-     * @deprecated private class is deprecated
-     */
-    @Deprecated
-    private static class DefaultPreferenceChangeEvent implements PreferenceChangeEvent {
-        private final String key;
-        private final Setting<?> oldValue;
-        private final Setting<?> newValue;
-
-        DefaultPreferenceChangeEvent(String key, Setting<?> oldValue, Setting<?> newValue) {
-            this.key = key;
-            this.oldValue = oldValue;
-            this.newValue = newValue;
-        }
-
-        @Override
-        public String getKey() {
-            return key;
-        }
-
-        @Override
-        public Setting<?> getOldValue() {
-            return oldValue;
-        }
-
-        @Override
-        public Setting<?> getNewValue() {
-            return newValue;
-        }
-    }
-
     private final ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener> listeners = ListenerList.create();
 
     private final HashMap<String, ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener>> keyListeners = new HashMap<>();
-
-    /**
-     * @deprecated deprecated private field
-     */
-    @Deprecated
-    private final ListenerList<Preferences.PreferenceChangedListener> listenersDeprecated = ListenerList.create();
-
-    /**
-     * @deprecated deprecated private field
-     */
-    @Deprecated
-    private final HashMap<String, ListenerList<Preferences.PreferenceChangedListener>> keyListenersDeprecated = new HashMap<>();
 
     /**
      * Constructs a new {@code Preferences}.
@@ -265,18 +173,6 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
-     * Adds a new preferences listener.
-     * @param listener The listener to add
-     * @deprecated use {@link #addPreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
-     */
-    @Deprecated
-    public void addPreferenceChangeListener(Preferences.PreferenceChangedListener listener) {
-        if (listener != null) {
-            listenersDeprecated.addListener(listener);
-        }
-    }
-
-    /**
      * Removes a preferences listener.
      * @param listener The listener to remove
      * @since 12881
@@ -284,16 +180,6 @@ public class Preferences extends AbstractPreferences {
     @Override
     public void removePreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
         listeners.removeListener(listener);
-    }
-
-    /**
-     * Removes a preferences listener.
-     * @param listener The listener to remove
-     * @deprecated use {@link #removePreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
-     */
-    @Deprecated
-    public void removePreferenceChangeListener(Preferences.PreferenceChangedListener listener) {
-        listenersDeprecated.removeListener(listener);
     }
 
     /**
@@ -305,19 +191,6 @@ public class Preferences extends AbstractPreferences {
     @Override
     public void addKeyPreferenceChangeListener(String key, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
         listenersForKey(key).addListener(listener);
-    }
-
-    /**
-     * Adds a listener that only listens to changes in one preference
-     * @param key The preference key to listen to
-     * @param listener The listener to add.
-     * @since 10824
-     * @deprecated use
-     * {@link #addKeyPreferenceChangeListener(java.lang.String, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
-     */
-    @Deprecated
-    public void addKeyPreferenceChangeListener(String key, Preferences.PreferenceChangedListener listener) {
-        listenersForKeyDeprecated(key).addListener(listener);
     }
 
     /**
@@ -335,16 +208,6 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
-     * @param key preference key
-     * @return listener list for this key
-     * @deprecated deprecated private method
-     */
-    @Deprecated
-    private ListenerList<Preferences.PreferenceChangedListener> listenersForKeyDeprecated(String key) {
-        return keyListenersDeprecated.computeIfAbsent(key, k -> ListenerList.create());
-    }
-
-    /**
      * Removes a listener that only listens to changes in one preference
      * @param key The preference key to listen to
      * @param listener The listener to add.
@@ -353,20 +216,6 @@ public class Preferences extends AbstractPreferences {
     @Override
     public void removeKeyPreferenceChangeListener(String key, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
         Optional.ofNullable(keyListeners.get(key)).orElseThrow(
-                () -> new IllegalArgumentException("There are no listeners registered for " + key))
-        .removeListener(listener);
-    }
-
-    /**
-     * Removes a listener that only listens to changes in one preference
-     * @param key The preference key to listen to
-     * @param listener The listener to add.
-     * @deprecated use
-     * {@link #removeKeyPreferenceChangeListener(java.lang.String, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
-     */
-    @Deprecated
-    public void removeKeyPreferenceChangeListener(String key, Preferences.PreferenceChangedListener listener) {
-        Optional.ofNullable(keyListenersDeprecated.get(key)).orElseThrow(
                 () -> new IllegalArgumentException("There are no listeners registered for " + key))
         .removeListener(listener);
     }
@@ -380,32 +229,12 @@ public class Preferences extends AbstractPreferences {
         if (forKey != null) {
             forKey.fireEvent(listener -> listener.preferenceChanged(evt));
         }
-        firePreferenceChangedDeprecated(key, oldValue, newValue);
     }
 
     /**
-     * @param key preference key
-     * @param oldValue old value
-     * @param newValue new value
-     * @deprecated deprecated private method
-     */
-    @Deprecated
-    private void firePreferenceChangedDeprecated(String key, Setting<?> oldValue, Setting<?> newValue) {
-        final Preferences.PreferenceChangeEvent evtDeprecated = new Preferences.DefaultPreferenceChangeEvent(key, oldValue, newValue);
-        listenersDeprecated.fireEvent(listener -> listener.preferenceChanged(evtDeprecated));
-
-        ListenerList<Preferences.PreferenceChangedListener> forKeyDeprecated = keyListenersDeprecated.get(key);
-        if (forKeyDeprecated != null) {
-            forKeyDeprecated.fireEvent(listener -> listener.preferenceChanged(evtDeprecated));
-        }
-    }
-
-    /**
-     * Get the base name of the JOSM directories for preferences, cache and
-     * user data.
+     * Get the base name of the JOSM directories for preferences, cache and user data.
      * Default value is "JOSM", unless overridden by system property "josm.dir.name".
-     * @return the base name of the JOSM directories for preferences, cache and
-     * user data
+     * @return the base name of the JOSM directories for preferences, cache and user data
      */
     public String getJOSMDirectoryBaseName() {
         String name = System.getProperty("josm.dir.name");
@@ -638,77 +467,6 @@ public class Preferences extends AbstractPreferences {
             }
         }
         return all;
-    }
-
-    /**
-     * Gets an boolean that may be specialized
-     * @param key The basic key
-     * @param specName The sub-key to append to the key
-     * @param def The default value
-     * @return The boolean value or the default value if it could not be parsed
-     * @deprecated use {@link PreferencesUtils#getBoolean(IPreferences, String, String, boolean)}
-     */
-    @Deprecated
-    public synchronized boolean getBoolean(final String key, final String specName, final boolean def) {
-        boolean generic = getBoolean(key, def);
-        String skey = key+'.'+specName;
-        Setting<?> prop = settingsMap.get(skey);
-        if (prop instanceof StringSetting)
-            return Boolean.parseBoolean(((StringSetting) prop).getValue());
-        else
-            return generic;
-    }
-
-    /**
-     * Set a boolean value for a certain setting.
-     * @param key the unique identifier for the setting
-     * @param value The new value
-     * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @see BooleanProperty
-     * @deprecated use {@link IPreferences#putBoolean(String, boolean)}
-     */
-    @Deprecated
-    public boolean put(final String key, final boolean value) {
-        return put(key, Boolean.toString(value));
-    }
-
-    /**
-     * Set a boolean value for a certain setting.
-     * @param key the unique identifier for the setting
-     * @param value The new value
-     * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @see IntegerProperty#put(Integer)
-     * @deprecated use {@link IPreferences#putInt(String, int)}
-     */
-    @Deprecated
-    public boolean putInteger(final String key, final Integer value) {
-        return put(key, Integer.toString(value));
-    }
-
-    /**
-     * Set a boolean value for a certain setting.
-     * @param key the unique identifier for the setting
-     * @param value The new value
-     * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @see DoubleProperty#put(Double)
-     * @deprecated use {@link IPreferences#putDouble(java.lang.String, double)}
-     */
-    @Deprecated
-    public boolean putDouble(final String key, final Double value) {
-        return put(key, Double.toString(value));
-    }
-
-    /**
-     * Set a boolean value for a certain setting.
-     * @param key the unique identifier for the setting
-     * @param value The new value
-     * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @see LongProperty#put(Long)
-     * @deprecated use {@link IPreferences#putLong(java.lang.String, long)}
-     */
-    @Deprecated
-    public boolean putLong(final String key, final Long value) {
-        return put(key, Long.toString(value));
     }
 
     /**
@@ -1049,92 +807,6 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
-     * Gets an integer preference
-     * @param key The preference key
-     * @param def The default value to use
-     * @return The integer
-     * @see IntegerProperty#get()
-     * @deprecated use {@link IPreferences#getInt(String, int)}
-     */
-    @Deprecated
-    public synchronized int getInteger(String key, int def) {
-        String v = get(key, Integer.toString(def));
-        if (v.isEmpty())
-            return def;
-
-        try {
-            return Integer.parseInt(v);
-        } catch (NumberFormatException e) {
-            // fall out
-            Logging.trace(e);
-        }
-        return def;
-    }
-
-    /**
-     * Gets an integer that may be specialized
-     * @param key The basic key
-     * @param specName The sub-key to append to the key
-     * @param def The default value
-     * @return The integer value or the default value if it could not be parsed
-     * @deprecated use {@link PreferencesUtils#getInteger(IPreferences, String, String, int)}
-     */
-    @Deprecated
-    public synchronized int getInteger(String key, String specName, int def) {
-        String v = get(key+'.'+specName);
-        if (v.isEmpty())
-            v = get(key, Integer.toString(def));
-        if (v.isEmpty())
-            return def;
-
-        try {
-            return Integer.parseInt(v);
-        } catch (NumberFormatException e) {
-            // fall out
-            Logging.trace(e);
-        }
-        return def;
-    }
-
-    /**
-     * Get a list of values for a certain key
-     * @param key the identifier for the setting
-     * @param def the default value.
-     * @return the corresponding value if the property has been set before, {@code def} otherwise
-     * @deprecated use {@link IPreferences#getList(java.lang.String, java.util.List)}
-     */
-    @Deprecated
-    public Collection<String> getCollection(String key, Collection<String> def) {
-        return getSetting(key, ListSetting.create(def), ListSetting.class).getValue();
-    }
-
-    /**
-     * Get a list of values for a certain key
-     * @param key the identifier for the setting
-     * @return the corresponding value if the property has been set before, an empty collection otherwise.
-     * @deprecated use {@link IPreferences#getList(java.lang.String)}
-     */
-    @Deprecated
-    public Collection<String> getCollection(String key) {
-        Collection<String> val = getList(key, null);
-        return val == null ? Collections.<String>emptyList() : val;
-    }
-
-    /**
-     * Removes a value from a given String collection
-     * @param key The preference key the collection is stored with
-     * @param value The value that should be removed in the collection
-     * @see #getList(String)
-     * @deprecated use {@link PreferencesUtils#removeFromList(IPreferences, String, String)}
-     */
-    @Deprecated
-    public synchronized void removeFromCollection(String key, String value) {
-        List<String> a = new ArrayList<>(getList(key, Collections.<String>emptyList()));
-        a.remove(value);
-        putList(key, a);
-    }
-
-    /**
      * Set a value for a certain setting. The changed setting is saved to the preference file immediately.
      * Due to caching mechanisms on modern operating systems and hardware, this shouldn't be a performance problem.
      * @param key the unique identifier for the setting
@@ -1215,217 +887,6 @@ public class Preferences extends AbstractPreferences {
         } else {
             return def;
         }
-    }
-
-    /**
-     * Put a collection.
-     * @param key key
-     * @param value value
-     * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @deprecated use {@link IPreferences#putList(java.lang.String, java.util.List)}
-     */
-    @Deprecated
-    public boolean putCollection(String key, Collection<String> value) {
-        return putSetting(key, value == null ? null : ListSetting.create(value));
-    }
-
-    /**
-     * Saves at most {@code maxsize} items of collection {@code val}.
-     * @param key key
-     * @param maxsize max number of items to save
-     * @param val value
-     * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @deprecated use {@link PreferencesUtils#putListBounded(IPreferences, String, int, List)}
-     */
-    @Deprecated
-    public boolean putCollectionBounded(String key, int maxsize, Collection<String> val) {
-        List<String> newCollection = new ArrayList<>(Math.min(maxsize, val.size()));
-        for (String i : val) {
-            if (newCollection.size() >= maxsize) {
-                break;
-            }
-            newCollection.add(i);
-        }
-        return putList(key, newCollection);
-    }
-
-    /**
-     * Used to read a 2-dimensional array of strings from the preference file.
-     * If not a single entry could be found, <code>def</code> is returned.
-     * @param key preference key
-     * @param def default array value
-     * @return array value
-     * @deprecated use {@link #getListOfLists(java.lang.String, java.util.List)}
-     */
-    @Deprecated
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public synchronized Collection<Collection<String>> getArray(String key, Collection<Collection<String>> def) {
-        ListListSetting val = getSetting(key, ListListSetting.create(def), ListListSetting.class);
-        return (Collection) val.getValue();
-    }
-
-    /**
-     * Gets a collection of string collections for the given key
-     * @param key The key
-     * @return The collection of string collections or an empty collection as default
-     * @deprecated use {@link IPreferences#getListOfLists(java.lang.String)}
-     */
-    @Deprecated
-    public Collection<Collection<String>> getArray(String key) {
-        Collection<Collection<String>> res = getArray(key, null);
-        return res == null ? Collections.<Collection<String>>emptyList() : res;
-    }
-
-    /**
-     * Put an array.
-     * @param key key
-     * @param value value
-     * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @deprecated use {@link IPreferences#putListOfLists(java.lang.String, java.util.List)}
-     */
-    @Deprecated
-    public boolean putArray(String key, Collection<Collection<String>> value) {
-        return putSetting(key, value == null ? null : ListListSetting.create(value));
-    }
-
-    /**
-     * Gets a collection of key/value maps.
-     * @param key The key to search at
-     * @param def The default value to use
-     * @return The stored value or the default one if it could not be parsed
-     * @deprecated use {@link IPreferences#getListOfMaps(java.lang.String, java.util.List)}
-     */
-    @Deprecated
-    public Collection<Map<String, String>> getListOfStructs(String key, Collection<Map<String, String>> def) {
-        return getSetting(key, new MapListSetting(def == null ? null : new ArrayList<>(def)), MapListSetting.class).getValue();
-    }
-
-    /**
-     * Stores a list of structs
-     * @param key The key to store the list in
-     * @param value A list of key/value maps
-     * @return <code>true</code> if the value was changed
-     * @see #getListOfMaps(java.lang.String, java.util.List)
-     * @deprecated use {@link IPreferences#putListOfMaps(java.lang.String, java.util.List)}
-     */
-    @Deprecated
-    public boolean putListOfStructs(String key, Collection<Map<String, String>> value) {
-        return putSetting(key, value == null ? null : new MapListSetting(new ArrayList<>(value)));
-    }
-
-    /**
-     * Annotation used for converting objects to String Maps and vice versa.
-     * Indicates that a certain field should be considered in the conversion process. Otherwise it is ignored.
-     *
-     * @see #serializeStruct(java.lang.Object, java.lang.Class)
-     * @see #deserializeStruct(java.util.Map, java.lang.Class)
-     * @deprecated use {@link StructUtils.StructEntry}
-     */
-    @Deprecated
-    @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
-    public @interface pref { }
-
-    /**
-     * Annotation used for converting objects to String Maps.
-     * Indicates that a certain field should be written to the map, even if the value is the same as the default value.
-     *
-     * @see #serializeStruct(java.lang.Object, java.lang.Class)
-     * @deprecated use {@link StructUtils.WriteExplicitly}
-     */
-    @Deprecated
-    @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
-    public @interface writeExplicitly { }
-
-    /**
-     * Get a list of hashes which are represented by a struct-like class.
-     * Possible properties are given by fields of the class klass that have the @pref annotation.
-     * Default constructor is used to initialize the struct objects, properties then override some of these default values.
-     * @param <T> klass type
-     * @param key main preference key
-     * @param klass The struct class
-     * @return a list of objects of type T or an empty list if nothing was found
-     * @deprecated use {@link StructUtils#getListOfStructs(IPreferences, String, Class)}
-     */
-    @Deprecated
-    public <T> List<T> getListOfStructs(String key, Class<T> klass) {
-        return StructUtils.getListOfStructs(this, key, klass);
-    }
-
-    /**
-     * same as above, but returns def if nothing was found
-     * @param <T> klass type
-     * @param key main preference key
-     * @param def default value
-     * @param klass The struct class
-     * @return a list of objects of type T or {@code def} if nothing was found
-     * @deprecated use {@link StructUtils#getListOfStructs(IPreferences, String, Collection, Class)}
-     */
-    @Deprecated
-    public <T> List<T> getListOfStructs(String key, Collection<T> def, Class<T> klass) {
-        return StructUtils.getListOfStructs(this, key, def, klass);
-    }
-
-    /**
-     * Convenience method that saves a MapListSetting which is provided as a collection of objects.
-     *
-     * Each object is converted to a <code>Map&lt;String, String&gt;</code> using the fields with {@link pref} annotation.
-     * The field name is the key and the value will be converted to a string.
-     *
-     * Considers only fields that have the @pref annotation.
-     * In addition it does not write fields with null values. (Thus they are cleared)
-     * Default values are given by the field values after default constructor has been called.
-     * Fields equal to the default value are not written unless the field has the @writeExplicitly annotation.
-     * @param <T> the class,
-     * @param key main preference key
-     * @param val the list that is supposed to be saved
-     * @param klass The struct class
-     * @return true if something has changed
-     * @deprecated use {@link StructUtils#putListOfStructs(IPreferences, String, Collection, Class)}
-     */
-    @Deprecated
-    public <T> boolean putListOfStructs(String key, Collection<T> val, Class<T> klass) {
-        return StructUtils.putListOfStructs(this, key, val, klass);
-    }
-
-    /**
-     * Convert an object to a String Map, by using field names and values as map key and value.
-     *
-     * The field value is converted to a String.
-     *
-     * Only fields with annotation {@link pref} are taken into account.
-     *
-     * Fields will not be written to the map if the value is null or unchanged
-     * (compared to an object created with the no-arg-constructor).
-     * The {@link writeExplicitly} annotation overrides this behavior, i.e. the default value will also be written.
-     *
-     * @param <T> the class of the object <code>struct</code>
-     * @param struct the object to be converted
-     * @param klass the class T
-     * @return the resulting map (same data content as <code>struct</code>)
-     * @deprecated use {@link StructUtils#serializeStruct(java.lang.Object, java.lang.Class)}
-     */
-    @Deprecated
-    public static <T> Map<String, String> serializeStruct(T struct, Class<T> klass) {
-        return StructUtils.serializeStruct(struct, klass);
-    }
-
-    /**
-     * Converts a String-Map to an object of a certain class, by comparing map keys to field names of the class and assigning
-     * map values to the corresponding fields.
-     *
-     * The map value (a String) is converted to the field type. Supported types are: boolean, Boolean, int, Integer, double,
-     * Double, String, Map&lt;String, String&gt; and Map&lt;String, List&lt;String&gt;&gt;.
-     *
-     * Only fields with annotation {@link pref} are taken into account.
-     * @param <T> the class
-     * @param hash the string map with initial values
-     * @param klass the class T
-     * @return an object of class T, initialized as described above
-     * @deprecated use {@link StructUtils#deserializeStruct(java.util.Map, java.lang.Class)}
-     */
-    @Deprecated
-    public static <T> T deserializeStruct(Map<String, String> hash, Class<T> klass) {
-        return StructUtils.deserializeStruct(hash, klass);
     }
 
     @Override

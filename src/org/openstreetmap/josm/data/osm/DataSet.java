@@ -54,7 +54,6 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
@@ -207,7 +206,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         // Transparently register as projection change listener. No need to explicitly remove
         // the listener, projection change listeners are managed as WeakReferences.
         Main.addProjectionChangeListener(this);
-        addSelectionListener((DataSelectionListener) e -> fireDeprecatedSelectionChange(e.getSelection()));
+        addSelectionListener((DataSelectionListener) e -> fireSelectionChange(e.getSelection()));
     }
 
     /**
@@ -334,16 +333,6 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     /**
-     * Returns the autocompletion manager, which maintains a list of used tags for autocompletion.
-     * @return the autocompletion manager
-     * @deprecated to be removed end of 2017. Use {@link AutoCompletionManager#of(DataSet)} instead.
-     */
-    @Deprecated
-    public AutoCompletionManager getAutoCompletionManager() {
-        return AutoCompletionManager.of(this);
-    }
-
-    /**
      * The API version that created this data set, if any.
      */
     private String version;
@@ -364,31 +353,6 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      */
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    /**
-     * Determines if upload is being discouraged.
-     * (i.e. this dataset contains private data which should not be uploaded)
-     * @return {@code true} if upload is being discouraged, {@code false} otherwise
-     * @see #setUploadDiscouraged
-     * @deprecated use {@link #getUploadPolicy()}
-     */
-    @Deprecated
-    public boolean isUploadDiscouraged() {
-        return uploadPolicy == UploadPolicy.DISCOURAGED || uploadPolicy == UploadPolicy.BLOCKED;
-    }
-
-    /**
-     * Sets the "upload discouraged" flag.
-     * @param uploadDiscouraged {@code true} if this dataset contains private data which should not be uploaded
-     * @see #isUploadDiscouraged
-     * @deprecated use {@link #setUploadPolicy(UploadPolicy)}
-     */
-    @Deprecated
-    public void setUploadDiscouraged(boolean uploadDiscouraged) {
-        if (uploadPolicy != UploadPolicy.BLOCKED) {
-            this.uploadPolicy = uploadDiscouraged ? UploadPolicy.DISCOURAGED : UploadPolicy.NORMAL;
-        }
     }
 
     /**
@@ -675,17 +639,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         selListeners.remove(listener);
     }
 
-    /**
-     * Notifies all registered {@link SelectionChangedListener} about the current selection in
-     * this dataset.
-     * @deprecated You should never need to do this from the outside.
-     */
-    @Deprecated
-    public void fireSelectionChanged() {
-        fireDeprecatedSelectionChange(getAllSelected());
-    }
-
-    private static void fireDeprecatedSelectionChange(Collection<? extends OsmPrimitive> currentSelection) {
+    private static void fireSelectionChange(Collection<? extends OsmPrimitive> currentSelection) {
         for (SelectionChangedListener l : selListeners) {
             l.selectionChanged(currentSelection);
         }
@@ -826,19 +780,6 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
 
         highlightedWaySegments = waySegments;
         fireHighlightingChanged();
-    }
-
-    /**
-     * Sets the current selection to the primitives in <code>selection</code>.
-     * Notifies all {@link SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
-     *
-     * @param selection the selection
-     * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
-     * @deprecated Use {@link #setSelected(Collection)} instead. To be removed end of 2017. Does not seem to be used by plugins.
-     */
-    @Deprecated
-    public void setSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
-        setSelected(selection);
     }
 
     /**

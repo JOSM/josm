@@ -163,12 +163,6 @@ public class JOSMFixture {
         initToolbar();
         if (Main.main == null) {
             new MainApplication().initialize();
-        } else {
-            if (Main.main.panel == null) {
-                initMainPanel(false);
-                Main.main.panel = MainApplication.getMainPanel();
-            }
-            Main.main.panel.reAddListeners();
         }
         // Add a test layer to the layer manager to get the MapFrame
         MainApplication.getLayerManager().addLayer(new TestLayer());

@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.tagging.ac;
 
-import org.openstreetmap.josm.tools.CheckParameterUtil;
-
 /**
  * Represents an entry in the set of auto completion values.
  *
@@ -72,18 +70,6 @@ public class AutoCompletionItem implements Comparable<AutoCompletionItem> {
      */
     public String getValue() {
         return value;
-    }
-
-    /**
-     * sets the value
-     * @param value the value; must not be null
-     * @throws IllegalArgumentException if value if null
-     * @deprecated value is now final, set it when constructing the object
-     */
-    @Deprecated
-    public void setValue(String value) {
-        CheckParameterUtil.ensureParameterNotNull(value, "value");
-        throw new UnsupportedOperationException("setValue() is no longer supported");
     }
 
     @Override

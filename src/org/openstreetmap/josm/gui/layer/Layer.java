@@ -501,18 +501,6 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     }
 
     /**
-     * Check changed status of layer
-     *
-     * @return True if layer was changed since last paint
-     * @deprecated This is not supported by multiple map views.
-     * Fire an {@link #invalidate()} to trigger a repaint.
-     */
-    @Deprecated
-    public boolean isChanged() {
-        return false;
-    }
-
-    /**
      * allows to check whether a projection is supported or not
      * @param proj projection
      *

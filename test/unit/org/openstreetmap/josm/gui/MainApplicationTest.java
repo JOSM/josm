@@ -80,7 +80,6 @@ public class MainApplicationTest {
      * Make sure {@code MainApplication.mainPanel} is initialized.
      * @param reAddListeners {@code true} to re-add listeners
      */
-    @SuppressWarnings("deprecation")
     public static void initMainPanel(boolean reAddListeners) {
         if (MainApplication.mainPanel == null) {
             MainApplication.mainPanel = new MainPanel(MainApplication.getLayerManager());
@@ -88,30 +87,21 @@ public class MainApplicationTest {
         if (reAddListeners) {
             MainApplication.mainPanel.reAddListeners();
         }
-        if (Main.main != null) {
-            Main.main.panel = MainApplication.mainPanel;
-        }
     }
 
     /**
      * Make sure {@code MainApplication.menu} is initialized.
      */
-    @SuppressWarnings("deprecation")
     public static void initMainMenu() {
         MainApplication.menu = new MainMenu();
-        Main.main.menu = MainApplication.menu;
     }
 
     /**
      * Make sure {@link MainApplication#toolbar} is initialized.
      */
-    @SuppressWarnings("deprecation")
     public static void initToolbar() {
         if (MainApplication.toolbar == null) {
             MainApplication.toolbar = new ToolbarPreferences();
-        }
-        if (Main.toolbar == null) {
-            Main.toolbar = MainApplication.getToolbar();
         }
     }
 

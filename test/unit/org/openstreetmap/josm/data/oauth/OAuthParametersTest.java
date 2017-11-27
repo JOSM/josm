@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -44,16 +43,6 @@ public class OAuthParametersTest {
         assertEquals(def, OAuthParameters.createDefault("wrong_url"));
         OAuthParameters dev2 = new OAuthParameters(dev);
         assertEquals(dev, dev2);
-    }
-
-    /**
-     * Unit test of method {@link OAuthParameters#createFromPreferences}.
-     * @deprecated to remove end of 2017
-     */
-    @Test
-    @Deprecated
-    public void testCreateFromPreferences() {
-        assertNotNull(OAuthParameters.createFromPreferences(Main.pref));
     }
 
     /**

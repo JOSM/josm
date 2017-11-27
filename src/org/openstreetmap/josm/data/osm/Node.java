@@ -92,13 +92,9 @@ public final class Node extends OsmPrimitive implements INode {
      * <p>
      * Uses the {@link Main#getProjection() global projection} to project the lat/lon-coordinates.
      * <p>
-     * Method {@link org.openstreetmap.josm.data.coor.ILatLon#getEastNorth()} of
-     * implemented interface <code>ILatLon</code> is deprecated, but this method is not.
      * @return the east north coordinates or {@code null} if {@link #isLatLonKnown()}
      * is false.
      */
-    @SuppressWarnings("deprecation")
-    @Override
     public EastNorth getEastNorth() {
         return getEastNorth(Main.getProjection());
     }
@@ -220,15 +216,6 @@ public final class Node extends OsmPrimitive implements INode {
         super.setDataset(dataSet);
         if (!isIncomplete() && isVisible() && !isLatLonKnown())
             throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString());
-    }
-
-    /**
-     * @deprecated no longer supported
-     */
-    @Override
-    @Deprecated
-    public void accept(org.openstreetmap.josm.data.osm.visitor.Visitor visitor) {
-        visitor.visit(this);
     }
 
     @Override

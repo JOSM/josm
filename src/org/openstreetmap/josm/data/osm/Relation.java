@@ -175,15 +175,6 @@ public final class Relation extends OsmPrimitive implements IRelation {
         return members[idx].getType();
     }
 
-    /**
-     * @deprecated no longer supported
-     */
-    @Override
-    @Deprecated
-    public void accept(org.openstreetmap.josm.data.osm.visitor.Visitor visitor) {
-        visitor.visit(this);
-    }
-
     @Override
     public void accept(OsmPrimitiveVisitor visitor) {
         visitor.visit(this);

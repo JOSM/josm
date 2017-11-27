@@ -53,14 +53,6 @@ public interface Projection extends Projecting {
     String toCode();
 
     /**
-     * Get a filename compatible string (for the cache directory).
-     * @return the cache directory name (base name)
-     * @deprecated unused - remove in 2017-07
-     */
-    @Deprecated
-    String getCacheDirectoryName();
-
-    /**
      * Get the bounds of the world.
      * @return the supported lat/lon rectangle for this projection
      */

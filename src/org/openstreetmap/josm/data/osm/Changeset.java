@@ -104,16 +104,6 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     }
 
     /**
-     * Visitor pattern.
-     * @param v visitor
-     * @deprecated no longer supported
-     */
-    @Deprecated
-    public void visit(org.openstreetmap.josm.data.osm.visitor.Visitor v) {
-        v.visit(this);
-    }
-
-    /**
      * Compares this changeset to another, based on their identifier.
      * @param other other changeset
      * @return the value {@code 0} if {@code getId() == other.getId()};

@@ -1023,17 +1023,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
-     * <p>Visits {@code org.openstreetmap.josm.data.osm.visitor.Visitor} for all referrers.</p>
-     *
-     * @param visitor the visitor. Ignored, if null.
-     * @deprecated use {@link #visitReferrers(OsmPrimitiveVisitor)}
-     */
-    @Deprecated
-    public void visitReferrers(org.openstreetmap.josm.data.osm.visitor.Visitor visitor) {
-        visitReferrers((OsmPrimitiveVisitor) visitor);
-    }
-
-    /**
      * <p>Visits {@code visitor} for all referrers.</p>
      *
      * @param visitor the visitor. Ignored, if null.
@@ -1084,15 +1073,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /*-----------------
      * OTHER METHODS
      *----------------*/
-
-    /**
-     * Implementation of the visitor scheme. Subclasses have to call the correct
-     * visitor function.
-     * @param visitor The visitor from which the visit() function must be called.
-     * @deprecated will be removed along with {@link org.openstreetmap.josm.data.osm.visitor.Visitor}
-     */
-    @Deprecated
-    public abstract void accept(org.openstreetmap.josm.data.osm.visitor.Visitor visitor);
 
     /**
      * Implementation of the visitor scheme. Subclasses have to call the correct

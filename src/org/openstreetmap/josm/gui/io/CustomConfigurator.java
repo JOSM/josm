@@ -44,12 +44,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -68,59 +68,6 @@ public final class CustomConfigurator {
 
     private CustomConfigurator() {
         // Hide default constructor for utils classes
-    }
-
-    /**
-     * Log a formatted message.
-     * @param fmt format
-     * @param vars arguments
-     * @see String#format
-     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#log(String, Object...)} instead
-     */
-    @Deprecated
-    public static void log(String fmt, Object... vars) {
-        PreferencesUtils.log(fmt, vars);
-    }
-
-    /**
-     * Log a message.
-     * @param s message to log
-     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#log(String)} instead
-     */
-    @Deprecated
-    public static void log(String s) {
-        PreferencesUtils.log(s);
-    }
-
-    /**
-     * Log an exception.
-     * @param e exception to log
-     * @param s message prefix
-     * @since 10469
-     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#log(Exception, String)} instead
-     */
-    @Deprecated
-    public static void log(Exception e, String s) {
-        PreferencesUtils.log(e, s);
-    }
-
-    /**
-     * Returns the log.
-     * @return the log
-     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#getLog()} instead
-     */
-    @Deprecated
-    public static String getLog() {
-        return PreferencesUtils.getLog();
-    }
-
-    /**
-     * Resets the log.
-     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#resetLog()} instead
-     */
-    @Deprecated
-    public static void resetLog() {
-        PreferencesUtils.resetLog();
     }
 
     /**

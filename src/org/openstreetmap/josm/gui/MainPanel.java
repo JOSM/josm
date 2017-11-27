@@ -7,7 +7,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
@@ -65,7 +64,6 @@ public class MainPanel extends JPanel {
             map = createNewMapFrame();
         } else {
             map = null;
-            Main.map = map;
             MainApplication.map = map;
             add(getGettingStarted(), BorderLayout.CENTER);
         }
@@ -89,7 +87,6 @@ public class MainPanel extends JPanel {
     private MapFrame createNewMapFrame() {
         MapFrame mapFrame = new MapFrame(null);
         // Required by many components.
-        Main.map = mapFrame;
         MainApplication.map = mapFrame;
 
         mapFrame.fillPanel(this);

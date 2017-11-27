@@ -19,6 +19,7 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -28,7 +29,7 @@ import org.openstreetmap.josm.tools.Logging;
  * AutoCompletingTextField is a text field with autocompletion behaviour. It
  * can be used as table cell editor in {@link JTable}s.
  *
- * Autocompletion is controlled by a list of {@link AutoCompletionListItem}s
+ * Autocompletion is controlled by a list of {@link AutoCompletionItem}s
  * managed in a {@link AutoCompletionList}.
  *
  * @since 1762

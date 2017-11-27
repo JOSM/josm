@@ -17,10 +17,6 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.ILatLon;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
@@ -177,45 +173,6 @@ public final class Projections {
                 Logging.trace(e);
             }
         }
-    }
-
-    /**
-     * Convert from lat/lon to easting/northing using the current projection.
-     *
-     * @param ll the geographical point to convert (in WGS84 lat/lon)
-     * @return the corresponding east/north coordinates
-     * @since 12725
-     * @deprecated use <code>Main.getProjection().latlon2eastNorth(ll)</code>
-     */
-    @Deprecated
-    public static EastNorth project(ILatLon ll) {
-        if (ll == null) return null;
-        return Main.getProjection().latlon2eastNorth(ll);
-    }
-
-    /**
-     * Convert from lat/lon to easting/northing using the current projection.
-     *
-     * @param ll the geographical point to convert (in WGS84 lat/lon)
-     * @return the corresponding east/north coordinates
-     * @deprecated use <code>Main.getProjection().latlon2eastNorth(ll)</code>
-     */
-    @Deprecated
-    public static EastNorth project(LatLon ll) {
-        return project((ILatLon) ll);
-    }
-
-    /**
-     * Convert from easting/norting to lat/lon using the current projection.
-     *
-     * @param en the geographical point to convert (in projected coordinates)
-     * @return the corresponding lat/lon (WGS84)
-     * @deprecated use <code>Main.getProjection().eastNorth2latlon(en)</code>
-     */
-    @Deprecated
-    public static LatLon inverseProject(EastNorth en) {
-        if (en == null) return null;
-        return Main.getProjection().eastNorth2latlon(en);
     }
 
     /**

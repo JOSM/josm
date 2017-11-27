@@ -471,25 +471,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extentThreshold if not null, determines if the partial filled should
      * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text Ignored. Use {@link #drawText} instead.
-     * @deprecated use {@link #drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled)}
-     */
-    @Deprecated
-    public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
-        drawArea(r, color, fillImage, extent, extentThreshold, disabled);
-    }
-
-    /**
-     * Draws a multipolygon area.
-     * @param r The multipolygon relation
-     * @param color The color to fill the area with.
-     * @param fillImage The image to fill the area with. Overrides color.
-     * @param extent if not null, area will be filled partially; specifies, how
-     * far to fill from the boundary towards the center of the area;
-     * if null, area will be filled completely
-     * @param extentThreshold if not null, determines if the partial filled should
-     * be replaced by plain fill, when it covers a certain fraction of the total area
-     * @param disabled If this should be drawn with a special disabled style.
      * @since 12285
      */
     public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled) {
@@ -515,25 +496,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         fillImage, extent, pfClip, disabled);
             }
         }
-    }
-
-    /**
-     * Draws an area defined by a way. They way does not need to be closed, but it should.
-     * @param w The way.
-     * @param color The color to fill the area with.
-     * @param fillImage The image to fill the area with. Overrides color.
-     * @param extent if not null, area will be filled partially; specifies, how
-     * far to fill from the boundary towards the center of the area;
-     * if null, area will be filled completely
-     * @param extentThreshold if not null, determines if the partial filled should
-     * be replaced by plain fill, when it covers a certain fraction of the total area
-     * @param disabled If this should be drawn with a special disabled style.
-     * @param text Ignored. Use {@link #drawText} instead.
-     * @deprecated use {@link #drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled)}
-     */
-    @Deprecated
-    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
-        drawArea(w, color, fillImage, extent, extentThreshold, disabled);
     }
 
     /**

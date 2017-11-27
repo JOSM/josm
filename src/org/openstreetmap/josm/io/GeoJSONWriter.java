@@ -30,7 +30,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
@@ -45,17 +44,6 @@ public class GeoJSONWriter {
     private final DataSet data;
     private final Projection projection;
     private static final boolean SKIP_EMPTY_NODES = true;
-
-    /**
-     * Constructs a new {@code GeoJSONWriter}.
-     * @param layer The OSM data layer to save
-     * @since 10852
-     * @deprecated To be removed end of 2017. Use {@link #GeoJSONWriter(DataSet)} instead
-     */
-    @Deprecated
-    public GeoJSONWriter(OsmDataLayer layer) {
-        this(layer.data);
-    }
 
     /**
      * Constructs a new {@code GeoJSONWriter}.

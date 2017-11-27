@@ -19,9 +19,6 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -128,39 +125,8 @@ public abstract class Command implements PseudoCommand {
     /** the map of OsmPrimitives in the original state to OsmPrimitives in cloned state */
     private Map<OsmPrimitive, PrimitiveData> cloneMap = new HashMap<>();
 
-    /**
-     * the layer which this command is applied to
-     * @deprecated to be removed end of 2017. Use {@link #data} instead
-     */
-    @Deprecated
-    private final OsmDataLayer layer;
-
     /** the dataset which this command is applied to */
     private final DataSet data;
-
-    /**
-     * Creates a new command in the context of the current edit layer, if any
-     * @deprecated to be removed end of 2017. Use {@link #Command(DataSet)} instead
-     */
-    @Deprecated
-    public Command() {
-        this.layer = MainApplication.getLayerManager().getEditLayer();
-        this.data = layer != null ? layer.data : Main.main.getEditDataSet();
-    }
-
-    /**
-     * Creates a new command in the context of a specific data layer
-     *
-     * @param layer the data layer. Must not be null.
-     * @throws IllegalArgumentException if layer is null
-     * @deprecated to be removed end of 2017. Use {@link #Command(DataSet)} instead
-     */
-    @Deprecated
-    public Command(OsmDataLayer layer) {
-        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-        this.layer = layer;
-        this.data = layer.data;
-    }
 
     /**
      * Creates a new command in the context of a specific data set, without data layer
@@ -171,7 +137,6 @@ public abstract class Command implements PseudoCommand {
      */
     public Command(DataSet data) {
         CheckParameterUtil.ensureParameterNotNull(data, "data");
-        this.layer = null;
         this.data = data;
     }
 
@@ -181,7 +146,6 @@ public abstract class Command implements PseudoCommand {
      * <p>
      * The layer should be invalidated after execution so that it can be re-painted.
      * @return true
-     * @see #invalidateAffectedLayers()
      */
     public boolean executeCommand() {
         CloneVisitor visitor = new CloneVisitor();
@@ -211,20 +175,6 @@ public abstract class Command implements PseudoCommand {
     }
 
     /**
-     * Called when a layer has been removed to have the command remove itself from
-     * any buffer if it is not longer applicable to the dataset (e.g. it was part of
-     * the removed layer)
-     *
-     * @param oldLayer the old layer that was removed
-     * @return true if this command is invalid after that layer is removed.
-     * @deprecated to be removed end of 2017.
-     */
-    @Deprecated
-    public boolean invalidBecauselayerRemoved(Layer oldLayer) {
-        return layer == oldLayer;
-    }
-
-    /**
      * Lets other commands access the original version
      * of the object. Usually for undoing.
      * @param osm The requested OSM object
@@ -232,16 +182,6 @@ public abstract class Command implements PseudoCommand {
      */
     public PrimitiveData getOrig(OsmPrimitive osm) {
         return cloneMap.get(osm);
-    }
-
-    /**
-     * Replies the layer this command is (or was) applied to.
-     * @return the layer this command is (or was) applied to
-     * @deprecated to be removed end of 2017. Use {@link #getAffectedDataSet} instead
-     */
-    @Deprecated
-    protected OsmDataLayer getLayer() {
-        return layer;
     }
 
     /**
@@ -312,7 +252,7 @@ public abstract class Command implements PseudoCommand {
 
     @Override
     public int hashCode() {
-        return Objects.hash(cloneMap, layer, data);
+        return Objects.hash(cloneMap, data);
     }
 
     @Override
@@ -321,20 +261,6 @@ public abstract class Command implements PseudoCommand {
         if (obj == null || getClass() != obj.getClass()) return false;
         Command command = (Command) obj;
         return Objects.equals(cloneMap, command.cloneMap) &&
-               Objects.equals(layer, command.layer) &&
                Objects.equals(data, command.data);
-    }
-
-    /**
-     * Invalidate all layers that were affected by this command.
-     * @see Layer#invalidate()
-     * @deprecated to be removed end of 2017.
-     */
-    @Deprecated
-    public void invalidateAffectedLayers() {
-        OsmDataLayer layer = getLayer();
-        if (layer != null) {
-            layer.invalidate();
-        }
     }
 }
