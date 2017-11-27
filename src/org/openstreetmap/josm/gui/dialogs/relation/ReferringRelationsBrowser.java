@@ -44,7 +44,7 @@ public class ReferringRelationsBrowser extends JPanel {
     /**
      * Constructs a new {@code ReferringRelationsBrowser}.
      * @param layer OSM data layer
-     * @param model referrinf relations browser model
+     * @param model referring relations browser model
      */
     public ReferringRelationsBrowser(OsmDataLayer layer, ReferringRelationsBrowserModel model) {
         this.model = model;
@@ -61,7 +61,16 @@ public class ReferringRelationsBrowser extends JPanel {
         referrers.setCellRenderer(new OsmPrimitivRenderer());
         add(new JScrollPane(referrers), BorderLayout.CENTER);
         referrers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        referrers.addMouseListener(new DblClickMouseAdapter());
+        referrers.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2
+                    && !e.isAltDown() && !e.isAltGraphDown() && !e.isControlDown() && !e.isMetaDown() && !e.isShiftDown()
+                    && referrers.getCellBounds(referrers.getSelectedIndex(), referrers.getSelectedIndex()).contains(e.getPoint())) {
+                    editAction.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, null));
+                }
+            }
+        });
 
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -168,15 +177,6 @@ public class ReferringRelationsBrowser extends JPanel {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabled();
-        }
-    }
-
-    class DblClickMouseAdapter extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2) {
-                editAction.run();
-            }
         }
     }
 }
