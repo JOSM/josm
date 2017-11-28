@@ -196,7 +196,6 @@ public final class StructUtils {
      * @param klass the class T
      * @return an object of class T, initialized as described above
      */
-    @SuppressWarnings("deprecation")
     public static <T> T deserializeStruct(Map<String, String> hash, Class<T> klass) {
         T struct = null;
         try {

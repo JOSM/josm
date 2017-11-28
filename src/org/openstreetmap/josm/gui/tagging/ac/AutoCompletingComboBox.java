@@ -244,7 +244,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
      * @param item      excepts AutoCompletionListItem, String and null
      */
     @Override
-    @SuppressWarnings("deprecation")
     public void configureEditor(ComboBoxEditor cbEditor, Object item) {
         if (item == null) {
             cbEditor.setItem(null);
@@ -261,7 +260,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
      * @param item      excepts AutoCompletionItem, String and null
      */
     @Override
-    @SuppressWarnings("deprecation")
     public void setSelectedItem(Object item) {
         if (item == null) {
             super.setSelectedItem(null);

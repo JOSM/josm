@@ -180,7 +180,6 @@ import org.xml.sax.SAXException;
  *
  * @author imi
  */
-@SuppressWarnings("deprecation")
 public class MainApplication extends Main {
 
     /**
@@ -471,7 +470,6 @@ public class MainApplication extends Main {
      * Called once at startup to initialize the main window content.
      * Should set {@link #menu} and {@link #mainPanel}
      */
-    @SuppressWarnings("deprecation")
     protected void initializeMainWindow() {
         if (mainFrame != null) {
             mainPanel = mainFrame.getPanel();
@@ -571,7 +569,6 @@ public class MainApplication extends Main {
      * @return The layer manager. The value returned will never change.
      * @since 12636 (as a replacement to {@code Main.getLayerManager()})
      */
-    @SuppressWarnings("deprecation")
     public static MainLayerManager getLayerManager() {
         return layerManager;
     }
@@ -624,7 +621,6 @@ public class MainApplication extends Main {
      * @return <code>true</code> if JOSM currently displays a map view
      * @since 12630 (as a replacement to {@code Main.isDisplayingMapView()})
      */
-    @SuppressWarnings("deprecation")
     public static boolean isDisplayingMapView() {
         return map != null && map.mapView != null;
     }
@@ -662,7 +658,6 @@ public class MainApplication extends Main {
      * @see #addMapFrameListener
      * @since 12639 (as a replacement to {@code Main.addAndFireMapFrameListener})
      */
-    @SuppressWarnings("deprecation")
     public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
         return mainPanel != null && mainPanel.addAndFireMapFrameListener(listener);
     }
@@ -674,7 +669,6 @@ public class MainApplication extends Main {
      * @see #addAndFireMapFrameListener
      * @since 12639 (as a replacement to {@code Main.addMapFrameListener})
      */
-    @SuppressWarnings("deprecation")
     public static boolean addMapFrameListener(MapFrameListener listener) {
         return mainPanel != null && mainPanel.addMapFrameListener(listener);
     }
@@ -685,7 +679,6 @@ public class MainApplication extends Main {
      * @return {@code true} if the listeners collection changed as a result of the call
      * @since 12639 (as a replacement to {@code Main.removeMapFrameListener})
      */
-    @SuppressWarnings("deprecation")
     public static boolean removeMapFrameListener(MapFrameListener listener) {
         return mainPanel != null && mainPanel.removeMapFrameListener(listener);
     }
@@ -695,7 +688,6 @@ public class MainApplication extends Main {
      * @param action action defining its own shortcut
      * @since 12639 (as a replacement to {@code Main.registerActionShortcut})
      */
-    @SuppressWarnings("deprecation")
     public static void registerActionShortcut(JosmAction action) {
         registerActionShortcut(action, action.getShortcut());
     }
@@ -706,7 +698,6 @@ public class MainApplication extends Main {
      * @param shortcut shortcut to associate to {@code action}
      * @since 12639 (as a replacement to {@code Main.registerActionShortcut})
      */
-    @SuppressWarnings("deprecation")
     public static void registerActionShortcut(Action action, Shortcut shortcut) {
         KeyStroke keyStroke = shortcut.getKeyStroke();
         if (keyStroke == null)
@@ -727,7 +718,6 @@ public class MainApplication extends Main {
      * @param shortcut shortcut to unregister
      * @since 12639 (as a replacement to {@code Main.unregisterShortcut})
      */
-    @SuppressWarnings("deprecation")
     public static void unregisterShortcut(Shortcut shortcut) {
         contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
     }
@@ -737,7 +727,6 @@ public class MainApplication extends Main {
      * @param action action to unregister
      * @since 12639 (as a replacement to {@code Main.unregisterActionShortcut})
      */
-    @SuppressWarnings("deprecation")
     public static void unregisterActionShortcut(JosmAction action) {
         unregisterActionShortcut(action, action.getShortcut());
     }
@@ -748,7 +737,6 @@ public class MainApplication extends Main {
      * @param shortcut shortcut to unregister
      * @since 12639 (as a replacement to {@code Main.unregisterActionShortcut})
      */
-    @SuppressWarnings("deprecation")
     public static void unregisterActionShortcut(Action action, Shortcut shortcut) {
         unregisterShortcut(shortcut);
         contentPanePrivate.getActionMap().remove(action);
@@ -760,7 +748,6 @@ public class MainApplication extends Main {
      * @return the registered action for the given shortcut
      * @since 12639 (as a replacement to {@code Main.getRegisteredActionShortcut})
      */
-    @SuppressWarnings("deprecation")
     public static Action getRegisteredActionShortcut(Shortcut shortcut) {
         KeyStroke keyStroke = shortcut.getKeyStroke();
         if (keyStroke == null)
@@ -844,7 +831,6 @@ public class MainApplication extends Main {
      * Main application Startup
      * @param argArray Command-line arguments
      */
-    @SuppressWarnings("deprecation")
     public static void main(final String[] argArray) {
         I18n.init();
         commandLineArgs = Arrays.asList(Arrays.copyOf(argArray, argArray.length));
