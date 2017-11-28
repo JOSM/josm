@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -31,28 +30,6 @@ public class AddCommand extends Command {
      * The primitive to add to the dataset.
      */
     private final OsmPrimitive osm;
-
-    /**
-     * Creates the command and specify the element to add in the context of the current edit layer, if any.
-     * @param osm The primitive to add
-     * @deprecated to be removed end of 2017. Use {@link #AddCommand(DataSet, OsmPrimitive)} instead
-     */
-    @Deprecated
-    public AddCommand(OsmPrimitive osm) {
-        this.osm = Objects.requireNonNull(osm, "osm");
-    }
-
-    /**
-     * Creates the command and specify the element to add in the context of the given data layer.
-     * @param layer The data layer. Must not be {@code null}
-     * @param osm The primitive to add
-     * @deprecated to be removed end of 2017. Use {@link #AddCommand(DataSet, OsmPrimitive)} instead
-     */
-    @Deprecated
-    public AddCommand(OsmDataLayer layer, OsmPrimitive osm) {
-        super(layer);
-        this.osm = Objects.requireNonNull(osm, "osm");
-    }
 
     /**
      * Creates the command and specify the element to add in the context of the given data set.

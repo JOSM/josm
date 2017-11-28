@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.oauth;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
@@ -137,18 +136,5 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
     public void initialize(String paramApiUrl) {
         CheckParameterUtil.ensureParameterNotNull(paramApiUrl, "paramApiUrl");
         pnlAdvancedProperties.initialize(paramApiUrl);
-    }
-
-    /**
-     * Initializes the authorisation UI with preference values in <code>pref</code>.
-     *
-     * @param pref the preferences. Must not be null.
-     * @throws IllegalArgumentException if pref is null
-     * @deprecated (since 12928) replaced by {@link #initialize(java.lang.String)}
-     */
-    @Deprecated
-    public void initFromPreferences(Preferences pref) {
-        CheckParameterUtil.ensureParameterNotNull(pref, "pref");
-        pnlAdvancedProperties.initFromPreferences(pref);
     }
 }

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.oauth;
 import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -95,26 +94,6 @@ public class OAuthParameters {
     }
 
     /**
-     * Replies a set of parameters as defined in the preferences.
-     *
-     * @param pref the preferences
-     * @return the parameters
-     * @deprecated (since 12928) replaced by {@link #createFromApiUrl(java.lang.String)}
-     */
-    @Deprecated
-    public static OAuthParameters createFromPreferences(Preferences pref) {
-        OAuthParameters parameters = createDefault(pref.get("osm-server.url"));
-        return new OAuthParameters(
-                pref.get("oauth.settings.consumer-key", parameters.getConsumerKey()),
-                pref.get("oauth.settings.consumer-secret", parameters.getConsumerSecret()),
-                pref.get("oauth.settings.request-token-url", parameters.getRequestTokenUrl()),
-                pref.get("oauth.settings.access-token-url", parameters.getAccessTokenUrl()),
-                pref.get("oauth.settings.authorise-url", parameters.getAuthoriseUrl()),
-                pref.get("oauth.settings.osm-login-url", parameters.getOsmLoginUrl()),
-                pref.get("oauth.settings.osm-logout-url", parameters.getOsmLogoutUrl()));
-    }
-
-    /**
      * Remembers the current values in the preferences.
      */
     public void rememberPreferences() {
@@ -125,25 +104,6 @@ public class OAuthParameters {
         Config.getPref().put("oauth.settings.authorise-url", getAuthoriseUrl());
         Config.getPref().put("oauth.settings.osm-login-url", getOsmLoginUrl());
         Config.getPref().put("oauth.settings.osm-logout-url", getOsmLogoutUrl());
-    }
-
-    /**
-     * Remembers the current values in the preferences <code>pref</code>.
-     *
-     * @param pref the preferences. Must not be null.
-     * @throws IllegalArgumentException if pref is null.
-     * @deprecated (since 12928) replaced by {@link #rememberPreferences()}
-     */
-    @Deprecated
-    public void rememberPreferences(Preferences pref) {
-        CheckParameterUtil.ensureParameterNotNull(pref, "pref");
-        pref.put("oauth.settings.consumer-key", getConsumerKey());
-        pref.put("oauth.settings.consumer-secret", getConsumerSecret());
-        pref.put("oauth.settings.request-token-url", getRequestTokenUrl());
-        pref.put("oauth.settings.access-token-url", getAccessTokenUrl());
-        pref.put("oauth.settings.authorise-url", getAuthoriseUrl());
-        pref.put("oauth.settings.osm-login-url", getOsmLoginUrl());
-        pref.put("oauth.settings.osm-logout-url", getOsmLogoutUrl());
     }
 
     private final String consumerKey;

@@ -58,9 +58,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -69,8 +67,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -720,45 +716,6 @@ public final class Utils {
                 return f.apply(l.get(index));
             }
         };
-    }
-
-    /**
-     * Returns a Bzip2 input stream wrapping given input stream.
-     * @param in The raw input stream
-     * @return a Bzip2 input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
-     * @throws IOException if the given input stream does not contain valid BZ2 header
-     * @since 7867
-     * @deprecated use {@link Compression#getBZip2InputStream(java.io.InputStream)}
-     */
-    @Deprecated
-    public static BZip2CompressorInputStream getBZip2InputStream(InputStream in) throws IOException {
-        return Compression.getBZip2InputStream(in);
-    }
-
-    /**
-     * Returns a Gzip input stream wrapping given input stream.
-     * @param in The raw input stream
-     * @return a Gzip input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
-     * @throws IOException if an I/O error has occurred
-     * @since 7119
-     * @deprecated use {@link Compression#getGZipInputStream(java.io.InputStream)}
-     */
-    @Deprecated
-    public static GZIPInputStream getGZipInputStream(InputStream in) throws IOException {
-        return Compression.getGZipInputStream(in);
-    }
-
-    /**
-     * Returns a Zip input stream wrapping given input stream.
-     * @param in The raw input stream
-     * @return a Zip input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
-     * @throws IOException if an I/O error has occurred
-     * @since 7119
-     * @deprecated use {@link Compression#getZipInputStream(java.io.InputStream)}
-     */
-    @Deprecated
-    public static ZipInputStream getZipInputStream(InputStream in) throws IOException {
-        return Compression.getZipInputStream(in);
     }
 
     /**

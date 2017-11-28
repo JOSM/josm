@@ -18,7 +18,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 
@@ -34,41 +33,6 @@ public class AddPrimitivesCommand extends Command {
 
     // only filled on undo
     private List<OsmPrimitive> createdPrimitives;
-
-    /**
-     * Constructs a new {@code AddPrimitivesCommand} to add data to the current edit layer.
-     * @param data The OSM primitives data to add. Must not be {@code null}
-     * @deprecated to be removed end of 2017. Use {@link #AddPrimitivesCommand(List, DataSet)} instead
-     */
-    @Deprecated
-    public AddPrimitivesCommand(List<PrimitiveData> data) {
-        this(data, data);
-    }
-
-    /**
-     * Constructs a new {@code AddPrimitivesCommand} to add data to the current edit layer.
-     * @param data The OSM primitives to add. Must not be {@code null}
-     * @param toSelect The OSM primitives to select at the end. Can be {@code null}
-     * @since 5953
-     * @deprecated to be removed end of 2017. Use {@link #AddPrimitivesCommand(List, List, DataSet)} instead
-     */
-    @Deprecated
-    public AddPrimitivesCommand(List<PrimitiveData> data, List<PrimitiveData> toSelect) {
-        init(data, toSelect);
-    }
-
-    /**
-     * Constructs a new {@code AddPrimitivesCommand} to add data to the given layer.
-     * @param data The OSM primitives data to add. Must not be {@code null}
-     * @param toSelect The OSM primitives to select at the end. Can be {@code null}
-     * @param layer The target data layer. Must not be {@code null}
-     * @deprecated to be removed end of 2017. Use {@link #AddPrimitivesCommand(List, List, DataSet)} instead
-     */
-    @Deprecated
-    public AddPrimitivesCommand(List<PrimitiveData> data, List<PrimitiveData> toSelect, OsmDataLayer layer) {
-        super(layer);
-        init(data, toSelect);
-    }
 
     /**
      * Constructs a new {@code AddPrimitivesCommand} to add data to the given data set.

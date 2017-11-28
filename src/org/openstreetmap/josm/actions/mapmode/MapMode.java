@@ -11,13 +11,13 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -61,35 +61,6 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
         new ImageProvider("mapmode", iconName).getResource().attachImageIcon(this);
         putValue(SHORT_DESCRIPTION, tooltip);
         this.cursor = cursor;
-    }
-
-    /**
-     * Constructor for mapmodes without a menu
-     * @param name the action's text
-     * @param iconName icon filename in {@code mapmode} directory
-     * @param tooltip  a longer description of the action that will be displayed in the tooltip.
-     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut.
-     * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
-     * @param cursor cursor displayed when map mode is active
-     * @deprecated use {@link #MapMode(String, String, String, Shortcut, Cursor)} instead
-     */
-    @Deprecated
-    public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
-        this(name, iconName, tooltip, shortcut, cursor);
-    }
-
-    /**
-     * Constructor for mapmodes with a menu (no shortcut will be registered)
-     * @param name the action's text
-     * @param iconName icon filename in {@code mapmode} directory
-     * @param tooltip  a longer description of the action that will be displayed in the tooltip.
-     * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
-     * @param cursor cursor displayed when map mode is active
-     * @deprecated use {@link #MapMode(String, String, String, Cursor)} instead
-     */
-    @Deprecated
-    public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
-        this(name, iconName, tooltip, cursor);
     }
 
     /**
@@ -175,18 +146,6 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     protected void updateKeyModifiers(ActionEvent e) {
         // ActionEvent does not have a getModifiersEx() method like other events :(
         updateKeyModifiersEx(mapOldModifiers(e.getModifiers()));
-    }
-
-    /**
-     * Update internal ctrl, alt, shift mask from given modifiers mask.
-     * @param modifiers event modifiers mask
-     * @deprecated use {@link #updateKeyModifiersEx} instead
-     */
-    @Deprecated
-    protected void updateKeyModifiers(int modifiers) {
-        ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
-        alt = (modifiers & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0;
-        shift = (modifiers & ActionEvent.SHIFT_MASK) != 0;
     }
 
     /**

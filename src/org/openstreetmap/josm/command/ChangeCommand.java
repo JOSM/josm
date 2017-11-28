@@ -14,7 +14,6 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -35,21 +34,6 @@ public class ChangeCommand extends Command {
      */
     public ChangeCommand(OsmPrimitive osm, OsmPrimitive newOsm) {
         this(osm.getDataSet(), osm, newOsm);
-    }
-
-    /**
-     * Constructs a new {@code ChangeCommand} in the context of a given data layer.
-     * @param layer The data layer
-     * @param osm The existing primitive to modify
-     * @param newOsm The new primitive
-     * @deprecated to be removed end of 2017. Use {@link #ChangeCommand(DataSet, OsmPrimitive, OsmPrimitive)} instead
-     */
-    @Deprecated
-    public ChangeCommand(OsmDataLayer layer, OsmPrimitive osm, OsmPrimitive newOsm) {
-        super(layer);
-        this.osm = osm;
-        this.newOsm = newOsm;
-        sanityChecks();
     }
 
     /**

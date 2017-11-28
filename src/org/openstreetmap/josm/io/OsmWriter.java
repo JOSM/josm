@@ -28,7 +28,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -127,16 +126,6 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         result.addAll(primitives);
         result.sort(byIdComparator);
         return result;
-    }
-
-    /**
-     * Writes the full OSM file for the given layer (header, data sources, osm data, footer).
-     * @param layer OSM data layer
-     * @deprecated To be removed end of 2017. Use {@link #write(DataSet)} instead
-     */
-    @Deprecated
-    public void writeLayer(OsmDataLayer layer) {
-        write(layer.data);
     }
 
     /**

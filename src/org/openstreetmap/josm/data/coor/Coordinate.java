@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data.coor;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.openstreetmap.josm.data.osm.BBox;
-
 /**
  * Base class of points of both coordinate systems.
  *
@@ -89,20 +87,6 @@ abstract class Coordinate implements Serializable {
         final double dx = this.x-px;
         final double dy = this.y-py;
         return dx*dx + dy*dy;
-    }
-
-    /**
-     * Creates bbox around this coordinate. Coordinate defines
-     * center of bbox, its edge will be 2*r.
-     *
-     * @param r size
-     * @return BBox around this coordinate
-     * @since 6203
-     * @deprecated use {@link BBox#BBox(double, double, double)} instead
-     */
-    @Deprecated
-    public BBox toBBox(final double r) {
-        return new BBox(x, y, r);
     }
 
     @Override

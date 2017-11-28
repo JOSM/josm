@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -26,18 +25,6 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class ConflictAddCommand extends Command {
     private final Conflict<? extends OsmPrimitive> conflict;
-
-    /**
-     * Constructs a new {@code ConflictAddCommand}.
-     * @param layer the data layer. Must not be null.
-     * @param conflict the conflict to add
-     * @deprecated to be removed end of 2017. Use {@link #ConflictAddCommand(DataSet, Conflict)} instead
-     */
-    @Deprecated
-    public ConflictAddCommand(OsmDataLayer layer, Conflict<? extends OsmPrimitive> conflict) {
-        super(layer);
-        this.conflict = conflict;
-    }
 
     /**
      * Constructs a new {@code ConflictAddCommand}.

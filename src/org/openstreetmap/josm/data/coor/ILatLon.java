@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projecting;
 
 /**
@@ -35,19 +34,6 @@ public interface ILatLon {
      */
     default boolean isLatLonKnown() {
         return !Double.isNaN(lat()) && !Double.isNaN(lon());
-    }
-
-    /**
-     * <p>Replies the projected east/north coordinates.</p>
-     *
-     * <p>Uses the {@link Main#getProjection() global projection} to project the lat/lon-coordinates.</p>
-     *
-     * @return the east north coordinates or {@code null} if #is
-     * @deprecated use {@link #getEastNorth(org.openstreetmap.josm.data.projection.Projecting)}
-     */
-    @Deprecated
-    default EastNorth getEastNorth() {
-        return getEastNorth(Main.getProjection());
     }
 
     /**

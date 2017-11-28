@@ -147,7 +147,6 @@ public final class StructUtils {
      * @param klass the class T
      * @return the resulting map (same data content as <code>struct</code>)
      */
-    @SuppressWarnings("deprecation")
     public static <T> Map<String, String> serializeStruct(T struct, Class<T> klass) {
         T structPrototype;
         try {
@@ -158,7 +157,7 @@ public final class StructUtils {
 
         Map<String, String> hash = new LinkedHashMap<>();
         for (Field f : klass.getDeclaredFields()) {
-            if (f.getAnnotation(Preferences.pref.class) == null && f.getAnnotation(StructEntry.class) == null) {
+            if (f.getAnnotation(StructEntry.class) == null) {
                 continue;
             }
             Utils.setObjectsAccessible(f);
@@ -166,7 +165,6 @@ public final class StructUtils {
                 Object fieldValue = f.get(struct);
                 Object defaultFieldValue = f.get(structPrototype);
                 if (fieldValue != null && (
-                        f.getAnnotation(Preferences.writeExplicitly.class) != null ||
                         f.getAnnotation(WriteExplicitly.class) != null ||
                         !Objects.equals(fieldValue, defaultFieldValue))) {
                     String key = f.getName().replace('_', '-');
@@ -215,7 +213,7 @@ public final class StructUtils {
                 Logging.trace(ex);
                 continue;
             }
-            if (f.getAnnotation(Preferences.pref.class) == null && f.getAnnotation(StructEntry.class) == null) {
+            if (f.getAnnotation(StructEntry.class) == null) {
                 continue;
             }
             Utils.setObjectsAccessible(f);

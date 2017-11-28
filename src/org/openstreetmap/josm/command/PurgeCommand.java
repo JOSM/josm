@@ -29,7 +29,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -43,23 +42,6 @@ public class PurgeCommand extends Command {
     protected Map<PrimitiveId, PrimitiveData> makeIncompleteDataByPrimId;
 
     protected final ConflictCollection purgedConflicts = new ConflictCollection();
-
-    /**
-     * Constructs a new {@code PurgeCommand} (handles conflicts).
-     * This command relies on a number of consistency conditions:
-     *  - makeIncomplete must be a subset of toPurge.
-     *  - Each primitive, that is in toPurge but not in makeIncomplete, must have all its referrers in toPurge.
-     *  - Each element of makeIncomplete must not be new and must have only referrers that are either a relation or included in toPurge.
-     * @param layer OSM data layer
-     * @param toPurge primitives to purge
-     * @param makeIncomplete primitives to make incomplete
-     * @deprecated to be removed end of 2017. Use {@link #PurgeCommand(DataSet, Collection, Collection)} instead
-     */
-    @Deprecated
-    public PurgeCommand(OsmDataLayer layer, Collection<OsmPrimitive> toPurge, Collection<OsmPrimitive> makeIncomplete) {
-        super(layer);
-        init(toPurge, makeIncomplete);
-    }
 
     /**
      * Constructs a new {@code PurgeCommand} (does not handle conflicts).
@@ -311,20 +293,6 @@ public class PurgeCommand extends Command {
                 Objects.equals(makeIncompleteData, that.makeIncompleteData) &&
                 Objects.equals(makeIncompleteDataByPrimId, that.makeIncompleteDataByPrimId) &&
                 Objects.equals(purgedConflicts, that.purgedConflicts);
-    }
-
-    /**
-     * Creates a new {@code PurgeCommand} to purge selected OSM primitives.
-     * @param layer optional osm data layer, can be null
-     * @param sel selected OSM primitives
-     * @param toPurgeAdditionally optional list that will be filled with primitives to be purged that have not been in the selection
-     * @return command to purge selected OSM primitives
-     * @since 12688
-     * @deprecated to be removed end of 2017. Use {@link #build(Collection, List)} instead
-     */
-    @Deprecated
-    public static PurgeCommand build(OsmDataLayer layer, Collection<OsmPrimitive> sel, List<OsmPrimitive> toPurgeAdditionally) {
-        return build(sel, toPurgeAdditionally);
     }
 
     /**

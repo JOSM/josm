@@ -22,8 +22,6 @@ import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
@@ -34,6 +32,7 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.preferences.CachedProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
@@ -332,16 +331,6 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
     @Override
     public double lat() {
         return coor == null ? Double.NaN : coor.lat();
-    }
-
-    /**
-     * Returns the marker's projected coordinates.
-     * @return The marker's projected coordinates (easting/northing)
-     * @deprecated use {@link #getEastNorth(org.openstreetmap.josm.data.projection.Projecting)}
-     */
-    @Deprecated
-    public final EastNorth getEastNorth() {
-        return coor.getEastNorth(Main.getProjection());
     }
 
     /**

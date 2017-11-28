@@ -244,7 +244,7 @@ public class AutoCompletionManager implements DataSetListener {
 
     /**
      * replies the auto completion values allowed for a specific key. Replies
-     * an empty list if key is null or if key is not in {@link #getKeys()}.
+     * an empty list if key is null or if key is not in {@link #getTagKeys()}.
      *
      * @param key OSM key
      * @return the list of auto completion values
@@ -342,38 +342,6 @@ public class AutoCompletionManager implements DataSetListener {
             list.add(getDataValues(key), AutoCompletionPriority.IS_IN_DATASET);
             list.addUserInput(getUserInputValues(key));
         }
-    }
-
-    /**
-     * Returns the currently cached tag keys.
-     * @return a list of tag keys
-     * @deprecated to be removed end of 2017. Use {@link #getTagKeys()} instead
-     */
-    @Deprecated
-    public List<AutoCompletionListItem> getKeys() {
-        return getTagKeys().stream().map(AutoCompletionListItem::new).collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the currently cached tag values for a given tag key.
-     * @param key the tag key
-     * @return a list of tag values
-     * @deprecated to be removed end of 2017. Use {@link #getTagValues(String)} instead
-     */
-    @Deprecated
-    public List<AutoCompletionListItem> getValues(String key) {
-        return getTagValues(key).stream().map(AutoCompletionListItem::new).collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the currently cached tag values for a given list of tag keys.
-     * @param keys the tag keys
-     * @return a list of tag values
-     * @deprecated to be removed end of 2017. Use {@link #getTagValues(List)} instead
-     */
-    @Deprecated
-    public List<AutoCompletionListItem> getValues(List<String> keys) {
-        return getTagValues(keys).stream().map(AutoCompletionListItem::new).collect(Collectors.toList());
     }
 
     private static List<AutoCompletionItem> setToList(AutoCompletionSet set, Comparator<AutoCompletionItem> comparator) {

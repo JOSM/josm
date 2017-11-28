@@ -284,21 +284,6 @@ public class MergeNodesAction extends JosmAction {
     /**
      * Merges the nodes in {@code nodes} at the specified node's location.
      *
-     * @param layer unused
-     * @param nodes the collection of nodes. Ignored if null.
-     * @param targetLocationNode this node's location will be used for the targetNode.
-     * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do
-     * @throws IllegalArgumentException if {@code layer} is null
-     * @deprecated use {@link #mergeNodes(Collection, Node)} instead
-     */
-    @Deprecated
-    public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetLocationNode) {
-        return mergeNodes(nodes, targetLocationNode);
-    }
-
-    /**
-     * Merges the nodes in {@code nodes} at the specified node's location.
-     *
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetLocationNode this node's location will be used for the targetNode.
      * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do

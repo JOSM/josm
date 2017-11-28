@@ -9,7 +9,6 @@ import java.awt.event.FocusListener;
 import java.awt.im.InputContext;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import javax.swing.ComboBoxEditor;
 import javax.swing.ComboBoxModel;
@@ -253,8 +252,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
             cbEditor.setItem(item);
         } else if (item instanceof AutoCompletionItem) {
             cbEditor.setItem(((AutoCompletionItem) item).getValue());
-        } else if (item instanceof AutoCompletionListItem) {
-            cbEditor.setItem(((AutoCompletionListItem) item).getItem().getValue());
         } else
             throw new IllegalArgumentException("Unsupported item: "+item);
     }
@@ -270,8 +267,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
             super.setSelectedItem(null);
         } else if (item instanceof AutoCompletionItem) {
             super.setSelectedItem(item);
-        } else if (item instanceof AutoCompletionListItem) {
-            super.setSelectedItem(((AutoCompletionListItem) item).getItem());
         } else if (item instanceof String) {
             String s = (String) item;
             // find the string in the model or create a new item
@@ -303,16 +298,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
         autocompleteEnabled = false;
         this.getEditor().setItem(oldValue); // Do not use setSelectedItem(oldValue); (fix #8013)
         autocompleteEnabled = true;
-    }
-
-    /**
-     * Sets the items of the combobox to the given {@code AutoCompletionListItem}s.
-     * @param elems AutoCompletionListItem items
-     * @deprecated to be removed end of 2017. Use {@link #setPossibleAcItems(Collection)} instead
-     */
-    @Deprecated
-    public void setPossibleACItems(Collection<AutoCompletionListItem> elems) {
-        setPossibleAcItems(elems.stream().map(AutoCompletionListItem::getItem).collect(Collectors.toList()));
     }
 
     /**

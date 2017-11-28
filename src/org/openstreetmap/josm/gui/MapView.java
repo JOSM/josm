@@ -34,7 +34,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -250,20 +249,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * This is a map of all Layers that have been added to this view.
      */
     private final HashMap<Layer, LayerPainter> registeredLayers = new HashMap<>();
-
-    /**
-     * Constructs a new {@code MapView}.
-     * @param layerManager The layers to display.
-     * @param contentPane Ignored. Main content pane is used.
-     * @param viewportData the initial viewport of the map. Can be null, then
-     * the viewport is derived from the layer data.
-     * @since 10279
-     * @deprecated use {@link #MapView(MainLayerManager, ViewportData)} instead
-     */
-    @Deprecated
-    public MapView(MainLayerManager layerManager, final JPanel contentPane, final ViewportData viewportData) {
-        this(layerManager, viewportData);
-    }
 
     /**
      * Constructs a new {@code MapView}.

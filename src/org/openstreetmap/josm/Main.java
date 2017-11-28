@@ -8,7 +8,6 @@ import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,9 +24,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.swing.Action;
-
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -40,12 +36,6 @@ import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MainMenu;
-import org.openstreetmap.josm.gui.MainPanel;
-import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.MapFrameListener;
-import org.openstreetmap.josm.gui.layer.MainLayerManager;
-import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
@@ -58,7 +48,6 @@ import org.openstreetmap.josm.tools.Platform;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
-import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -79,20 +68,6 @@ public abstract class Main {
      * @since 6897 (was public from 6453 to 6896)
      */
     private static final String OSM_WEBSITE = "https://www.openstreetmap.org";
-
-    /**
-     * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
-     * it only shows the MOTD panel.
-     * <p>
-     * You do not need this when accessing the layer manager. The layer manager will be empty if no map view is shown.
-     *
-     * @return <code>true</code> if JOSM currently displays a map view
-     * @deprecated use {@link org.openstreetmap.josm.gui.MainApplication#isDisplayingMapView()}
-     */
-    @Deprecated
-    public static boolean isDisplayingMapView() {
-        return MainApplication.isDisplayingMapView();
-    }
 
     /**
      * Global parent component for all dialogs and message boxes
@@ -118,42 +93,9 @@ public abstract class Main {
     public static final Preferences pref = new Preferences(JosmBaseDirectories.getInstance());
 
     /**
-     * The MapFrame.
-     * <p>
-     * There should be no need to access this to access any map data. Use {@link MainApplication#getLayerManager} instead.
-     *
-     * @deprecated Use {@link MainApplication#getMap()} instead
-     * @see MainPanel
-     */
-    @Deprecated
-    public static MapFrame map;
-
-    /**
-     * The toolbar preference control to register new actions.
-     * @deprecated Use {@link MainApplication#getToolbar} instead
-     */
-    @Deprecated
-    public static volatile ToolbarPreferences toolbar;
-
-    /**
      * The commands undo/redo handler.
      */
     public final UndoRedoHandler undoRedo = new UndoRedoHandler();
-
-    /**
-     * The main menu bar at top of screen.
-     * @deprecated Use {@link MainApplication#getMenu} instead
-     */
-    @Deprecated
-    public MainMenu menu;
-
-    /**
-     * The main panel.
-     * @deprecated Use {@link MainApplication#getMainPanel} instead
-     * @since 12125
-     */
-    @Deprecated
-    public MainPanel panel;
 
     /**
      * The file watcher service.
@@ -163,289 +105,6 @@ public abstract class Main {
     private static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
     private static final Set<OnlineResource> OFFLINE_RESOURCES = EnumSet.noneOf(OnlineResource.class);
-
-    /**
-     * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
-     * @since 6248
-     * @deprecated Use {@link Logging} class.
-     */
-    @Deprecated
-    public static int logLevel = 3;
-
-    /**
-     * Replies the first lines of last 5 error and warning messages, used for bug reports
-     * @return the first lines of last 5 error and warning messages
-     * @since 7420
-     * @deprecated Use {@link Logging#getLastErrorAndWarnings}.
-     */
-    @Deprecated
-    public static final Collection<String> getLastErrorAndWarnings() {
-        return Logging.getLastErrorAndWarnings();
-    }
-
-    /**
-     * Clears the list of last error and warning messages.
-     * @since 8959
-     * @deprecated Use {@link Logging#clearLastErrorAndWarnings}.
-     */
-    @Deprecated
-    public static void clearLastErrorAndWarnings() {
-        Logging.clearLastErrorAndWarnings();
-    }
-
-    /**
-     * Prints an error message if logging is on.
-     * @param msg The message to print.
-     * @since 6248
-     * @deprecated Use {@link Logging#error(String)}.
-     */
-    @Deprecated
-    public static void error(String msg) {
-        Logging.error(msg);
-    }
-
-    /**
-     * Prints a warning message if logging is on.
-     * @param msg The message to print.
-     * @deprecated Use {@link Logging#warn(String)}.
-     */
-    @Deprecated
-    public static void warn(String msg) {
-        Logging.warn(msg);
-    }
-
-    /**
-     * Prints an informational message if logging is on.
-     * @param msg The message to print.
-     * @deprecated Use {@link Logging#info(String)}.
-     */
-    @Deprecated
-    public static void info(String msg) {
-        Logging.info(msg);
-    }
-
-    /**
-     * Prints a debug message if logging is on.
-     * @param msg The message to print.
-     * @deprecated Use {@link Logging#debug(String)}.
-     */
-    @Deprecated
-    public static void debug(String msg) {
-        Logging.debug(msg);
-    }
-
-    /**
-     * Prints a trace message if logging is on.
-     * @param msg The message to print.
-     * @deprecated Use {@link Logging#trace(String)}.
-     */
-    @Deprecated
-    public static void trace(String msg) {
-        Logging.trace(msg);
-    }
-
-    /**
-     * Determines if debug log level is enabled.
-     * Useful to avoid costly construction of debug messages when not enabled.
-     * @return {@code true} if log level is at least debug, {@code false} otherwise
-     * @since 6852
-     * @deprecated Use {@link Logging#isDebugEnabled}.
-     */
-    @Deprecated
-    public static boolean isDebugEnabled() {
-        return Logging.isDebugEnabled();
-    }
-
-    /**
-     * Determines if trace log level is enabled.
-     * Useful to avoid costly construction of trace messages when not enabled.
-     * @return {@code true} if log level is at least trace, {@code false} otherwise
-     * @since 6852
-     * @deprecated Use {@link Logging#isTraceEnabled}.
-     */
-    @Deprecated
-    public static boolean isTraceEnabled() {
-        return Logging.isTraceEnabled();
-    }
-
-    /**
-     * Prints a formatted error message if logging is on. Calls {@link MessageFormat#format}
-     * function to format text.
-     * @param msg The formatted message to print.
-     * @param objects The objects to insert into format string.
-     * @since 6248
-     * @deprecated Use {@link Logging#error(String, Object...)}.
-     */
-    @Deprecated
-    public static void error(String msg, Object... objects) {
-        Logging.error(msg, objects);
-    }
-
-    /**
-     * Prints a formatted warning message if logging is on. Calls {@link MessageFormat#format}
-     * function to format text.
-     * @param msg The formatted message to print.
-     * @param objects The objects to insert into format string.
-     * @deprecated Use {@link Logging#warn(String, Object...)}.
-     */
-    @Deprecated
-    public static void warn(String msg, Object... objects) {
-        Logging.warn(msg, objects);
-    }
-
-    /**
-     * Prints a formatted informational message if logging is on. Calls {@link MessageFormat#format}
-     * function to format text.
-     * @param msg The formatted message to print.
-     * @param objects The objects to insert into format string.
-     * @deprecated Use {@link Logging#info(String, Object...)}.
-     */
-    @Deprecated
-    public static void info(String msg, Object... objects) {
-        Logging.info(msg, objects);
-    }
-
-    /**
-     * Prints a formatted debug message if logging is on. Calls {@link MessageFormat#format}
-     * function to format text.
-     * @param msg The formatted message to print.
-     * @param objects The objects to insert into format string.
-     * @deprecated Use {@link Logging#debug(String, Object...)}.
-     */
-    @Deprecated
-    public static void debug(String msg, Object... objects) {
-        Logging.debug(msg, objects);
-    }
-
-    /**
-     * Prints a formatted trace message if logging is on. Calls {@link MessageFormat#format}
-     * function to format text.
-     * @param msg The formatted message to print.
-     * @param objects The objects to insert into format string.
-     * @deprecated Use {@link Logging#trace(String, Object...)}.
-     */
-    @Deprecated
-    public static void trace(String msg, Object... objects) {
-        Logging.trace(msg, objects);
-    }
-
-    /**
-     * Prints an error message for the given Throwable.
-     * @param t The throwable object causing the error
-     * @since 6248
-     * @deprecated Use {@link Logging#error(Throwable)}.
-     */
-    @Deprecated
-    public static void error(Throwable t) {
-        Logging.error(t);
-    }
-
-    /**
-     * Prints a warning message for the given Throwable.
-     * @param t The throwable object causing the error
-     * @since 6248
-     * @deprecated Use {@link Logging#warn(Throwable)}.
-     */
-    @Deprecated
-    public static void warn(Throwable t) {
-        Logging.warn(t);
-    }
-
-    /**
-     * Prints a debug message for the given Throwable. Useful for exceptions usually ignored
-     * @param t The throwable object causing the error
-     * @since 10420
-     * @deprecated Use {@link Logging#debug(Throwable)}.
-     */
-    @Deprecated
-    public static void debug(Throwable t) {
-        Logging.debug(t);
-    }
-
-    /**
-     * Prints a trace message for the given Throwable. Useful for exceptions usually ignored
-     * @param t The throwable object causing the error
-     * @since 10420
-     * @deprecated Use {@link Logging#trace(Throwable)}.
-     */
-    @Deprecated
-    public static void trace(Throwable t) {
-        Logging.trace(t);
-    }
-
-    /**
-     * Prints an error message for the given Throwable.
-     * @param t The throwable object causing the error
-     * @param stackTrace {@code true}, if the stacktrace should be displayed
-     * @since 6642
-     * @deprecated Use {@link Logging#log(java.util.logging.Level, Throwable)}
-     *              or {@link Logging#logWithStackTrace(java.util.logging.Level, Throwable)}.
-     */
-    @Deprecated
-    public static void error(Throwable t, boolean stackTrace) {
-        if (stackTrace) {
-            Logging.log(Logging.LEVEL_ERROR, t);
-        } else {
-            Logging.logWithStackTrace(Logging.LEVEL_ERROR, t);
-        }
-    }
-
-    /**
-     * Prints an error message for the given Throwable.
-     * @param t The throwable object causing the error
-     * @param message additional error message
-     * @since 10420
-     * @deprecated Use {@link Logging#log(java.util.logging.Level, String, Throwable)}.
-     */
-    @Deprecated
-    public static void error(Throwable t, String message) {
-        Logging.log(Logging.LEVEL_ERROR, message, t);
-    }
-
-    /**
-     * Prints a warning message for the given Throwable.
-     * @param t The throwable object causing the error
-     * @param stackTrace {@code true}, if the stacktrace should be displayed
-     * @since 6642
-     * @deprecated Use {@link Logging#log(java.util.logging.Level, Throwable)}
-     *              or {@link Logging#logWithStackTrace(java.util.logging.Level, Throwable)}.
-     */
-    @Deprecated
-    public static void warn(Throwable t, boolean stackTrace) {
-        if (stackTrace) {
-            Logging.log(Logging.LEVEL_WARN, t);
-        } else {
-            Logging.logWithStackTrace(Logging.LEVEL_WARN, t);
-        }
-    }
-
-    /**
-     * Prints a warning message for the given Throwable.
-     * @param t The throwable object causing the error
-     * @param message additional error message
-     * @since 10420
-     * @deprecated Use {@link Logging#log(java.util.logging.Level, String, Throwable)}.
-     */
-    @Deprecated
-    public static void warn(Throwable t, String message) {
-        Logging.log(Logging.LEVEL_WARN, message, t);
-    }
-
-    /**
-     * Returns a human-readable message of error, also usable for developers.
-     * @param t The error
-     * @return The human-readable error message
-     * @since 6642
-     * @deprecated Use {@link Logging#getErrorMessage}.
-     */
-    @Deprecated
-    public static String getErrorMessage(Throwable t) {
-        if (t == null) {
-            return null;
-        } else {
-            return Logging.getErrorMessage(t);
-        }
-    }
 
     /**
      * Platform specific code goes in here.
@@ -610,17 +269,6 @@ public abstract class Main {
     }
 
     /**
-     * Returns the main layer manager that is used by the map view.
-     * @return The layer manager. The value returned will never change.
-     * @since 10279
-     * @deprecated use {@link MainApplication#getLayerManager} instead
-     */
-    @Deprecated
-    public static MainLayerManager getLayerManager() {
-        return MainApplication.getLayerManager();
-    }
-
-    /**
      * Replies the current selected primitives, from a end-user point of view.
      * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
      * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
@@ -651,70 +299,6 @@ public abstract class Main {
      * @since 12718
      */
     public abstract boolean containsDataSet(DataSet ds);
-
-    /**
-     * Registers a {@code JosmAction} and its shortcut.
-     * @param action action defining its own shortcut
-     * @deprecated use {@link MainApplication#registerActionShortcut(JosmAction)} instead
-     */
-    @Deprecated
-    public static void registerActionShortcut(JosmAction action) {
-        MainApplication.registerActionShortcut(action);
-    }
-
-    /**
-     * Registers an action and its shortcut.
-     * @param action action to register
-     * @param shortcut shortcut to associate to {@code action}
-     * @deprecated use {@link MainApplication#registerActionShortcut(Action, Shortcut)} instead
-     */
-    @Deprecated
-    public static void registerActionShortcut(Action action, Shortcut shortcut) {
-        MainApplication.registerActionShortcut(action, shortcut);
-    }
-
-    /**
-     * Unregisters a shortcut.
-     * @param shortcut shortcut to unregister
-     * @deprecated use {@link MainApplication#unregisterShortcut(Shortcut)} instead
-     */
-    @Deprecated
-    public static void unregisterShortcut(Shortcut shortcut) {
-        MainApplication.unregisterShortcut(shortcut);
-    }
-
-    /**
-     * Unregisters a {@code JosmAction} and its shortcut.
-     * @param action action to unregister
-     * @deprecated use {@link MainApplication#unregisterActionShortcut(JosmAction)} instead
-     */
-    @Deprecated
-    public static void unregisterActionShortcut(JosmAction action) {
-        MainApplication.unregisterActionShortcut(action);
-    }
-
-    /**
-     * Unregisters an action and its shortcut.
-     * @param action action to unregister
-     * @param shortcut shortcut to unregister
-     * @deprecated use {@link MainApplication#unregisterActionShortcut(Action, Shortcut)} instead
-     */
-    @Deprecated
-    public static void unregisterActionShortcut(Action action, Shortcut shortcut) {
-        MainApplication.unregisterActionShortcut(action, shortcut);
-    }
-
-    /**
-     * Replies the registered action for the given shortcut
-     * @param shortcut The shortcut to look for
-     * @return the registered action for the given shortcut
-     * @deprecated use {@link MainApplication#getRegisteredActionShortcut(Shortcut)} instead
-     * @since 5696
-     */
-    @Deprecated
-    public static Action getRegisteredActionShortcut(Shortcut shortcut) {
-        return MainApplication.getRegisteredActionShortcut(shortcut);
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     //  Implementation part
@@ -906,47 +490,6 @@ public abstract class Main {
          * Called when the user comes from a window of another application back to JOSM.
          */
         void fromOtherApplication();
-    }
-
-    /**
-     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes.
-     * <p>
-     * It will fire an initial mapFrameInitialized event when the MapFrame is present.
-     * Otherwise will only fire when the MapFrame is created or destroyed.
-     * @param listener The MapFrameListener
-     * @return {@code true} if the listeners collection changed as a result of the call
-     * @see #addMapFrameListener
-     * @deprecated use {@link MainApplication#addAndFireMapFrameListener} instead
-     * @since 11904
-     */
-    @Deprecated
-    public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
-        return MainApplication.addAndFireMapFrameListener(listener);
-    }
-
-    /**
-     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
-     * @param listener The MapFrameListener
-     * @return {@code true} if the listeners collection changed as a result of the call
-     * @see #addAndFireMapFrameListener
-     * @deprecated use {@link MainApplication#addMapFrameListener} instead
-     * @since 5957
-     */
-    @Deprecated
-    public static boolean addMapFrameListener(MapFrameListener listener) {
-        return MainApplication.addMapFrameListener(listener);
-    }
-
-    /**
-     * Unregisters the given {@code MapFrameListener} from MapFrame changes
-     * @param listener The MapFrameListener
-     * @return {@code true} if the listeners collection changed as a result of the call
-     * @deprecated use {@link MainApplication#removeMapFrameListener} instead
-     * @since 5957
-     */
-    @Deprecated
-    public static boolean removeMapFrameListener(MapFrameListener listener) {
-        return MainApplication.removeMapFrameListener(listener);
     }
 
     /**

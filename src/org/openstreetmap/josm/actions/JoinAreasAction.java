@@ -1009,7 +1009,7 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * This is a method that splits way into smaller parts, using the prepared nodes list as split points.
-     * Uses {@link SplitWayAction#splitWay} for the heavy lifting.
+     * Uses {@link SplitWayCommand#splitWay} for the heavy lifting.
      * @param way way to split
      * @param nodes split points
      * @return list of split ways (or original ways if no splitting is done).

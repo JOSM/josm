@@ -8,22 +8,16 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
-import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.Utils.toRadians;
 
 import java.awt.geom.Area;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
-import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
-import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
-import org.openstreetmap.josm.data.coor.conversion.NauticalCoordinateFormat;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -84,31 +78,6 @@ public class LatLon extends Coordinate implements ILatLon {
         cDdHighPecisionFormatter = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
         cDdHighPecisionFormatter.applyPattern("###0.0##########");
     }
-
-    /**
-     * Character denoting South, as string.
-     * @deprecated use {@link LatLonParser#SOUTH}
-     */
-    @Deprecated
-    public static final String SOUTH = trc("compass", "S");
-    /**
-     * Character denoting North, as string.
-     * @deprecated use {@link LatLonParser#NORTH}
-     */
-    @Deprecated
-    public static final String NORTH = trc("compass", "N");
-    /**
-     * Character denoting West, as string.
-     * @deprecated use {@link LatLonParser#WEST}
-     */
-    @Deprecated
-    public static final String WEST = trc("compass", "W");
-    /**
-     * Character denoting East, as string.
-     * @deprecated use {@link LatLonParser#EAST}
-     */
-    @Deprecated
-    public static final String EAST = trc("compass", "E");
 
     /**
      * Replies true if lat is in the range [-90,90]
@@ -184,52 +153,6 @@ public class LatLon extends Coordinate implements ILatLon {
     }
 
     /**
-     * Replies the coordinate in degrees/minutes/seconds format
-     * @param pCoordinate The coordinate to convert
-     * @return The coordinate in degrees/minutes/seconds format
-     * @deprecated use {@link #degreesMinutesSeconds} instead
-     */
-    @Deprecated
-    public static String dms(double pCoordinate) {
-        return degreesMinutesSeconds(pCoordinate);
-    }
-
-    /**
-     * Replies the coordinate in degrees/minutes/seconds format
-     * @param pCoordinate The coordinate to convert
-     * @return The coordinate in degrees/minutes/seconds format
-     * @since 12561
-     * @deprecated use {@link DMSCoordinateFormat#degreesMinutesSeconds(double)}
-     */
-    @Deprecated
-    public static String degreesMinutesSeconds(double pCoordinate) {
-        return DMSCoordinateFormat.degreesMinutesSeconds(pCoordinate);
-    }
-
-    /**
-     * Replies the coordinate in degrees/minutes format
-     * @param pCoordinate The coordinate to convert
-     * @return The coordinate in degrees/minutes format
-     * @since 12537
-     * @deprecated use {@link NauticalCoordinateFormat#degreesMinutes(double)}
-     */
-    @Deprecated
-    public static String degreesMinutes(double pCoordinate) {
-        return NauticalCoordinateFormat.degreesMinutes(pCoordinate);
-    }
-
-    /**
-     * Replies the coordinate in degrees/minutes format
-     * @param pCoordinate The coordinate to convert
-     * @return The coordinate in degrees/minutes format
-     * @deprecated use {@link #degreesMinutes(double)} instead
-     */
-    @Deprecated
-    public static String dm(double pCoordinate) {
-        return degreesMinutes(pCoordinate);
-    }
-
-    /**
      * Constructs a new object representing the given latitude/longitude.
      * @param lat the latitude, i.e., the north-south position in degrees
      * @param lon the longitude, i.e., the east-west position in degrees
@@ -251,31 +174,9 @@ public class LatLon extends Coordinate implements ILatLon {
         return y;
     }
 
-    /**
-     * Formats the latitude part according to the given format
-     * @param d the coordinate format to use
-     * @return the formatted latitude
-     * @deprecated use {@link org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat#latToString(ILatLon)}
-     */
-    @Deprecated
-    public String latToString(CoordinateFormat d) {
-        return d.getICoordinateFormat().latToString(this);
-    }
-
     @Override
     public double lon() {
         return x;
-    }
-
-    /**
-     * Formats the longitude part according to the given format
-     * @param d the coordinate format to use
-     * @return the formatted longitude
-     * @deprecated use {@link org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat#lonToString(ILatLon)}
-     */
-    @Deprecated
-    public String lonToString(CoordinateFormat d) {
-        return d.getICoordinateFormat().lonToString(this);
     }
 
     /**
@@ -408,20 +309,6 @@ public class LatLon extends Coordinate implements ILatLon {
     }
 
     /**
-     * Returns this lat/lon pair in human-readable format separated by {@code separator}.
-     * @param separator values separator
-     * @return String in the format {@code "1.23456[separator]2.34567"}
-     * @deprecated method removed without replacement
-     */
-    @Deprecated
-    public String toStringCSV(String separator) {
-        return Utils.join(separator, Arrays.asList(
-                DecimalDegreesCoordinateFormat.INSTANCE.latToString(this),
-                DecimalDegreesCoordinateFormat.INSTANCE.lonToString(this)
-        ));
-    }
-
-    /**
      * Interpolate between this and a other latlon
      * @param ll2 The other lat/lon object
      * @param proportion The proportion to interpolate
@@ -504,17 +391,5 @@ public class LatLon extends Coordinate implements ILatLon {
         LatLon that = (LatLon) obj;
         return Double.compare(that.x, x) == 0 &&
                Double.compare(that.y, y) == 0;
-    }
-
-    /**
-     * Parses the given string as lat/lon.
-     * @param coord String to parse
-     * @return parsed lat/lon
-     * @since 11045
-     * @deprecated use {@link LatLonParser#parse(java.lang.String)}
-     */
-    @Deprecated
-    public static LatLon parse(String coord) {
-        return LatLonParser.parse(coord);
     }
 }

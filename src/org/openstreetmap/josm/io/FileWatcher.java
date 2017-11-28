@@ -19,7 +19,6 @@ import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
-import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -54,33 +53,6 @@ public class FileWatcher {
         if (thread != null && !thread.isAlive()) {
             thread.start();
         }
-    }
-
-    /**
-     * Registers a map paint style for local file changes, allowing dynamic reloading.
-     * @param style The style to watch
-     * @throws IllegalArgumentException if {@code style} is null or if it does not provide a local file
-     * @throws IllegalStateException if the watcher service failed to start
-     * @throws IOException if an I/O error occurs
-     * @deprecated To be removed end of 2017. Use {@link #registerSource} instead
-     */
-    @Deprecated
-    public void registerStyleSource(StyleSource style) throws IOException {
-        registerSource(style);
-    }
-
-    /**
-     * Registers a validator rule for local file changes, allowing dynamic reloading.
-     * @param rule The rule to watch
-     * @throws IllegalArgumentException if {@code rule} is null or if it does not provide a local file
-     * @throws IllegalStateException if the watcher service failed to start
-     * @throws IOException if an I/O error occurs
-     * @since 7276
-     * @deprecated To be removed end of 2017. Use {@link #registerSource} instead
-     */
-    @Deprecated
-    public void registerValidatorRule(SourceEntry rule) throws IOException {
-        registerSource(rule);
     }
 
     /**

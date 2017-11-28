@@ -475,16 +475,12 @@ public class MainApplication extends Main {
     protected void initializeMainWindow() {
         if (mainFrame != null) {
             mainPanel = mainFrame.getPanel();
-            panel = mainPanel;
             mainFrame.initialize();
             menu = mainFrame.getMenu();
-            super.menu = menu;
         } else {
             // required for running some tests.
             mainPanel = new MainPanel(layerManager);
-            panel = mainPanel;
             menu = new MainMenu();
-            super.menu = menu;
         }
         mainPanel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
         mainPanel.reAddListeners();
@@ -1025,7 +1021,6 @@ public class MainApplication extends Main {
         monitor.indeterminateSubTask(tr("Setting defaults"));
         setupUIManager();
         toolbar = new ToolbarPreferences();
-        Main.toolbar = toolbar;
         ProjectionPreference.setProjection();
         setupNadGridSources();
         GuiHelper.translateJavaInternalMessages();
@@ -1050,8 +1045,8 @@ public class MainApplication extends Main {
         if ((!args.hasOption(Option.NO_MAXIMIZE) && maximized) || args.hasOption(Option.MAXIMIZE)) {
             mainFrame.setMaximized(true);
         }
-        if (main.menu.fullscreenToggleAction != null) {
-            main.menu.fullscreenToggleAction.initial();
+        if (menu.fullscreenToggleAction != null) {
+            menu.fullscreenToggleAction.initial();
         }
 
         SwingUtilities.invokeLater(new GuiFinalizationWorker(args, proxySelector));

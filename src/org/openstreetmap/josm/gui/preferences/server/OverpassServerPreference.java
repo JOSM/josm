@@ -75,24 +75,4 @@ public class OverpassServerPreference implements SubPreferenceSetting {
     public boolean isExpert() {
         return true;
     }
-
-    /**
-     * Returns the URL of the currently selected Overpass server.
-     * @return the URL of the currently selected Overpass server.
-     * @deprecated To be removed end of 2017. Use {@code OverpassDownloadReader.OVERPASS_SERVER.get()} instead
-     */
-    @Deprecated
-    public static String getOverpassServer() {
-        return OverpassDownloadReader.OVERPASS_SERVER.get();
-    }
-
-    /**
-     * Returns true if objects should be fetched from an Overpass server instead of the OSM API.
-     * @return true if objects should be fetched from an Overpass server instead of the OSM API.
-     * @deprecated To be removed end of 2017. Use {@code OverpassDownloadReader.FOR_MULTI_FETCH.get()} instead
-     */
-    @Deprecated
-    public static boolean useForMultiFetch() {
-        return OverpassDownloadReader.FOR_MULTI_FETCH.get();
-    }
 }

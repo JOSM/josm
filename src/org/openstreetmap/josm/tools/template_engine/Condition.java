@@ -29,16 +29,6 @@ public class Condition implements TemplateEntry {
         this.entries = new ArrayList<>();
     }
 
-    /**
-     * Returns template entries.
-     * @return template entries
-     * @deprecated (since 13003) use constructor {@link #Condition(java.util.Collection)} to set the entries
-     */
-    @Deprecated
-    public List<TemplateEntry> getEntries() {
-        return entries;
-    }
-
     @Override
     public void appendText(StringBuilder result, TemplateEngineDataProvider dataProvider) {
         for (TemplateEntry entry: entries) {

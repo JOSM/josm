@@ -716,19 +716,6 @@ public final class PluginHandler {
     }
 
     /**
-     * Method to get the (now obsolete) class loader for loading plugin code.
-     *
-     * @return the class loader
-     * @deprecated There is no longer a unified plugin class loader. Use {@link PluginProxy#classLoader}
-     * to get the class loader for each plugin. Or <code>PluginClass.class.getClassLoader()</code>
-     * to access the class loader from within the plugin.
-     */
-    @Deprecated
-    public static synchronized DynamicURLClassLoader getPluginClassLoader() {
-        return getJoinedPluginResourceCL();
-    }
-
-    /**
      * Get class loader to locate resources from plugins.
      *
      * It joins URLs of all plugins, to find images, etc.

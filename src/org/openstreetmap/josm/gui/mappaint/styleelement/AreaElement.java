@@ -47,7 +47,7 @@ public class AreaElement extends StyleElement {
      * Fill the area only partially from the borders
      * <p>
      * Public access is discouraged.
-     * @see StyledMapRenderer#drawArea(Way, Color, MapImage, Float, Float, boolean, TextLabel)
+     * @see StyledMapRenderer#drawArea
      */
     public Float extent;
 
@@ -55,7 +55,7 @@ public class AreaElement extends StyleElement {
      * Areas smaller than this are filled no matter what value {@link #extent} has.
      * <p>
      * Public access is discouraged.
-     * @see StyledMapRenderer#drawArea(Way, Color, MapImage, Float, Float, boolean, TextLabel)
+     * @see StyledMapRenderer#drawArea
      */
     public Float extentThreshold;
 

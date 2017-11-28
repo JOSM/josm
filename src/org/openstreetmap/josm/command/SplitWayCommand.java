@@ -232,7 +232,7 @@ public class SplitWayCommand extends SequenceCommand {
     /**
      * Splits the way {@code way} into chunks of {@code wayChunks} and replies
      * the result of this process in an instance of {@link SplitWayCommand}.
-     * The {@link org.openstreetmap.josm.actions.SplitWayAction.Strategy} is used to determine which
+     * The {@link SplitWayCommand.Strategy} is used to determine which
      * way chunk should reuse the old id and its history.
      *
      * Note that changes are not applied to the data yet. You have to

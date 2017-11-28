@@ -50,16 +50,6 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
         return id;
     }
 
-    /**
-    * Get the cache directory name.
-    * @return the cache directory name (base name)
-    * @deprecated unused - remove in 2017-09
-    */
-    @Deprecated
-    public String getCacheDir() {
-        return cacheDir;
-    }
-
     @Override
     public String toString() {
         return name;

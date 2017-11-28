@@ -4,9 +4,7 @@ package org.openstreetmap.josm.gui.tagging.ac;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -50,7 +48,7 @@ public class AutoCompletionList extends AbstractTableModel {
     }
 
     /**
-     * applies a filter expression to the list of {@link AutoCompletionListItem}s.
+     * applies a filter expression to the list of {@link AutoCompletionItem}s.
      *
      * The matching criterion is a case insensitive substring match.
      *
@@ -77,20 +75,6 @@ public class AutoCompletionList extends AbstractTableModel {
      */
     public String getFilter() {
         return filter;
-    }
-
-    /**
-     * adds an {@link AutoCompletionListItem} to the list. Only adds the item if it
-     * is not null and if not in the list yet.
-     *
-     * @param item the item
-     * @deprecated To be removed end of 2017. Use {@link #add(AutoCompletionItem)} instead
-     */
-    @Deprecated
-    public void add(AutoCompletionListItem item) {
-        if (item == null)
-            return;
-        add(item.getItem());
     }
 
     /**
@@ -134,33 +118,6 @@ public class AutoCompletionList extends AbstractTableModel {
     }
 
     /**
-     * adds a list of {@link AutoCompletionListItem} to this list. Only items which
-     * are not null and which do not exist yet in the list are added.
-     *
-     * @param other a list of AutoCompletionListItem; must not be null
-     * @throws IllegalArgumentException if other is null
-     * @deprecated to be removed end of 2017. Use {@link #add(Collection)} instead
-     */
-    @Deprecated
-    public void add(List<AutoCompletionListItem> other) {
-        CheckParameterUtil.ensureParameterNotNull(other, "other");
-        add(other.stream().map(AutoCompletionListItem::getItem).collect(Collectors.toList()));
-    }
-
-    /**
-     * adds a list of strings to this list. Only strings which
-     * are not null and which do not exist yet in the list are added.
-     *
-     * @param values a list of strings to add
-     * @param priority the priority to use
-     * @deprecated to be removed end of 2017. Use {@link #add(Collection, AutoCompletionPriority)} instead
-     */
-    @Deprecated
-    public void add(Collection<String> values, AutoCompletionItemPriority priority) {
-        add(values, priority.getPriority());
-    }
-
-    /**
      * adds a list of strings to this list. Only strings which
      * are not null and which do not exist yet in the list are added.
      *
@@ -182,21 +139,6 @@ public class AutoCompletionList extends AbstractTableModel {
         if (values != null && list.addUserInput(values)) {
             filter();
         }
-    }
-
-    /**
-     * checks whether a specific item is already in the list. Matches for the
-     * the value <strong>and</strong> the priority of the item
-     *
-     * @param item the item to check
-     * @return true, if item is in the list; false, otherwise
-     * @deprecated to be removed end of 2017. Use {@link #contains(AutoCompletionItem)} instead
-     */
-    @Deprecated
-    public boolean contains(AutoCompletionListItem item) {
-        if (item == null)
-            return false;
-        return contains(item.getItem());
     }
 
     /**
@@ -255,19 +197,6 @@ public class AutoCompletionList extends AbstractTableModel {
      */
     public int getFilteredSize() {
         return filtered.size();
-    }
-
-    /**
-     * replies the idx-th item from the list of filtered items
-     * @param idx the index; must be in the range 0 &lt;= idx &lt; {@link #getFilteredSize()}
-     * @return the item
-     *
-     * @throws IndexOutOfBoundsException if idx is out of bounds
-     * @deprecated to be removed end of 2017. Use {@link #getFilteredItemAt(int)} instead
-     */
-    @Deprecated
-    public AutoCompletionListItem getFilteredItem(int idx) {
-        return new AutoCompletionListItem(getFilteredItemAt(idx));
     }
 
     /**
