@@ -137,12 +137,7 @@ public class JOSMFixture {
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
 
         if (createGui) {
-            GuiHelper.runInEDTAndWaitWithException(new Runnable() {
-                @Override
-                public void run() {
-                    setupGUI();
-                }
-            });
+            GuiHelper.runInEDTAndWaitWithException(() -> setupGUI());
         }
     }
 

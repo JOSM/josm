@@ -146,7 +146,6 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void eventDispatched(AWTEvent e) {
         if (!(e instanceof KeyEvent)) {
             return;

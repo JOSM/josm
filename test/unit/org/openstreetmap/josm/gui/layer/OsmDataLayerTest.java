@@ -8,9 +8,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -21,6 +21,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link OsmDataLayer} class.
@@ -30,9 +33,21 @@ public class OsmDataLayerTest {
     /**
      * Setup tests
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init(true);
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform().projection().main();
+
+    private DataSet ds;
+    private OsmDataLayer layer;
+
+    /**
+     * Setup tests
+     */
+    @Before
+    public void setUp() {
+        ds = new DataSet();
+        layer = new OsmDataLayer(ds, "", null);
+        MainApplication.getLayerManager().addLayer(layer);
     }
 
     /**
@@ -40,27 +55,20 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testRecentRelation() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            int n = OsmDataLayer.PROPERTY_RECENT_RELATIONS_NUMBER.get();
-            assertTrue(n > 0);
-            for (int i = 0; i < 2*n; i++) {
-                Relation r = new Relation(i, 1);
-                ds.addPrimitive(r);
-                layer.setRecentRelation(r);
-            }
-            assertEquals(n, layer.getRecentRelations().size());
-            for (OsmPrimitive r : ds.allPrimitives()) {
-                if (r instanceof Relation) {
-                    layer.removeRecentRelation((Relation) r);
-                }
-            }
-            assertTrue(layer.getRecentRelations().isEmpty());
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
+        int n = OsmDataLayer.PROPERTY_RECENT_RELATIONS_NUMBER.get();
+        assertTrue(n > 0);
+        for (int i = 0; i < 2*n; i++) {
+            Relation r = new Relation(i, 1);
+            ds.addPrimitive(r);
+            layer.setRecentRelation(r);
         }
+        assertEquals(n, layer.getRecentRelations().size());
+        for (OsmPrimitive r : ds.allPrimitives()) {
+            if (r instanceof Relation) {
+                layer.removeRecentRelation((Relation) r);
+            }
+        }
+        assertTrue(layer.getRecentRelations().isEmpty());
     }
 
     /**
@@ -68,8 +76,6 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testGetInfoComponent() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         assertNotNull(layer.getInfoComponent());
 
         layer.setUploadDiscouraged(true);
@@ -107,8 +113,6 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testLayerStateChangeListenerNull() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         layer.addLayerStateChangeListener(null);
     }
 
@@ -117,8 +121,6 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testGetIcon() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         assertNotNull(layer.getIcon());
         layer.setUploadDiscouraged(true);
         assertNotNull(layer.getIcon());
@@ -129,16 +131,9 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testPaint() {
-        DataSet ds = new DataSet();
         fillDataSet(ds);
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            assertTrue(layer.getMenuEntries().length > 0);
-            layer.paint(TestUtils.newGraphics(), MainApplication.getMap().mapView, new Bounds(LatLon.ZERO));
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        assertNotNull(MainApplication.getMap());
+        layer.paint(TestUtils.newGraphics(), MainApplication.getMap().mapView, new Bounds(LatLon.ZERO));
     }
 
     /**
@@ -146,7 +141,6 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testGetToolTipText() {
-        DataSet ds = new DataSet();
         assertEquals("<html>0 nodes<br>0 ways<br>0 relations</html>", new OsmDataLayer(ds, "", null).getToolTipText());
         fillDataSet(ds);
         assertEquals("<html>1 node<br>1 way<br>1 relation</html>", new OsmDataLayer(ds, "", null).getToolTipText());
@@ -158,16 +152,15 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testMergeFrom() {
-        DataSet ds = new DataSet();
         fillDataSet(ds);
-        OsmDataLayer layer1 = new OsmDataLayer(ds, "", null);
         OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "", null);
+        MainApplication.getLayerManager().addLayer(layer2);
         assertTrue(layer2.data.allPrimitives().isEmpty());
-        assertTrue(layer2.isMergable(layer1));
-        layer2.mergeFrom(layer1);
+        assertTrue(layer2.isMergable(layer));
+        layer2.mergeFrom(layer);
         assertEquals(6, layer2.data.allPrimitives().size());
-        layer1.setUploadDiscouraged(true);
-        layer2.mergeFrom(layer1);
+        layer.setUploadDiscouraged(true);
+        layer2.mergeFrom(layer);
         assertTrue(layer2.isUploadDiscouraged());
     }
 
@@ -176,9 +169,7 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testCleanupAfterUpload() {
-        DataSet ds = new DataSet();
         fillDataSet(ds);
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         assertEquals(6, layer.data.allPrimitives().size());
         layer.cleanupAfterUpload(ds.allPrimitives());
         assertEquals(3, layer.data.allPrimitives().size());
@@ -189,7 +180,6 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testGetMenuEntries() {
-        OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         ExpertToggleAction.getInstance().setExpert(true);
         assertEquals(16, layer.getMenuEntries().length);
 
@@ -202,9 +192,7 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testToGpxData() {
-        DataSet ds = new DataSet();
         fillDataSet(ds);
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         assertNotNull(layer.toGpxData());
     }
 
@@ -213,9 +201,7 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testContainsPoint() {
-        DataSet ds = new DataSet();
         fillDataSet(ds);
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         assertTrue(layer.containsPoint(LatLon.ZERO));
     }
 
@@ -224,8 +210,6 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testIsModified() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         assertFalse(layer.isModified());
         fillDataSet(ds);
         assertTrue(layer.isModified());
@@ -236,7 +220,7 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testProjectionChanged() {
-        new OsmDataLayer(new DataSet(), "", null).projectionChanged(null, null);
+        layer.projectionChanged(null, null);
     }
 
     /**
@@ -244,8 +228,6 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testCheckSaveConditions() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         assertFalse(layer.checkSaveConditions());
         fillDataSet(ds);
         assertTrue(layer.checkSaveConditions());
