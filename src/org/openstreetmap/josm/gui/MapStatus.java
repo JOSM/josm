@@ -1220,23 +1220,17 @@ public final class MapStatus extends JPanel implements
 
     @Override
     public void wayNodesChanged(WayNodesChangedEvent event) {
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
-        if (ds != null) {
-            Collection<OsmPrimitive> sel = ds.getSelected();
-            if (sel.size() == 1 && sel.contains(event.getChangedWay())) {
-                refreshDistText(sel);
-            }
+        Collection<OsmPrimitive> sel = event.getDataset().getSelected();
+        if (sel.size() == 1 && sel.contains(event.getChangedWay())) {
+            refreshDistText(sel);
         }
     }
 
     @Override
     public void nodeMoved(NodeMovedEvent event) {
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
-        if (ds != null) {
-            Collection<OsmPrimitive> sel = ds.getSelected();
-            if (sel.size() == 2 && sel.contains(event.getNode())) {
-                refreshDistText(sel);
-            }
+        Collection<OsmPrimitive> sel = event.getDataset().getSelected();
+        if (sel.size() == 2 && sel.contains(event.getNode())) {
+            refreshDistText(sel);
         }
     }
 
