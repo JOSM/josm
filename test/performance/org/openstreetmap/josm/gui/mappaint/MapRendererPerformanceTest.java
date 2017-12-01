@@ -49,6 +49,9 @@ import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+/**
+ * Performance test of map renderer.
+ */
 public class MapRendererPerformanceTest {
 
     private static final boolean DUMP_IMAGE = false; // dump images to file for debugging purpose
@@ -86,6 +89,10 @@ public class MapRendererPerformanceTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout globalTimeout = Timeout.seconds(15*60);
 
+    /**
+     * Initializes test environment.
+     * @throws Exception if any error occurs
+     */
     @BeforeClass
     public static void load() throws Exception {
         JOSMFixture.createPerformanceTestFixture().init(true);
@@ -151,6 +158,9 @@ public class MapRendererPerformanceTest {
         }
     }
 
+    /**
+     * Cleanup test environment.
+     */
     @AfterClass
     public static void cleanUp() {
         setFilterStyleActive(false);
@@ -318,10 +328,12 @@ public class MapRendererPerformanceTest {
     }
 
     private static void setFilterStyleActive(boolean active) {
-        if (filterStyle.active != active) {
-            MapPaintStyles.toggleStyleActive(filterStyleIdx);
+        if (filterStyle != null) {
+            if (filterStyle.active != active) {
+                MapPaintStyles.toggleStyleActive(filterStyleIdx);
+            }
+            Assert.assertEquals(active, filterStyle.active);
         }
-        Assert.assertEquals(active, filterStyle.active);
     }
 
     private static void dumpRenderedImage(String id) throws IOException {

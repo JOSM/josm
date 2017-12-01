@@ -13,14 +13,13 @@ import java.util.Random;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator.KeyValueDataGenerator;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -47,10 +46,9 @@ public class KeyValuePerformanceTest {
     /**
      * Prepare the test.
      */
-    @BeforeClass
-    public static void createJOSMFixture() {
-        JOSMFixture.createPerformanceTestFixture().init(true);
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     /**
      * See if there is a big difference between Strings that are interned and those that are not.
