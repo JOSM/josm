@@ -178,6 +178,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             }
             if (i >= 0) {
                 getSelectionModel().setSelectionInterval(i, i);
+                getMemberTableModel().fireMakeMemberVisible(i);
             }
         }
     }
@@ -197,6 +198,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             }
             if (i < getRowCount()) {
                 getSelectionModel().setSelectionInterval(i, i);
+                getMemberTableModel().fireMakeMemberVisible(i);
             }
         }
     }
