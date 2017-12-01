@@ -72,8 +72,18 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
@@ -110,7 +120,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public final class MapStatus extends JPanel implements
-    Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener, SelectionChangedListener, ZoomChangeListener {
+    Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener, SelectionChangedListener, DataSetListener, ZoomChangeListener {
 
     private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Config.getPref().get("statusbar.decimal-format", "0.0"));
     private static final AbstractProperty<Double> DISTANCE_THRESHOLD = new DoubleProperty("statusbar.distance-threshold", 0.01).cached();
@@ -940,6 +950,7 @@ public final class MapStatus extends JPanel implements
         progressBar.addMouseListener(new ShowMonitorDialogMouseAdapter());
 
         Config.getPref().addPreferenceChangeListener(this);
+        DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
 
         mvComponentAdapter = new ComponentAdapter() {
@@ -1125,6 +1136,7 @@ public final class MapStatus extends JPanel implements
         SystemOfMeasurement.removeSoMChangeListener(this);
         NavigatableComponent.removeZoomChangeListener(this);
         Config.getPref().removePreferenceChangeListener(this);
+        DatasetEventManager.getInstance().removeDatasetListener(this);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         mv.removeComponentListener(mvComponentAdapter);
 
@@ -1172,8 +1184,7 @@ public final class MapStatus extends JPanel implements
         return Math.min(80, 20 + Math.max(0, w-1280) * 60 / (1920-1280));
     }
 
-    @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    private void refreshDistText(Collection<? extends OsmPrimitive> newSelection) {
         if (newSelection.size() == 2) {
             Iterator<? extends OsmPrimitive> it = newSelection.iterator();
             OsmPrimitive n1 = it.next();
@@ -1192,6 +1203,11 @@ public final class MapStatus extends JPanel implements
     }
 
     @Override
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        refreshDistText(newSelection);
+    }
+
+    @Override
     public void zoomChanged() {
         if (!GraphicsEnvironment.isHeadless()) {
             PointerInfo pointerInfo = MouseInfo.getPointerInfo();
@@ -1200,5 +1216,57 @@ public final class MapStatus extends JPanel implements
                 updateLatLonText(mp.x, mp.y);
             }
         }
+    }
+
+    @Override
+    public void wayNodesChanged(WayNodesChangedEvent event) {
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+        if (ds != null) {
+            Collection<OsmPrimitive> sel = ds.getSelected();
+            if (sel.size() == 1 && sel.contains(event.getChangedWay())) {
+                refreshDistText(sel);
+            }
+        }
+    }
+
+    @Override
+    public void nodeMoved(NodeMovedEvent event) {
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+        if (ds != null) {
+            Collection<OsmPrimitive> sel = ds.getSelected();
+            if (sel.size() == 2 && sel.contains(event.getNode())) {
+                refreshDistText(sel);
+            }
+        }
+    }
+
+    @Override
+    public void primitivesAdded(PrimitivesAddedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void tagsChanged(TagsChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void relationMembersChanged(RelationMembersChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void dataChanged(DataChangedEvent event) {
+        // Do nothing
     }
 }
