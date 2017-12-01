@@ -35,7 +35,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
@@ -78,14 +77,6 @@ public abstract class Main {
      * Global application.
      */
     public static volatile Main main;
-
-    /**
-     * The worker thread slave. This is for executing all long and intensive
-     * calculations. The executed runnables are guaranteed to be executed separately and sequential.
-     * @deprecated use {@link MainApplication#worker} instead
-     */
-    @Deprecated
-    public static ExecutorService worker;
 
     /**
      * Global application preferences

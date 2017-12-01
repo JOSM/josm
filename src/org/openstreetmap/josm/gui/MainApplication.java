@@ -220,9 +220,6 @@ public class MainApplication extends Main {
      * @since 12634 (as a replacement to {@code Main.worker})
      */
     public static final ExecutorService worker = new ProgressMonitorExecutor("main-worker-%d", Thread.NORM_PRIORITY);
-    static {
-        Main.worker = worker;
-    }
 
     /**
      * Provides access to the layers displayed in the main view.
