@@ -377,7 +377,7 @@ public final class MapViewState implements Serializable {
 
     /**
      * Create the default {@link MapViewState} object for the given map view. The screen position won't be set so that this method can be used
-     * before the view was added to the hirarchy.
+     * before the view was added to the hierarchy.
      * @param width The view width
      * @param height The view height
      * @return The state
