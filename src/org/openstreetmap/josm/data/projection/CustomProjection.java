@@ -62,7 +62,6 @@ public class CustomProjection extends AbstractProjection {
     protected String pref;
     protected String name;
     protected String code;
-    protected String cacheDir;
     protected Bounds bounds;
     private double metersPerUnitWMTS;
     private String axis = "enu"; // default axis orientation is East, North, Up

@@ -79,7 +79,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * WGS84: Directly use latitude / longitude values as x/y.
      */
-    public static final ProjectionChoice wgs84 = registerProjectionChoice(tr("WGS84 Geographic"), "core:wgs84", 4326, "epsg4326");
+    public static final ProjectionChoice wgs84 = registerProjectionChoice(tr("WGS84 Geographic"), "core:wgs84", 4326);
 
     /**
      * Mercator Projection.
@@ -271,12 +271,27 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
     }
 
+    /**
+     * Registers a new projection choice.
+     * @param name short name of the projection choice as shown in the GUI
+     * @param id short name of the projection choice as shown in the GUI
+     * @param epsg the unique numeric EPSG identifier for the projection
+     * @param cacheDir unused
+     * @return the registered {@link ProjectionChoice}
+     * @deprecated use {@link #registerProjectionChoice(String, String, Integer)} instead
+     */
+    @Deprecated
     public static ProjectionChoice registerProjectionChoice(String name, String id, Integer epsg, String cacheDir) {
-        ProjectionChoice pc = new SingleProjectionChoice(name, id, "EPSG:"+epsg, cacheDir);
-        registerProjectionChoice(pc);
-        return pc;
+        return registerProjectionChoice(name, id, epsg);
     }
 
+    /**
+     * Registers a new projection choice.
+     * @param name short name of the projection choice as shown in the GUI
+     * @param id short name of the projection choice as shown in the GUI
+     * @param epsg the unique numeric EPSG identifier for the projection
+     * @return the registered {@link ProjectionChoice}
+     */
     private static ProjectionChoice registerProjectionChoice(String name, String id, Integer epsg) {
         ProjectionChoice pc = new SingleProjectionChoice(name, id, "EPSG:"+epsg);
         registerProjectionChoice(pc);
