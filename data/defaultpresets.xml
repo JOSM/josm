@@ -5932,6 +5932,7 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=waste_basket"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=waste_basket" />
             <key key="amenity" value="waste_basket" />
+            <combo key="waste" text="Waste" values="trash,dog_excrement" />
         </item> <!-- Waste Basket/Trash Can -->
         <item name="Waste Disposal/Dumpster" icon="presets/service/recycling/waste_disposal.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=waste_disposal"
@@ -5943,6 +5944,7 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=waste_disposal"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=waste_disposal" />
             <key key="amenity" value="waste_disposal" />
+            <combo key="waste" text="Waste" values="trash" />
         </item> <!-- Waste Disposal/Dumpster -->
         <item name="Sanitary Dump Station" icon="presets/service/recycling/sanitary_dump_station.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Toilet_Holding_Tank_Disposal"
