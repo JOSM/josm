@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -144,7 +145,7 @@ public final class HttpClient {
                 if (DefaultAuthenticator.getInstance().isEnabled() && connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     DefaultAuthenticator.getInstance().addFailedCredentialHost(url.getHost());
                 }
-            } catch (IOException | IllegalArgumentException e) {
+            } catch (IOException | IllegalArgumentException | NoSuchElementException e) {
                 Logging.info("{0} {1} -> !!!", requestMethod, url);
                 Logging.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
