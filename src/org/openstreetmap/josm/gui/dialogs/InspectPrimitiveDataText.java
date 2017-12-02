@@ -220,7 +220,7 @@ public class InspectPrimitiveDataText {
                     Double.toString(en.north()));
             Pair<Integer, Hemisphere> utmZone = TransverseMercator.locateUtmZone(n.getCoor());
             String utmLabel = tr("UTM Zone");
-            add(utmLabel, utmLabel.endsWith(":") ? " " : ": ", Integer.toString(utmZone.a), utmZone.b.toString().substring(0, 1));
+            add(utmLabel, utmLabel.endsWith(":") ? " " : ": ", Integer.toString(utmZone.a), utmZone.b.name().substring(0, 1));
         }
     }
 

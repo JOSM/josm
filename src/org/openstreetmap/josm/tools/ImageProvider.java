@@ -1972,18 +1972,18 @@ public class ImageProvider {
     /**
      * Converts an {@link Rectangle} area of {@link Image} to a {@link BufferedImage} instance.
      * @param image image to convert
-     * @param crop_area rectangle to crop image with
+     * @param cropArea rectangle to crop image with
      * @return a {@code BufferedImage} instance for the cropped area of {@code Image}.
      * @since 13127
      */
-    public static BufferedImage toBufferedImage(Image image, Rectangle crop_area) {
+    public static BufferedImage toBufferedImage(Image image, Rectangle cropArea) {
         BufferedImage buffImage = null;
         Rectangle r = new Rectangle(image.getWidth(null), image.getHeight(null));
-        if (r.intersection(crop_area).equals(crop_area)) {
-            buffImage = new BufferedImage(crop_area.width, crop_area.height, BufferedImage.TYPE_INT_ARGB);
+        if (r.intersection(cropArea).equals(cropArea)) {
+            buffImage = new BufferedImage(cropArea.width, cropArea.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = buffImage.createGraphics();
-            g2.drawImage(image, 0, 0, crop_area.width, crop_area.height,
-                crop_area.x, crop_area.y, crop_area.x + crop_area.width, crop_area.y + crop_area.height, null);
+            g2.drawImage(image, 0, 0, cropArea.width, cropArea.height,
+                cropArea.x, cropArea.y, cropArea.x + cropArea.width, cropArea.y + cropArea.height, null);
             g2.dispose();
         }
         return buffImage;

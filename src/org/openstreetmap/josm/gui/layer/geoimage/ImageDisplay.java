@@ -778,19 +778,17 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         }
 
         // overscan to prevent empty edges when zooming in to zoom scales > 2:1
-        if (w > imgRect.width && h > imgRect.height && !imgRect.isFullView1D()) {
-            if (wFact != hFact) {
-                if (wFact > hFact) {
-                    w = compRect.width;
-                    x = 0;
-                    h = wFact / imgRect.width;
-                    y = (compRect.height - h) / 2;
-                } else {
-                    h = compRect.height;
-                    y = 0;
-                    w = hFact / imgRect.height;
-                    x = (compRect.width - w) / 2;
-                }
+        if (w > imgRect.width && h > imgRect.height && !imgRect.isFullView1D() && wFact != hFact) {
+            if (wFact > hFact) {
+                w = compRect.width;
+                x = 0;
+                h = wFact / imgRect.width;
+                y = (compRect.height - h) / 2;
+            } else {
+                h = compRect.height;
+                y = 0;
+                w = hFact / imgRect.height;
+                x = (compRect.width - w) / 2;
             }
         }
 
