@@ -4361,6 +4361,8 @@
             <key key="tourism" value="viewpoint" />
             <text key="name" text="Name" />
             <combo key="direction" text="Direction" delimiter="|" values="N|E|S|W|NE|NNE-S|180|90-270|270-90|0-360|70-110;250-290" values_no_i18n="true" values_sort="false" />
+            <space />
+            <label text="" icon="presets/misc/angles.svg" icon_size="300" />
             <!--<check key="man_made" value="tower" text="Look-Out Tower" />-->
         </item> <!-- Viewpoint -->
         <separator/>
@@ -5930,6 +5932,7 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=waste_basket"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=waste_basket" />
             <key key="amenity" value="waste_basket" />
+            <combo key="waste" text="Waste" values="trash,dog_excrement" />
         </item> <!-- Waste Basket/Trash Can -->
         <item name="Waste Disposal/Dumpster" icon="presets/service/recycling/waste_disposal.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=waste_disposal"
@@ -5941,6 +5944,7 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=waste_disposal"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=waste_disposal" />
             <key key="amenity" value="waste_disposal" />
+            <combo key="waste" text="Waste" values="trash" />
         </item> <!-- Waste Disposal/Dumpster -->
         <item name="Sanitary Dump Station" icon="presets/service/recycling/sanitary_dump_station.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Toilet_Holding_Tank_Disposal"
@@ -6818,7 +6822,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,residential,apartments,house,hotel,hut,bungalow,dormitory,terrace,detached,farm,roof" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,residential,apartments,house,hotel,hut,bungalow,dormitory,terrace,detached,farm" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
