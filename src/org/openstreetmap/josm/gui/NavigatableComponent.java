@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Cursor;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
@@ -319,7 +320,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     protected boolean isVisibleOnScreen() {
-        return SwingUtilities.getWindowAncestor(this) != null && isShowing();
+        return GraphicsEnvironment.isHeadless() || (
+            SwingUtilities.getWindowAncestor(this) != null && isShowing()
+        );
     }
 
     /**
