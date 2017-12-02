@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Container;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -144,10 +145,16 @@ public final class MapViewState implements Serializable {
     }
 
     private static Point findTopLeftOnScreen(JComponent position) {
-        try {
-            return position.getLocationOnScreen();
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            throw BugReport.intercept(e).put("position", position).put("parent", position::getParent);
+        if (GraphicsEnvironment.isHeadless()) {
+            // in our imaginary universe the window is always (10, 10) from the top left of the screen
+            Point topLeftInWindow = findTopLeftInWindow(position);
+            return new Point(topLeftInWindow.x + 10, topLeftInWindow.y + 10);
+        } else {
+            try {
+                return position.getLocationOnScreen();
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+                throw BugReport.intercept(e).put("position", position).put("parent", position::getParent);
+            }
         }
     }
 
