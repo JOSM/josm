@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -18,6 +19,7 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 
 import javax.swing.JMenuItem;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.awaitility.Awaitility;
@@ -26,11 +28,14 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.bbox.SourceButton;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.ImagePatternMatching;
@@ -86,7 +91,7 @@ public class MinimapDialogTest {
             if (JPopupMenu.Separator.class.isInstance(c)) {
                 break;
             } else {
-                boolean equalText = ((JMenuItem) c).getText() == label;
+                boolean equalText = ((JMenuItem) c).getText().equals(label);
                 boolean isSelected = ((JMenuItem) c).isSelected();
                 assertEquals(equalText, isSelected);
                 if (equalText) {
@@ -296,9 +301,9 @@ public class MinimapDialogTest {
         this.paintSlippyMap();
 
         Map<Integer, String> paletteMap = ImmutableMap.<Integer, String>builder()
-            .put(0xffffffff, "w")
-            .put(0xff000000, "b")
-            .put(0xfff0d1d1, "p")
+            .put(0xffffffff, "w")  // white
+            .put(0xff000000, "b")  // black
+            .put(0xfff0d1d1, "p")  // pink
             .build();
 
         Matcher rowMatcher = ImagePatternMatching.rowMatch(
@@ -382,6 +387,415 @@ public class MinimapDialogTest {
         assertTrue(
             "Viewport marker not 2:1 aspect ratio",
             Math.abs(colMatcher.group(2).length() - (rowMatcher.group(2).length()*2.0)) < 5
+        );
+    }
+
+    protected JCheckBoxMenuItem getShowDownloadedAreaMenuItem() {
+        JPopupMenu menu = this.sourceButton.getPopupMenu();
+        boolean afterSeparator = false;
+        for (Component c: menu.getComponents()) {
+            if (JPopupMenu.Separator.class.isInstance(c)) {
+                assertFalse("More than one separator before target item", afterSeparator);
+                afterSeparator = true;
+            } else if (((JMenuItem) c).getText().equals(tr("Show downloaded area"))) {
+                assertTrue("Separator not found before target item", afterSeparator);
+                assertTrue("Target item doesn't appear to be a JCheckBoxMenuItem", JCheckBoxMenuItem.class.isInstance(c));
+                return (JCheckBoxMenuItem) c;
+            }
+        }
+        fail("'Show downloaded area' menu item not found");
+        return null;
+    }
+
+    /**
+     * test downloaded area is shown shaded
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testShowDownloadedArea() throws Exception {
+        Main.pref.put("slippy_map_chooser.mapstyle", "Green Tiles");
+        Main.pref.putBoolean("slippy_map_chooser.show_downloaded_area", false);
+
+        DataSet dataSet = new DataSet();
+        dataSet.addDataSource(new DataSource(new Bounds(51.725, -0.0209, 51.746, 0.0162), "Somewhere"));
+
+        OsmDataLayer dataLayer = new OsmDataLayer(
+            dataSet,
+            "Test Layer 123",
+            null
+        );
+        MainApplication.getLayerManager().addLayer(dataLayer);
+        MainApplication.getLayerManager().setActiveLayer(dataLayer);
+
+        MapView mapView = MainApplication.getMap().mapView;
+        GuiHelper.runInEDTAndWaitWithException(() -> {
+            mapView.setVisible(true);
+            mapView.addNotify();
+            mapView.doLayout();
+            mapView.setBounds(0, 0, 500, 500);
+        });
+
+        this.setUpMiniMap();
+
+        // assert "show downloaded areas" checkbox is unchecked
+        assertFalse(this.getShowDownloadedAreaMenuItem().isSelected());
+
+        // we won't end up with exactly this viewport as it doesn't *precisely* match the aspect ratio
+        mapView.zoomTo(new Bounds(51.732, -0.0269, 51.753, 0.0102));
+
+        // an initial paint operation is required to trigger the tile fetches
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        Map<Integer, String> paletteMap = ImmutableMap.<Integer, String>builder()
+            .put(0xff00ff00, "g")  // green
+            .put(0xff000000, "b")  // black
+            .put(0xff8ad16b, "v")  // viewport marker inner (pink+green mix)
+            .put(0xff00df00, "d")  // (shaded green)
+            .put(0xff8ac46b, "q")  // (shaded pink+green mix)
+            .build();
+
+        // assert downloaded areas are not drawn
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()/2,
+            paletteMap,
+            "^g+bv+bg+$",
+            true
+        );
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()/2,
+            paletteMap,
+            "^g+bv+bg+$",
+            true
+        );
+
+        // enable "show downloaded areas"
+        GuiHelper.runInEDTAndWaitWithException(() -> this.getShowDownloadedAreaMenuItem().doClick());
+        assertTrue(this.getShowDownloadedAreaMenuItem().isSelected());
+
+        // assert downloaded areas are drawn
+        this.paintSlippyMap();
+
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()/2,
+            paletteMap,
+            "^d+bq+v+bg+d+$",
+            true
+        );
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()/2,
+            paletteMap,
+            "^d+bq+v+bg+d+$",
+            true
+        );
+
+        // also assert the leftmost column doesn't (yet) have any downloaded area marks (i.e. fully shaded)
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            0,
+            paletteMap,
+            "^d+$",
+            true
+        );
+
+        // add another downloaded area, going off the left of the widget
+        dataSet.addDataSource(new DataSource(new Bounds(51.745, -1., 51.765, 0.0162), "Somewhere else"));
+        // and redraw
+        this.paintSlippyMap();
+
+        // the middle row should be as before
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()/2,
+            paletteMap,
+            "^d+bq+v+bg+d+$",
+            true
+        );
+        // the middle column should have its unshaded region extended beyond the viewport marker
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()/2,
+            paletteMap,
+            "^d+g+bv+bg+d+$",
+            true
+        );
+        // but the leftmost column should now have an unshaded mark
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            0,
+            paletteMap,
+            "^d+g+d+$",
+            true
+        );
+        // and the rightmost column should be untouched
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()-1,
+            paletteMap,
+            "^d+$",
+            true
+        );
+
+        // and now if we pan to the left (in EastNorth units)
+        mapView.zoomTo(mapView.getCenter().add(-5000., 0.));
+        // and redraw
+        this.paintSlippyMap();
+
+        // the middle row should have its unshaded region outside the viewport marker
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()/2,
+            paletteMap,
+            "^d+bq+bd+g+d*$",
+            true
+        );
+        // the middle column should have a shaded region inside the viewport marker
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()/2,
+            paletteMap,
+            "^d+g+bv+q+bd+$",
+            true
+        );
+    }
+
+    /**
+     * test display of downloaded area follows active layer switching
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testShowDownloadedAreaLayerSwitching() throws Exception {
+        Main.pref.put("slippy_map_chooser.mapstyle", "Green Tiles");
+        Main.pref.putBoolean("slippy_map_chooser.show_downloaded_area", true);
+
+        DataSet dataSetA = new DataSet();
+        // dataSetA has a long thin horizontal downloaded area (extending off the left & right of the map)
+        dataSetA.addDataSource(new DataSource(new Bounds(-18., -61.02, -15., -60.98), "Elsewhere"));
+
+        OsmDataLayer dataLayerA = new OsmDataLayer(
+            dataSetA,
+            "Test Layer A",
+            null
+        );
+        MainApplication.getLayerManager().addLayer(dataLayerA);
+
+        DataSet dataSetB = new DataSet();
+        // dataSetB has a long thin vertical downloaded area (extending off the top & bottom of the map)
+        dataSetB.addDataSource(new DataSource(new Bounds(-16.38, -62., -16.34, -60.), "Nowhere"));
+
+        OsmDataLayer dataLayerB = new OsmDataLayer(
+            dataSetB,
+            "Test Layer B",
+            null
+        );
+        MainApplication.getLayerManager().addLayer(dataLayerB);
+
+        MainApplication.getLayerManager().setActiveLayer(dataLayerB);
+
+        MapView mapView = MainApplication.getMap().mapView;
+        GuiHelper.runInEDTAndWaitWithException(() -> {
+            mapView.setVisible(true);
+            mapView.addNotify();
+            mapView.doLayout();
+            mapView.setBounds(0, 0, 400, 400);
+        });
+
+        this.setUpMiniMap();
+
+        // assert "show downloaded areas" checkbox is checked
+        assertTrue(this.getShowDownloadedAreaMenuItem().isSelected());
+
+        // again, we won't end up with exactly this viewport as it doesn't *precisely* match the aspect ratio
+        mapView.zoomTo(new Bounds(-16.423, -61.076, -16.299, -60.932));
+
+        // an initial paint operation is required to trigger the tile fetches
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        Map<Integer, String> paletteMap = ImmutableMap.<Integer, String>builder()
+            .put(0xff00ff00, "g")  // green
+            .put(0xff000000, "b")  // black
+            .put(0xff8ad16b, "v")  // viewport marker inner (pink+green mix)
+            .put(0xff00df00, "d")  // (shaded green)
+            .put(0xff8ac46b, "q")  // (shaded pink+green mix)
+            .build();
+
+        // the middle row should be entirely unshaded
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()/2,
+            paletteMap,
+            "^g+bv+bg+$",
+            true
+        );
+        // the middle column should have an unshaded band within the viewport marker
+        Matcher centerMatcher = ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()/2,
+            paletteMap,
+            "^(d+bq+)(v+)(q+bd+)$",
+            true
+        );
+        // the leftmost and rightmost columns should have an unshaded band
+        Matcher leftMatcher = ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            0,
+            paletteMap,
+            "^(d+)(g+)(d+)$",
+            true
+        );
+        Matcher rightMatcher = ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()-1,
+            paletteMap,
+            "^(d+)(g+)(d+)$",
+            true
+        );
+        // the three columns should have the unshaded band in the same place
+        assertEquals(centerMatcher.group(1).length(), leftMatcher.group(1).length());
+        assertEquals(centerMatcher.group(1).length(), rightMatcher.group(1).length());
+        assertEquals(centerMatcher.group(2).length(), leftMatcher.group(2).length());
+        assertEquals(centerMatcher.group(2).length(), rightMatcher.group(2).length());
+
+        // switch active layer
+        MainApplication.getLayerManager().setActiveLayer(dataLayerA);
+        this.paintSlippyMap();
+
+        // the middle column should be entirely unshaded
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()/2,
+            paletteMap,
+            "^g+bv+bg+$",
+            true
+        );
+        // the middle row should have an unshaded band within the viewport marker
+        centerMatcher = ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()/2,
+            paletteMap,
+            "^(d+bq+)(v+)(q+bd+)$",
+            true
+        );
+        // the topmost and bottommost rows should have an unshaded band
+        Matcher topMatcher = ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            0,
+            paletteMap,
+            "^(d+)(g+)(d+)$",
+            true
+        );
+        Matcher BottomMatcher = ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()-1,
+            paletteMap,
+            "^(d+)(g+)(d+)$",
+            true
+        );
+        // the three rows should have the unshaded band in the same place
+        assertEquals(centerMatcher.group(1).length(), topMatcher.group(1).length());
+        assertEquals(centerMatcher.group(1).length(), BottomMatcher.group(1).length());
+        assertEquals(centerMatcher.group(2).length(), topMatcher.group(2).length());
+        assertEquals(centerMatcher.group(2).length(), BottomMatcher.group(2).length());
+
+        // deleting dataLayerA should hopefully switch our active layer back to dataLayerB
+        MainApplication.getLayerManager().removeLayer(dataLayerA);
+        this.paintSlippyMap();
+
+        // now we're really just repeating the same assertions we made originally when dataLayerB was active
+        // the middle row should be entirely unshaded
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()/2,
+            paletteMap,
+            "^g+bv+bg+$",
+            true
+        );
+        // the middle column should have an unshaded band within the viewport marker
+        centerMatcher = ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()/2,
+            paletteMap,
+            "^(d+bq+)(v+)(q+bd+)$",
+            true
+        );
+        // the leftmost and rightmost columns should have an unshaded band
+        leftMatcher = ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            0,
+            paletteMap,
+            "^(d+)(g+)(d+)$",
+            true
+        );
+        rightMatcher = ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()-1,
+            paletteMap,
+            "^(d+)(g+)(d+)$",
+            true
+        );
+        // the three columns should have the unshaded band in the same place
+        assertEquals(centerMatcher.group(1).length(), leftMatcher.group(1).length());
+        assertEquals(centerMatcher.group(1).length(), rightMatcher.group(1).length());
+        assertEquals(centerMatcher.group(2).length(), leftMatcher.group(2).length());
+        assertEquals(centerMatcher.group(2).length(), rightMatcher.group(2).length());
+
+        // but now if we expand its downloaded area to cover most of the southern hemisphere...
+        dataSetB.addDataSource(new DataSource(new Bounds(-75., -100., 0., 100.), "Everywhere"));
+        this.paintSlippyMap();
+
+        // we should see it all as unshaded.
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            0,
+            paletteMap,
+            "^g+$",
+            true
+        );
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()/2,
+            paletteMap,
+            "^g+bv+bg+$",
+            true
+        );
+        ImagePatternMatching.rowMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getHeight()-1,
+            paletteMap,
+            "^g+$",
+            true
+        );
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            0,
+            paletteMap,
+            "^g+$",
+            true
+        );
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()/2,
+            paletteMap,
+            "^g+bv+bg+$",
+            true
+        );
+        ImagePatternMatching.columnMatch(
+            paintedSlippyMap,
+            paintedSlippyMap.getWidth()-1,
+            paletteMap,
+            "^g+$",
+            true
         );
     }
 }
