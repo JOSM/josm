@@ -296,7 +296,11 @@ public class MergeNodesAction extends JosmAction {
         }
         Set<Node> allNodes = new HashSet<>(nodes);
         allNodes.add(targetLocationNode);
-        return mergeNodes(nodes, selectTargetNode(allNodes), targetLocationNode);
+        Node targetNode = selectTargetNode(allNodes);
+        if (targetNode == null) {
+            return null;
+        }
+        return mergeNodes(nodes, targetNode, targetLocationNode);
     }
 
     /**
