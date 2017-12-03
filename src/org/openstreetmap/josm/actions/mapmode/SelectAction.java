@@ -718,7 +718,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     LatLon ll = n.getCoor();
                     if (ll != null && ll.isOutSideWorld()) {
                         // Revert move
-                        ((MoveCommand) c).resetToCheckpoint();
+                        if (c instanceof MoveCommand) {
+                            ((MoveCommand) c).resetToCheckpoint();
+                        }
                         // TODO: We might use a simple notification in the lower left corner.
                         JOptionPane.showMessageDialog(
                                 Main.parent,
