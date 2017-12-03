@@ -19,6 +19,7 @@ import javax.swing.plaf.basic.BasicArrowButton;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -32,6 +33,8 @@ public class SideButton extends JButton implements Destroyable {
     /**
      * Constructs a new {@code SideButton}.
      * @param action action used to specify the new button
+     * an icon must be provided with {@link ImageResource#attachImageIcon(AbstractAction this, boolean true)}
+     * @throws IllegalArgumentException if no icon provided
      * @since 744
      */
     public SideButton(Action action) {
@@ -40,9 +43,8 @@ public class SideButton extends JButton implements Destroyable {
         if (icon != null) {
             setIcon(icon.getImageIconBounded(
                 ImageProvider.ImageSizes.SIDEBUTTON.getImageDimension()));
-        } else if (getIcon() != null) { /* TODO: remove when calling code is fixed, replace by exception */
-            Logging.warn("Old style SideButton usage for action " + action);
-            fixIcon(action);
+        } else {
+            throw new IllegalArgumentException("No icon provided");
         }
         doStyle();
     }
@@ -70,34 +72,6 @@ public class SideButton extends JButton implements Destroyable {
         super(action);
         setIcon(ImageProvider.get("dialogs", imagename, ImageProvider.ImageSizes.SIDEBUTTON));
         doStyle();
-    }
-
-    /**
-     * Fix icon size
-     * @param action the action
-     * @deprecated This method is old style and will be removed together with the removal
-     * of old constructor code
-     */
-    @Deprecated
-    private void fixIcon(Action action) {
-        // need to listen for changes, so that putValue() that are called after the
-        // SideButton is constructed get the proper icon size
-        if (action != null) {
-            propertyChangeListener = evt -> {
-                if (Action.SMALL_ICON.equals(evt.getPropertyName())) {
-                    fixIcon(null);
-                }
-            };
-            action.addPropertyChangeListener(propertyChangeListener);
-        }
-        int iconHeight = ImageProvider.ImageSizes.SIDEBUTTON.getImageDimension().height;
-        Icon i = getIcon();
-        if (i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
-            Image im = ((ImageIcon) i).getImage();
-            int newWidth = im.getWidth(null) * iconHeight / im.getHeight(null);
-            ImageIcon icon = new ImageIcon(im.getScaledInstance(newWidth, iconHeight, Image.SCALE_SMOOTH));
-            setIcon(icon);
-        }
     }
 
     /**
