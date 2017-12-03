@@ -42,6 +42,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -636,8 +637,17 @@ public class TagEditHelper {
                public void focusGained(FocusEvent e) {
                    Logging.trace("Focus gained by {0}, e={1}", values, e);
                    String key = keys.getEditor().getItem().toString();
+                   List<AutoCompletionItem> correctItems = autocomplete.getTagValues(getAutocompletionKeys(key), comparator);
+                   ComboBoxModel<AutoCompletionItem> currentModel = values.getModel();
+                   final int size = correctItems.size();
+                   boolean valuesOK = size == currentModel.getSize();
+                   for (int i = 0; valuesOK && i < size; i++) {
+                       valuesOK = Objects.equals(currentModel.getElementAt(i), correctItems.get(i));
+                   }
+                   if (!valuesOK) {
+                       values.setPossibleAcItems(correctItems);
+                   }
                    if (!Objects.equals(key, objKey)) {
-                       values.setPossibleAcItems(autocomplete.getTagValues(getAutocompletionKeys(key), comparator));
                        values.getEditor().selectAll();
                        objKey = key;
                    }
