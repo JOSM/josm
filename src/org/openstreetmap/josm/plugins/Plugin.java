@@ -174,7 +174,9 @@ public abstract class Plugin implements MapFrameListener {
      * @throws FileNotFoundException if the file exists but is a directory rather than a regular file,
      * does not exist but cannot be created, or cannot be opened for any other reason
      * @throws IOException if any other I/O error occurs
+     * @deprecated without replacement
      */
+    @Deprecated
     public void copy(String from, String to) throws IOException {
         String pluginDirName = getPluginDir();
         File pluginDir = new File(pluginDirName);
