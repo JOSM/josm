@@ -22,6 +22,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.io.File;
 
 import javax.swing.JComponent;
@@ -112,6 +113,10 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
     public static class VisRect extends Rectangle {
         private final Rectangle init;
 
+        /** set when this {@code VisRect} is updated by a mouse drag operation and
+         * unset on mouse release **/
+        public boolean isDragUpdate;
+
         /**
          * Constructs a new {@code VisRect}.
          * @param     x the specified X coordinate
@@ -124,6 +129,14 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             init = new Rectangle(this);
         }
 
+        /**
+         * Constructs a new {@code VisRect}.
+         * @param     x the specified X coordinate
+         * @param     y the specified Y coordinate
+         * @param     width  the width of the rectangle
+         * @param     height the height of the rectangle
+         * @param     peer share full bounds with this peer {@code VisRect}
+         */
         public VisRect(int x, int y, int width, int height, VisRect peer) {
             super(x, y, width, height);
             init = peer.init;
@@ -199,10 +212,12 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
     }
 
     /** The thread that reads the images. */
-    private class LoadImageRunnable implements Runnable {
+    private class LoadImageRunnable implements Runnable, ImageObserver {
 
         private final File file;
         private final int orientation;
+        private int width;
+        private int height;
 
         LoadImageRunnable(File file, Integer orientation) {
             this.file = file;
@@ -210,28 +225,76 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         }
 
         @Override
+        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+            if (((infoflags & ImageObserver.WIDTH) == ImageObserver.WIDTH) &&
+                ((infoflags & ImageObserver.HEIGHT) == ImageObserver.HEIGHT)) {
+                this.width = width;
+                this.height = height;
+                synchronized (this) {
+                    this.notify();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
         public void run() {
             Image img = Toolkit.getDefaultToolkit().createImage(file.getPath());
-            tracker.addImage(img, 1);
 
-            // Wait for the end of loading
-            while (!tracker.checkID(1, true)) {
-                if (this.file != ImageDisplay.this.file) {
-                    // The file has changed
-                    tracker.removeImage(img);
-                    return;
-                }
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    Logging.warn("InterruptedException in "+getClass().getSimpleName()+" while loading image "+file.getPath());
-                    Thread.currentThread().interrupt();
+            synchronized (this) {
+                width = -1;
+                img.getWidth(this);
+                img.getHeight(this);
+
+                while (width < 0) {
+                    try {
+                        this.wait();
+                        if (width < 0) {
+                            errorLoading = true;
+                            return;
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
-            boolean error = tracker.isErrorID(1);
-            if (img.getWidth(null) < 0 || img.getHeight(null) < 0) {
-                error = true;
+            long allocatedMem = Runtime.getRuntime().totalMemory() -
+                    Runtime.getRuntime().freeMemory();
+            long mem = Runtime.getRuntime().maxMemory()-allocatedMem;
+
+            if (mem > ((long) width*height*4)*2) {
+                Logging.info("Loading {0} using default toolkit", file.getPath());
+                tracker.addImage(img, 1);
+
+                // Wait for the end of loading
+                while (!tracker.checkID(1, true)) {
+                    if (this.file != ImageDisplay.this.file) {
+                        // The file has changed
+                        tracker.removeImage(img);
+                        return;
+                    }
+                    try {
+                        Thread.sleep(5);
+                    } catch (InterruptedException e) {
+                        Logging.trace(e);
+                        Logging.warn("InterruptedException in "+getClass().getSimpleName()+
+                                " while loading image "+file.getPath());
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                if (tracker.isErrorID(1)) {
+                    img = null;
+                    System.gc();
+                }
+            } else {
+                img = null;
+            }
+
+            if (img == null || width <= 0 || height <= 0) {
+                tracker.removeImage(img);
+                img = null;
             }
 
             synchronized (ImageDisplay.this) {
@@ -241,36 +304,33 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
                     return;
                 }
 
-                if (!error) {
-                    ImageDisplay.this.image = img;
-                    visibleRect = new VisRect(0, 0, img.getWidth(null), img.getHeight(null));
-
-                    final int w = (int) visibleRect.getWidth();
-                    final int h = (int) visibleRect.getHeight();
-
+                if (img != null) {
+                    boolean switchedDim = false;
                     if (ExifReader.orientationNeedsCorrection(orientation)) {
-                        final int hh, ww;
                         if (ExifReader.orientationSwitchesDimensions(orientation)) {
-                            ww = h;
-                            hh = w;
-                        } else {
-                            ww = w;
-                            hh = h;
+                            width = img.getHeight(null);
+                            height = img.getWidth(null);
+                            switchedDim = true;
                         }
-                        final BufferedImage rot = new BufferedImage(ww, hh, BufferedImage.TYPE_INT_RGB);
-                        final AffineTransform xform = ExifReader.getRestoreOrientationTransform(orientation, w, h);
+                        final BufferedImage rot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                        final AffineTransform xform = ExifReader.getRestoreOrientationTransform(orientation,
+                                img.getWidth(null), img.getHeight(null));
                         final Graphics2D g = rot.createGraphics();
-                        g.drawImage(image, xform, null);
+                        g.drawImage(img, xform, null);
                         g.dispose();
-
-                        visibleRect.setSize(ww, hh);
-                        image.flush();
-                        ImageDisplay.this.image = rot;
+                        img.flush();
+                        img = rot;
                     }
+
+                    ImageDisplay.this.image = img;
+                    visibleRect = new VisRect(0, 0, width, height);
+
+                    Logging.info("Loaded {0} with dimensions {1}x{2} mem(prev-avail={3}m,taken={4}m) exifOrientationSwitchedDimension={5}",
+                            file.getPath(), width, height, mem/1024/1024, width*height*4/1024/1024, switchedDim);
                 }
 
                 selectedRect = null;
-                errorLoading = error;
+                errorLoading = (img == null);
             }
             tracker.removeImage(img);
             ImageDisplay.this.repaint();
@@ -473,6 +533,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
             if (mouseIsDragging(e)) {
                 Point p = comp2imgCoord(visibleRect, e.getX(), e.getY(), getSize());
+                visibleRect.isDragUpdate = true;
                 visibleRect.x += mousePointInImg.x - p.x;
                 visibleRect.y += mousePointInImg.y - p.y;
                 visibleRect.checkRectPos();
@@ -503,9 +564,6 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (!mouseIsZoomSelecting(e) || selectedRect == null)
-                return;
-
             File file;
             Image image;
 
@@ -514,47 +572,56 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
                 image = ImageDisplay.this.image;
             }
 
-            if (image == null) {
+            if (image == null)
                 return;
+
+            if (mouseIsDragging(e)) {
+                visibleRect.isDragUpdate = false;
             }
 
-            int oldWidth = selectedRect.width;
-            int oldHeight = selectedRect.height;
+            if (mouseIsZoomSelecting(e) && selectedRect != null) {
+                int oldWidth = selectedRect.width;
+                int oldHeight = selectedRect.height;
 
-            // Check that the zoom doesn't exceed MAX_ZOOM:1
-            if (selectedRect.width < getSize().width / MAX_ZOOM.get()) {
-                selectedRect.width = (int) (getSize().width / MAX_ZOOM.get());
-            }
-            if (selectedRect.height < getSize().height / MAX_ZOOM.get()) {
-                selectedRect.height = (int) (getSize().height / MAX_ZOOM.get());
-            }
+                // Check that the zoom doesn't exceed MAX_ZOOM:1
+                if (selectedRect.width < getSize().width / MAX_ZOOM.get()) {
+                    selectedRect.width = (int) (getSize().width / MAX_ZOOM.get());
+                }
+                if (selectedRect.height < getSize().height / MAX_ZOOM.get()) {
+                    selectedRect.height = (int) (getSize().height / MAX_ZOOM.get());
+                }
 
-            // Set the same ratio for the visible rectangle and the display area
-            int hFact = selectedRect.height * getSize().width;
-            int wFact = selectedRect.width * getSize().height;
-            if (hFact > wFact) {
-                selectedRect.width = hFact / getSize().height;
-            } else {
-                selectedRect.height = wFact / getSize().width;
-            }
+                // Set the same ratio for the visible rectangle and the display area
+                int hFact = selectedRect.height * getSize().width;
+                int wFact = selectedRect.width * getSize().height;
+                if (hFact > wFact) {
+                    selectedRect.width = hFact / getSize().height;
+                } else {
+                    selectedRect.height = wFact / getSize().width;
+                }
 
-            // Keep the center of the selection
-            if (selectedRect.width != oldWidth) {
-                selectedRect.x -= (selectedRect.width - oldWidth) / 2;
-            }
-            if (selectedRect.height != oldHeight) {
-                selectedRect.y -= (selectedRect.height - oldHeight) / 2;
-            }
+                // Keep the center of the selection
+                if (selectedRect.width != oldWidth) {
+                    selectedRect.x -= (selectedRect.width - oldWidth) / 2;
+                }
+                if (selectedRect.height != oldHeight) {
+                    selectedRect.y -= (selectedRect.height - oldHeight) / 2;
+                }
 
-            selectedRect.checkRectSize();
-            selectedRect.checkRectPos();
+                selectedRect.checkRectSize();
+                selectedRect.checkRectPos();
+            }
 
             synchronized (ImageDisplay.this) {
                 if (file == ImageDisplay.this.file) {
-                    ImageDisplay.this.visibleRect.setBounds(selectedRect);
+                    if (selectedRect == null) {
+                        ImageDisplay.this.visibleRect = visibleRect;
+                    } else {
+                        ImageDisplay.this.visibleRect.setBounds(selectedRect);
+                        selectedRect = null;
+                    }
                 }
             }
-            selectedRect = null;
             ImageDisplay.this.repaint();
         }
 
@@ -586,6 +653,11 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         preferenceChanged(null);
     }
 
+    /**
+     * Sets a new source image to be displayed by this {@code ImageDisplay}.
+     * @param file new source image
+     * @param orientation orientation of new source (landscape, portrait, upside-down, etc.)
+     */
     public void setImage(File file, Integer orientation) {
         synchronized (this) {
             this.file = file;
@@ -650,16 +722,27 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             Rectangle target = calculateDrawImageRectangle(visibleRect, size);
             double scale = target.width / (double) r.width; // pixel ratio is 1:1
 
-            if (selectedRect == null && bilinLower < scale && scale < bilinUpper) {
-                BufferedImage bi = ImageProvider.toBufferedImage(image, r);
-                r.x = r.y = 0;
+            if (selectedRect == null && !visibleRect.isDragUpdate &&
+                bilinLower < scale && scale < bilinUpper) {
+                try {
+                    BufferedImage bi = ImageProvider.toBufferedImage(image, r);
+                    if (bi != null) {
+                        r.x = r.y = 0;
 
-                // See https://community.oracle.com/docs/DOC-983611 - The Perils of Image.getScaledInstance()
-                // Pre-scale image when downscaling by more than two times to avoid aliasing from default algorithm
-                image = ImageProvider.createScaledImage(bi, target.width, target.height,
-                            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                r.width = target.width;
-                r.height = target.height;
+                        // See https://community.oracle.com/docs/DOC-983611 - The Perils of Image.getScaledInstance()
+                        // Pre-scale image when downscaling by more than two times to avoid aliasing from default algorithm
+                        bi = ImageProvider.createScaledImage(bi, target.width, target.height,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                        r.width = target.width;
+                        r.height = target.height;
+                        image = bi;
+                    }
+                } catch (OutOfMemoryError oom) {
+                    // fall-back to the non-bilinear scaler
+                    r.x = visibleRect.x;
+                    r.y = visibleRect.y;
+                    System.gc();
+                }
             } else {
                 // if target and r cause drawImage to scale image region to a tmp buffer exceeding
                 // its bounds, it will silently fail; crop with r first in such cases
@@ -795,6 +878,11 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         return new VisRect(x + compRect.x, y + compRect.y, w, h, imgRect);
     }
 
+    /**
+     * Make the current image either scale to fit inside this component,
+     * or show a portion of image (1:1), if the image size is larger than
+     * the component size.
+     */
     public void zoomBestFitOrOne() {
         File file;
         Image image;

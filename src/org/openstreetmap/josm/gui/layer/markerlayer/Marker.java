@@ -30,7 +30,6 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.preferences.CachedProperty;
-import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -85,23 +84,6 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
 
         private static final Map<String, TemplateEntryProperty> CACHE = new HashMap<>();
 
-        // Legacy code - convert label from int to template engine expression
-        private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0);
-
-        private static String getDefaultLabelPattern() {
-            switch (PROP_LABEL.get()) {
-            case 1:
-                return LABEL_PATTERN_NAME;
-            case 2:
-                return LABEL_PATTERN_DESC;
-            case 0:
-            case 3:
-                return LABEL_PATTERN_AUTO;
-            default:
-                return "";
-            }
-        }
-
         public static TemplateEntryProperty forMarker(String layerName) {
             String key = "draw.rawgps.layer.wpt.pattern";
             if (layerName != null) {
@@ -109,7 +91,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
             }
             TemplateEntryProperty result = CACHE.get(key);
             if (result == null) {
-                String defaultValue = layerName == null ? getDefaultLabelPattern() : "";
+                String defaultValue = layerName == null ? LABEL_PATTERN_AUTO : "";
                 TemplateEntryProperty parent = layerName == null ? null : forMarker(null);
                 result = new TemplateEntryProperty(key, defaultValue, parent);
                 CACHE.put(key, result);
