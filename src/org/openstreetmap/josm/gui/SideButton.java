@@ -3,15 +3,13 @@ package org.openstreetmap.josm.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
@@ -19,8 +17,6 @@ import javax.swing.plaf.basic.BasicArrowButton;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Button that is usually used in toggle dialogs.
@@ -33,7 +29,7 @@ public class SideButton extends JButton implements Destroyable {
     /**
      * Constructs a new {@code SideButton}.
      * @param action action used to specify the new button
-     * an icon must be provided with {@link ImageResource#attachImageIcon(AbstractAction this, boolean true)}
+     * an icon must be provided with {@link ImageResource#attachImageIcon(AbstractAction, boolean)}
      * @throws IllegalArgumentException if no icon provided
      * @since 744
      */
