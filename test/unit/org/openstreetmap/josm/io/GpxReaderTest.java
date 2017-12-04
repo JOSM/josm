@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -62,5 +64,16 @@ public class GpxReaderTest {
     @Test(expected = SAXException.class)
     public void testException() throws Exception {
         new GpxReader(new ByteArrayInputStream("--foo--bar--".getBytes(StandardCharsets.UTF_8))).parse(true);
+    }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/15634">#15634</a>
+     * @throws IOException if an error occurs during reading
+     * @throws SAXException if any XML error occurs
+     */
+    @Test
+    public void testTicket15634() throws IOException, SAXException {
+        assertEquals(new Bounds(53.7229357, -7.9135019, 53.9301103, -7.59656),
+                GpxReaderTest.parseGpxData(TestUtils.getRegressionDataFile(15634, "drumlish.gpx")).getMetaBounds());
     }
 }
