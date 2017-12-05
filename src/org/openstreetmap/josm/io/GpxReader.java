@@ -89,18 +89,31 @@ public class GpxReader implements GpxConstants {
             data = new GpxData();
         }
 
-        private double parseCoord(String s) {
-            try {
-                return Double.parseDouble(s);
-            } catch (NumberFormatException ex) {
-                return Double.NaN;
+        private double parseCoord(Attributes atts, String key) {
+            String val = atts.getValue(key);
+            if (val != null) {
+                return parseCoord(val);
+            } else {
+                // Some software do not respect GPX schema and use "minLat" / "minLon" instead of "minlat" / "minlon"
+                return parseCoord(atts.getValue(key.replaceFirst("l", "L")));
             }
+        }
+
+        private double parseCoord(String s) {
+            if (s != null) {
+                try {
+                    return Double.parseDouble(s);
+                } catch (NumberFormatException ex) {
+                    Logging.trace(ex);
+                }
+            }
+            return Double.NaN;
         }
 
         private LatLon parseLatLon(Attributes atts) {
             return new LatLon(
-                    parseCoord(atts.getValue("lat")),
-                    parseCoord(atts.getValue("lon")));
+                    parseCoord(atts, "lat"),
+                    parseCoord(atts, "lon"));
         }
 
         @Override
@@ -177,10 +190,10 @@ public class GpxReader implements GpxConstants {
                     break;
                 case "bounds":
                     data.put(META_BOUNDS, new Bounds(
-                                parseCoord(atts.getValue("minlat")),
-                                parseCoord(atts.getValue("minlon")),
-                                parseCoord(atts.getValue("maxlat")),
-                                parseCoord(atts.getValue("maxlon"))));
+                                parseCoord(atts, "minlat"),
+                                parseCoord(atts, "minlon"),
+                                parseCoord(atts, "maxlat"),
+                                parseCoord(atts, "maxlon")));
                     break;
                 default: // Do nothing
                 }
