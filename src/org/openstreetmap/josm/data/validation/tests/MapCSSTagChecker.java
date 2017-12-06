@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -310,7 +311,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     }
                     try {
                         final String val = ai.val instanceof Expression
-                                ? (String) ((Expression) ai.val).evaluate(new Environment())
+                                ? Optional.of(((Expression) ai.val).evaluate(new Environment())).map(Object::toString).orElse(null)
                                 : ai.val instanceof String
                                 ? (String) ai.val
                                 : ai.val instanceof Keyword

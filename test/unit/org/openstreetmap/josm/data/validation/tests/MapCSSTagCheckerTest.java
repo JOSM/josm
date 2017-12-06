@@ -262,4 +262,16 @@ public class MapCSSTagCheckerTest {
     public void testTicket14289() throws Exception {
         doTestNaturalWood(14289, "example2.osm", 3, 3);
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/15641">Bug #15641</a>.
+     * @throws ParseException if an error occurs
+     */
+    @Test
+    public void testTicket15641() throws ParseException {
+        assertNotNull(buildTagChecker(
+                "relation[type=public_transport][public_transport=stop_area_group] > way {" +
+                "  throwWarning: eval(count(parent_tags(public_transport)));" +
+                "}"));
+    }
 }
