@@ -276,7 +276,7 @@ public class OsmReader extends AbstractReader {
             }
         }
         if (w.isDeleted() && !nodeIds.isEmpty()) {
-            Logging.info(tr("Deleted way {0} contains nodes", w.getUniqueId()));
+            Logging.info(tr("Deleted way {0} contains nodes", Long.toString(w.getUniqueId())));
             nodeIds = new ArrayList<>();
         }
         ways.put(wd.getUniqueId(), nodeIds);
@@ -286,13 +286,13 @@ public class OsmReader extends AbstractReader {
     private long parseWayNode(Way w) throws XMLStreamException {
         if (parser.getAttributeValue(null, "ref") == null) {
             throwException(
-                    tr("Missing mandatory attribute ''{0}'' on <nd> of way {1}.", "ref", w.getUniqueId())
+                    tr("Missing mandatory attribute ''{0}'' on <nd> of way {1}.", "ref", Long.toString(w.getUniqueId()))
             );
         }
         long id = getLong("ref");
         if (id == 0) {
             throwException(
-                    tr("Illegal value of attribute ''ref'' of element <nd>. Got {0}.", id)
+                    tr("Illegal value of attribute ''ref'' of element <nd>. Got {0}.", Long.toString(id))
             );
         }
         jumpToEnd();
@@ -326,7 +326,7 @@ public class OsmReader extends AbstractReader {
             }
         }
         if (r.isDeleted() && !members.isEmpty()) {
-            Logging.info(tr("Deleted relation {0} contains members", r.getUniqueId()));
+            Logging.info(tr("Deleted relation {0} contains members", Long.toString(r.getUniqueId())));
             members = new ArrayList<>();
         }
         relations.put(rd.getUniqueId(), members);
@@ -338,7 +338,7 @@ public class OsmReader extends AbstractReader {
         long id = 0;
         String value = parser.getAttributeValue(null, "ref");
         if (value == null) {
-            throwException(tr("Missing attribute ''ref'' on member in relation {0}.", r.getUniqueId()));
+            throwException(tr("Missing attribute ''ref'' on member in relation {0}.", Long.toString(r.getUniqueId())));
         }
         try {
             id = Long.parseLong(value);

@@ -94,8 +94,8 @@ public abstract class AbstractReader {
                     if (id <= 0)
                         throw new IllegalDataException(
                                 tr("Way with external ID ''{0}'' includes missing node with external ID ''{1}''.",
-                                        externalWayId,
-                                        id));
+                                        Long.toString(externalWayId),
+                                        Long.toString(id)));
                     // create an incomplete node if necessary
                     n = (Node) ds.getPrimitiveById(id, OsmPrimitiveType.NODE);
                     if (n == null) {
@@ -104,7 +104,7 @@ public abstract class AbstractReader {
                     }
                 }
                 if (n.isDeleted()) {
-                    Logging.info(tr("Deleted node {0} is part of way {1}", id, w.getId()));
+                    Logging.info(tr("Deleted node {0} is part of way {1}", Long.toString(id), Long.toString(w.getId())));
                 } else {
                     wayNodes.add(n);
                 }
@@ -112,7 +112,7 @@ public abstract class AbstractReader {
             w.setNodes(wayNodes);
             if (w.hasIncompleteNodes()) {
                 Logging.info(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
-                          externalWayId, w.getNodesCount()));
+                        Long.toString(externalWayId), w.getNodesCount()));
             }
             ds.addPrimitive(w);
         }
@@ -152,8 +152,8 @@ public abstract class AbstractReader {
                         //
                         throw new IllegalDataException(
                                 tr("Relation with external id ''{0}'' refers to a missing primitive with external id ''{1}''.",
-                                        externalRelationId,
-                                        rm.getMemberId()));
+                                        Long.toString(externalRelationId),
+                                        Long.toString(rm.getMemberId())));
 
                     // member refers to OSM primitive which was not present in the parsed data
                     // -> create a new incomplete primitive and add it to the dataset
@@ -175,7 +175,8 @@ public abstract class AbstractReader {
                     }
                 }
                 if (primitive.isDeleted()) {
-                    Logging.info(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
+                    Logging.info(tr("Deleted member {0} is used by relation {1}",
+                            Long.toString(primitive.getId()), Long.toString(relation.getId())));
                 } else {
                     relationMembers.add(new RelationMember(rm.getRole(), primitive));
                 }
