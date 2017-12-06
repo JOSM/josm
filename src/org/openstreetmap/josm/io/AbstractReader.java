@@ -111,7 +111,7 @@ public abstract class AbstractReader {
             }
             w.setNodes(wayNodes);
             if (w.hasIncompleteNodes()) {
-                Logging.info(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
+                Logging.info(tr("Way {0} with {1} nodes is incomplete because at least one node was missing in the loaded data.",
                         Long.toString(externalWayId), w.getNodesCount()));
             }
             ds.addPrimitive(w);
