@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -153,7 +154,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
                 String oldValue = Optional.ofNullable(getTagEditorValue(key)).orElse("");
                 if (!oldValue.equals(newValue)) {
                     setProperty(key, newValue);
-                    if (hashtagsKey != null) {
+                    if (hashtagsKey != null && Config.getPref().getBoolean("upload.changeset.hashtags", true)) {
                         String newHashTags = String.join(";", model.findHashTags());
                         String oldHashTags = Optional.ofNullable(getTagEditorValue(hashtagsKey)).orElse("");
                         if (!oldHashTags.equals(newHashTags)) {
