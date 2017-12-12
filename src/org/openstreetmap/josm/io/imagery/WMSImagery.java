@@ -339,6 +339,7 @@ public class WMSImagery {
     private LayerDetails parseLayer(Element element, Set<String> parentCrs) {
         String name = getChildContent(element, "Title", null, null);
         String ident = getChildContent(element, "Name", null, null);
+        String abstr = getChildContent(element, "Abstract", null, null);
 
         // The set of supported CRS/SRS for this layer
         Set<String> crsList = new HashSet<>();
@@ -384,7 +385,7 @@ public class WMSImagery {
         List<Element> layerChildren = getChildren(element, "Layer");
         List<LayerDetails> childLayers = parseLayers(layerChildren, crsList);
 
-        return new LayerDetails(name, ident, crsList, josmSupportsThisLayer, bounds, childLayers);
+        return new LayerDetails(name, ident, abstr, crsList, josmSupportsThisLayer, bounds, childLayers);
     }
 
     private static double getDecimalDegree(Element elem, String attr) {
@@ -447,15 +448,23 @@ public class WMSImagery {
     }
 
     /**
-     * The details of a layer of this wms server.
+     * The details of a layer of this WMS server.
      */
     public static class LayerDetails {
 
         /**
-         * The layer name
+         * The layer name (WMS {@code Title})
          */
         public final String name;
+        /**
+         * The layer ident (WMS {@code Name})
+         */
         public final String ident;
+        /**
+         * The layer abstract (WMS {@code Abstract})
+         * @since xxx
+         */
+        public final String abstr;
         /**
          * The child layers of this layer
          */
@@ -464,33 +473,57 @@ public class WMSImagery {
          * The bounds this layer can be used for
          */
         public final Bounds bounds;
+        /**
+         * the CRS/SRS pulled out of this layer's XML element
+         */
         public final Set<String> crsList;
+        /**
+         * {@code true} if any of the specified projections are supported by JOSM
+         */
         public final boolean supported;
 
-        public LayerDetails(String name, String ident, Set<String> crsList, boolean supportedLayer, Bounds bounds,
+        /**
+         * Constructs a new {@code LayerDetails}.
+         * @param name The layer name (WMS {@code Title})
+         * @param ident The layer ident (WMS {@code Name})
+         * @param abstr The layer abstract (WMS {@code Abstract})
+         * @param crsList The CRS/SRS pulled out of this layer's XML element
+         * @param supportedLayer {@code true} if any of the specified projections are supported by JOSM
+         * @param bounds The bounds this layer can be used for
+         * @param childLayers The child layers of this layer
+         * @since xxx
+         */
+        public LayerDetails(String name, String ident, String abstr, Set<String> crsList, boolean supportedLayer, Bounds bounds,
                 List<LayerDetails> childLayers) {
             this.name = name;
             this.ident = ident;
+            this.abstr = abstr;
             this.supported = supportedLayer;
             this.children = childLayers;
             this.bounds = bounds;
             this.crsList = crsList;
         }
 
+        /**
+         * Determines if any of the specified projections are supported by JOSM.
+         * @return {@code true} if any of the specified projections are supported by JOSM
+         */
         public boolean isSupported() {
             return this.supported;
         }
 
+        /**
+         * Returns the CRS/SRS pulled out of this layer's XML element.
+         * @return the CRS/SRS pulled out of this layer's XML element
+         */
         public Set<String> getProjections() {
             return crsList;
         }
 
         @Override
         public String toString() {
-            if (this.name == null || this.name.isEmpty())
-                return this.ident;
-            else
-                return this.name;
+            String baseName = (name == null || name.isEmpty()) ? ident : name;
+            return abstr == null || abstr.equalsIgnoreCase(baseName) ? baseName : baseName + " (" + abstr + ')';
         }
     }
 }
