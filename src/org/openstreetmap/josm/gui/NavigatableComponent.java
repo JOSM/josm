@@ -60,6 +60,7 @@ import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.util.CursorManager;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -121,7 +122,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @param listener the listener. Ignored if null or already absent
      */
-    public static void removeZoomChangeListener(NavigatableComponent.ZoomChangeListener listener) {
+    public static void removeZoomChangeListener(ZoomChangeListener listener) {
         zoomChangeListeners.remove(listener);
     }
 
@@ -130,16 +131,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @param listener the listener. Ignored if null or already registered.
      */
-    public static void addZoomChangeListener(NavigatableComponent.ZoomChangeListener listener) {
+    public static void addZoomChangeListener(ZoomChangeListener listener) {
         if (listener != null) {
             zoomChangeListeners.addIfAbsent(listener);
         }
     }
 
     protected static void fireZoomChanged() {
-        for (ZoomChangeListener l : zoomChangeListeners) {
-            l.zoomChanged();
-        }
+        GuiHelper.runInEDTAndWait(() -> {
+            for (ZoomChangeListener l : zoomChangeListeners) {
+                l.zoomChanged();
+            }
+        });
     }
 
     // The only events that may move/resize this map view are window movements or changes to the map view size.
