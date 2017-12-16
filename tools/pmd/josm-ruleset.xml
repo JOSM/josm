@@ -175,7 +175,6 @@
     <exclude name="InefficientEmptyStringCheck"/>
     <exclude name="OptimizableToArrayCall"/>
     <exclude name="SimplifyStartsWith"/>
-    <exclude name="StringToString"/>
     <exclude name="TooFewBranchesForASwitchStatement"/>
     <exclude name="UseArrayListInsteadOfVector"/>
     <exclude name="UselessStringValueOf"/>

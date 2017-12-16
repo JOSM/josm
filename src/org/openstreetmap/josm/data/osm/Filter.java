@@ -148,7 +148,7 @@ public class Filter extends SearchSetting {
         FilterPreferenceEntry e = new FilterPreferenceEntry();
         e.version = version;
         e.text = text;
-        e.mode = mode.toString();
+        e.mode = mode.name();
         e.case_sensitive = caseSensitive;
         e.regex_search = regexSearch;
         e.mapCSS_search = mapCSSSearch;
