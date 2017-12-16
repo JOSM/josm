@@ -462,7 +462,7 @@ public class WMSImagery {
         public final String ident;
         /**
          * The layer abstract (WMS {@code Abstract})
-         * @since xxx
+         * @since 13199
          */
         public final String abstr;
         /**
@@ -491,7 +491,7 @@ public class WMSImagery {
          * @param supportedLayer {@code true} if any of the specified projections are supported by JOSM
          * @param bounds The bounds this layer can be used for
          * @param childLayers The child layers of this layer
-         * @since xxx
+         * @since 13199
          */
         public LayerDetails(String name, String ident, String abstr, Set<String> crsList, boolean supportedLayer, Bounds bounds,
                 List<LayerDetails> childLayers) {

@@ -26,7 +26,7 @@ public class ImageryCompareTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(30000);
+    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(60000);
 
     /**
      * Test of imagery entries.
