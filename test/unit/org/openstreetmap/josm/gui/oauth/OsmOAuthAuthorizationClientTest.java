@@ -29,7 +29,7 @@ public class OsmOAuthAuthorizationClientTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().timeout(20000);
 
     /**
      * Unit test of {@link OsmOAuthAuthorizationClient}.

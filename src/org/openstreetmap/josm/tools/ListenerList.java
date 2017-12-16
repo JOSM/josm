@@ -247,7 +247,7 @@ public class ListenerList<T> {
     }
 
     /**
-     * Creates a new listener list that does not fail if listeners are added ore removed twice.
+     * Creates a new listener list that does not fail if listeners are added or removed twice.
      * <p>
      * Use of this list is discouraged. You should always use {@link #create()} in new implementations and check your listeners.
      * @param <T> The listener type
