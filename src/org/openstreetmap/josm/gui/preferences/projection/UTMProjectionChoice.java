@@ -41,7 +41,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code UTMProjectionChoice}.
      */
     public UTMProjectionChoice() {
-        super(tr("UTM"), /* NO-ICON */ "core:utm", cbEntries.toArray(new String[cbEntries.size()]), tr("UTM Zone"));
+        super(tr("UTM"), /* NO-ICON */ "core:utm", cbEntries.toArray(new String[0]), tr("UTM Zone"));
     }
 
     private class UTMPanel extends CBPanel {
@@ -117,7 +117,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
                 projections.add("EPSG:" + (32600 + zone + (hem == Hemisphere.South ? 100 : 0)));
             }
         }
-        return projections.toArray(new String[projections.size()]);
+        return projections.toArray(new String[0]);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
         Hemisphere hem = DEFAULT_HEMISPHERE;
 
         if (args != null) {
-            String[] array = args.toArray(new String[args.size()]);
+            String[] array = args.toArray(new String[0]);
 
             if (array.length > 1) {
                 hem = Hemisphere.valueOf(array[1]);

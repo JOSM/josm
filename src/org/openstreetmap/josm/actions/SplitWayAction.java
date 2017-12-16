@@ -169,7 +169,7 @@ public class SplitWayAction extends JosmAction {
             this.newWays = newWays;
             this.selection = selection;
             this.wayToKeep = wayToKeep;
-            this.list = new JList<>(newWays.toArray(new Way[newWays.size()]));
+            this.list = new JList<>(newWays.toArray(new Way[0]));
             configureList();
 
             setButtonIcons("ok", "cancel");

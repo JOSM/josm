@@ -14,8 +14,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -28,6 +26,8 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.Logging;
@@ -579,7 +579,7 @@ public class Multipolygon {
      */
     public static Collection<JoinedWay> joinWays(Collection<Way> waysToJoin) {
         final Collection<JoinedWay> result = new ArrayList<>();
-        final Way[] joinArray = waysToJoin.toArray(new Way[waysToJoin.size()]);
+        final Way[] joinArray = waysToJoin.toArray(new Way[0]);
         int left = waysToJoin.size();
         while (left > 0) {
             Way w = null;

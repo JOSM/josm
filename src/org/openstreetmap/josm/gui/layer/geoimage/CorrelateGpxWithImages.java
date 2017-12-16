@@ -420,7 +420,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             Collections.sort(vtTimezones);
 
-            JosmComboBox<String> cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[vtTimezones.size()]));
+            JosmComboBox<String> cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[0]));
 
             String tzId = Config.getPref().get("geoimage.timezoneid", "");
             TimeZone defaultTz;
@@ -572,7 +572,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         panelCb.add(new JLabel(tr("GPX track: ")));
 
-        cbGpx = new JosmComboBox<>(gpxLst.toArray(new GpxDataWrapper[gpxLst.size()]));
+        cbGpx = new JosmComboBox<>(gpxLst.toArray(new GpxDataWrapper[0]));
         if (defaultItem != null) {
             cbGpx.setSelectedItem(defaultItem);
         } else {

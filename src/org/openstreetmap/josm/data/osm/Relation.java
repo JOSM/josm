@@ -53,7 +53,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
             }
 
             if (members != null) {
-                this.members = members.toArray(new RelationMember[members.size()]);
+                this.members = members.toArray(new RelationMember[0]);
             } else {
                 this.members = new RelationMember[0];
             }

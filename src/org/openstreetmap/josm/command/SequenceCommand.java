@@ -41,7 +41,7 @@ public class SequenceCommand extends Command {
     public SequenceCommand(DataSet ds, String name, Collection<Command> sequenz, boolean continueOnError) {
         super(ds);
         this.name = name;
-        this.sequence = sequenz.toArray(new Command[sequenz.size()]);
+        this.sequence = sequenz.toArray(new Command[0]);
         this.continueOnError = continueOnError;
     }
 

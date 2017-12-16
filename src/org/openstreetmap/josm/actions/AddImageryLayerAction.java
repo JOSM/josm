@@ -168,7 +168,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         final WMSLayerTree tree = new WMSLayerTree();
         tree.updateTree(wms);
         List<String> wmsFormats = wms.getFormats();
-        final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[wmsFormats.size()]));
+        final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[0]));
         formats.setSelectedItem(wms.getPreferredFormats());
         formats.setToolTipText(tr("Select image format for WMS layer"));
 

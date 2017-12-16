@@ -348,7 +348,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         entries.add(SeparatorLayerAction.INSTANCE);
         entries.add(new LayerListPopup.InfoAction(this));
 
-        return entries.toArray(new Action[entries.size()]);
+        return entries.toArray(new Action[0]);
 
     }
 

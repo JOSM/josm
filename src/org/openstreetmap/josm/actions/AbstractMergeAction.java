@@ -84,7 +84,7 @@ public abstract class AbstractMergeAction extends JosmAction {
      * @return the chosen layer
      */
     protected static Layer askTargetLayer(List<Layer> targetLayers) {
-        return askTargetLayer(targetLayers.toArray(new Layer[targetLayers.size()]),
+        return askTargetLayer(targetLayers.toArray(new Layer[0]),
                 tr("Please select the target layer."),
                 tr("Select target layer"),
                 tr("Merge"), "dialogs/mergedown");

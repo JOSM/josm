@@ -123,7 +123,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
             }
             return null;
         }
-        return AbstractMergeAction.askTargetLayer(targetLayers.toArray(new AbstractTileSourceLayer[targetLayers.size()]),
+        return AbstractMergeAction.askTargetLayer(targetLayers.toArray(new AbstractTileSourceLayer[0]),
                 tr("Please select the imagery layer."),
                 tr("Select imagery layer"),
                 tr("Download"), "dialogs/down");

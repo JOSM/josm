@@ -148,7 +148,7 @@ public class PurgeAction extends JosmAction {
                     return type;
                 return Long.compare(o1.getUniqueId(), o2.getUniqueId());
             });
-            JList<OsmPrimitive> list = new JList<>(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));
+            JList<OsmPrimitive> list = new JList<>(toPurgeAdditionally.toArray(new OsmPrimitive[0]));
             /* force selection to be active for all entries */
             list.setCellRenderer(new SelectionForcedOsmPrimitivRenderer());
             JScrollPane scroll = new JScrollPane(list);
