@@ -843,7 +843,7 @@ Build-Date: ${build.tstamp}
 
     <target name="pmd" depends="init-properties">
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${toString:pmd.classpath}"/>
-        <pmd shortFilenames="true" encoding="UTF-8">
+        <pmd shortFilenames="true" cacheLocation="tools/pmd/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />
             <ruleset>${base.dir}/tools/pmd/josm-ruleset.xml</ruleset>
             <formatter type="text" toConsole="true" />
