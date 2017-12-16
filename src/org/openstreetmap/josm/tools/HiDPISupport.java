@@ -186,7 +186,7 @@ public final class HiDPISupport {
      * for each resolution variant
      */
     public static Image processMRImages(List<Image> imgs, Function<List<Image>, Image> processor) {
-        CheckParameterUtil.ensureThat(imgs.size() >= 1, "at least on element expected");
+        CheckParameterUtil.ensureThat(!imgs.isEmpty(), "at least one element expected");
         if (!getBaseMultiResolutionImageClass().isPresent()) {
             return processor.apply(imgs);
         }

@@ -151,13 +151,11 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
 
         // if latest version from history is higher than a non existing primitive version,
         // that means this version has been redacted and the primitive cannot be used.
-        if (history.getLatest().getVersion() > primitive.getVersion())
-            return false;
+        return history.getLatest().getVersion() <= primitive.getVersion();
 
         // latest has a higher version than one of the primitives
         // in the history (probably because the history got out of sync
         // with uploaded data) -> show the primitive as latest
-        return true;
     }
 
     /**
