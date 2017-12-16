@@ -31,8 +31,8 @@ import static org.openstreetmap.josm.tools.WinRegistry.HKEY_LOCAL_MACHINE;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -41,6 +41,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -517,7 +518,7 @@ public class PlatformHookWindows implements PlatformHook {
             Logging.warn("extended font config - unable to find font config template file {0}", templateFile.toString());
             return;
         }
-        try (FileInputStream fis = new FileInputStream(templateFile.toFile())) {
+        try (InputStream fis = Files.newInputStream(templateFile)) {
             Properties props = new Properties();
             props.load(fis);
             byte[] content = Files.readAllBytes(templateFile);
@@ -580,7 +581,7 @@ public class PlatformHookWindows implements PlatformHook {
                 }
             }
             Utils.updateSystemProperty("sun.awt.fontconfig", fontconfigFile.toString());
-        } catch (IOException ex) {
+        } catch (IOException | InvalidPathException ex) {
             Logging.error(ex);
         }
     }

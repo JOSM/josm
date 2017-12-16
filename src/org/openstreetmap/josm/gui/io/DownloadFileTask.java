@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -114,7 +114,7 @@ public class DownloadFileTask extends PleaseWaitRunnable {
 
             try (
                 InputStream in = downloadConnection.getResponse().getContent();
-                OutputStream out = new FileOutputStream(file)
+                OutputStream out = Files.newOutputStream(file.toPath())
             ) {
                 byte[] buffer = new byte[32_768];
                 int count = 0;
@@ -144,7 +144,7 @@ public class DownloadFileTask extends PleaseWaitRunnable {
                     file.getName(), address);
             Logging.warn(msg);
             throw new DownloadException(msg, e);
-        } catch (IOException e) {
+        } catch (IOException | InvalidPathException e) {
             if (canceled)
                 return;
             throw new DownloadException(e.getMessage(), e);

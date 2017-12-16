@@ -2,9 +2,10 @@
 package org.openstreetmap.josm.data.projection.datum;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -62,10 +63,10 @@ public final class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileS
         }
         if (grid != null) {
             try {
-                return new FileInputStream(grid.getAbsoluteFile());
-            } catch (FileNotFoundException ex) {
-                Logging.warn("NTV2 grid shift file not found: " + grid);
-                Logging.trace(ex);
+                return Files.newInputStream(grid.getAbsoluteFile().toPath());
+            } catch (IOException | InvalidPathException ex) {
+                Logging.warn("Unable to open NTV2 grid shift file: " + grid);
+                Logging.debug(ex);
             }
         }
         return null;

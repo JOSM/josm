@@ -4,9 +4,9 @@ package org.openstreetmap.josm.gui.io.importexport;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -39,7 +39,7 @@ public class NoteExporter extends FileExporter {
     public void exportData(File file, Layer layer) throws IOException {
         Logging.info("exporting notes to file: " + file);
         if (layer instanceof NoteLayer) {
-            try (OutputStream os = new FileOutputStream(file);
+            try (OutputStream os = Files.newOutputStream(file.toPath());
                  NoteWriter writer = new NoteWriter(os)) {
                 writer.write(((NoteLayer) layer).getNoteData());
             }

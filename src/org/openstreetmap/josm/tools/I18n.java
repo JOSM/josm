@@ -3,13 +3,14 @@ package org.openstreetmap.josm.tools;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -371,7 +372,7 @@ public final class I18n {
         final String enfile = "data/en.lang";
         final String langfile = "data/"+loadedCode+".lang";
         try (
-            FileInputStream fis = new FileInputStream(source);
+            InputStream fis = Files.newInputStream(source.toPath());
             JarInputStream jar = new JarInputStream(fis)
         ) {
             ZipEntry e;
@@ -383,7 +384,7 @@ public final class I18n {
             }
             if (found) {
                 try (
-                    FileInputStream fisTrans = new FileInputStream(source);
+                    InputStream fisTrans = Files.newInputStream(source.toPath());
                     JarInputStream jarTrans = new JarInputStream(fisTrans)
                 ) {
                     found = false;
@@ -396,8 +397,7 @@ public final class I18n {
                         load(jar, jarTrans, true);
                 }
             }
-        } catch (IOException e) {
-            // Ignore
+        } catch (IOException | InvalidPathException e) {
             Logging.trace(e);
         }
     }

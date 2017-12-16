@@ -7,8 +7,8 @@ import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -402,7 +402,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         File f = new File("/usr/share/ca-certificates/mozilla", certAmend.getFilename());
         if (f.exists()) {
             CertificateFactory fact = CertificateFactory.getInstance("X.509");
-            try (FileInputStream is = new FileInputStream(f)) {
+            try (InputStream is = Files.newInputStream(f.toPath())) {
                 return (X509Certificate) fact.generateCertificate(is);
             }
         }

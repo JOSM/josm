@@ -20,9 +20,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -330,9 +330,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         private InputStream createInputStream(File sel) throws IOException {
             if (Utils.hasExtension(sel, "gpx.gz")) {
-                return new GZIPInputStream(new FileInputStream(sel));
+                return new GZIPInputStream(Files.newInputStream(sel.toPath()));
             } else {
-                return new FileInputStream(sel);
+                return Files.newInputStream(sel.toPath());
             }
         }
     }

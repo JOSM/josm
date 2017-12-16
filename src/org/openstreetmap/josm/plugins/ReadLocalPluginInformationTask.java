@@ -4,9 +4,11 @@ package org.openstreetmap.josm.plugins;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -144,7 +146,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     protected void processLocalPluginInformationFile(File file) throws PluginListParseException {
-        try (FileInputStream fin = new FileInputStream(file)) {
+        try (InputStream fin = Files.newInputStream(file.toPath())) {
             List<PluginInformation> pis = new PluginListParser().parse(fin);
             for (PluginInformation pi : pis) {
                 // we always keep plugin information from a plugin site because it
@@ -153,7 +155,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                 //
                 availablePlugins.put(pi.name, pi);
             }
-        } catch (IOException e) {
+        } catch (IOException | InvalidPathException e) {
             throw new PluginListParseException(e);
         }
     }

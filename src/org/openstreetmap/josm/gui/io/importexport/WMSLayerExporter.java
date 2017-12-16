@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.gui.io.importexport;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
@@ -37,10 +37,10 @@ public class WMSLayerExporter extends FileExporter {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
 
         if (layer instanceof AbstractTileSourceLayer) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()))) {
                 oos.writeInt(CURRENT_FILE_VERSION); // file version
                 oos.writeObject(MainApplication.getMap().mapView.getCenter());
-                ImageryPreferenceEntry entry = new ImageryPreferenceEntry(((AbstractTileSourceLayer) layer).getInfo());
+                ImageryPreferenceEntry entry = new ImageryPreferenceEntry(((AbstractTileSourceLayer<?>) layer).getInfo());
                 oos.writeObject(StructUtils.serializeStruct(entry, ImageryPreferenceEntry.class));
             }
         }

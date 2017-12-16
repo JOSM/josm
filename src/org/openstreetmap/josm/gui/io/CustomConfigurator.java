@@ -3,15 +3,15 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -396,10 +396,10 @@ public final class CustomConfigurator {
             try {
                 String fileDir = file.getParentFile().getAbsolutePath();
                 if (fileDir != null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
-                try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+                try (InputStream is = Files.newInputStream(file.toPath())) {
                     openAndReadXML(is);
                 }
-            } catch (ScriptException | IOException | SecurityException ex) {
+            } catch (ScriptException | IOException | SecurityException | InvalidPathException ex) {
                 PreferencesUtils.log(ex, "Error reading custom preferences:");
             }
         }

@@ -2,9 +2,10 @@
 package org.openstreetmap.josm.data.cache;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Handler;
@@ -109,7 +110,7 @@ public final class JCSCacheManager {
         if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
             Logging.warn("Cannot create cache dir lock file");
         }
-        cacheDirLock = new FileOutputStream(cacheDirLockPath).getChannel().tryLock();
+        cacheDirLock = FileChannel.open(cacheDirLockPath.toPath(), StandardOpenOption.WRITE).tryLock();
 
         if (cacheDirLock == null)
             Logging.warn("Cannot lock cache directory. Will not use disk cache");
