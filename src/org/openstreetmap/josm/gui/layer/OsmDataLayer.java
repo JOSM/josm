@@ -739,14 +739,31 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         });
     }
 
-    private static WayPoint nodeToWayPoint(Node n) {
+    /**
+     * @param n the {@code Node} to convert
+     * @return {@code WayPoint} object
+     * @since 13210
+     */
+    public static WayPoint nodeToWayPoint(Node n) {
+        return nodeToWayPoint(n, 0);
+    }
+
+    /**
+     * @param n the {@code Node} to convert
+     * @param time a time value in milliseconds from the epoch.
+     * @return {@code WayPoint} object
+     * @since 13210
+     */
+    public static WayPoint nodeToWayPoint(Node n, long time) {
         WayPoint wpt = new WayPoint(n.getCoor());
 
         // Position info
 
         addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
 
-        if (!n.isTimestampEmpty()) {
+        if (time > 0) {
+            wpt.setTime(time);
+        } else if (!n.isTimestampEmpty()) {
             wpt.put("time", DateUtils.fromTimestamp(n.getRawTimestamp()));
             wpt.setTime();
         }

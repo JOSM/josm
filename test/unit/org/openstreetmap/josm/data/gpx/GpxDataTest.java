@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -423,7 +424,7 @@ public class GpxDataTest {
     }
 
     private static ImmutableGpxTrack emptyGpxTrack() {
-        return new ImmutableGpxTrack(Collections.emptyList(), Collections.emptyMap());
+        return new ImmutableGpxTrack(Collections.<Collection<WayPoint>>emptyList(), Collections.emptyMap());
     }
 
     private static ImmutableGpxTrack singleWaypointGpxTrack() {

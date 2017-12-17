@@ -4,15 +4,19 @@ package org.openstreetmap.josm.data.gpx;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.DoubleSummaryStatistics;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
@@ -21,6 +25,8 @@ import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.gpx.GpxTrack.GpxTrackChangeListener;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.ListeningCollection;
 
@@ -140,6 +146,23 @@ public class GpxData extends WithAttributes implements Data {
     }
 
     /**
+     * Get Stream<> of track segments as introduced in Java 8.
+     * @return {@code Stream<GPXTrack>}
+     */
+    private synchronized Stream<GpxTrackSegment> getTrackSegmentsStream() {
+        return getTracks().stream().flatMap(trk -> trk.getSegments().stream());
+    }
+
+    /**
+     * Clear all tracks, empties the current privateTracks container,
+     * helper method for some gpx manipulations.
+     */
+    private synchronized void clearTracks() {
+        privateTracks.forEach(t -> t.removeListener(proxy));
+        privateTracks.clear();
+    }
+
+    /**
      * Add a new track
      * @param track The new track
      * @since 12156
@@ -164,6 +187,104 @@ public class GpxData extends WithAttributes implements Data {
         }
         track.removeListener(proxy);
         fireInvalidate();
+    }
+
+    /**
+     * Combine tracks into a single, segmented track.
+     * The attributes of the first track are used, the rest discarded.
+     *
+     * @since 13210
+     */
+    public synchronized void combineTracksToSegmentedTrack() {
+        List<GpxTrackSegment> segs = getTrackSegmentsStream()
+                .collect(Collectors.toCollection(ArrayList<GpxTrackSegment>::new));
+        Map<String, Object> attrs = new HashMap<>(privateTracks.get(0).getAttributes());
+
+        // do not let the name grow if split / combine operations are called iteratively
+        attrs.put("name", attrs.get("name").toString().replaceFirst(" #\\d+$", ""));
+
+        clearTracks();
+        addTrack(new ImmutableGpxTrack(segs, attrs));
+    }
+
+    /**
+     * @param attrs attributes of/for an gpx track, written to if the name appeared previously in {@code counts}.
+     * @param counts a {@code HashMap} of previously seen names, associated with their count.
+     * @return the unique name for the gpx track.
+     *
+     * @since 13210
+     */
+    public static String ensureUniqueName(Map<String, Object> attrs, Map<String, Integer> counts) {
+        String name = attrs.getOrDefault("name", "GPX split result").toString();
+        Integer count = counts.getOrDefault(name, 0) + 1;
+        counts.put(name, count);
+
+        attrs.put("name", MessageFormat.format("{0}{1}", name, (count > 1) ? " #"+count : ""));
+        return attrs.get("name").toString();
+    }
+
+    /**
+     * Split tracks so that only single-segment tracks remain.
+     * Each segment will make up one individual track after this operation.
+     *
+     * @since 13210
+     */
+    public synchronized void splitTrackSegmentsToTracks() {
+        final HashMap<String, Integer> counts = new HashMap<>();
+
+        List<GpxTrack> trks = getTracks().stream()
+            .flatMap(trk -> {
+                return trk.getSegments().stream().map(seg -> {
+                    HashMap<String, Object> attrs = new HashMap<>(trk.getAttributes());
+                    ensureUniqueName(attrs, counts);
+                    return new ImmutableGpxTrack(Arrays.asList(seg), attrs);
+                });
+            })
+            .collect(Collectors.toCollection(ArrayList<GpxTrack>::new));
+
+        clearTracks();
+        trks.stream().forEachOrdered(trk -> addTrack(trk));
+    }
+
+    /**
+     * Split tracks into layers, the result is one layer for each track.
+     * If this layer currently has only one GpxTrack this is a no-operation.
+     *
+     * The new GpxLayers are added to the LayerManager, the original GpxLayer
+     * is untouched as to preserve potential route or wpt parts.
+     *
+     * @since 13210
+     */
+    public synchronized void splitTracksToLayers() {
+        final HashMap<String, Integer> counts = new HashMap<>();
+
+        getTracks().stream()
+            .filter(trk -> privateTracks.size() > 1)
+            .map(trk -> {
+                HashMap<String, Object> attrs = new HashMap<>(trk.getAttributes());
+                GpxData d = new GpxData();
+                d.addTrack(trk);
+                return new GpxLayer(d, ensureUniqueName(attrs, counts)); })
+            .forEachOrdered(layer -> MainApplication.getLayerManager().addLayer(layer));
+    }
+
+    /**
+     * Replies the current number of tracks in this GpxData
+     * @return track count
+     * @since 13210
+     */
+    public synchronized int getTrackCount() {
+        return privateTracks.size();
+    }
+
+    /**
+     * Replies the accumulated total of all track segments,
+     * the sum of segment counts for each track present.
+     * @return track segments count
+     * @since 13210
+     */
+    public synchronized int getTrackSegsCount() {
+        return privateTracks.stream().collect(Collectors.summingInt(t -> t.getSegments().size()));
     }
 
     /**

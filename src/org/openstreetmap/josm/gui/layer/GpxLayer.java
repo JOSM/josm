@@ -6,16 +6,22 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
@@ -47,11 +53,12 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 /**
  * A layer that displays data from a Gpx file / the OSM gpx downloads.
  */
-public class GpxLayer extends Layer {
+public class GpxLayer extends Layer implements ExpertModeChangeListener {
 
     /** GPX data */
     public GpxData data;
     private final boolean isLocalFile;
+    private boolean isExpertMode;
     /**
      * used by {@link ChooseTrackVisibilityAction} to determine which tracks to show/hide
      *
@@ -83,7 +90,7 @@ public class GpxLayer extends Layer {
     }
 
     /**
-     * Constructs a new {@code GpxLayer} with a given name, thah can be attached to a local file.
+     * Constructs a new {@code GpxLayer} with a given name, that can be attached to a local file.
      * @param d GPX data
      * @param name layer name
      * @param isLocal whether data is attached to a local file
@@ -96,6 +103,7 @@ public class GpxLayer extends Layer {
         Arrays.fill(trackVisibility, true);
         setName(name);
         isLocalFile = isLocal;
+        ExpertToggleAction.addExpertModeChangeListener(this, true);
     }
 
     @Override
@@ -138,7 +146,10 @@ public class GpxLayer extends Layer {
 
     @Override
     public Object getInfoComponent() {
-        StringBuilder info = new StringBuilder(48).append("<html>");
+        StringBuilder info = new StringBuilder(128)
+                .append("<html><head><style>")
+                .append("td { padding: 4px 16px; }")
+                .append("</style></head><body>");
 
         if (data.attr.containsKey("name")) {
             info.append(tr("Name: {0}", data.get(GpxConstants.META_NAME))).append("<br>");
@@ -150,10 +161,15 @@ public class GpxLayer extends Layer {
 
         if (!data.getTracks().isEmpty()) {
             info.append("<table><thead align='center'><tr><td colspan='5'>")
-                .append(trn("{0} track", "{0} tracks", data.tracks.size(), data.tracks.size()))
-                .append("</td></tr><tr align='center'><td>").append(tr("Name")).append("</td><td>")
-                .append(tr("Description")).append("</td><td>").append(tr("Timespan"))
-                .append("</td><td>").append(tr("Length")).append("</td><td>").append(tr("URL"))
+                .append(trn("{0} track, {1} track segments", "{0} tracks, {1} track segments",
+                        data.getTrackCount(), data.getTrackCount(),
+                        data.getTrackSegsCount(), data.getTrackSegsCount()))
+                .append("</td></tr><tr align='center'><td>").append(tr("Name"))
+                .append("</td><td>").append(tr("Description"))
+                .append("</td><td>").append(tr("Timespan"))
+                .append("</td><td>").append(tr("Length"))
+                .append("</td><td>").append(tr("Number of<br/>Segments"))
+                .append("</td><td>").append(tr("URL"))
                 .append("</td></tr></thead>");
 
             for (GpxTrack trk : data.getTracks()) {
@@ -170,6 +186,8 @@ public class GpxLayer extends Layer {
                 info.append("</td><td>");
                 info.append(SystemOfMeasurement.getSystemOfMeasurement().getDistText(trk.length()));
                 info.append("</td><td>");
+                info.append(trk.getSegments().size());
+                info.append("</td><td>");
                 if (trk.getAttributes().containsKey("url")) {
                     info.append(trk.get("url"));
                 }
@@ -180,7 +198,8 @@ public class GpxLayer extends Layer {
 
         info.append(tr("Length: {0}", SystemOfMeasurement.getSystemOfMeasurement().getDistText(data.length()))).append("<br>")
             .append(trn("{0} route, ", "{0} routes, ", data.getRoutes().size(), data.getRoutes().size()))
-            .append(trn("{0} waypoint", "{0} waypoints", data.getWaypoints().size(), data.getWaypoints().size())).append("<br></html>");
+            .append(trn("{0} waypoint", "{0} waypoints", data.getWaypoints().size(), data.getWaypoints().size()))
+            .append("<br></body></html>");
 
         final JScrollPane sp = new JScrollPane(new HtmlPanel(info.toString()));
         sp.setPreferredSize(new Dimension(sp.getPreferredSize().width+20, 370));
@@ -195,7 +214,7 @@ public class GpxLayer extends Layer {
 
     @Override
     public Action[] getMenuEntries() {
-        return new Action[] {
+        List<Action> entries = new ArrayList<>(Arrays.asList(
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
                 LayerListDialog.getInstance().createMergeLayerAction(this),
@@ -212,9 +231,21 @@ public class GpxLayer extends Layer {
                 new DownloadWmsAlongTrackAction(data),
                 SeparatorLayerAction.INSTANCE,
                 new ChooseTrackVisibilityAction(this),
-                new RenameLayerAction(getAssociatedFile(), this),
-                SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this) };
+                new RenameLayerAction(getAssociatedFile(), this)));
+
+        List<Action> expert = Arrays.asList(
+                new CombineTracksToSegmentedTrackAction(this),
+                new SplitTrackSegementsToTracksAction(this),
+                new SplitTracksToLayersAction(this));
+
+        if (isExpertMode && expert.stream().anyMatch(t -> t.isEnabled())) {
+            entries.add(SeparatorLayerAction.INSTANCE);
+            expert.stream().filter(t -> t.isEnabled()).forEach(t -> entries.add(t));
+        }
+
+        entries.add(SeparatorLayerAction.INSTANCE);
+        entries.add(new LayerListPopup.InfoAction(this));
+        return entries.toArray(new Action[0]);
     }
 
     /**
@@ -237,7 +268,9 @@ public class GpxLayer extends Layer {
             info.append(tr("Description: {0}", data.get(GpxConstants.META_DESC))).append("<br>");
         }
 
-        info.append(trn("{0} track, ", "{0} tracks, ", data.getTracks().size(), data.getTracks().size()))
+        info.append(trn("{0} track", "{0} tracks", data.getTrackCount(), data.getTrackCount()))
+            .append(trn(" ({0} segment)", " ({0} segments)", data.getTrackSegsCount(), data.getTrackSegsCount()))
+            .append(", ")
             .append(trn("{0} route, ", "{0} routes, ", data.getRoutes().size(), data.getRoutes().size()))
             .append(trn("{0} waypoint", "{0} waypoints", data.getWaypoints().size(), data.getWaypoints().size())).append("<br>")
             .append(tr("Length: {0}", SystemOfMeasurement.getSystemOfMeasurement().getDistText(data.length())))
@@ -328,5 +361,107 @@ public class GpxLayer extends Layer {
     @Override
     protected LayerPainter createMapViewPainter(MapViewEvent event) {
         return new GpxDrawHelper(this);
+    }
+
+    /**
+     * Action to merge tracks into a single segmented track
+     *
+     * @since 13210
+     */
+    public static class CombineTracksToSegmentedTrackAction extends AbstractAction {
+        private final transient GpxLayer layer;
+
+        /**
+         * Create a new CombineTracksToSegmentedTrackAction
+         * @param layer The layer with the data to work on.
+         */
+        public CombineTracksToSegmentedTrackAction(GpxLayer layer) {
+            // FIXME: icon missing, create a new icon for this action
+            //new ImageProvider("gpx_tracks_to_segmented_track").getResource().attachImageIcon(this, true);
+            putValue(SHORT_DESCRIPTION, tr("Collect segments of all tracks and combine in a single track."));
+            putValue(NAME, tr("Combine tracks of this layer"));
+            this.layer = layer;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            layer.data.combineTracksToSegmentedTrack();
+            layer.invalidate();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return layer.data.getTrackCount() > 1;
+        }
+    }
+
+    /**
+     * Action to split track segments into a multiple tracks with one segment each
+     *
+     * @since 13210
+     */
+    public static class SplitTrackSegementsToTracksAction extends AbstractAction {
+        private final transient GpxLayer layer;
+
+        /**
+         * Create a new SplitTrackSegementsToTracksAction
+         * @param layer The layer with the data to work on.
+         */
+        public SplitTrackSegementsToTracksAction(GpxLayer layer) {
+            // FIXME: icon missing, create a new icon for this action
+            //new ImageProvider("gpx_segmented_track_to_tracks").getResource().attachImageIcon(this, true);
+            putValue(SHORT_DESCRIPTION, tr("Split multiple track segments of one track into multiple tracks."));
+            putValue(NAME, tr("Split track segments to tracks"));
+            this.layer = layer;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            layer.data.splitTrackSegmentsToTracks();
+            layer.invalidate();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return layer.data.getTrackSegsCount() > layer.data.getTrackCount();
+        }
+    }
+
+    /**
+     * Action to split tracks of one gpx layer into multiple gpx layers,
+     * the result is one GPX track per gpx layer.
+     *
+     * @since 13210
+     */
+    public static class SplitTracksToLayersAction extends AbstractAction {
+        private final transient GpxLayer layer;
+
+        /**
+         * Create a new SplitTrackSegementsToTracksAction
+         * @param layer The layer with the data to work on.
+         */
+        public SplitTracksToLayersAction(GpxLayer layer) {
+            // FIXME: icon missing, create a new icon for this action
+            //new ImageProvider("gpx_split_tracks_to_layers").getResource().attachImageIcon(this, true);
+            putValue(SHORT_DESCRIPTION, tr("Split the tracks of this layer to one new layer each."));
+            putValue(NAME, tr("Split tracks to new layers"));
+            this.layer = layer;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            layer.data.splitTracksToLayers();
+            // layer is not modified by this action
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return layer.data.getTrackCount() > 1;
+        }
+    }
+
+    @Override
+    public void expertChanged(boolean isExpert) {
+        this.isExpertMode = isExpert;
     }
 }

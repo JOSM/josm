@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,15 +29,20 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.OsmPrimitiveAction;
 import org.openstreetmap.josm.actions.relation.AddSelectionToRelations;
 import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
 import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.DuplicateRelationAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
+import org.openstreetmap.josm.actions.relation.ExportRelationToGpxAction;
+import org.openstreetmap.josm.actions.relation.ExportRelationToGpxAction.Mode;
 import org.openstreetmap.josm.actions.relation.RecentRelationsAction;
 import org.openstreetmap.josm.actions.relation.SelectMembersAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
@@ -120,6 +126,16 @@ public class RelationListDialog extends ToggleDialog
     /** add all selected primitives to the given relations */
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
     private transient JMenuItem addSelectionToRelationMenuItem;
+
+    /** export relation to GPX track action */
+    private final ExportRelationToGpxAction exportRelationFromFirstAction =
+            new ExportRelationToGpxAction(EnumSet.of(Mode.FROM_FIRST_MEMBER, Mode.TO_FILE));
+    private final ExportRelationToGpxAction exportRelationFromLastAction =
+            new ExportRelationToGpxAction(EnumSet.of(Mode.FROM_LAST_MEMBER, Mode.TO_FILE));
+    private final ExportRelationToGpxAction exportRelationFromFirstToLayerAction =
+            new ExportRelationToGpxAction(EnumSet.of(Mode.FROM_FIRST_MEMBER, Mode.TO_LAYER));
+    private final ExportRelationToGpxAction exportRelationFromLastToLayerAction =
+            new ExportRelationToGpxAction(EnumSet.of(Mode.FROM_LAST_MEMBER, Mode.TO_LAYER));
 
     private final transient HighlightHelper highlightHelper = new HighlightHelper();
     private final boolean highlightEnabled = Config.getPref().getBoolean("draw.target-highlight", true);
@@ -602,6 +618,7 @@ public class RelationListDialog extends ToggleDialog
     }
 
     private void setupPopupMenuHandler() {
+        List<JMenuItem> checkDisabled = new ArrayList<>();
 
         // -- select action
         popupMenuHandler.addAction(selectRelationAction);
@@ -611,12 +628,18 @@ public class RelationListDialog extends ToggleDialog
         popupMenuHandler.addAction(selectMembersAction);
         popupMenuHandler.addAction(addMembersToSelectionAction);
 
-        popupMenuHandler.addSeparator();
         // -- download members action
+        popupMenuHandler.addSeparator();
         popupMenuHandler.addAction(downloadMembersAction);
-
-        // -- download incomplete members action
         popupMenuHandler.addAction(downloadSelectedIncompleteMembersAction);
+
+        // -- export relation to gpx action
+        popupMenuHandler.addSeparator();
+        checkDisabled.add(popupMenuHandler.addAction(exportRelationFromFirstAction));
+        checkDisabled.add(popupMenuHandler.addAction(exportRelationFromLastAction));
+        popupMenuHandler.addSeparator();
+        checkDisabled.add(popupMenuHandler.addAction(exportRelationFromFirstToLayerAction));
+        checkDisabled.add(popupMenuHandler.addAction(exportRelationFromLastToLayerAction));
 
         popupMenuHandler.addSeparator();
         popupMenuHandler.addAction(editAction).setVisible(false);
@@ -624,6 +647,29 @@ public class RelationListDialog extends ToggleDialog
         popupMenuHandler.addAction(deleteRelationsAction).setVisible(false);
 
         addSelectionToRelationMenuItem = popupMenuHandler.addAction(addSelectionToRelations);
+
+        popupMenuHandler.addListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                for (JMenuItem mi: checkDisabled) {
+                    mi.setVisible(((OsmPrimitiveAction) mi.getAction()).isEnabled());
+
+                    Component sep = popupMenu.getComponent(
+                            Math.max(0, popupMenu.getComponentIndex(mi)-1));
+                    if (!(sep instanceof JMenuItem)) {
+                        sep.setVisible(mi.isVisible());
+                    }
+                }
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+            }
+        });
     }
 
     /* ---------------------------------------------------------------------------------- */

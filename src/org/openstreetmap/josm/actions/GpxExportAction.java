@@ -39,6 +39,24 @@ public class GpxExportAction extends DiskAccessAction {
     }
 
     /**
+     * Deferring constructor for child classes.
+     *
+     * @param name see {@code DiskAccessAction}
+     * @param iconName see {@code DiskAccessAction}
+     * @param tooltip see {@code DiskAccessAction}
+     * @param shortcut see {@code DiskAccessAction}
+     * @param register see {@code DiskAccessAction}
+     * @param toolbarId see {@code DiskAccessAction}
+     * @param installAdapters see {@code DiskAccessAction}
+     *
+     * @since 13210
+     */
+    protected GpxExportAction(String name, String iconName, String tooltip, Shortcut shortcut,
+            boolean register, String toolbarId, boolean installAdapters) {
+        super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
+    }
+
+    /**
      * Get the layer to export.
      * @return The layer to export, either a {@link GpxLayer} or {@link OsmDataLayer}.
      */
