@@ -322,7 +322,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             if (imageChanged) {
                 // Set only if the image is new to preserve zoom and position if the same image is redisplayed
                 // (e.g. to update the OSD).
-                imgDisplay.setImage(entry.getFile(), entry.getExifOrientation());
+                imgDisplay.setImage(entry);
             }
             setTitle(tr("Geotagged Images") + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
             StringBuilder osd = new StringBuilder(entry.getFile() != null ? entry.getFile().getName() : "");
@@ -355,7 +355,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             // if this method is called to reinitialize dialog content with a blank image,
             // do not actually show the dialog again with a blank image if currently hidden (fix #10672)
             setTitle(tr("Geotagged Images"));
-            imgDisplay.setImage(null, null);
+            imgDisplay.setImage(null);
             imgDisplay.setOsdText("");
             return;
         }

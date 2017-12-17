@@ -45,7 +45,7 @@ import org.openstreetmap.josm.tools.Logging;
 public class ImageDisplay extends JComponent implements PreferenceChangedListener {
 
     /** The file that is currently displayed */
-    private File file;
+    private ImageEntry entry;
 
     /** The image currently displayed */
     private transient Image image;
@@ -214,63 +214,81 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
     /** The thread that reads the images. */
     private class LoadImageRunnable implements Runnable, ImageObserver {
 
+        private final ImageEntry entry;
         private final File file;
-        private final int orientation;
-        private int width;
-        private int height;
 
-        LoadImageRunnable(File file, Integer orientation) {
-            this.file = file;
-            this.orientation = orientation == null ? -1 : orientation;
+        LoadImageRunnable(ImageEntry entry) {
+            this.entry = entry;
+            this.file = entry.getFile();
         }
 
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
             if (((infoflags & ImageObserver.WIDTH) == ImageObserver.WIDTH) &&
                 ((infoflags & ImageObserver.HEIGHT) == ImageObserver.HEIGHT)) {
-                this.width = width;
-                this.height = height;
-                synchronized (this) {
-                    this.notify();
+                synchronized (entry) {
+                    entry.setWidth(width);
+                    entry.setHeight(height);
+                    entry.notifyAll();
                     return false;
                 }
             }
             return true;
         }
 
-        @Override
-        public void run() {
-            Image img = Toolkit.getDefaultToolkit().createImage(file.getPath());
+        private boolean updateImageEntry(Image img) {
+            if (!(entry.getWidth() > 0 && entry.getHeight() > 0)) {
+                synchronized (entry) {
+                    img.getWidth(this);
+                    img.getHeight(this);
 
-            synchronized (this) {
-                width = -1;
-                img.getWidth(this);
-                img.getHeight(this);
-
-                while (width < 0) {
-                    try {
-                        this.wait();
-                        if (width < 0) {
-                            errorLoading = true;
-                            return;
+                    long now = System.currentTimeMillis();
+                    while (!(entry.getWidth() > 0 && entry.getHeight() > 0)) {
+                        try {
+                            entry.wait(1000);
+                            if (this.entry != ImageDisplay.this.entry)
+                                return false;
+                            if (System.currentTimeMillis() - now > 10000)
+                                synchronized (ImageDisplay.this) {
+                                    errorLoading = true;
+                                    ImageDisplay.this.repaint();
+                                    return false;
+                                }
+                        } catch (InterruptedException e) {
+                            Logging.trace(e);
+                            Logging.warn("InterruptedException in {0} while getting properties of image {1}",
+                                    getClass().getSimpleName(), file.getPath());
+                            Thread.currentThread().interrupt();
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                 }
             }
+            return true;
+        }
 
-            long allocatedMem = Runtime.getRuntime().totalMemory() -
-                    Runtime.getRuntime().freeMemory();
-            long mem = Runtime.getRuntime().maxMemory()-allocatedMem;
+        private boolean mayFitMemory(long amountWanted) {
+            return amountWanted < (
+                   Runtime.getRuntime().maxMemory() -
+                   Runtime.getRuntime().totalMemory() +
+                   Runtime.getRuntime().freeMemory());
+        }
 
-            if (mem > ((long) width*height*4)*2) {
+        @Override
+        public void run() {
+            Image img = Toolkit.getDefaultToolkit().createImage(file.getPath());
+            if (!updateImageEntry(img))
+                return;
+
+            int width = entry.getWidth();
+            int height = entry.getHeight();
+
+            if (mayFitMemory(((long) width)*height*4*2)) {
                 Logging.info("Loading {0} using default toolkit", file.getPath());
                 tracker.addImage(img, 1);
 
                 // Wait for the end of loading
                 while (!tracker.checkID(1, true)) {
-                    if (this.file != ImageDisplay.this.file) {
+                    if (this.entry != ImageDisplay.this.entry) {
                         // The file has changed
                         tracker.removeImage(img);
                         return;
@@ -279,26 +297,21 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
                         Thread.sleep(5);
                     } catch (InterruptedException e) {
                         Logging.trace(e);
-                        Logging.warn("InterruptedException in "+getClass().getSimpleName()+
-                                " while loading image "+file.getPath());
+                        Logging.warn("InterruptedException in {0} while loading image {1}",
+                                getClass().getSimpleName(), file.getPath());
                         Thread.currentThread().interrupt();
                     }
                 }
                 if (tracker.isErrorID(1)) {
+                    // the tracker catches OutOfMemory conditions
                     img = null;
-                    System.gc();
                 }
             } else {
                 img = null;
             }
 
-            if (img == null || width <= 0 || height <= 0) {
-                tracker.removeImage(img);
-                img = null;
-            }
-
             synchronized (ImageDisplay.this) {
-                if (this.file != ImageDisplay.this.file) {
+                if (this.entry != ImageDisplay.this.entry) {
                     // The file has changed
                     tracker.removeImage(img);
                     return;
@@ -306,15 +319,17 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
                 if (img != null) {
                     boolean switchedDim = false;
-                    if (ExifReader.orientationNeedsCorrection(orientation)) {
-                        if (ExifReader.orientationSwitchesDimensions(orientation)) {
+                    if (ExifReader.orientationNeedsCorrection(entry.getExifOrientation())) {
+                        if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
                             width = img.getHeight(null);
                             height = img.getWidth(null);
                             switchedDim = true;
                         }
                         final BufferedImage rot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                        final AffineTransform xform = ExifReader.getRestoreOrientationTransform(orientation,
-                                img.getWidth(null), img.getHeight(null));
+                        final AffineTransform xform = ExifReader.getRestoreOrientationTransform(
+                                entry.getExifOrientation(),
+                                img.getWidth(null),
+                                img.getHeight(null));
                         final Graphics2D g = rot.createGraphics();
                         g.drawImage(img, xform, null);
                         g.dispose();
@@ -325,8 +340,8 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
                     ImageDisplay.this.image = img;
                     visibleRect = new VisRect(0, 0, width, height);
 
-                    Logging.info("Loaded {0} with dimensions {1}x{2} mem(prev-avail={3}m,taken={4}m) exifOrientationSwitchedDimension={5}",
-                            file.getPath(), width, height, mem/1024/1024, width*height*4/1024/1024, switchedDim);
+                    Logging.info("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
+                            file.getPath(), width, height, width*height*4/1024/1024, switchedDim);
                 }
 
                 selectedRect = null;
@@ -360,12 +375,12 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         }
 
         private void mouseWheelMovedImpl(int x, int y, int rotation, boolean refreshMousePointInImg) {
-            File file;
+            ImageEntry entry;
             Image image;
             VisRect visibleRect;
 
             synchronized (ImageDisplay.this) {
-                file = ImageDisplay.this.file;
+                entry = ImageDisplay.this.entry;
                 image = ImageDisplay.this.image;
                 visibleRect = ImageDisplay.this.visibleRect;
             }
@@ -417,7 +432,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             visibleRect.checkRectPos();
 
             synchronized (ImageDisplay.this) {
-                if (ImageDisplay.this.file == file) {
+                if (ImageDisplay.this.entry == entry) {
                     ImageDisplay.this.visibleRect = visibleRect;
                 }
             }
@@ -446,12 +461,12 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         @Override
         public void mouseClicked(MouseEvent e) {
             // Move the center to the clicked point.
-            File file;
+            ImageEntry entry;
             Image image;
             VisRect visibleRect;
 
             synchronized (ImageDisplay.this) {
-                file = ImageDisplay.this.file;
+                entry = ImageDisplay.this.entry;
                 image = ImageDisplay.this.image;
                 visibleRect = ImageDisplay.this.visibleRect;
             }
@@ -485,7 +500,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             visibleRect.checkRectPos();
 
             synchronized (ImageDisplay.this) {
-                if (ImageDisplay.this.file == file) {
+                if (ImageDisplay.this.entry == entry) {
                     ImageDisplay.this.visibleRect = visibleRect;
                 }
             }
@@ -518,12 +533,12 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             if (!mouseIsDragging(e) && !mouseIsZoomSelecting(e))
                 return;
 
-            File file;
+            ImageEntry entry;
             Image image;
             VisRect visibleRect;
 
             synchronized (ImageDisplay.this) {
-                file = ImageDisplay.this.file;
+                entry = ImageDisplay.this.entry;
                 image = ImageDisplay.this.image;
                 visibleRect = ImageDisplay.this.visibleRect;
             }
@@ -538,7 +553,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
                 visibleRect.y += mousePointInImg.y - p.y;
                 visibleRect.checkRectPos();
                 synchronized (ImageDisplay.this) {
-                    if (ImageDisplay.this.file == file) {
+                    if (ImageDisplay.this.entry == entry) {
                         ImageDisplay.this.visibleRect = visibleRect;
                     }
                 }
@@ -564,12 +579,14 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            File file;
+            ImageEntry entry;
             Image image;
+            VisRect visibleRect;
 
             synchronized (ImageDisplay.this) {
-                file = ImageDisplay.this.file;
+                entry = ImageDisplay.this.entry;
                 image = ImageDisplay.this.image;
+                visibleRect = ImageDisplay.this.visibleRect;
             }
 
             if (image == null)
@@ -613,7 +630,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             }
 
             synchronized (ImageDisplay.this) {
-                if (file == ImageDisplay.this.file) {
+                if (entry == ImageDisplay.this.entry) {
                     if (selectedRect == null) {
                         ImageDisplay.this.visibleRect = visibleRect;
                     } else {
@@ -655,18 +672,18 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
     /**
      * Sets a new source image to be displayed by this {@code ImageDisplay}.
-     * @param file new source image
-     * @param orientation orientation of new source (landscape, portrait, upside-down, etc.)
+     * @param entry new source image
+     * @since 13220
      */
-    public void setImage(File file, Integer orientation) {
+    public void setImage(ImageEntry entry) {
         synchronized (this) {
-            this.file = file;
+            this.entry = entry;
             image = null;
             errorLoading = false;
         }
         repaint();
-        if (file != null) {
-            new Thread(new LoadImageRunnable(file, orientation), LoadImageRunnable.class.getName()).start();
+        if (entry != null) {
+            new Thread(new LoadImageRunnable(entry), LoadImageRunnable.class.getName()).start();
         }
     }
 
@@ -681,14 +698,14 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
     @Override
     public void paintComponent(Graphics g) {
+        ImageEntry entry;
         Image image;
-        File file;
         VisRect visibleRect;
         boolean errorLoading;
 
         synchronized (this) {
             image = this.image;
-            file = this.file;
+            entry = this.entry;
             visibleRect = this.visibleRect;
             errorLoading = this.errorLoading;
         }
@@ -698,7 +715,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         }
 
         Dimension size = getSize();
-        if (file == null) {
+        if (entry == null) {
             g.setColor(Color.black);
             String noImageStr = tr("No image");
             Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(noImageStr, g);
@@ -709,9 +726,9 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
             g.setColor(Color.black);
             String loadingStr;
             if (!errorLoading) {
-                loadingStr = tr("Loading {0}", file.getName());
+                loadingStr = tr("Loading {0}", entry.getFile().getName());
             } else {
-                loadingStr = tr("Error on file {0}", file.getName());
+                loadingStr = tr("Error on file {0}", entry.getFile().getName());
             }
             Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(loadingStr, g);
             g.drawString(loadingStr,
@@ -741,7 +758,6 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
                     // fall-back to the non-bilinear scaler
                     r.x = visibleRect.x;
                     r.y = visibleRect.y;
-                    System.gc();
                 }
             } else {
                 // if target and r cause drawImage to scale image region to a tmp buffer exceeding
@@ -771,7 +787,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
                 g.drawRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
             }
             if (errorLoading) {
-                String loadingStr = tr("Error on file {0}", file.getName());
+                String loadingStr = tr("Error on file {0}", entry.getFile().getName());
                 Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(loadingStr, g);
                 g.drawString(loadingStr,
                         (int) ((size.width - noImageSize.getWidth()) / 2),
@@ -884,12 +900,12 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
      * the component size.
      */
     public void zoomBestFitOrOne() {
-        File file;
+        ImageEntry entry;
         Image image;
         VisRect visibleRect;
 
         synchronized (this) {
-            file = this.file;
+            entry = this.entry;
             image = this.image;
             visibleRect = this.visibleRect;
         }
@@ -910,7 +926,7 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
         }
 
         synchronized (this) {
-            if (file == this.file) {
+            if (this.entry == entry) {
                 this.visibleRect = visibleRect;
             }
         }

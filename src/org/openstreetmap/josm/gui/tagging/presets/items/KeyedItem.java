@@ -99,7 +99,7 @@ public abstract class KeyedItem extends TaggingPresetItem {
         /**
          * A set of values that were used for this key.
          */
-        public final SortedSet<String> values = new TreeSet<>();; // NOSONAR
+        public final SortedSet<String> values = new TreeSet<>(); // NOSONAR
         private boolean hadKeys;
         private boolean hadEmpty;
 

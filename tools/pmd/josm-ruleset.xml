@@ -156,7 +156,6 @@
     <exclude name="CompareObjectsWithEquals"/>
     <exclude name="ConstructorCallsOverridableMethod"/>
     <exclude name="DataflowAnomalyAnalysis"/>
-    <exclude name="DoNotCallGarbageCollectionExplicitly"/>
     <exclude name="DoNotCallSystemExit"/>
     <exclude name="DontImportSun"/>
     <exclude name="EmptyIfStmt"/>

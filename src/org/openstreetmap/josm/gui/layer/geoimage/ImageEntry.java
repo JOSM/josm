@@ -20,6 +20,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.jpeg.JpegDirectory;
 
 /**
  * Stores info about each image
@@ -52,6 +53,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     /** The time after correlation with a gpx track */
     private Date gpsTime;
 
+    private int width;
+    private int height;
+
     /**
      * When the correlation dialog is open, we like to show the image position
      * for the current time offset on the map in real time.
@@ -73,6 +77,24 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      */
     public ImageEntry(File file) {
         setFile(file);
+    }
+
+    /**
+     * Returns width of the image this ImageEntry represents.
+     * @return width of the image this ImageEntry represents
+     * @since 13220
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * Returns height of the image this ImageEntry represents.
+     * @return height of the image this ImageEntry represents
+     * @since 13220
+     */
+    public int getHeight() {
+        return height;
     }
 
     /**
@@ -141,7 +163,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @return EXIF orientation
      */
     public Integer getExifOrientation() {
-        return exifOrientation;
+        return exifOrientation != null ? exifOrientation : 1;
     }
 
     /**
@@ -227,6 +249,24 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         if (thumbnail == null) {
             new ThumbsLoader(Collections.singleton(this)).run();
         }
+    }
+
+    /**
+     * Sets the width of this ImageEntry.
+     * @param width set the width of this ImageEntry
+     * @since 13220
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    /**
+     * Sets the height of this ImageEntry.
+     * @param height set the height of this ImageEntry
+     * @since 13220
+     */
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     /**
@@ -456,6 +496,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             setExifTime(null);
         }
 
+        final Directory dir = metadata.getFirstDirectoryOfType(JpegDirectory.class);
         final Directory dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
         final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
@@ -463,6 +504,18 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             if (dirExif != null) {
                 int orientation = dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION);
                 setExifOrientation(orientation);
+            }
+        } catch (MetadataException ex) {
+            Logging.debug(ex);
+        }
+
+        try {
+            if (dir != null) {
+                // there are cases where these do not match width and height stored in dirExif
+                int width = dir.getInt(JpegDirectory.TAG_IMAGE_WIDTH);
+                int height = dir.getInt(JpegDirectory.TAG_IMAGE_HEIGHT);
+                setWidth(width);
+                setHeight(height);
             }
         } catch (MetadataException ex) {
             Logging.debug(ex);

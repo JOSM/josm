@@ -79,7 +79,6 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -458,8 +457,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             imgList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             imgList.getSelectionModel().addListSelectionListener(evt -> {
                 int index = imgList.getSelectedIndex();
-                Integer orientation = ExifReader.readOrientation(yLayer.data.get(index).getFile());
-                imgDisp.setImage(yLayer.data.get(index).getFile(), orientation);
+                imgDisp.setImage(yLayer.data.get(index));
                 Date date = yLayer.data.get(index).getExifTime();
                 if (date != null) {
                     DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
@@ -482,12 +480,11 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         JpgImporter.FILE_FILTER_WITH_FOLDERS, JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
                 if (fc == null)
                     return;
-                File sel = fc.getSelectedFile();
+                ImageEntry entry = new ImageEntry(fc.getSelectedFile());
+                entry.extractExif();
+                imgDisp.setImage(entry);
 
-                Integer orientation = ExifReader.readOrientation(sel);
-                imgDisp.setImage(sel, orientation);
-
-                Date date = ExifReader.readTime(sel);
+                Date date = entry.getExifTime();
                 if (date != null) {
                     lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM).format(date));
                     tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+' ');
