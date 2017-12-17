@@ -296,7 +296,7 @@ way["addr:interpolation"=alphabetic] {
     color: address#1C86EE;
     dashes: 2,2;
 }
-area[building][!building?!] {
+area[building][!building?!][building!=y][building!=1] {
     fill-color: building#cb9999;
 }
 area[building=roof],
