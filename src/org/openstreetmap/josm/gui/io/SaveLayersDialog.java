@@ -250,7 +250,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             super(new GridBagLayout());
             build();
             lblMessage.setText(msg);
-            lstLayers.setListData(infos.toArray(new SaveLayerInfo[infos.size()]));
+            lstLayers.setListData(infos.toArray(new SaveLayerInfo[0]));
         }
 
         protected void build() {

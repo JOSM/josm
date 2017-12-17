@@ -55,7 +55,7 @@ public class NativeFileChooser extends AbstractFileChooser {
         // TODO implement this after Oracle fixes JDK-4811090 / JDK-6192906
         // https://bugs.openjdk.java.net/browse/JDK-4811090 : Extend awt filedialog
         // https://bugs.openjdk.java.net/browse/JDK-6192906 : Add more features to java.awt.FileDialog
-        return fileFilters.toArray(new FileFilter[fileFilters.size()]);
+        return fileFilters.toArray(new FileFilter[0]);
     }
 
     @Override

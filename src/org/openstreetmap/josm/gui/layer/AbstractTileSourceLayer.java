@@ -1648,7 +1648,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         actions.addAll(getMenuAdditions());
         actions.add(SeparatorLayerAction.INSTANCE);
         actions.add(new LayerListPopup.InfoAction(this));
-        return actions.toArray(new Action[actions.size()]);
+        return actions.toArray(new Action[0]);
     }
 
     /**

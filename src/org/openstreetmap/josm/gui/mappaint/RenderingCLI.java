@@ -6,9 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -542,12 +543,12 @@ public class RenderingCLI implements CLIModule {
         return ra;
     }
 
-    private DataSet loadDataset() throws FileNotFoundException, IllegalDataException {
+    private DataSet loadDataset() throws IOException, IllegalDataException {
         if (argInput == null) {
             throw new IllegalArgumentException(tr("Missing argument - input data file ({0})", "--input|-i"));
         }
         try {
-            return OsmReader.parseDataSet(new FileInputStream(argInput), null);
+            return OsmReader.parseDataSet(Files.newInputStream(Paths.get(argInput)), null);
         } catch (IllegalDataException e) {
             throw new IllegalDataException(tr("In .osm data file ''{0}'' - ", argInput) + e.getMessage());
         }

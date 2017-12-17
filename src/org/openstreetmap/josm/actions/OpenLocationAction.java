@@ -248,7 +248,7 @@ public class OpenLocationAction extends JosmAction {
      * @return the selected tasks from the user or an empty list if the dialog has been canceled
      */
     Collection<DownloadTask> askWhichTasksToLoad(final Collection<DownloadTask> tasks) {
-        final JList<DownloadTask> list = new JList<>(tasks.toArray(new DownloadTask[tasks.size()]));
+        final JList<DownloadTask> list = new JList<>(tasks.toArray(new DownloadTask[0]));
         list.addSelectionInterval(0, tasks.size() - 1);
         final ExtendedDialog dialog = new WhichTasksToPerformDialog(list);
         dialog.showDialog();

@@ -1609,7 +1609,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
 
             // We use parallel sort here. This is only available for arrays.
-            StyleRecord[] sorted = allStyleElems.toArray(new StyleRecord[allStyleElems.size()]);
+            StyleRecord[] sorted = allStyleElems.toArray(new StyleRecord[0]);
             Arrays.parallelSort(sorted, null);
 
             if (!benchmark.renderDraw(allStyleElems)) {

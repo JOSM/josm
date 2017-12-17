@@ -1032,7 +1032,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             colorList.add(darkerColor(lastColor, 0.950f));
         }
 
-        return createColorLut(0, colorList.toArray(new Color[ colorList.size() ]));
+        return createColorLut(0, colorList.toArray(new Color[0]));
     }
 
     /**

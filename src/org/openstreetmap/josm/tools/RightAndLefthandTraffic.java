@@ -2,14 +2,15 @@
 package org.openstreetmap.josm.tools;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -153,7 +154,7 @@ public final class RightAndLefthandTraffic {
     private static void saveOptimizedBoundaries(Collection<Way> optimizedWays) {
         DataSet ds = optimizedWays.iterator().next().getDataSet();
         File file = new File(Config.getDirs().getCacheDirectory(true), "left-right-hand-traffic.osm");
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
              OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, ds.getVersion())
             ) {
             w.header(DataSet.UploadPolicy.DISCOURAGED);
@@ -165,10 +166,10 @@ public final class RightAndLefthandTraffic {
     }
 
     private static Collection<Way> loadOptimizedBoundaries() {
-        try (InputStream is = new FileInputStream(new File(
-                Config.getDirs().getCacheDirectory(false), "left-right-hand-traffic.osm"))) {
+        try (InputStream is = Files.newInputStream(Paths.get(
+                Config.getDirs().getCacheDirectory(false).getPath(), "left-right-hand-traffic.osm"))) {
            return OsmReader.parseDataSet(is, null).getWays();
-        } catch (IllegalDataException | IOException ex) {
+        } catch (IllegalDataException | IOException | InvalidPathException ex) {
             Logging.trace(ex);
             return Collections.emptyList();
         }

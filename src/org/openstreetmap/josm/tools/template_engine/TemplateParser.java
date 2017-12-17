@@ -60,7 +60,7 @@ public class TemplateParser {
             } else if (token.getType() == TokenType.VARIABLE_START) {
                 templateEntry = parseVariable();
             } else if (endTokens.contains(token.getType()))
-                return CompoundTemplateEntry.fromArray(entries.toArray(new TemplateEntry[entries.size()]));
+                return CompoundTemplateEntry.fromArray(entries.toArray(new TemplateEntry[0]));
             else if (token.getType() == TokenType.TEXT) {
                 tokenizer.nextToken();
                 templateEntry = new StaticText(token.getText());

@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -714,11 +714,7 @@ public class SessionReader {
                 throw new IOException(ex);
             }
         } else {
-            try {
-                return new FileInputStream(sessionFile);
-            } catch (FileNotFoundException ex) {
-                throw new IOException(ex);
-            }
+            return Files.newInputStream(sessionFile.toPath());
         }
     }
 

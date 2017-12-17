@@ -62,7 +62,7 @@ public final class Way extends OsmPrimitive implements IWay {
             if (nodes == null) {
                 this.nodes = new Node[0];
             } else {
-                this.nodes = nodes.toArray(new Node[nodes.size()]);
+                this.nodes = nodes.toArray(new Node[0]);
             }
             for (Node node: this.nodes) {
                 node.addReferrer(this);

@@ -343,7 +343,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         if (item.length() > 0) {
             result.add(item.toString());
         }
-        return result.toArray(new String[result.size()]);
+        return result.toArray(new String[0]);
     }
 
     protected abstract Object getSelectedItem();

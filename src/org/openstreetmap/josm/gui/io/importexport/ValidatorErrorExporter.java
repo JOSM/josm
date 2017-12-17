@@ -4,9 +4,9 @@ package org.openstreetmap.josm.gui.io.importexport;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -43,7 +43,7 @@ public class ValidatorErrorExporter extends FileExporter {
         OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         if (layer instanceof ValidatorLayer && editLayer != null) {
             Logging.info("exporting validation errors to file: " + file);
-            try (OutputStream os = new FileOutputStream(file);
+            try (OutputStream os = Files.newOutputStream(file.toPath());
                  ValidatorErrorWriter writer = new ValidatorErrorWriter(os)) {
                 writer.write(editLayer.validationErrors);
             }

@@ -2,12 +2,11 @@
 package org.openstreetmap.josm.io;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -149,7 +148,7 @@ public enum Compression {
      * @throws IOException if any I/O error occurs
      */
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
-        FileInputStream in = new FileInputStream(file);
+        InputStream in = Files.newInputStream(file.toPath());
         try {
             return byExtension(file.getName()).getUncompressedInputStream(in);
         } catch (IOException e) {
@@ -187,7 +186,7 @@ public enum Compression {
      * @throws IOException if any I/O error occurs
      */
     public static OutputStream getCompressedFileOutputStream(File file) throws IOException {
-        FileOutputStream out = new FileOutputStream(file);
+        OutputStream out = Files.newOutputStream(file.toPath());
         try {
             return byExtension(file.getName()).getCompressedOutputStream(out);
         } catch (IOException e) {

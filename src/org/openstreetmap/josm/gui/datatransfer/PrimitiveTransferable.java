@@ -55,7 +55,7 @@ public class PrimitiveTransferable implements Transferable {
         if (sourceLayer != null) {
             flavors.addAll(OsmLayerTransferData.FLAVORS);
         }
-        return flavors.toArray(new DataFlavor[flavors.size()]);
+        return flavors.toArray(new DataFlavor[0]);
     }
 
     @Override

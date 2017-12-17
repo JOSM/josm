@@ -3,12 +3,11 @@ package org.openstreetmap.josm.io.session;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -330,10 +329,8 @@ public class SessionWriter {
      * @throws IOException if any I/O error occurs
      */
     public void write(File f) throws IOException {
-        try (OutputStream out = new FileOutputStream(f)) {
+        try (OutputStream out = Files.newOutputStream(f.toPath())) {
             write(out);
-        } catch (FileNotFoundException e) {
-            throw new IOException(e);
         }
     }
 

@@ -4,11 +4,12 @@ package org.openstreetmap.josm.plugins;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,7 +114,7 @@ public class PluginInformation {
         this.name = name;
         this.file = file;
         try (
-            FileInputStream fis = new FileInputStream(file);
+            InputStream fis = Files.newInputStream(file.toPath());
             JarInputStream jar = new JarInputStream(fis)
         ) {
             Manifest manifest = jar.getManifest();
@@ -121,7 +122,7 @@ public class PluginInformation {
                 throw new PluginException(tr("The plugin file ''{0}'' does not include a Manifest.", file.toString()));
             scanManifest(manifest, false);
             libraries.add(0, Utils.fileToURL(file));
-        } catch (IOException e) {
+        } catch (IOException | InvalidPathException e) {
             throw new PluginException(name, e);
         }
     }

@@ -357,7 +357,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
 
     public ProjectionPreference() {
         this.projectionCombo = new JosmComboBox<>(
-            projectionChoices.toArray(new ProjectionChoice[projectionChoices.size()]));
+            projectionChoices.toArray(new ProjectionChoice[0]));
         this.coordinatesCombo = new JosmComboBox<>(
                 CoordinateFormatManager.getCoordinateFormats().toArray(new ICoordinateFormat[0]));
     }

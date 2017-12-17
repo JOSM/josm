@@ -20,9 +20,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -330,9 +330,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         private InputStream createInputStream(File sel) throws IOException {
             if (Utils.hasExtension(sel, "gpx.gz")) {
-                return new GZIPInputStream(new FileInputStream(sel));
+                return new GZIPInputStream(Files.newInputStream(sel.toPath()));
             } else {
-                return new FileInputStream(sel);
+                return Files.newInputStream(sel.toPath());
             }
         }
     }
@@ -420,7 +420,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             Collections.sort(vtTimezones);
 
-            JosmComboBox<String> cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[vtTimezones.size()]));
+            JosmComboBox<String> cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[0]));
 
             String tzId = Config.getPref().get("geoimage.timezoneid", "");
             TimeZone defaultTz;
@@ -572,7 +572,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         panelCb.add(new JLabel(tr("GPX track: ")));
 
-        cbGpx = new JosmComboBox<>(gpxLst.toArray(new GpxDataWrapper[gpxLst.size()]));
+        cbGpx = new JosmComboBox<>(gpxLst.toArray(new GpxDataWrapper[0]));
         if (defaultItem != null) {
             cbGpx.setSelectedItem(defaultItem);
         } else {

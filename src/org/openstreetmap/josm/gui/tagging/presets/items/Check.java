@@ -80,7 +80,7 @@ public class Check extends KeyedItem {
             allowedStates.add(QuadStateCheckBox.State.NOT_SELECTED);
         allowedStates.add(QuadStateCheckBox.State.UNSET);
         check = new QuadStateCheckBox(locale_text, initialState,
-                allowedStates.toArray(new QuadStateCheckBox.State[allowedStates.size()]));
+                allowedStates.toArray(new QuadStateCheckBox.State[0]));
         check.setPropertyText(key);
         check.setState(check.getState()); // to update the tooltip text
 

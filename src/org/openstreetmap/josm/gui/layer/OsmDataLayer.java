@@ -680,7 +680,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
                 new ConsistencyTestAction(),
                 SeparatorLayerAction.INSTANCE,
                 new LayerListPopup.InfoAction(this)));
-        return actions.toArray(new Action[actions.size()]);
+        return actions.toArray(new Action[0]);
     }
 
     /**
