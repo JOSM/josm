@@ -76,13 +76,13 @@ public class GpxLayerTest {
         assertEquals("foo", layer.getName());
         assertFalse(layer.isLocalFile());
         assertEquals(Color.MAGENTA, layer.getColorProperty().get());
-        assertEquals("<html>0 tracks, 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer.getToolTipText());
+        assertEquals("<html>0 tracks (0 segments), 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer.getToolTipText());
 
         GpxLayer layer2 = new GpxLayer(new GpxData(), "bar", true);
         assertEquals("bar", layer2.getName());
         assertTrue(layer2.isLocalFile());
         assertEquals(Color.MAGENTA, layer2.getColorProperty().get());
-        assertEquals("<html>0 tracks, 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer2.getToolTipText());
+        assertEquals("<html>0 tracks (0 segments), 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer2.getToolTipText());
 
         assertTrue(layer.checkSaveConditions());
         assertTrue(layer.isInfoResizable());
@@ -101,6 +101,11 @@ public class GpxLayerTest {
     public void testGetInfoComponent() throws Exception {
         assertEquals("<html>\n"+
                      "  <head>\n" +
+                     "    <style type=\"text/css\">\n" +
+                     "      <!--\n" +
+                     "        td { padding-top: 4px; padding-bottom: 4px; padding-right: 16px; padding-left: 16px }\n" +
+                     "      -->\n" +
+                     "    </style>\n" +
                      "    \n" +
                      "  </head>\n" +
                      "  <body>\n" +
@@ -111,13 +116,18 @@ public class GpxLayerTest {
 
         assertEquals("<html>\n"+
                      "  <head>\n" +
+                     "    <style type=\"text/css\">\n" +
+                     "      <!--\n" +
+                     "        td { padding-top: 4px; padding-bottom: 4px; padding-right: 16px; padding-left: 16px }\n" +
+                     "      -->\n" +
+                     "    </style>\n" +
                      "    \n" +
                      "  </head>\n" +
                      "  <body>\n" +
                      "    <table>\n" +
                      "      <tr align=\"center\">\n" +
                      "        <td colspan=\"5\">\n" +
-                     "          1 track\n" +
+                     "          1 track, 1 track segments\n" +
                      "        </td>\n" +
                      "      </tr>\n" +
                      "      <tr align=\"center\">\n" +
@@ -132,6 +142,9 @@ public class GpxLayerTest {
                      "        </td>\n" +
                      "        <td>\n" +
                      "          Length\n" +
+                     "        </td>\n" +
+                     "        <td>\n" +
+                     "          Number of<br>Segments\n" +
                      "        </td>\n" +
                      "        <td>\n" +
                      "          URL\n" +
@@ -149,6 +162,9 @@ public class GpxLayerTest {
                      "        </td>\n" +
                      "        <td>\n" +
                      "          12.0 m\n" +
+                     "        </td>\n" +
+                     "        <td>\n" +
+                     "          1\n" +
                      "        </td>\n" +
                      "        <td>\n" +
                      "          \n" +
