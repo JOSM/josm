@@ -129,6 +129,9 @@ public class FilterModel {
                 }
                 disabledCount -= disabledAndHiddenCount;
             } finally {
+                if (changed) {
+                    ds.fireFilterChanged();
+                }
                 ds.endUpdate();
             }
 

@@ -1209,6 +1209,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         fireEvent(new PrimitiveFlagsChangedEvent(this, primitive));
     }
 
+    void fireFilterChanged() {
+        fireEvent(new DataChangedEvent(this));
+    }
+
     void fireHighlightingChanged() {
         HighlightUpdateListener.HighlightUpdateEvent e = new HighlightUpdateListener.HighlightUpdateEvent(this);
         highlightUpdateListeners.fireEvent(l -> l.highlightUpdated(e));

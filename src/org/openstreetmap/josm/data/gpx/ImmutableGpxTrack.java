@@ -38,6 +38,22 @@ public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
         this.bounds = calculateBounds();
     }
 
+    /**
+     * Constructs a new {@code ImmutableGpxTrack} from {@code GpxTrackSegment} objects.
+     * @param segments The segments to build the track from.  Input is not deep-copied,
+     *                 which means the caller may reuse the same segments to build
+     *                 multiple ImmutableGpxTrack instances from.  This should not be
+     *                 a problem, since this object cannot modify {@code this.segments}.
+     * @param attributes Attributes for the GpxTrack, the input map is copied.
+     * @since 13210
+     */
+    public ImmutableGpxTrack(List<GpxTrackSegment> segments, Map<String, Object> attributes) {
+        this.attr = Collections.unmodifiableMap(new HashMap<>(attributes));
+        this.segments = Collections.unmodifiableList(segments);
+        this.length = calculateLength();
+        this.bounds = calculateBounds();
+    }
+
     private double calculateLength() {
         double result = 0.0; // in meters
 

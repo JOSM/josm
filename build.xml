@@ -20,13 +20,17 @@
         <property name="src.dir" location="${base.dir}/src"/>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
-        <property name="javacc.home" location="${base.dir}/tools"/>
+        <property name="tools.dir" location="${base.dir}/tools"/>
+        <property name="pmd.dir" location="${tools.dir}/pmd"/>
+        <property name="checkstyle.dir" location="${tools.dir}/checkstyle"/>
+        <property name="spotbugs.dir" location="${tools.dir}/spotbugs"/>
+        <property name="javacc.home" location="${tools.dir}"/>
         <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
-        <property name="groovy.jar" location="${base.dir}/tools/groovy-all.jar"/>
-        <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant.jar"/>
+        <property name="groovy.jar" location="${tools.dir}/groovy-all.jar"/>
+        <property name="error_prone_ant.jar" location="${tools.dir}/error_prone_ant.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
         <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
@@ -50,10 +54,10 @@
             </fileset>
             <pathelement path="${dist.jar}"/>
             <pathelement path="${groovy.jar}"/>
-            <pathelement path="tools/spotbugs/spotbugs-annotations.jar"/>
+            <pathelement path="${spotbugs.dir}/spotbugs-annotations.jar"/>
         </path>
         <path id="pmd.classpath">
-            <fileset dir="${base.dir}/tools/pmd/">
+            <fileset dir="${pmd.dir}">
                 <include name="*.jar"/>
             </fileset>
         </path>
@@ -165,7 +169,7 @@ Build-Date: ${build.tstamp}
     <!-- Mac OS X target -->
     <target name="mac" depends="init-properties">
         <!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
-        <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="tools/appbundler-1.0ea.jar"/>
+        <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="${tools.dir}/appbundler-1.0ea.jar"/>
         <!-- create MacOS X application bundle -->
         <bundleapp outputdirectory="${bundle.outdir}" name="JOSM" displayname="JOSM" executablename="JOSM" identifier="org.openstreetmap.josm"
                    mainclassname="org.openstreetmap.josm.gui.MainApplication"
@@ -195,7 +199,7 @@ Build-Date: ${build.tstamp}
         </bundleapp>
 
         <!-- appbundler lacks the possibility of defining our own keys or using a template, so update the .plist manually -->
-        <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="tools/xmltask.jar"/>
+        <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="${tools.dir}/xmltask.jar"/>
 
         <xmltask source="${bundle.outdir}/JOSM.app/Contents/Info.plist" dest="${bundle.outdir}/JOSM.app/Contents/Info.plist" indent="false">
             <!-- remove empty CFBundleDocumentTypes definition -->
@@ -387,6 +391,7 @@ Build-Date: ${build.tstamp}
         <delete file="${src.dir}/org/w3/_2001/xmlschema/Adapter1.java"/>
         <delete dir="${src.dir}/org/openstreetmap/josm/data/imagery/types"/>
         <delete file="${epsg.output}"/>
+        <delete file="${pmd.dir}/cache"/>
     </target>
     <macrodef name="init-test-preferences">
         <attribute name="testfamily"/>
@@ -405,7 +410,7 @@ Build-Date: ${build.tstamp}
         <init-test-preferences testfamily="unit"/>
         <init-test-preferences testfamily="functional"/>
         <init-test-preferences testfamily="performance"/>
-        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="${tools.dir}/jacocoant.jar" />
     </target>
     <target name="test-clean" depends="init-properties">
         <delete dir="${test.dir}/build"/>
@@ -543,7 +548,7 @@ Build-Date: ${build.tstamp}
         </jacoco:report>
     </target>
     <target name="dist-optimized" depends="dist">
-        <taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar"/>
+        <taskdef resource="proguard/ant/task.properties" classpath="${tools.dir}/proguard.jar"/>
         <proguard>
         -injars ${dist.jar}
         -outjars ${dist-optimized.jar}
@@ -598,7 +603,7 @@ Build-Date: ${build.tstamp}
     <target name="dist-optimized-report" depends="dist-optimized" unless="isJava9">
         <!-- generate difference report between optimized jar and normal one -->
         <exec executable="perl" dir="${basedir}">
-            <arg value="tools/japicc/japi-compliance-checker.pl"/>
+            <arg value="${tools.dir}/japicc/japi-compliance-checker.pl"/>
             <arg value="--lib=JOSM"/>
             <arg value="--keep-internal"/>
             <arg value="--v1=${version.entry.commit.revision}"/>
@@ -613,7 +618,7 @@ Build-Date: ${build.tstamp}
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-            <classpath path="tools/animal-sniffer-ant-tasks.jar"/>
+            <classpath path="${tools.dir}/animal-sniffer-ant-tasks.jar"/>
         </typedef>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
@@ -744,7 +749,7 @@ Build-Date: ${build.tstamp}
         <attribute name="output"/>
         <sequential>
             <echo message="Generating Taginfo for type @{type} to @{output}"/>
-            <groovy src="${taginfoextract}" classpath="${dist.jar}:tools/spotbugs/spotbugs-annotations.jar">
+            <groovy src="${taginfoextract}" classpath="${dist.jar}:${spotbugs.dir}/spotbugs-annotations.jar">
                 <arg value="-t"/>
                 <arg value="@{type}"/>
                 <arg value="--noexit"/>
@@ -758,7 +763,7 @@ Build-Date: ${build.tstamp}
     </macrodef>
 
     <target name="taginfo" depends="dist">
-        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
+        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};${tools.dir}/commons-cli-1.3.1.jar"/>
         <property name="taginfoextract" value="scripts/TagInfoExtract.groovy"/>
         <property name="imgurlprefix" value="http://josm.openstreetmap.de/download/taginfo/taginfo-img"/>
         <_taginfo type="mappaint" output="taginfo_style.json"/>
@@ -767,7 +772,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="imageryindex" depends="init-properties">
-        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
+        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};${tools.dir}/commons-cli-1.3.1.jar"/>
         <echo message="Checking editor imagery difference"/>
         <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.jar}">
                 <arg value="-noeli"/>
@@ -802,16 +807,16 @@ Build-Date: ${build.tstamp}
 
     <target name="checkstyle-compile" depends="init-properties">
         <mkdir dir="${checkstyle-build.dir}"/>
-        <javac sourcepath="" srcdir="${base.dir}/tools/checkstyle/src" failonerror="true"
+        <javac sourcepath="" srcdir="${checkstyle.dir}/src" failonerror="true"
             destdir="${checkstyle-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
             includeantruntime="false" createMissingPackageInfoClass="false"
-            encoding="UTF-8" classpath="tools/checkstyle/checkstyle-all.jar">
+            encoding="UTF-8" classpath="${checkstyle.dir}/checkstyle-all.jar">
         </javac>
     </target>
     <target name="checkstyle" depends="checkstyle-compile">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-             classpath="tools/checkstyle/checkstyle-all.jar:${checkstyle-build.dir}"/>
-        <checkstyle config="tools/checkstyle/josm_checks.xml">
+             classpath="${checkstyle.dir}/checkstyle-all.jar:${checkstyle-build.dir}"/>
+        <checkstyle config="${checkstyle.dir}/josm_checks.xml">
             <fileset dir="${base.dir}/src/org/openstreetmap/josm" includes="**/*.java"
                 excludes="gui/mappaint/mapcss/parsergen/*.java"/>
             <fileset dir="${base.dir}/test" includes="**/*.java"/>
@@ -821,9 +826,9 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="spotbugs" depends="dist">
-        <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="tools/spotbugs/spotbugs-ant.jar"/>
+        <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${spotbugs.dir}/spotbugs-ant.jar"/>
         <path id="spotbugs-classpath">
-            <fileset dir="${base.dir}/tools/spotbugs/">
+            <fileset dir="${spotbugs.dir}">
                 <include name="*.jar"/>
             </fileset>
         </path>
@@ -832,7 +837,7 @@ Build-Date: ${build.tstamp}
                 outputFile="spotbugs-josm.xml"
                 classpath="${spotbugs-classpath}"
                 pluginList=""
-                excludeFilter="tools/spotbugs/josm-filter.xml"
+                excludeFilter="${spotbugs.dir}/josm-filter.xml"
                 effort="max"
                 reportLevel="low"
                 >
@@ -843,9 +848,9 @@ Build-Date: ${build.tstamp}
 
     <target name="pmd" depends="init-properties">
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${toString:pmd.classpath}"/>
-        <pmd shortFilenames="true" cacheLocation="tools/pmd/cache" encoding="UTF-8">
+        <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />
-            <ruleset>${base.dir}/tools/pmd/josm-ruleset.xml</ruleset>
+            <ruleset>${pmd.dir}/josm-ruleset.xml</ruleset>
             <formatter type="text" toConsole="true" />
             <formatter type="xml" toFile="pmd-josm.xml">
                 <param name="encoding" value="UTF-8" />

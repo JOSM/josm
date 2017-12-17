@@ -145,6 +145,15 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     }
 
     /**
+     * Set the the time stamp of the waypoint into seconds from the epoch,
+     * @param time millisecond from the epoch
+     * @since 13210
+     */
+    public void setTime(long time) {
+        this.time = time / 1000.;
+    }
+
+    /**
      * Convert the time stamp of the waypoint into seconds from the epoch
      * @return The parsed time if successful, or {@code null}
      * @since 9383
