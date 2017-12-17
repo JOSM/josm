@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.io.AsynchronousUploadPrimitivesTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
@@ -273,6 +274,14 @@ public class MainLayerManager extends LayerManager {
 
     @Override
     protected Collection<Layer> realRemoveSingleLayer(Layer layer) {
+        if ((layer instanceof OsmDataLayer) && (((OsmDataLayer) layer).isReadOnly())) {
+            GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.parent,
+                    tr("Trying to delete the layer with background upload. Please wait until the upload is finished.")));
+
+            // Return an empty collection for allowing to delete other layers
+            return new ArrayList<>();
+        }
+
         if (layer == activeLayer || layer == editLayer) {
             Layer nextActive = suggestNextActiveLayer(layer);
             setActiveLayer(nextActive, true);
@@ -408,11 +417,17 @@ public class MainLayerManager extends LayerManager {
 
     @Override
     protected synchronized void realResetState() {
-        // active and edit layer are unset automatically
-        super.realResetState();
+        // Reset state if no asynchronous upload is under progress
+        if (!AsynchronousUploadPrimitivesTask.getCurrentAsynchronousUploadTask().isPresent()) {
+            // active and edit layer are unset automatically
+            super.realResetState();
 
-        activeLayerChangeListeners.clear();
-        layerAvailabilityListeners.clear();
+            activeLayerChangeListeners.clear();
+            layerAvailabilityListeners.clear();
+        } else {
+            GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.parent,
+                    tr("A background upload is already in progress. Cannot reset state until the upload is finished.")));
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -59,6 +60,8 @@ public class LoadAndZoomHandler extends RequestHandler {
 
     // Optional argument 'select'
     private final Set<SimplePrimitiveId> toSelect = new HashSet<>();
+
+    private Boolean isKeepingCurrentSelection = false;
 
     @Override
     public String getPermissionMessage() {
@@ -159,7 +162,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         /**
          * deselect objects if parameter addtags given
          */
-        if (args.containsKey("addtags")) {
+        if (args.containsKey("addtags") && !isKeepingCurrentSelection) {
             GuiHelper.executeByMainWorkerInEDT(() -> {
                 DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (ds == null) // e.g. download failed
@@ -184,7 +187,13 @@ public class LoadAndZoomHandler extends RequestHandler {
                         forTagAdd.add(p);
                     }
                 }
+                if (isKeepingCurrentSelection) {
+                    Collection<OsmPrimitive> sel = ds.getSelected();
+                    newSel.addAll(sel);
+                    forTagAdd.addAll(sel);
+                }
                 toSelect.clear();
+                isKeepingCurrentSelection = false;
                 ds.setSelected(newSel);
                 zoom(newSel, bbox);
                 MapFrame map = MainApplication.getMap();
@@ -286,6 +295,10 @@ public class LoadAndZoomHandler extends RequestHandler {
             toSelect.clear();
             for (String item : args.get("select").split(",")) {
                 if (!item.isEmpty()) {
+                    if ("currentselection".equals(item.toLowerCase(Locale.ENGLISH))) {
+                        isKeepingCurrentSelection = true;
+                        continue;
+                    }
                     try {
                         toSelect.add(SimplePrimitiveId.fromString(item));
                     } catch (IllegalArgumentException ex) {
