@@ -327,10 +327,7 @@ public class OsmOAuthAuthorizationClient {
             if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
                 throw new OsmOAuthAuthorizationException(tr("Failed to authenticate user ''{0}'' with password ''***'' as OAuth user",
                         userName));
-        } catch (OsmOAuthAuthorizationException e) {
-            Logging.debug(e);
-            throw new OsmLoginFailedException(e.getCause());
-        } catch (IOException e) {
+        } catch (OsmOAuthAuthorizationException | IOException e) {
             throw new OsmLoginFailedException(e);
         } finally {
             synchronized (this) {

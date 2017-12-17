@@ -195,7 +195,7 @@ public class ProjectionCLI implements CLIModule {
         try {
             return Double.parseDouble(s);
         } catch (NumberFormatException nfe) {
-            throw new IllegalArgumentException(tr("Unable to parse number ''{0}''", s));
+            throw new IllegalArgumentException(tr("Unable to parse number ''{0}''", s), nfe);
         }
     }
 
