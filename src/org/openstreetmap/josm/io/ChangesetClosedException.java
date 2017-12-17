@@ -97,14 +97,26 @@ public class ChangesetClosedException extends OsmTransferException {
     }
 
     /**
-     * Creates the exception with the given error header and the given
-     * source.
+     * Creates the exception with the given error header and source.
      *
      * @param errorHeader the error header
      * @param source the source for the exception
      */
     public ChangesetClosedException(String errorHeader, Source source) {
-        super(errorHeader);
+        this(errorHeader, source, null);
+    }
+
+    /**
+     * Creates the exception with the given error header, source and cause.
+     *
+     * @param errorHeader the error header
+     * @param source the source for the exception
+     * @param cause  The cause (which is saved for later retrieval by the {@link #getCause} method).
+     *               A null value is permitted, and indicates that the cause is nonexistent or unknown.
+     * @since 13207
+     */
+    public ChangesetClosedException(String errorHeader, Source source, Throwable cause) {
+        super(errorHeader, cause);
         parseErrorHeader(errorHeader);
         this.source = source == null ? Source.UNSPECIFIED : source;
     }

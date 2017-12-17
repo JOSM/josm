@@ -30,6 +30,11 @@
     <exclude name="UnusedFormalParameter"/>
     <exclude name="UseVarargs"/>
   </rule>
+  <rule ref="category/java/bestpractices.xml/PreserveStackTrace">
+    <properties>
+        <property name="violationSuppressXPath" value="//PrimaryExpression/PrimaryPrefix/Name[@Image='BugReport.intercept']"/>
+    </properties>
+  </rule>
   <rule ref="category/java/bestpractices.xml/UnusedFormalParameter">
     <properties>
         <property name="violationSuppressXPath" value="//Annotation[MarkerAnnotation/Name/@Image='Deprecated']/..[MethodDeclaration|ConstructorDeclaration]"/>

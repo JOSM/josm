@@ -230,7 +230,7 @@ public class RenderingCLI implements CLIModule {
                     argZoom = Integer.parseInt(getopt.getOptarg());
                 } catch (NumberFormatException nfe) {
                     throw new IllegalArgumentException(
-                            tr("Expected integer number for option {0}, but got ''{1}''", "--zoom", getopt.getOptarg()));
+                            tr("Expected integer number for option {0}, but got ''{1}''", "--zoom", getopt.getOptarg()), nfe);
                 }
                 if (argZoom < 0)
                     throw new IllegalArgumentException(
@@ -241,7 +241,7 @@ public class RenderingCLI implements CLIModule {
                     try {
                         argBounds = new Bounds(getopt.getOptarg(), ",", Bounds.ParseMethod.LEFT_BOTTOM_RIGHT_TOP, false);
                     } catch (IllegalArgumentException iae) { // NOPMD
-                        throw new IllegalArgumentException(tr("Unable to parse {0} parameter: {1}", "--bounds", iae.getMessage()));
+                        throw new IllegalArgumentException(tr("Unable to parse {0} parameter: {1}", "--bounds", iae.getMessage()), iae);
                     }
                 }
                 break;
@@ -267,7 +267,7 @@ public class RenderingCLI implements CLIModule {
                         argScale = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
-                                tr("Expected floating point number for option {0}, but got ''{1}''", "--scale", getopt.getOptarg()));
+                                tr("Expected floating point number for option {0}, but got ''{1}''", "--scale", getopt.getOptarg()), nfe);
                     }
                     break;
                 case ANCHOR:
@@ -281,7 +281,7 @@ public class RenderingCLI implements CLIModule {
                         double lat = LatLonParser.parseCoordinate(parts[1]);
                         argAnchor = new LatLon(lat, lon);
                     } catch (IllegalArgumentException iae) { // NOPMD
-                        throw new IllegalArgumentException(tr("In option {0}: {1}", "--anchor", iae.getMessage()));
+                        throw new IllegalArgumentException(tr("In option {0}: {1}", "--anchor", iae.getMessage()), iae);
                     }
                     break;
                 case WIDTH_M:
@@ -289,7 +289,7 @@ public class RenderingCLI implements CLIModule {
                         argWidthM = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
-                                tr("Expected floating point number for option {0}, but got ''{1}''", "--width-m", getopt.getOptarg()));
+                                tr("Expected floating point number for option {0}, but got ''{1}''", "--width-m", getopt.getOptarg()), nfe);
                     }
                     if (argWidthM <= 0) throw new IllegalArgumentException(
                             tr("Expected floating point number > 0 for option {0}, but got ''{1}''", "--width-m", getopt.getOptarg()));
@@ -299,7 +299,7 @@ public class RenderingCLI implements CLIModule {
                         argHeightM = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
-                                tr("Expected floating point number for option {0}, but got ''{1}''", "--height-m", getopt.getOptarg()));
+                                tr("Expected floating point number for option {0}, but got ''{1}''", "--height-m", getopt.getOptarg()), nfe);
                     }
                     if (argHeightM <= 0) throw new IllegalArgumentException(
                             tr("Expected floating point number > 0 for option {0}, but got ''{1}''", "--width-m", getopt.getOptarg()));
@@ -309,7 +309,7 @@ public class RenderingCLI implements CLIModule {
                         argWidthPx = Integer.parseInt(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
-                                tr("Expected integer number for option {0}, but got ''{1}''", "--width-px", getopt.getOptarg()));
+                                tr("Expected integer number for option {0}, but got ''{1}''", "--width-px", getopt.getOptarg()), nfe);
                     }
                     if (argWidthPx <= 0) throw new IllegalArgumentException(
                             tr("Expected integer number > 0 for option {0}, but got ''{1}''", "--width-px", getopt.getOptarg()));
@@ -319,7 +319,7 @@ public class RenderingCLI implements CLIModule {
                         argHeightPx = Integer.parseInt(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
-                                tr("Expected integer number for option {0}, but got ''{1}''", "--height-px", getopt.getOptarg()));
+                                tr("Expected integer number for option {0}, but got ''{1}''", "--height-px", getopt.getOptarg()), nfe);
                     }
                     if (argHeightPx <= 0) throw new IllegalArgumentException(
                             tr("Expected integer number > 0 for option {0}, but got ''{1}''", "--height-px", getopt.getOptarg()));
@@ -332,7 +332,7 @@ public class RenderingCLI implements CLIModule {
                         argMaxImageSize = Integer.parseInt(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
-                                tr("Expected integer number for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()));
+                                tr("Expected integer number for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()), nfe);
                     }
                     if (argMaxImageSize < 0) throw new IllegalArgumentException(
                             tr("Expected integer number >= 0 for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()));
@@ -550,7 +550,7 @@ public class RenderingCLI implements CLIModule {
         try {
             return OsmReader.parseDataSet(Files.newInputStream(Paths.get(argInput)), null);
         } catch (IllegalDataException e) {
-            throw new IllegalDataException(tr("In .osm data file ''{0}'' - ", argInput) + e.getMessage());
+            throw new IllegalDataException(tr("In .osm data file ''{0}'' - ", argInput) + e.getMessage(), e);
         }
     }
 

@@ -486,7 +486,7 @@ public class OsmApi extends OsmConnection {
         } catch (OsmApiException e) {
             String errorHeader = e.getErrorHeader();
             if (e.getResponseCode() == HttpURLConnection.HTTP_CONFLICT && ChangesetClosedException.errorHeaderMatchesPattern(errorHeader))
-                throw new ChangesetClosedException(errorHeader, ChangesetClosedException.Source.UPDATE_CHANGESET);
+                throw new ChangesetClosedException(errorHeader, ChangesetClosedException.Source.UPDATE_CHANGESET, e);
             throw e;
         } finally {
             monitor.finishTask();

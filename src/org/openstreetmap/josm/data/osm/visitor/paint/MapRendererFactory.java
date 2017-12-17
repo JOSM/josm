@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Graphics2D;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -306,9 +305,6 @@ public final class MapRendererFactory {
         try {
             Constructor<?> c = activeRenderer.getConstructor(Graphics2D.class, NavigatableComponent.class, boolean.class);
             return AbstractMapRenderer.class.cast(c.newInstance(g, viewport, isInactiveMode));
-        } catch (InvocationTargetException e) {
-            Logging.debug(e);
-            throw new MapRendererFactoryException(e.getCause());
         } catch (ReflectiveOperationException | IllegalArgumentException e) {
             throw new MapRendererFactoryException(e);
         }
