@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -424,7 +425,7 @@ public class MainLayerManager extends LayerManager {
 
             activeLayerChangeListeners.clear();
             layerAvailabilityListeners.clear();
-        } else {
+        } else if (!GraphicsEnvironment.isHeadless()) {
             GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.parent,
                     tr("A background upload is already in progress. Cannot reset state until the upload is finished.")));
         }
