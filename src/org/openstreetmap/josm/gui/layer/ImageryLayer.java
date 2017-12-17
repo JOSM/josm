@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
+import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -175,7 +176,10 @@ public abstract class ImageryLayer extends Layer {
         return panel;
     }
 
-    protected JTextField createTextField(String text) {
+    protected JComponent createTextField(String text) {
+        if (text != null && text.matches("https?://.*")) {
+            return new UrlLabel(text);
+        }
         JTextField ret = new JTextField(text);
         ret.setEditable(false);
         ret.setBorder(BorderFactory.createEmptyBorder());

@@ -72,6 +72,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ImageryAdjustAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
@@ -92,6 +93,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.io.importexport.WMSLayerImporter;
@@ -116,6 +118,7 @@ import org.openstreetmap.josm.gui.layer.imagery.ZoomToNativeLevelAction;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManager;
 import org.openstreetmap.josm.tools.MemoryManager.MemoryHandle;
@@ -498,6 +501,42 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
+    private void sendOsmTileRequest(String request) {
+        Tile clickedTile = clickedTileHolder.getTile();
+        if (clickedTile != null) {
+            try {
+                new Notification(HttpClient.create(new URL(clickedTile.getUrl() + '/' + request))
+                        .connect().fetchContent()).show();
+            } catch (IOException ex) {
+                Logging.error(ex);
+            }
+        }
+    }
+
+    private final class GetOsmTileStatusAction extends AbstractAction {
+        private GetOsmTileStatusAction() {
+            super(tr("Get tile status"));
+            setEnabled(clickedTileHolder.getTile() != null);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            sendOsmTileRequest("status");
+        }
+    }
+
+    private final class MarkOsmTileDirtyAction extends AbstractAction {
+        private MarkOsmTileDirtyAction() {
+            super(tr("Force tile rendering"));
+            setEnabled(clickedTileHolder.getTile() != null);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            sendOsmTileRequest("dirty");
+        }
+    }
+
     /**
      * Simple class to keep clickedTile within hookUpMapView
      */
@@ -576,6 +615,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             add(new JSeparator());
             add(new JMenuItem(new LoadTileAction()));
             add(new JMenuItem(new ShowTileInfoAction()));
+            if (ExpertToggleAction.isExpert() && tileSource.getBaseUrl().contains(".tile.openstreetmap.org/")) {
+                add(new JMenuItem(new GetOsmTileStatusAction()));
+                add(new JMenuItem(new MarkOsmTileDirtyAction()));
+            }
         }
     }
 
