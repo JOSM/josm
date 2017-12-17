@@ -1,12 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.Rule;
-import org.junit.Before;
+import java.util.Optional;
+
 import org.junit.After;
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -17,8 +18,11 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import java.util.Optional;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+/**
+ * Unit tests of {@link AsynchronousUploadPrimitivesTask}.
+ */
 public class AsynchronousUploadPrimitivesTaskTest {
 
     private UploadStrategySpecification strategy;
@@ -61,6 +65,7 @@ public class AsynchronousUploadPrimitivesTaskTest {
         layer = null;
         strategy = null;
         changeset = null;
+        uploadPrimitivesTask.cancel();
         uploadPrimitivesTask = null;
     }
 

@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.AsynchronousUploadPrimitivesTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This class extends the layer manager by adding an active and an edit layer.
@@ -425,9 +426,12 @@ public class MainLayerManager extends LayerManager {
 
             activeLayerChangeListeners.clear();
             layerAvailabilityListeners.clear();
-        } else if (!GraphicsEnvironment.isHeadless()) {
-            GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.parent,
-                    tr("A background upload is already in progress. Cannot reset state until the upload is finished.")));
+        } else {
+            String msg = tr("A background upload is already in progress. Cannot reset state until the upload is finished.");
+            Logging.warn(msg);
+            if (!GraphicsEnvironment.isHeadless()) {
+                GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.parent, msg));
+            }
         }
     }
 
