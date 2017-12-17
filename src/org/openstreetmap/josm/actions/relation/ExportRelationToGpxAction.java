@@ -76,18 +76,36 @@ public class ExportRelationToGpxAction extends GpxExportAction
      * @param mode which mode to use, see {@code ExportRelationToGpxAction.Mode}
      */
     public ExportRelationToGpxAction(EnumSet<Mode> mode) {
-        super(tr("{0} starting from {1} member",
-                 mode.contains(TO_FILE) ? tr("Export GPX file") : tr("Convert to GPX layer"),
-                 mode.contains(FROM_FIRST_MEMBER) ? tr("first") : tr("last")),
-              mode.contains(TO_FILE) ? "exportgpx" : "dialogs/layerlist",
-              tr("Flatten this relation to a single gpx track "+
-                 "recursively, starting with the {0} member(s), "+
-                 "successively continuing to the {1}.",
-                 mode.contains(FROM_FIRST_MEMBER) ? tr("first") : tr("last"),
-                 mode.contains(FROM_FIRST_MEMBER) ? tr("last") : tr("first")),
-              null, false, null, false);
+        super(name(mode), mode.contains(TO_FILE) ? "exportgpx" : "dialogs/layerlist", tooltip(mode),
+                null, false, null, false);
         putValue("help", ht("/Action/ExportRelationToGpx"));
         this.mode = mode;
+    }
+
+    private static String name(EnumSet<Mode> mode) {
+        if (mode.contains(TO_FILE)) {
+            if (mode.contains(FROM_FIRST_MEMBER)) {
+                return tr("Export GPX file starting from first member");
+            } else {
+                return tr("Export GPX file starting from last member");
+            }
+        } else {
+            if (mode.contains(FROM_FIRST_MEMBER)) {
+                return tr("Convert to GPX layer starting from first member");
+            } else {
+                return tr("Convert to GPX layer starting from last member");
+            }
+        }
+    }
+
+    private static String tooltip(EnumSet<Mode> mode) {
+        if (mode.contains(FROM_FIRST_MEMBER)) {
+            return tr("Flatten this relation to a single gpx track recursively, " +
+                    "starting with the first member(s), successively continuing to the last.");
+        } else {
+            return tr("Flatten this relation to a single gpx track recursively, " +
+                    "starting with the last member(s), successively continuing to the first.");
+        }
     }
 
     private static final class BidiIterableList {
@@ -162,7 +180,6 @@ public class ExportRelationToGpxAction extends GpxExportAction
             List<WayPoint> trkseg = new ArrayList<>();
             trk.add(trkseg);
 
-            //RelationSorter.sortMembersByConnectivity(defaultMembers); // preserve given order
             List<WayConnectionType> wct = new WayConnectionTypeCalculator().updateLinks(flat);
             final HashMap<String, Integer> names = new HashMap<>();
             for (int i = 0; i < flat.size(); i++) {
@@ -175,7 +192,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
                             trkseg.clear();
                             trk.add(trkseg);
                         }
-                        if (trkAttr.isEmpty()/* && (!wct.get(i).linkNext || (i+1 == flat.size()))*/) {
+                        if (trkAttr.isEmpty()) {
                             Relation r = Way.getParentRelations(Arrays.asList(flat.get(i).getWay()))
                                     .stream().filter(relsFound::contains).findFirst().orElseGet(null);
                             if (r != null)
@@ -200,8 +217,6 @@ public class ExportRelationToGpxAction extends GpxExportAction
             layerName = lprefix + layerName;
         }
 
-        //Relation debug = new Relation(); debug.setMembers(flat);
-        //MainApplication.getLayerManager().getEditDataSet().addPrimitive(debug);
         return new GpxLayer(gpxData, layerName, true);
     }
 
