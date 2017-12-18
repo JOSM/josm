@@ -8,8 +8,6 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
-import javax.swing.SwingUtilities;
-
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
@@ -19,7 +17,9 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * Similar like {@link DatasetEventManager}, just for selection events.
@@ -71,6 +71,11 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
             OldListenerInfo that = (OldListenerInfo) o;
             return Objects.equals(listener, that.listener);
         }
+
+        @Override
+        public String toString() {
+            return "OldListenerInfo [listener=" + listener + ']';
+        }
     }
 
     private static class DataListenerInfo implements ListenerInfo {
@@ -96,6 +101,11 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
             if (o == null || getClass() != o.getClass()) return false;
             DataListenerInfo that = (DataListenerInfo) o;
             return Objects.equals(listener, that.listener);
+        }
+
+        @Override
+        public String toString() {
+            return "DataListenerInfo [listener=" + listener + ']';
         }
     }
 
@@ -195,7 +205,11 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
     @Override
     public void selectionChanged(SelectionChangeEvent event) {
         fireEvent(immedatelyListeners, event);
-        SwingUtilities.invokeLater(() -> fireEvent(inEDTListeners, event));
+        try {
+            GuiHelper.runInEDTAndWaitWithException(() -> fireEvent(inEDTListeners, event));
+        } catch (ReportedException e) {
+            throw BugReport.intercept(e).put("event", event).put("inEDTListeners", inEDTListeners);
+        }
     }
 
     private static void fireEvent(List<ListenerInfo> listeners, SelectionChangeEvent event) {
