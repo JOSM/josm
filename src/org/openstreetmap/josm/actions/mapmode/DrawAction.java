@@ -29,6 +29,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -347,8 +348,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     public void selectionChanged(SelectionChangeEvent event) {
         if (!MainApplication.getMap().mapView.isActiveLayerDrawable())
             return;
-        computeHelperLine();
-        addHighlighting();
+        // Make sure helper line is computed later (causes deadlock in selection event chain otherwise)
+        SwingUtilities.invokeLater(() -> {
+            computeHelperLine();
+            addHighlighting();
+        });
     }
 
     private void tryAgain(MouseEvent e) {
