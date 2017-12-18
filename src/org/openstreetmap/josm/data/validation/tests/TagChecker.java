@@ -331,6 +331,10 @@ public class TagChecker extends TagTest {
         return false;
     }
 
+    private static String fixLow(String s) {
+        return s.replaceAll("[\\x00-\\x1F]", "");
+    }
+
     private static Set<String> getPresetValues(String key) {
         Set<String> res = TaggingPresets.getPresetValues(key);
         if (res != null)
@@ -436,6 +440,7 @@ public class TagChecker extends TagTest {
                 errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_VALUE)
                         .message(tr("Tag value contains character with code less than 0x20"), s, key)
                         .primitives(p)
+                        .fix(() -> new ChangePropertyCommand(p, key, fixLow(value)))
                         .build());
                 withErrors.put(p, "ICV");
             }
@@ -443,6 +448,7 @@ public class TagChecker extends TagTest {
                 errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_KEY)
                         .message(tr("Tag key contains character with code less than 0x20"), s, key)
                         .primitives(p)
+                        .fix(() -> new ChangePropertyKeyCommand(p, key, fixLow(key)))
                         .build());
                 withErrors.put(p, "ICK");
             }
