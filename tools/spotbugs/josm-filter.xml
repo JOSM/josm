@@ -1,73 +1,76 @@
 <FindBugsFilter>
 
-	<Match>
-		<Bug pattern="DM_EXIT" />
-	</Match>
-	<Match>
-		<Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME" />
-	</Match>
-	<Match>
-		<Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS" />
-	</Match>
-	<Match>
-		<Bug pattern="IL_INFINITE_LOOP" />
-	</Match>
-	<Match>
-		<Bug pattern="NM_CONFUSING" />
-	</Match>
-	<Match>
-		<Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" />
-	</Match>
-	<Match>
-		<Bug pattern="SE_BAD_FIELD" />
-	</Match>
-	<Match>
-		<Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED" />
-	</Match>
-	<Match>
-		<Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE" />
-	</Match>
-	<Match>
-		<Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
-	</Match>
+    <Match>
+        <Bug pattern="DM_EXIT" />
+    </Match>
+    <Match>
+        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME" />
+    </Match>
+    <Match>
+        <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS" />
+    </Match>
+    <Match>
+        <Bug pattern="IL_INFINITE_LOOP" />
+    </Match>
+    <Match>
+        <Bug pattern="NM_CONFUSING" />
+    </Match>
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" />
+    </Match>
+    <Match>
+        <Bug pattern="SE_BAD_FIELD" />
+    </Match>
+    <Match>
+        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED" />
+    </Match>
+    <Match>
+        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+    </Match>
+    <Match>
+        <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE" />
+    </Match>
+    <Match>
+        <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
+    </Match>
 
-	<Match>
-		<Bug pattern="EI_EXPOSE_REP2" />
-		<Class name="org.openstreetmap.josm.tools.CopyList" />
-	</Match>
-	<Match>
-		<Bug pattern="MS_CANNOT_BE_FINAL" />
-		<Class name="org.openstreetmap.josm.Main" />
-	</Match>
-	<Match>
-		<Bug pattern="MS_SHOULD_BE_FINAL" />
-		<Class name="org.openstreetmap.josm.Main" />
-	</Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2" />
+        <Class name="org.openstreetmap.josm.tools.CopyList" />
+    </Match>
+    <Match>
+        <Bug pattern="MS_CANNOT_BE_FINAL" />
+        <Class name="org.openstreetmap.josm.Main" />
+    </Match>
+    <Match>
+        <Bug pattern="MS_SHOULD_BE_FINAL" />
+        <Class name="org.openstreetmap.josm.Main" />
+    </Match>
 
-	<Match>
-		<Class name="~com.*" />
-	</Match>
+    <Match>
+        <Class name="~com.*" />
+    </Match>
     <Match>
         <Class name="~gnu.getopt.*" />
     </Match>
     <Match>
         <Class name="~javax.json.*" />
     </Match>
-	<Match>
-		<Class name="~oauth.signpost.*" />
-	</Match>
-	<Match>
-		<Class name="~org.apache.*" />
-	</Match>
+    <Match>
+        <Class name="~oauth.signpost.*" />
+    </Match>
+    <Match>
+        <Class name="~org.apache.*" />
+    </Match>
     <Match>
         <Class name="~org.glassfish.json.*" />
     </Match>
-	<Match>
-		<Class name="~org.jdesktop.swinghelper.debug.*" />
-	</Match>
-	<Match>
-		<Class name="~org.openstreetmap.gui.jmapviewer.*" />
-	</Match>
+    <Match>
+        <Class name="~org.jdesktop.swinghelper.debug.*" />
+    </Match>
+    <Match>
+        <Class name="~org.openstreetmap.gui.jmapviewer.*" />
+    </Match>
     <Match>
         <Class name="~org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.*" />
     </Match>
