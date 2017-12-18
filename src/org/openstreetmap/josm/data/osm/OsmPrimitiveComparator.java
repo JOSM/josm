@@ -24,7 +24,7 @@ public final class OsmPrimitiveComparator {
      * @return a comparator comparing primitives by their name using {@link DefaultNameFormatter}
      */
     public static Comparator<OsmPrimitive> comparingNames() {
-        final Comparator<String> digitsLast = comparing(str -> Character.isDigit(str.charAt(0)) ? 1 : 0);
+        final Comparator<String> digitsLast = comparing(str -> !str.isEmpty() && Character.isDigit(str.charAt(0)) ? 1 : 0);
         return comparing(memoize(DefaultNameFormatter.getInstance()::format),
                 digitsLast.thenComparing(AlphanumComparator.getInstance()));
     }
