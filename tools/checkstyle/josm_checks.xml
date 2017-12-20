@@ -20,7 +20,6 @@ JOSM Checkstyle rules
       <property name="format" value="^(e[1-9]?|t|ex[1-9]?|[a-z][a-z][a-zA-Z]+)$"/>
     </module>
     <module name="CommentsIndentation"/>
-    <module name="FileContentsHolder"/>
     <module name="MissingDeprecated"/>
     <module name="MissingOverride"/>
     <module name="PackageAnnotation"/>
@@ -89,9 +88,7 @@ JOSM Checkstyle rules
       <property name="tokens" value="LITERAL_TRY,LITERAL_CATCH,LITERAL_FINALLY,LITERAL_DO,LITERAL_ELSE,LITERAL_FOR,INSTANCE_INIT,STATIC_INIT,LITERAL_SWITCH"/>
     </module>
     <module name="EmptyCatchBlock"/>
-    <module name="LeftCurly">
-      <property name="maxLineLength" value="140"/>
-    </module>
+    <module name="LeftCurly"/>
     <module name="RightCurly"/>
     <module name="NeedBraces">
       <property name="tokens" value="LITERAL_DO,LITERAL_FOR,LITERAL_WHILE"/>
@@ -103,6 +100,11 @@ JOSM Checkstyle rules
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="org.openstreetmap.josm.TopLevelJavadocCheck"/>
+    <module name="SuppressionCommentFilter">
+      <property name="offCommentFormat" value="CHECKSTYLE\.OFF\: ([\w\|]+)"/>
+      <property name="onCommentFormat" value="CHECKSTYLE\.ON\: ([\w\|]+)"/>
+      <property name="checkFormat" value="$1"/>
+    </module>
   </module>
   <module name="Header">
     <property name="header" value="// License: GPL. For details, see LICENSE file."/>
@@ -110,11 +112,6 @@ JOSM Checkstyle rules
   </module>
   <module name="FileLength">
     <property name="fileExtensions" value=".java"/>
-  </module>
-  <module name="SuppressionCommentFilter">
-    <property name="offCommentFormat" value="CHECKSTYLE\.OFF\: ([\w\|]+)"/>
-    <property name="onCommentFormat" value="CHECKSTYLE\.ON\: ([\w\|]+)"/>
-    <property name="checkFormat" value="$1"/>
   </module>
   <module name="FileTabCharacter"/>
   <module name="NewlineAtEndOfFile">
