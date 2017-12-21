@@ -220,7 +220,8 @@ public class WMSImagery {
                 // handling systems deal with problems
                 getCapabilitiesUrl = new URL(serviceUrlStr);
             }
-            serviceUrl = new URL(serviceUrlStr);
+            // Make sure we don't keep GetCapabilities request in service URL
+            serviceUrl = new URL(serviceUrlStr.replace("REQUEST=GetCapabilities", "").replace("&&", "&"));
         } catch (HeadlessException e) {
             Logging.warn(e);
             return;
@@ -266,8 +267,11 @@ public class WMSImagery {
             if (child != null) {
                 String baseURL = child.getAttribute("xlink:href");
                 if (!baseURL.equals(serviceUrlStr)) {
-                    Logging.info("GetCapabilities specifies a different service URL: " + baseURL);
-                    serviceUrl = new URL(baseURL);
+                    URL newURL = new URL(baseURL);
+                    if (newURL.getAuthority() != null) {
+                        Logging.info("GetCapabilities specifies a different service URL: " + baseURL);
+                        serviceUrl = newURL;
+                    }
                 }
             }
 
