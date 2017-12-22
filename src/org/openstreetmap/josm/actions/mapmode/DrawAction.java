@@ -1312,7 +1312,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     @Override
     public Collection<? extends OsmPrimitive> getPreservedPrimitives() {
         DataSet ds = getLayerManager().getEditDataSet();
-        return ds != null ? ds.getSelected() : Collections.emptySet();
+        if (ds != null) {
+            // Preserves selected primitives and selected way nodes
+            Set<OsmPrimitive> result = new HashSet<>();
+            for (Way w : ds.getSelectedWays()) {
+                result.addAll(w.getNodes());
+            }
+            result.addAll(ds.getSelected());
+            return result;
+        }
+        return Collections.emptySet();
     }
 
     @Override
