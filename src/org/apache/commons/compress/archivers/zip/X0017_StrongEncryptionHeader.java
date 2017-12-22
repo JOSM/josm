@@ -310,7 +310,7 @@ public class X0017_StrongEncryptionHeader extends PKWareExtraHeader {
             this.hashAlg = HashAlgorithm.getAlgorithmByCode(ZipShort.getValue(data, offset + 12));
             this.hashSize = ZipShort.getValue(data, offset + 14);
             // srlist... hashed public keys
-            for (int i = 0; i < this.rcount; i++) {
+            for (long i = 0; i < this.rcount; i++) {
                 for (int j = 0; j < this.hashSize; j++) {
                     //  ZipUtil.signedByteToUnsignedInt(data[offset + 16 + (i * this.hashSize) + j]));
                 }

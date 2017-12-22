@@ -116,7 +116,7 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
     private static final int BLOCK_SIZE_UNSPECIFIED = -511;
 
     /**
-     * Constructor for TarInputStream.
+     * Constructor for TarArchiveOutputStream.
      *
      * @param os the output stream to use
      */
@@ -125,7 +125,7 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
     }
 
     /**
-     * Constructor for TarInputStream.
+     * Constructor for TarArchiveOutputStream.
      *
      * @param os the output stream to use
      * @param encoding name of the encoding to use for file names
@@ -136,7 +136,7 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
     }
 
     /**
-     * Constructor for TarInputStream.
+     * Constructor for TarArchiveOutputStream.
      *
      * @param os the output stream to use
      * @param blockSize the block size to use. Must be a multiple of 512 bytes.
@@ -147,7 +147,7 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
 
 
     /**
-     * Constructor for TarInputStream.
+     * Constructor for TarArchiveOutputStream.
      *
      * @param os the output stream to use
      * @param blockSize the block size to use
@@ -162,7 +162,7 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
     }
 
     /**
-     * Constructor for TarInputStream.
+     * Constructor for TarArchiveOutputStream.
      *
      * @param os the output stream to use
      * @param blockSize the block size to use . Must be a multiple of 512 bytes.
@@ -184,7 +184,7 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
     }
 
     /**
-     * Constructor for TarInputStream.
+     * Constructor for TarArchiveOutputStream.
      *
      * @param os the output stream to use
      * @param blockSize the block size to use. Must be a multiple of 512 bytes.
