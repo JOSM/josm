@@ -42,18 +42,18 @@ public class GeoJSONWriterTest {
         final GeoJSONWriter writer = new GeoJSONWriter(ds);
         assertEquals(("" +
                 "{\n" +
-                "    'type':'FeatureCollection',\n" +
-                "    'generator':'JOSM',\n" +
-                "    'features':[\n" +
+                "    'type': 'FeatureCollection',\n" +
+                "    'generator': 'JOSM',\n" +
+                "    'features': [\n" +
                 "        {\n" +
-                "            'type':'Feature',\n" +
-                "            'properties':{\n" +
-                "                'name':'foo',\n" +
-                "                'source':'code'\n" +
+                "            'type': 'Feature',\n" +
+                "            'properties': {\n" +
+                "                'name': 'foo',\n" +
+                "                'source': 'code'\n" +
                 "            },\n" +
-                "            'geometry':{\n" +
-                "                'type':'Point',\n" +
-                "                'coordinates':[\n" +
+                "            'geometry': {\n" +
+                "                'type': 'Point',\n" +
+                "                'coordinates': [\n" +
                 "                    4.56000000000,\n" +
                 "                    12.30000000000\n" +
                 "                ]\n" +
@@ -80,17 +80,17 @@ public class GeoJSONWriterTest {
         final GeoJSONWriter writer = new GeoJSONWriter(ds);
         assertEquals(("" +
                 "{\n" +
-                "    'type':'FeatureCollection',\n" +
-                "    'generator':'JOSM',\n" +
-                "    'features':[\n" +
+                "    'type': 'FeatureCollection',\n" +
+                "    'generator': 'JOSM',\n" +
+                "    'features': [\n" +
                 "        {\n" +
-                "            'type':'Feature',\n" +
-                "            'properties':{\n" +
-                "                'highway':'footway'\n" +
+                "            'type': 'Feature',\n" +
+                "            'properties': {\n" +
+                "                'highway': 'footway'\n" +
                 "            },\n" +
-                "            'geometry':{\n" +
-                "                'type':'LineString',\n" +
-                "                'coordinates':[\n" +
+                "            'geometry': {\n" +
+                "                'type': 'LineString',\n" +
+                "                'coordinates': [\n" +
                 "                    [\n" +
                 "                        4.56000000000,\n" +
                 "                        12.30000000000\n" +
