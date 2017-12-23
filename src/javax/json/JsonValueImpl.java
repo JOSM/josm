@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -38,57 +38,70 @@
  * holder.
  */
 
-package org.glassfish.json;
+package javax.json;
 
-import org.glassfish.json.api.BufferPool;
-
-import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonGeneratorFactory;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.util.Map;
+import java.io.Serializable;
 
 /**
- * @author Jitendra Kotamraju
+ * Private implementation of {@link JsonValue} for simple {@link ValueType}s
+ * allowing their usage in constants which are better to implement {@link Serializable}.
+ *
+ * @author Lukas Jungmann
  */
-class JsonGeneratorFactoryImpl implements JsonGeneratorFactory {
+final class JsonValueImpl implements JsonValue, Serializable {
 
-    private final boolean prettyPrinting;
-    private final Map<String, ?> config;    // unmodifiable map
-    private final BufferPool bufferPool;
+    private final ValueType valueType;
 
-    JsonGeneratorFactoryImpl(Map<String, ?> config, boolean prettyPrinting,
-            BufferPool bufferPool) {
-        this.config = config;
-        this.prettyPrinting = prettyPrinting;
-        this.bufferPool = bufferPool;
+    JsonValueImpl(ValueType valueType) {
+        this.valueType = valueType;
+    }
+
+    /**
+     * Returns the value type of this JSON value.
+     *
+     * @return JSON value type
+     */
+    @Override
+    public ValueType getValueType() {
+        return valueType;
+    }
+
+    /**
+     * Compares the specified object with this {@link JsonValue}
+     * object for equality. Returns {@code true} if and only if the
+     * specified object is also a JsonValue, and their
+     * {@link #getValueType()} objects are <i>equal</i>.
+     *
+     * @param obj the object to be compared for equality with this JsonValue
+     * @return {@code true} if the specified object is equal to this
+     * JsonValue
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof JsonValue) {
+            return getValueType().equals(((JsonValue) obj).getValueType());
+        }
+        return false;
+    }
+
+    /**
+     * Returns the hash code value for this {@link JsonValue} object.
+     * The hash code of the {@link JsonValue} object is defined to be
+     * its {@link #getValueType()} object's hash code.
+     *
+     * @return the hash code value for this {@link JsonValue} object
+     */
+    @Override
+    public int hashCode() {
+        return valueType.hashCode();
     }
 
     @Override
-    public JsonGenerator createGenerator(Writer writer) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(writer, bufferPool)
-                : new JsonGeneratorImpl(writer, bufferPool);
-    }
-
-    @Override
-    public JsonGenerator createGenerator(OutputStream out) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(out, bufferPool)
-                : new JsonGeneratorImpl(out, bufferPool);
-    }
-
-    @Override
-    public JsonGenerator createGenerator(OutputStream out, Charset charset) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(out, charset, bufferPool)
-                : new JsonGeneratorImpl(out, charset, bufferPool);
-    }
-
-    @Override
-    public Map<String, ?> getConfigInUse() {
-        return config;
+    public String toString() {
+        return valueType.name().toLowerCase();
     }
 
 }

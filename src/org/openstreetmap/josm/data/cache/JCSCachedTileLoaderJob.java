@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -49,6 +51,14 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     // even if the refresh from the server fails.
     protected static final long ABSOLUTE_EXPIRE_TIME_LIMIT = TimeUnit.DAYS.toMillis(365);
 
+    // Pattern to detect Tomcat error message. Be careful with change of format:
+    // CHECKSTYLE.OFF: LineLength
+    // https://svn.apache.org/viewvc/tomcat/trunk/java/org/apache/catalina/valves/ErrorReportValve.java?r1=1740707&r2=1779641&pathrev=1779641&diff_format=h
+    // CHECKSTYLE.ON: LineLength
+    protected static final Pattern TOMCAT_ERR_MESSAGE = Pattern.compile(
+        ".*<p><b>[^<]+</b>[^<]+</p><p><b>[^<]+</b> (?:<u>)?([^<]*)(?:</u>)?</p><p><b>[^<]+</b> (?:<u>)?[^<]*(?:</u>)?</p>.*",
+        Pattern.CASE_INSENSITIVE);
+
     /**
      * maximum download threads that will be started
      */
@@ -73,8 +83,6 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             new LinkedBlockingDeque<Runnable>(),
             Utils.newThreadFactory("JCS-downloader-%d", Thread.NORM_PRIORITY)
             );
-
-
 
     private static final ConcurrentMap<String, Set<ICachedLoaderListener>> inProgress = new ConcurrentHashMap<>();
     private static final ConcurrentMap<String, Boolean> useHead = new ConcurrentHashMap<>();
@@ -358,6 +366,17 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     raw = Utils.readBytesFromStream(urlConn.getContent());
                 } else {
                     raw = new byte[]{};
+                    try {
+                        String data = urlConn.fetchContent();
+                        if (!data.isEmpty()) {
+                            Matcher m = TOMCAT_ERR_MESSAGE.matcher(data);
+                            if (m.matches()) {
+                                attributes.setErrorMessage(m.group(1).replace("'", "''"));
+                            }
+                        }
+                    } catch (IOException e) {
+                        Logging.warn(e);
+                    }
                 }
 
                 if (isResponseLoadable(urlConn.getHeaderFields(), urlConn.getResponseCode(), raw)) {
@@ -389,7 +408,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
             return doCache;
         } catch (IOException e) {
-            Logging.debug("JCS - IOExecption during communication with server for: {0}", getUrlNoException());
+            Logging.debug("JCS - IOException during communication with server for: {0}", getUrlNoException());
             if (isObjectLoadable()) {
                 return true;
             } else {

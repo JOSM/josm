@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -41,22 +41,47 @@
 package javax.json;
 
 /**
- * Super type for the two structured types in JSON ({@link JsonObject object}s
- * and {@link JsonArray array}s).
+ * <p>This interface represents an implementation of a JSON Merge Patch
+ * as defined by <a href="http://tools.ietf.org/html/rfc7396">RFC 7396</a>.
+ * </p>
+ * <p>A {@code JsonMergePatch} can be instantiated with {@link Json#createMergePatch(JsonValue)}
+ * by specifying the patch operations in a JSON Merge Patch or using {@link Json#createMergeDiff(JsonValue, JsonValue)}
+ * to create a JSON Merge Patch based on the difference between two {@code JsonValue}s.
+ * </p>
+ * The following illustrates both approaches.
+ * <p>1. Construct a JsonMergePatch with an existing JSON Merge Patch.
+ * <pre>{@code
+ *   JsonValue contacts = ... ; // The target to be patched
+ *   JsonValue patch = ...  ; // JSON Merge Patch
+ *   JsonMergePatch mergePatch = Json.createMergePatch(patch);
+ *   JsonValue result = mergePatch.apply(contacts);
+ * } </pre>
+ * 2. Construct a JsonMergePatch from a difference between two {@code JsonValue}s.
+ * <pre>{@code
+ *   JsonValue source = ... ; // The source object
+ *   JsonValue target = ... ; // The modified object
+ *   JsonMergePatch mergePatch = Json.createMergeDiff(source, target); // The diff between source and target in a Json Merge Patch format
+ * } </pre>
+ *
+ * @see <a href="http://tools.ietf.org/html/rfc7396">RFC 7396</a>
+ *
+ * @since 1.1
  */
-public interface JsonStructure extends JsonValue {
+public interface JsonMergePatch {
 
     /**
-     * Get the value referenced by the provided JSON Pointer in the JsonStructure.
+     * Applies the JSON Merge Patch to the specified {@code target}.
+     * The target is not modified by the patch.
      *
-     * @param jsonPointer the JSON Pointer
-     * @return the {@code JsonValue} at the referenced location
-     * @throws JsonException if the JSON Pointer is malformed, or if it references
-     *     a non-existing member or value.
-     *
-     * @since 1.1
+     * @param target the target to apply the merge patch
+     * @return the transformed target after the patch
      */
-    default public JsonValue getValue(String jsonPointer) {
-        return Json.createPointer(jsonPointer).getValue(this);
-    }
+    JsonValue apply(JsonValue target);
+
+    /**
+     * Returns the {@code JsonMergePatch} as {@code JsonValue}.
+     *
+     * @return this {@code JsonMergePatch} as {@code JsonValue}
+     */
+    JsonValue toJsonValue();
 }

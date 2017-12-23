@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -292,8 +292,11 @@ final class JsonTokenizer implements Closeable {
                 throw unexpectedChar(ch);
             }
         }
-        readBegin--;
-        storeEnd = readBegin;
+        if (ch != -1) {
+            // Only reset readBegin if eof has not been reached
+            readBegin--;
+            storeEnd = readBegin;
+        }
     }
 
     private void readTrue() {
@@ -416,6 +419,49 @@ final class JsonTokenizer implements Closeable {
         }
     }
 
+    boolean hasNextToken() {
+        reset();
+        int ch = peek();
+
+        // whitespace
+        while (ch == 0x20 || ch == 0x09 || ch == 0x0a || ch == 0x0d) {
+            if (ch == '\r') {
+                ++lineNo;
+                ++readBegin;
+                ch = peek();
+                if (ch == '\n') {
+                    lastLineOffset = bufferOffset+readBegin+1;
+                } else {
+                    lastLineOffset = bufferOffset+readBegin;
+                    continue;
+                }
+            } else if (ch == '\n') {
+                ++lineNo;
+                lastLineOffset = bufferOffset+readBegin+1;
+            }
+            ++readBegin;
+            ch = peek();
+        }
+        return ch != -1;
+    }
+
+    private int peek() {
+        try {
+            if (readBegin == readEnd) {     // need to fill the buffer
+                int len = fillBuf();
+                if (len == -1) {
+                    return -1;
+                }
+                assert len != 0;
+                readBegin = storeEnd;
+                readEnd = readBegin+len;
+            }
+            return buf[readBegin];
+        } catch (IOException ioe) {
+            throw new JsonException(JsonMessages.TOKENIZER_IO_ERR(), ioe);
+        }
+    }
+
     // Gives the location of the last char. Used for
     // JsonParsingException.getLocation
     JsonLocation getLastCharLocation() {
@@ -498,7 +544,7 @@ final class JsonTokenizer implements Closeable {
     int getInt() {
         // no need to create BigDecimal for common integer values (1-9 digits)
         int storeLen = storeEnd-storeBegin;
-        if (!fracOrExp && (storeLen <= 9 || (minus && storeLen == 10))) {
+        if (!fracOrExp && (storeLen <= 9 || (minus && storeLen <= 10))) {
             int num = 0;
             int i = minus ? 1 : 0;
             for(; i < storeLen; i++) {
@@ -509,12 +555,34 @@ final class JsonTokenizer implements Closeable {
             return getBigDecimal().intValue();
         }
     }
+    
+    long getLong() {
+        // no need to create BigDecimal for common integer values (1-18 digits)
+        int storeLen = storeEnd-storeBegin;
+        if (!fracOrExp && (storeLen <= 18 || (minus && storeLen <= 19))) {
+            long num = 0;
+            int i = minus ? 1 : 0;
+            for(; i < storeLen; i++) {
+                num = num * 10 + (buf[storeBegin+i] - '0');
+            }
+            return minus ? -num : num;
+        } else {
+            return getBigDecimal().longValue();
+        }
+    }
 
     // returns true for common integer values (1-9 digits).
     // So there are cases it will return false even though the number is int
     boolean isDefinitelyInt() {
         int storeLen = storeEnd-storeBegin;
-        return !fracOrExp && (storeLen <= 9 || (minus && storeLen == 10));
+        return !fracOrExp && (storeLen <= 9 || (minus && storeLen <= 10));
+    }
+    
+    // returns true for common long values (1-18 digits).
+    // So there are cases it will return false even though the number is long
+    boolean isDefinitelyLong() {
+    	int storeLen = storeEnd-storeBegin;
+    	return !fracOrExp && (storeLen <= 18 || (minus && storeLen <= 19));
     }
 
     boolean isIntegral() {

@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -40,55 +40,60 @@
 
 package org.glassfish.json;
 
-import org.glassfish.json.api.BufferPool;
-
-import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonGeneratorFactory;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.util.Map;
+import java.io.StringReader;
+import javax.json.Json;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
+import javax.json.stream.JsonParsingException;
 
 /**
- * @author Jitendra Kotamraju
+ * A utility class
+ * 
+ * @since 1.1
  */
-class JsonGeneratorFactoryImpl implements JsonGeneratorFactory {
+public final class JsonUtil {
 
-    private final boolean prettyPrinting;
-    private final Map<String, ?> config;    // unmodifiable map
-    private final BufferPool bufferPool;
-
-    JsonGeneratorFactoryImpl(Map<String, ?> config, boolean prettyPrinting,
-            BufferPool bufferPool) {
-        this.config = config;
-        this.prettyPrinting = prettyPrinting;
-        this.bufferPool = bufferPool;
+    private JsonUtil() {
     }
 
-    @Override
-    public JsonGenerator createGenerator(Writer writer) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(writer, bufferPool)
-                : new JsonGeneratorImpl(writer, bufferPool);
+    /**
+     * Reads the input JSON text and returns a JsonValue.
+     * <p>For convenience, single quotes as well as double quotes
+     * are allowed to delimit JSON strings. If single quotes are
+     * used, any quotes, single or double, in the JSON string must be
+     * escaped (prepend with a '\').
+     *
+     * @param jsonString the input JSON data
+     * @return the object model for {@code jsonString}
+     * @throws JsonParsingException if the input is not legal JSON text
+     */
+    public static JsonValue toJson(String jsonString) {
+        StringBuilder builder = new StringBuilder();
+        boolean single_context = false;
+        for (int i = 0; i < jsonString.length(); i++) {
+            char ch = jsonString.charAt(i);
+            if (ch == '\\') {
+                i = i + 1;
+                if (i < jsonString.length()) {
+                    ch = jsonString.charAt(i);
+                    if (!(single_context && ch == '\'')) {
+                        // unescape ' inside single quotes
+                        builder.append('\\');
+                    }
+                }
+            } else if (ch == '\'') {
+                // Turn ' into ", for proper JSON string
+                ch = '"';
+                single_context = ! single_context;
+            }
+            builder.append(ch);
+        }
+                   
+        JsonReader reader = Json.createReader(
+                                new StringReader(builder.toString()));
+        JsonValue value = reader.readValue();
+        reader.close();
+        return value;
     }
-
-    @Override
-    public JsonGenerator createGenerator(OutputStream out) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(out, bufferPool)
-                : new JsonGeneratorImpl(out, bufferPool);
-    }
-
-    @Override
-    public JsonGenerator createGenerator(OutputStream out, Charset charset) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(out, charset, bufferPool)
-                : new JsonGeneratorImpl(out, charset, bufferPool);
-    }
-
-    @Override
-    public Map<String, ?> getConfigInUse() {
-        return config;
-    }
-
 }
+

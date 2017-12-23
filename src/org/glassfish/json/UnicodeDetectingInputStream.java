@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -45,6 +45,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A filter stream that detects the unicode encoding for the original
@@ -53,9 +54,7 @@ import java.nio.charset.Charset;
  * @author Jitendra Kotamraju
  */
 class UnicodeDetectingInputStream extends FilterInputStream {
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
-    private static final Charset UTF_16BE = Charset.forName("UTF-16BE");
-    private static final Charset UTF_16LE = Charset.forName("UTF-16LE");
+
     private static final Charset UTF_32LE = Charset.forName("UTF-32LE");
     private static final Charset UTF_32BE = Charset.forName("UTF-32BE");
 
@@ -121,14 +120,14 @@ class UnicodeDetectingInputStream extends FilterInputStream {
             buf[2] = (byte)b3;
             buf[3] = (byte)b4;
         } catch (IOException ioe) {
-            throw new JsonException("I/O error while auto-detecting the encoding of stream", ioe);
+            throw new JsonException(JsonMessages.PARSER_INPUT_ENC_DETECT_IOERR(), ioe);
         }
     }
 
     private Charset detectEncoding() {
         fillBuf();
         if (bufLen < 2) {
-            throw new JsonException("Cannot auto-detect encoding, not enough chars");
+            throw new JsonException(JsonMessages.PARSER_INPUT_ENC_DETECT_FAILED());
         } else if (bufLen == 4) {
             // Use BOM to detect encoding
             if (buf[0] == NUL && buf[1] == NUL && buf[2] == FE && buf[3] == FF) {
@@ -139,26 +138,26 @@ class UnicodeDetectingInputStream extends FilterInputStream {
                 return UTF_32LE;
             } else if (buf[0] == FE && buf[1] == FF) {
                 curIndex = 2;
-                return UTF_16BE;
+                return StandardCharsets.UTF_16BE;
             } else if (buf[0] == FF && buf[1] == FE) {
                 curIndex = 2;
-                return UTF_16LE;
+                return StandardCharsets.UTF_16LE;
             } else if (buf[0] == EF && buf[1] == BB && buf[2] == BF) {
                 curIndex = 3;
-                return UTF_8;
+                return StandardCharsets.UTF_8;
             }
             // No BOM, just use JSON RFC's encoding algo to auto-detect
             if (buf[0] == NUL && buf[1] == NUL && buf[2] == NUL) {
                 return UTF_32BE;
             } else if (buf[0] == NUL && buf[2] == NUL) {
-                return UTF_16BE;
+                return StandardCharsets.UTF_16BE;
             } else if (buf[1] == NUL && buf[2] == NUL && buf[3] == NUL) {
                 return UTF_32LE;
             } else if (buf[1] == NUL && buf[3] == NUL) {
-                return UTF_16LE;
+                return StandardCharsets.UTF_16LE;
             }
         }
-        return UTF_8;
+        return StandardCharsets.UTF_8;
     }
 
     @Override

@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2011-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -68,8 +68,6 @@ import java.util.Map;
  *
  * <p> All the methods in this class are safe for use by multiple concurrent
  * threads.
- *
- * @author Jitendra Kotamraju
  */
 public interface JsonParserFactory {
 
@@ -77,15 +75,17 @@ public interface JsonParserFactory {
      * Creates a JSON parser from a character stream.
      *
      * @param reader a i/o reader from which JSON is to be read
+     * @return the created JSON parser
      */
     JsonParser createParser(Reader reader);
 
     /**
      * Creates a JSON parser from the specified byte stream.
      * The character encoding of the stream is determined
-     * as specified in <a href="http://tools.ietf.org/rfc/rfc4627.txt">RFC 4627</a>.
+     * as specified in <a href="http://tools.ietf.org/rfc/rfc7159.txt">RFC 7159</a>.
      *
      * @param in i/o stream from which JSON is to be read
+     * @return the created JSON parser
      * @throws javax.json.JsonException if encoding cannot be determined
      *         or i/o error (IOException would be cause of JsonException)
      */
@@ -98,6 +98,7 @@ public interface JsonParserFactory {
      *
      * @param in i/o stream from which JSON is to be read
      * @param charset a charset
+     * @return the created JSON parser
      */
     JsonParser createParser(InputStream in, Charset charset);
 
@@ -105,6 +106,7 @@ public interface JsonParserFactory {
      * Creates a JSON parser from the specified JSON object.
      *
      * @param obj a JSON object
+     * @return the created JSON parser
      */
     JsonParser createParser(JsonObject obj);
 
@@ -112,6 +114,7 @@ public interface JsonParserFactory {
      * Creates a JSON parser from the specified JSON array.
      *
      * @param array a JSON array
+     * @return the created JSON parser
      */
     JsonParser createParser(JsonArray array);
 

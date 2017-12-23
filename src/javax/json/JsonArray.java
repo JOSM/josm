@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2011-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -41,6 +41,9 @@
 package javax.json;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * {@code JsonArray} represents an immutable JSON array
@@ -110,8 +113,6 @@ import java.util.List;
  * access to the values in the JSON array. Any attempt to modify the list,
  * whether directly or using its collection views, results in an 
  * {@code UnsupportedOperationException}.
- *
- * @author Jitendra Kotamraju
  */
 public interface JsonArray extends JsonStructure, List<JsonValue> {
 
@@ -164,17 +165,44 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
     JsonString getJsonString(int index);
 
     /**
-     * Returns a list a view of the specified type for the array. This method
+     * Returns a list view of the specified type for the array. This method
      * does not verify if there is a value of wrong type in the array. Providing
      * this typesafe view dynamically may cause a program fail with a
      * {@code ClassCastException}, if there is a value of wrong type in this
      * array. Unfortunately, the exception can occur at any time after this
      * method returns.
      *
+     * @param <T> The type of the List for the array
      * @param clazz a JsonValue type
-     * @return a list view of the  specified type
+     * @return a list view of the specified type
      */
     <T extends JsonValue> List<T> getValuesAs(Class<T> clazz);
+
+    /**
+     * Returns a list view for the array. The value and the type of the elements
+     * in the list is specified by the {@code func} argument.
+     * <p>This method can be used to obtain a list of the unwrapped types, such as
+     * <pre>{@code
+     *     List<String> strings = ary1.getValuesAs(JsonString::getString);
+     *     List<Integer> ints = ary2.getValuesAs(JsonNumber::intValue);
+     * } </pre>
+     * or a list of simple projections, such as
+     * <pre> {@code
+     *     List<Integer> stringsizes = ary1.getValueAs((JsonString v)->v.getString().length();
+     * } </pre>
+     * @param <K> The element type (must be a subtype of JsonValue) of this JsonArray.
+     * @param <T> The element type of the returned List
+     * @param func The function that maps the elements of this JsonArray to the target elements.
+     * @return A List of the specified values and type.
+     * @throws ClassCastException if the {@code JsonArray} contains a value of wrong type
+     *
+     * @since 1.1
+     */
+    default <T, K extends JsonValue> List<T> getValuesAs(Function<K, T> func) {
+        @SuppressWarnings("unchecked")
+        Stream<K> stream = (Stream<K>) stream();
+        return stream.map(func).collect(Collectors.toList());
+    }
 
     /**
      * A convenience method for
@@ -194,7 +222,9 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * its {@link javax.json.JsonString#getString()} is returned. Otherwise,
      * the specified default value is returned.
      *
-     * @param index index of the JsonString value
+     * @param index index of the {@code JsonString} value
+     * @param defaultValue the String to return if the {@code JsonValue} at the
+     *    specified position is not a {@code JsonString}
      * @return the String value at the specified position in this array,
      * or the specified default value
      */
@@ -219,6 +249,8 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * this method returns the specified default value.
      *
      * @param index index of the {@code JsonNumber} value
+     * @param defaultValue the int value to return if the {@code JsonValue} at
+     *     the specified position is not a {@code JsonNumber}
      * @return the int value at the specified position in this array,
      * or the specified default value
      */
@@ -246,6 +278,8 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * Otherwise this method returns the specified default value.
      *
      * @param index index of the JSON boolean value
+     * @param defaultValue the boolean value to return if the {@code JsonValue}
+     *    at the specified position is neither TRUE nor FALSE
      * @return the boolean value at the specified position,
      * or the specified default value
      */
@@ -257,9 +291,8 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      *
      * @param index index of the JSON null value
      * @return return true if the value at the specified location is
-     * {@code JsonValue.NUL}, otherwise false
+     * {@code JsonValue.NULL}, otherwise false
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     boolean isNull(int index);
-
 }

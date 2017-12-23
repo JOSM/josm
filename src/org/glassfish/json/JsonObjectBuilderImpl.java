@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -50,11 +50,13 @@ import java.math.BigInteger;
 import java.util.*;
 
 /**
- * JsonObjectBuilder impl
+ * JsonObjectBuilder implementation
  *
  * @author Jitendra Kotamraju
+ * @author Kin-man Chung
  */
 class JsonObjectBuilderImpl implements JsonObjectBuilder {
+
     private Map<String, JsonValue> valueMap;
     private final BufferPool bufferPool;
 
@@ -62,6 +64,19 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         this.bufferPool = bufferPool;
     }
 
+    JsonObjectBuilderImpl(JsonObject object, BufferPool bufferPool) {
+        this.bufferPool = bufferPool;
+        valueMap = new LinkedHashMap<>();
+        valueMap.putAll(object);
+    }
+
+    JsonObjectBuilderImpl(Map<String, Object> map, BufferPool bufferPool) {
+        this.bufferPool = bufferPool;
+        valueMap = new LinkedHashMap<>();
+        populate(map);
+    }
+
+    @Override
     public JsonObjectBuilder add(String name, JsonValue value) {
         validateName(name);
         validateValue(value);
@@ -69,6 +84,7 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, String value) {
         validateName(name);
         validateValue(value);
@@ -76,6 +92,7 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, BigInteger value) {
         validateName(name);
         validateValue(value);
@@ -83,6 +100,7 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, BigDecimal value) {
         validateName(name);
         validateValue(value);
@@ -90,36 +108,42 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, int value) {
         validateName(name);
         putValueMap(name, JsonNumberImpl.getJsonNumber(value));
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, long value) {
         validateName(name);
         putValueMap(name, JsonNumberImpl.getJsonNumber(value));
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, double value) {
         validateName(name);
         putValueMap(name, JsonNumberImpl.getJsonNumber(value));
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, boolean value) {
         validateName(name);
         putValueMap(name, value ? JsonValue.TRUE : JsonValue.FALSE);
         return this;
     }
 
+    @Override
     public JsonObjectBuilder addNull(String name) {
         validateName(name);
         putValueMap(name, JsonValue.NULL);
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, JsonObjectBuilder builder) {
         validateName(name);
         if (builder == null) {
@@ -129,6 +153,7 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         return this;
     }
 
+    @Override
     public JsonObjectBuilder add(String name, JsonArrayBuilder builder) {
         validateName(name);
         if (builder == null) {
@@ -138,6 +163,26 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         return this;
     }
 
+    @Override
+    public JsonObjectBuilder addAll(JsonObjectBuilder builder) {
+        if (builder == null) {
+            throw new NullPointerException(JsonMessages.OBJBUILDER_OBJECT_BUILDER_NULL());
+        }
+        if (valueMap == null) {
+            this.valueMap = new LinkedHashMap<>();
+        }
+        this.valueMap.putAll(builder.build());
+        return this;
+    }
+
+    @Override
+    public JsonObjectBuilder remove(String name) {
+        validateName(name);
+        this.valueMap.remove(name);
+        return this;
+    }
+
+    @Override
     public JsonObject build() {
         Map<String, JsonValue> snapshot = (valueMap == null)
                 ? Collections.<String, JsonValue>emptyMap()
@@ -146,9 +191,22 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         return new JsonObjectImpl(snapshot, bufferPool);
     }
 
+    private void populate(Map<String, Object> map) {
+        final Set<String> fields = map.keySet();
+        for (String field : fields) {
+            Object value = map.get(field);
+            if (value != null && value instanceof Optional) {
+                ((Optional<?>) value).ifPresent(v ->
+                        this.valueMap.put(field, MapUtil.handle(v, bufferPool)));
+            } else {
+                this.valueMap.put(field, MapUtil.handle(value, bufferPool));
+            }
+        }
+    }
+
     private void putValueMap(String name, JsonValue value) {
         if (valueMap == null) {
-            this.valueMap = new LinkedHashMap<String, JsonValue>();
+            this.valueMap = new LinkedHashMap<>();
         }
         valueMap.put(name, value);
     }
@@ -263,10 +321,30 @@ class JsonObjectBuilderImpl implements JsonObjectBuilder {
         @Override
         public String toString() {
             StringWriter sw = new StringWriter();
-            JsonWriter jw = new JsonWriterImpl(sw, bufferPool);
-            jw.write(this);
-            jw.close();
+            try (JsonWriter jw = new JsonWriterImpl(sw, bufferPool)) {
+                jw.write(this);
+            }
             return sw.toString();
+        }
+
+        @Override
+        public JsonObject asJsonObject() {
+            return this;
+        }
+
+        @Override
+        public int size() {
+            return valueMap.size();
+        }
+
+        @Override
+        public JsonValue get(Object key) {
+            return valueMap.get(key);
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            return valueMap.containsKey(key);
         }
     }
 
