@@ -157,7 +157,7 @@ public class RestartAction extends JosmAction {
                 // else it's a .class, add the classpath and mainClass
                 cmd.add("-cp");
                 cmd.add('"' + System.getProperty("java.class.path") + '"');
-                cmd.add(mainCommand[0]);
+                cmd.add(mainCommand[0].replace("jdk.plugin/", "")); // Main class appears to be invalid on Java WebStart 9
             }
             // add JNLP file.
             if (jnlp != null) {
