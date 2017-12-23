@@ -1,0 +1,8 @@
+version: '{build}'
+install:
+  - cinst ant
+  - cinst jdk9
+build_script:
+  - ant compile javadoc dist distmac distwin checkstyle pmd
+test_script:
+  - ant test
