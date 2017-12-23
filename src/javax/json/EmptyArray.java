@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2013-2017 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -37,64 +37,100 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
+package javax.json;
 
-package org.glassfish.json;
-
-import java.util.Collection;
-import org.glassfish.json.api.BufferPool;
-
-import javax.json.JsonObject;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonBuilderFactory;
-import javax.json.JsonObjectBuilder;
+import java.io.Serializable;
+import java.util.AbstractList;
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
+import java.util.RandomAccess;
 
 /**
- * @author Jitendra Kotamraju
+ * Private implementation of immutable {@link JsonArray}.
+ *
+ * @author Lukas Jungmann
  */
-class JsonBuilderFactoryImpl implements JsonBuilderFactory {
-    private final Map<String, ?> config;
-    private final BufferPool bufferPool;
+final class EmptyArray extends AbstractList<JsonValue> implements JsonArray, Serializable, RandomAccess {
 
-    JsonBuilderFactoryImpl(BufferPool bufferPool) {
-        this.config = Collections.emptyMap();
-        this.bufferPool = bufferPool;
+    private static final long serialVersionUID = 7295439472061642859L;
+
+    @Override
+    public JsonValue get(int index) {
+        throw new IndexOutOfBoundsException("Index: " + index);
     }
 
     @Override
-    public JsonObjectBuilder createObjectBuilder() {
-        return new JsonObjectBuilderImpl(bufferPool);
-    }
- 
-    @Override
-    public JsonObjectBuilder createObjectBuilder(JsonObject object) {
-        return new JsonObjectBuilderImpl(object, bufferPool);
+    public int size() {
+        return 0;
     }
 
     @Override
-    public JsonObjectBuilder createObjectBuilder(Map<String, Object> object) {
-        return new JsonObjectBuilderImpl(object, bufferPool);
+    public JsonObject getJsonObject(int index) {
+        return (JsonObject) get(index);
     }
 
     @Override
-    public JsonArrayBuilder createArrayBuilder() {
-        return new JsonArrayBuilderImpl(bufferPool);
+    public JsonArray getJsonArray(int index) {
+        return (JsonArray) get(index);
     }
 
     @Override
-    public JsonArrayBuilder createArrayBuilder(JsonArray array) {
-        return new JsonArrayBuilderImpl(array, bufferPool);
+    public JsonNumber getJsonNumber(int index) {
+        return (JsonNumber) get(index);
     }
 
     @Override
-    public JsonArrayBuilder createArrayBuilder(Collection<?> collection) {
-        return new JsonArrayBuilderImpl(collection, bufferPool);
+    public JsonString getJsonString(int index) {
+        return (JsonString) get(index);
     }
 
     @Override
-    public Map<String, ?> getConfigInUse() {
-        return config;
+    public <T extends JsonValue> List<T> getValuesAs(Class<T> clazz) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getString(int index) {
+        return getJsonString(index).getString();
+    }
+
+    @Override
+    public String getString(int index, String defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public int getInt(int index) {
+        return getJsonNumber(index).intValue();
+    }
+
+    @Override
+    public int getInt(int index, int defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public boolean getBoolean(int index) {
+        return get(index) == JsonValue.TRUE;
+    }
+
+    @Override
+    public boolean getBoolean(int index, boolean defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public boolean isNull(int index) {
+        return get(index) == JsonValue.NULL;
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.ARRAY;
+    }
+
+    // Preserves singleton property
+    private Object readResolve() {
+        return JsonValue.EMPTY_JSON_ARRAY;
     }
 }

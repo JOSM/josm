@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -49,6 +49,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
@@ -57,7 +58,6 @@ import java.util.Map;
  * @author Jitendra Kotamraju
  */
 class JsonGeneratorImpl implements JsonGenerator {
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private static final char[] INT_MIN_VALUE_CHARS = "-2147483648".toCharArray();
     private static final int[] INT_CHARS_SIZE_TABLE = { 9, 99, 999, 9999, 99999,
@@ -100,13 +100,14 @@ class JsonGeneratorImpl implements JsonGenerator {
     private static enum Scope {
         IN_NONE,
         IN_OBJECT,
+        IN_FIELD,
         IN_ARRAY
     }
 
     private final BufferPool bufferPool;
     private final Writer writer;
     private Context currentContext = new Context(Scope.IN_NONE);
-    private final Deque<Context> stack = new ArrayDeque<Context>();
+    private final Deque<Context> stack = new ArrayDeque<>();
 
     // Using own buffering mechanism as JDK's BufferedWriter uses synchronized
     // methods. Also, flushBuffer() is useful when you don't want to actually
@@ -121,7 +122,7 @@ class JsonGeneratorImpl implements JsonGenerator {
     }
 
     JsonGeneratorImpl(OutputStream out, BufferPool bufferPool) {
-        this(out, UTF_8, bufferPool);
+        this(out, StandardCharsets.UTF_8, bufferPool);
     }
 
     JsonGeneratorImpl(OutputStream out, Charset encoding, BufferPool bufferPool) {
@@ -169,7 +170,7 @@ class JsonGeneratorImpl implements JsonGenerator {
     private JsonGenerator writeName(String name) {
         writeComma();
         writeEscapedString(name);
-        writeChar(':');
+        writeColon();
         return this;
     }
 
@@ -266,10 +267,8 @@ class JsonGeneratorImpl implements JsonGenerator {
 
     @Override
     public JsonGenerator write(JsonValue value) {
-        if (currentContext.scope != Scope.IN_ARRAY) {
-            throw new JsonGenerationException(
-                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
-        }
+        checkContextForValue();
+
         switch (value.getValueType()) {
             case ARRAY:
                 JsonArray array = (JsonArray)value;
@@ -294,6 +293,7 @@ class JsonGeneratorImpl implements JsonGenerator {
             case NUMBER:
                 JsonNumber number = (JsonNumber)value;
                 writeValue(number.toString());
+                popFieldContext();
                 break;
             case TRUE:
                 write(true);
@@ -381,87 +381,90 @@ class JsonGeneratorImpl implements JsonGenerator {
         return this;
     }
 
+    @Override
     public JsonGenerator write(String value) {
-        if (currentContext.scope != Scope.IN_ARRAY) {
-            throw new JsonGenerationException(
-                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
-        }
+        checkContextForValue();
         writeComma();
         writeEscapedString(value);
+        popFieldContext();
         return this;
     }
 
 
+    @Override
     public JsonGenerator write(int value) {
-        if (currentContext.scope != Scope.IN_ARRAY) {
-            throw new JsonGenerationException(
-                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
-        }
+        checkContextForValue();
         writeComma();
         writeInt(value);
+        popFieldContext();
         return this;
     }
 
     @Override
     public JsonGenerator write(long value) {
-        if (currentContext.scope != Scope.IN_ARRAY) {
-            throw new JsonGenerationException(
-                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
-        }
+        checkContextForValue();
         writeValue(String.valueOf(value));
+        popFieldContext();
         return this;
     }
 
     @Override
     public JsonGenerator write(double value) {
-        if (currentContext.scope != Scope.IN_ARRAY) {
-            throw new JsonGenerationException(
-                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
-        }
+        checkContextForValue();
         if (Double.isInfinite(value) || Double.isNaN(value)) {
             throw new NumberFormatException(JsonMessages.GENERATOR_DOUBLE_INFINITE_NAN());
         }
         writeValue(String.valueOf(value));
+        popFieldContext();
         return this;
     }
 
     @Override
     public JsonGenerator write(BigInteger value) {
-        if (currentContext.scope != Scope.IN_ARRAY) {
+        checkContextForValue();
+        writeValue(value.toString());
+        popFieldContext();
+        return this;
+    }
+
+    private void checkContextForValue() {
+        if ((!currentContext.first && currentContext.scope != Scope.IN_ARRAY && currentContext.scope != Scope.IN_FIELD)
+                || (currentContext.first && currentContext.scope == Scope.IN_OBJECT)) {
             throw new JsonGenerationException(
                     JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
         }
-        writeValue(value.toString());
-        return this;
     }
 
     @Override
     public JsonGenerator write(BigDecimal value) {
-        if (currentContext.scope != Scope.IN_ARRAY) {
-            throw new JsonGenerationException(
-                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
-        }
+        checkContextForValue();
         writeValue(value.toString());
+        popFieldContext();
+
         return this;
     }
 
-    public JsonGenerator write(boolean value) {
-        if (currentContext.scope != Scope.IN_ARRAY) {
-            throw new JsonGenerationException(
-                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
+    private void popFieldContext() {
+        if (currentContext.scope == Scope.IN_FIELD) {
+            currentContext = stack.pop();
         }
+    }
+
+    @Override
+    public JsonGenerator write(boolean value) {
+        checkContextForValue();
         writeComma();
         writeString(value ? "true" : "false");
+        popFieldContext();
         return this;
     }
 
+    @Override
     public JsonGenerator writeNull() {
-        if (currentContext.scope != Scope.IN_ARRAY) {
-            throw new JsonGenerationException(
-                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
-        }
+        checkContextForValue();
         writeComma();
         writeString("null");
+        popFieldContext();
         return this;
     }
 
@@ -473,8 +476,21 @@ class JsonGeneratorImpl implements JsonGenerator {
     private void writeValue(String name, String value) {
         writeComma();
         writeEscapedString(name);
-        writeChar(':');
+        writeColon();
         writeString(value);
+    }
+
+    @Override
+    public JsonGenerator writeKey(String name) {
+        if (currentContext.scope != Scope.IN_OBJECT) {
+            throw new JsonGenerationException(
+                    JsonMessages.GENERATOR_ILLEGAL_METHOD(currentContext.scope));
+        }
+        writeName(name);
+        stack.push(currentContext);
+        currentContext = new Context(Scope.IN_FIELD);
+        currentContext.first = false;
+        return this;
     }
 
     @Override
@@ -484,14 +500,19 @@ class JsonGeneratorImpl implements JsonGenerator {
         }
         writeChar(currentContext.scope == Scope.IN_ARRAY ? ']' : '}');
         currentContext = stack.pop();
+        popFieldContext();
         return this;
     }
 
     protected void writeComma() {
-        if (!currentContext.first) {
+        if (!currentContext.first && currentContext.scope != Scope.IN_FIELD) {
             writeChar(',');
         }
         currentContext.first = false;
+    }
+
+    protected void writeColon() {
+        writeChar(':');
     }
 
     private static class Context {
@@ -504,6 +525,7 @@ class JsonGeneratorImpl implements JsonGenerator {
 
     }
 
+    @Override
     public void close() {
         if (currentContext.scope != Scope.IN_NONE || currentContext.first) {
             throw new JsonGenerationException(JsonMessages.GENERATOR_INCOMPLETE_JSON());

@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2011-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -50,15 +50,13 @@ import java.math.BigInteger;
  * Implementations may use a {@link BigDecimal} object to store the numeric
  * value internally.
  * The {@code BigDecimal} object can be constructed from the following types:
- * {@link BigDecimal#BigDecimal(int) <code>int</code>},
- * {@link BigDecimal#BigDecimal(long) <code>long</code>},
- * {@link BigDecimal#BigDecimal(BigInteger) <code>BigInteger</code>},
- * {@link BigDecimal#valueOf(double) <code>double</code>}, and
- * {@link BigDecimal#BigDecimal(String) <code>String</code>}.
+ * <code>int</code> {@link BigDecimal#BigDecimal(int)},
+ * <code>long</code> {@link BigDecimal#BigDecimal(long)},
+ * <code>BigInteger</code> {@link BigDecimal#BigDecimal(BigInteger)},
+ * <code>double</code> {@link BigDecimal#valueOf(double)}, and
+ * <code>String</code> {@link BigDecimal#BigDecimal(String)}.
  * Some of the method semantics in this class are defined using the
  * {@code BigDecimal} semantics.
- *
- * @author Jitendra Kotamraju
  */
 public interface JsonNumber extends JsonValue {
 
@@ -137,7 +135,7 @@ public interface JsonNumber extends JsonValue {
     BigInteger bigIntegerValue();
 
     /**
-     * Returns this JSON number as a {@link BigDecimal} object. This is a
+     * Returns this JSON number as a {@link BigInteger} object. This is a
      * convenience method for {@code bigDecimalValue().toBigIntegerExact()}.
      *
      * @return a {@link BigInteger} representation of the JSON number
@@ -166,6 +164,17 @@ public interface JsonNumber extends JsonValue {
     BigDecimal bigDecimalValue();
 
     /**
+     * Returns this JSON number as a {@link Number} object.
+     *
+     * @return a {@link Number} representation of the JSON number
+     *
+     * @since 1.1
+     */
+    default Number numberValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Returns a JSON text representation of the JSON number. The
      * representation is equivalent to {@link BigDecimal#toString()}.
      *
@@ -180,9 +189,9 @@ public interface JsonNumber extends JsonValue {
      * object is also {@code JsonNumber} and their {@link #bigDecimalValue()}
      * objects are <i>equal</i>
      *
-     * @param obj the object to be compared for equality with 
+     * @param obj the object to be compared for equality with
      *      this {@code JsonNumber}
-     * @return {@code true} if the specified object is equal to this 
+     * @return {@code true} if the specified object is equal to this
      *      {@code JsonNumber}
      */
     @Override

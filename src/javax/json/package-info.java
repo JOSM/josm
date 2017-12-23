@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2011-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -50,16 +50,20 @@
  * {@code JsonArray} provides a {@link java.util.List} view to access the
  * ordered sequence of zero or more values from the model.
  *
- * <p>The object model API uses builder patterns to create these object models. 
- * The classes {@link javax.json.JsonObjectBuilder} and 
- * {@link javax.json.JsonArrayBuilder} provide methods to create models
+ * <p>The object model API uses builder patterns to create and modify
+ * these object models. The classes {@link javax.json.JsonObjectBuilder} and 
+ * {@link javax.json.JsonArrayBuilder} provide methods to create and modify models
  * of type {@code JsonObject} and {@code JsonArray} respectively.
  *
  * <p>These object models can also be created from an input source using
  * the class {@link javax.json.JsonReader}. Similarly, these object models
  * can be written to an output source using the class {@link javax.json.JsonWriter}.
- *
- * @since JSON Processing 1.0
- * @author Jitendra Kotamraju
+ * <p>
+ * This package includes several classes that implement other JSON related
+ * standards: <a href="http://tools.ietf.org/html/rfc6901">JSON Pointer</a>,
+ * <a Href="http://tools.ietf.org/html/rfc6902">JSON Patch</a>, and
+ * <a Href="http://tools.ietf.org/html/rfc7396">JSON Merge Patch</a>.
+ * They can be used to retrieve, transform or manipulate values in an
+ * object model.
  */
 package javax.json;

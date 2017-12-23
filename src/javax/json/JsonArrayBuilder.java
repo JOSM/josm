@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -44,10 +44,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * A builder for creating {@link JsonArray} models from scratch. This
- * interface initializes an empty JSON array model and provides methods to add
- * values to the array model and to return the resulting array. The methods
- * in this class can be chained to add multiple values to the array.
+ * A builder for creating {@link JsonArray} models from scratch, and for
+ * modifying a existing {@code JsonArray}.
+ * <p>A {@code JsonArrayBuilder} can start with an empty or a non-empty
+ * JSON array model. This interface provides methods to add, insert, remove
+ * and replace values in the JSON array model.</p>
+ * <p>Methods in this class can be chained to perform multiple values to
+ * the array.</p>
  *
  * <p>The class {@link javax.json.Json} contains methods to create the builder
  * object. The example code below shows how to build an empty {@code JsonArray}
@@ -63,7 +66,6 @@ import java.math.BigInteger;
  * multiple builder instances with the same configuration. This the preferred
  * way to create multiple instances.
  *
- * <a id="JsonArrayBuilderExample1"/>
  * The example code below shows how to build a {@code JsonArray} object
  * that represents the following JSON array:
  *
@@ -164,7 +166,7 @@ public interface JsonArrayBuilder {
      *
      * @param value the number value
      * @return this array builder
-     * @throws NumberFormatException if the value is Not-a-Number(NaN) or 
+     * @throws NumberFormatException if the value is Not-a-Number (NaN) or
      *      infinity
      *
      * @see JsonNumber
@@ -204,6 +206,434 @@ public interface JsonArrayBuilder {
      * @throws NullPointerException if the specified builder is null
      */
     JsonArrayBuilder add(JsonArrayBuilder builder);
+
+    /**
+     * Adds all elements of the array in the specified array builder to the array.
+     *
+     * @param builder the array builder
+     * @return this array builder
+     * @throws NullPointerException if the specified builder is null
+     *
+     @since 1.1
+     */
+    default JsonArrayBuilder addAll(JsonArrayBuilder builder) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Inserts a value to the array at the specified position. Shifts the value
+     * currently at that position (if any) and any subsequent values to the right
+     * (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param value the JSON value
+     * @return this array builder
+     * @throws NullPointerException if the specified value is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, JsonValue value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a value to the array as a {@link JsonString} at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param value the string value
+     * @return this array builder
+     * @throws NullPointerException if the specified value is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a value to the array as a {@link JsonNumber} at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws NullPointerException if the specified value is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, BigDecimal value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a value to the array as a {@link JsonNumber} at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws NullPointerException if the specified value is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, BigInteger value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a value to the array as a {@link JsonNumber} at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, int value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a value to the array as a {@link JsonNumber} at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, long value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a value to the array as a {@link JsonNumber} at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws NumberFormatException if the value is Not-a-Number (NaN) or
+     *      infinity
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, double value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a {@link JsonValue#TRUE}  or {@link JsonValue#FALSE} value to the
+     * array at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param value the boolean value
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, boolean value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a {@link JsonValue#NULL} value to the array at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder addNull(int index) {
+        return add(index, JsonValue.NULL);
+    }
+
+    /**
+     * Adds a {@link JsonObject} from an object builder to the array at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param builder the object builder
+     * @return this array builder
+     * @throws NullPointerException if the specified builder is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, JsonObjectBuilder builder) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adds a {@link JsonArray} from an array builder to the array at the specified position.
+     * Shifts the value currently at that position (if any) and any subsequent values
+     * to the right (adds one to their indices).  Index starts with 0.
+     *
+     * @param index the position in the array
+     * @param builder the array builder
+     * @return this array builder
+     * @throws NullPointerException if the specified builder is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index > array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder add(int index, JsonArrayBuilder builder) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with the specified value at the
+     * specified position.
+     *
+     * @param index the position in the array
+     * @param value the JSON value
+     * @return this array builder
+     * @throws NullPointerException if the specified value is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, JsonValue value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with the specified value as a
+     * {@link JsonString} at the specified position.
+     *
+     * @param index the position in the array
+     * @param value the string value
+     * @return this array builder
+     * @throws NullPointerException if the specified value is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with the specified value as a
+     * {@link JsonNumber} at the specified position.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws NullPointerException if the specified value is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, BigDecimal value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with the specified value as a
+     * {@link JsonNumber} at the specified position.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws NullPointerException if the specified value is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, BigInteger value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with the specified value as a
+     * {@link JsonNumber} at the specified position.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, int value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with the specified value as a
+     * {@link JsonNumber} at the specified position.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, long value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with the specified value as a
+     * {@link JsonNumber} at the specified position.
+     *
+     * @param index the position in the array
+     * @param value the number value
+     * @return this array builder
+     * @throws NumberFormatException if the value is Not-a-Number (NaN) or
+     *      infinity
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @see JsonNumber
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, double value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with
+     * a {@link JsonValue#TRUE}  or {@link JsonValue#FALSE} value
+     * at the specified position.
+     *
+     * @param index the position in the array
+     * @param value the boolean value
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, boolean value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with
+     * a {@link JsonValue#NULL} value at the specified position.
+     *
+     * @param index the position in the array
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder setNull(int index) {
+        return set(index, JsonValue.NULL);
+    }
+
+    /**
+     * Replaces a value in the array with the specified value as a
+     * {@link JsonObject} from an object builder at the specified position.
+     *
+     * @param index the position in the array
+     * @param builder the object builder
+     * @return this array builder
+     * @throws NullPointerException if the specified builder is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, JsonObjectBuilder builder) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Replaces a value in the array with the specified value as a
+     * {@link JsonArray} from an array builder at the specified position.
+     *
+     * @param index the position in the array
+     * @param builder the array builder
+     * @return this array builder
+     * @throws NullPointerException if the specified builder is null
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder set(int index, JsonArrayBuilder builder) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Remove the value in the array at the specified position.
+     * Shift any subsequent values to the left (subtracts one from their
+     * indices.
+     *
+     * @param index the position in the array
+     * @return this array builder
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *   {@code (index < 0 || index >= array size)}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder remove(int index) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns the current array.

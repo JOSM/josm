@@ -62,8 +62,8 @@ is from Stuart D. Gathman and licensed with GPL.
 The Ellipsoid code (http://www.i3s.unice.fr/~johan/gps/)
 is from Johan Montagnat and licensed with GPL.
 
-The JSON code (https://java.net/projects/jsonp/)
-is from Oracle (RI for JSR 353: Java API for JSON Processing) 
+The JSON code (https://javaee.github.io/jsonp/)
+is from Oracle (RI for JSR 374: Java API for JSON Processing) 
 and licensed with GPL / classpath exception.
 
 The opening hour validation uses code from opening_hour.js

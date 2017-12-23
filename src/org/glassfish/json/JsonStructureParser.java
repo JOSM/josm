@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -44,7 +44,11 @@ import javax.json.*;
 import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * {@link JsonParser} implementation on top of JsonArray/JsonObject
@@ -55,7 +59,7 @@ class JsonStructureParser implements JsonParser {
 
     private Scope current;
     private Event state;
-    private final Deque<Scope> scopeStack = new ArrayDeque<Scope>();
+    private final Deque<Scope> scopeStack = new ArrayDeque<>();
 
     JsonStructureParser(JsonArray array) {
         current = new ArrayScope(array);
@@ -67,12 +71,16 @@ class JsonStructureParser implements JsonParser {
 
     @Override
     public String getString() {
-        if (state == Event.KEY_NAME) {
-            return ((ObjectScope)current).key;
-        } else if (state == Event.VALUE_STRING) {
-            return ((JsonString)current.getJsonValue()).getString();
+        switch (state) {
+            case KEY_NAME:
+                return ((ObjectScope)current).key;
+            case VALUE_STRING:
+                return ((JsonString)current.getJsonValue()).getString();
+            case VALUE_NUMBER:
+                return ((JsonNumber)current.getJsonValue()).toString();
+            default:
+                throw new IllegalStateException(JsonMessages.PARSER_GETSTRING_ERR(state));
         }
-        throw new IllegalStateException(JsonMessages.PARSER_GETSTRING_ERR(state));
     }
 
     @Override
@@ -169,6 +177,62 @@ class JsonStructureParser implements JsonParser {
         // no-op
     }
 
+    @Override
+    public void skipObject() {
+        if (current instanceof ObjectScope) {
+            int depth = 1;
+            do {
+                if (state == Event.KEY_NAME) {
+                    state = getState(current.getJsonValue());
+                    switch (state) {
+                        case START_OBJECT:
+                            depth++;
+                            break;
+                        case END_OBJECT:
+                            depth--;
+                            break;
+                        default:
+                            //no-op
+                    }
+                } else {
+                    if (current.hasNext()) {
+                        current.next();
+                        state = Event.KEY_NAME;
+                    } else {
+                        state = Event.END_OBJECT;
+                        depth--;
+                    }
+                }
+            } while (state != Event.END_OBJECT && depth > 0);
+        }
+    }
+
+    @Override
+    public void skipArray() {
+        if (current instanceof ArrayScope) {
+            int depth = 1;
+            do {
+                if (current.hasNext()) {
+                    current.next();
+                    state = getState(current.getJsonValue());
+                    switch (state) {
+                        case START_ARRAY:
+                            depth++;
+                            break;
+                        case END_ARRAY:
+                            depth--;
+                            break;
+                        default:
+                            //no-op
+                    }
+                } else {
+                    state = Event.END_ARRAY;
+                    depth--;
+                }
+            } while (!(state == Event.END_ARRAY && depth == 0));
+        }
+    }
+
     private static Event getState(JsonValue value) {
         switch (value.getValueType()) {
             case ARRAY:
@@ -186,7 +250,7 @@ class JsonStructureParser implements JsonParser {
             case NULL:
                 return Event.VALUE_NULL;
             default:
-                throw new JsonException("Unknown value type="+value.getValueType());
+                throw new JsonException(JsonMessages.PARSER_STATE_ERR(value.getValueType()));
         }
     }
 
@@ -199,7 +263,7 @@ class JsonStructureParser implements JsonParser {
             } else if (value instanceof JsonObject) {
                 return new ObjectScope((JsonObject)value);
             }
-            throw new JsonException("Cannot be called for value="+value);
+            throw new JsonException(JsonMessages.PARSER_SCOPE_ERR(value));
         }
     }
 

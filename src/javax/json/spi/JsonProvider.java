@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2011-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -49,9 +49,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Optional;
 
 /**
  * Service provider for JSON processing objects.
@@ -60,7 +64,6 @@ import java.util.ServiceLoader;
  * threads.
  *
  * @see ServiceLoader
- * @author Jitendra Kotamraju
  */
 public abstract class JsonProvider {
 
@@ -75,10 +78,10 @@ public abstract class JsonProvider {
     }
 
     /**
-     *
      * Creates a JSON provider object. The provider is loaded using the
      * {@link ServiceLoader#load(Class)} method. If there are no available
      * service providers, this method returns the default service provider.
+     * Users are recommended to cache the result of this method.
      *
      * @see ServiceLoader
      * @return a JSON provider
@@ -89,10 +92,9 @@ public abstract class JsonProvider {
         if (it.hasNext()) {
             return it.next();
         }
-
         try {
             Class<?> clazz = Class.forName(DEFAULT_PROVIDER);
-            return (JsonProvider)clazz.newInstance();
+            return (JsonProvider) clazz.newInstance();
         } catch (ClassNotFoundException x) {
             throw new JsonException(
                     "Provider " + DEFAULT_PROVIDER + " not found", x);
@@ -114,7 +116,7 @@ public abstract class JsonProvider {
     /**
      * Creates a JSON parser from the specified byte stream.
      * The character encoding of the stream is determined
-     * as defined in <a href="http://tools.ietf.org/rfc/rfc4627.txt">RFC 4627
+     * as defined in <a href="http://tools.ietf.org/rfc/rfc7159.txt">RFC 7159
      * </a>.
      *
      * @param in i/o stream from which JSON is to be read
@@ -192,7 +194,7 @@ public abstract class JsonProvider {
     /**
      * Creates a JSON reader from a byte stream. The character encoding of
      * the stream is determined as described in
-     * <a href="http://tools.ietf.org/rfc/rfc4627.txt">RFC 4627</a>.
+     * <a href="http://tools.ietf.org/rfc/rfc7159.txt">RFC 7159</a>.
      *
      * @param in a byte stream from which JSON is to be read
      * @return a JSON reader
@@ -245,18 +247,175 @@ public abstract class JsonProvider {
     public abstract JsonReaderFactory createReaderFactory(Map<String,?> config);
 
     /**
-     * Creates a JSON object builder
+     * Creates a JSON object builder.
      *
      * @return a JSON object builder
      */
     public abstract JsonObjectBuilder createObjectBuilder();
 
     /**
-     * Creates a JSON array builder
+     * Creates a JSON object builder, initialized with the specified object.
+     *
+     * @param object the initial JSON object in the builder
+     * @return a JSON object builder
+     *
+     * @since 1.1
+     */
+    public JsonObjectBuilder createObjectBuilder(JsonObject object) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JSON object builder, initialized with the data from specified {@code map}.
+     * If the @{code map} contains {@link Optional}s then resulting JSON object builder
+     * contains the key from the {@code map} only if the {@link Optional} is not empty.
+     *
+     * @param map the initial object in the builder
+     * @return a JSON object builder
+     * @exception IllegalArgumentException if the value from the {@code map} cannot be converted
+     *            to the corresponding {@link JsonValue}
+     *
+     * @since 1.1
+     */
+    public JsonObjectBuilder createObjectBuilder(Map<String, Object> map) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JSON array builder.
      *
      * @return a JSON array builder
      */
     public abstract JsonArrayBuilder createArrayBuilder();
+
+    /**
+     * Creates a JSON array builder, initialized with the specified array.
+     *
+     * @param array the initial JSON array in the builder
+     * @return a JSON array builder
+     *
+     * @since 1.1
+     */
+    public JsonArrayBuilder createArrayBuilder(JsonArray array) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates JSON Pointer (<a href="http://tools.ietf.org/html/rfc6901">RFC 6901</a>)
+     * from given {@code jsonPointer} string.
+     * <ul>
+     *     <li>An empty {@code jsonPointer} string defines a reference to the target itself.</li>
+     *     <li>If the {@code jsonPointer} string is non-empty, it must be a sequence of '{@code /}' prefixed tokens.</li>
+     * </ul>
+     *
+     * @param jsonPointer the JSON Pointer string
+     * @throws NullPointerException if {@code jsonPointer} is {@code null}
+     * @throws JsonException if {@code jsonPointer} is not a valid JSON Pointer
+     * @return a JSON Pointer
+     *
+     * @since 1.1
+     */
+    public JsonPointer createPointer(String jsonPointer) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JSON Patch builder (<a href="http://tools.ietf.org/html/rfc6902">RFC 6902</a>).
+     *
+     * @return a JSON Patch builder
+     *
+     * @since 1.1
+     */
+    public JsonPatchBuilder createPatchBuilder() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JSON Patch builder
+     * (<a href="http://tools.ietf.org/html/rfc6902">RFC 6902</a>),
+     * initialized with the specified operations.
+     *
+     * @param array the initial patch operations
+     * @return a JSON Patch builder
+     *
+     * @since 1.1
+     */
+    public JsonPatchBuilder createPatchBuilder(JsonArray array) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JSON Patch (<a href="http://tools.ietf.org/html/rfc6902">RFC 6902</a>)
+     * from the specified operations.
+     *
+     * @param array patch operations
+     * @return a JSON Patch
+     *
+     * @since 1.1
+     */
+    public JsonPatch createPatch(JsonArray array) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Generates a JSON Patch (<a href="http://tools.ietf.org/html/rfc6902">RFC 6902</a>)
+     * from the source and target {@code JsonStructure}.
+     * The generated JSON Patch need not be unique.
+     *
+     * @param source the source
+     * @param target the target, must be the same type as the source
+     * @return a JSON Patch which when applied to the source, yields the target
+     *
+     * @since 1.1
+     */
+    public JsonPatch createDiff(JsonStructure source, JsonStructure target) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates JSON Merge Patch (<a href="http://tools.ietf.org/html/rfc7396">RFC 7396</a>)
+     * from specified {@code JsonValue}.
+     *
+     * @param patch the patch
+     * @return a JSON Merge Patch
+     *
+     * @since 1.1
+     */
+    public JsonMergePatch createMergePatch(JsonValue patch) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Generates a JSON Merge Patch (<a href="http://tools.ietf.org/html/rfc7396">RFC 7396</a>)
+     * from the source and target {@code JsonValue}s
+     * which when applied to the {@code source}, yields the {@code target}.
+     *
+     * @param source the source
+     * @param target the target
+     * @return a JSON Merge Patch
+     *
+     * @since 1.1
+     */
+    public JsonMergePatch createMergeDiff(JsonValue source, JsonValue target) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JSON array builder, initialized with the content of specified {@code collection}.
+     * If the @{code collection} contains {@link Optional}s then resulting JSON array builder
+     * contains the value from the {@code collection} only if the {@link Optional} is not empty.
+     *
+     * @param collection the initial data for the builder
+     * @return a JSON array builder
+     * @exception IllegalArgumentException if the value from the {@code collection} cannot be converted
+     *            to the corresponding {@link JsonValue}
+     *
+     * @since 1.1
+     */
+    public JsonArrayBuilder createArrayBuilder(Collection<?> collection) {
+        throw new UnsupportedOperationException();
+    }
+
 
     /**
      * Creates a builder factory for creating {@link JsonArrayBuilder}
@@ -271,4 +430,75 @@ public abstract class JsonProvider {
      */
     public abstract JsonBuilderFactory createBuilderFactory(Map<String,?> config);
 
+    /**
+     * Creates a JsonString.
+     *
+     * @param value a JSON string
+     * @return the JsonString for the string
+     *
+     * @since 1.1
+     */
+    public JsonString createValue(String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JsonNumber.
+     *
+     * @param value a JSON number
+     * @return the JsonNumber for the number
+     *
+     * @since 1.1
+     */
+    public JsonNumber createValue(int value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JsonNumber.
+     *
+     * @param value a JSON number
+     * @return the JsonNumber for the number
+     *
+     * @since 1.1
+     */
+    public JsonNumber createValue(long value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JsonNumber.
+     *
+     * @param value a JSON number
+     * @return the JsonNumber for the number
+     *
+     * @since 1.1
+     */
+    public JsonNumber createValue(double value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JsonNumber.
+     *
+     * @param value a JSON number
+     * @return the JsonNumber for the number
+     *
+     * @since 1.1
+     */
+    public JsonNumber createValue(BigDecimal value) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a JsonNumber.
+     *
+     * @param value a JSON number
+     * @return the JsonNumber for the number
+     *
+     * @since 1.1
+     */
+    public JsonNumber createValue(BigInteger value) {
+        throw new UnsupportedOperationException();
+    }
 }

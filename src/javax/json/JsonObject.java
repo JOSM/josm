@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2011-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -124,8 +124,6 @@ import java.util.Map;
  * <p>The map object's iteration ordering is based on the order in which
  * name/value pairs are added to the corresponding builder or the order
  * in which name/value pairs appear in the corresponding stream.
- *
- * @author Jitendra Kotamraju
  */
 public interface JsonObject extends JsonStructure, Map<String, JsonValue> {
 
@@ -265,7 +263,7 @@ public interface JsonObject extends JsonStructure, Map<String, JsonValue> {
      * {@code JsonValue.NULL}.
      *
      * @param name name whose associated value is checked
-     * @return return true if the associated value is {@code JsonValue.NUL},
+     * @return return true if the associated value is {@code JsonValue.NULL},
      * otherwise false
      * @throws NullPointerException if the specified name doesn't have any
      * mapping

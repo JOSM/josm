@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2012-2017 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -38,57 +38,89 @@
  * holder.
  */
 
-package org.glassfish.json;
+package javax.json;
 
-import org.glassfish.json.api.BufferPool;
-
-import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonGeneratorFactory;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.Set;
 
 /**
- * @author Jitendra Kotamraju
+ * Private implementation of immutable {@link JsonObject}.
+ *
+ * @author Lukas Jungmann
  */
-class JsonGeneratorFactoryImpl implements JsonGeneratorFactory {
+final class EmptyObject extends AbstractMap<String, JsonValue> implements JsonObject, Serializable {
 
-    private final boolean prettyPrinting;
-    private final Map<String, ?> config;    // unmodifiable map
-    private final BufferPool bufferPool;
+    private static final long serialVersionUID = -1461653546889072583L;
 
-    JsonGeneratorFactoryImpl(Map<String, ?> config, boolean prettyPrinting,
-            BufferPool bufferPool) {
-        this.config = config;
-        this.prettyPrinting = prettyPrinting;
-        this.bufferPool = bufferPool;
+    @Override
+    public Set<Entry<String, JsonValue>> entrySet() {
+        return Collections.<Entry<String, JsonValue>>emptySet();
     }
 
     @Override
-    public JsonGenerator createGenerator(Writer writer) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(writer, bufferPool)
-                : new JsonGeneratorImpl(writer, bufferPool);
+    public JsonArray getJsonArray(String name) {
+        return (JsonArray) get(name);
     }
 
     @Override
-    public JsonGenerator createGenerator(OutputStream out) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(out, bufferPool)
-                : new JsonGeneratorImpl(out, bufferPool);
+    public JsonObject getJsonObject(String name) {
+        return (JsonObject) get(name);
     }
 
     @Override
-    public JsonGenerator createGenerator(OutputStream out, Charset charset) {
-        return prettyPrinting
-                ? new JsonPrettyGeneratorImpl(out, charset, bufferPool)
-                : new JsonGeneratorImpl(out, charset, bufferPool);
+    public JsonNumber getJsonNumber(String name) {
+        return (JsonNumber) get(name);
     }
 
     @Override
-    public Map<String, ?> getConfigInUse() {
-        return config;
+    public JsonString getJsonString(String name) {
+        return (JsonString) get(name);
     }
 
+    @Override
+    public String getString(String name) {
+        return getJsonString(name).getString();
+    }
+
+    @Override
+    public String getString(String name, String defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public int getInt(String name) {
+        return getJsonNumber(name).intValue();
+    }
+
+    @Override
+    public int getInt(String name, int defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public boolean getBoolean(String name) {
+        throw new NullPointerException();
+    }
+
+    @Override
+    public boolean getBoolean(String name, boolean defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public boolean isNull(String name) {
+        throw new NullPointerException();
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.OBJECT;
+    }
+
+    // Preserves singleton property
+    private Object readResolve() {
+        return JsonValue.EMPTY_JSON_OBJECT;
+    }
 }

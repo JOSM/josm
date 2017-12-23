@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -42,12 +42,17 @@ package org.glassfish.json;
 
 import org.glassfish.json.api.BufferPool;
 
-import javax.json.*;
-import javax.json.stream.JsonParser;
 import java.io.InputStream;
 import java.io.Reader;
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParsingException;
 
 /**
  * JsonReader impl using parser and builders.
@@ -81,14 +86,18 @@ class JsonReaderImpl implements JsonReader {
         }
         readDone = true;
         if (parser.hasNext()) {
-            JsonParser.Event e = parser.next();
-            if (e == JsonParser.Event.START_ARRAY) {
-                return readArray(new JsonArrayBuilderImpl(bufferPool));
-            } else if (e == JsonParser.Event.START_OBJECT) {
-                return readObject(new JsonObjectBuilderImpl(bufferPool));
+            try {
+                JsonParser.Event e = parser.next();
+                if (e == JsonParser.Event.START_ARRAY) {
+                    return parser.getArray();
+                } else if (e == JsonParser.Event.START_OBJECT) {
+                    return parser.getObject();
+                }
+            } catch (IllegalStateException ise) {
+                throw new JsonParsingException(ise.getMessage(), ise, parser.getLastCharLocation());
             }
         }
-        throw new JsonException("Internal Error");
+        throw new JsonException(JsonMessages.INTERNAL_ERROR());
     }
 
     @Override
@@ -98,14 +107,14 @@ class JsonReaderImpl implements JsonReader {
         }
         readDone = true;
         if (parser.hasNext()) {
-            JsonParser.Event e = parser.next();
-            if (e == JsonParser.Event.START_OBJECT) {
-                return readObject(new JsonObjectBuilderImpl(bufferPool));
-            } else if (e == JsonParser.Event.START_ARRAY) {
-                throw new JsonException(JsonMessages.READER_EXPECTED_OBJECT_GOT_ARRAY());
+            try {
+                parser.next();
+                return parser.getObject();
+            } catch (IllegalStateException ise) {
+                throw new JsonParsingException(ise.getMessage(), ise, parser.getLastCharLocation());
             }
         }
-        throw new JsonException("Internal Error");
+        throw new JsonException(JsonMessages.INTERNAL_ERROR());
     }
 
     @Override
@@ -115,14 +124,31 @@ class JsonReaderImpl implements JsonReader {
         }
         readDone = true;
         if (parser.hasNext()) {
-            JsonParser.Event e = parser.next();
-            if (e == JsonParser.Event.START_ARRAY) {
-                return readArray(new JsonArrayBuilderImpl(bufferPool));
-            } else if (e == JsonParser.Event.START_OBJECT) {
-                throw new JsonException(JsonMessages.READER_EXPECTED_ARRAY_GOT_OBJECT());
+            try {
+                parser.next();
+                return parser.getArray();
+            } catch (IllegalStateException ise) {
+                throw new JsonParsingException(ise.getMessage(), ise, parser.getLastCharLocation());
             }
         }
-        throw new JsonException("Internal Error");
+        throw new JsonException(JsonMessages.INTERNAL_ERROR());
+    }
+
+    @Override
+    public JsonValue readValue() {
+        if (readDone) {
+            throw new IllegalStateException(JsonMessages.READER_READ_ALREADY_CALLED());
+        }
+        readDone = true;
+        if (parser.hasNext()) {
+            try {
+                parser.next();
+                return parser.getValue();
+            } catch (IllegalStateException ise) {
+                throw new JsonParsingException(ise.getMessage(), ise, parser.getLastCharLocation());
+            }
+        }
+        throw new JsonException(JsonMessages.INTERNAL_ERROR());
     }
 
     @Override
@@ -130,89 +156,4 @@ class JsonReaderImpl implements JsonReader {
         readDone = true;
         parser.close();
     }
-
-    private JsonArray readArray(JsonArrayBuilder builder) {
-        while(parser.hasNext()) {
-            JsonParser.Event e = parser.next();
-            switch (e) {
-                case START_ARRAY:
-                    JsonArray array = readArray(new JsonArrayBuilderImpl(bufferPool));
-                    builder.add(array);
-                    break;
-                case START_OBJECT:
-                    JsonObject object = readObject(new JsonObjectBuilderImpl(bufferPool));
-                    builder.add(object);
-                    break;
-                case VALUE_STRING:
-                    builder.add(parser.getString());
-                    break;
-                case VALUE_NUMBER:
-                    if (parser.isDefinitelyInt()) {
-                        builder.add(parser.getInt());
-                    } else {
-                        builder.add(parser.getBigDecimal());
-                    }
-                    break;
-                case VALUE_TRUE:
-                    builder.add(JsonValue.TRUE);
-                    break;
-                case VALUE_FALSE:
-                    builder.add(JsonValue.FALSE);
-                    break;
-                case VALUE_NULL:
-                    builder.addNull();
-                    break;
-                case END_ARRAY:
-                    return builder.build();
-                default:
-                    throw new JsonException("Internal Error");
-            }
-        }
-        throw new JsonException("Internal Error");
-    }
-
-    private JsonObject readObject(JsonObjectBuilder builder) {
-        String key = null;
-        while(parser.hasNext()) {
-            JsonParser.Event e = parser .next();
-            switch (e) {
-                case START_ARRAY:
-                    JsonArray array = readArray(new JsonArrayBuilderImpl(bufferPool));
-                    builder.add(key, array);
-                    break;
-                case START_OBJECT:
-                    JsonObject object = readObject(new JsonObjectBuilderImpl(bufferPool));
-                    builder.add(key, object);
-                    break;
-                case KEY_NAME:
-                    key = parser.getString();
-                    break;
-                case VALUE_STRING:
-                    builder.add(key, parser.getString());
-                    break;
-                case VALUE_NUMBER:
-                    if (parser.isDefinitelyInt()) {
-                        builder.add(key, parser.getInt());
-                    } else {
-                        builder.add(key, parser.getBigDecimal());
-                    }
-                    break;
-                case VALUE_TRUE:
-                    builder.add(key, JsonValue.TRUE);
-                    break;
-                case VALUE_FALSE:
-                    builder.add(key, JsonValue.FALSE);
-                    break;
-                case VALUE_NULL:
-                    builder.addNull(key);
-                    break;
-                case END_OBJECT:
-                    return builder.build();
-                default:
-                    throw new JsonException("Internal Error");
-            }
-        }
-        throw new JsonException("Internal Error");
-    }
-
 }

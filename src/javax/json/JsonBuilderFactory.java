@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -40,6 +40,7 @@
 
 package javax.json;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -70,8 +71,6 @@ import java.util.Map;
  *
  * <p> All the methods in this class are safe for use by multiple concurrent
  * threads.
- *
- * @author Jitendra Kotamraju
  */
 public interface JsonBuilderFactory {
 
@@ -84,12 +83,65 @@ public interface JsonBuilderFactory {
     JsonObjectBuilder createObjectBuilder();
 
     /**
+     * Creates a {@code JsonObjectBuilder} instance, initialized with an object.
+     *
+     * @param object the initial object in the builder
+     * @return a JSON object builder
+     * @throws NullPointerException if specified object is {@code null}
+     *
+     * @since 1.1
+     */
+    default JsonObjectBuilder createObjectBuilder(JsonObject object) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a {@code JsonObjectBuilder} instance, initialized with the specified object.
+     *
+     * @param object the initial object in the builder
+     * @return a JSON object builder
+     * @throws NullPointerException if specified object is {@code null}
+     *
+     * @since 1.1
+     */
+    default JsonObjectBuilder createObjectBuilder(Map<String, Object> object) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Creates a {@code JsonArrayBuilder} instance that is used to build
      * {@link JsonArray}
      *
      * @return a JSON array builder
      */
     JsonArrayBuilder createArrayBuilder();
+
+    /**
+     * Creates a {@code JsonArrayBuilder} instance, initialized with an array.
+     *
+     * @param array the initial array in the builder
+     * @return a JSON array builder
+     * @throws NullPointerException if specified array is {@code null}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder createArrayBuilder(JsonArray array) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Creates a {@code JsonArrayBuilder} instance,
+     * initialized with the content of specified collection.
+     *
+     * @param collection the initial data for the builder
+     * @return a JSON array builder
+     * @throws NullPointerException if specified collection is {@code null}
+     *
+     * @since 1.1
+     */
+    default JsonArrayBuilder createArrayBuilder(Collection<?> collection) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns read-only map of supported provider specific configuration
