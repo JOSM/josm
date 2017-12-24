@@ -146,7 +146,7 @@ public class GpxData extends WithAttributes implements Data {
     }
 
     /**
-     * Get Stream<> of track segments as introduced in Java 8.
+     * Get stream of track segments.
      * @return {@code Stream<GPXTrack>}
      */
     private synchronized Stream<GpxTrackSegment> getTrackSegmentsStream() {
