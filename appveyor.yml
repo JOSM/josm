@@ -7,6 +7,13 @@ install:
   - cinst ant
   - refreshenv
 build_script:
-  - ant compile javadoc dist distmac distwin checkstyle pmd
+  - ant compile javadoc dist distmac checkstyle pmd
 test_script:
   - ant test
+artifacts:
+  - path: dist\josm-custom.*
+  - path: *-josm.xml
+  - path: javadoc
+    type: zip
+  - path: test\report
+    type: zip
