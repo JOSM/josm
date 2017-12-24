@@ -7,9 +7,16 @@ install:
   - cinst ant
   - refreshenv
 build_script:
-  - ant compile javadoc dist distmac checkstyle pmd
+  - ant compile javadoc dist distmac checkstyle pmd spotbugs
 test_script:
   - ant test
+after_test:
+  - ps: |
+        $wc = New-Object 'System.Net.WebClient'
+        Get-ChildItem . -Name -Recurse 'TEST-*.xml'  |
+        Foreach-Object {
+            $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $_))
+        }
 artifacts:
   - path: dist\josm-custom.*
   - path: checkstyle-josm.xml
@@ -19,3 +26,4 @@ artifacts:
     type: zip
   - path: test\report
     type: zip
+  - path: hs_err_pid*.log
