@@ -6,7 +6,7 @@ matrix:
   include:
     - os: linux
       dist: trusty
-      sudo: false
+      sudo: required
       jdk:
         - oraclejdk9
         - oraclejdk8
