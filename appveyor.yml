@@ -1,7 +1,9 @@
 version: '{build}'
+image: Visual Studio 2017
 install:
   - cinst ant
   - cinst jdk9
+  - refreshenv
 build_script:
   - ant compile javadoc dist distmac distwin checkstyle pmd
 test_script:
