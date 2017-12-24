@@ -12,7 +12,9 @@ test_script:
   - ant test
 artifacts:
   - path: dist\josm-custom.*
-  - path: *-josm.xml
+  - path: checkstyle-josm.xml
+  - path: pmd-josm.xml
+  - path: spotbugs-josm.xml
   - path: javadoc
     type: zip
   - path: test\report
