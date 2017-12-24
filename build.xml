@@ -886,7 +886,7 @@ Build-Date: ${build.tstamp}
       ** generate projection list.
     -->
     <target name="epsg" depends="epsg-compile">
-        <touch file="${epsg.output}"/>
+        <touch file="${epsg.output}" mkdirs="true"/>
         <java classname="BuildProjectionDefinitions" failonerror="true" fork="true">
             <sysproperty key="java.awt.headless" value="true"/>
             <classpath>
