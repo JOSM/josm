@@ -1,0 +1,15 @@
+language: java
+os:
+  - linux
+  - osx
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: false
+      jdk:
+        - oraclejdk9
+        - oraclejdk8
+        - openjdk8
+    - os: osx
+      osx_image: xcode9.2
