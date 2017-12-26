@@ -32,7 +32,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
-import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -85,7 +84,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 Main.getProjection().toCode(),
                 layer.getInfo().getName(),
                 null,
-                curOff.east(), curOff.north(), center.lon(), center.lat());
+                curOff, center);
         layer.getDisplaySettings().setOffsetBookmark(tempOffset);
         addListeners();
         showOffsetDialog(new ImageryOffsetDialog());
@@ -292,10 +291,10 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
                 // US locale to force decimal separator to be '.'
                 try (Formatter us = new Formatter(Locale.US)) {
-                    TileSourceDisplaySettings ds = layer.getDisplaySettings();
+                    EastNorth displacement = layer.getDisplaySettings().getDisplacement();
                     tOffset.setText(us.format(new StringBuilder()
                         .append("%1.").append(precision).append("f; %1.").append(precision).append('f').toString(),
-                        ds.getDx(), ds.getDy()).toString());
+                        displacement.east(), displacement.north()).toString());
                 }
             }
         }

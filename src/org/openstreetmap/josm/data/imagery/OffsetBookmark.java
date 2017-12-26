@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -39,6 +40,11 @@ public class OffsetBookmark {
     @StructEntry @WriteExplicitly private double dx, dy;
     @StructEntry private double center_lon, center_lat;
 
+    /**
+     * Test if an image is usable for the given imagery layer.
+     * @param layer The layer to use the image at
+     * @return <code>true</code> if it is usable on the projection of the layer and the imagery name matches.
+     */
     public boolean isUsable(ImageryLayer layer) {
         if (projection_code == null) return false;
         if (!Main.getProjection().toCode().equals(projection_code) && !hasCenter()) return false;
@@ -54,10 +60,45 @@ public class OffsetBookmark {
         // do nothing
     }
 
+    /**
+     * Create a new {@link OffsetBookmark} object using (0, 0) as center
+     * <p>
+     * The use of the {@link #OffsetBookmark(String, String, String, EastNorth, ILatLon)} constructor is preferred.
+     * @param projectionCode The projection for which this object was created
+     * @param imageryName The name of the imagery on the layer
+     * @param name The name of the new bookmark
+     * @param dx The x displacement
+     * @param dy The y displacement
+     */
     public OffsetBookmark(String projectionCode, String imageryName, String name, double dx, double dy) {
         this(projectionCode, imageryName, name, dx, dy, 0, 0);
     }
 
+    /**
+     * Create a new {@link OffsetBookmark} object
+     * @param projectionCode The projection for which this object was created
+     * @param imageryName The name of the imagery on the layer
+     * @param name The name of the new bookmark
+     * @param displacement The displacement in east/north space.
+     * @param center The point on earth that was used as reference to align the image.
+     * @since 13243
+     */
+    public OffsetBookmark(String projectionCode, String imageryName, String name, EastNorth displacement, ILatLon center) {
+        this(projectionCode, imageryName, name, displacement.east(), displacement.north(), center.lon(), center.lat());
+    }
+
+    /**
+     * Create a new {@link OffsetBookmark} by specifying all values.
+     * <p>
+     * The use of the {@link #OffsetBookmark(String, String, String, EastNorth, ILatLon)} constructor is preferred.
+     * @param projectionCode The projection for which this object was created
+     * @param imageryName The name of the imagery on the layer
+     * @param name The name of the new bookmark
+     * @param dx The x displacement
+     * @param dy The y displacement
+     * @param centerLon The point on earth that was used as reference to align the image.
+     * @param centerLat The point on earth that was used as reference to align the image.
+     */
     public OffsetBookmark(String projectionCode, String imageryName, String name, double dx, double dy, double centerLon, double centerLat) {
         this.projection_code = projectionCode;
         this.imagery_name = imageryName;
@@ -68,6 +109,10 @@ public class OffsetBookmark {
         this.center_lat = centerLat;
     }
 
+    /**
+     * Loads an old bookmark. For backward compatibility with settings. Do not use.
+     * @param list The settings that were read
+     */
     public OffsetBookmark(Collection<String> list) {
         List<String> array = new ArrayList<>(list);
         this.projection_code = array.get(0);
@@ -84,14 +129,26 @@ public class OffsetBookmark {
         }
     }
 
+    /**
+     * Get the projection code for which this bookmark was created.
+     * @return The projection.
+     */
     public String getProjectionCode() {
         return projection_code;
     }
 
+    /**
+     * Get the name of this bookmark. This name can e.g. be displayed in menus.
+     * @return The name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the name of the imagery for which this bookmark was created. It is used to match the bookmark to the right layers.
+     * @return The name
+     */
     public String getImageryName() {
         return imagery_name;
     }
@@ -148,23 +205,44 @@ public class OffsetBookmark {
         return center_lat != 0 || center_lon != 0;
     }
 
+    /**
+     * Set the projection code for which this bookmark was created
+     * @param projectionCode The projection
+     */
     public void setProjectionCode(String projectionCode) {
         this.projection_code = projectionCode;
     }
 
+    /**
+     * Set the name of the bookmark
+     * @param name The name
+     * @see #getName()
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Sets the name of the imagery
+     * @param imageryName The name
+     * @see #getImageryName()
+     */
     public void setImageryName(String imageryName) {
         this.imagery_name = imageryName;
     }
 
+    /**
+     * Update the displacement of this imagery.
+     * @param displacement The displacement
+     */
     public void setDisplacement(EastNorth displacement) {
         this.dx = displacement.east();
         this.dy = displacement.north();
     }
 
+    /**
+     * Load the global list of bookmarks from preferences.
+     */
     public static void loadBookmarks() {
         List<OffsetBookmark> bookmarks = StructUtils.getListOfStructs(
                 Config.getPref(), "imagery.offsetbookmarks", null, OffsetBookmark.class);
@@ -183,6 +261,9 @@ public class OffsetBookmark {
         }
     }
 
+    /**
+     * Stores the bookmakrs in the settings.
+     */
     public static void saveBookmarks() {
         StructUtils.putListOfStructs(Config.getPref(), "imagery.offsetbookmarks", allBookmarks, OffsetBookmark.class);
     }
@@ -237,6 +318,12 @@ public class OffsetBookmark {
         return allBookmarks.get(index);
     }
 
+    /**
+     * Gets a bookmark that is usable on the given layer by it's name.
+     * @param layer The layer to use the bookmark at
+     * @param name The name of the bookmark
+     * @return The bookmark if found, <code>null</code> if not.
+     */
     public static OffsetBookmark getBookmarkByName(ImageryLayer layer, String name) {
         for (OffsetBookmark b : allBookmarks) {
             if (b.isUsable(layer) && name.equals(b.name))
@@ -245,7 +332,12 @@ public class OffsetBookmark {
         return null;
     }
 
-    public static void bookmarkOffset(String name, AbstractTileSourceLayer layer) {
+    /**
+     * Add a bookmark for the displacement of that layer
+     * @param name The bookmark name
+     * @param layer The layer to store the bookmark for
+     */
+    public static void bookmarkOffset(String name, AbstractTileSourceLayer<?> layer) {
         LatLon center;
         if (MainApplication.isDisplayingMapView()) {
             center = Main.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter());
@@ -254,7 +346,7 @@ public class OffsetBookmark {
         }
         OffsetBookmark nb = new OffsetBookmark(
                 Main.getProjection().toCode(), layer.getInfo().getName(),
-                name, layer.getDisplaySettings().getDx(), layer.getDisplaySettings().getDy(), center.lon(), center.lat());
+                name, layer.getDisplaySettings().getDisplacement(), center);
         for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator(); it.hasNext();) {
             OffsetBookmark b = it.next();
             if (b.isUsable(layer) && name.equals(b.name)) {

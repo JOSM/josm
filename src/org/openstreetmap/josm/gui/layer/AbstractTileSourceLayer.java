@@ -659,7 +659,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
             break;
         default:
-            // trigger a redraw just to be sure.
+            // e.g. displacement
+            // trigger a redraw in every case
             invalidate();
         }
     }
@@ -1919,6 +1920,45 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         displaySettings.setOffsetBookmark(displaySettings.getOffsetBookmark());
         if (tileCache != null) {
             tileCache.clear();
+        }
+    }
+
+    @Override
+    protected List<OffsetMenuEntry> getOffsetMenuEntries() {
+        return OffsetBookmark.getBookmarks()
+            .stream()
+            .filter(b -> b.isUsable(this))
+            .map(OffsetMenuBookmarkEntry::new)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * An entry for a bookmark in the offset menu.
+     * @author Michael Zangl
+     */
+    private class OffsetMenuBookmarkEntry implements OffsetMenuEntry {
+        private final OffsetBookmark bookmark;
+
+        OffsetMenuBookmarkEntry(OffsetBookmark bookmark) {
+            this.bookmark = bookmark;
+
+        }
+
+        @Override
+        public String getLabel() {
+            return bookmark.getName();
+        }
+
+        @Override
+        public boolean isActive() {
+            EastNorth offset = bookmark.getDisplacement(Main.getProjection());
+            EastNorth active = getDisplaySettings().getDisplacement();
+            return Utils.equalsEpsilon(offset.east(), active.east()) && Utils.equalsEpsilon(offset.north(), active.north());
+        }
+
+        @Override
+        public void actionPerformed() {
+            getDisplaySettings().setOffsetBookmark(bookmark);
         }
     }
 }
