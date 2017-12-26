@@ -170,18 +170,20 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
      * Gets the displacement in x (east) direction
      * @return The displacement.
      * @since 10571
+     * @see #getDisplacement()
      */
     public double getDx() {
-        return displacement.east();
+        return getDisplacement().east();
     }
 
     /**
      * Gets the displacement in y (north) direction
      * @return The displacement.
      * @since 10571
+     * @see #getDisplacement()
      */
     public double getDy() {
-        return displacement.north();
+        return getDisplacement().north();
     }
 
     /**
@@ -194,7 +196,7 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     }
 
     /**
-     * Sets an offset bookmark to use.
+     * Sets an offset bookmark to use. Loads the displacement from the bookmark.
      *
      * @param offsetBookmark the offset bookmark, may be null
      */

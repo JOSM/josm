@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -128,8 +129,9 @@ public class SessionReaderTest {
         assertTrue(layers.get(0) instanceof ImageryLayer);
         final AbstractTileSourceLayer<?> image = (AbstractTileSourceLayer<?>) layers.get(0);
         assertEquals("Bing aerial imagery", image.getName());
-        assertEquals(-2.671667778864503, image.getDisplaySettings().getDx(), 1e-9);
-        assertEquals(13.89643478114158, image.getDisplaySettings().getDy(), 1e-9);
+        EastNorth displacement = image.getDisplaySettings().getDisplacement();
+        assertEquals(-2.671667778864503, displacement.east(), 1e-9);
+        assertEquals(13.89643478114158, displacement.north(), 1e-9);
     }
 
     /**

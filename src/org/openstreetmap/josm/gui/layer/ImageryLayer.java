@@ -30,7 +30,6 @@ import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -44,7 +43,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Abstract base class for background imagery layers ({@link WMSLayer}, {@link TMSLayer}, {@link WMTSLayer}).
@@ -53,6 +51,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class ImageryLayer extends Layer {
 
+    /**
+     * The default value for the sharpen filter for each imagery layer.
+     */
     public static final IntegerProperty PROP_SHARPEN_LEVEL = new IntegerProperty("imagery.sharpen_level", 0);
 
     private final List<ImageProcessor> imageProcessors = new ArrayList<>();
@@ -186,6 +187,11 @@ public abstract class ImageryLayer extends Layer {
         return ret;
     }
 
+    /**
+     * Create a new imagery layer
+     * @param info The imagery info to use as base
+     * @return The created layer
+     */
     public static ImageryLayer create(ImageryInfo info) {
         switch(info.getImageryType()) {
         case WMS:
@@ -202,18 +208,18 @@ public abstract class ImageryLayer extends Layer {
     }
 
     class ApplyOffsetAction extends AbstractAction {
-        private final transient OffsetBookmark b;
+        private final transient OffsetMenuEntry menuEntry;
 
-        ApplyOffsetAction(OffsetBookmark b) {
-            super(b.getName());
-            this.b = b;
+        ApplyOffsetAction(OffsetMenuEntry menuEntry) {
+            super(menuEntry.getLabel());
+            this.menuEntry = menuEntry;
         }
 
         @Override
         public void actionPerformed(ActionEvent ev) {
-            setOffset(b);
+            menuEntry.actionPerformed();
+            //TODO: Use some form of listeners for this.
             MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
-            MainApplication.getMap().repaint();
         }
     }
 
@@ -234,33 +240,41 @@ public abstract class ImageryLayer extends Layer {
         }
     }
 
+    /**
+     * Create the menu item that should be added to the offset menu.
+     * It may have a sub menu of e.g. bookmarks added to it.
+     * @return The menu item to add to the imagery menu.
+     */
     public JMenuItem getOffsetMenuItem() {
         JMenu subMenu = new JMenu(trc("layer", "Offset"));
         subMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
         return (JMenuItem) getOffsetMenuItem(subMenu);
     }
 
+    /**
+     * Create the submenu or the menu item to set the offset of the layer.
+     *
+     * If only one menu item for this layer exists, it is returned by this method.
+     *
+     * If there are multiple, this method appends them to the subMenu and then returns the reference to the subMenu.
+     * @param subMenu The subMenu to use
+     * @return A single menu item to adjust the layer or the passed subMenu to which the menu items were appended.
+     */
     public JComponent getOffsetMenuItem(JComponent subMenu) {
         JMenuItem adjustMenuItem = new JMenuItem(getAdjustAction());
-        List<OffsetBookmark> allBookmarks = OffsetBookmark.getBookmarks();
-        if (allBookmarks.isEmpty()) return adjustMenuItem;
+        List<OffsetMenuEntry> usableBookmarks = getOffsetMenuEntries();
+        if (usableBookmarks.isEmpty()) {
+            return adjustMenuItem;
+        }
 
         subMenu.add(adjustMenuItem);
         subMenu.add(new JSeparator());
-        boolean hasBookmarks = false;
         int menuItemHeight = 0;
-        for (OffsetBookmark b : allBookmarks) {
-            if (!b.isUsable(this)) {
-                continue;
-            }
+        for (OffsetMenuEntry b : usableBookmarks) {
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(new ApplyOffsetAction(b));
-            EastNorth offset = b.getDisplacement(Main.getProjection());
-            if (Utils.equalsEpsilon(offset.east(), getDx()) && Utils.equalsEpsilon(offset.north(), getDy())) {
-                item.setSelected(true);
-            }
+            item.setSelected(b.isActive());
             subMenu.add(item);
             menuItemHeight = item.getPreferredSize().height;
-            hasBookmarks = true;
         }
         if (menuItemHeight > 0) {
             if (subMenu instanceof JMenu) {
@@ -269,10 +283,12 @@ public abstract class ImageryLayer extends Layer {
                 MenuScroller.setScrollerFor((JPopupMenu) subMenu);
             }
         }
-        return hasBookmarks ? subMenu : adjustMenuItem;
+        return subMenu;
     }
 
     protected abstract Action getAdjustAction();
+
+    protected abstract List<OffsetMenuEntry> getOffsetMenuEntries();
 
     /**
      * Gets the settings for the filter that is applied to this layer.
@@ -337,6 +353,31 @@ public abstract class ImageryLayer extends Layer {
             img = processor.process(img);
         }
         return img;
+    }
+
+    /**
+     * An additional menu entry in the imagery offset menu.
+     * @author Michael Zangl
+     * @since 13243
+     * @see ImageryLayer#getOffsetMenuEntries()
+     */
+    public static interface OffsetMenuEntry {
+        /**
+         * Get the label to use for this menu item
+         * @return The label to display in the menu.
+         */
+        String getLabel();
+
+        /**
+         * Test whether this bookmark is currently active
+         * @return <code>true</code> if it is active
+         */
+        boolean isActive();
+
+        /**
+         * Load this bookmark
+         */
+        void actionPerformed();
     }
 
     @Override
