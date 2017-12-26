@@ -321,7 +321,7 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc,compile-cots,compile-jmapviewer">
         <!-- JOSM -->
         <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}"
-            excludes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**,gnu/**"
+            excludes="com/**,javax/**,gnu/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerclasspath>
                 <pathelement location="${error_prone_ant.jar}"/>
