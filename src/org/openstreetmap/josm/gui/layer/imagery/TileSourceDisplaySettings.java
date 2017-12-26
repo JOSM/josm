@@ -169,8 +169,8 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     /**
      * Gets the displacement in x (east) direction
      * @return The displacement.
-     * @since 10571
      * @see #getDisplacement()
+     * @since 10571
      */
     public double getDx() {
         return getDisplacement().east();
@@ -179,8 +179,8 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     /**
      * Gets the displacement in y (north) direction
      * @return The displacement.
-     * @since 10571
      * @see #getDisplacement()
+     * @since 10571
      */
     public double getDy() {
         return getDisplacement().north();

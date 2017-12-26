@@ -207,7 +207,7 @@ public abstract class ImageryLayer extends Layer {
         }
     }
 
-    class ApplyOffsetAction extends AbstractAction {
+    private static class ApplyOffsetAction extends AbstractAction {
         private final transient OffsetMenuEntry menuEntry;
 
         ApplyOffsetAction(OffsetMenuEntry menuEntry) {
@@ -358,10 +358,10 @@ public abstract class ImageryLayer extends Layer {
     /**
      * An additional menu entry in the imagery offset menu.
      * @author Michael Zangl
-     * @since 13243
      * @see ImageryLayer#getOffsetMenuEntries()
+     * @since 13243
      */
-    public static interface OffsetMenuEntry {
+    public interface OffsetMenuEntry {
         /**
          * Get the label to use for this menu item
          * @return The label to display in the menu.
