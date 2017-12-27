@@ -75,7 +75,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         // change toolbar icon from if specified
         String icon = info.getIcon();
         if (icon != null) {
-            new ImageProvider(icon).setOptional(true).getResourceAsync().thenAccept(result -> {
+            new ImageProvider(icon).setOptional(true).getResourceAsync().thenAcceptAsync(result -> {
                 if (result != null) {
                     GuiHelper.runInEDT(() -> result.attachImageIcon(this));
                 }

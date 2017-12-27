@@ -630,6 +630,15 @@ public class ImageProvider {
     }
 
     /**
+     * Determines if this icon is located on a remote location (http, https, wiki).
+     * @return {@code true} if this icon is located on a remote location (http, https, wiki)
+     * @since 13250
+     */
+    public boolean isRemote() {
+        return name.startsWith(HTTP_PROTOCOL) || name.startsWith(HTTPS_PROTOCOL) || name.startsWith(WIKI_PROTOCOL);
+    }
+
+    /**
      * Execute the image request and scale result.
      * @return the requested image or null if the request failed
      */
@@ -654,7 +663,7 @@ public class ImageProvider {
      * @since 10714
      */
     public CompletableFuture<ImageIcon> getAsync() {
-        return name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)
+        return isRemote()
                 ? CompletableFuture.supplyAsync(this::get, IMAGE_FETCHER)
                 : CompletableFuture.completedFuture(get());
     }
@@ -698,7 +707,7 @@ public class ImageProvider {
      * @since 10714
      */
     public CompletableFuture<ImageResource> getResourceAsync() {
-        return name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)
+        return isRemote()
                 ? CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER)
                 : CompletableFuture.completedFuture(getResource());
     }

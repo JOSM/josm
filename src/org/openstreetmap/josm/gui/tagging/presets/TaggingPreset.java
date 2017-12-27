@@ -216,7 +216,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         imgProv.setId("presets");
         imgProv.setArchive(arch);
         imgProv.setOptional(true);
-        imgProv.getResourceAsync().thenAccept(result -> {
+        imgProv.getResourceAsync().thenAcceptAsync(result -> {
             if (result != null) {
                 GuiHelper.runInEDT(() -> result.attachImageIcon(this));
             } else {
