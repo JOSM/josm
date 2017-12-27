@@ -116,13 +116,16 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
             new LZ77Compressor.Callback() {
                 @Override
                 public void accept(LZ77Compressor.Block block) throws IOException {
-                    //System.err.println(block);
-                    if (block instanceof LZ77Compressor.LiteralBlock) {
+                    switch (block.getType()) {
+                    case LITERAL:
                         addLiteralBlock((LZ77Compressor.LiteralBlock) block);
-                    } else if (block instanceof LZ77Compressor.BackReference) {
+                        break;
+                    case BACK_REFERENCE:
                         addBackReference((LZ77Compressor.BackReference) block);
-                    } else if (block instanceof LZ77Compressor.EOD) {
+                        break;
+                    case EOD:
                         writeFinalLiteralBlock();
+                        break;
                     }
                 }
             });

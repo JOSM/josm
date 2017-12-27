@@ -102,11 +102,15 @@ public class SnappyCompressorOutputStream extends CompressorOutputStream {
         compressor = new LZ77Compressor(params, new LZ77Compressor.Callback() {
                 @Override
                 public void accept(LZ77Compressor.Block block) throws IOException {
-                    //System.err.println(block);
-                    if (block instanceof LZ77Compressor.LiteralBlock) {
+                    switch (block.getType()) {
+                    case LITERAL:
                         writeLiteralBlock((LZ77Compressor.LiteralBlock) block);
-                    } else if (block instanceof LZ77Compressor.BackReference) {
+                        break;
+                    case BACK_REFERENCE:
                         writeBackReference((LZ77Compressor.BackReference) block);
+                        break;
+                    case EOD:
+                        break;
                     }
                 }
             });

@@ -84,10 +84,15 @@ import java.util.Arrays;
  */
 public class LZ77Compressor {
 
-    /**
-     * Base class representing things the compressor may emit.
-     */
-    public static abstract class Block { }
+    /** Base class representing blocks the compressor may emit. */
+    public static abstract class Block {
+        /** Enumeration of the block types the compressor may emit. */
+        public static enum BlockType {
+            LITERAL, BACK_REFERENCE, EOD
+        }
+        abstract public BlockType getType();
+    }
+
     /**
      * Represents a literal block of data.
      *
@@ -128,12 +133,16 @@ public class LZ77Compressor {
         public int getLength() {
             return length;
         }
-
+        @Override
+        public BlockType getType() {
+            return BlockType.LITERAL;
+        }
         @Override
         public String toString() {
             return "LiteralBlock starting at " + offset + " with length " + length;
         }
     }
+
     /**
      * Represents a back-reference.
      */
@@ -157,18 +166,22 @@ public class LZ77Compressor {
         public int getLength() {
             return length;
         }
-
+        @Override
+        public BlockType getType() {
+            return BlockType.BACK_REFERENCE;
+        }
         @Override
         public String toString() {
             return "BackReference with offset " + offset + " and length " + length;
         }
     }
-    /**
-     * A simple "we are done" marker.
-     */
-    public static final class EOD extends Block { }
 
-    private static final EOD THE_EOD = new EOD();
+    /** A simple "we are done" marker. */
+    private static final Block THE_EOD = new Block() {
+        @Override
+        public BlockType getType() {
+            return BlockType.EOD;
+        } };
 
     /**
      * Callback invoked while the compressor processes data.
