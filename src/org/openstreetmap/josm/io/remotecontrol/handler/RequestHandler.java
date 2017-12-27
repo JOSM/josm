@@ -37,7 +37,7 @@ public abstract class RequestHandler {
     public static final boolean loadInNewLayerDefault = false;
 
     /** past confirmations */
-    protected static PermissionCache PERMISSIONS = new PermissionCache();
+    protected static final PermissionCache PERMISSIONS = new PermissionCache();
 
     /** The GET request arguments */
     protected Map<String, String> args;
