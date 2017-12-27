@@ -465,25 +465,6 @@ public abstract class Main {
     }
 
     /**
-     * Listener for window switch events.
-     *
-     * These are events, when the user activates a window of another application
-     * or comes back to JOSM. Window switches from one JOSM window to another
-     * are not reported.
-     */
-    public interface WindowSwitchListener {
-        /**
-         * Called when the user activates a window of another application.
-         */
-        void toOtherApplication();
-
-        /**
-         * Called when the user comes from a window of another application back to JOSM.
-         */
-        void fromOtherApplication();
-    }
-
-    /**
      * Adds a new network error that occur to give a hint about broken Internet connection.
      * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
      *
