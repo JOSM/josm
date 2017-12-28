@@ -455,11 +455,14 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     /**
-     * Queries whether the GPS data changed.
+     * Queries whether the GPS data changed. The flag value from the temporary
+     * copy is returned if that copy exists.
      * @return {@code true} if GPS data changed, {@code false} otherwise
      * @since 6392
      */
     public boolean hasNewGpsData() {
+        if (tmp != null)
+            return tmp.isNewGpsData;
         return isNewGpsData;
     }
 
