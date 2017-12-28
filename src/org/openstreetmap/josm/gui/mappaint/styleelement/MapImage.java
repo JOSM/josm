@@ -138,7 +138,7 @@ public class MapImage {
                 .setWidth(width)
                 .setHeight(height)
                 .setOptional(true)
-                .getAsync().thenAccept(result -> {
+                .getAsync().thenAcceptAsync(result -> {
                     synchronized (this) {
                         if (result == null) {
                             source.logWarning(tr("Failed to locate image ''{0}''", name));
