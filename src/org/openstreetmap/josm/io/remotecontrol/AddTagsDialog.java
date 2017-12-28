@@ -35,7 +35,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Dialog to add tags as part of the remotecontrol.
@@ -271,7 +270,7 @@ public class AddTagsDialog extends ExtendedDialog {
     /**
      * parse addtags parameters Example URL (part):
      * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
-     * @param args request arguments
+     * @param args request arguments (URL encoding already removed)
      * @param sender is a string for skipping confirmations. Use empty string for always confirmed adding.
      * @param primitives OSM objects that will be modified
      */
@@ -279,7 +278,7 @@ public class AddTagsDialog extends ExtendedDialog {
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(() -> {
                 Set<String> tagSet = new HashSet<>();
-                for (String tag1 : Utils.decodeUrl(args.get("addtags")).split("\\|")) {
+                for (String tag1 : args.get("addtags").split("\\|")) {
                     if (!tag1.trim().isEmpty() && tag1.contains("=")) {
                         tagSet.add(tag1.trim());
                     }
