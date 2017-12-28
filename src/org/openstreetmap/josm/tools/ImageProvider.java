@@ -45,6 +45,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -658,14 +659,15 @@ public class ImageProvider {
      * Load the image in a background thread.
      *
      * This method returns immediately and runs the image request asynchronously.
+     * @param action the action that will deal with the image
      *
      * @return the future of the requested image
-     * @since 10714
+     * @since 13252
      */
-    public CompletableFuture<ImageIcon> getAsync() {
+    public CompletableFuture<Void> getAsync(Consumer<? super ImageIcon> action) {
         return isRemote()
-                ? CompletableFuture.supplyAsync(this::get, IMAGE_FETCHER)
-                : CompletableFuture.completedFuture(get());
+                ? CompletableFuture.supplyAsync(this::get, IMAGE_FETCHER).thenAcceptAsync(action)
+                : CompletableFuture.completedFuture(get()).thenAccept(action);
     }
 
     /**
@@ -702,14 +704,15 @@ public class ImageProvider {
      * Load the image in a background thread.
      *
      * This method returns immediately and runs the image request asynchronously.
+     * @param action the action that will deal with the image
      *
      * @return the future of the requested image
-     * @since 10714
+     * @since 13252
      */
-    public CompletableFuture<ImageResource> getResourceAsync() {
+    public CompletableFuture<Void> getResourceAsync(Consumer<? super ImageResource> action) {
         return isRemote()
-                ? CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER)
-                : CompletableFuture.completedFuture(getResource());
+                ? CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER).thenAcceptAsync(action)
+                : CompletableFuture.completedFuture(getResource()).thenAccept(action);
     }
 
     /**
