@@ -1039,13 +1039,13 @@ way[prop("trackLeft","core_cycleway")]::core_cycleway2 {
     modifier: true;
 }
     /* render opposite */
-way[cycleway=opposite]::core_cycleway {
-    object-z-index: 1;
+way[cycleway=opposite][oneway][oneway!=no]::core_cycleway {
+    z-index: 1;
     width: +0;
     color: bicycle#b100ff;
     dashes: 4,10;
 }
-node[cycleway=lane], node[cycleway=opposite_lane],
+node[cycleway=lane ], node[cycleway=opposite_lane ],
 node[cycleway=track], node[cycleway=opposite_track],
 node[cycleway=opposite] {
     icon-image: "presets/misc/deprecated.svg";
