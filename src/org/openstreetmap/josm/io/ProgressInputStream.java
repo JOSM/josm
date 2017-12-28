@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 import java.util.Optional;
 
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -34,35 +33,6 @@ public class ProgressInputStream extends InputStream {
         this.updater = new StreamProgressUpdater(size,
                 Optional.ofNullable(progressMonitor).orElse(NullProgressMonitor.INSTANCE), tr("Downloading data..."));
         this.in = in;
-    }
-
-    /**
-     * Constructs a new {@code ProgressInputStream}.
-     *
-     * Will call {@link URLConnection#getInputStream()} to obtain the stream to monitor.
-     *
-     * @param con the connection to monitor
-     * @param progressMonitor the monitor to report to
-     * @throws OsmTransferException if any I/O error occurs
-     * @deprecated use {@link org.openstreetmap.josm.tools.HttpClient.Response#getContent}
-     */
-    @Deprecated
-    public ProgressInputStream(URLConnection con, ProgressMonitor progressMonitor) throws OsmTransferException {
-        if (progressMonitor == null) {
-            progressMonitor = NullProgressMonitor.INSTANCE;
-        }
-        progressMonitor.beginTask(tr("Contacting OSM Server..."), 1);
-        progressMonitor.indeterminateSubTask(null);
-
-        try {
-            this.in = con.getInputStream();
-            this.updater = new StreamProgressUpdater(con.getContentLength(), progressMonitor, tr("Downloading data..."));
-        } catch (IOException e) {
-            progressMonitor.finishTask();
-            if (con.getHeaderField("Error") != null)
-                throw new OsmTransferException(tr(con.getHeaderField("Error")), e);
-            throw new OsmTransferException(e);
-        }
     }
 
     @Override
