@@ -415,7 +415,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         ss.mapCSSSearch = mapCSSSearch.isSelected();
                         SearchCompiler.compile(ss);
                         super.buttonAction(buttonIndex, evt);
-                    } catch (SearchParseError e) {
+                    } catch (SearchParseError | MapCSSException e) {
                         Logging.debug(e);
                         JOptionPane.showMessageDialog(
                                 Main.parent,
