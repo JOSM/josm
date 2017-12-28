@@ -243,7 +243,7 @@ public class GpxData extends WithAttributes implements Data {
             .collect(Collectors.toCollection(ArrayList<GpxTrack>::new));
 
         clearTracks();
-        trks.stream().forEachOrdered(trk -> addTrack(trk));
+        trks.stream().forEachOrdered(this::addTrack);
     }
 
     /**
