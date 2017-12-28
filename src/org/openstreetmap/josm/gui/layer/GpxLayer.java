@@ -238,9 +238,9 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
                 new SplitTrackSegementsToTracksAction(this),
                 new SplitTracksToLayersAction(this));
 
-        if (isExpertMode && expert.stream().anyMatch(t -> t.isEnabled())) {
+        if (isExpertMode && expert.stream().anyMatch(Action::isEnabled)) {
             entries.add(SeparatorLayerAction.INSTANCE);
-            expert.stream().filter(t -> t.isEnabled()).forEach(t -> entries.add(t));
+            expert.stream().filter(Action::isEnabled).forEach(entries::add);
         }
 
         entries.add(SeparatorLayerAction.INSTANCE);

@@ -61,7 +61,7 @@ public class LoadAndZoomHandler extends RequestHandler {
     // Optional argument 'select'
     private final Set<SimplePrimitiveId> toSelect = new HashSet<>();
 
-    private Boolean isKeepingCurrentSelection = false;
+    private boolean isKeepingCurrentSelection;
 
     @Override
     public String getPermissionMessage() {
