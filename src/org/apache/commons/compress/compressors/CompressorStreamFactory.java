@@ -56,6 +56,7 @@ import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 import org.apache.commons.compress.compressors.xz.XZUtils;
 import org.apache.commons.compress.compressors.z.ZCompressorInputStream;
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream;
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream;
 import org.apache.commons.compress.compressors.zstandard.ZstdUtils;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -198,7 +199,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      *
      * @since 1.16
      */
-    public static final String ZSTANDARD = "zst";
+    public static final String ZSTANDARD = "zstd";
 
     /**
      * Constructs a new sorted map from input stream provider names to provider
@@ -525,7 +526,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      *            of the compressor, i.e. {@value #GZIP}, {@value #BZIP2},
      *            {@value #XZ}, {@value #LZMA}, {@value #PACK200},
      *            {@value #SNAPPY_RAW}, {@value #SNAPPY_FRAMED}, {@value #Z},
-     *            {@value #LZ4_BLOCK}, {@value #LZ4_FRAMED}
+     *            {@value #LZ4_BLOCK}, {@value #LZ4_FRAMED}, {@value #ZSTANDARD}
      *            or {@value #DEFLATE}
      * @param in
      *            the input stream
@@ -633,7 +634,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      * @param name
      *            the compressor name, i.e. {@value #GZIP}, {@value #BZIP2},
      *            {@value #XZ}, {@value #PACK200}, {@value #SNAPPY_FRAMED},
-     *            {@value #LZ4_BLOCK}, {@value #LZ4_FRAMED}
+     *            {@value #LZ4_BLOCK}, {@value #LZ4_FRAMED}, {@value #ZSTANDARD}
      *            or {@value #DEFLATE}
      * @param out
      *            the output stream
@@ -688,6 +689,12 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
                 return new FramedLZ4CompressorOutputStream(out);
             }
 
+            if (ZSTANDARD.equalsIgnoreCase(name)) {
+                if (!ZstdUtils.isZstdCompressionAvailable()) {
+                    throw new CompressorException("Zstandard compression is not available.");
+                }
+                return new ZstdCompressorOutputStream(out);
+            }
         } catch (final IOException e) {
             throw new CompressorException("Could not create CompressorOutputStream", e);
         }
@@ -731,7 +738,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     @Override
     public Set<String> getOutputStreamCompressorNames() {
-        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_FRAMED, LZ4_BLOCK, LZ4_FRAMED);
+        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_FRAMED, LZ4_BLOCK, LZ4_FRAMED, ZSTANDARD);
     }
 
     /**
