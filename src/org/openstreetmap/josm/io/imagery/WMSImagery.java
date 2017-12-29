@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io.imagery;
 import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,6 +24,11 @@ import java.util.stream.StreamSupport;
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -228,12 +234,10 @@ public class WMSImagery {
         }
 
         final Response response = HttpClient.create(getCapabilitiesUrl).connect();
-        final String incomingData = response.fetchContent();
-        Logging.debug("Server response to Capabilities request:");
-        Logging.debug(incomingData);
+        String incomingData = null;
 
         if (response.getResponseCode() >= 400) {
-            throw new WMSGetCapabilitiesException(response.getResponseMessage(), incomingData);
+            throw new WMSGetCapabilitiesException(response.getResponseMessage(), response.fetchContent());
         }
 
         try {
@@ -242,8 +246,18 @@ public class WMSImagery {
                 Logging.info("Ignoring DTD " + publicId + ", " + systemId);
                 return new InputSource(new StringReader(""));
             });
-            Document document = builder.parse(new InputSource(new StringReader(incomingData)));
+            Document document = builder.parse(response.getContent());
             Element root = document.getDocumentElement();
+
+            try {
+                StringWriter writer = new StringWriter();
+                TransformerFactory.newInstance().newTransformer().transform(new DOMSource(document), new StreamResult(writer));
+                incomingData = writer.getBuffer().toString();
+                Logging.debug("Server response to Capabilities request:");
+                Logging.debug(incomingData);
+            } catch (TransformerFactoryConfigurationError | TransformerException e) {
+                Logging.warn(e);
+            }
 
             // Check if the request resulted in ServiceException
             if ("ServiceException".equals(root.getTagName())) {
