@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -277,7 +278,7 @@ public class AddTagsDialog extends ExtendedDialog {
     public static void addTags(final Map<String, String> args, final String sender, final Collection<? extends OsmPrimitive> primitives) {
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(() -> {
-                Set<String> tagSet = new HashSet<>();
+                Set<String> tagSet = new LinkedHashSet<>(); // preserve order, see #15704
                 for (String tag1 : args.get("addtags").split("\\|")) {
                     if (!tag1.trim().isEmpty() && tag1.contains("=")) {
                         tagSet.add(tag1.trim());
