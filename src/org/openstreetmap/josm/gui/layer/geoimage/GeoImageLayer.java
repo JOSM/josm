@@ -1030,7 +1030,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
         MapFrame map = MainApplication.getMap();
         if (map.getToggleDialog(ImageViewerDialog.class) == null) {
-            ImageViewerDialog.newInstance();
             map.addToggleDialog(ImageViewerDialog.getInstance());
         }
     }

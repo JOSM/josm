@@ -59,17 +59,13 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private boolean collapseButtonClicked;
 
-    static void newInstance() {
-        dialog = new ImageViewerDialog();
-    }
-
     /**
      * Replies the unique instance of this dialog
      * @return the unique instance
      */
     public static ImageViewerDialog getInstance() {
         if (dialog == null)
-            throw new AssertionError("a new instance needs to be created first");
+            dialog = new ImageViewerDialog();
         return dialog;
     }
 
