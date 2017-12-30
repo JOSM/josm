@@ -83,6 +83,8 @@ public final class Logging {
         stdout.setLevel(Level.ALL);
 
         LOGGER.addHandler(WARNINGS);
+        // Set log level to info, otherwise the first ListenerList created will be for debugging purposes and create memory leaks
+        Logging.setLogLevel(Logging.LEVEL_INFO);
     }
 
     private Logging() {
