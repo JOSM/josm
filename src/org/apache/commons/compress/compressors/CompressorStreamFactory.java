@@ -201,6 +201,14 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      */
     public static final String ZSTANDARD = "zstd";
 
+    private static final String YOU_NEED_BROTLI_DEC = youNeed("Google Brotli Dec", "https://github.com/google/brotli/");
+    private static final String YOU_NEED_XZ_JAVA = youNeed("XZ for Java", "https://tukaani.org/xz/java.html");
+    private static final String YOU_NEED_ZSTD_JNI = youNeed("Zstd JNI", "https://github.com/luben/zstd-jni");
+
+    private static String youNeed(String name, String url) {
+        return " In addition to Apache Commons Compress you need the " + name + " library - see " + url;
+    }
+
     /**
      * Constructs a new sorted map from input stream provider names to provider
      * objects.
@@ -562,28 +570,28 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
             if (BROTLI.equalsIgnoreCase(name)) {
                 if (!BrotliUtils.isBrotliCompressionAvailable()) {
-                    throw new CompressorException("Brotli compression is not available.");
+                    throw new CompressorException("Brotli compression is not available." + YOU_NEED_BROTLI_DEC);
                 }
                 return new BrotliCompressorInputStream(in);
             }
 
             if (XZ.equalsIgnoreCase(name)) {
                 if (!XZUtils.isXZCompressionAvailable()) {
-                    throw new CompressorException("XZ compression is not available.");
+                    throw new CompressorException("XZ compression is not available." + YOU_NEED_XZ_JAVA);
                 }
                 return new XZCompressorInputStream(in, actualDecompressConcatenated, memoryLimitInKb);
             }
 
             if (ZSTANDARD.equalsIgnoreCase(name)) {
                 if (!ZstdUtils.isZstdCompressionAvailable()) {
-                    throw new CompressorException("Zstandard compression is not available.");
+                    throw new CompressorException("Zstandard compression is not available." + YOU_NEED_ZSTD_JNI);
                 }
                 return new ZstdCompressorInputStream(in);
             }
 
             if (LZMA.equalsIgnoreCase(name)) {
                 if (!LZMAUtils.isLZMACompressionAvailable()) {
-                    throw new CompressorException("LZMA compression is not available");
+                    throw new CompressorException("LZMA compression is not available" + YOU_NEED_XZ_JAVA);
                 }
                 return new LZMACompressorInputStream(in, memoryLimitInKb);
             }
@@ -690,9 +698,6 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
             }
 
             if (ZSTANDARD.equalsIgnoreCase(name)) {
-                if (!ZstdUtils.isZstdCompressionAvailable()) {
-                    throw new CompressorException("Zstandard compression is not available.");
-                }
                 return new ZstdCompressorOutputStream(out);
             }
         } catch (final IOException e) {
