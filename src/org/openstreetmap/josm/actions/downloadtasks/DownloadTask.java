@@ -127,4 +127,11 @@ public interface DownloadTask {
      * @since 5691
      */
     String getConfirmationMessage(URL url);
+
+    /**
+     * Sets whether the map view will zoom to download area after download
+     * @param zoomAfterDownload if true, the map view will zoom to download area after download
+     * @since 13261
+     */
+    void setZoomAfterDownload(boolean zoomAfterDownload);
 }

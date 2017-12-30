@@ -78,6 +78,11 @@ public class PostDownloadHandlerTest {
             public String acceptsDocumentationSummary() {
                 return null;
             }
+
+            @Override
+            public void setZoomAfterDownload(boolean zoomAfterDownload) {
+                // Do nothing
+            }
         };
     }
 

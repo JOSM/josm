@@ -78,11 +78,7 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
         return downloadedData;
     }
 
-    /**
-     * Sets whether the map view will zoom to download area after download
-     * @param zoomAfterDownload if true, the map view will zoom to download area after download
-     * @since 11658
-     */
+    @Override
     public final void setZoomAfterDownload(boolean zoomAfterDownload) {
         this.zoomAfterDownload = zoomAfterDownload;
     }
