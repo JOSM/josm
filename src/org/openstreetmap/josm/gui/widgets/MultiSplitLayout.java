@@ -244,6 +244,8 @@ public class MultiSplitLayout implements LayoutManager {
         String name = child.getName();
         if (name != null) {
             childMap.remove(name);
+        } else {
+            childMap.values().removeIf(child::equals);
         }
     }
 
