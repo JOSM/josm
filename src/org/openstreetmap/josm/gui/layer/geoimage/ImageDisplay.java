@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -42,7 +43,7 @@ import org.openstreetmap.josm.tools.Logging;
  *
  * Offers basic mouse interaction (zoom, drag) and on-screen text.
  */
-public class ImageDisplay extends JComponent implements PreferenceChangedListener {
+public class ImageDisplay extends JComponent implements Destroyable, PreferenceChangedListener {
 
     /** The file that is currently displayed */
     private ImageEntry entry;
@@ -62,6 +63,8 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
 
     /** The tracker to load the images */
     private final MediaTracker tracker = new MediaTracker(this);
+
+    private final ImgDisplayMouseListener mouseListener = new ImgDisplayMouseListener();
 
     private String osdText;
 
@@ -662,12 +665,19 @@ public class ImageDisplay extends JComponent implements PreferenceChangedListene
      * Constructs a new {@code ImageDisplay}.
      */
     public ImageDisplay() {
-        ImgDisplayMouseListener mouseListener = new ImgDisplayMouseListener();
         addMouseListener(mouseListener);
         addMouseWheelListener(mouseListener);
         addMouseMotionListener(mouseListener);
         Config.getPref().addPreferenceChangeListener(this);
         preferenceChanged(null);
+    }
+
+    @Override
+    public void destroy() {
+        removeMouseListener(mouseListener);
+        removeMouseWheelListener(mouseListener);
+        removeMouseMotionListener(mouseListener);
+        Config.getPref().removePreferenceChangeListener(this);
     }
 
     /**

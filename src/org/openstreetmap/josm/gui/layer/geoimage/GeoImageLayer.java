@@ -62,10 +62,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -101,6 +98,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     private MouseAdapter mouseAdapter;
     private MouseMotionAdapter mouseMotionAdapter;
     private MapModeChangeListener mapModeListener;
+    private ActiveLayerChangeListener activeLayerChangeListener;
 
     /** Mouse position where the last image was selected. */
     private Point lastSelPos;
@@ -991,42 +989,13 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         MapFrame.addMapModeChangeListener(mapModeListener);
         mapModeListener.mapModeChange(null, MainApplication.getMap().mapMode);
 
-        MainApplication.getLayerManager().addActiveLayerChangeListener(e -> {
+        activeLayerChangeListener = e -> {
             if (MainApplication.getLayerManager().getActiveLayer() == this) {
                 // only in select mode it is possible to click the images
                 MainApplication.getMap().selectSelectTool(false);
             }
-        });
-
-        MainApplication.getLayerManager().addLayerChangeListener(new LayerChangeListener() {
-            @Override
-            public void layerAdded(LayerAddEvent e) {
-                // Do nothing
-            }
-
-            @Override
-            public void layerRemoving(LayerRemoveEvent e) {
-                if (e.getRemovedLayer() == GeoImageLayer.this) {
-                    stopLoadThumbs();
-                    MapView mapView = MainApplication.getMap().mapView;
-                    mapView.removeMouseListener(mouseAdapter);
-                    mapView.removeMouseMotionListener(mouseMotionAdapter);
-                    MapFrame.removeMapModeChangeListener(mapModeListener);
-                    currentPhoto = -1;
-                    if (data != null) {
-                        data.clear();
-                    }
-                    data = null;
-                    // stop listening to layer change events
-                    MainApplication.getLayerManager().removeLayerChangeListener(this);
-                }
-            }
-
-            @Override
-            public void layerOrderChanged(LayerOrderChangeEvent e) {
-                // Do nothing
-            }
-        });
+        };
+        MainApplication.getLayerManager().addActiveLayerChangeListener(activeLayerChangeListener);
 
         MapFrame map = MainApplication.getMap();
         if (map.getToggleDialog(ImageViewerDialog.class) == null) {
@@ -1035,9 +1004,30 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     }
 
     @Override
+    public synchronized void destroy() {
+        super.destroy();
+        stopLoadThumbs();
+        MapView mapView = MainApplication.getMap().mapView;
+        mapView.removeMouseListener(mouseAdapter);
+        mapView.removeMouseMotionListener(mouseMotionAdapter);
+        MapFrame.removeMapModeChangeListener(mapModeListener);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(activeLayerChangeListener);
+        currentPhoto = -1;
+        if (data != null) {
+            data.clear();
+        }
+        data = null;
+    }
+
+    @Override
     public LayerPainter attachToMapView(MapViewEvent event) {
         MapView.addZoomChangeListener(this);
-        return super.attachToMapView(event);
+        return new CompatibilityModeLayerPainter() {
+            @Override
+            public void detachFromMapView(MapViewEvent event) {
+                MapView.removeZoomChangeListener(GeoImageLayer.this);
+            }
+        };
     }
 
     @Override

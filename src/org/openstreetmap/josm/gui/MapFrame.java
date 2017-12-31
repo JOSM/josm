@@ -347,15 +347,21 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
                 ((Destroyable) toolBarActions.getComponent(i)).destroy();
             }
         }
+        toolBarActions.removeAll();
         for (int i = 0; i < toolBarToggle.getComponentCount(); ++i) {
             if (toolBarToggle.getComponent(i) instanceof Destroyable) {
                 ((Destroyable) toolBarToggle.getComponent(i)).destroy();
             }
         }
+        toolBarToggle.removeAll();
 
         statusLine.destroy();
         mapView.destroy();
         keyDetector.unregister();
+
+        allDialogs.clear();
+        allDialogButtons.clear();
+        allMapModeButtons.clear();
     }
 
     /**

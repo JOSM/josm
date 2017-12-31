@@ -329,6 +329,9 @@ public class DialogsPanel extends JPanel implements Destroyable {
                 throw BugReport.intercept(e).put("dialog", t).put("dialog-class", t.getClass());
             }
         }
+        mSpltPane.removeAll();
+        allDialogs.clear();
+        panels.clear();
     }
 
     /**
