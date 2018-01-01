@@ -269,4 +269,11 @@ public interface TileSource extends Attributed {
      */
     String getServerCRS();
 
+    /**
+     * Determines if this imagery supports "/dirty" mode (tile re-rendering).
+     * @return <code>true</code> if it supports "/dirty" mode (tile re-rendering)
+     */
+    default boolean isDirtyMode() {
+        return false;
+    }
 }

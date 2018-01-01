@@ -40,6 +40,9 @@ public class TileSourceInfo {
     /** mapping &lt;header key, metadata key&gt; */
     protected Map<String, String> metadataHeaders;
 
+    /** supports "/dirty" mode (tile re-rendering) */
+    protected boolean dirtyMode;
+
     /**
      * Create a TileSourceInfo class
      *
@@ -186,5 +189,21 @@ public class TileSourceInfo {
      */
     public final void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * Determines if this imagery supports "/dirty" mode (tile re-rendering).
+     * @return <code>true</code> if it supports "/dirty" mode (tile re-rendering)
+     */
+    public final boolean isDirtyMode() {
+        return dirtyMode;
+    }
+
+    /**
+     * Sets whether this imagery supports "/dirty" mode (tile re-rendering).
+     * @param dirtyMode <code>true</code> if it supports "/dirty" mode (tile re-rendering)
+     */
+    public final void setDirtyMode(boolean dirtyMode) {
+        this.dirtyMode = dirtyMode;
     }
 }
