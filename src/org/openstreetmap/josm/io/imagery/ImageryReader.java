@@ -206,7 +206,8 @@ public class ImageryReader implements Closeable {
                         "icon",
                         "date",
                         TILE_SIZE,
-                        "valid-georeference"
+                        "valid-georeference",
+                        "dirty-mode"
                 ).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
                     lang = atts.getValue("lang");
@@ -469,6 +470,9 @@ public class ImageryReader implements Closeable {
                     break;
                 case "valid-georeference":
                     entry.setGeoreferenceValid(Boolean.parseBoolean(accumulator.toString()));
+                    break;
+                case "dirty-mode":
+                    entry.setDirtyMode(Boolean.parseBoolean(accumulator.toString()));
                     break;
                 default: // Do nothing
                 }
