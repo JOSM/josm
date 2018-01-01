@@ -513,6 +513,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.name, other.name) &&
                 Objects.equals(this.id, other.id) &&
                 Objects.equals(this.url, other.url) &&
+                Objects.equals(this.dirtyMode, other.dirtyMode) &&
                 Objects.equals(this.bestMarked, other.bestMarked) &&
                 Objects.equals(this.isGeoreferenceValid, other.isGeoreferenceValid) &&
                 Objects.equals(this.cookies, other.cookies) &&
