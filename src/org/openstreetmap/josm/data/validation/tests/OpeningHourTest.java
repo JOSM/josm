@@ -35,7 +35,7 @@ public class OpeningHourTest extends Test.TagTest {
     /**
      * Javascript engine
      */
-    public static final ScriptEngine ENGINE = new ScriptEngineManager().getEngineByName("JavaScript");
+    public static final ScriptEngine ENGINE = new ScriptEngineManager(null).getEngineByName("JavaScript");
 
     /**
      * Constructs a new {@code OpeningHourTest}.

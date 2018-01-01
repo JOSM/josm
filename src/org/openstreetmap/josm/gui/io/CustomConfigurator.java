@@ -420,7 +420,7 @@ public final class CustomConfigurator {
             try {
                 this.mainPrefs = mainPrefs;
                 PreferencesUtils.resetLog();
-                engine = new ScriptEngineManager().getEngineByName("JavaScript");
+                engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
                 engine.eval("API={}; API.pref={}; API.fragments={};");
 
                 engine.eval("homeDir='"+normalizeDirName(Config.getDirs().getPreferencesDirectory(false).getAbsolutePath()) +"';");
