@@ -21,7 +21,7 @@ import org.openstreetmap.josm.io.CachedFile;
 public final class OverpassTurboQueryWizard {
 
     private static OverpassTurboQueryWizard instance;
-    private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+    private final ScriptEngine engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
 
     /**
      * Replies the unique instance of this class.
