@@ -14,8 +14,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -225,7 +223,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             super(Main.parent,
                     tr("Adjust imagery offset"),
                     new String[] {tr("OK"), tr("Cancel")},
-                    false);
+                    false, false); // Do not dispose on close, so HIDE_ON_CLOSE remains the default behaviour and setVisible is called
             setButtonIcons("ok", "cancel");
             contentInsets = new Insets(10, 15, 5, 15);
             JPanel pnl = new JPanel(new GridBagLayout());
@@ -242,7 +240,6 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             tOffset.addFocusListener(this);
             setContent(pnl);
             setupDialog();
-            addWindowListener(new WindowEventHandler());
             setRememberWindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(Main.parent, getSize()));
         }
 
@@ -274,9 +271,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 }
             }
             updateOffsetIntl();
-            if (MainApplication.isDisplayingMapView()) {
-                MainApplication.getMap().repaint();
-            }
+            layer.invalidate();
         }
 
         private void updateOffset() {
@@ -322,7 +317,6 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 return;
             }
             super.buttonAction(buttonIndex, evt);
-            restoreMapModeState();
         }
 
         @Override
@@ -339,6 +333,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 }
             }
             MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
+            restoreMapModeState();
         }
 
         private void restoreMapModeState() {
@@ -348,16 +343,9 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             if (oldMapMode != null) {
                 map.selectMapMode(oldMapMode);
                 oldMapMode = null;
-            } else {
-                map.selectSelectTool(false);
-            }
-        }
-
-        class WindowEventHandler extends WindowAdapter {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                setVisible(false);
-                restoreMapModeState();
+            } else if (!map.selectSelectTool(false)) {
+                exitMode();
+                map.mapMode = null;
             }
         }
     }
