@@ -615,7 +615,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             add(new JSeparator());
             add(new JMenuItem(new LoadTileAction()));
             add(new JMenuItem(new ShowTileInfoAction()));
-            if (ExpertToggleAction.isExpert() && tileSource != null && tileSource.isDirtyMode()) {
+            if (ExpertToggleAction.isExpert() && tileSource != null && tileSource.isModTileFeatures()) {
                 add(new JMenuItem(new GetOsmTileStatusAction()));
                 add(new JMenuItem(new MarkOsmTileDirtyAction()));
             }

@@ -700,8 +700,8 @@
                             <xs:element name="valid-georeference" minOccurs="0" maxOccurs="1" type="xs:boolean" />
                             <!-- does imagery server supports JOSM 4326 to 3857 reprojection and non-square queries. Affects showing warnings. -->
                             <xs:element name="epsg4326to3857Supported" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-                            <!-- does imagery server supports tile re-rendering using "/dirty". Defaults to false. -->
-                            <xs:element name="dirty-mode" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+                            <!-- does imagery server supports "/status" and tile re-rendering using "/dirty". Defaults to false. -->
+                            <xs:element name="mod-tile-features" minOccurs="0" maxOccurs="1" type="xs:boolean" />
                         </xs:choice>
                     </xs:sequence>
                     <xs:attribute name="last-check" type="xs:date" use="optional" />
