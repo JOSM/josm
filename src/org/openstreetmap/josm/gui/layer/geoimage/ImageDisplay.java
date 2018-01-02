@@ -336,7 +336,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                         final Graphics2D g = rot.createGraphics();
                         g.drawImage(img, xform, null);
                         g.dispose();
-                        img.flush();
+                        tracker.removeImage(img);
                         img = rot;
                     }
 
