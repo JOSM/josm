@@ -40,8 +40,8 @@ public class TileSourceInfo {
     /** mapping &lt;header key, metadata key&gt; */
     protected Map<String, String> metadataHeaders;
 
-    /** supports "/dirty" mode (tile re-rendering) */
-    protected boolean dirtyMode;
+    /** supports "/status" and "/dirty" mode (tile re-rendering) */
+    protected boolean modTileFeatures;
 
     /**
      * Create a TileSourceInfo class
@@ -192,18 +192,18 @@ public class TileSourceInfo {
     }
 
     /**
-     * Determines if this imagery supports "/dirty" mode (tile re-rendering).
-     * @return <code>true</code> if it supports "/dirty" mode (tile re-rendering)
+     * Determines if this imagery supports "/status" and "/dirty" mode (tile re-rendering).
+     * @return <code>true</code> if it supports "/status" and "/dirty" mode (tile re-rendering)
      */
-    public final boolean isDirtyMode() {
-        return dirtyMode;
+    public final boolean isModTileFeatures() {
+        return modTileFeatures;
     }
 
     /**
-     * Sets whether this imagery supports "/dirty" mode (tile re-rendering).
-     * @param dirtyMode <code>true</code> if it supports "/dirty" mode (tile re-rendering)
+     * Sets whether this imagery supports "/status" and "/dirty" mode (tile re-rendering).
+     * @param modTileFeatures <code>true</code> if it supports "/status" and "/dirty" mode (tile re-rendering)
      */
-    public final void setDirtyMode(boolean dirtyMode) {
-        this.dirtyMode = dirtyMode;
+    public final void setModTileFeatures(boolean modTileFeatures) {
+        this.modTileFeatures = modTileFeatures;
     }
 }

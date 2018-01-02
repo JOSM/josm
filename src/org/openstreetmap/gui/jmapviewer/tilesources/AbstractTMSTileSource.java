@@ -30,7 +30,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     private final Map<String, Set<String>> noTileHeaders;
     private final Map<String, Set<String>> noTileChecksums;
     private final Map<String, String> metadataHeaders;
-    protected boolean dirtyMode;
+    protected boolean modTileFeatures;
     protected int tileSize;
 
     /**
@@ -48,7 +48,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         this.noTileHeaders = info.getNoTileHeaders();
         this.noTileChecksums = info.getNoTileChecksums();
         this.metadataHeaders = info.getMetadataHeaders();
-        this.dirtyMode = info.isDirtyMode();
+        this.modTileFeatures = info.isModTileFeatures();
         this.tileSize = info.getTileSize();
     }
 
@@ -238,8 +238,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     }
 
     @Override
-    public boolean isDirtyMode() {
-        return dirtyMode;
+    public boolean isModTileFeatures() {
+        return modTileFeatures;
     }
 
     private static int getTileMax(int zoom) {

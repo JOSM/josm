@@ -273,7 +273,7 @@ public interface TileSource extends Attributed {
      * Determines if this imagery supports "/dirty" mode (tile re-rendering).
      * @return <code>true</code> if it supports "/dirty" mode (tile re-rendering)
      */
-    default boolean isDirtyMode() {
+    default boolean isModTileFeatures() {
         return false;
     }
 }
