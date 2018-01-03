@@ -177,11 +177,14 @@ public class LZ77Compressor {
     }
 
     /** A simple "we are done" marker. */
-    private static final Block THE_EOD = new Block() {
+    public static final class EOD extends Block {
         @Override
         public BlockType getType() {
             return BlockType.EOD;
-        } };
+        }
+    }
+
+    private static final Block THE_EOD = new EOD();
 
     /**
      * Callback invoked while the compressor processes data.
