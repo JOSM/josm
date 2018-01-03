@@ -2,9 +2,14 @@
 package org.openstreetmap.josm.io.imagery;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -34,5 +39,20 @@ public class WMSImageryTest {
         exc = new WMSGetCapabilitiesException("foo", "bar");
         assertEquals("foo", exc.getMessage());
         assertEquals("bar", exc.getIncomingData());
+    }
+
+    /**
+     * Non-regression test for bug #15730.
+     * @throws IOException if any I/O error occurs
+     * @throws WMSGetCapabilitiesException never
+     */
+    @Test
+    public void testTicket15730() throws IOException, WMSGetCapabilitiesException {
+        try (InputStream is = TestUtils.getRegressionDataStream(15730, "capabilities.xml")) {
+            WMSImagery wms = new WMSImagery();
+            wms.parseCapabilities(null, is);
+            assertEquals(1, wms.getLayers().size());
+            assertTrue(wms.getLayers().get(0).abstr.startsWith("South Carolina  NAIP Imagery 2017    Resolution: 100CM "));
+        }
     }
 }

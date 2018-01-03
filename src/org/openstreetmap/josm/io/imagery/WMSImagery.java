@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io.imagery;
 
 import java.awt.HeadlessException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -234,19 +235,23 @@ public class WMSImagery {
         }
 
         final Response response = HttpClient.create(getCapabilitiesUrl).connect();
-        String incomingData = null;
 
         if (response.getResponseCode() >= 400) {
             throw new WMSGetCapabilitiesException(response.getResponseMessage(), response.fetchContent());
         }
 
+        parseCapabilities(serviceUrlStr, response.getContent());
+    }
+
+    void parseCapabilities(String serviceUrlStr, InputStream contentStream) throws IOException, WMSGetCapabilitiesException {
+        String incomingData = null;
         try {
             DocumentBuilder builder = Utils.newSafeDOMBuilder();
             builder.setEntityResolver((publicId, systemId) -> {
                 Logging.info("Ignoring DTD " + publicId + ", " + systemId);
                 return new InputSource(new StringReader(""));
             });
-            Document document = builder.parse(response.getContent());
+            Document document = builder.parse(contentStream);
             Element root = document.getDocumentElement();
 
             try {
@@ -368,7 +373,7 @@ public class WMSImagery {
         // I think CRS and SRS are the same at this point
         getChildrenStream(element)
             .filter(child -> "CRS".equals(child.getNodeName()) || "SRS".equals(child.getNodeName()))
-            .map(child -> (String) getContent(child))
+            .map(child -> getContent(child))
             .filter(crs -> !crs.isEmpty())
             .map(crs -> crs.trim().toUpperCase(Locale.ENGLISH))
             .forEach(crsList::add);
@@ -420,19 +425,20 @@ public class WMSImagery {
         if (child == null)
             return missing;
         else {
-            String content = (String) getContent(child);
+            String content = getContent(child);
             return (!content.isEmpty()) ? content : empty;
         }
     }
 
-    private static Object getContent(Element element) {
+    private static String getContent(Element element) {
         NodeList nl = element.getChildNodes();
         StringBuilder content = new StringBuilder();
         for (int i = 0; i < nl.getLength(); i++) {
             Node node = nl.item(i);
             switch (node.getNodeType()) {
                 case Node.ELEMENT_NODE:
-                    return node;
+                    content.append(getContent((Element) node));
+                    break;
                 case Node.CDATA_SECTION_NODE:
                 case Node.TEXT_NODE:
                     content.append(node.getNodeValue());
