@@ -1196,6 +1196,16 @@ public final class Utils {
     }
 
     /**
+     * A ForkJoinWorkerThread that will always inherit caller permissions,
+     * unlike JDK's InnocuousForkJoinWorkerThread, used if a security manager exists.
+     */
+    static final class JosmForkJoinWorkerThread extends ForkJoinWorkerThread {
+        JosmForkJoinWorkerThread(ForkJoinPool pool) {
+            super(pool);
+        }
+    }
+
+    /**
      * Returns a {@link ForkJoinPool} with the parallelism given by the preference key.
      * @param pref The preference key to determine parallelism
      * @param nameFormat see {@link #newThreadFactory(String, int)}
@@ -1208,7 +1218,11 @@ public final class Utils {
             final AtomicLong count = new AtomicLong(0);
             @Override
             public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
-                final ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+                // Do not use JDK default thread factory !
+                // If JOSM is started with Java Web Start, a security manager is installed and the factory
+                // creates threads without any permission, forbidding them to load a class instantiating
+                // another ForkJoinPool such as MultipolygonBuilder (see bug #15722)
+                final ForkJoinWorkerThread thread = new JosmForkJoinWorkerThread(pool);
                 thread.setName(String.format(Locale.ENGLISH, nameFormat, count.getAndIncrement()));
                 thread.setPriority(threadPriority);
                 return thread;
