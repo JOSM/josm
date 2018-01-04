@@ -30,7 +30,7 @@ public class WebMarker extends ButtonMarker {
     private final URL webUrl;
 
     public WebMarker(LatLon ll, URL webUrl, MarkerLayer parentLayer, double time, double offset) {
-        super(ll, "web", parentLayer, time, offset);
+        super(ll, /* ICON(markers/) */ "web", parentLayer, time, offset);
         CheckParameterUtil.ensureParameterNotNull(webUrl, "webUrl");
         this.webUrl = webUrl;
     }

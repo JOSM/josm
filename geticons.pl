@@ -68,11 +68,6 @@ for my $arg (@ARGV ? @ARGV : @default)
         my $i = "statusline/$1";
         ++$icons{$i};
       }
-      if($l =~ /createPreferenceTab\(\"(.*?)\"/)
-      {
-        my $i = "preferences/$1";
-        ++$icons{$i};
-      }
       if($l =~ /setIcon\(\"(.*?)\"/)
       {
         my $i = "statusline/$1";
@@ -88,11 +83,6 @@ for my $arg (@ARGV ? @ARGV : @default)
         my $i = "$1/$2";
         ++$icons{$i};
       }
-      if($l =~ /ImageProvider\.overlay\(.*?,\s*\"(.*?)\",/)
-      {
-        my $i = $1;
-        ++$icons{$i};
-      }
       if($l =~ /getCursor\(\"(.*?)\",\s*\"(.*?)\"/)
       {
         my $i = "cursor/modifier/$2";
@@ -105,11 +95,6 @@ for my $arg (@ARGV ? @ARGV : @default)
         my $i = "cursor/$1";
         ++$icons{$i};
       }
-      if($l =~ /SideButton*\(\s*(?:mark)?tr\s*\(\s*\".*?\"\s*\)\s*,\s*\"(.*?)\"/)
-      {
-        my $i = "dialogs/$1";
-        ++$icons{$i};
-      }
       if($l =~ /super\(\s*tr\(\".*?\"\),\s*\"(.*?)\"/s)
       {
         my $i = "$extends$1";
@@ -118,16 +103,6 @@ for my $arg (@ARGV ? @ARGV : @default)
       if($l =~ /super\(\s*trc\(\".*?\",\s*\".*?\"\),\s*\"(.*?)\"/s)
       {
         my $i = "$extends$1";
-        ++$icons{$i};
-      }
-      if($l =~ /audiotracericon\",\s*\"(.*?)\"/s)
-      {
-        my $i = "markers/$1";
-        ++$icons{$i};
-      }
-      if($l =~ /\"(.*?)\",\s*parentLayer/s)
-      {
-        my $i = "markers/$1";
         ++$icons{$i};
       }
       if($l =~ /setButtonIcons.*\{(.*)\}/ || $l =~ /setButtonIcons\((.*)\)/ )

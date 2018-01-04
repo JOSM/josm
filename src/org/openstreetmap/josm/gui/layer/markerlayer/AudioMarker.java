@@ -29,7 +29,7 @@ public class AudioMarker extends ButtonMarker {
     public boolean timeFromAudio; // as opposed to from the GPX track
 
     public AudioMarker(LatLon ll, TemplateEngineDataProvider dataProvider, URL audioUrl, MarkerLayer parentLayer, double time, double offset) {
-        super(ll, dataProvider, "speech", parentLayer, time, offset);
+        super(ll, dataProvider, /* ICON(markers/) */ "speech", parentLayer, time, offset);
         this.audioUrl = audioUrl;
         this.syncOffset = 0.0;
         this.timeFromAudio = false;
