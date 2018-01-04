@@ -84,8 +84,6 @@ This is an overview of the files and directories in the JOSM code repository:
     - projection-regression-test-data.csv
                             regression data for projection tests
                             (see test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java)
-- geticons.pl               tool to find all used icons and allows deleting unused icons
-                            searches also for images with incompatible svg code
 - gpl-2.0.txt, gpl-3.0.txt  full text of the GNU General Public License
 - images/                   images distributed with the JOSM binary
     - icons                 images for the Potlatch 2 style
@@ -104,6 +102,8 @@ This is an overview of the files and directories in the JOSM code repository:
 - README                    this file
 - resources/                resource files that will be included in the JOSM jar file
 - scripts/                  various scripts used by JOSM developers
+  - geticons.pl             tool to find all used icons and allows deleting unused icons
+                            searches also for images with incompatible svg code
 - src/                      the source code of the program
 - start.html                HTML page to run the applet version of JOSM
 - styles/                   map styles included in JOSM
