@@ -133,6 +133,13 @@ public enum ZipMethod {
 
 
     /**
+     * Compression Method 95 for XZ.
+     *
+     * @see <a href="http://www.winzip.com/wz54.htm">http://www.winzip.com/wz54.htm</a>
+     */
+    XZ(95),
+
+    /**
      * Compression Method 96 for Jpeg compression.
      *
      * @see <a href="http://www.winzip.com/wz54.htm">http://www.winzip.com/wz54.htm</a>

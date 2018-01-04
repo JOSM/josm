@@ -32,7 +32,7 @@ import org.apache.commons.compress.compressors.CompressorInputStream;
  */
 public class ZstdCompressorInputStream extends CompressorInputStream {
 
-    private final com.github.luben.zstd.ZstdInputStream decIS;
+    private final ZstdInputStream decIS;
 
     public ZstdCompressorInputStream(final InputStream in) throws IOException {
         this.decIS = new ZstdInputStream(in);

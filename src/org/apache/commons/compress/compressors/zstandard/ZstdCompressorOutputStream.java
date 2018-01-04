@@ -32,7 +32,7 @@ import org.apache.commons.compress.compressors.CompressorOutputStream;
  */
 public class ZstdCompressorOutputStream extends CompressorOutputStream {
 
-    private final com.github.luben.zstd.ZstdOutputStream encOS;
+    private final ZstdOutputStream encOS;
 
     public ZstdCompressorOutputStream(final OutputStream out) throws IOException {
         this.encOS = new ZstdOutputStream(out);

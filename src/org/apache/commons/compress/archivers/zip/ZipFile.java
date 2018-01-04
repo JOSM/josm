@@ -515,6 +515,7 @@ public class ZipFile implements Closeable {
             case TOKENIZATION:
             case UNKNOWN:
             case WAVPACK:
+            case XZ:
             default:
                 throw new ZipException("Found unsupported compression method "
                                        + ze.getMethod());
