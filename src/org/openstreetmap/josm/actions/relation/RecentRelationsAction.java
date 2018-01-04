@@ -50,12 +50,8 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
         arrow.setToolTipText(tr("List of recent relations"));
         MainApplication.undoRedo.addCommandQueueListener(this);
         enableArrow();
-        shortcut = Shortcut.registerShortcut(
-            "relationeditor:editrecentrelation",
-            tr("Relation Editor: {0}", tr("Open recent relation")),
-            KeyEvent.VK_ESCAPE,
-            Shortcut.SHIFT
-        );
+        shortcut = Shortcut.registerShortcut("relationeditor:editrecentrelation",
+            tr("Relation Editor: {0}", tr("Open recent relation")), KeyEvent.VK_ESCAPE, Shortcut.SHIFT);
         launchAction = new LaunchEditorAction();
         MainApplication.registerActionShortcut(launchAction, shortcut);
     }
