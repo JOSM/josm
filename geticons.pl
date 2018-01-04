@@ -22,13 +22,22 @@ for my $arg (@ARGV ? @ARGV : @default)
 {
   for my $file (glob($arg))
   {
+    my @defs;
     open(FILE,"<",$file) or die "Could not open $file\n";
     #print "Read file $file\n";
     $/ = $file =~ /\.java$/ ? ";" : $o;
     my $extends = "";
     while(my $l = <FILE>)
     {
+      if($l =~ /private static final String ([A-Z_]+) = ("[^"]+")/)
+      {
+        push(@defs, [$1, $2]);
+      }
       next if $l =~ /NO-ICON/;
+      for my $d (@defs)
+      {
+        $l =~ s/$d->[0]/$d->[1]/g;
+      }
       if($l =~ /icon\s*[:=]\s*["']([^"'+]+?)["']/)
       {
         ++$icons{$1};
@@ -121,7 +130,7 @@ for my $arg (@ARGV ? @ARGV : @default)
         my $i = "markers/$1";
         ++$icons{$i};
       }
-      if($l =~ /setButtonIcons.*\{(.*)\}/)
+      if($l =~ /setButtonIcons.*\{(.*)\}/ || $l =~ /setButtonIcons\((.*)\)/ )
       {
         my $t = $1;
         while($t =~ /\"(.*?)\"/g)

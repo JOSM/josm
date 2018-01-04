@@ -71,7 +71,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class SelectAction extends MapMode implements ModifierExListener, KeyPressReleaseListener, SelectionEnded {
 
-    private static final String NORMAL = "normal";
+    private static final String NORMAL = /* ICON(cursor/)*/ "normal";
 
     /**
      * Select action mode.
@@ -91,21 +91,21 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     // contains all possible cases the cursor can be in the SelectAction
     enum SelectActionCursor {
 
-        rect(NORMAL, "selection"),
-        rect_add(NORMAL, "select_add"),
-        rect_rm(NORMAL, "select_remove"),
-        way(NORMAL, "select_way"),
-        way_add(NORMAL, "select_way_add"),
-        way_rm(NORMAL, "select_way_remove"),
-        node(NORMAL, "select_node"),
-        node_add(NORMAL, "select_node_add"),
-        node_rm(NORMAL, "select_node_remove"),
-        virtual_node(NORMAL, "addnode"),
-        scale("scale", null),
-        rotate("rotate", null),
-        merge("crosshair", null),
-        lasso(NORMAL, "rope"),
-        merge_to_node("crosshair", "joinnode"),
+        rect(NORMAL, /* ICON(cursor/modifier/)*/ "selection"), 
+        rect_add(NORMAL, /* ICON(cursor/modifier/)*/ "select_add"),
+        rect_rm(NORMAL, /* ICON(cursor/modifier/)*/ "select_remove"),
+        way(NORMAL, /* ICON(cursor/modifier/)*/ "select_way"),
+        way_add(NORMAL, /* ICON(cursor/modifier/)*/ "select_way_add"),
+        way_rm(NORMAL, /* ICON(cursor/modifier/)*/ "select_way_remove"),
+        node(NORMAL, /* ICON(cursor/modifier/)*/ "select_node"),
+        node_add(NORMAL, /* ICON(cursor/modifier/)*/ "select_node_add"),
+        node_rm(NORMAL, /* ICON(cursor/modifier/)*/ "select_node_remove"),
+        virtual_node(NORMAL, /* ICON(cursor/modifier/)*/ "addnode"),
+        scale(/* ICON(cursor/)*/ "scale", null), 
+        rotate(/* ICON(cursor/)*/ "rotate", null),
+        merge(/* ICON(cursor/)*/ "crosshair", null),
+        lasso(NORMAL, /* ICON(cursor/modifier/)*/ "rope"), 
+        merge_to_node(/* ICON(cursor/)*/ "crosshair", /* ICON(cursor/modifier/)*/"joinnode"),
         move(Cursor.MOVE_CURSOR);
 
         private final Cursor c;

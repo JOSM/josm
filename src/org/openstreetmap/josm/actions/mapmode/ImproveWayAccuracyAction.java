@@ -61,7 +61,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class ImproveWayAccuracyAction extends MapMode implements
         SelectionChangedListener, ModifierExListener {
 
-    private static final String CROSSHAIR = "crosshair";
+    private static final String CROSSHAIR = /* ICON(cursor/)*/ "crosshair";
 
     enum State {
         SELECTING, IMPROVING
@@ -80,13 +80,13 @@ public class ImproveWayAccuracyAction extends MapMode implements
     private Point mousePos;
     private boolean dragging;
 
-    private final Cursor cursorSelect = ImageProvider.getCursor("normal", "mode");
-    private final Cursor cursorSelectHover = ImageProvider.getCursor("hand", "mode");
+    private final Cursor cursorSelect = ImageProvider.getCursor(/* ICON(cursor/)*/ "normal", /* ICON(cursor/modifier/)*/ "mode");
+    private final Cursor cursorSelectHover = ImageProvider.getCursor(/* ICON(cursor/)*/ "hand", /* ICON(cursor/modifier/)*/ "mode");
     private final Cursor cursorImprove = ImageProvider.getCursor(CROSSHAIR, null);
-    private final Cursor cursorImproveAdd = ImageProvider.getCursor(CROSSHAIR, "addnode");
-    private final Cursor cursorImproveDelete = ImageProvider.getCursor(CROSSHAIR, "delete_node");
-    private final Cursor cursorImproveAddLock = ImageProvider.getCursor(CROSSHAIR, "add_node_lock");
-    private final Cursor cursorImproveLock = ImageProvider.getCursor(CROSSHAIR, "lock");
+    private final Cursor cursorImproveAdd = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "addnode");
+    private final Cursor cursorImproveDelete = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "delete_node");
+    private final Cursor cursorImproveAddLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "add_node_lock");
+    private final Cursor cursorImproveLock = ImageProvider.getCursor(CROSSHAIR, /* ICON(cursor/modifier/)*/ "lock");
 
     private Color guideColor;
 
