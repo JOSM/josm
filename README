@@ -97,13 +97,13 @@ This is an overview of the files and directories in the JOSM code repository:
                             files, Debian/Ubuntu scripts, man pages, icons, etc.
 - macosx/                   files needed to create the MacOS X package
 - netbeans/                 preconfigured Netbeans project
-- optimize-images           short script to decrease size of PNG images
 - patches/                  patches for external libraries used in JOSM (see below)
 - README                    this file
 - resources/                resource files that will be included in the JOSM jar file
 - scripts/                  various scripts used by JOSM developers
   - geticons.pl             tool to find all used icons and allows deleting unused icons
                             searches also for images with incompatible svg code
+  - optimize-images         short script to decrease size of PNG images
 - src/                      the source code of the program
 - start.html                HTML page to run the applet version of JOSM
 - styles/                   map styles included in JOSM
