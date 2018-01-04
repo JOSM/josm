@@ -168,7 +168,7 @@ for($i = 1; my @ifiles = (glob("images".("/*" x $i).".png"), glob("images".("/*"
     {
       if($haveicons{"$1.png"})
       {
-        print STDERR "File $1 exists twice as .svg and .png.\n";
+        print STDERR "$1: File exists twice as .svg and .png.\n";
       }
       # check for unwanted svg effects
       if(open FILE, "<","images/$ifile")
@@ -180,18 +180,18 @@ for($i = 1; my @ifiles = (glob("images".("/*" x $i).".png"), glob("images".("/*"
         {
           for my $x (split(/\s*;\s*/, $1))
           {
-            print STDERR "Style starts with minus for $ifile: $x\n" if $x =~ /^-/;
+            print STDERR "$ifile: Style starts with minus: $x\n" if $x =~ /^-/;
           }
         }
         if($f =~ /viewBox\s*=\s*["']([^"']+)["']/)
         {
           my $x = $1;
-          print STDERR "ViewBox has float values for $ifile: $x\n" if $x =~ /\./;
+          print STDERR "$ifile: ViewBox has float values: $x\n" if $x =~ /\./;
         }
       }
       else
       {
-        print STDERR "Could not open file $ifile: $1";
+        print STDERR "$ifile: Could not open file: $1";
       }
     }
     $haveicons{$ifile} = 1;
@@ -202,12 +202,12 @@ for my $img (sort keys %icons)
 {
   if($img =~ /\.(png|svg)/)
   {
-    print STDERR "File $img does not exist!\n" if(!-f "images/$img");
+    print STDERR "$img: File does not exist!\n" if(!-f "images/$img");
     delete $haveicons{$img};
   }
   else
   {
-    print STDERR "File $img(.svg|.png) does not exist!\n" if(!-f "images/$img.png" && !-f "images/$img.svg");
+    print STDERR "$img(.svg|.png): File does not exist!\n" if(!-f "images/$img.png" && !-f "images/$img.svg");
     delete $haveicons{"$img.svg"};
     delete $haveicons{"$img.png"};
   }
@@ -215,5 +215,5 @@ for my $img (sort keys %icons)
 
 for my $img (sort keys %haveicons)
 {
-  print "$img\n";
+  print "$img: Unused image.\n";
 }
