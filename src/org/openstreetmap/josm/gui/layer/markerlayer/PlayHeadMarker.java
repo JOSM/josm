@@ -60,7 +60,7 @@ public final class PlayHeadMarker extends Marker {
 
     private PlayHeadMarker() {
         super(LatLon.ZERO, "",
-                Config.getPref().get("marker.audiotracericon", "audio-tracer"),
+                Config.getPref().get("marker.audiotracericon", /* ICON(markers/) */ "audio-tracer"),
                 null, -1.0, 0.0);
         enabled = Config.getPref().getBoolean("marker.traceaudio", true);
         if (!enabled) return;

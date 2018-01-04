@@ -38,7 +38,7 @@ public class ImageMarker extends ButtonMarker {
     public URL imageUrl;
 
     public ImageMarker(LatLon ll, URL imageUrl, MarkerLayer parentLayer, double time, double offset) {
-        super(ll, "photo", parentLayer, time, offset);
+        super(ll, /* ICON(markers/) */ "photo", parentLayer, time, offset);
         this.imageUrl = imageUrl;
     }
 

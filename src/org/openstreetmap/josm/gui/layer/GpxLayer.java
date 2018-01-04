@@ -377,7 +377,7 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
          */
         public CombineTracksToSegmentedTrackAction(GpxLayer layer) {
             // FIXME: icon missing, create a new icon for this action
-            //new ImageProvider("gpx_tracks_to_segmented_track").getResource().attachImageIcon(this, true);
+            //new ImageProvider(..."gpx_tracks_to_segmented_track").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Collect segments of all tracks and combine in a single track."));
             putValue(NAME, tr("Combine tracks of this layer"));
             this.layer = layer;
@@ -409,7 +409,7 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
          */
         public SplitTrackSegementsToTracksAction(GpxLayer layer) {
             // FIXME: icon missing, create a new icon for this action
-            //new ImageProvider("gpx_segmented_track_to_tracks").getResource().attachImageIcon(this, true);
+            //new ImageProvider(..."gpx_segmented_track_to_tracks").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Split multiple track segments of one track into multiple tracks."));
             putValue(NAME, tr("Split track segments to tracks"));
             this.layer = layer;
@@ -442,7 +442,7 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
          */
         public SplitTracksToLayersAction(GpxLayer layer) {
             // FIXME: icon missing, create a new icon for this action
-            //new ImageProvider("gpx_split_tracks_to_layers").getResource().attachImageIcon(this, true);
+            //new ImageProvider(..."gpx_split_tracks_to_layers").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Split the tracks of this layer to one new layer each."));
             putValue(NAME, tr("Split tracks to new layers"));
             this.layer = layer;
