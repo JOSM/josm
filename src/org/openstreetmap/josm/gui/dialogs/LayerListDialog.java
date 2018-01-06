@@ -828,8 +828,6 @@ public class LayerListDialog extends ToggleDialog {
             MapView mapView = MainApplication.getMap().mapView;
             for (int row : sel) {
                 Layer l1 = layers.get(row);
-                Layer l2 = layers.get(row-1);
-                mapView.moveLayer(l2, row);
                 mapView.moveLayer(l1, row-1);
             }
             fireTableDataChanged();
@@ -864,9 +862,7 @@ public class LayerListDialog extends ToggleDialog {
             MapView mapView = MainApplication.getMap().mapView;
             for (int row : sel) {
                 Layer l1 = layers.get(row);
-                Layer l2 = layers.get(row+1);
                 mapView.moveLayer(l1, row+1);
-                mapView.moveLayer(l2, row);
             }
             fireTableDataChanged();
             selectionModel.setValueIsAdjusting(true);
