@@ -1225,7 +1225,7 @@ public class MainApplication extends Main {
         }
 
         monitor.indeterminateSubTask(tr("Installing updated plugins"));
-        PluginHandler.installDownloadedPlugins(true);
+        PluginHandler.installDownloadedPlugins(pluginsToLoad, true);
 
         monitor.indeterminateSubTask(tr("Loading early plugins"));
         PluginHandler.loadEarlyPlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
