@@ -1171,3 +1171,16 @@ way[building=1] {
   group: tr("misspelled value");
   fixAdd: "building=yes";
 }
+
+/* #15675 */
+node[power=transformer][location=pole][transformer] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("deprecated tagging");
+  fixChangeKey: "location => power";
+}
+node[power=transformer][location=pole][!transformer] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("deprecated tagging");
+  fixChangeKey: "location => power";
+  fixAdd: "transformer=yes";
+}

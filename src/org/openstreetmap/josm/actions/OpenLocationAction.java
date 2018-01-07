@@ -138,7 +138,7 @@ public class OpenLocationAction extends JosmAction {
         all.add(uploadAddresses, GBC.eop().fill(GBC.BOTH));
 
         // use separate layer
-        JCheckBox layer = new JCheckBox(tr("Separate Layer"));
+        JCheckBox layer = new JCheckBox(tr("Download as new layer"));
         layer.setToolTipText(tr("Select if the data should be downloaded into a new layer"));
         layer.setSelected(USE_NEW_LAYER.get());
         all.add(layer, GBC.eop().fill(GBC.BOTH));

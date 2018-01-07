@@ -76,7 +76,7 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
     private JButton installCertificate;
     private JButton uninstallCertificate;
 
-    private final JCheckBox loadInNewLayer = new JCheckBox(tr("Download objects to new layer"));
+    private final JCheckBox loadInNewLayer = new JCheckBox(tr("Download as new layer"));
     private final JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("Confirm all Remote Control actions manually"));
 
     @Override

@@ -151,6 +151,12 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         case KeyEvent.VK_DOWN : dy = -1; break;
         case KeyEvent.VK_LEFT : dx = -1; break;
         case KeyEvent.VK_RIGHT : dx = +1; break;
+        case KeyEvent.VK_ESCAPE:
+            if (offsetDialog != null) {
+                offsetDialog.setVisible(false);
+                return;
+            }
+            break;
         default: // Do nothing
         }
         if (dx != 0 || dy != 0) {
@@ -324,6 +330,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             super.setVisible(visible);
             if (visible)
                 return;
+            ignoreListener = true;
             offsetDialog = null;
             if (layer != null) {
                 if (getValue() != 1) {
