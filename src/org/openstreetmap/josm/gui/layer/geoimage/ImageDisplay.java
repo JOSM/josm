@@ -307,7 +307,10 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                 }
                 if (tracker.isErrorID(1)) {
                     // the tracker catches OutOfMemory conditions
+                    tracker.removeImage(img);
                     img = null;
+                } else {
+                    tracker.removeImage(img);
                 }
             } else {
                 img = null;
@@ -316,7 +319,6 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             synchronized (ImageDisplay.this) {
                 if (this.entry != ImageDisplay.this.entry) {
                     // The file has changed
-                    tracker.removeImage(img);
                     return;
                 }
 
@@ -336,7 +338,6 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                         final Graphics2D g = rot.createGraphics();
                         g.drawImage(img, xform, null);
                         g.dispose();
-                        tracker.removeImage(img);
                         img = rot;
                     }
 
@@ -350,7 +351,6 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                 selectedRect = null;
                 errorLoading = (img == null);
             }
-            tracker.removeImage(img);
             ImageDisplay.this.repaint();
         }
     }
