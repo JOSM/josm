@@ -60,6 +60,50 @@ public class ZipArchiveEntry extends java.util.zip.ZipEntry
     private static final byte[] EMPTY = new byte[0];
 
     /**
+     * Indicates how the name of this entry has been determined.
+     * @since 1.16
+     */
+    public enum NameSource {
+        /**
+         * The name has been read from the archive using the encoding
+         * of the archive specified when creating the {@link
+         * ZipArchiveInputStream} or {@link ZipFile} (defaults to the
+         * platform's default encoding).
+         */
+        NAME,
+        /**
+         * The name has been read from the archive and the archive
+         * specified the EFS flag which indicates the name has been
+         * encoded as UTF-8.
+         */
+        NAME_WITH_EFS_FLAG,
+        /**
+         * The name has been read from an {@link UnicodePathExtraField
+         * Unicode Extra Field}.
+         */
+        UNICODE_EXTRA_FIELD
+    }
+
+    /**
+     * Indicates how the comment of this entry has been determined.
+     * @since 1.16
+     */
+    public enum CommentSource {
+        /**
+         * The comment has been read from the archive using the encoding
+         * of the archive specified when creating the {@link
+         * ZipArchiveInputStream} or {@link ZipFile} (defaults to the
+         * platform's default encoding).
+         */
+        COMMENT,
+        /**
+         * The comment has been read from an {@link UnicodeCommentExtraField
+         * Unicode Extra Field}.
+         */
+        UNICODE_EXTRA_FIELD
+    }
+
+    /**
      * The {@link java.util.zip.ZipEntry} base class only supports
      * the compression methods STORED and DEFLATED. We override the
      * field so that any compression methods can be used.
@@ -98,6 +142,8 @@ public class ZipArchiveEntry extends java.util.zip.ZipEntry
     private long localHeaderOffset = OFFSET_UNKNOWN;
     private long dataOffset = OFFSET_UNKNOWN;
     private boolean isStreamContiguous = false;
+    private NameSource nameSource = NameSource.NAME;
+    private CommentSource commentSource = CommentSource.COMMENT;
 
 
     /**
@@ -927,4 +973,41 @@ public class ZipArchiveEntry extends java.util.zip.ZipEntry
     public void setRawFlag(final int rawFlag) {
         this.rawFlag = rawFlag;
     }
+
+    /**
+     * The source of the name field value.
+     * @return source of the name field value
+     * @since 1.16
+     */
+    public NameSource getNameSource() {
+        return nameSource;
+    }
+
+    /**
+     * Sets the source of the name field value.
+     * @param nameSource source of the name field value
+     * @since 1.16
+     */
+    public void setNameSource(NameSource nameSource) {
+        this.nameSource = nameSource;
+    }
+
+    /**
+     * The source of the comment field value.
+     * @return source of the comment field value
+     * @since 1.16
+     */
+    public CommentSource getCommentSource() {
+        return commentSource;
+    }
+
+    /**
+     * Sets the source of the comment field value.
+     * @param commentSource source of the comment field value
+     * @since 1.16
+     */
+    public void setCommentSource(CommentSource commentSource) {
+        this.commentSource = commentSource;
+    }
+
 }

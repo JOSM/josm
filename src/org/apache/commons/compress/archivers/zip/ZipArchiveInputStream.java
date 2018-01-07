@@ -297,6 +297,9 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         final byte[] fileName = new byte[fileNameLen];
         readFully(fileName);
         current.entry.setName(entryEncoding.decode(fileName), fileName);
+        if (hasUTF8Flag) {
+            current.entry.setNameSource(ZipArchiveEntry.NameSource.NAME_WITH_EFS_FLAG);
+        }
 
         final byte[] extraData = new byte[extraLen];
         readFully(extraData);

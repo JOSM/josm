@@ -237,8 +237,9 @@ public abstract class ZipUtil {
         final String originalName = ze.getName();
         final String newName = getUnicodeStringIfOriginalMatches(name,
                                                            originalNameBytes);
-        if (newName != null && !originalName.equals(newName)) {
+        if (newName != null) {
             ze.setName(newName);
+            ze.setNameSource(ZipArchiveEntry.NameSource.UNICODE_EXTRA_FIELD);
         }
 
         if (commentBytes != null && commentBytes.length > 0) {
@@ -248,6 +249,7 @@ public abstract class ZipUtil {
                 getUnicodeStringIfOriginalMatches(cmt, commentBytes);
             if (newComment != null) {
                 ze.setComment(newComment);
+                ze.setCommentSource(ZipArchiveEntry.CommentSource.UNICODE_EXTRA_FIELD);
             }
         }
     }
