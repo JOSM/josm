@@ -816,7 +816,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
             return;
         }
 
-        Collection<OsmPrimitive> selection = getLayerManager().getEditDataSet().getSelected();
+        DataSet ds = getLayerManager().getEditDataSet();
+        Collection<OsmPrimitive> selection = ds != null ? ds.getSelected() : Collections.emptyList();
 
         MapView mv = MainApplication.getMap().mapView;
         Node currentMouseNode = null;
