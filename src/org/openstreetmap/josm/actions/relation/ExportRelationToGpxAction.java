@@ -101,10 +101,10 @@ public class ExportRelationToGpxAction extends GpxExportAction
     private static String tooltip(EnumSet<Mode> mode) {
         if (mode.contains(FROM_FIRST_MEMBER)) {
             return tr("Flatten this relation to a single gpx track recursively, " +
-                    "starting with the first member(s), successively continuing to the last.");
+                    "starting with the first member, successively continuing to the last.");
         } else {
             return tr("Flatten this relation to a single gpx track recursively, " +
-                    "starting with the last member(s), successively continuing to the first.");
+                    "starting with the last member, successively continuing to the first.");
         }
     }
 
