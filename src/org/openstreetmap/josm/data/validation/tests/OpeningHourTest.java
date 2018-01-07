@@ -231,14 +231,14 @@ public class OpeningHourTest extends Test.TagTest {
             final Object r = parse(value, key, mode, locale);
             String prettifiedValue = null;
             try {
-                prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
+                prettifiedValue = getOpeningHoursPrettifiedValues(r);
             } catch (ScriptException | NoSuchMethodException e) {
                 Logging.warn(e);
             }
-            for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getErrors"))) {
+            for (final Object i : getOpeningHoursErrors(r)) {
                 errors.add(new OpeningHoursTestError(getErrorMessage(key, i), Severity.ERROR, prettifiedValue));
             }
-            for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
+            for (final Object i : getOpeningHoursWarnings(r)) {
                 errors.add(new OpeningHoursTestError(getErrorMessage(key, i), Severity.WARNING, prettifiedValue));
             }
             if (!ignoreOtherSeverity && errors.isEmpty() && prettifiedValue != null && !value.equals(prettifiedValue)) {
@@ -248,6 +248,42 @@ public class OpeningHourTest extends Test.TagTest {
             Logging.error(ex);
         }
         return errors;
+    }
+
+    /**
+     * Returns the prettified value returned by the opening hours parser.
+     * @param r result of {@link #parse}
+     * @return the prettified value returned by the opening hours parser
+     * @throws NoSuchMethodException if method "prettifyValue" or matching argument types cannot be found
+     * @throws ScriptException if an error occurs during invocation of the JavaScript method
+     * @since 13296
+     */
+    public final String getOpeningHoursPrettifiedValues(Object r) throws NoSuchMethodException, ScriptException {
+        return (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
+    }
+
+    /**
+     * Returns the list of errors returned by the opening hours parser.
+     * @param r result of {@link #parse}
+     * @return the list of errors returned by the opening hours parser
+     * @throws NoSuchMethodException if method "getErrors" or matching argument types cannot be found
+     * @throws ScriptException if an error occurs during invocation of the JavaScript method
+     * @since 13296
+     */
+    public final List<Object> getOpeningHoursErrors(Object r) throws NoSuchMethodException, ScriptException {
+        return getList(((Invocable) ENGINE).invokeMethod(r, "getErrors"));
+    }
+
+    /**
+     * Returns the list of warnings returned by the opening hours parser.
+     * @param r result of {@link #parse}
+     * @return the list of warnings returned by the opening hours parser
+     * @throws NoSuchMethodException if method "getWarnings" or matching argument types cannot be found
+     * @throws ScriptException if an error occurs during invocation of the JavaScript method
+     * @since 13296
+     */
+    public final List<Object> getOpeningHoursWarnings(Object r) throws NoSuchMethodException, ScriptException {
+        return getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"));
     }
 
     /**
