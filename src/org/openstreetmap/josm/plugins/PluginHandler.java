@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -1233,16 +1234,17 @@ public final class PluginHandler {
     }
 
     /**
-     * Installs downloaded plugins. Moves files with the suffix ".jar.new" to the corresponding
-     * ".jar" files.
+     * Installs downloaded plugins. Moves files with the suffix ".jar.new" to the corresponding ".jar" files.
      *
      * If {@code dowarn} is true, this methods emits warning messages on the console if a downloaded
      * but not yet installed plugin .jar can't be be installed. If {@code dowarn} is false, the
      * installation of the respective plugin is silently skipped.
      *
+     * @param pluginsToLoad list of plugin informations to update
      * @param dowarn if true, warning messages are displayed; false otherwise
+     * @since 13294
      */
-    public static void installDownloadedPlugins(boolean dowarn) {
+    public static void installDownloadedPlugins(Collection<PluginInformation> pluginsToLoad, boolean dowarn) {
         File pluginDir = Main.pref.getPluginsDirectory();
         if (!pluginDir.exists() || !pluginDir.isDirectory() || !pluginDir.canWrite())
             return;
@@ -1273,7 +1275,17 @@ public final class PluginHandler {
                 continue;
             }
             // Install plugin
-            if (!updatedPlugin.renameTo(plugin) && dowarn) {
+            if (updatedPlugin.renameTo(plugin)) {
+                try {
+                    // Update plugin URL
+                    URL newPluginURL = plugin.toURI().toURL();
+                    URL oldPluginURL = updatedPlugin.toURI().toURL();
+                    pluginsToLoad.stream().filter(x -> x.libraries.contains(oldPluginURL)).forEach(
+                            x -> Collections.replaceAll(x.libraries, oldPluginURL, newPluginURL));
+                } catch (MalformedURLException e) {
+                    Logging.warn(e);
+                }
+            } else if (dowarn) {
                 Logging.warn(tr("Failed to install plugin ''{0}'' from temporary download file ''{1}''. Renaming failed.",
                         plugin.toString(), updatedPlugin.toString()));
                 Logging.warn(tr("Failed to install already downloaded plugin ''{0}''. " +
