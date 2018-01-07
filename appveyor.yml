@@ -22,8 +22,6 @@ artifacts:
   - path: checkstyle-josm.xml
   - path: pmd-josm.xml
   - path: spotbugs-josm.xml
-  - path: javadoc
-    type: zip
   - path: test\report
     type: zip
   - path: hs_err_pid*.log
