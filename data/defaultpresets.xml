@@ -299,7 +299,7 @@
         <combo key="circuits" text="Amount of circuits" values="1,2,3,4" />
     </chunk>
     <chunk id="power_loc">
-        <combo key="location" text="Location" values="outdoor,indoor,underground,platform,rooftop,kiosk" values_context="power" />
+        <combo key="location" text="Location" values="outdoor,indoor,underground,platform,rooftop" values_context="power" />
     </chunk>
     <chunk id="power_extra">
         <reference ref="power_loc" />
