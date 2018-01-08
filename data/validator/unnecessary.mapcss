@@ -16,7 +16,7 @@
 area:closed[amenity ][area?][!highway],
 area:closed[building][area?],
 area:closed[landuse ][area?][!highway],
-area:closed[leisure ][area?][!highway],
+area:closed[leisure ][area?][!highway][leisure!=track][leisure!=slipway],
 area:closed[natural ][area?],
 area:closed[shop    ][area?] {
   throwWarning: tr("{0} is unnecessary for {1}", "{2.key}", "{1.key}");
