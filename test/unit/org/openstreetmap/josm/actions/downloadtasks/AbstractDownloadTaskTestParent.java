@@ -39,6 +39,15 @@ public abstract class AbstractDownloadTaskTestParent {
     protected abstract String getRemoteFile();
 
     /**
+     * Returns the {@code Content-Type} with which to serve the file referenced
+     * by {@link #getRemoteFile()}
+     * @return the {@code Content-Type} string for file {@link #getRemoteFile()}
+     */
+    protected String getRemoteContentType() {
+        return "text/xml";
+    }
+
+    /**
      * Returns the http URL to remote test file to download.
      * @return the http URL to remote test file to download
      */
@@ -53,7 +62,7 @@ public abstract class AbstractDownloadTaskTestParent {
         wireMockRule.stubFor(get(urlEqualTo("/" + getRemoteFile()))
                 .willReturn(aResponse()
                     .withStatus(200)
-                    .withHeader("Content-Type", "text/xml")
+                    .withHeader("Content-Type", getRemoteContentType())
                     .withBodyFile(getRemoteFile())));
     }
 }

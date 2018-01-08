@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.testutils;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -15,9 +16,11 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
@@ -58,6 +61,8 @@ public class JOSMTestRules implements TestRule {
     private APIType useAPI = APIType.NONE;
     private String i18n = null;
     private TileSourceRule tileSourceRule;
+    private String assumeRevisionString;
+    private Version originalVersion;
     private boolean platform;
     private boolean useProjection;
     private boolean useProjectionNadGrids;
@@ -132,6 +137,16 @@ public class JOSMTestRules implements TestRule {
      */
     public JOSMTestRules platform() {
         platform = true;
+        return this;
+    }
+
+    /**
+     * Mock this test's assumed JOSM version (as reported by {@link Version}).
+     * @param revisionProperties mock contents of JOSM's {@code REVISION} properties file
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules assumeRevision(final String revisionProperties) {
+        this.assumeRevisionString = revisionProperties;
         return this;
     }
 
@@ -276,7 +291,7 @@ public class JOSMTestRules implements TestRule {
 
     /**
      * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
-     *         {@link Main#menu}, {@link Main#toolbar} global variables in this test.
+     *         global variables in this test.
      * @return this instance, for easy chaining
      * @since 12557
      */
@@ -284,6 +299,14 @@ public class JOSMTestRules implements TestRule {
         platform();
         main = true;
         return this;
+    }
+
+    private static class MockVersion extends Version {
+        MockVersion(final String propertiesString) {
+            super.initFromRevisionInfo(
+                new ByteArrayInputStream(propertiesString.getBytes())
+            );
+        }
     }
 
     @Override
@@ -317,12 +340,19 @@ public class JOSMTestRules implements TestRule {
     /**
      * Set up before running a test
      * @throws InitializationError If an error occured while creating the required environment.
+     * @throws ReflectiveOperationException if a reflective access error occurs
      */
-    protected void before() throws InitializationError {
+    protected void before() throws InitializationError, ReflectiveOperationException {
         // Tests are running headless by default.
         System.setProperty("java.awt.headless", "true");
 
         cleanUpFromJosmFixture();
+
+        if (this.assumeRevisionString != null) {
+            this.originalVersion = Version.getInstance();
+            final Version replacementVersion = new MockVersion(this.assumeRevisionString);
+            TestUtils.setPrivateStaticField(Version.class, "instance", replacementVersion);
+        }
 
         Config.setPreferencesInstance(Main.pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
@@ -464,9 +494,10 @@ public class JOSMTestRules implements TestRule {
 
     /**
      * Clean up after running a test
+     * @throws ReflectiveOperationException if a reflective access error occurs
      */
     @SuppressFBWarnings("DM_GC")
-    protected void after() {
+    protected void after() throws ReflectiveOperationException {
         // Sync AWT Thread
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
@@ -480,6 +511,11 @@ public class JOSMTestRules implements TestRule {
         // TODO: Remove global listeners and other global state.
         Main.pref.resetToInitialState();
         Main.platform = null;
+
+        if (this.assumeRevisionString != null && this.originalVersion != null) {
+            TestUtils.setPrivateStaticField(Version.class, "instance", this.originalVersion);
+        }
+
         // Parts of JOSM uses weak references - destroy them.
         System.gc();
     }

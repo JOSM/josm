@@ -1257,13 +1257,6 @@ public final class PluginHandler {
             final String filePath = updatedPlugin.getPath();
             File plugin = new File(filePath.substring(0, filePath.length() - 4));
             String pluginName = updatedPlugin.getName().substring(0, updatedPlugin.getName().length() - 8);
-            if (plugin.exists() && !plugin.delete() && dowarn) {
-                Logging.warn(tr("Failed to delete outdated plugin ''{0}''.", plugin.toString()));
-                Logging.warn(tr("Failed to install already downloaded plugin ''{0}''. " +
-                        "Skipping installation. JOSM is still going to load the old plugin version.",
-                        pluginName));
-                continue;
-            }
             try {
                 // Check the plugin is a valid and accessible JAR file before installing it (fix #7754)
                 new JarFile(updatedPlugin).close();
@@ -1272,6 +1265,13 @@ public final class PluginHandler {
                     Logging.log(Logging.LEVEL_WARN, tr("Failed to install plugin ''{0}'' from temporary download file ''{1}''. {2}",
                             plugin.toString(), updatedPlugin.toString(), e.getLocalizedMessage()), e);
                 }
+                continue;
+            }
+            if (plugin.exists() && !plugin.delete() && dowarn) {
+                Logging.warn(tr("Failed to delete outdated plugin ''{0}''.", plugin.toString()));
+                Logging.warn(tr("Failed to install already downloaded plugin ''{0}''. " +
+                        "Skipping installation. JOSM is still going to load the old plugin version.",
+                        pluginName));
                 continue;
             }
             // Install plugin
