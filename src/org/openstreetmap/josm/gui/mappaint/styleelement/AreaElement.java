@@ -19,6 +19,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HiDPISupport;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This is the style that defines how an area is filled.
@@ -85,9 +86,13 @@ public class AreaElement extends StyleElement {
             // get base image from possible multi-resolution image, so we can
             // cast to BufferedImage and get pixel value at the center of the image
             img = HiDPISupport.getBaseImage(img);
-            color = new Color(((BufferedImage) img).getRGB(
-                    fillImage.getWidth() / 2, fillImage.getHeight() / 2)
-            );
+            try {
+                color = new Color(((BufferedImage) img).getRGB(
+                        fillImage.getWidth() / 2, fillImage.getHeight() / 2)
+                );
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw BugReport.intercept(e).put("env.osm", env.osm).put("iconRef", iconRef).put("fillImage", fillImage).put("img", img);
+            }
 
             fillImage.alpha = Utils.clamp(Config.getPref().getInt("mappaint.fill-image-alpha", 255), 0, 255);
             Integer pAlpha = Utils.colorFloat2int(c.get(FILL_OPACITY, null, float.class));
