@@ -288,13 +288,12 @@ public class OpeningHourTest extends Test.TagTest {
 
     /**
      * Translates and shortens the error/warning message.
-     * @param key OSM key
      * @param o error/warning message returned by {@link #getOpeningHoursErrors} or {@link #getOpeningHoursWarnings}
      * @return translated/shortened error/warning message
-     * @since 13297
+     * @since 13298
      */
-    public static String getErrorMessage(String key, Object o) {
-        String msg = o.toString().trim()
+    public static String getErrorMessage(Object o) {
+        return o.toString().trim()
         .replace("Unexpected token:", tr("Unexpected token:"))
         .replace("Unexpected token (school holiday parser):", tr("Unexpected token (school holiday parser):"))
         .replace("Unexpected token in number range:", tr("Unexpected token in number range:"))
@@ -303,7 +302,16 @@ public class OpeningHourTest extends Test.TagTest {
         .replace("Unexpected token in month range:", tr("Unexpected token in month range:"))
         .replace("Unexpected token in year range:", tr("Unexpected token in year range:"))
         .replace("This means that the syntax is not valid at that point or it is currently not supported.", tr("Invalid/unsupported syntax."));
-        return key + " - " + msg;
+    }
+
+    /**
+     * Translates and shortens the error/warning message.
+     * @param key OSM key
+     * @param o error/warning message returned by {@link #getOpeningHoursErrors} or {@link #getOpeningHoursWarnings}
+     * @return translated/shortened error/warning message
+     */
+    static String getErrorMessage(String key, Object o) {
+        return key + " - " + getErrorMessage(o);
     }
 
     protected void check(final OsmPrimitive p, final String key) {
