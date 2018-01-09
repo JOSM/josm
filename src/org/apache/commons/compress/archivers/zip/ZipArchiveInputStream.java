@@ -34,6 +34,7 @@ import java.util.zip.ZipException;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.deflate64.Deflate64CompressorInputStream;
 import org.apache.commons.compress.utils.ArchiveUtils;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -315,17 +316,35 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         current.entry.setDataOffset(getBytesRead());
         current.entry.setStreamContiguous(true);
 
+        ZipMethod m = ZipMethod.getMethodByCode(current.entry.getMethod());
         if (current.entry.getCompressedSize() != ArchiveEntry.SIZE_UNKNOWN) {
-            if (current.entry.getMethod() == ZipMethod.UNSHRINKING.getCode()) {
-                current.in = new UnshrinkingInputStream(new BoundedInputStream(in, current.entry.getCompressedSize()));
-            } else if (current.entry.getMethod() == ZipMethod.IMPLODING.getCode()) {
-                current.in = new ExplodingInputStream(
+            if (ZipUtil.canHandleEntryData(current.entry) && m != ZipMethod.STORED && m != ZipMethod.DEFLATED) {
+                InputStream bis = new BoundedInputStream(in, current.entry.getCompressedSize());
+                switch (m) {
+                case UNSHRINKING:
+                    current.in = new UnshrinkingInputStream(bis);
+                    break;
+                case IMPLODING:
+                    current.in = new ExplodingInputStream(
                         current.entry.getGeneralPurposeBit().getSlidingDictionarySize(),
                         current.entry.getGeneralPurposeBit().getNumberOfShannonFanoTrees(),
-                        new BoundedInputStream(in, current.entry.getCompressedSize()));
-            } else if (current.entry.getMethod() == ZipMethod.BZIP2.getCode()) {
-                current.in = new BZip2CompressorInputStream(new BoundedInputStream(in, current.entry.getCompressedSize()));
+                        bis);
+                    break;
+                case BZIP2:
+                    current.in = new BZip2CompressorInputStream(bis);
+                    break;
+                case ENHANCED_DEFLATED:
+                    current.in = new Deflate64CompressorInputStream(bis);
+                    break;
+                default:
+                    // we should never get here as all supported methods have been covered
+                    // will cause an error when read is invoked, don't throw an exception here so people can
+                    // skip unsupported entries
+                    break;
+                }
             }
+        } else if (m == ZipMethod.ENHANCED_DEFLATED) {
+            current.in = new Deflate64CompressorInputStream(in);
         }
 
         entriesRead++;
@@ -427,6 +446,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
             read = readDeflated(buffer, offset, length);
         } else if (current.entry.getMethod() == ZipMethod.UNSHRINKING.getCode()
                 || current.entry.getMethod() == ZipMethod.IMPLODING.getCode()
+                || current.entry.getMethod() == ZipMethod.ENHANCED_DEFLATED.getCode()
                 || current.entry.getMethod() == ZipMethod.BZIP2.getCode()) {
             read = current.in.read(buffer, offset, length);
         } else {
@@ -773,13 +793,14 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
      *
      * @return true if allowStoredEntriesWithDataDescriptor is true,
      * the entry doesn't require any data descriptor or the method is
-     * DEFLATED.
+     * DEFLATED or ENHANCED_DEFLATED.
      */
     private boolean supportsDataDescriptorFor(final ZipArchiveEntry entry) {
         return !entry.getGeneralPurposeBit().usesDataDescriptor()
 
                 || (allowStoredEntriesWithDataDescriptor && entry.getMethod() == ZipEntry.STORED)
-                || entry.getMethod() == ZipEntry.DEFLATED;
+                || entry.getMethod() == ZipEntry.DEFLATED
+                || entry.getMethod() == ZipMethod.ENHANCED_DEFLATED.getCode();
     }
 
     /**

@@ -37,6 +37,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream;
 import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputStream;
+import org.apache.commons.compress.compressors.deflate64.Deflate64CompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
@@ -178,6 +179,13 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
     public static final String DEFLATE = "deflate";
 
     /**
+     * Constant (value {@value}) used to identify the Deflate64 compress method.
+     *
+     * @since 1.16
+     */
+    public static final String DEFLATE64 = "deflate64";
+
+    /**
      * Constant (value {@value}) used to identify the block LZ4
      * compression method.
      *
@@ -305,6 +313,13 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     public static String getDeflate() {
         return DEFLATE;
+    }
+
+    /**
+     * @since 1.16
+     */
+    public static String getDeflate64() {
+        return DEFLATE64;
     }
 
     public static String getGzip() {
@@ -534,7 +549,8 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      *            of the compressor, i.e. {@value #GZIP}, {@value #BZIP2},
      *            {@value #XZ}, {@value #LZMA}, {@value #PACK200},
      *            {@value #SNAPPY_RAW}, {@value #SNAPPY_FRAMED}, {@value #Z},
-     *            {@value #LZ4_BLOCK}, {@value #LZ4_FRAMED}, {@value #ZSTANDARD}
+     *            {@value #LZ4_BLOCK}, {@value #LZ4_FRAMED}, {@value #ZSTANDARD},
+     *            {@value #DEFLATE64}
      *            or {@value #DEFLATE}
      * @param in
      *            the input stream
@@ -614,6 +630,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
             if (DEFLATE.equalsIgnoreCase(name)) {
                 return new DeflateCompressorInputStream(in);
+            }
+
+            if (DEFLATE64.equalsIgnoreCase(name)) {
+                return new Deflate64CompressorInputStream(in);
             }
 
             if (LZ4_BLOCK.equalsIgnoreCase(name)) {
@@ -738,7 +758,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
     @Override
     public Set<String> getInputStreamCompressorNames() {
         return Sets.newHashSet(GZIP, BROTLI, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_RAW, SNAPPY_FRAMED, Z, LZ4_BLOCK,
-            LZ4_FRAMED, ZSTANDARD);
+            LZ4_FRAMED, ZSTANDARD, DEFLATE64);
     }
 
     @Override

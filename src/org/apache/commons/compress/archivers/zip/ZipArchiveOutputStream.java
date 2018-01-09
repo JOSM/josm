@@ -1040,7 +1040,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
 
 
     private byte[] createLocalFileHeader(final ZipArchiveEntry ze, final ByteBuffer name, final boolean encodable,
-                                         final boolean phased, long archiveOffset) throws IOException {
+                                         final boolean phased, long archiveOffset) {
         ResourceAlignmentExtraField oldAlignmentEx =
             (ResourceAlignmentExtraField) ze.getExtraField(ResourceAlignmentExtraField.ID);
         if (oldAlignmentEx != null) {
