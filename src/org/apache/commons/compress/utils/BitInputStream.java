@@ -103,6 +103,7 @@ public class BitInputStream implements Closeable {
     /**
      * Returns the number of bits that can be read from this input
      * stream without reading from the underlying input stream at all.
+     * @return estimate of the number of bits that can be read without reading from the underlying stream
      * @since 1.16
      */
     public int bitsCached() {
@@ -113,6 +114,8 @@ public class BitInputStream implements Closeable {
      * Returns an estimate of the number of bits that can be read from
      * this input stream without blocking by the next invocation of a
      * method for this input stream.
+     * @throws IOException if the underlying stream throws one when calling available
+     * @return estimate of the number of bits that can be read without blocking
      * @since 1.16
      */
     public long bitsAvailable() throws IOException {
@@ -121,6 +124,7 @@ public class BitInputStream implements Closeable {
 
     /**
      * Drops bits until the next bits will be read from a byte boundary.
+     * @throws IOException if reading the remaining bits to the next byte boundary fails
      * @since 1.16
      */
     public void alignWithByteBoundary() throws IOException {

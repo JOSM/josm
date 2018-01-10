@@ -317,6 +317,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     /**
      * @since 1.16
+     * @return the constant {@link #DEFLATE64}
      */
     public static String getDeflate64() {
         return DEFLATE64;

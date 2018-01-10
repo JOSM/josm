@@ -477,21 +477,25 @@ public class ZipFile implements Closeable {
         // cast valididty is checked just above
         ZipUtil.checkRequestedFeatures(ze);
         final long start = ze.getDataOffset();
-        // doesn't get closed if the method is not supported, but doesn't hold any resources either
+
+        // doesn't get closed if the method is not supported - which
+        // should never happen because of the checkRequestedFeatures
+        // call above
         final BoundedInputStream bis =
             createBoundedInputStream(start, ze.getCompressedSize()); //NOSONAR
+        final InputStream buf = new BufferedInputStream(bis); //NOSONAR
         switch (ZipMethod.getMethodByCode(ze.getMethod())) {
             case STORED:
                 return bis;
             case UNSHRINKING:
-                return new UnshrinkingInputStream(bis);
+                return new UnshrinkingInputStream(buf);
             case IMPLODING:
                 return new ExplodingInputStream(ze.getGeneralPurposeBit().getSlidingDictionarySize(),
-                        ze.getGeneralPurposeBit().getNumberOfShannonFanoTrees(), new BufferedInputStream(bis));
+                        ze.getGeneralPurposeBit().getNumberOfShannonFanoTrees(), buf);
             case DEFLATED:
                 bis.addDummy();
                 final Inflater inflater = new Inflater(true);
-                return new InflaterInputStream(bis, inflater) {
+                return new InflaterInputStream(buf, inflater) {
                     @Override
                     public void close() throws IOException {
                         try {
@@ -502,9 +506,9 @@ public class ZipFile implements Closeable {
                     }
                 };
             case BZIP2:
-                return new BZip2CompressorInputStream(bis);
+                return new BZip2CompressorInputStream(buf);
             case ENHANCED_DEFLATED:
-                return new Deflate64CompressorInputStream(bis);
+                return new Deflate64CompressorInputStream(buf);
             case AES_ENCRYPTED:
             case EXPANDING_LEVEL_1:
             case EXPANDING_LEVEL_2:

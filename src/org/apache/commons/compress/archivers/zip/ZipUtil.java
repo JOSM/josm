@@ -234,7 +234,6 @@ public abstract class ZipUtil {
                                                  final byte[] commentBytes) {
         final UnicodePathExtraField name = (UnicodePathExtraField)
             ze.getExtraField(UnicodePathExtraField.UPATH_ID);
-        final String originalName = ze.getName();
         final String newName = getUnicodeStringIfOriginalMatches(name,
                                                            originalNameBytes);
         if (newName != null) {
