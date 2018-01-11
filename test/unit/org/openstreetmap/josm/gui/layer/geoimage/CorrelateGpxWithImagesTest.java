@@ -84,14 +84,14 @@ public class CorrelateGpxWithImagesTest {
         // and not taken from GPX track.
         assertEquals(null, ib.getSpeed());
         assertEquals(null, i0.getSpeed());
-        assertEquals(new Double(11.675317966018756), i1.getSpeed(), 0.000001);
-        assertEquals(new Double(24.992418392716967), i2.getSpeed(), 0.000001);
-        assertEquals(new Double(27.307968754679223), i3.getSpeed(), 0.000001);
+        assertEquals(Double.valueOf(11.675317966018756), i1.getSpeed(), 0.000001);
+        assertEquals(Double.valueOf(24.992418392716967), i2.getSpeed(), 0.000001);
+        assertEquals(Double.valueOf(27.307968754679223), i3.getSpeed(), 0.000001);
         assertEquals(null, ib.getElevation());
-        assertEquals(new Double(471.86), i0.getElevation(), 0.000001);
-        assertEquals(new Double(489.29), i1.getElevation(), 0.000001);
-        assertEquals(new Double((490.40 + 489.75) / 2), i2.getElevation(), 0.000001);
-        assertEquals(new Double(486.368333333), i3.getElevation(), 0.000001);
+        assertEquals(Double.valueOf(471.86), i0.getElevation(), 0.000001);
+        assertEquals(Double.valueOf(489.29), i1.getElevation(), 0.000001);
+        assertEquals(Double.valueOf((490.40 + 489.75) / 2), i2.getElevation(), 0.000001);
+        assertEquals(Double.valueOf(486.368333333), i3.getElevation(), 0.000001);
         assertEquals(null, ib.getGpsTime());
         assertEquals(DateUtils.fromString("2016:01:03 11:59:54"), i0.getGpsTime()); // original time is kept
         assertEquals(DateUtils.fromString("2016:01:03 12:04:01"), i1.getGpsTime());
