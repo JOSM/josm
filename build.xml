@@ -813,6 +813,16 @@ Build-Date: ${build.tstamp}
             encoding="UTF-8" classpath="${checkstyle.dir}/checkstyle-all.jar">
         </javac>
     </target>
+    <target name="checkstyle-changed" depends="checkstyle-compile">
+        <exec append="false" osfamily="unix" executable="bash" failifexecutionfails="true">
+            <arg value="-c"/>
+            <arg value="svn status -q --ignore-externals src test | grep -o '\(src\|test\)/.*' | xargs java -cp '${checkstyle.dir}/checkstyle-all.jar:${checkstyle-build.dir}' com.puppycrawl.tools.checkstyle.Main -c ${checkstyle.dir}/josm_checks.xml | sed -e 's:\([^ ]*\) [^:]*/\([^:/]*.java\:[^:]*\):(\2)\1:'"/>
+        </exec>
+        <exec append="false" osfamily="windows" executable="powershell" failifexecutionfails="true">
+            <arg value="/c"/>
+            <arg value="svn status -q --ignore-externals src test | ForEach-Object {java -cp '${checkstyle.dir}/checkstyle-all.jar;${checkstyle-build.dir}' com.puppycrawl.tools.checkstyle.Main -c ${checkstyle.dir}/josm_checks.xml $_.split(' ')[7]}"/>
+        </exec>
+    </target>
     <target name="checkstyle" depends="checkstyle-compile">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
              classpath="${checkstyle.dir}/checkstyle-all.jar:${checkstyle-build.dir}"/>
