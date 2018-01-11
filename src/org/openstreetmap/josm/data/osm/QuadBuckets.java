@@ -388,11 +388,14 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     }
 
     @Override
+    @SuppressWarnings("ModifyCollectionInEnhancedForLoop")
     public boolean retainAll(Collection<?> objects) {
         for (T o : this) {
             if (objects.contains(o)) {
                 continue;
             }
+            // In theory this could cause a ConcurrentModificationException
+            // but we never had such bug report in 8 years (since r2263)
             if (!this.remove(o)) {
                 return false;
             }
