@@ -40,6 +40,15 @@ import org.apache.commons.compress.utils.FixedLengthBlockOutputStream;
  * The TarOutputStream writes a UNIX tar archive as an OutputStream. Methods are provided to put
  * entries, and then write their contents by writing to this stream using write().
  *
+ * <p>tar archives consist of a sequence of records of 512 bytes each
+ * that are grouped into blocks. Prior to Apache Commons Compress 1.14
+ * it has been possible to configure a record size different from 512
+ * bytes and arbitrary block sizes. Starting with Compress 1.15 512 is
+ * the only valid option for the record size and the block size must
+ * be a multiple of 512. Also the default block size changed from
+ * 10240 bytes prior to Compress 1.15 to 512 bytes with Compress
+ * 1.15.</p>
+ *
  * @NotThreadSafe
  */
 public class TarArchiveOutputStream extends ArchiveOutputStream {
@@ -118,6 +127,8 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
     /**
      * Constructor for TarArchiveOutputStream.
      *
+     * <p>Uses a block size of 512 bytes.</p>
+     *
      * @param os the output stream to use
      */
     public TarArchiveOutputStream(final OutputStream os) {
@@ -126,6 +137,8 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
 
     /**
      * Constructor for TarArchiveOutputStream.
+     *
+     * <p>Uses a block size of 512 bytes.</p>
      *
      * @param os the output stream to use
      * @param encoding name of the encoding to use for file names
