@@ -14,14 +14,14 @@
 	<classpathentry kind="lib" path="test/lib/fest/jcip-annotations-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/MRJToolkitStubs-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/jfcunit.jar"/>
-	<classpathentry exported="true" kind="lib" path="test/lib/equalsverifier-2.4.jar"/>
+	<classpathentry kind="lib" path="test/lib/equalsverifier-2.4.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/reflections/reflections-0.9.10.jar"/>
 	<classpathentry kind="lib" path="test/lib/reflections/guava-21.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/reflections/javassist-3.21.0-GA.jar"/>
 	<classpathentry kind="lib" path="test/lib/system-rules-1.16.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/unitils-core-3.4.6.jar"/>
 	<classpathentry kind="lib" path="test/lib/commons-testing/commons-testing-2.1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="test/lib/wiremock-standalone-2.10.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/wiremock-standalone-2.13.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="test/lib/awaitility-3.0.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
