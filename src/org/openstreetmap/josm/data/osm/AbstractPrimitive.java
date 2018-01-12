@@ -170,6 +170,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
     protected static final short FLAG_ANNOTATED = 1 << 12;
 
     /**
+     * Determines if the primitive is preserved from the filter mechanism.
+     */
+    protected static final short FLAG_PRESERVED = 1 << 13;
+
+    /**
      * Put several boolean flags to one short int field to save memory.
      * Other bits of this field are used in subclasses.
      */

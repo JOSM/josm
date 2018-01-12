@@ -232,8 +232,10 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     /**
      * Gets a collection of primitives that should not be hidden by the filter.
      * @return The primitives that the filter should not hide.
+     * @deprecated use {@link org.openstreetmap.josm.data.osm.DataSet#allPreservedPrimitives}
      * @since 11993
      */
+    @Deprecated
     public Collection<? extends OsmPrimitive> getPreservedPrimitives() {
         return Collections.emptySet();
     }

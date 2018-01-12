@@ -427,6 +427,15 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
+     * Set binary property used internally by the filter mechanism.
+     * @param isPreserved new "preserved" flag value
+     * @since 13309
+     */
+    public void setPreserved(boolean isPreserved) {
+        updateFlags(FLAG_PRESERVED, isPreserved);
+    }
+
+    /**
      * Replies true, if this primitive is disabled. (E.g. a filter applies)
      * @return {@code true} if this object has the "disabled" flag enabled
      */
@@ -456,6 +465,15 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public boolean getDisabledType() {
         return (flags & FLAG_DISABLED_TYPE) != 0;
+    }
+
+    /**
+     * Replies true, if this primitive is preserved from filtering.
+     * @return {@code true} if this object has the "preserved" flag enabled
+     * @since 13309
+     */
+    public boolean isPreserved() {
+        return (flags & FLAG_PRESERVED) != 0;
     }
 
     /**
