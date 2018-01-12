@@ -161,6 +161,41 @@ public class TileSourceRule extends WireMockRule {
         }
     }
 
+    /**
+     * A vertically striped tile source
+     */
+    public static class VStripeSource extends ColorSource {
+        protected final Color rightColor
+;
+        public VStripeSource(Color leftColor, Color rightColor, String label, int tileSize) {
+            super(leftColor, label, tileSize);
+            this.rightColor = rightColor;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.color, this.rightColor, this.label, this.tileSize, this.getClass());
+        }
+
+        @Override
+        public byte[] generatePayloadBytes() {
+            final BufferedImage image = new BufferedImage(this.tileSize, this.tileSize, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = image.createGraphics();
+            g.setBackground(this.color);
+            g.clearRect(0, 0, image.getWidth(), image.getHeight());
+            g.setColor(this.rightColor);
+            g.fillRect(0, 0, image.getWidth()/2, image.getHeight());
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            try {
+                ImageIO.write(image, "png", outputStream);
+            } catch (IOException e) {
+                Logging.trace(e);
+            }
+            return outputStream.toByteArray();
+        }
+    }
+
     protected final List<ConstSource> sourcesList;
     protected final boolean clearLayerList;
     protected final boolean clearSlippyMapSources;
