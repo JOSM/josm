@@ -204,7 +204,7 @@ class HuffmanDecoder implements Closeable {
             int max = (int) Math.min(blockLength - read, len);
             for (int i = 0; i < max; i++) {
                 if (reader.bitsCached() > 0) {
-                    byte next = (byte) (readBits(Byte.SIZE) & 0xFF);
+                    byte next = (byte) readBits(Byte.SIZE);
                     b[off + i] = memory.add(next);
                     read++;
                 } else {
@@ -261,6 +261,7 @@ class HuffmanDecoder implements Closeable {
 
         private int runBufferPos = 0;
         private byte[] runBuffer = new byte[0];
+        private int runBufferLength = 0;
 
         HuffmanCodes(HuffmanState state, int[] lengths, int[] distance) {
             this.state = state;
@@ -287,7 +288,7 @@ class HuffmanDecoder implements Closeable {
             while (result < len) {
                 int symbol = nextSymbol(reader, lengthTree);
                 if (symbol < 256) {
-                    b[off + result++] = memory.add((byte) (symbol & 0xFF));
+                    b[off + result++] = memory.add((byte) symbol);
                 } else if (symbol > 256) {
                     int runMask = RUN_LENGTH_TABLE[symbol - 257];
                     int run = runMask >>> 5;
@@ -301,7 +302,10 @@ class HuffmanDecoder implements Closeable {
                     int distXtra = distMask & 0xF;
                     dist += readBits(distXtra);
 
-                    runBuffer = new byte[run];
+                    if (runBuffer.length < run) {
+                        runBuffer = new byte[run];
+                    }
+                    runBufferLength = run;
                     runBufferPos = 0;
                     memory.recordToBuffer(dist, run, runBuffer);
 
@@ -316,7 +320,7 @@ class HuffmanDecoder implements Closeable {
         }
 
         private int copyFromRunBuffer(byte[] b, int off, int len) {
-            int bytesInBuffer = runBuffer.length - runBufferPos;
+            int bytesInBuffer = runBufferLength - runBufferPos;
             int copiedBytes = 0;
             if (bytesInBuffer > 0) {
                 copiedBytes = Math.min(len, bytesInBuffer);
@@ -333,7 +337,7 @@ class HuffmanDecoder implements Closeable {
 
         @Override
         int available() {
-            return runBuffer.length - runBufferPos;
+            return runBufferLength - runBufferPos;
         }
     }
 
