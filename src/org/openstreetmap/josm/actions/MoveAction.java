@@ -151,7 +151,7 @@ public class MoveAction extends JosmAction {
         }
 
         for (Node n : affectedNodes) {
-            if (n.getCoor().isOutSideWorld()) {
+            if (n.isLatLonKnown() && n.getCoor().isOutSideWorld()) {
                 // Revert move
                 ((MoveCommand) c).moveAgain(-distx, -disty);
                 JOptionPane.showMessageDialog(
