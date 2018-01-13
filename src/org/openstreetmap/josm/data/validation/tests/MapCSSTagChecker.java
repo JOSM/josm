@@ -60,6 +60,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
@@ -775,7 +776,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             } catch (IOException | IllegalStateException | IllegalArgumentException ex) {
                 Logging.warn(tr("Failed to add {0} to tag checker", i));
                 Logging.log(Logging.LEVEL_WARN, ex);
-            } catch (ParseException ex) {
+            } catch (ParseException | TokenMgrError ex) {
                 Logging.warn(tr("Failed to add {0} to tag checker", i));
                 Logging.warn(ex);
             }
@@ -844,7 +845,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         if (tagChecker != null) {
             try {
                 tagChecker.addMapCSS(rule.url);
-            } catch (IOException | ParseException e) {
+            } catch (IOException | ParseException | TokenMgrError e) {
                 Logging.warn(e);
             }
         }
