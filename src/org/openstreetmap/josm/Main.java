@@ -8,7 +8,6 @@ import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -19,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -409,22 +409,20 @@ public abstract class Main {
      * explicitly removing the listeners and allows us to transparently register every
      * created dataset as projection change listener.
      */
-    private static final List<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<>();
+    private static final List<WeakReference<ProjectionChangeListener>> listeners = new CopyOnWriteArrayList<>();
 
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if ((newValue == null ^ oldValue == null)
                 || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
-            synchronized (Main.class) {
-                Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
-                while (it.hasNext()) {
-                    WeakReference<ProjectionChangeListener> wr = it.next();
-                    ProjectionChangeListener listener = wr.get();
-                    if (listener == null) {
-                        it.remove();
-                        continue;
-                    }
-                    listener.projectionChanged(oldValue, newValue);
+            Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
+            while (it.hasNext()) {
+                WeakReference<ProjectionChangeListener> wr = it.next();
+                ProjectionChangeListener listener = wr.get();
+                if (listener == null) {
+                    it.remove();
+                    continue;
                 }
+                listener.projectionChanged(oldValue, newValue);
             }
             if (newValue != null && oldBounds != null && main != null) {
                 main.restoreOldBounds(oldBounds);
