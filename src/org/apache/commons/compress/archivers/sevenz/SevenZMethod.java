@@ -42,6 +42,11 @@ public enum SevenZMethod {
     LZMA2(new byte[] { (byte)0x21 }),
     /** Deflate */
     DEFLATE(new byte[] { (byte)0x04, (byte)0x01, (byte)0x08 }),
+    /**
+     * Deflate64
+     * @since 1.16
+     */
+    DEFLATE64(new byte[] { (byte)0x04, (byte)0x01, (byte)0x09 }),
     /** BZIP2 */
     BZIP2(new byte[] { (byte)0x04, (byte)0x02, (byte)0x02 }),
     /**

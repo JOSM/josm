@@ -31,6 +31,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.apache.commons.compress.compressors.deflate64.Deflate64CompressorInputStream;
 import org.apache.commons.compress.utils.FlushShieldFilterOutputStream;
 import org.tukaani.xz.ARMOptions;
 import org.tukaani.xz.ARMThumbOptions;
@@ -50,6 +51,7 @@ class Coders {
             put(SevenZMethod.LZMA, new LZMADecoder());
             put(SevenZMethod.LZMA2, new LZMA2Decoder());
             put(SevenZMethod.DEFLATE, new DeflateDecoder());
+            put(SevenZMethod.DEFLATE64, new Deflate64Decoder());
             put(SevenZMethod.BZIP2, new BZIP2Decoder());
             put(SevenZMethod.AES256SHA256, new AES256SHA256Decoder());
             put(SevenZMethod.BCJ_X86_FILTER, new BCJDecoder(new X86Options()));
@@ -216,6 +218,20 @@ class Coders {
                     deflater.end();
                 }
             }
+        }
+    }
+
+    static class Deflate64Decoder extends CoderBase {
+        Deflate64Decoder() {
+            super(Number.class);
+        }
+
+        @SuppressWarnings("resource") // caller must close the InputStream
+        @Override
+        InputStream decode(final String archiveName, final InputStream in, final long uncompressedLength,
+                final Coder coder, final byte[] password)
+            throws IOException {
+            return new Deflate64CompressorInputStream(in);
         }
     }
 
