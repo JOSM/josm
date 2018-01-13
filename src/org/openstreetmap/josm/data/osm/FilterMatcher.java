@@ -10,8 +10,6 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Not;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -224,9 +222,7 @@ public class FilterMatcher {
     }
 
     private static FilterType test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
-        MapFrame map = MainApplication.getMap();
-        if (primitive.isIncomplete() ||
-                (map != null && map.mapMode != null && map.mapMode.getPreservedPrimitives().contains(primitive)))
+        if (primitive.isIncomplete() || primitive.isPreserved())
             return FilterType.NOT_FILTERED;
 
         boolean filtered = false;

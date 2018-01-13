@@ -517,6 +517,16 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     /**
+     * Returns a collection containing all primitives preserved from filtering.
+     * @return A collection containing all primitives preserved from filtering.
+     * @see OsmPrimitive#isPreserved
+     * @since 13309
+     */
+    public Collection<OsmPrimitive> allPreservedPrimitives() {
+        return getPrimitives(OsmPrimitive::isPreserved);
+    }
+
+    /**
      * Adds a primitive to the dataset.
      *
      * @param primitive the primitive.
