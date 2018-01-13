@@ -105,8 +105,10 @@ public class DrawActionTest {
 
     /**
      * Non regression test case for bug #14762.
+     * @deprecated test to remove
      */
     @Test
+    @Deprecated
     public void testTicket14762() {
         DrawAction action = new DrawAction();
         assertNull(action.getLayerManager().getEditDataSet());
