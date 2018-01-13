@@ -1224,19 +1224,6 @@ public class ImageProvider {
         return null;
     }
 
-    /** Quit parsing, when a certain condition is met */
-    private static class SAXReturnException extends SAXException {
-        private final String result;
-
-        SAXReturnException(String result) {
-            this.result = result;
-        }
-
-        public String getResult() {
-            return result;
-        }
-    }
-
     /**
      * Reads the wiki page on a certain file in html format in order to find the real image URL.
      *
