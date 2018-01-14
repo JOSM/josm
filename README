@@ -59,15 +59,25 @@ This is an overview of the files and directories in the JOSM code repository:
 - CONTRIBUTION              list of major code contributors
 - data/                     data files that will be included in the JOSM jar file
     - fonts/                font files used for map rendering
+    - gpx/                  different color gradients for gpx drawing
     - projection/           projection files
-      - epsg                list of projection definitions
-    - *.lang                translation data
-    - *.xsd                 xml schema files for validation of configuration files
+      - custom-epsg         list of projection definitions, auto-generated file created by ant task 'epsg'
+    - security/*.pem        certificates that we like to accept for TLS connections, but are missing in the
+                            default Java certificate store
+    - validator/            data files used by the JOSM validator
+      - *.cfg               files designed for the old tagchecker, still in use
+      - *.mapcss            default validation rules for the MapCSS-based tagchecker
+      - opening_hours.js    Javascript code to validate opening hours tag
+                            (external library, see https://github.com/opening-hours/opening_hours.js)
+    - boundaries.osm        OSM file containing boundary data for the states of the earth, including
+                            data for right and left-hand traffic
+    - defaultpresets.xml    data file for the core tagging presets
     - help-browser.css      CSS file for the help sites (HTML content is downloaded from the website
                             on demand, but displayed inside the programm in a Java web browser component.)
-    - validator/            data files used by the JOSM validator feature
-      - *.cfg               files designed for the old tagchecker, still used
-      - *.mapcss            default validation rules for the new mapcss-based tagchecker
+    - overpass-wizard.js    Javascript code to provide a wizard-GUI for creating Overpass requests
+                            (external library, see https://github.com/tyrasd/overpass-wizard)
+    - *.lang                translation data
+    - *.xsd                 xml schema files for validation of configuration files
 - data_nodist/              data files that are useful for development, but not distributed
     - exif-direction-example.jpg
                             sample image, that contains direction information in the EXIF header
@@ -75,15 +85,27 @@ This is an overview of the files and directories in the JOSM code repository:
     - filterTests.osm       used for unit testing of the filter feature
                             (see test/unit/org/openstreetmap/josm/data/osm/FilterTest.java)
     - Join_Areas_Tests.osm  some examples to test the 'join areas' feature
-    - mapcss/               sample map styles and corresponding data files for regression testing
+    - *.*                   various other data files used for unit testing and as reference file
     - projection/           projection files
-      - *.gsb               NTv2 grid files for projection support (see CONTRIBUTION)
-    - projection-reference-data.csv
+      - *.gsb               NTv2 grid files for projection support, downloaded by the
+                            client on demand (see CONTRIBUTION)
+      - CHENyx06-Distribution.pdf
+                            archive of terms of use for the CHENyx06.gsb file
+      - epsg                EPSG data file, taken from the proj.4 project
+                            (see https://github.com/OSGeo/proj.4/blob/master/nad/epsg)
+      - josm-epsg           customizations to the epsg file, used together with the epsg file
+                            to generate data/projection/custom-epsg
+                            
+      - projection-reference-data.csv
                             reference data for projection tests
                             (see test/unit/org/openstreetmap/josm/data/projection/ProjectionRefTest.java)
-    - projection-regression-test-data.csv
+      - projection-regression-test-data.csv
                             regression data for projection tests
                             (see test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java)
+    - trans/*.lang          translation data for files that are not distributed, but used
+                            by the server for localization of the services;
+                            currently contains plugin descriptions in order to include translations
+                            in the downloaded plugin list
 - gpl-2.0.txt, gpl-3.0.txt  full text of the GNU General Public License
 - images/                   images distributed with the JOSM binary
     - icons                 images for the Potlatch 2 style
@@ -101,10 +123,19 @@ This is an overview of the files and directories in the JOSM code repository:
 - README                    this file
 - resources/                resource files that will be included in the JOSM jar file
 - scripts/                  various scripts used by JOSM developers
+  - BuildProjectionDefinitions.java
+                            called from the ant build file to combine the files epsg and josm-epsg
+                            to create the custom-epsg file for distribution
   - geticons.pl             tool to find all used icons and allows deleting unused icons
                             searches also for images with incompatible svg code
   - optimize-images         short script to decrease size of PNG images
-- src/                      the source code of the program
+  - presets_lang.pl         helper script to update language links in presets file
+  - since_xxx.py            developer tool to replace "@since xxx" in Javadoc by the upcoming revision number
+  - SyncEditorLayerIndex.groovy
+                            script to compare and analyse the differences of the editor layer index and the
+                            JOSM imagery list (see https://josm.openstreetmap.de/wiki/ImageryCompare)
+  - TagInfoExtract.groovy   extracts tag information for the taginfo project
+- src/                      the source code of the application
 - start.html                HTML page to run the applet version of JOSM
 - styles/                   map styles included in JOSM
 - sytles_nodist/            files needed for map style maintenance
