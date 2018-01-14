@@ -112,6 +112,13 @@ public class UnsupportedZipFeatureException extends ZipException {
          * @since 1.5
          */
         public static final Feature SPLITTING = new Feature("splitting");
+        /**
+         * The archive contains entries with unknown compressed size
+         * for a compression method that doesn't support detection of
+         * the end of the compressed stream.
+         * @since 1.16
+         */
+        public static final Feature UNKNOWN_COMPRESSED_SIZE = new Feature("unknown compressed size");
 
         private final String name;
 

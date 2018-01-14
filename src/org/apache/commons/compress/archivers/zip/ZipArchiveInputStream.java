@@ -412,8 +412,8 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         if (ae instanceof ZipArchiveEntry) {
             final ZipArchiveEntry ze = (ZipArchiveEntry) ae;
             return ZipUtil.canHandleEntryData(ze)
-                && supportsDataDescriptorFor(ze);
-
+                && supportsDataDescriptorFor(ze)
+                && supportsCompressedSizeFor(ze);
         }
         return false;
     }
@@ -436,6 +436,10 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         ZipUtil.checkRequestedFeatures(current.entry);
         if (!supportsDataDescriptorFor(current.entry)) {
             throw new UnsupportedZipFeatureException(UnsupportedZipFeatureException.Feature.DATA_DESCRIPTOR,
+                    current.entry);
+        }
+        if (!supportsCompressedSizeFor(current.entry)) {
+            throw new UnsupportedZipFeatureException(UnsupportedZipFeatureException.Feature.UNKNOWN_COMPRESSED_SIZE,
                     current.entry);
         }
 
@@ -801,6 +805,19 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
                 || (allowStoredEntriesWithDataDescriptor && entry.getMethod() == ZipEntry.STORED)
                 || entry.getMethod() == ZipEntry.DEFLATED
                 || entry.getMethod() == ZipMethod.ENHANCED_DEFLATED.getCode();
+    }
+
+    /**
+     * Whether the compressed size for the entry is either known or
+     * not required by the compression method being used.
+     */
+    private boolean supportsCompressedSizeFor(final ZipArchiveEntry entry) {
+        return entry.getCompressedSize() != ArchiveEntry.SIZE_UNKNOWN
+            || entry.getMethod() == ZipEntry.DEFLATED
+            || entry.getMethod() == ZipMethod.ENHANCED_DEFLATED.getCode()
+            || (entry.getGeneralPurposeBit().usesDataDescriptor()
+                && allowStoredEntriesWithDataDescriptor
+                && entry.getMethod() == ZipEntry.STORED);
     }
 
     /**

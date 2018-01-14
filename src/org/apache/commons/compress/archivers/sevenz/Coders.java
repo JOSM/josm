@@ -17,10 +17,12 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.SequenceInputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,6 +128,7 @@ class Coders {
     }
 
     static class DeflateDecoder extends CoderBase {
+        private static final byte[] ONE_ZERO_BYTE = new byte[1];
         DeflateDecoder() {
             super(Number.class);
         }
@@ -136,8 +139,10 @@ class Coders {
                 final Coder coder, final byte[] password)
             throws IOException {
             final Inflater inflater = new Inflater(true);
-            final InflaterInputStream inflaterInputStream = new InflaterInputStream(new DummyByteAddingInputStream(in),
-                    inflater);
+            // Inflater requires an extra dummy byte, see
+            // https://docs.oracle.com/javase/7/docs/api/java/util/zip/Inflater.html#Inflater(boolean)
+            final InflaterInputStream inflaterInputStream = new InflaterInputStream(new SequenceInputStream(in,
+                new ByteArrayInputStream(ONE_ZERO_BYTE)), inflater);
             return new DeflateDecoderInputStream(inflaterInputStream, inflater);
         }
         @Override
@@ -254,38 +259,4 @@ class Coders {
         }
     }
 
-    /**
-     * ZLIB requires an extra dummy byte.
-     *
-     * @see java.util.zip.Inflater#Inflater(boolean)
-     * @see org.apache.commons.compress.archivers.zip.ZipFile.BoundedInputStream
-     */
-    private static class DummyByteAddingInputStream extends FilterInputStream {
-        private boolean addDummyByte = true;
-
-        private DummyByteAddingInputStream(final InputStream in) {
-            super(in);
-        }
-
-        @Override
-        public int read() throws IOException {
-            int result = super.read();
-            if (result == -1 && addDummyByte) {
-                addDummyByte = false;
-                result = 0;
-            }
-            return result;
-        }
-
-        @Override
-        public int read(final byte[] b, final int off, final int len) throws IOException {
-            final int result = super.read(b, off, len);
-            if (result == -1 && addDummyByte) {
-                addDummyByte = false;
-                b[off] = 0;
-                return 1;
-            }
-            return result;
-        }
-    }
 }

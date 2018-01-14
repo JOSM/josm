@@ -18,11 +18,13 @@
 package org.apache.commons.compress.archivers.zip;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
@@ -90,6 +92,7 @@ public class ZipFile implements Closeable {
     private static final int POS_1 = 1;
     private static final int POS_2 = 2;
     private static final int POS_3 = 3;
+    private static final byte[] ONE_ZERO_BYTE = new byte[1];
 
     /**
      * List of entries in the order they appear inside the central
@@ -493,9 +496,11 @@ public class ZipFile implements Closeable {
                 return new ExplodingInputStream(ze.getGeneralPurposeBit().getSlidingDictionarySize(),
                         ze.getGeneralPurposeBit().getNumberOfShannonFanoTrees(), buf);
             case DEFLATED:
-                bis.addDummy();
                 final Inflater inflater = new Inflater(true);
-                return new InflaterInputStream(buf, inflater) {
+                // Inflater requires an extra dummy byte, see
+                // https://docs.oracle.com/javase/7/docs/api/java/util/zip/Inflater.html#Inflater(boolean)
+                return new InflaterInputStream(new SequenceInputStream(buf, new ByteArrayInputStream(ONE_ZERO_BYTE)),
+                    inflater) {
                     @Override
                     public void close() throws IOException {
                         try {
@@ -1100,7 +1105,6 @@ public class ZipFile implements Closeable {
         private ByteBuffer singleByteBuffer;
         private final long end;
         private long loc;
-        private boolean addDummy = false;
 
         BoundedInputStream(final long start, final long remaining) {
             this.end = start+remaining;
@@ -1114,10 +1118,6 @@ public class ZipFile implements Closeable {
         @Override
         public synchronized int read() throws IOException {
             if (loc >= end) {
-                if (loc == end && addDummy) {
-                    addDummy = false;
-                    return 0;
-                }
                 return -1;
             }
             if (singleByteBuffer == null) {
@@ -1142,11 +1142,6 @@ public class ZipFile implements Closeable {
 
             if (len > end-loc) {
                 if (loc >= end) {
-                    if (loc == end && addDummy) {
-                        addDummy = false;
-                        b[off] = 0;
-                        return 1;
-                    }
                     return -1;
                 }
                 len = (int)(end-loc);
@@ -1170,10 +1165,6 @@ public class ZipFile implements Closeable {
             }
             buf.flip();
             return read;
-        }
-
-        synchronized void addDummy() {
-            this.addDummy = true;
         }
     }
 
