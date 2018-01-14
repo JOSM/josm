@@ -17,6 +17,7 @@ import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -53,6 +54,12 @@ public class SearchCompilerTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
+
+    /**
+     * Rule to assert exception message.
+     */
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
     private static final class SearchContext {
         final DataSet ds = new DataSet();
@@ -684,5 +691,16 @@ public class SearchCompilerTest {
         for (OsmPrimitive osm : new OsmPrimitive[] {ctx.r1, ctx.r2, ctx.w1, ctx.w2}) {
             ctx.match(osm, false);
         }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/15755">Bug #15755</a>.
+     * @throws SearchParseError always
+     */
+    @Test
+    public void testTicket15755() throws SearchParseError {
+        expectedEx.expect(SearchParseError.class);
+        expectedEx.expectMessage("<html>Expecting <code>:</code> after <i>type</i></html>");
+        SearchCompiler.compile("public_transport=stop_area -type");
     }
 }
