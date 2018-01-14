@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -414,16 +413,8 @@ public abstract class Main {
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if ((newValue == null ^ oldValue == null)
                 || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
-            Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
-            while (it.hasNext()) {
-                WeakReference<ProjectionChangeListener> wr = it.next();
-                ProjectionChangeListener listener = wr.get();
-                if (listener == null) {
-                    it.remove();
-                    continue;
-                }
-                listener.projectionChanged(oldValue, newValue);
-            }
+            listeners.removeIf(x -> x.get() == null);
+            listeners.forEach(x -> x.get().projectionChanged(oldValue, newValue));
             if (newValue != null && oldBounds != null && main != null) {
                 main.restoreOldBounds(oldBounds);
             }
