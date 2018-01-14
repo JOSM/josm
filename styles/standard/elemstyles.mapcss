@@ -35,6 +35,12 @@ setting::shrink_nodes {
   default: true;
 }
 
+setting::hide_tagged_waynodes {
+  type: boolean;
+  label: tr("Hide tagged waynodes at low zoom");
+  default: true;
+}
+
 setting::highway_labels {
   type: boolean;
   label: tr("Display street labels (at high zoom)");
@@ -4680,6 +4686,7 @@ node|z-15[note][FIXME][!setting("hide_icons")]::core_note_fixme {
 /*
 Summary of different zoom levels:
   (any zoom)    place=* (except locality) and a few natural icons with their text is shown
+  |z-14         tagged way nodes are hidden completely
   |z-15         untagged way nodes are hidden completely
   |z15          place=locality icon
   |z16-         fixme=* and note=* symbols; place=locality text
@@ -4688,6 +4695,7 @@ Summary of different zoom levels:
   |z18-         text for normal POI icons is shown
   
  * text size and node size is adapted according to zoom level (see style source below), place labels (except locality) don't get smaller
+ * all these zoom features are modifiable via style settings
  * maxspeed icons should not be distinguishable from POIs with "icon-image" property
 
 */
@@ -4709,6 +4717,9 @@ node:connection {
 node:tagged {
     symbol-stroke-color: none;
     symbol-fill-color: node_tagged#00ffff;
+}
+way > node|z-14[setting("shrink_nodes")][setting("hide_tagged_waynodes")]:tagged { /* todo: check which is faster: `way > node {...}` or `node!:unconnected {...}`, also at other occurrences in this file */
+    symbol-shape: none;
 }
 
 way > node|z16[setting("shrink_nodes")]!:tagged { symbol-size: 1; }
