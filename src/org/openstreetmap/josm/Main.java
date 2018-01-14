@@ -430,13 +430,11 @@ public abstract class Main {
      */
     public static void addProjectionChangeListener(ProjectionChangeListener listener) {
         if (listener == null) return;
-        synchronized (Main.class) {
-            for (WeakReference<ProjectionChangeListener> wr : listeners) {
-                // already registered ? => abort
-                if (wr.get() == listener) return;
-            }
-            listeners.add(new WeakReference<>(listener));
+        for (WeakReference<ProjectionChangeListener> wr : listeners) {
+            // already registered ? => abort
+            if (wr.get() == listener) return;
         }
+        listeners.add(new WeakReference<>(listener));
     }
 
     /**
@@ -446,11 +444,16 @@ public abstract class Main {
      */
     public static void removeProjectionChangeListener(ProjectionChangeListener listener) {
         if (listener == null) return;
-        synchronized (Main.class) {
-            // remove the listener - and any other listener which got garbage
-            // collected in the meantime
-            listeners.removeIf(wr -> wr.get() == null || wr.get() == listener);
-        }
+        // remove the listener - and any other listener which got garbage collected in the meantime
+        listeners.removeIf(wr -> wr.get() == null || wr.get() == listener);
+    }
+
+    /**
+     * Remove all projection change listeners. For testing purposes only.
+     * @since 13322
+     */
+    public static void clearProjectionChangeListeners() {
+        listeners.clear();
     }
 
     /**
