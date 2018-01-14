@@ -1184,3 +1184,13 @@ node[power=transformer][location=pole][!transformer] {
   fixChangeKey: "location => power";
   fixAdd: "transformer=yes";
 }
+
+node[tourism=picnic_table],
+node[amenity=picnic_table],
+node[leisure=picnic],
+node[leisure=picnic_site] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "tourism=picnic_site";
+  suggestAlternative: "leisure=picnic_table";
+  group: tr("deprecated tagging");
+}
