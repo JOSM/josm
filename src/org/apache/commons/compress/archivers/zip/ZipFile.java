@@ -477,29 +477,31 @@ public class ZipFile implements Closeable {
         if (!(ze instanceof Entry)) {
             return null;
         }
-        // cast valididty is checked just above
+        // cast validity is checked just above
         ZipUtil.checkRequestedFeatures(ze);
         final long start = ze.getDataOffset();
 
         // doesn't get closed if the method is not supported - which
         // should never happen because of the checkRequestedFeatures
         // call above
-        final BoundedInputStream bis =
-            createBoundedInputStream(start, ze.getCompressedSize()); //NOSONAR
-        final InputStream buf = new BufferedInputStream(bis); //NOSONAR
+        final InputStream is =
+            new BufferedInputStream(createBoundedInputStream(start, ze.getCompressedSize())); //NOSONAR
         switch (ZipMethod.getMethodByCode(ze.getMethod())) {
             case STORED:
-                return bis;
+                return is;
             case UNSHRINKING:
-                return new UnshrinkingInputStream(buf);
+                return new UnshrinkingInputStream(is);
             case IMPLODING:
                 return new ExplodingInputStream(ze.getGeneralPurposeBit().getSlidingDictionarySize(),
-                        ze.getGeneralPurposeBit().getNumberOfShannonFanoTrees(), buf);
+                        ze.getGeneralPurposeBit().getNumberOfShannonFanoTrees(), is);
             case DEFLATED:
                 final Inflater inflater = new Inflater(true);
-                // Inflater requires an extra dummy byte, see
+                // Inflater with nowrap=true has this odd contract for a zero padding
+                // byte following the data stream; this used to be zlib's requirement
+                // and has been fixed a long time ago, but the contract persists so
+                // we comply.
                 // https://docs.oracle.com/javase/7/docs/api/java/util/zip/Inflater.html#Inflater(boolean)
-                return new InflaterInputStream(new SequenceInputStream(buf, new ByteArrayInputStream(ONE_ZERO_BYTE)),
+                return new InflaterInputStream(new SequenceInputStream(is, new ByteArrayInputStream(ONE_ZERO_BYTE)),
                     inflater) {
                     @Override
                     public void close() throws IOException {
@@ -511,9 +513,9 @@ public class ZipFile implements Closeable {
                     }
                 };
             case BZIP2:
-                return new BZip2CompressorInputStream(buf);
+                return new BZip2CompressorInputStream(is);
             case ENHANCED_DEFLATED:
-                return new Deflate64CompressorInputStream(buf);
+                return new Deflate64CompressorInputStream(is);
             case AES_ENCRYPTED:
             case EXPANDING_LEVEL_1:
             case EXPANDING_LEVEL_2:
