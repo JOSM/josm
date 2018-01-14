@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -408,15 +407,13 @@ public class SearchCompilerTest {
 
     /**
      * Compiles "foo type bar" and tests the parse error message
+     * @throws SearchParseError always
      */
     @Test
-    public void testFooTypeBar() {
-        try {
-            SearchCompiler.compile("foo type bar");
-            fail();
-        } catch (SearchParseError parseError) {
-            assertEquals("<html>Expecting <code>:</code> after <i>type</i>", parseError.getMessage());
-        }
+    public void testFooTypeBar() throws SearchParseError {
+        expectedEx.expect(SearchParseError.class);
+        expectedEx.expectMessage("<html>Expecting <code>:</code> after <i>type</i></html>");
+        SearchCompiler.compile("foo type bar");
     }
 
     /**
@@ -691,16 +688,5 @@ public class SearchCompilerTest {
         for (OsmPrimitive osm : new OsmPrimitive[] {ctx.r1, ctx.r2, ctx.w1, ctx.w2}) {
             ctx.match(osm, false);
         }
-    }
-
-    /**
-     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/15755">Bug #15755</a>.
-     * @throws SearchParseError always
-     */
-    @Test
-    public void testTicket15755() throws SearchParseError {
-        expectedEx.expect(SearchParseError.class);
-        expectedEx.expectMessage("<html>Expecting <code>:</code> after <i>type</i></html>");
-        SearchCompiler.compile("public_transport=stop_area -type");
     }
 }
