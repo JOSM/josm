@@ -419,7 +419,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         Logging.debug(e);
                         JOptionPane.showMessageDialog(
                                 Main.parent,
-                                tr("Search expression is not valid: \n\n {0}", e.getMessage()),
+                                "<html>" + tr("Search expression is not valid: \n\n {0}",
+                                        e.getMessage().replace("<html>", "").replace("</html>", "")).replace("\n", "<br>") +
+                                "</html>",
                                 tr("Invalid search expression"),
                                 JOptionPane.ERROR_MESSAGE);
                     }

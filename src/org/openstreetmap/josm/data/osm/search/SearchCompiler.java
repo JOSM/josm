@@ -200,11 +200,12 @@ public class SearchCompiler {
                             }
                             return new TimestampRange(minDate, maxDate);
                         } else {
-                            throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>"));
+                            throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>")
+                                + "</html>");
                         }
                     }
                 } else {
-                    throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<code>:</code>", "<i>" + keyword + "</i>"));
+                    throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<code>:</code>", "<i>" + keyword + "</i>") + "</html>");
                 }
             }
             throw new IllegalStateException("Not expecting keyword " + keyword);
