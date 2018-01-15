@@ -245,19 +245,7 @@ public class BugReportDialog extends JDialog {
      * @return The parent frame.
      */
     private static Frame findParent() {
-        Component current = Main.parent;
-        try {
-            // avoid cycles/invalid hirarchies
-            for (int i = 0; i < 20 && current != null; i++) {
-                if (current instanceof Frame) {
-                    return (Frame) current;
-                }
-                current = current.getParent();
-            }
-        } catch (RuntimeException e) { // NOPMD
-            BugReport.intercept(e).put("current", current).warn();
-        }
-        return null;
+        return (Frame) (Main.parent instanceof Frame ? Main.parent : SwingUtilities.getAncestorOfClass(Frame.class, Main.parent));
     }
 
     /**
