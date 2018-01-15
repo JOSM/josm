@@ -373,7 +373,7 @@ public class WMSImagery {
         // I think CRS and SRS are the same at this point
         getChildrenStream(element)
             .filter(child -> "CRS".equals(child.getNodeName()) || "SRS".equals(child.getNodeName()))
-            .map(child -> getContent(child))
+            .map(WMSImagery::getContent)
             .filter(crs -> !crs.isEmpty())
             .map(crs -> crs.trim().toUpperCase(Locale.ENGLISH))
             .forEach(crsList::add);
