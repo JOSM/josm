@@ -6,7 +6,6 @@ import java.io.Reader;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.openstreetmap.josm.io.CachedFile;
@@ -21,7 +20,7 @@ import org.openstreetmap.josm.io.CachedFile;
 public final class OverpassTurboQueryWizard {
 
     private static OverpassTurboQueryWizard instance;
-    private final ScriptEngine engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
+    private final ScriptEngine engine = Utils.getJavaScriptEngine();
 
     /**
      * Replies the unique instance of this class.
@@ -36,21 +35,20 @@ public final class OverpassTurboQueryWizard {
     }
 
     private OverpassTurboQueryWizard() {
-        if (engine == null) {
-            throw new IllegalStateException("Failed to retrieve JavaScript engine");
-        }
         try (CachedFile file = new CachedFile("resource://data/overpass-wizard.js");
              Reader reader = file.getContentReader()) {
-            engine.eval("var console = {error: " + Logging.class.getCanonicalName() + ".warn};");
-            engine.eval("var global = {};");
-            engine.eval(reader);
-            engine.eval("var overpassWizard = function(query) {" +
-                    "  return global.overpassWizard(query, {" +
-                    "    comment: false," +
-                    "    outputFormat: 'xml'," +
-                    "    outputMode: 'recursive_meta'" +
-                    "  });" +
-                    "}");
+            if (engine != null) {
+                engine.eval("var console = {error: " + Logging.class.getCanonicalName() + ".warn};");
+                engine.eval("var global = {};");
+                engine.eval(reader);
+                engine.eval("var overpassWizard = function(query) {" +
+                        "  return global.overpassWizard(query, {" +
+                        "    comment: false," +
+                        "    outputFormat: 'xml'," +
+                        "    outputMode: 'recursive_meta'" +
+                        "  });" +
+                        "}");
+            }
         } catch (ScriptException | IOException ex) {
             throw new IllegalStateException("Failed to initialize OverpassTurboQueryWizard", ex);
         }
@@ -63,6 +61,9 @@ public final class OverpassTurboQueryWizard {
      * @throws UncheckedParseException when the parsing fails
      */
     public String constructQuery(String search) {
+        if (engine == null) {
+            throw new IllegalStateException("Failed to retrieve JavaScript engine");
+        }
         try {
             final Object result = ((Invocable) engine).invokeFunction("overpassWizard", search);
             if (Boolean.FALSE.equals(result)) {

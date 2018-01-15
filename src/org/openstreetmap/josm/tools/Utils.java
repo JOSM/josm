@@ -60,6 +60,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -1719,4 +1721,18 @@ public final class Utils {
         return Optional.empty();
     }
 
+    /**
+     * Returns JRE JavaScript Engine (Nashorn by default), if any.
+     * Catches and logs SecurityException and return null in case of error.
+     * @return JavaScript Engine, or null.
+     * @since 13301
+     */
+    public static ScriptEngine getJavaScriptEngine() {
+        try {
+            return new ScriptEngineManager(null).getEngineByName("JavaScript");
+        } catch (SecurityException e) {
+            Logging.error(e);
+            return null;
+        }
+    }
 }

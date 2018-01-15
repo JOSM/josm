@@ -25,7 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -420,7 +419,10 @@ public final class CustomConfigurator {
             try {
                 this.mainPrefs = mainPrefs;
                 PreferencesUtils.resetLog();
-                engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
+                engine = Utils.getJavaScriptEngine();
+                if (engine == null) {
+                    throw new ScriptException("Failed to retrieve JavaScript engine");
+                }
                 engine.eval("API={}; API.pref={}; API.fragments={};");
 
                 engine.eval("homeDir='"+normalizeDirName(Config.getDirs().getPreferencesDirectory(false).getAbsolutePath()) +"';");

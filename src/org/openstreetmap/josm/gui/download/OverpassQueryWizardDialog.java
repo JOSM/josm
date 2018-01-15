@@ -143,10 +143,8 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
      */
     private Optional<String> tryParseSearchTerm(String searchTerm) {
         try {
-            String query = this.overpassQueryBuilder.constructQuery(searchTerm);
-
-            return Optional.of(query);
-        } catch (UncheckedParseException ex) {
+            return Optional.of(overpassQueryBuilder.constructQuery(searchTerm));
+        } catch (UncheckedParseException | IllegalStateException ex) {
             Logging.error(ex);
             JOptionPane.showMessageDialog(
                     dsPanel.getParent(),
@@ -157,7 +155,6 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                     tr("Parse error"),
                     JOptionPane.ERROR_MESSAGE
             );
-
             return Optional.empty();
         }
     }
