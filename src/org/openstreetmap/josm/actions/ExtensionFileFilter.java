@@ -139,7 +139,17 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         );
     }
 
-    public enum AddArchiveExtension { NONE, BASE, ALL }
+    /**
+     * Strategy to determine if extensions must be added to the description.
+     */
+    public enum AddArchiveExtension {
+        /** No extension is added */
+        NONE,
+        /** Only base extension is added */
+        BASE,
+        /** All extensions are added (base + archives) */
+        ALL
+    }
 
     /**
      * Adds a new file importer at the end of the global list. This importer will be evaluated after core ones.
