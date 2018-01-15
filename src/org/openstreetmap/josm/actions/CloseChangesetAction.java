@@ -142,10 +142,18 @@ public class CloseChangesetAction extends JosmAction {
             }
         }
 
+        /**
+         * Determines if the download task has been canceled.
+         * @return {@code true} if the download task has been canceled
+         */
         public boolean isCanceled() {
             return canceled;
         }
 
+        /**
+         * Returns the last exception that occured.
+         * @return the last exception that occured, or {@code null}
+         */
         public Exception getLastException() {
             return lastException;
         }

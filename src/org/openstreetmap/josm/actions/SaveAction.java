@@ -30,6 +30,10 @@ public final class SaveAction extends SaveActionBase {
         putValue("help", ht("/Action/Save"));
     }
 
+    /**
+     * Returns the unique instance.
+     * @return the unique instance
+     */
     public static SaveAction getInstance() {
         return instance;
     }

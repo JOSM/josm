@@ -124,7 +124,7 @@ public class UnJoinNodeWayAction extends JosmAction {
         // If exactly one selected way, remove node not referencing par this way.
         if (selectedWays.size() == 1) {
             Way w = selectedWays.get(0);
-            for (Node n: new ArrayList<Node>(resultingNodes)) {
+            for (Node n: new ArrayList<>(resultingNodes)) {
                 if (!w.containsNode(n)) {
                     resultingNodes.remove(n);
                 }
