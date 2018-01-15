@@ -64,7 +64,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     /** The tracker to load the images */
     private final MediaTracker tracker = new MediaTracker(this);
 
-    private final ImgDisplayMouseListener mouseListener = new ImgDisplayMouseListener();
+    private final ImgDisplayMouseListener imgMouseListener = new ImgDisplayMouseListener();
 
     private String osdText;
 
@@ -665,18 +665,18 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      * Constructs a new {@code ImageDisplay}.
      */
     public ImageDisplay() {
-        addMouseListener(mouseListener);
-        addMouseWheelListener(mouseListener);
-        addMouseMotionListener(mouseListener);
+        addMouseListener(imgMouseListener);
+        addMouseWheelListener(imgMouseListener);
+        addMouseMotionListener(imgMouseListener);
         Config.getPref().addPreferenceChangeListener(this);
         preferenceChanged(null);
     }
 
     @Override
     public void destroy() {
-        removeMouseListener(mouseListener);
-        removeMouseWheelListener(mouseListener);
-        removeMouseMotionListener(mouseListener);
+        removeMouseListener(imgMouseListener);
+        removeMouseWheelListener(imgMouseListener);
+        removeMouseMotionListener(imgMouseListener);
         Config.getPref().removePreferenceChangeListener(this);
     }
 
