@@ -414,7 +414,7 @@ public abstract class Main {
         if ((newValue == null ^ oldValue == null)
                 || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
             listeners.removeIf(x -> x.get() == null);
-            listeners.forEach(x -> x.get().projectionChanged(oldValue, newValue));
+            listeners.stream().map(WeakReference::get).filter(Objects::nonNull).forEach(x -> x.projectionChanged(oldValue, newValue));
             if (newValue != null && oldBounds != null && main != null) {
                 main.restoreOldBounds(oldBounds);
             }
