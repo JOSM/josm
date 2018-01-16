@@ -393,8 +393,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         SwingUtilities.invokeLater(() -> {
             event.getOldSelection().stream().forEach(x -> updatePreservedFlag(x, false));
             event.getSelection().stream().forEach(x -> updatePreservedFlag(x, true));
-            computeHelperLine();
-            addHighlighting(event);
+            if (MainApplication.getMap() != null) {
+                computeHelperLine();
+                addHighlighting(event);
+            }
         });
     }
 
