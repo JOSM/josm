@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -35,7 +35,7 @@ public class OpeningHourTest extends Test.TagTest {
     /**
      * Javascript engine
      */
-    public static final ScriptEngine ENGINE = new ScriptEngineManager(null).getEngineByName("JavaScript");
+    public static final ScriptEngine ENGINE = Utils.getJavaScriptEngine();
 
     /**
      * Constructs a new {@code OpeningHourTest}.
