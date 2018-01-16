@@ -700,21 +700,6 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
-     * Convenience method for accessing colour preferences.
-     * <p>
-     * To be removed: end of 2016
-     *
-     * @param colName name of the colour
-     * @param def default value
-     * @return a Color object for the configured colour, or the default value if none configured.
-     * @deprecated Use a {@link NamedColorProperty} instead.
-     */
-    @Deprecated
-    public synchronized Color getColor(String colName, Color def) {
-        return getColor(colName, null, def);
-    }
-
-    /**
      * only for preferences
      * @param o color key
      * @return translated color name
@@ -737,32 +722,6 @@ public class Preferences extends AbstractPreferences {
             }
         } else {
             return fullKey;
-        }
-    }
-
-    /**
-     * Convenience method for accessing colour preferences.
-     * <p>
-     * To be removed: end of 2016
-     * @param colName name of the colour
-     * @param specName name of the special colour settings
-     * @param def default value
-     * @return a Color object for the configured colour, or the default value if none configured.
-     * @deprecated Use a {@link NamedColorProperty} instead.
-     * You can replace this by: <code>new NamedColorProperty(colName, def).getChildColor(specName)</code>
-     */
-    @Deprecated
-    public synchronized Color getColor(String colName, String specName, Color def) {
-        String colKey = org.openstreetmap.josm.data.preferences.ColorProperty.getColorKey(colName);
-        registerColor(colKey, colName);
-        String colStr = specName != null ? get(COLOR_PREFIX+specName) : "";
-        if (colStr.isEmpty()) {
-            colStr = get(colKey, ColorHelper.color2html(def, true));
-        }
-        if (colStr != null && !colStr.isEmpty()) {
-            return ColorHelper.html2color(colStr);
-        } else {
-            return def;
         }
     }
 
