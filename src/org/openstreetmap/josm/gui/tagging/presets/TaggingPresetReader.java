@@ -69,6 +69,11 @@ public final class TaggingPresetReader {
     public static class Chunk {
         /** The chunk id, can be referenced later */
         public String id;
+
+        @Override
+        public String toString() {
+            return "Chunk [id=" + id + ']';
+        }
     }
 
     /**
@@ -77,6 +82,11 @@ public final class TaggingPresetReader {
     public static class Reference {
         /** Reference matching a chunk id defined earlier **/
         public String ref;
+
+        @Override
+        public String toString() {
+            return "Reference [ref=" + ref + ']';
+        }
     }
 
     static class HashSetWithLast<E> extends LinkedHashSet<E> {
@@ -181,6 +191,7 @@ public final class TaggingPresetReader {
             } else {
                 o = parser.next();
             }
+            Logging.trace("Preset object: {0}", o);
             if (o instanceof Chunk) {
                 if (!lastIds.isEmpty() && ((Chunk) o).id.equals(lastIds.peek())) {
                     // pop last id on end of object, don't process further
@@ -322,6 +333,8 @@ public final class TaggingPresetReader {
     static Collection<TaggingPreset> readAll(String source, boolean validate, HashSetWithLast<TaggingPreset> all)
             throws SAXException, IOException {
         Collection<TaggingPreset> tp;
+        Logging.debug("Reading presets from {0}", source);
+        long startTime = System.currentTimeMillis();
         try (
             CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
             // zip may be null, but Java 7 allows it: https://blogs.oracle.com/darcy/entry/project_coin_null_try_with
@@ -333,6 +346,9 @@ public final class TaggingPresetReader {
             try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip)) {
                 tp = readAll(new BufferedReader(r), validate, all);
             }
+        }
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("Presets read in {0}", Utils.getDurationString(System.currentTimeMillis() - startTime));
         }
         return tp;
     }
