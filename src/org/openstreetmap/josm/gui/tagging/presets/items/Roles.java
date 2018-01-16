@@ -35,7 +35,7 @@ public class Roles extends TaggingPresetItem {
 
     /**
      * The <code>role</code> element in tagging preset definition.
-     * 
+     *
      * Information on a certain role, which is expected for the relation members.
      */
     public static class Role {
@@ -116,7 +116,6 @@ public class Roles extends TaggingPresetItem {
          */
         public boolean isRole(String role) {
             if (regexp && role != null) { // pass null through, it will anyway fail
-                
                 return role.matches(this.key);
             }
             return this.key.equals(role);
@@ -148,8 +147,16 @@ public class Roles extends TaggingPresetItem {
             }
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "Role [key=" + key + ", text=" + text + ']';
+        }
     }
 
+    /**
+     * List of {@link Role} elements.
+     */
     public final List<Role> roles = new LinkedList<>();
 
     @Override
@@ -171,5 +178,10 @@ public class Roles extends TaggingPresetItem {
 
     @Override
     public void addCommands(List<Tag> changedTags) {
+    }
+
+    @Override
+    public String toString() {
+        return "Roles [roles=" + roles + ']';
     }
 }

@@ -57,4 +57,9 @@ public class PresetLink extends TaggingPresetItem {
     public void addCommands(List<Tag> changedTags) {
         // Do nothing
     }
+
+    @Override
+    public String toString() {
+        return "PresetLink [preset_name=" + preset_name + ']';
+    }
 }
