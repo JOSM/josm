@@ -158,6 +158,15 @@ public final class MapViewState implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return getClass().getName() + " [projecting=" + this.projecting
+            + " viewWidth=" + this.viewWidth
+            + " viewHeight=" + this.viewHeight
+            + " scale=" + this.scale
+            + " topLeft=" + this.topLeft + "]";
+    }
+
     /**
      * The scale in east/north units per pixel.
      * @return The scale.

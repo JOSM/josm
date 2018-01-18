@@ -481,6 +481,12 @@ public class MinimapDialogTest {
         // assert downloaded areas are drawn
         this.paintSlippyMap();
 
+        System.err.println("Reported bbox: " + MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toString());
+
+        System.err.println("Reported MapViewState: " + MainApplication.getMap().mapView.getState());
+
+        System.err.println("Reported slippyMap bounding box: " + this.slippyMap.getBoundingBox());
+
         ImagePatternMatching.rowMatch(
             paintedSlippyMap,
             paintedSlippyMap.getHeight()/2,
