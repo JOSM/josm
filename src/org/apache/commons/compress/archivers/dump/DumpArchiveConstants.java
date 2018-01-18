@@ -49,7 +49,7 @@ public final class DumpArchiveConstants {
 
         int code;
 
-        private SEGMENT_TYPE(final int code) {
+        SEGMENT_TYPE(final int code) {
             this.code = code;
         }
 
@@ -74,7 +74,7 @@ public final class DumpArchiveConstants {
 
         int code;
 
-        private COMPRESSION_TYPE(final int code) {
+        COMPRESSION_TYPE(final int code) {
             this.code = code;
         }
 

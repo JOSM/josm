@@ -25,7 +25,7 @@ package org.apache.commons.compress.compressors.brotli;
  */
 public class BrotliUtils {
 
-    static enum CachedAvailability {
+    enum CachedAvailability {
         DONT_CACHE, CACHED_AVAILABLE, CACHED_UNAVAILABLE
     }
 

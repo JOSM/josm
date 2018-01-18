@@ -38,7 +38,7 @@ public class LZMAUtils {
         (byte) 0x5D, 0, 0
     };
 
-    static enum CachedAvailability {
+    enum CachedAvailability {
         DONT_CACHE, CACHED_AVAILABLE, CACHED_UNAVAILABLE
     }
 

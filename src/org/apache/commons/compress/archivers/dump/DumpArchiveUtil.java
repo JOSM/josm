@@ -66,11 +66,7 @@ class DumpArchiveUtil {
         //verify checksum...
         final int checksum = convert32(buffer, 28);
 
-        if (checksum != calculateChecksum(buffer)) {
-            return false;
-        }
-
-        return true;
+        return checksum == calculateChecksum(buffer);
     }
 
     /**

@@ -704,15 +704,11 @@ public class TarArchiveInputStream extends ArchiveInputStream {
             return true;
         }
         // COMPRESS-107 - recognise Ant tar files
-        if (ArchiveUtils.matchAsciiBuffer(TarConstants.MAGIC_ANT,
+        return ArchiveUtils.matchAsciiBuffer(TarConstants.MAGIC_ANT,
                 signature, TarConstants.MAGIC_OFFSET, TarConstants.MAGICLEN)
-            &&
-            ArchiveUtils.matchAsciiBuffer(TarConstants.VERSION_ANT,
-                signature, TarConstants.VERSION_OFFSET, TarConstants.VERSIONLEN)
-                ){
-            return true;
-        }
-        return false;
+                &&
+                ArchiveUtils.matchAsciiBuffer(TarConstants.VERSION_ANT,
+                        signature, TarConstants.VERSION_OFFSET, TarConstants.VERSIONLEN);
     }
 
 }

@@ -70,7 +70,7 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
         M4(4096 * 1024, 7);
 
         private final int size, index;
-        private BlockSize(int size, int index) {
+        BlockSize(int size, int index) {
             this.size = size;
             this.index = index;
         }

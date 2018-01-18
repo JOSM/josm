@@ -80,7 +80,7 @@ public final class ByteUtils {
         checkReadLength(length);
         long l = 0;
         for (int i = 0; i < length; i++) {
-            l |= (bytes[off + i] & 0xffl) << (8 * i);
+            l |= (bytes[off + i] & 0xffL) << (8 * i);
         }
         return l;
     }

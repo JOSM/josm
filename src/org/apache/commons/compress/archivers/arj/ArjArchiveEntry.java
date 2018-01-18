@@ -91,7 +91,7 @@ public class ArjArchiveEntry implements ArchiveEntry {
      */
     @Override
     public Date getLastModifiedDate() {
-        final long ts = isHostOsUnix() ? localFileHeader.dateTimeModified * 1000l
+        final long ts = isHostOsUnix() ? localFileHeader.dateTimeModified * 1000L
             : ZipUtil.dosToJavaTime(0xFFFFFFFFL & localFileHeader.dateTimeModified);
         return new Date(ts);
     }

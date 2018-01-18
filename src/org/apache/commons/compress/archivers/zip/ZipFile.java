@@ -470,10 +470,9 @@ public class ZipFile implements Closeable {
      * @param ze the entry to get the stream for.
      * @return a stream to read the entry from.
      * @throws IOException if unable to create an input stream from the zipentry
-     * @throws ZipException if the zipentry uses an unsupported feature
      */
     public InputStream getInputStream(final ZipArchiveEntry ze)
-        throws IOException, ZipException {
+        throws IOException {
         if (!(ze instanceof Entry)) {
             return null;
         }

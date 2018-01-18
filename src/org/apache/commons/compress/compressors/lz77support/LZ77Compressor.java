@@ -87,7 +87,7 @@ public class LZ77Compressor {
     /** Base class representing blocks the compressor may emit. */
     public static abstract class Block {
         /** Enumeration of the block types the compressor may emit. */
-        public static enum BlockType {
+        public enum BlockType {
             LITERAL, BACK_REFERENCE, EOD
         }
         abstract public BlockType getType();

@@ -864,11 +864,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
             return true;
         }
 
-        if (!isPaxHeader() && !isGlobalPaxHeader() && getName().endsWith("/")) {
-            return true;
-        }
-
-        return false;
+        return !isPaxHeader() && !isGlobalPaxHeader() && getName().endsWith("/");
     }
 
     /**
@@ -1193,7 +1189,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     private int writeEntryHeaderField(final long value, final byte[] outbuf, final int offset,
                                       final int length, final boolean starMode) {
         if (!starMode && (value < 0
-                          || value >= 1l << 3 * (length - 1))) {
+                          || value >= 1L << 3 * (length - 1))) {
             // value doesn't fit into field when written as octal
             // number, will be written to PAX header or causes an
             // error

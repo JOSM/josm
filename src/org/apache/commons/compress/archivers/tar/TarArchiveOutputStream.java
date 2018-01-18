@@ -671,7 +671,7 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
                 final TarArchiveEntry longLinkEntry = new TarArchiveEntry(TarConstants.GNU_LONGLINK,
                     linkType);
 
-                longLinkEntry.setSize(len + 1l); // +1 for NUL
+                longLinkEntry.setSize(len + 1L); // +1 for NUL
                 transferModTime(entry, longLinkEntry);
                 putArchiveEntry(longLinkEntry);
                 write(encodedName.array(), encodedName.arrayOffset(), len);

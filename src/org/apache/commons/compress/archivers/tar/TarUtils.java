@@ -245,8 +245,7 @@ public class TarUtils {
         String string = new String(buffer, offset, length);
 
         string=string.replaceAll("\0", "{NUL}"); // Replace NULs to allow string to be printed
-        final String s = "Invalid byte "+currentByte+" at offset "+(current-offset)+" in '"+string+"' len="+length;
-        return s;
+        return "Invalid byte "+currentByte+" at offset "+(current-offset)+" in '"+string+"' len="+length;
     }
 
     /**
@@ -492,7 +491,7 @@ public class TarUtils {
                                          final int offset, final int length,
                                          final boolean negative) {
         final int bits = (length - 1) * 8;
-        final long max = 1l << bits;
+        final long max = 1L << bits;
         long val = Math.abs(value); // Long.MIN_VALUE stays Long.MIN_VALUE
         if (val < 0 || val >= max) {
             throw new IllegalArgumentException("Value " + value +
@@ -501,7 +500,7 @@ public class TarUtils {
         if (negative) {
             val ^= max - 1;
             val++;
-            val |= 0xffl << bits;
+            val |= 0xffL << bits;
         }
         for (int i = offset + length - 1; i >= offset; i--) {
             buf[i] = (byte) val;

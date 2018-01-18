@@ -119,7 +119,7 @@ public class BitInputStream implements Closeable {
      * @since 1.16
      */
     public long bitsAvailable() throws IOException {
-        return bitsCachedSize + 8l * in.available();
+        return bitsCachedSize + 8L * in.available();
     }
 
     /**
@@ -137,7 +137,7 @@ public class BitInputStream implements Closeable {
     private long processBitsGreater57(final int count) throws IOException {
         final long bitsOut;
         int overflowBits = 0;
-        long overflow = 0l;
+        long overflow = 0L;
 
         // bitsCachedSize >= 57 and left-shifting it 8 bits would cause an overflow
         int bitsToAddCount = count - bitsCachedSize;

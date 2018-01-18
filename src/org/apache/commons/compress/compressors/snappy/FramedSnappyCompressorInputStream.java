@@ -230,7 +230,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
             expectedChecksum = unmask(readCrc());
         } else if (type == COMPRESSED_CHUNK_TYPE) {
             final boolean expectChecksum = dialect.usesChecksumWithCompressedChunks();
-            final long size = readSize() - (expectChecksum ? 4l : 0l);
+            final long size = readSize() - (expectChecksum ? 4L : 0L);
             if (expectChecksum) {
                 expectedChecksum = unmask(readCrc());
             } else {

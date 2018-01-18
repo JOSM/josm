@@ -41,7 +41,7 @@ public class XZUtils {
         (byte) 0xFD, '7', 'z', 'X', 'Z', '\0'
     };
 
-    static enum CachedAvailability {
+    enum CachedAvailability {
         DONT_CACHE, CACHED_AVAILABLE, CACHED_UNAVAILABLE
     }
 

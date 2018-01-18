@@ -218,7 +218,7 @@ public abstract class PKWareExtraHeader implements ZipExtraField {
         static {
             final Map<Integer, EncryptionAlgorithm> cte = new HashMap<>();
             for (final EncryptionAlgorithm method : values()) {
-                cte.put(Integer.valueOf(method.getCode()), method);
+                cte.put(method.getCode(), method);
             }
             codeToEnum = Collections.unmodifiableMap(cte);
         }
@@ -247,7 +247,7 @@ public abstract class PKWareExtraHeader implements ZipExtraField {
          * if the method is not known
          */
         public static EncryptionAlgorithm getAlgorithmByCode(final int code) {
-            return codeToEnum.get(Integer.valueOf(code));
+            return codeToEnum.get(code);
         }
     }
 
@@ -273,7 +273,7 @@ public abstract class PKWareExtraHeader implements ZipExtraField {
         static {
             final Map<Integer, HashAlgorithm> cte = new HashMap<>();
             for (final HashAlgorithm method : values()) {
-                cte.put(Integer.valueOf(method.getCode()), method);
+                cte.put(method.getCode(), method);
             }
             codeToEnum = Collections.unmodifiableMap(cte);
         }
@@ -302,7 +302,7 @@ public abstract class PKWareExtraHeader implements ZipExtraField {
          * if the method is not known
          */
         public static HashAlgorithm getAlgorithmByCode(final int code) {
-            return codeToEnum.get(Integer.valueOf(code));
+            return codeToEnum.get(code);
         }
     }
 }

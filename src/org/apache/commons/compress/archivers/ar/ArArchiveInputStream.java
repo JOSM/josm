@@ -271,35 +271,11 @@ public class ArArchiveInputStream extends ArchiveInputStream {
     public static boolean matches(final byte[] signature, final int length) {
         // 3c21 7261 6863 0a3e
 
-        if (length < 8) {
-            return false;
-        }
-        if (signature[0] != 0x21) {
-            return false;
-        }
-        if (signature[1] != 0x3c) {
-            return false;
-        }
-        if (signature[2] != 0x61) {
-            return false;
-        }
-        if (signature[3] != 0x72) {
-            return false;
-        }
-        if (signature[4] != 0x63) {
-            return false;
-        }
-        if (signature[5] != 0x68) {
-            return false;
-        }
-        if (signature[6] != 0x3e) {
-            return false;
-        }
-        if (signature[7] != 0x0a) {
-            return false;
-        }
-
-        return true;
+        return length >= 8 && signature[0] == 0x21 &&
+                signature[1] == 0x3c && signature[2] == 0x61 &&
+                signature[3] == 0x72 && signature[4] == 0x63 &&
+                signature[5] == 0x68 && signature[6] == 0x3e &&
+                signature[7] == 0x0a;
     }
 
     static final String BSD_LONGNAME_PREFIX = "#1/";

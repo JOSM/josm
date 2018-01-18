@@ -123,23 +123,8 @@ public class LZMACompressorInputStream extends CompressorInputStream {
      * @since 1.10
      */
     public static boolean matches(final byte[] signature, final int length) {
-
-        if (signature == null || length < 3) {
-            return false;
-        }
-
-        if (signature[0] != 0x5d) {
-            return false;
-        }
-
-        if (signature[1] != 0) {
-            return false;
-        }
-
-        if (signature[2] != 0) {
-            return false;
-        }
-
-        return true;
+        return signature != null && length >= 3 &&
+                signature[0] == 0x5d && signature[1] == 0 &&
+                signature[2] == 0;
     }
 }

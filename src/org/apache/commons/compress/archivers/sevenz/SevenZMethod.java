@@ -92,7 +92,7 @@ public enum SevenZMethod {
 
     private final byte[] id;
 
-    private SevenZMethod(final byte[] id) {
+    SevenZMethod(final byte[] id) {
         this.id = id;
     }
 

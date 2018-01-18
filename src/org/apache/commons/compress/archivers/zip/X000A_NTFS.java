@@ -382,12 +382,12 @@ public class X000A_NTFS implements ZipExtraField {
 
     private static ZipEightByteInteger dateToZip(final Date d) {
         if (d == null) { return null; }
-        return new ZipEightByteInteger((d.getTime() * 10000l) - EPOCH_OFFSET);
+        return new ZipEightByteInteger((d.getTime() * 10000L) - EPOCH_OFFSET);
     }
 
     private static Date zipToDate(final ZipEightByteInteger z) {
         if (z == null || ZipEightByteInteger.ZERO.equals(z)) { return null; }
-        final long l = (z.getLongValue() + EPOCH_OFFSET) / 10000l;
+        final long l = (z.getLongValue() + EPOCH_OFFSET) / 10000L;
         return new Date(l);
     }
 

@@ -430,7 +430,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      * @since 1.14
      */
     public CompressorStreamFactory(final boolean decompressUntilEOF, final int memoryLimitInKb) {
-        this.decompressUntilEOF = Boolean.valueOf(decompressUntilEOF);
+        this.decompressUntilEOF = decompressUntilEOF;
         // Also copy to existing variable so can continue to use that as the
         // current value
         this.decompressConcatenated = decompressUntilEOF;

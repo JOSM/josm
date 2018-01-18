@@ -299,7 +299,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         writeAsciiLong(devMin, 8, 16);
         writeAsciiLong(entry.getRemoteDeviceMaj(), 8, 16);
         writeAsciiLong(entry.getRemoteDeviceMin(), 8, 16);
-        writeAsciiLong(entry.getName().length() + 1l, 8, 16);
+        writeAsciiLong(entry.getName().length() + 1L, 8, 16);
         writeAsciiLong(entry.getChksum(), 8, 16);
         writeCString(entry.getName());
         pad(entry.getHeaderPadCount());
@@ -330,7 +330,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         writeAsciiLong(entry.getNumberOfLinks(), 6, 8);
         writeAsciiLong(entry.getRemoteDevice(), 6, 8);
         writeAsciiLong(entry.getTime(), 11, 8);
-        writeAsciiLong(entry.getName().length() + 1l, 6, 8);
+        writeAsciiLong(entry.getName().length() + 1L, 6, 8);
         writeAsciiLong(entry.getSize(), 11, 8);
         writeCString(entry.getName());
     }
@@ -360,7 +360,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         writeBinaryLong(entry.getNumberOfLinks(), 2, swapHalfWord);
         writeBinaryLong(entry.getRemoteDevice(), 2, swapHalfWord);
         writeBinaryLong(entry.getTime(), 4, swapHalfWord);
-        writeBinaryLong(entry.getName().length() + 1l, 2, swapHalfWord);
+        writeBinaryLong(entry.getName().length() + 1L, 2, swapHalfWord);
         writeBinaryLong(entry.getSize(), 4, swapHalfWord);
         writeCString(entry.getName());
         pad(entry.getHeaderPadCount());

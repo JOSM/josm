@@ -36,8 +36,8 @@ public enum FramedSnappyDialect {
 
     private final boolean streamIdentifier, checksumWithCompressedChunks;
 
-    private FramedSnappyDialect(final boolean hasStreamIdentifier,
-                                final boolean usesChecksumWithCompressedChunks) {
+    FramedSnappyDialect(final boolean hasStreamIdentifier,
+                        final boolean usesChecksumWithCompressedChunks) {
         this.streamIdentifier = hasStreamIdentifier;
         this.checksumWithCompressedChunks = usesChecksumWithCompressedChunks;
     }
