@@ -7,6 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
@@ -173,5 +174,46 @@ public class OverpassDownloadReaderTest {
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;").matches());
+    }
+
+    /**
+     * Test {@link OverpassDownloadReader#fixQuery(String)}.
+     */
+    @Test
+    public void testFixQuery() {
+        assertNull(OverpassDownloadReader.fixQuery(null));
+
+        assertEquals("out meta;", OverpassDownloadReader.fixQuery("out;"));
+        assertEquals("out meta;", OverpassDownloadReader.fixQuery("out body;"));
+        assertEquals("out meta;", OverpassDownloadReader.fixQuery("out skel;"));
+        assertEquals("out meta;", OverpassDownloadReader.fixQuery("out ids;"));
+
+        assertEquals("out meta id;", OverpassDownloadReader.fixQuery("out id;"));
+        assertEquals("out meta id;", OverpassDownloadReader.fixQuery("out body id;"));
+        assertEquals("out meta id;", OverpassDownloadReader.fixQuery("out skel id;"));
+        assertEquals("out meta id;", OverpassDownloadReader.fixQuery("out ids id;"));
+
+        assertEquals("out meta qt;", OverpassDownloadReader.fixQuery("out qt;"));
+        assertEquals("out meta qt;", OverpassDownloadReader.fixQuery("out body qt;"));
+        assertEquals("out meta qt;", OverpassDownloadReader.fixQuery("out skel qt;"));
+        assertEquals("out meta qt;", OverpassDownloadReader.fixQuery("out ids qt;"));
+
+        assertEquals("[out:xml]", OverpassDownloadReader.fixQuery("[out:json]"));
+        assertEquals("[out:xml]", OverpassDownloadReader.fixQuery("[out:csv(\n" +
+                "    ::\"id\", amenity, name, operator, opening_hours, \"contact:website\", \"contact:phone\", brand, dispensing, lastcheck\n" +
+                "  )]"));
+
+        assertEquals("[out:xml][timeout:25];\n" +
+                "(\n" +
+                "  node[\"historic\"=\"ringfort\"];\n" +
+                "  way[\"historic\"=\"ringfort\"];\n" +
+                ");\n" +
+                "out meta;",
+            OverpassDownloadReader.fixQuery("[out:json][timeout:25];\n" +
+                "(\n" +
+                "  node[\"historic\"=\"ringfort\"];\n" +
+                "  way[\"historic\"=\"ringfort\"];\n" +
+                ");\n" +
+                "out body;"));
     }
 }

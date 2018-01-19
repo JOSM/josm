@@ -393,4 +393,16 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
         return ds;
     }
+
+    /**
+     * Fixes Overpass API query to make sure it will be accepted by JOSM.
+     * @param query Overpass query to check
+     * @return fixed query
+     * @since 13335
+     */
+    public static String fixQuery(String query) {
+        return query == null ? query : query
+                .replaceFirst("out( body| skel| ids)?( id| qt)?;", "out meta$2;")
+                .replaceFirst("(?s)\\[out:(json|csv)[^\\]]*\\]", "[out:xml]");
+    }
 }

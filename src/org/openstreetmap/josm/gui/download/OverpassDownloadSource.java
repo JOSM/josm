@@ -191,7 +191,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
                 }
             };
 
-            return new OverpassDownloadData(query, errorReporter);
+            return new OverpassDownloadData(OverpassDownloadReader.fixQuery(query), errorReporter);
         }
 
         @Override
