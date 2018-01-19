@@ -7,6 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
@@ -180,6 +181,8 @@ public class OverpassDownloadReaderTest {
      */
     @Test
     public void testFixQuery() {
+        assertNull(OverpassDownloadReader.fixQuery(null));
+
         assertEquals("out meta;", OverpassDownloadReader.fixQuery("out;"));
         assertEquals("out meta;", OverpassDownloadReader.fixQuery("out body;"));
         assertEquals("out meta;", OverpassDownloadReader.fixQuery("out skel;"));
@@ -195,13 +198,18 @@ public class OverpassDownloadReaderTest {
         assertEquals("out meta qt;", OverpassDownloadReader.fixQuery("out skel qt;"));
         assertEquals("out meta qt;", OverpassDownloadReader.fixQuery("out ids qt;"));
 
-        assertEquals("[timeout:25];\n" +
+        assertEquals("[out:xml]", OverpassDownloadReader.fixQuery("[out:json]"));
+        assertEquals("[out:xml]", OverpassDownloadReader.fixQuery("[out:csv(\n" +
+                "    ::\"id\", amenity, name, operator, opening_hours, \"contact:website\", \"contact:phone\", brand, dispensing, lastcheck\n" +
+                "  )]"));
+
+        assertEquals("[out:xml][timeout:25];\n" +
                 "(\n" +
                 "  node[\"historic\"=\"ringfort\"];\n" +
                 "  way[\"historic\"=\"ringfort\"];\n" +
                 ");\n" +
                 "out meta;",
-            OverpassDownloadReader.fixQuery("[timeout:25];\n" +
+            OverpassDownloadReader.fixQuery("[out:xml][timeout:25];\n" +
                 "(\n" +
                 "  node[\"historic\"=\"ringfort\"];\n" +
                 "  way[\"historic\"=\"ringfort\"];\n" +
