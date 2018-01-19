@@ -209,7 +209,7 @@ public class OverpassDownloadReaderTest {
                 "  way[\"historic\"=\"ringfort\"];\n" +
                 ");\n" +
                 "out meta;",
-            OverpassDownloadReader.fixQuery("[out:xml][timeout:25];\n" +
+            OverpassDownloadReader.fixQuery("[out:json][timeout:25];\n" +
                 "(\n" +
                 "  node[\"historic\"=\"ringfort\"];\n" +
                 "  way[\"historic\"=\"ringfort\"];\n" +
