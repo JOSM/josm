@@ -55,7 +55,7 @@
 }
 
 *[height][height !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/] {
-  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "height");
+  throwWarning: tr("unusual value of {0}: meters is default; point is separator; if units, put space then unit", "{0.key}");
   assertMatch: "node height=medium";
   assertMatch: "node height=-5";
   assertNoMatch: "node height=2 m";
@@ -66,7 +66,7 @@
 }
 
 *[maxheight][maxheight !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default)$/] {
-  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "maxheight");
+  throwWarning: tr("unusual value of {0}: meters is default; point is separator; if units, put space then unit", "{0.key}");
   assertMatch: "node maxheight=something";
   assertMatch: "node maxheight=-5";
   assertMatch: "node maxheight=0";
@@ -79,7 +79,7 @@
 }
 
 way[width][width !~ /^(([0-9]+\.?[0-9]*( [a-z]+)?)|([0-9]+\'([0-9]+\.?[0-9]*\")?))$/] {
-  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "width");
+  throwWarning: tr("unusual value of {0}: meters is default; point is separator; if units, put space then unit", "{0.key}");
   assertMatch: "way width=something";
   assertMatch: "way width=-5";
   assertNoMatch: "way width=3";
@@ -91,7 +91,7 @@ way[width][width !~ /^(([0-9]+\.?[0-9]*( [a-z]+)?)|([0-9]+\'([0-9]+\.?[0-9]*\")?
 }
 
 *[maxwidth][maxwidth !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
-  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "maxwidth");
+  throwWarning: tr("unusual value of {0}: meters is default; point is separator; if units, put space then unit", "{0.key}");
   assertMatch: "way maxwidth=something";
   assertMatch: "way maxwidth=-5";
   assertNoMatch: "way maxwidth=2";
@@ -100,7 +100,7 @@ way[width][width !~ /^(([0-9]+\.?[0-9]*( [a-z]+)?)|([0-9]+\'([0-9]+\.?[0-9]*\")?
   assertNoMatch: "way maxwidth=7 ft";
 }
 *[maxweight][maxweight !~ /^(([0-9]+\.?[0-9]*( (t|kg|lbs))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
-  throwWarning: tr("{0}: tonne is default; period is separator; if units, put space then unit", "maxweight");
+  throwWarning: tr("unusual value of {0}: tonne is default; point is separator; if units, put space then unit", "{0.key}");
   assertMatch: "way maxweight=something";
   assertMatch: "way maxweight=-5";
   assertNoMatch: "way maxweight=2";
@@ -111,7 +111,7 @@ way[width][width !~ /^(([0-9]+\.?[0-9]*( [a-z]+)?)|([0-9]+\'([0-9]+\.?[0-9]*\")?
 way[maxspeed][maxspeed !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/],
 way[maxspeed:forward][maxspeed:forward !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/],
 way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/] {
-  throwWarning: tr("unusual {0} format", "maxspeed");
+  throwWarning: tr("unusual value of {0}", "{0.key}");
   assertMatch: "way maxspeed=something";
   assertMatch: "way maxspeed=-50";
   assertMatch: "way maxspeed=0";
@@ -127,7 +127,7 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
 }
 
 *[distance][distance !~ /^(([0-9]+\.?[0-9]*( (m|km|mi|nmi))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
-  throwWarning: tr("{0}: kilometers is default; period is separator; if units, put space then unit", "distance");
+  throwWarning: tr("unusual value of {0}: kilometers is default; point is separator; if units, put space then unit", "{0.key}");
   assertMatch: "way distance=something";
   assertMatch: "way distance=-5";
   assertNoMatch: "way distance=2";
@@ -144,7 +144,7 @@ way[voltage][voltage =~ /(.*[A-Za-z].*)|.*,.*|.*( ).*/] {
 /* some users are using frequency for other purposes (not electromagnetic) 
    with the values 'perennial' and 'intermittent'; the vast majority are 0, 16.7, 50 and 60 */
 way[frequency][frequency !~ /^(0|[1-9][0-9]*(\.[0-9]+)?)( (kHz|MHz|GHz|THz))?$/] {
-  throwWarning: tr("unusual {0} specification", "frequency");
+  throwWarning: tr("unusual value of {0}", "{0.key}");
   assertMatch: "way frequency=something";
   assertNoMatch: "way frequency=0"; /* DC */
   assertNoMatch: "way frequency=16.7";
@@ -154,7 +154,7 @@ way[frequency][frequency !~ /^(0|[1-9][0-9]*(\.[0-9]+)?)( (kHz|MHz|GHz|THz))?$/]
 }
 
 way[gauge][gauge !~ /^([1-9][0-9]{1,3}(;[1-9][0-9]{1,3})*|broad|standard|narrow)$/] {
-  throwWarning: tr("unusual train track gauge; use mm with no separator");
+  throwWarning: tr("unusual value of {0}", "{0.key}");
   assertMatch: "way gauge=something";
   assertNoMatch: "way gauge=1435";
   assertNoMatch: "way gauge=1000;1435";
@@ -164,7 +164,11 @@ way[gauge][gauge !~ /^([1-9][0-9]{1,3}(;[1-9][0-9]{1,3})*|broad|standard|narrow)
 
 /* the numbers for percentage and degrees include could probably be bracketed a bit more precisely */
 way[incline][incline !~ /^(up|down|-?([0-9]+?(\.[1-9]%)?|100)[%°]?)$/] {
-  throwWarning: tr("unusual incline; use percentages/degrees or up/down");
+  throwWarning: tr("unusual value of {0}", "{0.key}");
+  suggestAlternative: "x%";
+  suggestAlternative: "x°";
+  suggestAlternative: "up";
+  suggestAlternative: "down";
   assertMatch: "way incline=extreme";
   assertNoMatch: "way incline=up";
   assertNoMatch: "way incline=down";
@@ -194,7 +198,7 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertNoMatch: "node amenity=cinema screen=8";
 }
 *[admin_level][admin_level !~ /^(1|2|3|4|5|6|7|8|9|10|11|12)$/] {
-  throwWarning: tr("unusual value of {0}", "{1.key}");
+  throwWarning: tr("unusual value of {0}", "{0.key}");
   assertMatch: "node admin_level=0";
   assertMatch: "node admin_level=-1";
   assertMatch: "node admin_level=13";
@@ -204,13 +208,13 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
 /* #14989 */
 *[direction][direction<0],
 *[direction][direction>=360] {
-  throwWarning: tr("unusual value of {0}", "{1.key}");
+  throwWarning: tr("unusual value of {0}", "{0.key}");
   assertMatch: "node direction=-10";
   assertMatch: "node direction=360";
   assertNoMatch: "node direction=0";
 }
 *[direction][direction !~ /^([0-9][0-9]?[0-9]?|north|east|south|west|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW|forward|backward|both|clockwise|anti-clockwise|anticlockwise|up|down)(-([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW))?(;([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW)-([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW))*$/] {
-  throwWarning: tr("unusual value of {0}", "{1.key}");
+  throwWarning: tr("unusual value of {0}", "{0.key}");
   assertMatch: "node direction=north-down";
   assertMatch: "node direction=rome";
   assertMatch: "node direction=C";
