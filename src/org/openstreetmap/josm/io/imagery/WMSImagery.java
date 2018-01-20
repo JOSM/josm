@@ -234,13 +234,31 @@ public class WMSImagery {
             return;
         }
 
+        doAttemptGetCapabilities(serviceUrlStr, getCapabilitiesUrl);
+    }
+
+    private void doAttemptGetCapabilities(String serviceUrlStr, URL getCapabilitiesUrl)
+            throws IOException, WMSGetCapabilitiesException {
         final Response response = HttpClient.create(getCapabilitiesUrl).connect();
 
         if (response.getResponseCode() >= 400) {
             throw new WMSGetCapabilitiesException(response.getResponseMessage(), response.fetchContent());
         }
 
-        parseCapabilities(serviceUrlStr, response.getContent());
+        try {
+            parseCapabilities(serviceUrlStr, response.getContent());
+        } catch (WMSGetCapabilitiesException e) {
+            String url = getCapabilitiesUrl.toExternalForm();
+            // ServiceException for servers handling only WMS 1.3.0 ?
+            if (e.getCause() == null && url.contains("VERSION=1.1.1")) {
+                doAttemptGetCapabilities(serviceUrlStr, new URL(url.replace("VERSION=1.1.1", "VERSION=1.3.0")));
+                if (serviceUrl.toExternalForm().contains("VERSION=1.1.1")) {
+                    serviceUrl = new URL(serviceUrl.toExternalForm().replace("VERSION=1.1.1", "VERSION=1.3.0"));
+                }
+            } else {
+                throw e;
+            }
+        }
     }
 
     void parseCapabilities(String serviceUrlStr, InputStream contentStream) throws IOException, WMSGetCapabilitiesException {
