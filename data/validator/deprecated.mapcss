@@ -1194,3 +1194,24 @@ node[leisure=picnic_site] {
   suggestAlternative: "leisure=picnic_table";
   group: tr("deprecated tagging");
 }
+
+/* #15804 */
+relation[water=salt],
+way[water=salt],
+way[water=salt_pool],
+way[water=salt_panne],
+way[water=salt_pond] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "salt=yes";
+  suggestAlternative: "landuse=salt_pond";
+  group: tr("deprecated tagging");
+}
+
+/* #15805 */
+way[water=tidal] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "tidal=yes";
+  fixAdd: "tidal=yes";
+  fixRemove: "water";
+  group: tr("deprecated tagging");
+}
