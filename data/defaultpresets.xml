@@ -2561,6 +2561,7 @@
                     <check key="fuel:diesel" text="Diesel" />
                     <check key="fuel:biodiesel" text="Bio Diesel" />
                     <check key="fuel:octane_80" text="Octane 80" />
+                    <check key="fuel:octane_87" text="Octane 87" />
                     <check key="fuel:octane_91" text="Octane 91" />
                     <check key="fuel:octane_92" text="Octane 92" />
                     <check key="fuel:octane_95" text="Octane 95" />
@@ -2568,6 +2569,7 @@
                     <check key="fuel:octane_100" text="Octane 100" />
                     <check key="fuel:e10" text="E10 (10% Ethanol mix)" />
                     <check key="fuel:e85" text="E85 (85% Ethanol mix)" />
+                    <check key="fuel:ethanol" text="Ethanol (alcohol)" />
                     <check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" />
                     <check key="fuel:cng" text="CNG (Compressed Natural Gas)" />
                 </checkgroup>
@@ -3130,6 +3132,7 @@
                     <check key="fuel:GTL_diesel" text="Diesel (Gas To Liquid - ultimate diesel)" />
                     <check key="fuel:HGV_diesel" text="Diesel for Heavy Good Vehicles" />
                     <check key="fuel:octane_80" text="Octane 80" />
+                    <check key="fuel:octane_87" text="Octane 87" />
                     <check key="fuel:octane_91" text="Octane 91" />
                     <check key="fuel:octane_92" text="Octane 92" />
                     <check key="fuel:octane_95" text="Octane 95" />
@@ -3137,6 +3140,7 @@
                     <check key="fuel:octane_100" text="Octane 100" />
                     <check key="fuel:e10" text="E10 (10% Ethanol mix)" />
                     <check key="fuel:e85" text="E85 (85% Ethanol mix)" />
+                    <check key="fuel:ethanol" text="Ethanol (alcohol)" />
                     <check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" />
                     <check key="fuel:cng" text="CNG (Compressed Natural Gas)" />
                     <check key="fuel:1_25" text="1/25 mix (mofa/moped)" />
