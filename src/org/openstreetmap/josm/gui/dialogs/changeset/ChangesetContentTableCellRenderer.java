@@ -38,10 +38,14 @@ public class ChangesetContentTableCellRenderer extends AbstractCellRenderer {
         renderColors(isSelected);
         switch(column) {
         case 0:
-            renderModificationType((ChangesetModificationType) value);
+            if (value instanceof ChangesetModificationType) {
+                renderModificationType((ChangesetModificationType) value);
+            }
             break;
         case 1:
-            renderId(((HistoryOsmPrimitive) value).getId());
+            if (value instanceof HistoryOsmPrimitive) {
+                renderId(((HistoryOsmPrimitive) value).getId());
+            }
             break;
         default:
             /* do nothing */
