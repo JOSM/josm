@@ -100,7 +100,7 @@
   assertNoMatch: "node maxheight=16'3\"";
 }
 
-*[width][width =~ /^[0-9]+,[0-9]+$/] {
+*[width][width =~ /^[0-9]+,[0-9]+( (m|ft))?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("width=", replace(tag("width"), ",", "."));
   set width_separator_autofix;
