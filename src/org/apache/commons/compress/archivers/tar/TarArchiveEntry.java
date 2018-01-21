@@ -242,6 +242,9 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      * Construct an entry with only a name. This allows the programmer
      * to construct the entry's header "by hand". File is set to null.
      *
+     * <p>The entry's name will be the value of the {@code name}
+     * argument with leading slashes stripped.</p>
+     *
      * @param name the entry name
      */
     public TarArchiveEntry(final String name) {
@@ -251,6 +254,10 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     /**
      * Construct an entry with only a name. This allows the programmer
      * to construct the entry's header "by hand". File is set to null.
+     *
+     * <p>The entry's name will be the value of the {@code name}
+     * argument with leading slashes stripped if {@code
+     * preserveLeadingSlashes} is {@code false}.</p>
      *
      * @param name the entry name
      * @param preserveLeadingSlashes whether to allow leading slashes
@@ -276,6 +283,10 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     /**
      * Construct an entry with a name and a link flag.
      *
+     * <p>The entry's name will be the value of the {@code name}
+     * argument with all file separators replaced by forward slashes
+     * and leading slashes stripped.</p>
+     *
      * @param name the entry name
      * @param linkFlag the entry link flag.
      */
@@ -285,6 +296,11 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
 
     /**
      * Construct an entry with a name and a link flag.
+     *
+     * <p>The entry's name will be the value of the {@code name}
+     * argument with all file separators replaced by forward
+     * slashes. Leading slashes are stripped if {@code
+     * preserveLeadingSlashes} is {@code false}.</p>
      *
      * @param name the entry name
      * @param linkFlag the entry link flag.
@@ -307,6 +323,11 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      * header is constructed from information from the file.
      * The name is set from the normalized file path.
      *
+     * <p>The entry's name will be the value of the {@code file}'s
+     * path with all file separators replaced by forward slashes and
+     * leading slashes stripped. The name will end in a slash if the
+     * {@code file} represents a directory.</p>
+     *
      * @param file The file that the entry represents.
      */
     public TarArchiveEntry(final File file) {
@@ -316,6 +337,11 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     /**
      * Construct an entry for a file. File is set to file, and the
      * header is constructed from information from the file.
+     *
+     * <p>The entry's name will be the value of the {@code fileName}
+     * argument with all file separators replaced by forward slashes
+     * and leading slashes stripped. The name will end in a slash if the
+     * {@code file} represents a directory.</p>
      *
      * @param file The file that the entry represents.
      * @param fileName the name to be used for the entry.
