@@ -89,15 +89,7 @@ public class BitInputStream implements Closeable {
         if (bitsCachedSize < count) {
             return processBitsGreater57(count);
         }
-        final long bitsOut;
-        if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
-            bitsOut = (bitsCached & MASKS[count]);
-            bitsCached >>>= count;
-        } else {
-            bitsOut = (bitsCached >> (bitsCachedSize - count)) & MASKS[count];
-        }
-        bitsCachedSize -= count;
-        return bitsOut;
+        return readCachedBits(count);
     }
 
     /**
@@ -124,13 +116,12 @@ public class BitInputStream implements Closeable {
 
     /**
      * Drops bits until the next bits will be read from a byte boundary.
-     * @throws IOException if reading the remaining bits to the next byte boundary fails
      * @since 1.16
      */
-    public void alignWithByteBoundary() throws IOException {
+    public void alignWithByteBoundary() {
         int toSkip = bitsCachedSize % 8;
         if (toSkip > 0) {
-            readBits(toSkip);
+            readCachedBits(toSkip);
         }
     }
 
@@ -159,6 +150,18 @@ public class BitInputStream implements Closeable {
         bitsOut = bitsCached & MASKS[count];
         bitsCached = overflow;
         bitsCachedSize = overflowBits;
+        return bitsOut;
+    }
+
+    private long readCachedBits(int count) {
+        final long bitsOut;
+        if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
+            bitsOut = (bitsCached & MASKS[count]);
+            bitsCached >>>= count;
+        } else {
+            bitsOut = (bitsCached >> (bitsCachedSize - count)) & MASKS[count];
+        }
+        bitsCachedSize -= count;
         return bitsOut;
     }
 
