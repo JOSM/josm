@@ -211,3 +211,6 @@ There are some third party libraries which are directly included in the source c
 * swinghelper: Class CheckThreadViolationRepaintManager to find classpath violations
     src/org/jdesktop/swinghelper/debug/CheckThreadViolationRepaintManager.java
     -> https://github.com/floscher/swinghelper
+* xz extractor
+    src/org/tukaani
+    -> https://tukaani.org/xz/java.html

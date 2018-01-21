@@ -70,6 +70,10 @@ The opening hour validation uses code from opening_hour.js
 (https://github.com/ypid/opening_hours.js) which is licensed
 with the New (2-clause) BSD license.
 
+The XZ code (https://tukaani.org/xz/java.html)
+is from Lasse Collin and Igor Pavlov
+and license free Public Domain.
+
 ------------------------------- PROJECTION DATA -------------------------------
 
 French NTF_R93 NTV2 grid: Source: IGN - Institut national de l'information

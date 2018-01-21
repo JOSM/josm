@@ -15,6 +15,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
+import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -37,7 +39,11 @@ public enum Compression {
     /**
      * zip compression
      */
-    ZIP;
+    ZIP,
+    /**
+     * xz compression
+     */
+    XZ;
 
     /**
      * Determines the compression type depending on the suffix of {@code name}.
@@ -51,6 +57,8 @@ public enum Compression {
                 ? BZIP2
                 : name != null && name.endsWith(".zip")
                 ? ZIP
+                : name != null && name.endsWith(".xz")
+                ? XZ
                 : NONE;
     }
 
@@ -67,6 +75,8 @@ public enum Compression {
             return GZIP;
         case "application/x-bzip2":
             return BZIP2;
+        case "application/x-xz":
+            return XZ;
         default:
             return NONE;
         }
@@ -87,10 +97,26 @@ public enum Compression {
                 return getGZipInputStream(in);
             case ZIP:
                 return getZipInputStream(in);
+            case XZ:
+                return getXZInputStream(in);
             case NONE:
             default:
                 return in;
         }
+    }
+
+    /**
+     * Returns a XZ input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a XZ input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if the given input stream does not contain valid BZ2 header
+     * @since 13350
+     */
+    public static XZCompressorInputStream getXZInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        return new XZCompressorInputStream(in, true);
     }
 
     /**
@@ -172,6 +198,8 @@ public enum Compression {
                 return new GZIPOutputStream(out);
             case ZIP:
                 return new ZipOutputStream(out, StandardCharsets.UTF_8);
+            case XZ:
+                return new XZCompressorOutputStream(out);
             case NONE:
             default:
                 return out;

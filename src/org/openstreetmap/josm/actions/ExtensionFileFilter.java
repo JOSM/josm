@@ -409,7 +409,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     public static ExtensionFileFilter newFilterWithArchiveExtensions(
             String extensions, String defaultExtension, String description, boolean addArchiveExtensionsToDescription) {
 
-        List<String> archiveExtensions = Arrays.asList("gz", "bz2");
+        List<String> archiveExtensions = Arrays.asList("gz", "bz", "bz2", "xz", "zip");
         return newFilterWithArchiveExtensions(
             extensions,
             defaultExtension,
