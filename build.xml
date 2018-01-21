@@ -257,6 +257,7 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/compress/compressors/deflate/**"/>
             <exclude name="org/apache/commons/compress/compressors/gzip/**"/>
             <exclude name="org/apache/commons/compress/compressors/lz4/**"/>
+            <exclude name="org/apache/commons/compress/compressors/lzma/**"/>
             <exclude name="org/apache/commons/compress/compressors/lz77support/**"/>
             <exclude name="org/apache/commons/compress/compressors/pack200/**"/>
             <exclude name="org/apache/commons/compress/compressors/snappy/**"/>
