@@ -642,9 +642,9 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                     nextSym = perm_zt[tmp];
                 }
 
-                final int yy_0 = yy[0];
-                checkBounds(yy_0, 256, "yy");
-                final byte ch = seqToUnseq[yy_0];
+                final int yy0 = yy[0];
+                checkBounds(yy0, 256, "yy");
+                final byte ch = seqToUnseq[yy0];
                 unzftab[ch & 0xff] += s + 1;
 
                 while (s-- >= 0) {

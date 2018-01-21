@@ -111,7 +111,7 @@ public class BitInputStream implements Closeable {
      * @since 1.16
      */
     public long bitsAvailable() throws IOException {
-        return bitsCachedSize + 8L * in.available();
+        return bitsCachedSize + ((long) Byte.SIZE) * in.available();
     }
 
     /**
@@ -119,7 +119,7 @@ public class BitInputStream implements Closeable {
      * @since 1.16
      */
     public void alignWithByteBoundary() {
-        int toSkip = bitsCachedSize % 8;
+        int toSkip = bitsCachedSize % Byte.SIZE;
         if (toSkip > 0) {
             readCachedBits(toSkip);
         }
@@ -132,7 +132,7 @@ public class BitInputStream implements Closeable {
 
         // bitsCachedSize >= 57 and left-shifting it 8 bits would cause an overflow
         int bitsToAddCount = count - bitsCachedSize;
-        overflowBits = 8 - bitsToAddCount;
+        overflowBits = Byte.SIZE - bitsToAddCount;
         final long nextByte = in.read();
         if (nextByte < 0) {
             return nextByte;
@@ -180,10 +180,10 @@ public class BitInputStream implements Closeable {
             if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
                 bitsCached |= (nextByte << bitsCachedSize);
             } else {
-                bitsCached <<= 8;
+                bitsCached <<= Byte.SIZE;
                 bitsCached |= nextByte;
             }
-            bitsCachedSize += 8;
+            bitsCachedSize += Byte.SIZE;
         }
         return false;
     }

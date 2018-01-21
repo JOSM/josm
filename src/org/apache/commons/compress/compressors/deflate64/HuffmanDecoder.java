@@ -131,51 +131,58 @@ class HuffmanDecoder implements Closeable {
 
     public int decode(byte[] b, int off, int len) throws IOException {
         while (!finalBlock || state.hasData()) {
-            switch (state.state()) {
-                case INITIAL:
-                    finalBlock = readBits(1) == 1;
-                    int mode = (int) readBits(2);
-                    switch (mode) {
-                        case 0:
-                            reader.alignWithByteBoundary();
-                            long bLen = readBits(16);
-                            long bNLen = readBits(16);
-                            if (((bLen ^ 0xFFFF) & 0xFFFF) != bNLen) {
-                                //noinspection DuplicateStringLiteralInspection
-                                throw new IllegalStateException("Illegal LEN / NLEN values");
-                            }
-                            state = new UncompressedState(bLen);
-                            break;
-                        case 1:
-                            state = new HuffmanCodes(FIXED_CODES, FIXED_LITERALS, FIXED_DISTANCE);
-                            break;
-                        case 2:
-                            int literals = (int) (readBits(5) + 257);
-                            int[] literalTable = new int[literals];
-
-                            int distances = (int) (readBits(5) + 1);
-                            int[] distanceTable = new int[distances];
-
-                            populateDynamicTables(reader, literalTable, distanceTable);
-
-                            state = new HuffmanCodes(DYNAMIC_CODES, literalTable, distanceTable);
-                            break;
-                        default:
-                            throw new IllegalStateException("Unsupported compression: " + mode);
-                    }
+            if (state.state() == HuffmanState.INITIAL) {
+                finalBlock = readBits(1) == 1;
+                int mode = (int) readBits(2);
+                switch (mode) {
+                case 0:
+                    switchToUncompressedState();
+                    break;
+                case 1:
+                    state = new HuffmanCodes(FIXED_CODES, FIXED_LITERALS, FIXED_DISTANCE);
+                    break;
+                case 2:
+                    int[][] tables = readDynamicTables();
+                    state = new HuffmanCodes(DYNAMIC_CODES, tables[0], tables[1]);
                     break;
                 default:
-                    return state.read(b, off, len);
+                    throw new IllegalStateException("Unsupported compression: " + mode);
+                }
+            } else {
+                return state.read(b, off, len);
             }
         }
         return -1;
+    }
+
+    private void switchToUncompressedState() throws IOException {
+        reader.alignWithByteBoundary();
+        long bLen = readBits(16);
+        long bNLen = readBits(16);
+        if (((bLen ^ 0xFFFF) & 0xFFFF) != bNLen) {
+            //noinspection DuplicateStringLiteralInspection
+            throw new IllegalStateException("Illegal LEN / NLEN values");
+        }
+        state = new UncompressedState(bLen);
+    }
+
+    private int[][] readDynamicTables() throws IOException {
+        int[][] result = new int[2][];
+        int literals = (int) (readBits(5) + 257);
+        result[0] = new int[literals];
+
+        int distances = (int) (readBits(5) + 1);
+        result[1] = new int[distances];
+
+        populateDynamicTables(reader, result[0], result[1]);
+        return result;
     }
 
     int available() throws IOException {
         return state.available();
     }
 
-    private static abstract class DecoderState {
+    private abstract static class DecoderState {
         abstract HuffmanState state();
 
         abstract int read(byte[] b, int off, int len) throws IOException;
@@ -202,20 +209,22 @@ class HuffmanDecoder implements Closeable {
         int read(byte[] b, int off, int len) throws IOException {
             // as len is an int and (blockLength - read) is >= 0 the min must fit into an int as well
             int max = (int) Math.min(blockLength - read, len);
-            for (int i = 0; i < max; i++) {
+            int readSoFar = 0;
+            while (readSoFar < max) {
+                int readNow;
                 if (reader.bitsCached() > 0) {
                     byte next = (byte) readBits(Byte.SIZE);
-                    b[off + i] = memory.add(next);
-                    read++;
+                    b[off + readSoFar] = memory.add(next);
+                    readNow = 1;
                 } else {
-                    int readNow = in.read(b, off + i, max - i);
+                    readNow = in.read(b, off + readSoFar, max - readSoFar);
                     if (readNow == -1) {
                         throw new EOFException("Truncated Deflate64 Stream");
                     }
-                    memory.add(b, off + i, readNow);
-                    read += readNow;
-                    i += readNow;
+                    memory.add(b, off + readSoFar, readNow);
                 }
+                read += readNow;
+                readSoFar += readNow;
             }
             return max;
         }
@@ -345,7 +354,7 @@ class HuffmanDecoder implements Closeable {
         BinaryTreeNode node = tree;
         while (node != null && node.literal == -1) {
             long bit = readBits(reader, 1);
-            node = bit == 0 ? node.left : node.right;
+            node = bit == 0 ? node.leftNode : node.rightNode;
         }
         return node != null ? node.literal : -1;
     }
@@ -360,18 +369,20 @@ class HuffmanDecoder implements Closeable {
 
         BinaryTreeNode codeLengthTree = buildTree(codeLengthValues);
 
-        int[] auxBuffer = new int[literals.length + distances.length];
+        final int[] auxBuffer = new int[literals.length + distances.length];
 
-        int value = -1, length = 0;
-        for (int i = 0; i < auxBuffer.length; ) {
+        int value = -1;
+        int length = 0;
+        int off = 0;
+        while (off < auxBuffer.length) {
             if (length > 0) {
-                auxBuffer[i++] = value;
+                auxBuffer[off++] = value;
                 length--;
             } else {
                 int symbol = nextSymbol(reader, codeLengthTree);
                 if (symbol < 16) {
                     value = symbol;
-                    auxBuffer[i++] = value;
+                    auxBuffer[off++] = value;
                 } else if (symbol == 16) {
                     length = (int) (readBits(reader, 2) + 3);
                 } else if (symbol == 17) {
@@ -391,7 +402,8 @@ class HuffmanDecoder implements Closeable {
     private static class BinaryTreeNode {
         private final int bits;
         int literal = -1;
-        BinaryTreeNode left, right;
+        BinaryTreeNode leftNode;
+        BinaryTreeNode rightNode;
 
         private BinaryTreeNode(int bits) {
             this.bits = bits;
@@ -399,22 +411,22 @@ class HuffmanDecoder implements Closeable {
 
         void leaf(int symbol) {
             literal = symbol;
-            left = null;
-            right = null;
+            leftNode = null;
+            rightNode = null;
         }
 
         BinaryTreeNode left() {
-            if (left == null && literal == -1) {
-                left = new BinaryTreeNode(bits + 1);
+            if (leftNode == null && literal == -1) {
+                leftNode = new BinaryTreeNode(bits + 1);
             }
-            return left;
+            return leftNode;
         }
 
         BinaryTreeNode right() {
-            if (right == null && literal == -1) {
-                right = new BinaryTreeNode(bits + 1);
+            if (rightNode == null && literal == -1) {
+                rightNode = new BinaryTreeNode(bits + 1);
             }
-            return right;
+            return rightNode;
         }
     }
 

@@ -90,7 +90,7 @@ public class LZ77Compressor {
         public enum BlockType {
             LITERAL, BACK_REFERENCE, EOD
         }
-        abstract public BlockType getType();
+        public abstract BlockType getType();
     }
 
     /**

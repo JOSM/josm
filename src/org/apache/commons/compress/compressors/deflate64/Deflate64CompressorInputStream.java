@@ -27,10 +27,12 @@ import static org.apache.commons.compress.utils.IOUtils.closeQuietly;
  * Deflate64 decompressor.
  *
  * @since 1.16
+ * @NotThreadSafe
  */
 public class Deflate64CompressorInputStream extends CompressorInputStream {
     private InputStream originalStream;
     private HuffmanDecoder decoder;
+    private final byte[] oneByte = new byte[1];
 
     /**
      * Constructs a Deflate64CompressorInputStream.
@@ -51,12 +53,11 @@ public class Deflate64CompressorInputStream extends CompressorInputStream {
      */
     @Override
     public int read() throws IOException {
-        byte[] b = new byte[1];
         while (true) {
-            int r = read(b);
+            int r = read(oneByte);
             switch (r) {
                 case 1:
-                    return b[0] & 0xFF;
+                    return oneByte[0] & 0xFF;
                 case -1:
                     return -1;
                 case 0:
