@@ -9,16 +9,17 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
 /**
- * Task allowing to download compressed OSM files (gzip and bzip2)
+ * Task allowing to download compressed OSM files (gzip, xz and bzip2)
  * @since 5317
  */
 public class DownloadOsmCompressedTask extends DownloadOsmTask {
 
-    private static final String PATTERN_COMPRESS = "https?://.*/.*\\.osm.(gz|bz2?|zip)";
+    private static final String PATTERN_COMPRESS = "https?://.*/(.*\\.osm\\.(gz|xz|bz2?|zip))";
 
     @Override
     public String[] getPatterns() {
@@ -31,8 +32,7 @@ public class DownloadOsmCompressedTask extends DownloadOsmTask {
     }
 
     @Override
-    public Future<?> download(boolean newLayer, Bounds downloadArea,
-            ProgressMonitor progressMonitor) {
+    public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
         return null;
     }
 
@@ -48,18 +48,12 @@ public class DownloadOsmCompressedTask extends DownloadOsmTask {
             @Override
             protected DataSet parseDataSet() throws OsmTransferException {
                 ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                if (url.matches("https?://.*/.*\\.osm.bz2?")) {
-                    return reader.parseOsmBzip2(subTaskMonitor);
-                } else if (url.matches("https?://.*/.*\\.osm.gz")) {
-                    return reader.parseOsmGzip(subTaskMonitor);
-                } else {
-                    return reader.parseOsmZip(subTaskMonitor);
-                }
+                return reader.parseOsm(subTaskMonitor, Compression.byExtension(url));
             }
         };
         currentBounds = null;
         // Extract .osm.gz/bz/bz2/zip filename from URL to set the new layer name
-        extractOsmFilename("https?://.*/(.*\\.osm.(gz|bz2?|zip))", url);
+        extractOsmFilename(PATTERN_COMPRESS, url);
         return MainApplication.worker.submit(downloadTask);
     }
 }

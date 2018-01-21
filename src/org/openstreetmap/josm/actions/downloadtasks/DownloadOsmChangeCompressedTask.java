@@ -8,18 +8,21 @@ import java.util.concurrent.Future;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
 /**
- * Task allowing to download compressed OSM-Change files (gzip and bzip2)
+ * Task allowing to download compressed OSM-Change files (gzip, xz and bzip2)
  * @since 5361
  */
 public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
 
+    private static final String PATTERN_COMPRESS = "https?://.*/(.*\\.osc.(gz|xz|bz2?|zip))";
+
     @Override
     public String[] getPatterns() {
-        return new String[]{"https?://.*/.*\\.osc.(gz|bz2?)"};
+        return new String[]{PATTERN_COMPRESS};
     }
 
     @Override
@@ -39,16 +42,12 @@ public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
             @Override
             protected DataSet parseDataSet() throws OsmTransferException {
                 ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                if (url.matches("https?://.*/.*\\.osc.bz2?")) {
-                    return reader.parseOsmChangeBzip2(subTaskMonitor);
-                } else {
-                    return reader.parseOsmChangeGzip(subTaskMonitor);
-                }
+                return reader.parseOsmChange(subTaskMonitor, Compression.byExtension(url));
             }
         };
         currentBounds = null;
-        // Extract .osc.gz/bz/bz2 filename from URL to set the new layer name
-        extractOsmFilename("https?://.*/(.*\\.osc.(gz|bz2?))", url);
+        // Extract .osc.gz/xz/bz/bz2/zip filename from URL to set the new layer name
+        extractOsmFilename(PATTERN_COMPRESS, url);
         return MainApplication.worker.submit(downloadTask);
     }
 }

@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.BoundingBoxDownloader.MoreNotesException;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerLocationReader.NoteUrlPattern;
@@ -46,6 +47,8 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
     public static final IntegerProperty DOWNLOAD_LIMIT = new IntegerProperty("osm.notes.downloadLimit", 1000);
     /** Property defining number of days a bug needs to be closed to no longer be downloaded */
     public static final IntegerProperty DAYS_CLOSED = new IntegerProperty("osm.notes.daysClosed", 7);
+
+    private static final String PATTERN_COMPRESS = "https?://.*/(.*\\.osn.(gz|xz|bz2?|zip))";
 
     private DownloadTask downloadTask;
     private NoteLayer noteLayer;
@@ -70,8 +73,8 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
 
     @Override
     public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
-        if (url.endsWith(".bz2")) {
-            downloadTask = new DownloadBzip2RawUrlTask(new OsmServerLocationReader(url), progressMonitor);
+        if (url.matches(PATTERN_COMPRESS)) {
+            downloadTask = new DownloadCompressedRawUrlTask(new OsmServerLocationReader(url), progressMonitor, Compression.byExtension(url));
         } else {
             downloadTask = new DownloadRawUrlTask(new OsmServerLocationReader(url), progressMonitor);
         }
@@ -209,10 +212,13 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
         }
     }
 
-    class DownloadBzip2RawUrlTask extends DownloadTask {
+    class DownloadCompressedRawUrlTask extends DownloadTask {
 
-        DownloadBzip2RawUrlTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
+        private final Compression compression;
+
+        DownloadCompressedRawUrlTask(OsmServerReader reader, ProgressMonitor progressMonitor, Compression compression) {
             super(reader, progressMonitor);
+            this.compression = compression;
         }
 
         @Override
@@ -222,7 +228,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             }
             ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             try {
-                notesData = reader.parseRawNotesBzip2(subMonitor);
+                notesData = reader.parseRawNotes(subMonitor, compression);
             } catch (OsmTransferException e) {
                 if (isCanceled())
                     return;

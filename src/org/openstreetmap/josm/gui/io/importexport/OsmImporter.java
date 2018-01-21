@@ -32,8 +32,8 @@ public class OsmImporter extends FileImporter {
      * The OSM file filter (*.osm and *.xml files).
      */
     public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
-            "osm,xml", "osm", tr("OSM Server Files") + " (*.osm, *.osm.gz, *.osm.bz2, *.osm.zip, *.xml)",
-            ExtensionFileFilter.AddArchiveExtension.NONE, Arrays.asList("gz", "bz", "bz2", "zip"));
+            "osm,xml", "osm", tr("OSM Server Files") + " (*.osm, *.osm.gz, *.osm.bz2, *.osm.xz, *.osm.zip, *.xml)",
+            ExtensionFileFilter.AddArchiveExtension.NONE, Arrays.asList("gz", "bz", "bz2", "xz", "zip"));
 
     /**
      * Utility class containing imported OSM layer, and a task to run after it is added to MapView.

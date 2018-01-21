@@ -123,7 +123,7 @@ public class OsmExporter extends FileExporter {
     }
 
     protected void doSave(File file, OsmDataLayer layer) throws IOException {
-        // create outputstream and wrap it with gzip or bzip, if necessary
+        // create outputstream and wrap it with gzip, xz or bzip, if necessary
         try (
             OutputStream out = getOutputStream(file);
             Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);

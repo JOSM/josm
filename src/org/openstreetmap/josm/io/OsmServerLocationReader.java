@@ -83,8 +83,10 @@ public class OsmServerLocationReader extends OsmServerReader {
      * @since 12679
      */
     public enum NoteUrlPattern {
+        /** URL of OSM API Notes endpoint */
         API_URL  ("https?://.*/api/0.6/notes.*"),
-        DUMP_FILE("https?://.*/(.*\\.osn(.bz2)?)");
+        /** URL of OSM API Notes compressed dump file */
+        DUMP_FILE("https?://.*/(.*\\.osn(\\.(gz|xz|bz2?|zip))?)");
 
         private final String urlPattern;
 
@@ -146,58 +148,43 @@ public class OsmServerLocationReader extends OsmServerReader {
     }
 
     @Override
-    public DataSet parseOsm(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new OsmParser(progressMonitor, Compression.NONE), progressMonitor);
+    public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
+        return parseOsm(progressMonitor, Compression.NONE);
     }
 
     @Override
-    public DataSet parseOsmBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new OsmParser(progressMonitor, Compression.BZIP2), progressMonitor);
+    public DataSet parseOsm(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
+        return doParse(new OsmParser(progressMonitor, compression), progressMonitor);
     }
 
     @Override
-    public DataSet parseOsmGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new OsmParser(progressMonitor, Compression.GZIP), progressMonitor);
+    public DataSet parseOsmChange(ProgressMonitor progressMonitor) throws OsmTransferException {
+        return parseOsmChange(progressMonitor, Compression.NONE);
     }
 
     @Override
-    public DataSet parseOsmZip(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new OsmParser(progressMonitor, Compression.ZIP), progressMonitor);
+    public DataSet parseOsmChange(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
+        return doParse(new OsmChangeParser(progressMonitor, compression), progressMonitor);
     }
 
     @Override
-    public DataSet parseOsmChange(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new OsmChangeParser(progressMonitor, Compression.NONE), progressMonitor);
+    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
+        return parseRawGps(progressMonitor, Compression.NONE);
     }
 
     @Override
-    public DataSet parseOsmChangeBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new OsmChangeParser(progressMonitor, Compression.BZIP2), progressMonitor);
+    public GpxData parseRawGps(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
+        return doParse(new GpxParser(progressMonitor, compression), progressMonitor);
     }
 
     @Override
-    public DataSet parseOsmChangeGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new OsmChangeParser(progressMonitor, Compression.GZIP), progressMonitor);
+    public List<Note> parseRawNotes(ProgressMonitor progressMonitor) throws OsmTransferException {
+        return parseRawNotes(progressMonitor, Compression.NONE);
     }
 
     @Override
-    public GpxData parseRawGps(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new GpxParser(progressMonitor, Compression.NONE), progressMonitor);
-    }
-
-    @Override
-    public GpxData parseRawGpsBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new GpxParser(progressMonitor, Compression.BZIP2), progressMonitor);
-    }
-
-    @Override
-    public List<Note> parseRawNotes(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new NoteParser(progressMonitor, Compression.NONE), progressMonitor);
-    }
-
-    @Override
-    public List<Note> parseRawNotesBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return doParse(new NoteParser(progressMonitor, Compression.BZIP2), progressMonitor);
+    public List<Note> parseRawNotes(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
+        return doParse(new NoteParser(progressMonitor, compression), progressMonitor);
     }
 
     protected class OsmParser extends Parser<DataSet> {
