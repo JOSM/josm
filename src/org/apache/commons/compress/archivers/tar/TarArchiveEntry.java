@@ -243,7 +243,8 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      * to construct the entry's header "by hand". File is set to null.
      *
      * <p>The entry's name will be the value of the {@code name}
-     * argument with leading slashes stripped.</p>
+     * argument with all file separators replaced by forward slashes
+     * and leading slashes stripped.</p>
      *
      * @param name the entry name
      */
@@ -256,8 +257,9 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      * to construct the entry's header "by hand". File is set to null.
      *
      * <p>The entry's name will be the value of the {@code name}
-     * argument with leading slashes stripped if {@code
-     * preserveLeadingSlashes} is {@code false}.</p>
+     * argument with all file separators replaced by forward slashes.
+     * Leading slashes are stripped if {@code preserveLeadingSlashes}
+     * is {@code false}.</p>
      *
      * @param name the entry name
      * @param preserveLeadingSlashes whether to allow leading slashes
