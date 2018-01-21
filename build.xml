@@ -250,8 +250,6 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/compress/changes/**"/>
             <exclude name="org/apache/commons/compress/compressors/bzip2/BZip2Utils.java"/>
             <exclude name="org/apache/commons/compress/compressors/brotli/**"/>
-            <exclude name="org/apache/commons/compress/compressors/lzma/**"/>
-            <exclude name="org/apache/commons/compress/compressors/xz/**"/>
             <exclude name="org/apache/commons/compress/compressors/CompressorStreamFactory.java"/>
             <exclude name="org/apache/commons/compress/compressors/CompressorStreamProvider.java"/>
             <exclude name="org/apache/commons/compress/compressors/CompressorException.java"/>
