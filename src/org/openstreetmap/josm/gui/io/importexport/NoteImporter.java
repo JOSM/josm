@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
- * File importer that reads note dump files (*.osn, .osn.gz and .osn.bz2)
+ * File importer that reads note dump files (*.osn, .osn.gz, .osn.xz and .osn.bz2)
  * @since 7538
  */
 public class NoteImporter extends FileImporter {

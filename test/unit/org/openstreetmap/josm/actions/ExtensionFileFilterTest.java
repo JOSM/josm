@@ -8,7 +8,6 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter.AddArchiveExtension;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests for class {@link ExtensionFileFilter}.
@@ -30,13 +29,17 @@ public class ExtensionFileFilterTest {
     @Test
     public void testNewFilterWithArchiveExtensions() {
         test("ext1", "ext1", "description", true,
-                "ext1,ext1.gz,ext1.bz2", "description (*.ext1, *.ext1.gz, *.ext1.bz2)");
+                "ext1,ext1.gz,ext1.bz,ext1.bz2,ext1.xz,ext1.zip",
+                "description (*.ext1, *.ext1.gz, *.ext1.bz, *.ext1.bz2, *.ext1.xz, *.ext1.zip)");
         test("ext1", "ext1", "description", false,
-                "ext1,ext1.gz,ext1.bz2", "description (*.ext1)");
+                "ext1,ext1.gz,ext1.bz,ext1.bz2,ext1.xz,ext1.zip", "description (*.ext1)");
         test("ext1,ext2", "ext1", "description", true,
-                "ext1,ext1.gz,ext1.bz2,ext2,ext2.gz,ext2.bz2", "description (*.ext1, *.ext1.gz, *.ext1.bz2, *.ext2, *.ext2.gz, *.ext2.bz2)");
+                "ext1,ext1.gz,ext1.bz,ext1.bz2,ext1.xz,ext1.zip,ext2,ext2.gz,ext2.bz,ext2.bz2,ext2.xz,ext2.zip",
+                "description (*.ext1, *.ext1.gz, *.ext1.bz, *.ext1.bz2, *.ext1.xz, *.ext1.zip, " +
+                             "*.ext2, *.ext2.gz, *.ext2.bz, *.ext2.bz2, *.ext2.xz, *.ext2.zip)");
         test("ext1,ext2", "ext1", "description", false,
-                "ext1,ext1.gz,ext1.bz2,ext2,ext2.gz,ext2.bz2", "description (*.ext1, *.ext2)");
+                "ext1,ext1.gz,ext1.bz,ext1.bz2,ext1.xz,ext1.zip,ext2,ext2.gz,ext2.bz,ext2.bz2,ext2.xz,ext2.zip",
+                "description (*.ext1, *.ext2)");
     }
 
     /**
@@ -46,7 +49,6 @@ public class ExtensionFileFilterTest {
     public void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ExtensionFileFilter.class).usingGetClass()
-            .suppress(Warning.ANNOTATION) // FIXME: remove it after https://github.com/jqno/equalsverifier/issues/152 is fixed
             .verify();
     }
 
