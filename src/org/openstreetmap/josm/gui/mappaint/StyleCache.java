@@ -70,6 +70,11 @@ public final class StyleCache {
     }
 
     @Override
+    public String toString() {
+        return "StyleCache{PLAIN: " + this.states[PLAIN] + " SELECTED: " + this.states[SELECTED] + "}";
+    }
+
+    @Override
     public int hashCode() {
         return Arrays.deepHashCode(this.states);
     }
