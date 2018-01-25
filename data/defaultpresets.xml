@@ -7213,7 +7213,10 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=water_well" />
             <space />
             <key key="man_made" value="water_well" />
-            <text key="name" text="Name" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="pump" text="Pump" values="yes,no,manual,powered"  values_sort="false"/>
+            </optional>
         </item> <!-- Water Well -->
         <separator/>
         <item name="Lighthouse" icon="presets/landmark/lighthouse.svg" type="node,closedway" preset_name_label="true">
