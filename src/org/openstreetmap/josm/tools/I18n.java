@@ -418,8 +418,8 @@ public final class I18n {
             return false;
         }
         try (
-            InputStream enStream = en.openStream();
-            InputStream trStream = tr.openStream()
+            InputStream enStream = Utils.openStream(en);
+            InputStream trStream = Utils.openStream(tr)
         ) {
             if (load(enStream, trStream, false)) {
                 pluralMode = languages.get(l);
