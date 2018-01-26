@@ -54,13 +54,14 @@
   assertNoMatch: "node building:levels=0"; /* valid because there can be building:levels:underground > 0 or roof:levels > 0 */
 }
 
-*[height][height =~ /^[0-9]+,[0-9]+( (m|ft))?$/] {
+*[height][height =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("height=", replace(tag("height"), ",", "."));
   set height_separator_autofix;
   assertMatch: "node height=5,5";
   assertMatch: "node height=12,00";
   assertMatch: "node height=12,5 ft";
+  assertNoMatch: "node height=12,000";
   assertNoMatch: "node height=3,50,5";
   assertNoMatch: "node height=3.5";
   assertNoMatch: "node height=4";
@@ -76,13 +77,14 @@
   assertNoMatch: "node height=22'";
 }
 
-*[maxheight][maxheight =~ /^[0-9]+,[0-9]+( (m|ft))?$/] {
+*[maxheight][maxheight =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("maxheight=", replace(tag("maxheight"), ",", "."));
   set maxheight_separator_autofix;
   assertMatch: "node maxheight=5,5";
   assertMatch: "node maxheight=12,00";
   assertMatch: "node maxheight=12,5 ft";
+  assertNoMatch: "node maxheight=12,000";
   assertNoMatch: "node maxheight=3,50,5";
   assertNoMatch: "node maxheight=3.5";
   assertNoMatch: "node maxheight=4";
@@ -100,12 +102,13 @@
   assertNoMatch: "node maxheight=16'3\"";
 }
 
-*[width][width =~ /^[0-9]+,[0-9]+( (m|ft))?$/] {
+*[width][width =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("width=", replace(tag("width"), ",", "."));
   set width_separator_autofix;
   assertMatch: "node width=5,5";
   assertMatch: "node width=12,00";
+  assertNoMatch: "node width=12,000";
   assertNoMatch: "node width=3,50,5";
   assertNoMatch: "node width=3.5";
   assertNoMatch: "node width=4";
@@ -122,12 +125,13 @@
   assertNoMatch: "way width=10'5\"";
 }
 
-*[maxwidth][maxwidth =~ /^[0-9]+,[0-9]+( (m|ft))?$/] {
+*[maxwidth][maxwidth =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("maxwidth=", replace(tag("maxwidth"), ",", "."));
   set maxwidth_separator_autofix;
   assertMatch: "node maxwidth=5,5";
   assertMatch: "node maxwidth=12,00";
+  assertNoMatch: "node maxwidth=12,000";
   assertNoMatch: "node maxwidth=3,50,5";
   assertNoMatch: "node maxwidth=3.5";
   assertNoMatch: "node maxwidth=4";
@@ -142,12 +146,13 @@
   assertNoMatch: "way maxwidth=7 ft";
 }
 
-*[maxweight][maxweight =~ /^[0-9]+,[0-9]+( (t|kg|lbs))?$/] {
+*[maxweight][maxweight =~ /^[0-9]+,[0-9][0-9]?( (t|kg|lbs))?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("maxweight=", replace(tag("maxweight"), ",", "."));
   set maxweight_separator_autofix;
   assertMatch: "node maxweight=5,5";
   assertMatch: "node maxweight=12,00";
+  assertNoMatch: "node maxweight=12,000";
   assertNoMatch: "node maxweight=3,50,5";
   assertNoMatch: "node maxweight=3.5";
   assertNoMatch: "node maxweight=4";
@@ -180,12 +185,13 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
   assertNoMatch: "way maxspeed=variable";
 }
 
-*[distance][distance =~ /^[0-9]+,[0-9]+( (m|km|mi|nmi))?$/] {
+*[distance][distance =~ /^[0-9]+,[0-9][0-9]?( (m|km|mi|nmi))?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("distance=", replace(tag("distance"), ",", "."));
   set distance_separator_autofix;
   assertMatch: "node distance=5,5";
   assertMatch: "node distance=12,00";
+  assertNoMatch: "node distance=12,000";
   assertNoMatch: "node distance=3,50,5";
   assertNoMatch: "node distance=3.5";
   assertNoMatch: "node distance=4";
@@ -316,12 +322,13 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertNoMatch: "node ele=12";
   assertNoMatch: "node ele=high";
 }
-*[ele][ele =~ /^[0-9]+,[0-9]+$/] {
+*[ele][ele =~ /^[0-9]+,[0-9][0-9]?$/] {
   throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
   fixAdd: concat("ele=", replace(tag("ele"), ",", "."));
   set ele_separator_autofix;
   assertMatch: "node ele=5,5";
   assertMatch: "node ele=12,00";
+  assertNoMatch: "node ele=8,848"; /* wrongly used thousands separator */
   assertNoMatch: "node ele=3,50,5";
   assertNoMatch: "node ele=3.5";
   assertNoMatch: "node ele=4";
