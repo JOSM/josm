@@ -60,6 +60,14 @@ public final class HttpClient {
     private Response response;
     private boolean finishOnCloseOutput = true;
 
+    // Pattern to detect Tomcat error message. Be careful with change of format:
+    // CHECKSTYLE.OFF: LineLength
+    // https://svn.apache.org/viewvc/tomcat/trunk/java/org/apache/catalina/valves/ErrorReportValve.java?r1=1740707&r2=1779641&pathrev=1779641&diff_format=h
+    // CHECKSTYLE.ON: LineLength
+    private static final Pattern TOMCAT_ERR_MESSAGE = Pattern.compile(
+        ".*<p><b>[^<]+</b>[^<]+</p><p><b>[^<]+</b> (?:<u>)?([^<]*)(?:</u>)?</p><p><b>[^<]+</b> (?:<u>)?[^<]*(?:</u>)?</p>.*",
+        Pattern.CASE_INSENSITIVE);
+
     static {
         CookieHandler.setDefault(new CookieManager());
     }
@@ -685,5 +693,16 @@ public final class HttpClient {
             }
             connection.disconnect();
         }
+    }
+
+    /**
+     * Returns a {@link Matcher} against predefined Tomcat error messages.
+     * If it matches, error message can be extracted from {@code group(1)}.
+     * @param data HTML contents to check
+     * @return a {@link Matcher} against predefined Tomcat error messages
+     * @since 13358
+     */
+    public static Matcher getTomcatErrorMatcher(String data) {
+        return data != null ? TOMCAT_ERR_MESSAGE.matcher(data) : null;
     }
 }

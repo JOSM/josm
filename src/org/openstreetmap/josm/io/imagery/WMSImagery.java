@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -120,6 +121,7 @@ public class WMSImagery {
     private List<LayerDetails> layers;
     private URL serviceUrl;
     private List<String> formats;
+    private String version = "1.1.1";
 
     /**
      * Returns the list of layers.
@@ -135,6 +137,15 @@ public class WMSImagery {
      */
     public URL getServiceUrl() {
         return serviceUrl;
+    }
+
+    /**
+     * Returns the WMS version used.
+     * @return the WMS version used (1.1.1 or 1.3.0)
+     * @since 13358
+     */
+    public String getVersion() {
+        return version;
     }
 
     /**
@@ -197,9 +208,9 @@ public class WMSImagery {
      */
     public String buildGetMapUrl(Collection<LayerDetails> selectedLayers, String format) {
         return buildRootUrl() + "FORMAT=" + format + (imageFormatHasTransparency(format) ? "&TRANSPARENT=TRUE" : "")
-                + "&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS="
+                + "&VERSION=" + version + "&SERVICE=WMS&REQUEST=GetMap&LAYERS="
                 + selectedLayers.stream().map(x -> x.ident).collect(Collectors.joining(","))
-                + "&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}";
+                + "&STYLES=&" + ("1.3.0".equals(version) ? "CRS" : "SRS") + "={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}";
     }
 
     /**
@@ -237,28 +248,61 @@ public class WMSImagery {
         doAttemptGetCapabilities(serviceUrlStr, getCapabilitiesUrl);
     }
 
+    /**
+     * Attempts WMS GetCapabilities with version 1.1.1 first, then 1.3.0 in case of specific errors.
+     * @param serviceUrlStr WMS service URL
+     * @param getCapabilitiesUrl GetCapabilities URL
+     * @throws IOException if any I/O error occurs
+     * @throws WMSGetCapabilitiesException if any HTTP or parsing error occurs
+     */
     private void doAttemptGetCapabilities(String serviceUrlStr, URL getCapabilitiesUrl)
             throws IOException, WMSGetCapabilitiesException {
+        final String url = getCapabilitiesUrl.toExternalForm();
         final Response response = HttpClient.create(getCapabilitiesUrl).connect();
 
+        // Is the HTTP connection successul ?
         if (response.getResponseCode() >= 400) {
-            throw new WMSGetCapabilitiesException(response.getResponseMessage(), response.fetchContent());
+            // HTTP error for servers handling only WMS 1.3.0 ?
+            String errorMessage = response.getResponseMessage();
+            String errorContent = response.fetchContent();
+            Matcher tomcat = HttpClient.getTomcatErrorMatcher(errorContent);
+            boolean messageAbout130 = errorMessage != null && errorMessage.contains("1.3.0");
+            boolean contentAbout130 = errorContent != null && tomcat != null && tomcat.matches() && tomcat.group(1).contains("1.3.0");
+            if (url.contains("VERSION=1.1.1") && (messageAbout130 || contentAbout130)) {
+                doAttemptGetCapabilities130(serviceUrlStr, url);
+                return;
+            }
+            throw new WMSGetCapabilitiesException(errorMessage, errorContent);
         }
 
         try {
+            // Parse XML capabilities sent by the server
             parseCapabilities(serviceUrlStr, response.getContent());
         } catch (WMSGetCapabilitiesException e) {
-            String url = getCapabilitiesUrl.toExternalForm();
             // ServiceException for servers handling only WMS 1.3.0 ?
             if (e.getCause() == null && url.contains("VERSION=1.1.1")) {
-                doAttemptGetCapabilities(serviceUrlStr, new URL(url.replace("VERSION=1.1.1", "VERSION=1.3.0")));
-                if (serviceUrl.toExternalForm().contains("VERSION=1.1.1")) {
-                    serviceUrl = new URL(serviceUrl.toExternalForm().replace("VERSION=1.1.1", "VERSION=1.3.0"));
-                }
+                doAttemptGetCapabilities130(serviceUrlStr, url);
             } else {
                 throw e;
             }
         }
+    }
+
+    /**
+     * Attempts WMS GetCapabilities with version 1.3.0.
+     * @param serviceUrlStr WMS service URL
+     * @param url GetCapabilities URL
+     * @throws IOException if any I/O error occurs
+     * @throws WMSGetCapabilitiesException if any HTTP or parsing error occurs
+     * @throws MalformedURLException in case of invalid URL
+     */
+    private void doAttemptGetCapabilities130(String serviceUrlStr, final String url)
+            throws IOException, WMSGetCapabilitiesException, MalformedURLException {
+        doAttemptGetCapabilities(serviceUrlStr, new URL(url.replace("VERSION=1.1.1", "VERSION=1.3.0")));
+        if (serviceUrl.toExternalForm().contains("VERSION=1.1.1")) {
+            serviceUrl = new URL(serviceUrl.toExternalForm().replace("VERSION=1.1.1", "VERSION=1.3.0"));
+        }
+        version = "1.3.0";
     }
 
     void parseCapabilities(String serviceUrlStr, InputStream contentStream) throws IOException, WMSGetCapabilitiesException {

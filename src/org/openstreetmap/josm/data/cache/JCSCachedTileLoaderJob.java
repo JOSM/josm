@@ -16,7 +16,6 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -50,14 +49,6 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     // Absolute expire time limit. Cached tiles that are older will not be used,
     // even if the refresh from the server fails.
     protected static final long ABSOLUTE_EXPIRE_TIME_LIMIT = TimeUnit.DAYS.toMillis(365);
-
-    // Pattern to detect Tomcat error message. Be careful with change of format:
-    // CHECKSTYLE.OFF: LineLength
-    // https://svn.apache.org/viewvc/tomcat/trunk/java/org/apache/catalina/valves/ErrorReportValve.java?r1=1740707&r2=1779641&pathrev=1779641&diff_format=h
-    // CHECKSTYLE.ON: LineLength
-    protected static final Pattern TOMCAT_ERR_MESSAGE = Pattern.compile(
-        ".*<p><b>[^<]+</b>[^<]+</p><p><b>[^<]+</b> (?:<u>)?([^<]*)(?:</u>)?</p><p><b>[^<]+</b> (?:<u>)?[^<]*(?:</u>)?</p>.*",
-        Pattern.CASE_INSENSITIVE);
 
     /**
      * maximum download threads that will be started
@@ -369,7 +360,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     try {
                         String data = urlConn.fetchContent();
                         if (!data.isEmpty()) {
-                            Matcher m = TOMCAT_ERR_MESSAGE.matcher(data);
+                            Matcher m = HttpClient.getTomcatErrorMatcher(data);
                             if (m.matches()) {
                                 attributes.setErrorMessage(m.group(1).replace("'", "''"));
                             }
