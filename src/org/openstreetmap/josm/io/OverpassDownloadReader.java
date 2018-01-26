@@ -402,7 +402,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
      */
     public static String fixQuery(String query) {
         return query == null ? query : query
-                .replaceFirst("out( body| skel| ids)?( id| qt)?;", "out meta$2;")
-                .replaceFirst("(?s)\\[out:(json|csv)[^\\]]*\\]", "[out:xml]");
+                .replaceAll("out( body| skel| ids)?( id| qt)?;", "out meta$2;")
+                .replaceAll("(?s)\\[out:(json|csv)[^\\]]*\\]", "[out:xml]");
     }
 }
