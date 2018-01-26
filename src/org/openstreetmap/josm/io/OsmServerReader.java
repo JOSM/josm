@@ -163,9 +163,10 @@ public abstract class OsmServerReader extends OsmConnection {
                 throw new OsmTransferException(e);
             }
 
-            if ("file".equals(url.getProtocol())) {
+            String protocol = url.getProtocol();
+            if ("file".equals(protocol) || "jar".equals(protocol)) {
                 try {
-                    return url.openStream();
+                    return Utils.openStream(url);
                 } catch (IOException e) {
                     throw new OsmTransferException(e);
                 }

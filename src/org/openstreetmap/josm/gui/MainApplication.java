@@ -155,7 +155,6 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -954,7 +953,7 @@ public class MainApplication extends Main {
             XMLCommandProcessor config = new XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 Logging.info("Reading preferences from " + i);
-                try (InputStream is = openStream(new URL(i))) {
+                try (InputStream is = Utils.openStream(new URL(i))) {
                     config.openAndReadXML(is);
                 } catch (IOException ex) {
                     throw BugReport.intercept(ex).put("file", i);
@@ -1205,14 +1204,6 @@ public class MainApplication extends Main {
                     UIManager.put(key, font.deriveFont(font.getSize2D() * (float) menuFontFactor));
                 }
             }
-        }
-    }
-
-    private static InputStream openStream(URL url) throws IOException {
-        if ("file".equals(url.getProtocol())) {
-            return url.openStream();
-        } else {
-            return HttpClient.create(url).connect().getContent();
         }
     }
 

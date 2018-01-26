@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,7 +26,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -1733,6 +1737,52 @@ public final class Utils {
         } catch (SecurityException e) {
             Logging.error(e);
             return null;
+        }
+    }
+
+    /**
+     * Convenient method to open an URL stream, using JOSM HTTP client if neeeded.
+     * @param url URL for reading from
+     * @return an input stream for reading from the URL
+     * @throws IOException if any I/O error occurs
+     * @since 13356
+     */
+    public static InputStream openStream(URL url) throws IOException {
+        switch (url.getProtocol()) {
+            case "http":
+            case "https":
+                return HttpClient.create(url).connect().getContent();
+            case "jar":
+                try {
+                    return url.openStream();
+                } catch (FileNotFoundException e) {
+                    // Workaround to https://bugs.openjdk.java.net/browse/JDK-4523159
+                    String urlPath = url.getPath();
+                    if (urlPath.startsWith("file:/") && urlPath.split("!").length > 2) {
+                        try {
+                            // Locate jar file
+                            int index = urlPath.lastIndexOf("!/");
+                            Path jarFile = Paths.get(urlPath.substring("file:/".length(), index));
+                            Path filename = jarFile.getFileName();
+                            FileTime jarTime = Files.readAttributes(jarFile, BasicFileAttributes.class).lastModifiedTime();
+                            // Copy it to temp directory (hopefully free of exclamation mark) if needed (missing or older jar)
+                            Path jarCopy = Paths.get(System.getProperty("java.io.tmpdir")).resolve(filename);
+                            if (!jarCopy.toFile().exists() ||
+                                    Files.readAttributes(jarCopy, BasicFileAttributes.class).lastModifiedTime().compareTo(jarTime) < 0) {
+                                Files.copy(jarFile, jarCopy, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                            }
+                            // Open the stream using the copy
+                            return new URL(url.getProtocol() + ':' + jarCopy.toUri().toURL().toExternalForm() + urlPath.substring(index))
+                                    .openStream();
+                        } catch (RuntimeException | IOException ex) {
+                            Logging.warn(ex);
+                        }
+                    }
+                    throw e;
+                }
+            case "file":
+            default:
+                return url.openStream();
         }
     }
 }
