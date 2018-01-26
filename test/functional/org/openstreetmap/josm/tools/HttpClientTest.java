@@ -4,7 +4,9 @@ package org.openstreetmap.josm.tools;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
+import java.util.regex.Matcher;
 
 import javax.json.JsonObject;
 import javax.json.JsonReader;
@@ -296,5 +299,28 @@ public class HttpClientTest {
                 .uncompress(true).uncompressAccordingToContentDisposition(true).getContentReader()) {
             Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         }
+    }
+
+    /**
+     * Test that error message sent by Tomcat can be parsed.
+     */
+    @Test
+    public void testTomcatErrorMessage() {
+        Matcher m = HttpClient.getTomcatErrorMatcher(
+            "<html><head><title>Apache Tomcat/DGFiP - Rapport d''erreur</title><style><!--"+
+                "H1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;} "+
+                "H2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;} "+
+                "H3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;} "+
+                "BODY {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;} "+
+                "B {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;} "+
+                "P {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;}"+
+                "A {color : black;}A.name {color : black;}HR {color : #525D76;}"+
+            "--></style> </head><body><h1>Etat HTTP 400 - La commune demandée n'existe pas ou n'est pas accessible.</h1>"+
+            "<HR size=\"1\" noshade=\"noshade\">"+
+            "<p><b>type</b> Rapport d''état</p><p><b>message</b> <u>La commune demandée n'existe pas ou n'est pas accessible.</u></p>"+
+            "<p><b>description</b> <u>La requête envoyée par le client était syntaxiquement incorrecte.</u></p>"+
+            "<HR size=\"1\" noshade=\"noshade\"><h3>Apache Tomcat/DGFiP</h3></body></html>");
+        assertTrue(m.matches());
+        assertEquals("La commune demandée n'existe pas ou n'est pas accessible.", m.group(1));
     }
 }
