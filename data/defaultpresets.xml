@@ -1406,6 +1406,7 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:crossing"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:crossing"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:crossing"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:crossing"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:crossing"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:crossing"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:crossing"
@@ -2340,6 +2341,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=basin"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=basin"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=basin"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:landuse=basin"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=basin"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=basin"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:landuse=basin"
@@ -2504,6 +2506,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=ferry_terminal"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=ferry_terminal"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=ferry_terminal"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=ferry_terminal"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=ferry_terminal"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=ferry_terminal"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=ferry_terminal"
@@ -2727,6 +2730,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=subway"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:railway=subway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=subway"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:railway=subway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=subway"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=subway"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:railway=subway"
@@ -3273,6 +3277,7 @@
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=car_parts"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=car_parts"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=car_parts"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=car_parts"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=car_parts" />
             <space />
             <key key="shop" value="car_parts" />
@@ -3605,6 +3610,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=subway_entrance"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:railway=subway_entrance"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=subway_entrance"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:railway=subway_entrance"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=subway_entrance"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=subway_entrance"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:railway=subway_entrance"
@@ -6387,7 +6393,8 @@
         <item name="Nine-pin Bowling" icon="presets/sport/9pin.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=9pin"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:sport=9pin"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=9pin" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=9pin"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:sport=9pin" />
             <space />
             <key key="sport" value="9pin" />
             <text key="name" text="Name" />
@@ -6397,7 +6404,8 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=10pin"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:sport=10pin"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=10pin"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:sport=10pin" />
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:sport=10pin"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:sport=10pin" />
             <space />
             <key key="sport" value="10pin" />
             <text key="name" text="Name" />
@@ -6679,6 +6687,7 @@
         <item name="Boule" icon="presets/sport/boule.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=boules"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:sport=boules"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:sport=boules"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:sport=boules" />
             <space />
             <key key="sport" value="boules" />
@@ -6861,6 +6870,7 @@
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:building:part"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:building:part"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:building:part"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:building:part"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building:part"
                   zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Key:building:part" />
             <space />
@@ -6921,6 +6931,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=flagpole"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=flagpole"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=flagpole"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:man_made=flagpole"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=flagpole"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=flagpole"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:man_made=flagpole" />
@@ -7065,6 +7076,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=adit"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=adit"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=adit"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:man_made=adit"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=adit"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=adit"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=adit"
@@ -7299,6 +7311,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=survey_point"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=survey_point"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=survey_point"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:man_made=survey_point"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=survey_point"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=survey_point"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=survey_point"
@@ -8191,7 +8204,8 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=cheese"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=cheese"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=cheese"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=cheese" />
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=cheese"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=cheese" />
             <space />
             <key key="shop" value="cheese" />
             <reference ref="name_operator_oh_wheelchair" />
@@ -8249,7 +8263,8 @@
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=tea"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=tea"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=tea"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=tea" />
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=tea"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=tea" />
             <space />
             <key key="shop" value="tea" />
             <reference ref="name_oh_wheelchair" />
@@ -8261,6 +8276,7 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=coffee"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=coffee"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=coffee"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=coffee"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=coffee" />
             <space />
             <key key="shop" value="coffee" />
@@ -8884,6 +8900,7 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=cosmetics"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=cosmetics"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=cosmetics"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=cosmetics"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=cosmetics" />
             <space />
             <key key="shop" value="cosmetics" />
@@ -9145,6 +9162,7 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=travel_agency"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=travel_agency"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=travel_agency"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=travel_agency"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=travel_agency" />
             <space />
             <key key="shop" value="travel_agency" />
@@ -9227,7 +9245,8 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=bookmaker"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=bookmaker"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=bookmaker"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=bookmaker" />
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=bookmaker"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=bookmaker" />
             <space />
             <key key="shop" value="bookmaker" />
             <reference ref="name_operator_oh_wheelchair" />
@@ -9275,7 +9294,8 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=photo"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=photo"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=photo"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=photo" />
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=photo"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=photo" />
             <space />
             <key key="shop" value="photo" />
             <reference ref="name_oh_wheelchair" />
@@ -10085,6 +10105,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=city"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:place=city"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=city"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:place=city"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:place=city"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:place=city"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=city"
@@ -10177,6 +10198,7 @@
         <item name="Quarter" icon="presets/place/quarter.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=quarter"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:place=quarter"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:place=quarter"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:place=quarter" />
             <space />
             <key key="place" value="quarter" />
@@ -10384,7 +10406,8 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=reef"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=reef"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=reef"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=reef" />
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=reef"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=reef" />
             <space />
             <key key="natural" value="reef" />
             <text key="name" text="Name" />
