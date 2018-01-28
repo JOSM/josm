@@ -290,7 +290,9 @@ public class TarUtils {
         throws IOException {
 
         int len = 0;
-        for (int i = offset; len < length && buffer[i] != 0; i++, len++);
+        for (int i = offset; len < length && buffer[i] != 0; i++) {
+            len++;
+        }
         if (len > 0) {
             final byte[] b = new byte[len];
             System.arraycopy(buffer, offset, b, 0, len);

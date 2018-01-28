@@ -36,18 +36,39 @@ import org.apache.commons.compress.utils.CharsetNames;
 
 /**
  * Input stream that decompresses .gz files.
- * This supports decompressing concatenated .gz files which is important
- * when decompressing standalone .gz files.
+ *
+ * <p>This supports decompressing concatenated .gz files which is important
+ * when decompressing standalone .gz files.</p>
+ *
  * <p>
  * {@link java.util.zip.GZIPInputStream} doesn't decompress concatenated .gz
  * files: it stops after the first member and silently ignores the rest.
  * It doesn't leave the read position to point to the beginning of the next
  * member, which makes it difficult workaround the lack of concatenation
  * support.
+ * </p>
+ *
  * <p>
  * Instead of using <code>GZIPInputStream</code>, this class has its own .gz
  * container format decoder. The actual decompression is done with
  * {@link java.util.zip.Inflater}.
+ * </p>
+ *
+ * <p>If you use the constructor {@code GzipCompressorInputStream(in)}
+ * or {@code GzipCompressorInputStream(in, false)} with some {@code
+ * InputStream} {@code in} then {@link #read} will return -1 as soon
+ * as the first internal member has been read completely. The stream
+ * {@code in} will be positioned at the start of the second gzip
+ * member if there is one.</p>
+ *
+ * <p>If you use the constructor {@code GzipCompressorInputStream(in,
+ * true)} with some {@code InputStream} {@code in} then {@link #read}
+ * will return -1 once the stream {@code in} has been exhausted. The
+ * data read from a stream constructed this way will consist of the
+ * concatenated data of all gzip members contained inside {@code
+ * in}.</p>
+ *
+ * @see "https://tools.ietf.org/html/rfc1952"
  */
 public class GzipCompressorInputStream extends CompressorInputStream {
     // Header flags

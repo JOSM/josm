@@ -131,7 +131,7 @@ class HuffmanDecoder implements Closeable {
 
     public int decode(byte[] b, int off, int len) throws IOException {
         while (!finalBlock || state.hasData()) {
-            if (state.state() == HuffmanState.INITIAL) {
+            if (state.state() == INITIAL) {
                 finalBlock = readBits(1) == 1;
                 int mode = (int) readBits(2);
                 switch (mode) {
