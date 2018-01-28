@@ -207,7 +207,11 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             dialog.getConflictResolver().populate(c);
             dialog.showDialog();
 
-            lstConflicts.setSelectedIndex(index);
+            if (index < conflicts.size() - 1) {
+                lstConflicts.setSelectedIndex(index);
+            } else {
+                lstConflicts.setSelectedIndex(index - 1);
+            }
         }
         MainApplication.getMap().mapView.repaint();
     }
@@ -303,7 +307,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
         int index = lstConflicts.getSelectedIndex();
 
-        return index >= 0 ? conflicts.get(index) : null;
+        return index >= 0 && index < conflicts.size() ? conflicts.get(index) : null;
     }
 
     private synchronized boolean isConflictSelected() {
