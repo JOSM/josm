@@ -149,7 +149,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     /** The entry's name. */
     private String name = "";
 
-    /** Whether to enforce leading slashes on the name */
+    /** Whether to allow leading slashes or drive names inside the name */
     private final boolean preserveAbsolutePath;
 
     /** The entry's permission mode. */
@@ -245,7 +245,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      *
      * <p>The entry's name will be the value of the {@code name}
      * argument with all file separators replaced by forward slashes
-     * and leading slashes stripped.</p>
+     * and leading slashes as well as Windows drive letters stripped.</p>
      *
      * @param name the entry name
      */
@@ -264,7 +264,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      *
      * @param name the entry name
      * @param preserveAbsolutePath whether to allow leading slashes
-     * in the name or drive letters.
+     * or drive letters in the name.
      *
      * @since 1.1
      */
@@ -307,7 +307,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      * @param name the entry name
      * @param linkFlag the entry link flag.
      * @param preserveAbsolutePath whether to allow leading slashes
-     * in the name or drive letters.
+     * or drive letters in the name.
      *
      * @since 1.5
      */
@@ -327,8 +327,9 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      *
      * <p>The entry's name will be the value of the {@code file}'s
      * path with all file separators replaced by forward slashes and
-     * leading slashes stripped. The name will end in a slash if the
-     * {@code file} represents a directory.</p>
+     * leading slashes as well as Windows drive letters stripped. The
+     * name will end in a slash if the {@code file} represents a
+     * directory.</p>
      *
      * @param file The file that the entry represents.
      */
