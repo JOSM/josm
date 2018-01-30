@@ -171,7 +171,12 @@ public class ImageProvider {
          * About dialog logo size
          * @since 10358
          */
-        ABOUT_LOGO(256, 258);
+        ABOUT_LOGO(256, 258),
+        /**
+         * Status line logo size
+         * @since 13369
+         */
+        STATUSLINE(18, 18);
 
         private final int virtualWidth;
         private final int virtualHeight;

@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 
 /**
  * A small user interface component that consists of an image label and
@@ -51,7 +52,7 @@ public class ImageLabel extends JPanel {
      * @param img Image name (without extension) to find in {@code statusline} directory
      */
     public void setIcon(String img) {
-        imgLabel.setIcon(ImageProvider.get("statusline/" + img));
+        imgLabel.setIcon(ImageProvider.get("statusline/", img, ImageSizes.STATUSLINE));
     }
 
     @Override
