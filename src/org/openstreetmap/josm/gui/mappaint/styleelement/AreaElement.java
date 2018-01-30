@@ -88,7 +88,7 @@ public class AreaElement extends StyleElement {
             img = HiDPISupport.getBaseImage(img);
             try {
                 color = new Color(((BufferedImage) img).getRGB(
-                        fillImage.getWidth() / 2, fillImage.getHeight() / 2)
+                        img.getWidth(null) / 2, img.getHeight(null) / 2)
                 );
             } catch (ArrayIndexOutOfBoundsException e) {
                 throw BugReport.intercept(e).put("env.osm", env.osm).put("iconRef", iconRef).put("fillImage", fillImage).put("img", img);
