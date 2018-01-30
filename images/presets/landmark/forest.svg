@@ -11,17 +11,17 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg1"
-   sodipodi:docname="jean-victor-balin-plain-tree.svg"
+   sodipodi:docname="13.svg"
    inkscape:export-filename="/datas/Projs/Cliparts Stocker/plain_tree.png"
-   viewBox="0 0 1118.8397 1227.8107"
+   viewBox="0 0 160 160"
    sodipodi:version="0.32"
    inkscape:export-xdpi="72.000000"
    version="1.0"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    inkscape:export-ydpi="72.000000"
-   inkscape:version="0.48.5 r10040"
-   width="100%"
-   height="100%">
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   width="160"
+   height="160">
   <defs
      id="defs3">
     <linearGradient
@@ -480,13 +480,13 @@
      inkscape:window-y="-4"
      pagecolor="#ffffff"
      inkscape:window-height="1003"
-     inkscape:zoom="0.41427105"
+     inkscape:zoom="2.3434709"
      inkscape:window-x="-4"
      showgrid="true"
      borderopacity="1.0"
      inkscape:current-layer="svg1"
-     inkscape:cx="105.70544"
-     inkscape:cy="678.68539"
+     inkscape:cx="60.13832"
+     inkscape:cy="64.240855"
      inkscape:window-width="1680"
      inkscape:pageopacity="0.0"
      showguides="true"
@@ -495,7 +495,10 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-maximized="0">
+     inkscape:window-maximized="0"
+     width="160"
+     viewbox-height="160"
+     units="px">
     <inkscape:grid
        type="xygrid"
        id="grid2995"
@@ -503,16 +506,18 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-0.66599997px"
-       originy="255.623px" />
+       originx="-0.71039995"
+       originy="272.66454"
+       spacingx="1.0666666"
+       spacingy="1.0666667" />
   </sodipodi:namedview>
   <g
      id="g5885"
-     transform="translate(-82.251123,-23.332313)">
+     transform="matrix(0.1430053,0,0,0.13031325,-11.762347,-3.04052)">
     <path
        id="path1545"
        style="fill:url(#linearGradient5883);fill-rule:evenodd"
-       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 h -60.22 z"
+       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 Z"
        inkscape:connector-curvature="0" />
     <path
        id="path909"
@@ -535,7 +540,7 @@
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
         <dc:publisher>
           <cc:Agent
              rdf:about="http://openclipart.org/">
@@ -561,7 +566,7 @@
         </dc:subject>
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -573,12 +578,12 @@
   </metadata>
   <g
      id="g5885-4"
-     transform="translate(193.73388,-23.332313)">
+     transform="matrix(0.1430053,0,0,0.13031325,27.704965,-3.04052)">
     <path
        inkscape:connector-curvature="0"
        id="path1545-5"
        style="fill:url(#linearGradient5883-1);fill-rule:evenodd"
-       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 h -60.22 z" />
+       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 Z" />
     <path
        inkscape:connector-curvature="0"
        id="path909-5"
@@ -594,12 +599,12 @@
   </g>
   <g
      id="g5885-1"
-     transform="translate(477.93588,-23.332313)">
+     transform="matrix(0.1430053,0,0,0.13031325,68.347357,-3.04052)">
     <path
        inkscape:connector-curvature="0"
        id="path1545-8"
        style="fill:url(#linearGradient5883-3);fill-rule:evenodd"
-       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 h -60.22 z" />
+       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 Z" />
     <path
        inkscape:connector-curvature="0"
        id="path909-9"
@@ -615,12 +620,12 @@
   </g>
   <g
      id="g5885-4-7"
-     transform="translate(753.92088,-23.332313)">
+     transform="matrix(0.1430053,0,0,0.13031325,107.81468,-3.04052)">
     <path
        inkscape:connector-curvature="0"
        id="path1545-5-9"
        style="fill:url(#linearGradient5883-1-7);fill-rule:evenodd"
-       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 h -60.22 z" />
+       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 Z" />
     <path
        inkscape:connector-curvature="0"
        id="path909-5-5"
@@ -636,12 +641,12 @@
   </g>
   <g
      id="g5885-4-5"
-     transform="translate(58.781997,232.29069)">
+     transform="matrix(0.1430053,0,0,0.13031325,8.4061347,30.27054)">
     <path
        inkscape:connector-curvature="0"
        id="path1545-5-0"
        style="fill:url(#linearGradient5883-1-6);fill-rule:evenodd"
-       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 h -60.22 z" />
+       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 Z" />
     <path
        inkscape:connector-curvature="0"
        id="path909-5-9"
@@ -657,12 +662,12 @@
   </g>
   <g
      id="g5885-1-0"
-     transform="translate(342.984,232.29069)">
+     transform="matrix(0.1430053,0,0,0.13031325,49.048526,30.27054)">
     <path
        inkscape:connector-curvature="0"
        id="path1545-8-6"
        style="fill:url(#linearGradient5883-3-7);fill-rule:evenodd"
-       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 h -60.22 z" />
+       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 Z" />
     <path
        inkscape:connector-curvature="0"
        id="path909-9-1"
@@ -678,12 +683,12 @@
   </g>
   <g
      id="g5885-4-7-8"
-     transform="translate(618.969,232.29069)">
+     transform="matrix(0.1430053,0,0,0.13031325,88.515848,30.27054)">
     <path
        inkscape:connector-curvature="0"
        id="path1545-5-9-9"
        style="fill:url(#linearGradient5883-1-7-3);fill-rule:evenodd"
-       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 h -60.22 z" />
+       d="m 193.88,772.09 -9.78,223.43 h 84.88 L 254.1,772.09 Z" />
     <path
        inkscape:connector-curvature="0"
        id="path909-5-5-3"
