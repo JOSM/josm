@@ -459,11 +459,18 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public ImageryInfo(ImageryInfo i) {
         super(i.name, i.url, i.id);
+        this.noTileHeaders = i.noTileHeaders;
+        this.noTileChecksums = i.noTileChecksums;
+        this.minZoom = i.minZoom;
+        this.maxZoom = i.maxZoom;
+        this.cookies = i.cookies;
+        this.tileSize = i.tileSize;
+        this.metadataHeaders = i.metadataHeaders;
+        this.modTileFeatures = i.modTileFeatures;
+
         this.origName = i.origName;
         this.langName = i.langName;
-        this.bestMarked = i.bestMarked;
         this.defaultEntry = i.defaultEntry;
-        this.cookies = i.cookies;
         this.eulaAcceptanceRequired = null;
         this.imageryType = i.imageryType;
         this.pixelPerDegree = i.pixelPerDegree;
@@ -471,20 +478,20 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.defaultMinZoom = i.defaultMinZoom;
         this.bounds = i.bounds;
         this.serverProjections = i.serverProjections;
+        this.description = i.description;
+        this.langDescription = i.langDescription;
         this.attributionText = i.attributionText;
-        this.attributionLinkURL = i.attributionLinkURL;
         this.permissionReferenceURL = i.permissionReferenceURL;
+        this.attributionLinkURL = i.attributionLinkURL;
         this.attributionImage = i.attributionImage;
         this.attributionImageURL = i.attributionImageURL;
         this.termsOfUseText = i.termsOfUseText;
         this.termsOfUseURL = i.termsOfUseURL;
         this.countryCode = i.countryCode;
         this.date = i.date;
+        this.bestMarked = i.bestMarked;
+        // do not copy field {@code mirrors}
         this.icon = i.icon;
-        this.description = i.description;
-        this.noTileHeaders = i.noTileHeaders;
-        this.noTileChecksums = i.noTileChecksums;
-        this.metadataHeaders = i.metadataHeaders;
         this.isGeoreferenceValid = i.isGeoreferenceValid;
         this.defaultLayers = i.defaultLayers;
     }
