@@ -35,7 +35,7 @@ public class TileSourceInfo {
     protected String cookies = "";
 
     /** tile size of the displayed tiles */
-    private int tileSize = -1;
+    protected int tileSize = -1;
 
     /** mapping &lt;header key, metadata key&gt; */
     protected Map<String, String> metadataHeaders;
