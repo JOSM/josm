@@ -84,7 +84,14 @@ import java.util.Arrays;
  */
 public class LZ77Compressor {
 
-    /** Base class representing blocks the compressor may emit. */
+    /**
+     * Base class representing blocks the compressor may emit.
+     *
+     * <p>This class is not supposed to be subclassed by classes
+     * outside of Commons Compress so it is considered internal and
+     * changed that would break subclasses may get introduced with
+     * future releases.</p>
+     */
     public static abstract class Block {
         /** Enumeration of the block types the compressor may emit. */
         public enum BlockType {
