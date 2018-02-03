@@ -24,7 +24,9 @@ area:closed[shop    ][area?] {
   fixRemove: "{2.key}";
 }
 
-/* #14256 */
+/* #14256, #15664 */
+area:closed[highway=rest_area][area?],
+area:closed[highway=services][area?],
 area:closed[aeroway=aerodrome][area?],
 area:closed[aeroway=helipad][area?] {
   throwWarning: tr("{0} is unnecessary for {1}", "{2.key}", "{1.tag}");
