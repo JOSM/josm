@@ -537,16 +537,16 @@ way[sidewalk=yes] {
   group: tr("deprecated tagging");
 }
 
-/* see #10346 */
-way[oneway=1] {
+/* see #10346, #15667 (waterway has its own rules in unnecessary.mapcss) */
+way[oneway=1][!waterway] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "oneway=yes";
   group: tr("deprecated tagging");
   fixAdd: "oneway=yes";
 }
 
-/* see #11329 */
-way[oneway=-1] {
+/* see #11329, #15667 */
+way[oneway=-1][!waterway] {
   throwWarning: tr("{0} is not recommended. Use the Reverse Ways function from the Tools menu.", "{0.tag}");
 }
 

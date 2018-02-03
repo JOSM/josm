@@ -24,7 +24,9 @@ area:closed[shop    ][area?] {
   fixRemove: "{2.key}";
 }
 
-/* #14256 */
+/* #14256, #15664 */
+area:closed[highway=rest_area][area?],
+area:closed[highway=services][area?],
 area:closed[aeroway=aerodrome][area?],
 area:closed[aeroway=helipad][area?] {
   throwWarning: tr("{0} is unnecessary for {1}", "{2.key}", "{1.tag}");
@@ -50,4 +52,15 @@ way >:sameTags node:tagged {
   throwWarning: tr("{0} together with {1} and {2}. Remove {0}.", "{0.key}", "{1.key}", "{2.key}");
   group: tr("unnecessary tag");
   fixRemove: "payment:cash";
+}
+
+/* see #10346, #15667 */
+way[waterway][oneway?] {
+  throwWarning: tr("{0} is unnecessary for {1}", "{1.key}", "{0.key}");
+  group: tr("unnecessary tag");
+  fixRemove: "{1.key}";
+}
+way[waterway][oneway=-1] {
+  throwWarning: tr("{0} is unnecessary for {1}. The flow direction is defined by the way direction.", "{1.key}", "{0.key}");
+  group: tr("unnecessary tag");
 }
