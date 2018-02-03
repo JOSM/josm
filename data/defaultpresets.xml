@@ -4547,6 +4547,13 @@
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Movie Theater/Cinema -->
+        <item name="Bandstand" icon="presets/leisure/bandstand.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=bandstand" />
+            <space />
+            <key key="leisure" value="bandstand" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <combo key="access" text="Access" values="yes,permissive,private" />
+        </item> <!-- Bandstand -->
         <item name="Zoo" icon="presets/leisure/zoo.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=zoo"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=zoo"
@@ -6971,6 +6978,13 @@
             <reference ref="name_operator" />
             <text key="height" text="Height (meters)" />
         </item> <!-- Chimney -->
+        <item name="Kiln" icon="presets/misc/kiln.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=kiln" />
+            <space />
+            <key key="man_made" value="kiln" />
+            <reference ref="name_operator" />
+            <combo key="product" text="Product" values="lime,charcoal,bricks" />
+        </item> <!-- Kiln -->
         <item name="Windmill" icon="presets/landmark/windmill.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=windmill"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=windmill"

@@ -1323,6 +1323,7 @@ area[man_made=beacon],
 area[man_made=bridge],
 area[bridge:support],
 area[man_made=chimney],
+area[man_made=kiln],
 area[man_made=gasometer],
 area[man_made=silo],
 area[man_made=storage_tank],
@@ -1346,6 +1347,10 @@ node[bridge:support] {
 }
 node[man_made=chimney] {
     icon-image: "presets/landmark/chimney.svg";
+    set icon_z17;
+}
+node[man_made=kiln] {
+    icon-image: "presets/misc/kiln.svg";
     set icon_z17;
 }
 node[man_made=flagpole] {
@@ -1647,6 +1652,7 @@ node[office=government] {
 /* leisure tags */
 /****************/
 
+area[leisure=bandstand],
 area[leisure=sports_centre],
 area[leisure=fitness_centre],
 area[leisure=stadium],
@@ -1654,6 +1660,10 @@ area[leisure=horse_riding],
 area[leisure=beach_resort],
 area[leisure=water_park] {
     fill-color: leisure#c7f1a3;
+}
+node[leisure=bandstand] {
+    icon-image: "presets/leisure/bandstand.svg";
+    set icon_z17;
 }
 node[leisure=sports_centre] {
     icon-image: "presets/sport/sports_centre.svg";
@@ -2894,10 +2904,6 @@ node[amenity=hunting_stand] {
 }
 node[amenity=marketplace] {
     icon-image: "presets/shop/marketplace.svg";
-    set icon_z17;
-}
-node[amenity=wlan] {
-    icon-image: "presets/misc/wlan.svg";
     set icon_z17;
 }
 node[amenity=vending_machine] {
