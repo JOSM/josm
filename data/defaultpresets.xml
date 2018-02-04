@@ -10262,7 +10262,7 @@
             <key key="place" value="locality" />
             <reference ref="name_wikipedia" />
         </item> <!-- Locality -->
-        <item name="Square" icon="presets/place/square.svg" type="node,closedway" preset_name_label="true">
+        <item name="Square" icon="presets/place/square.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=square" />
             <space />
             <key key="place" value="square" />
@@ -10814,6 +10814,7 @@
             <combo key="aquaculture" text="Aquaculture" values="shrimp,fish,mussels" />
             <reference ref="optional_name_operator" />
         </item> <!-- Aquaculture -->
+        <separator/>
         <item name="Allotments" icon="presets/landuse/allotments.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=allotments"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=allotments"
@@ -10828,7 +10829,6 @@
             <key key="landuse" value="allotments" />
             <reference ref="optional_name" />
         </item> <!-- Allotments -->
-        <separator/>
         <item name="Garden" icon="presets/leisure/garden.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=garden"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:leisure=garden"

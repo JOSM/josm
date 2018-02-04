@@ -327,7 +327,7 @@ node[building=transformer_tower] {
     set icon_z17;
 }
 node[entrance=yes],
-node[entrance=home]
+node[entrance=home],
 node[entrance=staircase] {
     icon-image: "presets/misc/entrance_yes.svg";
     set icon_z17;
