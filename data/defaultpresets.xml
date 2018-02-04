@@ -3191,10 +3191,10 @@
             </checkgroup>
             <space />
             <label text="Number of Sockets:" />
-            <combo key="socket:type1" text="Type 1 (Yazaki)" values="1,2,3,4,5,6" />
-            <combo key="socket:type1_combo" text="Type 1 Combo" values="1,2,3,4,5,6" />
-            <combo key="socket:type2" text="Type 2 (Mennekes)" values="1,2,3,4,5,6" />
-            <combo key="socket:type2_combo" text="Type 2 Combo" values="1,2,3,4,5,6" />
+            <combo key="socket:type1" text="SAE J1772 (IEC Type 1)" values="1,2,3,4,5,6" />
+            <combo key="socket:type1_combo" text="SAE J1772 Combo (DC)" values="1,2,3,4,5,6" />
+            <combo key="socket:type2" text="IEC Type 2 (Mennekes)" values="1,2,3,4,5,6" />
+            <combo key="socket:type2_combo" text="IEC Type 2 Combo (DC)" values="1,2,3,4,5,6" />
             <combo key="socket:type3" text="Type 3 (SCAME)" values="1,2,3,4,5,6" />
             <combo key="socket:chademo" text="CHAdeMO" values="1,2,3,4,5,6" />
             <combo key="socket:tesla_supercharger" text="Tesla Supercharger" values="1,2,3,4,5,6" />
