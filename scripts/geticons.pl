@@ -151,11 +151,14 @@ for($i = 1; my @ifiles = (glob("images".("/*" x $i).".png"), glob("images".("/*"
         undef $/;
         my $f = <FILE>;
         close FILE;
-        while($f =~ /style\s*=\s*["']([^"']+)["']/g)
+        for my $sep ("'", '"')
         {
-          for my $x (split(/\s*;\s*/, $1))
+          while($f =~ /style\s*=\s*$sep([^$sep]+)$sep/g)
           {
-            print STDERR "$ifile: Style starts with minus: $x\n" if $x =~ /^-/;
+            for my $x (split(/\s*;\s*/, $1))
+            {
+              print STDERR "$ifile: Style starts with minus: $x\n" if $x =~ /^-/;
+            }
           }
         }
         if($f =~ /viewBox\s*=\s*["']([^"']+)["']/)
