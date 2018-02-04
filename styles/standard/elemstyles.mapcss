@@ -4651,7 +4651,7 @@ node|z15-[place=locality],
 node|z-14[place=locality][!setting("hide_icons")] {
     icon-image: "presets/place/locality.svg";
     font-weight: bold;
-    text-color:black;
+    text-color: black;
     text-halo-color: white;
     text-halo-radius: 1;
 }
@@ -4660,6 +4660,14 @@ node[place=island] {
 }
 node[place=islet] {
     icon-image: "presets/place/islet.svg";
+}
+
+area[place=square] {
+    fill-color: place#8de3cb;
+}
+node[place=square] {
+    icon-image: "presets/place/square.svg";
+    set icon_z17;
 }
 
 /***************************/
@@ -4691,7 +4699,7 @@ node|z-15[note][FIXME][!setting("hide_icons")]::core_note_fixme {
 
 /*
 Summary of different zoom levels:
-  (any zoom)    place=* (except locality) and a few natural icons with their text is shown
+  (any zoom)    place=* (except locality and square) and a few natural icons with their text is shown
   |z-14         tagged way nodes are hidden completely
   |z-15         untagged way nodes are hidden completely
   |z15          place=locality icon
@@ -4700,7 +4708,7 @@ Summary of different zoom levels:
                 street name along highway=* ways
   |z18-         text for normal POI icons is shown
   
- * text size and node size is adapted according to zoom level (see style source below), place labels (except locality) don't get smaller
+ * text size and node size is adapted according to zoom level (see style source below), place labels (except locality and square) don't get smaller
  * all these zoom features are modifiable via style settings
  * maxspeed icons should not be distinguishable from POIs with "icon-image" property
 

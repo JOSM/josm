@@ -10262,6 +10262,12 @@
             <key key="place" value="locality" />
             <reference ref="name_wikipedia" />
         </item> <!-- Locality -->
+        <item name="Square" icon="presets/place/square.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=square" />
+            <space />
+            <key key="place" value="square" />
+            <reference ref="name_wikipedia" />
+        </item> <!-- Square -->
     </group> <!-- Places -->
     <group name="Geography" icon="presets/landmark/peak.svg">
         <item name="Peak" icon="presets/landmark/peak.svg" type="node" preset_name_label="true">
