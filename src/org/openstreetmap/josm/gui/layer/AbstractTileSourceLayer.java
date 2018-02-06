@@ -124,6 +124,7 @@ import org.openstreetmap.josm.tools.MemoryManager;
 import org.openstreetmap.josm.tools.MemoryManager.MemoryHandle;
 import org.openstreetmap.josm.tools.MemoryManager.NotEnoughMemoryException;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Base abstract class that supports displaying images provided by TileSource. It might be TMS source, WMS or WMTS
@@ -1439,6 +1440,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             this.bounds = bounds;
             this.minZoom = minZoom;
             this.maxZoom = maxZoom;
+            if (minZoom > maxZoom) {
+                throw new IllegalArgumentException(minZoom + " > " + maxZoom);
+            }
             this.tileSets = new AbstractTileSourceLayer.TileSet[maxZoom - minZoom + 1];
         }
 
@@ -1882,7 +1886,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         private void doPaint(MapViewGraphics graphics) {
-            drawInViewArea(graphics.getDefaultGraphics(), graphics.getMapView(), graphics.getClipBounds().getProjectionBounds());
+            try {
+                drawInViewArea(graphics.getDefaultGraphics(), graphics.getMapView(), graphics.getClipBounds().getProjectionBounds());
+            } catch (IllegalArgumentException e) {
+                throw BugReport.intercept(e)
+                               .put("graphics", graphics).put("tileSource", tileSource).put("currentZoomLevel", currentZoomLevel);
+            }
         }
 
         private void allocateCacheMemory() {
