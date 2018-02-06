@@ -59,4 +59,9 @@ public class MapViewGraphics {
     public MapViewRectangle getClipBounds() {
         return clipBounds;
     }
+
+    @Override
+    public String toString() {
+        return "MapViewGraphics [graphics=" + graphics + ", mapView=" + mapView + ", clipBounds=" + clipBounds + ']';
+    }
 }

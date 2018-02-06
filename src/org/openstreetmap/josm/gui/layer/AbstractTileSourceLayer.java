@@ -1417,6 +1417,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         IProjected botRightUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMax());
         if (coordinateConverter.requiresReprojection()) {
             Projection projServer = Projections.getProjectionByCode(tileSource.getServerCRS());
+            if (projServer == null) {
+                throw new IllegalStateException(tileSource.toString());
+            }
             ProjectionBounds projBounds = new ProjectionBounds(
                     CoordinateConversion.projToEn(topLeftUnshifted),
                     CoordinateConversion.projToEn(botRightUnshifted));
@@ -1888,7 +1891,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         private void doPaint(MapViewGraphics graphics) {
             try {
                 drawInViewArea(graphics.getDefaultGraphics(), graphics.getMapView(), graphics.getClipBounds().getProjectionBounds());
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | IllegalStateException e) {
                 throw BugReport.intercept(e)
                                .put("graphics", graphics).put("tileSource", tileSource).put("currentZoomLevel", currentZoomLevel);
             }

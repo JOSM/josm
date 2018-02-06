@@ -719,11 +719,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     @Override
     public int getTileSize() {
-        // no support for non-square tiles (tileHeight != tileWidth)
-        // and for different tile sizes at different zoom levels
-        Collection<Layer> projLayers = getLayers(null, tileProjection.toCode());
-        if (!projLayers.isEmpty()) {
-            return projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
+        if (tileProjection != null) {
+            // no support for non-square tiles (tileHeight != tileWidth)
+            // and for different tile sizes at different zoom levels
+            Collection<Layer> projLayers = getLayers(null, tileProjection.toCode());
+            if (!projLayers.isEmpty()) {
+                return projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
+            }
         }
         // if no layers is found, fallback to default mercator tile size. Maybe it will work
         Logging.warn("WMTS: Could not determine tile size. Using default tile size of: {0}", getDefaultTileSize());
@@ -1058,6 +1060,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     @Override
     public String getServerCRS() {
-        return tileProjection.toCode();
+        return tileProjection != null ? tileProjection.toCode() : null;
     }
 }

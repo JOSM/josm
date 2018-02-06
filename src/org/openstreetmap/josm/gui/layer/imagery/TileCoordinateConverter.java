@@ -201,6 +201,6 @@ public class TileCoordinateConverter {
      * @return true if tiles need to be reprojected from server projection to display projection
      */
     public boolean requiresReprojection() {
-        return !tileSource.getServerCRS().equals(Main.getProjection().toCode());
+        return !Objects.equals(tileSource.getServerCRS(), Main.getProjection().toCode());
     }
 }
