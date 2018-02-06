@@ -272,7 +272,8 @@ public class JOSMTestRules implements TestRule {
                 new TileSourceRule.ColorSource(Color.WHITE, "White Tiles", 256),
                 new TileSourceRule.ColorSource(Color.BLACK, "Black Tiles", 256),
                 new TileSourceRule.ColorSource(Color.MAGENTA, "Magenta Tiles", 256),
-                new TileSourceRule.ColorSource(Color.GREEN, "Green Tiles", 256)
+                new TileSourceRule.ColorSource(Color.GREEN, "Green Tiles", 256),
+                new TileSourceRule.VStripeSource(Color.GREEN, Color.WHITE, "Green/white Stripes", 256)
             )
         );
     }
