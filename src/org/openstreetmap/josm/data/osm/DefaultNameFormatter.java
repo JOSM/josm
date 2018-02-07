@@ -491,11 +491,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             }
             String key = keyList.get(i);
             sb.append("<strong>")
-              .append(key)
+              .append(Utils.escapeReservedCharactersHTML(key))
               .append("</strong>=");
             String value = tags.get(key);
             while (!value.isEmpty()) {
-                sb.append(value.substring(0, Math.min(50, value.length())));
+                sb.append(Utils.escapeReservedCharactersHTML(value.substring(0, Math.min(50, value.length()))));
                 if (value.length() > 50) {
                     sb.append("<br>");
                     value = value.substring(50);
