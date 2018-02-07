@@ -105,6 +105,8 @@ public class SimilarNamedWaysTest {
         checkSimilarity("different number", "track 1", "track 2", false);
         checkSimilarity("different number length", "track 9", "track 10", false);
         checkSimilarity("multiple numbers", "track 8 - 9", "track 10 - 11", false);
+        // persian numbers, see #15869
+        checkSimilarity("persian numbers", "بن‌بست نیلوفر ۵", "بن‌بست نیلوفر ۶", false);
 
         checkSimilarity("1st and 2nd", "1st Street", "2nd Street", false);
         checkSimilarity("1st case", "1St Street", "1st Street", true);
