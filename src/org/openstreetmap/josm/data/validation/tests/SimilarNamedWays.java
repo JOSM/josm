@@ -53,7 +53,7 @@ public class SimilarNamedWays extends Test {
 
         // FIXME: hardcode these rules for now. Replace them with preferences later
         // See https://josm.openstreetmap.de/ticket/3733#comment:19
-        addRegExprRule("\\d+", "0"); // Highway 66
+        addRegExprRule("\\pN+", "0"); // Unicode numbers: matches "Highway 66" but also persian numbers
         addRegExprRule("\\d+(st|nd|rd|th)", "0st"); // 3rd Ave
         addRegExprRule("^[A-Z] ", "X"); // E Street
         addSynonyms("east", "west", "north", "south");
