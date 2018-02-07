@@ -39,6 +39,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * Action displayed in imagery menu to add a new imagery layer.
@@ -135,19 +136,23 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled()) return;
+        ImageryLayer layer = null;
         try {
             final ImageryInfo infoToAdd = convertImagery(info);
             if (infoToAdd != null) {
-                getLayerManager().addLayer(ImageryLayer.create(infoToAdd));
+                layer = ImageryLayer.create(infoToAdd);
+                getLayerManager().addLayer(layer);
                 AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
             }
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException | ReportedException ex) {
             if (ex.getMessage() == null || ex.getMessage().isEmpty() || GraphicsEnvironment.isHeadless()) {
                 throw ex;
             } else {
-                JOptionPane.showMessageDialog(Main.parent,
-                        ex.getMessage(), tr("Error"),
-                        JOptionPane.ERROR_MESSAGE);
+                Logging.error(ex);
+                JOptionPane.showMessageDialog(Main.parent, ex.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
+                if (layer != null) {
+                    getLayerManager().removeLayer(layer);
+                }
             }
         }
     }

@@ -146,6 +146,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             crs = builder.crs;
             identifier = builder.identifier;
         }
+
+        @Override
+        public String toString() {
+            return "TileMatrixSet [crs=" + crs + ", identifier=" + identifier + ']';
+        }
     }
 
     private static class Dimension {
@@ -187,6 +192,12 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
          */
         public String getUserTitle() {
             return title != null ? title : identifier;
+        }
+
+        @Override
+        public String toString() {
+            return "Layer [identifier=" + identifier + ", title=" + title + ", tileMatrixSet="
+                    + tileMatrixSet + ", baseUrl=" + baseUrl + ", style=" + style + ']';
         }
     }
 
@@ -682,7 +693,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                     }
                 }
                 if (this.currentLayer == null)
-                    return;
+                    throw new IllegalArgumentException(
+                            layers.stream().map(l -> l.tileMatrixSet).collect(Collectors.toList()).toString());
             } // else: keep currentLayer and tileProjection as is
         }
         if (this.currentLayer != null) {
