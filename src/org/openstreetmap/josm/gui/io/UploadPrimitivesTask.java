@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.MaxChangesetSizeExceededPolicy;
 import org.openstreetmap.josm.io.MessageNotifier;
@@ -329,8 +330,13 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
             }
             if (uploadCanceled) return;
             if (lastException == null) {
-                new Notification(
-                        "<h3>" + tr("Upload successful!") + "</h3>")
+                HtmlPanel panel = new HtmlPanel(
+                        "<h3><a href=\"" + Main.getBaseBrowseUrl() + "/changeset/" + changeset.getId() + "\">"
+                                + tr("Upload successful!") + "</a></h3>");
+                panel.enableClickableHyperlinks();
+                panel.setOpaque(false);
+                new Notification()
+                        .setContent(panel)
                         .setIcon(ImageProvider.get("misc", "check_large"))
                         .show();
                 return;
