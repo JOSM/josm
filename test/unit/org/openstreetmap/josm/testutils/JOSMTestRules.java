@@ -63,6 +63,8 @@ public class JOSMTestRules implements TestRule {
     private TileSourceRule tileSourceRule;
     private String assumeRevisionString;
     private Version originalVersion;
+    private Runnable mapViewStateMockingRunnable;
+    private Runnable navigableComponentMockingRunnable;
     private boolean platform;
     private boolean useProjection;
     private boolean useProjectionNadGrids;
@@ -296,8 +298,30 @@ public class JOSMTestRules implements TestRule {
      * @since 12557
      */
     public JOSMTestRules main() {
+        return this.main(
+            WindowlessMapViewStateMocker::new,
+            WindowlessNavigatableComponentMocker::new
+        );
+    }
+
+    /**
+     * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
+     *         global variables in this test.
+     * @param mapViewStateMockingRunnable Runnable to use for mocking out any required parts of
+     *        {@link org.openstreetmap.josm.gui.MapViewState}, null to skip.
+     * @param navigableComponentMockingRunnable Runnable to use for mocking out any required parts
+     *        of {@link org.openstreetmap.josm.gui.NavigableComponent}, null to skip.
+     *
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules main(
+        final Runnable mapViewStateMockingRunnable,
+        final Runnable navigableComponentMockingRunnable
+    ) {
         platform();
-        main = true;
+        this.main = true;
+        this.mapViewStateMockingRunnable = mapViewStateMockingRunnable;
+        this.navigableComponentMockingRunnable = navigableComponentMockingRunnable;
         return this;
     }
 
@@ -452,6 +476,15 @@ public class JOSMTestRules implements TestRule {
             JOSMFixture.createUnitTestFixture().init(true);
         } else {
             if (main) {
+                // apply mockers to MapViewState and NavigableComponent whether we're headless or not
+                // as we generally don't create the josm main window even in non-headless mode.
+                if (this.mapViewStateMockingRunnable != null) {
+                    this.mapViewStateMockingRunnable.run();
+                }
+                if (this.navigableComponentMockingRunnable != null) {
+                    this.navigableComponentMockingRunnable.run();
+                }
+
                 new MainApplication();
                 JOSMFixture.initContentPane();
                 JOSMFixture.initMainPanel(true);
