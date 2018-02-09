@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,6 +23,22 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class ColorfulImageProcessorTest {
 
     private static final int TEST_IMAGE_SIZE = 5;
+
+    private static final int[] PALETTE = {
+            Color.BLACK.getRGB(),
+            Color.WHITE.getRGB(),
+            Color.GRAY.getRGB(),
+            Color.GREEN.getRGB(),
+            Color.RED.getRGB(),
+            Color.BLUE.getRGB(),
+            0xff908050,
+            0xff908070,
+            0xff908070,
+            0xff908070,
+            0xfff02080,
+    };
+
+    private static final IndexColorModel COLOR_MODEL = new IndexColorModel(8, PALETTE.length, PALETTE, 0, true, 255, DataBuffer.TYPE_BYTE);
 
     /**
      * No special rules
@@ -78,7 +96,8 @@ public class ColorfulImageProcessorTest {
             for (int type : new int[] {
                     BufferedImage.TYPE_3BYTE_BGR,
                     BufferedImage.TYPE_4BYTE_ABGR,
-                    BufferedImage.TYPE_4BYTE_ABGR_PRE }) {
+                    BufferedImage.TYPE_4BYTE_ABGR_PRE,
+                    BufferedImage.TYPE_BYTE_INDEXED }) {
                 assertTrue(runProcessing(data, type));
             }
         }
@@ -103,10 +122,13 @@ public class ColorfulImageProcessorTest {
     }
 
     private BufferedImage createImage(Color color, int type) {
-        BufferedImage image = new BufferedImage(TEST_IMAGE_SIZE, TEST_IMAGE_SIZE, type);
+        BufferedImage image = type == BufferedImage.TYPE_BYTE_INDEXED
+                ? new BufferedImage(TEST_IMAGE_SIZE, TEST_IMAGE_SIZE, type, COLOR_MODEL)
+                : new BufferedImage(TEST_IMAGE_SIZE, TEST_IMAGE_SIZE, type);
         Graphics2D graphics = image.createGraphics();
         graphics.setColor(color);
         graphics.fillRect(0, 0, TEST_IMAGE_SIZE, TEST_IMAGE_SIZE);
+        assertEquals(color.getRGB(), image.getRGB(1, 1));
         return image;
     }
 
