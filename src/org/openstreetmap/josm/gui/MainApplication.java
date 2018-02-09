@@ -888,6 +888,9 @@ public class MainApplication extends Main {
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
+        Config.setPreferencesInstance(Main.pref);
+        Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
+
         if (args.showVersion()) {
             System.out.println(Version.getInstance().getAgentString());
             return;
@@ -907,8 +910,6 @@ public class MainApplication extends Main {
             Logging.info(tr("Enabled detailed debug level (trace)"));
         }
 
-        Config.setPreferencesInstance(Main.pref);
-        Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
 
         args.getPreferencesToSet().forEach(Main.pref::put);
