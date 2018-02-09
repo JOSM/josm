@@ -37,7 +37,7 @@ Under Linux, open a shell, go to the file directory and type
 your JAVA_HOME variable to the java executable location (the root location,
 not the bin).
 
-MacOS X users just click on the .jar file icon.
+macOS users just click on the .jar file icon.
 
 =============================================================================
             II. Development
@@ -93,6 +93,8 @@ This is an overview of the files and directories in the JOSM code repository:
                             archive of terms of use for the CHENyx06.gsb file
       - epsg                EPSG data file, taken from the proj.4 project
                             (see https://github.com/OSGeo/proj.4/blob/master/nad/epsg)
+      - esri                ESRI data file, taken from the proj.4 project
+                            (see https://github.com/OSGeo/proj.4/blob/master/nad/esri)
       - josm-epsg           customizations to the epsg file, used together with the epsg file
                             to generate data/projection/custom-epsg
                             

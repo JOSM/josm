@@ -4573,8 +4573,8 @@ area[setting("place_fill_colour")][place=isolated_dwelling],
 area[setting("place_fill_colour")][place=neighbourhood],
 area[setting("place_fill_colour")][place=suburb],
 area[setting("place_fill_colour")][place=locality],
-area[setting("place_fill_colour")][place=island],
-area[setting("place_fill_colour")][place=islet] {
+area[place=island],
+area[place=islet] {
     fill-color: place#8de3cb;
     set place;
 }

@@ -417,6 +417,8 @@
 <6811> +proj=omerc +lat_0=45.91666666666666 +lonc=-123 +alpha=295 +k=1 +x_0=7000000.00000248 +y_0=-2999999.999988 +no_uoff +gamma=295 +ellps=GRS80 +units=ft +no_defs +bounds=-125,45,-121,47 <>
 # NAD83(2011) / Oregon Columbia River West zone (m)
 <6810> +proj=omerc +lat_0=45.91666666666666 +lonc=-123 +alpha=295 +k=1 +x_0=7000000 +y_0=-3000000 +no_uoff +gamma=295 +ellps=GRS80 +units=m +no_defs +bounds=-125,45,-121,47 <>
+# NAD83(2011) / PCCS zone 1 (ft)
+<8065> +proj=omerc +lat_0=32.25 +lonc=-111.4 +alpha=45 +k=1.00011 +x_0=48768 +y_0=243840 +gamma=45 +ellps=GRS80 +units=ft +no_defs +bounds=-112,31,-110,33 <>
 ##
 ## Following entries use Sinusoidal projection
 ##
