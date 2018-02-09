@@ -136,6 +136,9 @@ public class RestartAction extends JosmAction {
         final String jnlp = System.getProperty("jnlpx.origFilenameArg");
         // program main and program arguments (be careful a sun property. might not be supported by all JVM)
         final String javaCommand = System.getProperty("sun.java.command");
+        if (javaCommand == null) {
+            throw new IOException("Unable to retrieve sun.java.command property");
+        }
         String[] mainCommand = javaCommand.split(" ");
         if (javaCommand.endsWith(".jnlp") && jnlp == null) {
             // see #11751 - jnlp on Linux
