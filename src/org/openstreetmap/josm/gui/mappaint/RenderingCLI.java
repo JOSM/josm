@@ -227,7 +227,7 @@ public class RenderingCLI implements CLIModule {
                 break;
             case 'z':
                 try {
-                    argZoom = Integer.parseInt(getopt.getOptarg());
+                    argZoom = Integer.valueOf(getopt.getOptarg());
                 } catch (NumberFormatException nfe) {
                     throw new IllegalArgumentException(
                             tr("Expected integer number for option {0}, but got ''{1}''", "--zoom", getopt.getOptarg()), nfe);
@@ -306,7 +306,7 @@ public class RenderingCLI implements CLIModule {
                     break;
                 case WIDTH_PX:
                     try {
-                        argWidthPx = Integer.parseInt(getopt.getOptarg());
+                        argWidthPx = Integer.valueOf(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
                                 tr("Expected integer number for option {0}, but got ''{1}''", "--width-px", getopt.getOptarg()), nfe);
@@ -316,7 +316,7 @@ public class RenderingCLI implements CLIModule {
                     break;
                 case HEIGHT_PX:
                     try {
-                        argHeightPx = Integer.parseInt(getopt.getOptarg());
+                        argHeightPx = Integer.valueOf(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
                                 tr("Expected integer number for option {0}, but got ''{1}''", "--height-px", getopt.getOptarg()), nfe);
@@ -329,7 +329,7 @@ public class RenderingCLI implements CLIModule {
                     break;
                 case MAX_IMAGE_SIZE:
                     try {
-                        argMaxImageSize = Integer.parseInt(getopt.getOptarg());
+                        argMaxImageSize = Integer.valueOf(getopt.getOptarg());
                     } catch (NumberFormatException nfe) {
                         throw new IllegalArgumentException(
                                 tr("Expected integer number for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()), nfe);
