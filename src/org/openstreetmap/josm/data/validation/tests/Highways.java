@@ -236,7 +236,7 @@ public class Highways extends Test {
                 }
                 if ((leftByPedestrians || leftByCyclists) && leftByCars) {
                     errors.add(TestError.builder(this, Severity.OTHER, MISSING_PEDESTRIAN_CROSSING)
-                            .message(tr("Missing pedestrian crossing information"))
+                            .message(tr("Missing pedestrian crossing information. Add the tag crossing=*."))
                             .primitives(n)
                             .build());
                     return;
