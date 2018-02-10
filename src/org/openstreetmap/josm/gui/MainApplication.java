@@ -21,6 +21,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.security.AllPermission;
 import java.security.CodeSource;
 import java.security.GeneralSecurityException;
@@ -168,7 +169,6 @@ import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.bugreport.BugReportQueue;
 import org.openstreetmap.josm.tools.bugreport.BugReportSender;
@@ -953,11 +953,15 @@ public class MainApplication extends Main {
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
             XMLCommandProcessor config = new XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
-                Logging.info("Reading preferences from " + i);
-                try (InputStream is = Utils.openStream(new URL(i))) {
-                    config.openAndReadXML(is);
+                try {
+                    URL url = i.contains("://") ? new URL(i) : Paths.get(i).toUri().toURL();
+                    Logging.info("Reading preferences from " + url);
+                    try (InputStream is = Utils.openStream(url)) {
+                        config.openAndReadXML(is);
+                    }
                 } catch (IOException ex) {
-                    throw BugReport.intercept(ex).put("file", i);
+                    Logging.error(ex);
+                    return;
                 }
             }
         }
