@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
-<!-- ClipArt by Arvin61r58 (http://openclipart.org/user-detail/Arvin61r58) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -12,98 +10,25 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="160"
+   height="120"
+   viewBox="0 0 160 120"
    id="svg2"
-   viewBox="0 0 976.15625 729.85008"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   width="100%"
-   height="100%"
-   sodipodi:docname="11.svg">
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1680"
-     inkscape:window-height="988"
-     id="namedview69"
-     showgrid="false"
-     inkscape:zoom="0.43628026"
-     inkscape:cx="797.85974"
-     inkscape:cy="398.68092"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg2"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0" />
-  <title
-     id="title4370">Billboard Frame</title>
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="21.svg">
   <defs
      id="defs4">
-    <filter
-       id="filter4278"
-       height="1"
-       width="1"
-       color-interpolation-filters="sRGB"
-       y="0"
-       x="0">
-      <feTurbulence
-         id="feTurbulence4280"
-         baseFrequency="0.021000000000000001 0.021000000000000001"
-         seed="0"
-         result="result0"
-         numOctaves="2"
-         type="turbulence" />
-      <feSpecularLighting
-         id="feSpecularLighting4282"
-         specularConstant="1"
-         result="result1"
-         specularExponent="24.29999924"
-         surfaceScale="2">
-        <feDistantLight
-           id="feDistantLight4284"
-           elevation="45"
-           azimuth="225" />
-      </feSpecularLighting>
-      <feDiffuseLighting
-         id="feDiffuseLighting4286"
-         surfaceScale="3"
-         in="result0"
-         result="result2"
-         diffuseConstant="1.21000004">
-        <feDistantLight
-           id="feDistantLight4288"
-           elevation="42"
-           azimuth="225" />
-      </feDiffuseLighting>
-      <feBlend
-         id="feBlend4290"
-         mode="multiply"
-         in2="SourceGraphic"
-         result="result91" />
-      <feComposite
-         id="feComposite4292"
-         in="result1"
-         in2="result91"
-         k3="1"
-         k2="1"
-         k1="0"
-         result="result92"
-         k4="0"
-         operator="arithmetic" />
-      <feComposite
-         id="feComposite4294"
-         operator="in"
-         result="result2"
-         in2="SourceAlpha" />
-    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4347"
+       id="linearGradient3096"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.17197244,0,0,0.13798973,9.3315376,948.21259)"
+       x1="357.79999"
+       y1="556.90997"
+       x2="456.60001"
+       y2="556.90997" />
     <linearGradient
        id="linearGradient4347"
        y2="556.90997"
@@ -174,6 +99,16 @@
          offset="1" />
     </linearGradient>
     <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4353"
+       id="linearGradient3098"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(3.2022,122.35)"
+       x1="446.25"
+       y1="689.37"
+       x2="446.25"
+       y2="715.01001" />
+    <linearGradient
        id="linearGradient4353"
        y2="715.01001"
        gradientUnits="userSpaceOnUse"
@@ -190,122 +125,49 @@
          style="stop-color:#e3e3e3"
          offset="1" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient4347"
-       id="linearGradient3096"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.0492,0,0,0.83928,56.9452,90.310078)"
-       x1="357.79999"
-       y1="556.90997"
-       x2="456.60001"
-       y2="556.90997" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient4353"
-       id="linearGradient3098"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(3.2022,122.35)"
-       x1="446.25"
-       y1="689.37"
-       x2="446.25"
-       y2="715.01001" />
   </defs>
-  <rect
-     id="rect2985"
-     style="fill:url(#linearGradient3096);fill-rule:evenodd"
-     rx="12.852"
-     ry="11.842"
-     height="344.26999"
-     width="95.811996"
-     y="385.58008"
-     x="440.19519" />
-  <g
-     transform="matrix(1,0,0,1.0753,-7.25,-451.87197)"
-     id="g4132">
-    <g
-       transform="matrix(1,0,0,0.83333,21.422,173.53)"
-       id="g4125">
-      <rect
-         x="33.09"
-         y="740.15002"
-         width="16.011"
-         height="25.618"
-         style="fill:#000000;fill-rule:evenodd"
-         id="rect4115" />
-      <rect
-         x="898.76001"
-         y="740.15002"
-         width="16.011"
-         height="25.618"
-         style="fill:#000000;fill-rule:evenodd"
-         id="rect4117" />
-      <rect
-         x="682.34003"
-         y="740.15002"
-         width="16.011"
-         height="25.618"
-         style="fill:#000000;fill-rule:evenodd"
-         id="rect4119" />
-      <rect
-         x="249.50999"
-         y="740.15002"
-         width="16.011"
-         height="25.618"
-         style="fill:#000000;fill-rule:evenodd"
-         id="rect4121" />
-      <rect
-         x="465.92001"
-         y="740.15002"
-         width="16.011"
-         height="25.618"
-         style="fill:#000000;fill-rule:evenodd"
-         id="rect4123" />
-    </g>
-    <path
-       inkscape:connector-curvature="0"
-       d="m 966.48,812.6 9.1053,-0.0628 6.5646,23.891 -13.718,-0.2011 -473.09,0.061 -473.09,0.0242 -13.718,0.20109 6.5646,-23.891 9.1053,0.0628 471.13,-0.0833 z"
-       style="fill:url(#linearGradient3098);stroke:#000000;stroke-width:1.92869997"
-       id="path4083-2" />
-  </g>
-  <g
-     transform="matrix(1,0,0,1.0753,-4.8711,-332.50292)"
-     id="g4071"
-     style="fill:#803300">
-    <rect
-       x="14.971"
-       y="312.10001"
-       width="956"
-       height="366"
-       style="fill:#803300;stroke:#000000;stroke-width:5.78609991"
-       id="rect4043" />
-    <rect
-       x="20.938"
-       y="317.76999"
-       width="944.06"
-       height="354.66"
-       style="fill:#803300;fill-rule:evenodd;stroke:#828282;stroke-width:5.78609991"
-       id="rect4043-1" />
-  </g>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="4.2951213"
+     inkscape:cx="29.418382"
+     inkscape:cy="85.412106"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     viewbox-height="16">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1" />
+  </sodipodi:namedview>
   <metadata
-     id="metadata67">
+     id="metadata7">
     <rdf:RDF>
-      <cc:Work>
+      <cc:Work
+         rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
-        <dc:publisher>
-          <cc:Agent
-             rdf:about="http://openclipart.org/">
-            <dc:title>Openclipart</dc:title>
-          </cc:Agent>
-        </dc:publisher>
-        <dc:title>Billboard Frame</dc:title>
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -315,17 +177,98 @@
       </cc:License>
     </rdf:RDF>
   </metadata>
-  <text
-     xml:space="preserve"
-     style="font-size:335.74322510000002000px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:40.81823348999999700px;word-spacing:0px;fill:#ffcc00;fill-opacity:1;stroke:none;font-family:Calibri"
-     x="37.716553"
-     y="308.91446"
-     id="text3111"
-     sodipodi:linespacing="125%"
-     transform="scale(1.0174037,0.98289404)"><tspan
-       sodipodi:role="line"
-       id="tspan3113"
-       x="37.716553"
-       y="308.91446"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Calibri;fill:#ffcc00">JOSM</tspan></text>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-933.3622)">
+    <rect
+       id="rect2985"
+       style="fill:url(#linearGradient3096);fill-rule:evenodd;stroke-width:0.16416109"
+       rx="2.1065476"
+       ry="1.9469956"
+       height="56.602951"
+       width="15.704368"
+       y="996.75928"
+       x="72.149345" />
+    <g
+       transform="matrix(0.16390816,0,0,0.17679483,-1.1905774,859.07004)"
+       id="g4132">
+      <g
+         transform="matrix(1,0,0,0.83333,21.422,173.53)"
+         id="g4125">
+        <rect
+           x="33.09"
+           y="740.15002"
+           width="16.011"
+           height="25.618"
+           style="fill:#000000;fill-rule:evenodd"
+           id="rect4115" />
+        <rect
+           x="898.76001"
+           y="740.15002"
+           width="16.011"
+           height="25.618"
+           style="fill:#000000;fill-rule:evenodd"
+           id="rect4117" />
+        <rect
+           x="682.34003"
+           y="740.15002"
+           width="16.011"
+           height="25.618"
+           style="fill:#000000;fill-rule:evenodd"
+           id="rect4119" />
+        <rect
+           x="249.50999"
+           y="740.15002"
+           width="16.011"
+           height="25.618"
+           style="fill:#000000;fill-rule:evenodd"
+           id="rect4121" />
+        <rect
+           x="465.92001"
+           y="740.15002"
+           width="16.011"
+           height="25.618"
+           style="fill:#000000;fill-rule:evenodd"
+           id="rect4123" />
+      </g>
+      <path
+         inkscape:connector-curvature="0"
+         d="m 966.48,812.6 9.1053,-0.0628 6.5646,23.891 -13.718,-0.2011 -473.09,0.061 -473.09,0.0242 -13.718,0.20109 6.5646,-23.891 9.1053,0.0628 471.13,-0.0833 z"
+         style="fill:url(#linearGradient3098);stroke:#000000;stroke-width:1.92869997"
+         id="path4083-2" />
+    </g>
+    <g
+       transform="matrix(0.16390816,0,0,0.17679483,-0.80065643,878.69604)"
+       id="g4071"
+       style="fill:#803300">
+      <rect
+         x="14.971"
+         y="312.10001"
+         width="956"
+         height="366"
+         style="fill:#803300;stroke:#000000;stroke-width:5.78609991"
+         id="rect4043" />
+      <rect
+         x="20.938"
+         y="317.76999"
+         width="944.06"
+         height="354.66"
+         style="fill:#803300;fill-rule:evenodd;stroke:#828282;stroke-width:5.78609991"
+         id="rect4043-1" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.96993315px;line-height:0%;font-family:Calibri;letter-spacing:6.70076561px;word-spacing:0px;fill:#ffcc00;fill-opacity:1;stroke:none;stroke-width:0.1641611"
+       x="6.1893835"
+       y="998.85687"
+       id="text3111"
+       transform="scale(1.0158361,0.98441078)"><tspan
+         sodipodi:role="line"
+         id="tspan3113"
+         x="6.1893835"
+         y="998.85687"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:55.11597824px;line-height:1.25;font-family:Calibri;fill:#ffcc00;stroke-width:0.1641611">JOSM</tspan></text>
+  </g>
 </svg>
