@@ -10444,6 +10444,7 @@
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=tree"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=tree"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:natural=tree"
+                  nb.href="http://wiki.openstreetmap.org/wiki/No:Tag:natural=tree"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=tree"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=tree"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=tree"
@@ -10453,8 +10454,16 @@
             <key key="natural" value="tree" />
             <text key="name" text="Name" />
             <text key="height" text="Height (meters)" />
+            <text key="circumference" text="Circumference (meters)" />
             <reference ref="genus_species_taxon" />
             <reference ref="leaf" />
+            <combo key="denotation" text="Denotation" values_searchable="true" values_context="tree denotation" >
+                <list_entry value="landmark" short_description="Trees remarkable due to its size or prominent location, usually visible from great distances and useful for navigation." />
+                <list_entry value="natural_monument" short_description="Especially old tree, often with a particular shape. Usually protected for its uniqueness." />
+                <list_entry value="avenue" short_description="Trees aligned along a road." />
+                <list_entry value="urban" short_description="Trees found within settlements, e.g. in parks or spread through residential areas." />
+                <list_entry value="agricultural" short_description="Trees in agricultural use." />
+            </combo>
         </item> <!-- Tree -->
         <item name="Tree Row" icon="presets/landmark/tree_row.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree_row"
