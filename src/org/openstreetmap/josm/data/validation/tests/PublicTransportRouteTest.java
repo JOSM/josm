@@ -45,9 +45,9 @@ public class PublicTransportRouteTest extends Test {
         final List<RelationMember> membersToCheck = new ArrayList<>();
         final Set<Node> routeNodes = new HashSet<>();
         for (RelationMember member : r.getMembers()) {
-            if (member.hasRole("forward", "backward")) {
-                errors.add(TestError.builder(this, Severity.WARNING, 3601)
-                        .message(tr("Route relation contains a ''{0}'' role", "forward/backward"))
+            if (member.hasRole("forward", "backward", "alternate")) {
+                errors.add(TestError.builder(this, Severity.ERROR, 3601)
+                        .message(tr("Route relation contains a ''{0}'' role", "forward/backward/alternate"))
                         .primitives(r)
                         .build());
                 return;
