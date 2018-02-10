@@ -297,7 +297,7 @@ public class WMSImagery {
      * @throws MalformedURLException in case of invalid URL
      */
     private void doAttemptGetCapabilities130(String serviceUrlStr, final String url)
-            throws IOException, WMSGetCapabilitiesException, MalformedURLException {
+            throws IOException, WMSGetCapabilitiesException {
         doAttemptGetCapabilities(serviceUrlStr, new URL(url.replace("VERSION=1.1.1", "VERSION=1.3.0")));
         if (serviceUrl.toExternalForm().contains("VERSION=1.1.1")) {
             serviceUrl = new URL(serviceUrl.toExternalForm().replace("VERSION=1.1.1", "VERSION=1.3.0"));
