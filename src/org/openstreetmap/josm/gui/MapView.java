@@ -489,7 +489,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         try {
-            drawMapContent(g);
+            drawMapContent((Graphics2D) g);
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("visibleLayers", layerManager::getVisibleLayersInZOrder)
                     .put("temporaryLayers", temporaryLayers);
@@ -497,7 +497,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         super.paint(g);
     }
 
-    private void drawMapContent(Graphics g) {
+    private void drawMapContent(Graphics2D g) {
         // In HiDPI-mode, the Graphics g will have a transform that scales
         // everything by a factor of 2.0 or so. At the same time, the value returned
         // by getWidth()/getHeight will be reduced by that factor.
@@ -508,10 +508,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         // of the temporary buffer pixel by pixel onto g, without scaling.
         // (Otherwise, we would upscale a small buffer image and the result would be
         // blurry, with 2x2 pixel blocks.)
-        Graphics2D gg = (Graphics2D) g;
-        AffineTransform trOrig = gg.getTransform();
-        double uiScaleX = gg.getTransform().getScaleX();
-        double uiScaleY = gg.getTransform().getScaleY();
+        AffineTransform trOrig = g.getTransform();
+        double uiScaleX = g.getTransform().getScaleX();
+        double uiScaleY = g.getTransform().getScaleY();
         // width/height in full-resolution screen pixels
         int width = (int) Math.round(getWidth() * uiScaleX);
         int height = (int) Math.round(getHeight() * uiScaleY);
@@ -614,8 +613,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         try {
-            gg.setTransform(new AffineTransform(1, 0, 0, 1, trOrig.getTranslateX(), trOrig.getTranslateY()));
-            gg.drawImage(offscreenBuffer, 0, 0, null);
+            g.setTransform(new AffineTransform(1, 0, 0, 1, trOrig.getTranslateX(), trOrig.getTranslateY()));
+            g.drawImage(offscreenBuffer, 0, 0, null);
         } catch (ClassCastException e) {
             // See #11002 and duplicate tickets. On Linux with Java >= 8 Many users face this error here:
             //
@@ -642,7 +641,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             // But the application seems to work fine after, so let's just log the error
             Logging.error(e);
         } finally {
-            gg.setTransform(trOrig);
+            g.setTransform(trOrig);
         }
     }
 
