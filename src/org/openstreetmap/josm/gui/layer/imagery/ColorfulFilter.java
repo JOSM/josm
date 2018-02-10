@@ -10,7 +10,10 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.IndexColorModel;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -19,6 +22,9 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 11914 (extracted from ColorfulImageProcessor)
  */
 public class ColorfulFilter implements BufferedImageOp {
+    private static final double LUMINOSITY_RED = .21d;
+    private static final double LUMINOSITY_GREEN = .72d;
+    private static final double LUMINOSITY_BLUE = .07d;
     private final double colorfulness;
 
     /**
@@ -36,6 +42,12 @@ public class ColorfulFilter implements BufferedImageOp {
         }
 
         BufferedImage dest = Optional.ofNullable(dst).orElseGet(() -> createCompatibleDestImage(src, null));
+        int type = src.getType();
+
+        if (type == BufferedImage.TYPE_BYTE_INDEXED) {
+            return filterIndexed(src, dest);
+        }
+
         DataBuffer srcBuffer = src.getRaster().getDataBuffer();
         DataBuffer destBuffer = dest.getRaster().getDataBuffer();
         if (!(srcBuffer instanceof DataBufferByte) || !(destBuffer instanceof DataBufferByte)) {
@@ -43,7 +55,6 @@ public class ColorfulFilter implements BufferedImageOp {
             return src;
         }
 
-        int type = src.getType();
         if (type != dest.getType()) {
             Logging.trace("Cannot apply color filter: Src / Dest differ in type (" + type + '/' + dest.getType() + ')');
             return src;
@@ -80,6 +91,52 @@ public class ColorfulFilter implements BufferedImageOp {
         return dest;
     }
 
+    /**
+     * Fast alternative for indexed images: We can change the palette here.
+     * @param src The source image
+     * @param dest The image to copy the source to
+     * @return The image.
+     */
+    private BufferedImage filterIndexed(BufferedImage src, BufferedImage dest) {
+        Objects.requireNonNull(dest, "dst needs to be non null");
+        if (src.getType() != BufferedImage.TYPE_BYTE_INDEXED) {
+            throw new IllegalArgumentException("Source must be of type TYPE_BYTE_INDEXED");
+        }
+        if (dest.getType() != BufferedImage.TYPE_BYTE_INDEXED) {
+            throw new IllegalArgumentException("Destination must be of type TYPE_BYTE_INDEXED");
+        }
+        if (!(src.getColorModel() instanceof IndexColorModel)) {
+            throw new IllegalArgumentException("Expecting an IndexColorModel for a image of type TYPE_BYTE_INDEXED");
+        }
+        src.copyData(dest.getRaster());
+
+        IndexColorModel model = (IndexColorModel) src.getColorModel();
+        int size = model.getMapSize();
+        byte[] red = getIndexColorModelData(size, model::getReds);
+        byte[] green = getIndexColorModelData(size, model::getGreens);
+        byte[] blue = getIndexColorModelData(size, model::getBlues);
+        byte[] alphas = getIndexColorModelData(size, model::getAlphas);
+
+        for (int i = 0; i < size; i++) {
+            int r = red[i] & 0xff;
+            int g = green[i] & 0xff;
+            int b = blue[i] & 0xff;
+            double luminosity = r * LUMINOSITY_RED + g * LUMINOSITY_GREEN + b * LUMINOSITY_BLUE;
+            red[i] = mix(r, luminosity);
+            green[i] = mix(g, luminosity);
+            blue[i] = mix(b, luminosity);
+        }
+
+        IndexColorModel dstModel = new IndexColorModel(model.getPixelSize(), model.getMapSize(), red, green, blue, alphas);
+        return new BufferedImage(dstModel, dest.getRaster(), dest.isAlphaPremultiplied(), null);
+    }
+
+    private static byte[] getIndexColorModelData(int size, Consumer<byte[]> consumer) {
+        byte[] data = new byte[size];
+        consumer.accept(data);
+        return data;
+    }
+
     private void doFilter(DataBufferByte src, DataBufferByte dest, int redOffset, int greenOffset, int blueOffset,
             int alphaOffset, boolean hasAlpha) {
         byte[] srcPixels = src.getData();
@@ -93,7 +150,7 @@ public class ColorfulFilter implements BufferedImageOp {
             int r = srcPixels[i + redOffset] & 0xff;
             int g = srcPixels[i + greenOffset] & 0xff;
             int b = srcPixels[i + blueOffset] & 0xff;
-            double luminosity = r * .21d + g * .72d + b * .07d;
+            double luminosity = r * LUMINOSITY_RED + g * LUMINOSITY_GREEN + b * LUMINOSITY_BLUE;
             destPixels[i + redOffset] = mix(r, luminosity);
             destPixels[i + greenOffset] = mix(g, luminosity);
             destPixels[i + blueOffset] = mix(b, luminosity);
