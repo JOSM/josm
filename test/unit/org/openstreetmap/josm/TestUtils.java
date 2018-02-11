@@ -259,6 +259,16 @@ public final class TestUtils {
     }
 
     /**
+     * Creates a new node with the given tags (see {@link OsmUtils#createPrimitive(java.lang.String)})
+     *
+     * @param tags  the tags to set
+     * @return a new node
+     */
+    public static Node newNode(String tags) {
+        return (Node) OsmUtils.createPrimitive("node " + tags);
+    }
+
+    /**
      * Creates a new way with the given tags (see {@link OsmUtils#createPrimitive(java.lang.String)}) and the nodes added
      *
      * @param tags  the tags to set

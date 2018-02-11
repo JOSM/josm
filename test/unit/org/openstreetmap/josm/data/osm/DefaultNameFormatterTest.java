@@ -152,4 +152,18 @@ public class DefaultNameFormatterTest {
         assertEquals("<ul><li>1</li><li>2</li><li>3</li><li>4</li><li>...</li></ul>",
                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(nodes, 5));
     }
+
+    /**
+     * Test of {@link DefaultNameFormatter#buildDefaultToolTip(IPrimitive)}.
+     */
+    @Test
+    public void testBuildDefaultToolTip() {
+        assertEquals("<html><strong>id</strong>=0<br>"+
+                           "<strong>name:en</strong>=foo<br>"+
+                           "<strong>tourism</strong>=hotel<br>"+
+                           "<strong>url</strong>=http://foo.bar<br>"+
+                           "<strong>xml</strong>=&lt;tag/&gt;</html>",
+                DefaultNameFormatter.getInstance().buildDefaultToolTip(
+                        TestUtils.newNode("tourism=hotel name:en=foo url=http://foo.bar xml=<tag/>")));
+    }
 }
