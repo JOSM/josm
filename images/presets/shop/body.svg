@@ -1,31 +1,114 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" xmlns:ns1="http://sozi.baierouge.fr" id="svg3570" sodipodi:docname="buddy.svg" viewBox="0 0 485.2 493.06" sodipodi:version="0.32" version="1.0" inkscape:output_extension="org.inkscape.output.svg.inkscape" inkscape:version="0.46">
-  <sodipodi:namedview id="base" bordercolor="#666666" inkscape:pageshadow="2" guidetolerance="10.0" pagecolor="#ffffff" gridtolerance="10.0" inkscape:zoom="0.93701046" objecttolerance="10.0" borderopacity="1.0" inkscape:current-layer="svg3570" inkscape:cx="93.724066" inkscape:cy="246.52873" inkscape:window-y="66" inkscape:window-x="88" inkscape:window-height="675" showgrid="false" inkscape:pageopacity="0.0" inkscape:window-width="640"/>
-  <g id="layer1" transform="translate(-77.174 10.598)">
-    <g id="g2577" transform="matrix(2.332 0 0 2.332 997.06 -122.71)">
-      <g id="g2579" transform="translate(1.4286 -131.43)">
-        <rect id="rect2581" style="fill:#000000" rx="12" ry="12" height="138.57" width="84.286" y="252.36" x="-334.29"/>
-        <path id="path2583" style="fill:#000000" d="m-291.43 172.36a48.571 48.571 0 1 1 -97.14 0 48.571 48.571 0 1 1 97.14 0z" transform="matrix(.72059 0 0 .72059 -47.143 90.303)"/>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg3570"
+   sodipodi:docname="03.svg"
+   viewBox="0 0 160 160"
+   sodipodi:version="0.32"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   width="160"
+   height="160">
+  <defs
+     id="defs13" />
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     guidetolerance="10.0"
+     pagecolor="#ffffff"
+     gridtolerance="10.0"
+     inkscape:zoom="0.93701046"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     inkscape:current-layer="svg3570"
+     inkscape:cx="93.724066"
+     inkscape:cy="246.52873"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:window-height="987"
+     showgrid="true"
+     inkscape:pageopacity="0.0"
+     inkscape:window-width="1680"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4509" />
+  </sodipodi:namedview>
+  <g
+     id="layer1"
+     transform="matrix(0.3297493,0,0,0.32416952,-25.4498,3.6063541)">
+    <g
+       id="g2577"
+       transform="matrix(2.332,0,0,2.332,997.06,-122.71)">
+      <g
+         id="g2579"
+         transform="translate(1.4286,-131.43)">
+        <rect
+           id="rect2581"
+           style="fill:#000000"
+           rx="12"
+           ry="12"
+           height="138.57001"
+           width="84.286003"
+           y="252.36"
+           x="-334.29001" />
+        <path
+           id="path2583"
+           style="fill:#000000"
+           d="m -291.43,172.36 a 48.571,48.571 0 1 1 -97.14,0 48.571,48.571 0 1 1 97.14,0 z"
+           transform="matrix(0.72059,0,0,0.72059,-47.143,90.303)"
+           inkscape:connector-curvature="0" />
       </g>
-      <rect id="rect2585" style="fill:#000000" transform="rotate(40)" rx="8" ry="8" height="114.29" width="25.714" y="298.63" x="-172.71"/>
-      <rect id="rect2587" style="fill:#000000" transform="matrix(-.76604 .64279 .64279 .76604 0 0)" rx="8" ry="8" height="114.29" width="25.714" y="-74.733" x="272.25"/>
+      <rect
+         id="rect2585"
+         style="fill:#000000"
+         transform="rotate(40)"
+         rx="8"
+         ry="8"
+         height="114.29"
+         width="25.714001"
+         y="298.63"
+         x="-172.71001" />
+      <rect
+         id="rect2587"
+         style="fill:#000000"
+         transform="matrix(-0.76604,0.64279,0.64279,0.76604,0,0)"
+         rx="8"
+         ry="8"
+         height="114.29"
+         width="25.714001"
+         y="-74.733002"
+         x="272.25" />
     </g>
   </g>
-  <metadata>
+  <metadata
+     id="metadata10">
     <rdf:RDF>
       <cc:Work>
         <dc:format>image/svg+xml</dc:format>
-        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
         <dc:publisher>
-          <cc:Agent rdf:about="http://openclipart.org/">
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
             <dc:title>Openclipart</dc:title>
           </cc:Agent>
         </dc:publisher>
-        <dc:title>Buddy</dc:title>
+        <dc:title></dc:title>
         <dc:date>2008-11-03T14:42:04</dc:date>
-        <dc:description/>
+        <dc:description />
         <dc:source>https://openclipart.org/detail/19935/buddy-by-sheikh_tuhin-19935</dc:source>
         <dc:creator>
           <cc:Agent>
@@ -43,10 +126,14 @@
           </rdf:Bag>
         </dc:subject>
       </cc:Work>
-      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
-        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
-        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
-        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
       </cc:License>
     </rdf:RDF>
   </metadata>

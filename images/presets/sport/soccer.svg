@@ -1,9 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 10.0, SVG Export Plug-In . SVG Version: 3.0.0 Build 77)  --><svg enable-background="new 0 0 105.66 100.619" height="100.619" i:pageBounds="0 792 612 0" i:rulerOrigin="0 0" i:viewOrigin="253 446" overflow="visible" space="preserve" viewBox="0 0 105.66 100.619" width="105.66" xmlns="http://www.w3.org/2000/svg" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" xmlns:graph="http://ns.adobe.com/Graphs/1.0/" xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/" xmlns:x="http://ns.adobe.com/Extensibility/1.0/" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <metadata>
-    <rdf:RDF xmlns:cc="http://web.resource.org/cc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-      <cc:Work rdf:about="">
-        <dc:title>Soccer Ball</dc:title>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 10.0, SVG Export Plug-In . SVG Version: 3.0.0 Build 77)  -->
+
+<svg
+   xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   enable-background="new 0 0 105.66 100.619"
+   height="150"
+   i:pageBounds="0 792 612 0"
+   i:rulerOrigin="0 0"
+   i:viewOrigin="253 446"
+   overflow="visible"
+   space="preserve"
+   viewBox="0 0 160 150"
+   width="160"
+   version="1.1"
+   id="svg27"
+   sodipodi:docname="31.svg"
+   style="overflow:visible"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+  <defs
+     id="defs31" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     id="namedview29"
+     showgrid="true"
+     inkscape:zoom="2.3454814"
+     inkscape:cx="52.830002"
+     inkscape:cy="50.309502"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg27">
+    <inkscape:grid
+       type="xygrid"
+       id="grid838" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata2">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title></dc:title>
         <dc:description>Soccer Ball.</dc:description>
         <dc:subject>
           <rdf:Bag>
@@ -14,45 +66,120 @@
           </rdf:Bag>
         </dc:subject>
         <dc:publisher>
-          <cc:Agent rdf:about="http://www.openclipart.org/">
+          <cc:Agent
+             rdf:about="http://www.openclipart.org/">
             <dc:title>Open Clip Art Project</dc:title>
           </cc:Agent>
         </dc:publisher>
         <dc:creator>
-          <cc:Agent rdf:about="http://web.resource.org/cc/PublicDomain">
+          <cc:Agent
+             rdf:about="http://web.resource.org/cc/PublicDomain">
             <dc:title>Gerald G.</dc:title>
           </cc:Agent>
         </dc:creator>
         <dc:rights>
-          <cc:Agent rdf:about="http://web.resource.org/cc/PublicDomain">
+          <cc:Agent
+             rdf:about="http://web.resource.org/cc/PublicDomain">
             <dc:title>Public Domain</dc:title>
           </cc:Agent>
         </dc:rights>
         <dc:date>2005-04-22</dc:date>
         <dc:format>image/svg+xml</dc:format>
-        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-        <cc:license rdf:resource="http://web.resource.org/cc/PublicDomain"/>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
         <dc:language>en</dc:language>
       </cc:Work>
-      <cc:License rdf:about="http://web.resource.org/cc/PublicDomain">
-        <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
-        <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
-        <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
       </cc:License>
     </rdf:RDF>
   </metadata>
-  <g i:dimmedPercent="50" i:layer="yes" i:rgbTrio="#4F008000FFFF" id="Layer_1">
-    <g>
-      <path clip-rule="evenodd" d="     M52.83,0.018c29.152,0,52.813,22.531,52.813,50.292c0,27.76-23.66,50.292-52.813,50.292S0.018,78.07,0.018,50.31     C0.018,22.549,23.678,0.018,52.83,0.018" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M25.254,11.218c-1.548,0.648-2.664,1.332-3.78,2.196c-1.116,0.756-1.908,1.692-2.664,2.664c-0.864,0.9-1.584,1.872-2.16,2.916     l7.128-1.836h0C24.246,15.178,24.75,13.198,25.254,11.218z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M32.886,8.086L48.87,4.198l11.016,9.108L56.97,24.934l-12.24,5.688l-15.48-4.104l-2.304-9.468L32.886,8.086z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M63.342,14.026l-1.943,11.016L73.53,37.174l12.96-1.944l3.996-14.544L76.302,9.058L63.342,14.026z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M76.05,41.278l12.24-2.196l7.272,12.24L85.518,67.918l-12.6-1.188l-4.607-10.549L76.05,41.278z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M94.482,75.91l-5.832-6.768l10.188-17.209l3.528-1.943c0.036,4.176-0.288,7.703-0.972,11.268     c-0.828,3.527-2.053,6.732-3.276,9.324C96.895,73.029,95.778,74.758,94.482,75.91z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M33.894,63.418L48.33,52.762l16.236,4.248l5.184,12.205l-8.964,11.771l-20.232-4.248L33.894,63.418z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M64.962,97.113c-2.988,0.434-6.012,0.756-9.216,0.828c-3.312,0.072-6.84,0-10.044-0.359c-3.42-0.504-6.588-1.404-9.36-2.305     c-2.772-0.971-4.896-2.051-6.768-3.383l-0.252-4.861l9.576-7.271l21.457,3.781l6.155,9.432L64.962,97.113z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M14.31,43.726l13.212-13.428l14.292,3.996l3.636,15.48L30.546,61.295l-12.96-0.361L14.31,43.726z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
-      <path clip-rule="evenodd" d="     M9.45,71.123c-1.152,0.467-2.232-0.758-3.384-3.277c-1.26-2.736-2.952-8.244-3.528-12.348c-0.54-4.141-0.504-8.172,0.252-12.24     l7.524,2.412l3.996,16.705L9.45,71.123z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+  <g
+     i:dimmedPercent="50"
+     i:layer="yes"
+     i:rgbTrio="#4F008000FFFF"
+     id="Layer_1"
+     transform="matrix(1.5142815,0,0,1.4907573,0,-2.2958984e-6)">
+    <g
+       id="g24">
+      <path
+         d="m 52.83,0.018 c 29.152,0 52.813,22.531 52.813,50.292 0,27.76 -23.66,50.292 -52.813,50.292 C 23.677,100.602 0.018,78.07 0.018,50.31 0.018,22.549 23.678,0.018 52.83,0.018"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path4"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="m 25.254,11.218 c -1.548,0.648 -2.664,1.332 -3.78,2.196 -1.116,0.756 -1.908,1.692 -2.664,2.664 -0.864,0.9 -1.584,1.872 -2.16,2.916 l 7.128,-1.836 v 0 c 0.468,-1.98 0.972,-3.96 1.476,-5.94 z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path6"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="M 32.886,8.086 48.87,4.198 59.886,13.306 56.97,24.934 44.73,30.622 29.25,26.518 26.946,17.05 Z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path8"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="M 63.342,14.026 61.399,25.042 73.53,37.174 86.49,35.23 90.486,20.686 76.302,9.058 Z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path10"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="M 76.05,41.278 88.29,39.082 95.562,51.322 85.518,67.918 72.918,66.73 68.311,56.181 Z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path12"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="M 94.482,75.91 88.65,69.142 98.838,51.933 102.366,49.99 c 0.036,4.176 -0.288,7.703 -0.972,11.268 -0.828,3.527 -2.053,6.732 -3.276,9.324 -1.223,2.447 -2.34,4.176 -3.636,5.328 z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path14"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="M 33.894,63.418 48.33,52.762 64.566,57.01 69.75,69.215 60.786,80.986 40.554,76.738 Z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path16"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="m 64.962,97.113 c -2.988,0.434 -6.012,0.756 -9.216,0.828 -3.312,0.072 -6.84,0 -10.044,-0.359 -3.42,-0.504 -6.588,-1.404 -9.36,-2.305 -2.772,-0.971 -4.896,-2.051 -6.768,-3.383 l -0.252,-4.861 9.576,-7.271 21.457,3.781 6.155,9.432 z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path18"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="M 14.31,43.726 27.522,30.298 41.814,34.294 45.45,49.774 30.546,61.295 17.586,60.934 Z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path20"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
+      <path
+         d="M 9.45,71.123 C 8.298,71.59 7.218,70.365 6.066,67.846 4.806,65.11 3.114,59.602 2.538,55.498 1.998,51.357 2.034,47.326 2.79,43.258 l 7.524,2.412 3.996,16.705 z"
+         i:knockout="Off"
+         stroke-miterlimit="10"
+         id="path22"
+         inkscape:connector-curvature="0"
+         style="clip-rule:evenodd;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.036;stroke-miterlimit:10" />
     </g>
   </g>
 </svg>
