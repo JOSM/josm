@@ -37,7 +37,7 @@ public class MapPaintPreferenceTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public Timeout globalTimeout = Timeout.seconds(10*60);
+    public Timeout globalTimeout = Timeout.seconds(15*60);
 
     /**
      * Setup test.
