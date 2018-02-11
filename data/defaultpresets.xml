@@ -1986,7 +1986,7 @@
             <reference ref="barrier_5" />
             <reference ref="optional_maxwidth" />
         </item> <!-- Bump Gate -->
-        <item name="Kissing Gate" type="node" preset_name_label="true">
+        <item name="Kissing Gate" icon="presets/barrier/kissing_gate.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=kissing_gate"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:barrier=kissing_gate"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=kissing_gate"
