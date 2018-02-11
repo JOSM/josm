@@ -466,7 +466,10 @@ node[barrier=jersey_barrier] {
     icon-image: "presets/barrier/jersey_barrier.svg";
     set icon_z17;
 }
-node[barrier=kissing_gate][!is_prop_set(icon-image)],
+node[barrier=kissing_gate] {
+    icon-image: "presets/barrier/kissing_gate.svg";
+    set icon_z17;
+}
 node[barrier=bump_gate][!is_prop_set(icon-image)],
 node[barrier=bus_trap][!is_prop_set(icon-image)],
 node[barrier=hampshire_gate][!is_prop_set(icon-image)] {
