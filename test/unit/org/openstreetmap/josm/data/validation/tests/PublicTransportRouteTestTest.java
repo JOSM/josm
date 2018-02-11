@@ -58,7 +58,7 @@ public class PublicTransportRouteTestTest {
         test.startTest(null);
         test.visit(r3);
         assertEquals(1, test.getErrors().size());
-        assertEquals("Route relation contains a 'forward/backward' role", test.getErrors().get(0).getMessage());
+        assertEquals("Route relation contains a 'forward/backward/alternate' role", test.getErrors().get(0).getMessage());
 
         final Relation r4 = TestUtils.newRelation("type=route route=tram public_transport:version=2",
                 new RelationMember("", w1), new RelationMember("", w3), new RelationMember("", w2));
