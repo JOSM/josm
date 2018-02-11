@@ -10,12 +10,12 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg2"
-   sodipodi:docname="running-pictogram.svg"
-   viewBox="0 0 289.64 289.64"
+   sodipodi:docname="27.svg"
+   viewBox="0 0 160 160"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
-   width="100%"
-   height="100%">
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   width="160"
+   height="160">
   <defs
      id="defs19" />
   <sodipodi:namedview
@@ -24,46 +24,48 @@
      inkscape:pageshadow="2"
      inkscape:window-y="-8"
      pagecolor="#ffffff"
-     inkscape:window-height="988"
+     inkscape:window-height="987"
      inkscape:window-maximized="1"
      inkscape:zoom="1.979899"
      inkscape:window-x="-8"
-     showgrid="false"
+     showgrid="true"
      borderopacity="1.0"
      inkscape:current-layer="layer1"
-     inkscape:cx="109.63379"
+     inkscape:cx="23.518286"
      inkscape:cy="107.5452"
      inkscape:window-width="1680"
      inkscape:pageopacity="0.0"
-     inkscape:document-units="px" />
+     inkscape:document-units="px"
+     units="px">
+    <inkscape:grid
+       type="xygrid"
+       id="grid823" />
+  </sodipodi:namedview>
   <g
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     transform="translate(-152.32 -338.97)">
+     transform="translate(-152.32,45713.79)">
     <rect
-       x="152.31735"
-       y="338.97083"
-       width="289.6449"
-       height="289.6449"
-       ry="15.000028"
-       rx="15.000028"
-       style="fill:#003366"
+       x="152.32001"
+       y="-45713.789"
+       width="160"
+       height="160"
+       ry="8.2860231"
+       rx="8.2860231"
+       style="fill:#003366;stroke-width:0.55240053"
        id="rect3708" />
     <g
-       transform="matrix(0.69430089,0,0,0.74064812,64.470511,207.78538)"
+       transform="matrix(0.38353219,0,0,0.40913443,103.79335,-45786.257)"
        style="fill:#eeeeee"
        id="g3710">
-      <path
-         sodipodi:cx="245.21452"
-         sodipodi:cy="279.84802"
+      <circle
          transform="translate(1.4286,-1.4286)"
-         d="m 276.27671,279.84802 c 0,17.15518 -13.90701,31.06219 -31.06219,31.06219 -17.15517,0 -31.06219,-13.90701 -31.06219,-31.06219 0,-17.15517 13.90702,-31.06219 31.06219,-31.06219 17.15518,0 31.06219,13.90702 31.06219,31.06219 z"
-         sodipodi:type="arc"
          style="fill:#eeeeee"
-         sodipodi:ry="31.062191"
-         sodipodi:rx="31.062191"
-         id="path2908" />
+         id="path2908"
+         cx="245.21452"
+         cy="279.84802"
+         r="31.062191" />
       <rect
          x="-60.716"
          y="407.51001"
@@ -71,7 +73,7 @@
          height="132.33"
          ry="8.4373999"
          rx="8.4027004"
-         transform="matrix(0.68411441,-0.72937472,0.72937472,0.68411441,0,0)"
+         transform="rotate(-46.834)"
          style="fill:#eeeeee"
          id="rect2912" />
       <rect
@@ -82,7 +84,7 @@
          ry="8.4047003"
          rx="8.4352999"
          inkscape:transform-center-x="-22.142857"
-         transform="matrix(0.72671856,-0.68693532,0.68693532,0.72671856,0,0)"
+         transform="rotate(-43.388)"
          style="fill:#eeeeee"
          id="rect2914" />
       <rect
@@ -112,7 +114,7 @@
          height="28.570999"
          ry="8.3058996"
          rx="8.3058004"
-         transform="matrix(0.70710678,-0.70710678,0.70710678,0.70710678,0,0)"
+         transform="rotate(-45)"
          style="fill:#eeeeee"
          id="rect3698" />
       <rect
@@ -122,7 +124,7 @@
          height="30.714001"
          ry="8.3875999"
          rx="8.3467999"
-         transform="matrix(0.67947972,-0.73369429,0.73369429,0.67947972,0,0)"
+         transform="rotate(-47.197)"
          style="fill:#eeeeee"
          id="rect3700" />
       <rect
@@ -132,7 +134,7 @@
          height="132.86"
          ry="8.4245996"
          rx="8.4145002"
-         transform="matrix(0.70049835,-0.71365403,0.71365403,0.70049835,0,0)"
+         transform="rotate(-45.533)"
          style="fill:#eeeeee"
          id="rect3702" />
       <rect
@@ -142,7 +144,7 @@
          height="72.857002"
          ry="8.6969004"
          rx="8.1672001"
-         transform="matrix(0.11734674,-0.993091,0.993091,0.11734674,0,0)"
+         transform="rotate(-83.261)"
          style="fill:#eeeeee"
          id="rect3704" />
     </g>
@@ -155,7 +157,7 @@
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
         <dc:publisher>
           <cc:Agent
              rdf:about="http://openclipart.org/">
@@ -193,7 +195,7 @@
         </dc:subject>
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
