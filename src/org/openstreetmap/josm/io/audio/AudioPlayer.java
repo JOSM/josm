@@ -236,7 +236,8 @@ public final class AudioPlayer extends Thread implements AudioListener {
         double leadIn = Config.getPref().getDouble("audio.leadin", 1.0 /* default, seconds */);
         double calibration = Config.getPref().getDouble("audio.calibration", 1.0 /* default, ratio */);
         try {
-            soundPlayer = (SoundPlayer) Class.forName("org.openstreetmap.josm.io.audio.JavaFxMediaPlayer").getConstructor().newInstance();
+            soundPlayer = (SoundPlayer) Class.forName("org.openstreetmap.josm.io.audio.JavaFxMediaPlayer")
+                    .getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
             Logging.debug(e);
             Logging.warn("JOSM compiled without Java FX support. Falling back to Java Sound API");
