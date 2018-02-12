@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -107,7 +108,7 @@ public class JumpToAction extends JosmAction {
         final Optional<Bounds> boundsFromClipboard = Optional
                 .ofNullable(ClipboardUtils.getClipboardStringContent())
                 .map(OsmUrlToBounds::parse);
-        if (boundsFromClipboard.isPresent()) {
+        if (boundsFromClipboard.isPresent() && Config.getPref().getBoolean("jumpto.use.clipboard", true)) {
             setBounds(boundsFromClipboard.get());
         } else {
             setBounds(mv.getState().getViewArea().getCornerBounds());
