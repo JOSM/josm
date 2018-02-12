@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public final class Changeset implements Tagged, Comparable<Changeset> {
 
     /** The maximum changeset tag length allowed by API 0.6 **/
-    public static final int MAX_CHANGESET_TAG_LENGTH = 255;
+    public static final int MAX_CHANGESET_TAG_LENGTH = MAX_TAG_LENGTH;
 
     /** the changeset id */
     private int id;
