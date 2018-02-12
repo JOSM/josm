@@ -12,6 +12,13 @@ import java.util.Map;
 // FIXME: better naming? setTags(), getTags(), getKeys() instead of keySet() ?
 //
 public interface Tagged {
+
+    /**
+     * The maximum tag length allowed by OSM API
+     * @since 13414
+     */
+    int MAX_TAG_LENGTH = 255;
+
     /**
      * Sets the map of key/value pairs
      *
