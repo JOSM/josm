@@ -18,7 +18,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.DividedScale.RangeViolatedError;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
@@ -89,6 +91,8 @@ public class ElemStyles implements PreferenceChangedListener {
             cacheIdx++;
             preferenceCache.clear();
             backgroundColorCache = null;
+            MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class).forEach(
+                    dl -> dl.data.clearMappaintCache());
         });
     }
 
@@ -138,7 +142,7 @@ public class ElemStyles implements PreferenceChangedListener {
      * @return pair containing style list and range
      */
     public Pair<StyleElementList, Range> getStyleCacheWithRange(OsmPrimitive osm, double scale, NavigatableComponent nc) {
-        if (osm.mappaintStyle == null || osm.getMappaintCacheIdx() != cacheIdx || scale <= 0) {
+        if (!osm.isCachedStyleUpToDate() || scale <= 0) {
             osm.mappaintStyle = StyleCache.EMPTY_STYLECACHE;
         } else {
             Pair<StyleElementList, Range> lst = osm.mappaintStyle.getWithRange(scale, osm.isSelected());
@@ -194,7 +198,7 @@ public class ElemStyles implements PreferenceChangedListener {
                     + " (object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
                     + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b + ')', e);
         }
-        osm.setMappaintCacheIdx(cacheIdx);
+        osm.declareCachedStyleUpToDate();
         return p;
     }
 
