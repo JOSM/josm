@@ -86,7 +86,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 JOptionPane.showMessageDialog(getParent(), tr("Could not retrieve WMS layer list."),
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             } catch (WMSImagery.WMSGetCapabilitiesException ex3) {
-                String incomingData = ex3.getIncomingData().trim();
+                String incomingData = ex3.getIncomingData() != null ? ex3.getIncomingData().trim() : "";
                 String title = tr("WMS Error");
                 StringBuilder message = new StringBuilder(tr("Could not parse WMS layer list."));
                 Logging.log(Logging.LEVEL_ERROR, "Could not parse WMS layer list. Incoming data:\n"+incomingData, ex3);
