@@ -114,6 +114,7 @@ public class PurgeCommand extends Command {
                     }
                 }
             }
+            getAffectedDataSet().clearMappaintCache();
         } finally {
             getAffectedDataSet().endUpdate();
         }
@@ -125,22 +126,28 @@ public class PurgeCommand extends Command {
         if (getAffectedDataSet() == null)
             return;
 
-        for (OsmPrimitive osm : toPurge) {
-            PrimitiveData data = makeIncompleteDataByPrimId.get(osm);
-            if (data != null) {
-                if (getAffectedDataSet().getPrimitiveById(osm) != osm)
-                    throw new AssertionError(
-                            String.format("Primitive %s has been made incomplete when purging, but it cannot be found on undo.", osm));
-                osm.load(data);
-            } else {
-                if (getAffectedDataSet().getPrimitiveById(osm) != null)
-                    throw new AssertionError(String.format("Primitive %s was removed when purging, but is still there on undo", osm));
-                getAffectedDataSet().addPrimitive(osm);
+        getAffectedDataSet().beginUpdate();
+        try {
+            for (OsmPrimitive osm : toPurge) {
+                PrimitiveData data = makeIncompleteDataByPrimId.get(osm);
+                if (data != null) {
+                    if (getAffectedDataSet().getPrimitiveById(osm) != osm)
+                        throw new AssertionError(
+                                String.format("Primitive %s has been made incomplete when purging, but it cannot be found on undo.", osm));
+                    osm.load(data);
+                } else {
+                    if (getAffectedDataSet().getPrimitiveById(osm) != null)
+                        throw new AssertionError(String.format("Primitive %s was removed when purging, but is still there on undo", osm));
+                    getAffectedDataSet().addPrimitive(osm);
+                }
             }
-        }
 
-        for (Conflict<?> conflict : purgedConflicts) {
-            getAffectedDataSet().getConflicts().add(conflict);
+            for (Conflict<?> conflict : purgedConflicts) {
+                getAffectedDataSet().getConflicts().add(conflict);
+            }
+            getAffectedDataSet().clearMappaintCache();
+        } finally {
+            getAffectedDataSet().endUpdate();
         }
     }
 

@@ -199,6 +199,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
 
     private final ConflictCollection conflicts = new ConflictCollection();
 
+    private short mappaintCacheIdx = 1;
+
     /**
      * Constructs a new {@code DataSet}.
      */
@@ -1378,5 +1380,25 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             return bbox.getBounds();
         }
         return null;
+    }
+
+    /**
+     * Returns mappaint cache index for this DataSet.
+     *
+     * If the {@link OsmPrimitive#mappaintCacheIdx} is not equal to the DataSet mappaint
+     * cache index, this means the cache for that primitive is out of date.
+     * @return mappaint cache index
+     * @since 13420
+     */
+    public short getMappaintCacheIndex() {
+        return mappaintCacheIdx;
+    }
+
+    /**
+     * Clear the mappaint cache for this DataSet.
+     * @since 13420
+     */
+    public void clearMappaintCache() {
+        mappaintCacheIdx++;
     }
 }

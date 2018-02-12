@@ -203,9 +203,28 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
+     * Check if the cached style for this primitive is up to date.
+     * @return true if the cached style for this primitive is up to date
+     * @since 13420
+     */
+    public final boolean isCachedStyleUpToDate() {
+        return mappaintStyle != null && mappaintCacheIdx == dataSet.getMappaintCacheIndex();
+    }
+
+    /**
+     * Declare that the cached style for this primitive is up to date.
+     * @since 13420
+     */
+    public final void declareCachedStyleUpToDate() {
+        this.mappaintCacheIdx = dataSet.getMappaintCacheIndex();
+    }
+
+    /**
      * Returns mappaint cache index.
      * @return mappaint cache index
+     * @deprecated no longer supported (see also {@link #isCachedStyleUpToDate()})
      */
+    @Deprecated
     public final short getMappaintCacheIdx() {
         return mappaintCacheIdx;
     }
@@ -213,7 +232,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
      * Sets the mappaint cache index.
      * @param mappaintCacheIdx mappaint cache index
+     * @deprecated no longer supported (see also {@link #declareCachedStyleUpToDate()})
      */
+    @Deprecated
     public final void setMappaintCacheIdx(short mappaintCacheIdx) {
         this.mappaintCacheIdx = mappaintCacheIdx;
     }
