@@ -143,6 +143,18 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     @Override
+    public synchronized void destroy() {
+        if (data.contains(AudioMarker.recentlyPlayedMarker())) {
+            AudioMarker.resetRecentlyPlayedMarker();
+        }
+        syncAudioMarker = null;
+        currentMarker = null;
+        fromLayer = null;
+        data.clear();
+        super.destroy();
+    }
+
+    @Override
     public LayerPainter attachToMapView(MapViewEvent event) {
         event.getMapView().addMouseListener(new MarkerMouseAdapter());
 

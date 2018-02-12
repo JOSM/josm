@@ -40,8 +40,19 @@ public class AudioMarker extends ButtonMarker {
         play();
     }
 
+    /**
+     * Returns the marker played the most recently, if any.
+     * @return the marker played the most recently, or {@code null}
+     */
     public static AudioMarker recentlyPlayedMarker() {
         return recentlyPlayedMarker;
+    }
+
+    /**
+     * Forgets the marker played the most recently, if any.
+     */
+    static void resetRecentlyPlayedMarker() {
+        recentlyPlayedMarker = null;
     }
 
     public URL url() {
