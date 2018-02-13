@@ -313,7 +313,13 @@ public final class Projections {
 
         ProjectionDefinition pd = inits.get(code);
         if (pd != null) {
-            proj = new CustomProjection(pd.name, code, pd.definition);
+            CustomProjection cproj = new CustomProjection(pd.name, code, null);
+            try {
+                cproj.update(pd.definition);
+            } catch (ProjectionConfigurationException ex) {
+                throw new RuntimeException(ex);
+            }
+            proj = cproj;
         }
         if (proj == null) {
             Supplier<Projection> ps = projectionSuppliersByCode.get(code);
