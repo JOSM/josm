@@ -109,6 +109,8 @@ public final class Projections {
         ellipsoids.put("clrk80", Ellipsoid.Clarke1880);
         ellipsoids.put("clrk80ign", Ellipsoid.ClarkeIGN);
         ellipsoids.put("evrstSS", Ellipsoid.EverestSabahSarawak);
+        ellipsoids.put("fschr60", Ellipsoid.Fischer);
+        ellipsoids.put("fschr60m", Ellipsoid.FischerMod);
         ellipsoids.put("intl", Ellipsoid.Hayford);
         ellipsoids.put("helmert", Ellipsoid.Helmert);
         ellipsoids.put("krass", Ellipsoid.Krassowsky);
@@ -313,7 +315,13 @@ public final class Projections {
 
         ProjectionDefinition pd = inits.get(code);
         if (pd != null) {
-            proj = new CustomProjection(pd.name, code, pd.definition);
+            CustomProjection cproj = new CustomProjection(pd.name, code, null);
+            try {
+                cproj.update(pd.definition);
+            } catch (ProjectionConfigurationException ex) {
+                throw new RuntimeException("Error loading " + code, ex);
+            }
+            proj = cproj;
         }
         if (proj == null) {
             Supplier<Projection> ps = projectionSuppliersByCode.get(code);
