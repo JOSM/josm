@@ -61,6 +61,16 @@ public final class Ellipsoid {
     public static final Ellipsoid EverestSabahSarawak = Ellipsoid.createArf(6377298.556, 300.8017);
 
     /**
+     * Fischer (Mercury Datum) 1960
+     */
+    public static final Ellipsoid Fischer = Ellipsoid.createArf(6378166., 298.3);
+
+    /**
+     * Modified Fischer 1960
+     */
+    public static final Ellipsoid FischerMod = Ellipsoid.createArf(6378155., 298.3);
+
+    /**
      * GRS67 ellipsoid
      */
     public static final Ellipsoid GRS67 = Ellipsoid.createArf(6378160.0, 298.247167427);
