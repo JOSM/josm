@@ -1215,3 +1215,10 @@ way[water=tidal] {
   fixRemove: "water";
   group: tr("deprecated tagging");
 }
+
+*[amenity=toilet] {
+  throwError: tr("{0}", "{0.tag}");
+  suggestAlternative: "amenity=toilets";
+  group: tr("misspelled value");
+  fixAdd: "amenity=toilets";
+}
