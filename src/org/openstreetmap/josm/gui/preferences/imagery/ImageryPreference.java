@@ -579,7 +579,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
              */
             ActivateAction() {
                 putValue(NAME, tr("Activate"));
-                putValue(SHORT_DESCRIPTION, tr("copy selected defaults"));
+                putValue(SHORT_DESCRIPTION, tr("Copy selected default entries from the list above into the list below."));
                 new ImageProvider("preferences", "activate-down").getResource().attachImageIcon(this, true);
             }
 
