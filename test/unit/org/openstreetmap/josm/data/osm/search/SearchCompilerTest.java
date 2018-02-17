@@ -495,6 +495,18 @@ public class SearchCompilerTest {
     }
 
     /**
+     * Test empty values.
+     * @throws SearchParseError never
+     */
+    @Test
+    public void testEmptyValues15943() throws SearchParseError {
+        Match matcher = SearchCompiler.compile("access=");
+        assertTrue(matcher.match(new Tag("access", null)));
+        assertTrue(matcher.match(new Tag("access", "")));
+        assertFalse(matcher.match(new Tag("access", "private")));
+    }
+
+    /**
      * Unit test of {@link SearchCompiler.ExactKeyValue.Mode} enum.
      */
     @Test
@@ -560,7 +572,6 @@ public class SearchCompilerTest {
 
         SearchCompiler.compile(settings);
     }
-
 
     /**
      * Ensures that correct presets are stored in the {@link org.openstreetmap.josm.data.osm.search.SearchCompiler.Preset}
