@@ -335,7 +335,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             RemoveEntryAction remove = new RemoveEntryAction();
             activeTable.getSelectionModel().addListSelectionListener(remove);
 
-            add(new JLabel(tr("Available default entries:")), GBC.eol().insets(5, 5, 0, 0));
+            add(new JLabel(tr("Available default entries:")), GBC.std().insets(5, 5, 0, 0));
+            add(new JLabel(tr("Boundaries of selected imagery entries:")), GBC.eol().insets(5, 5, 0, 0));
+
             // Add default item list
             JScrollPane scrolldef = new JScrollPane(defaultTable);
             scrolldef.setPreferredSize(new Dimension(200, 200));
