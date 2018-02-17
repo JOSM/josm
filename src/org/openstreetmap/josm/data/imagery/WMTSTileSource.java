@@ -256,6 +256,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                         }
                     });
             this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.list.setAutoCreateRowSorter(true);
             this.list.setRowSelectionAllowed(true);
             this.list.setColumnSelectionAllowed(false);
             JPanel panel = new JPanel(new GridBagLayout());
@@ -268,7 +269,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             if (index < 0) {
                 return null; //nothing selected
             }
-            Layer selectedLayer = layers.get(index).getValue().get(0);
+            Layer selectedLayer = layers.get(list.convertRowIndexToModel(index)).getValue().get(0);
             return new WMTSDefaultLayer(selectedLayer.identifier, selectedLayer.tileMatrixSet.identifier);
         }
 
