@@ -835,11 +835,11 @@ public class SearchCompiler {
             case NONE:
                 return false;
             case MISSING_KEY:
-                return osm.get(key) == null;
+                return !osm.hasTag(key);
             case ANY:
                 return true;
             case ANY_VALUE:
-                return osm.get(key) != null;
+                return osm.hasTag(key);
             case ANY_KEY:
                 for (String v:osm.getKeys().values()) {
                     if (v.equals(value))

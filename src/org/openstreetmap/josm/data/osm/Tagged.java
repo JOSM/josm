@@ -75,13 +75,28 @@ public interface Tagged {
 
     /**
      * Replies true if there is a tag with key <code>key</code>.
+     * The value could however be empty. See {@link #hasTag(String)} to check for non-empty tags.
      *
      * @param key the key
      * @return true, if there is a tag with key <code>key</code>
+     * @see #hasTag(String)
      * @since 11608
      */
     default boolean hasKey(String key) {
         return get(key) != null;
+    }
+
+    /**
+     * Replies true if there is a non-empty tag with key <code>key</code>.
+     *
+     * @param key the key
+     * @return true, if there is a non-empty tag with key <code>key</code>
+     * @see Tagged#hasKey(String)
+     * @since 13430
+     */
+    default boolean hasTag(String key) {
+        String v = get(key);
+        return v != null && !v.isEmpty();
     }
 
     /**
