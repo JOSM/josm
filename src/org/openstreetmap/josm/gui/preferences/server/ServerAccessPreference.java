@@ -109,4 +109,9 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         pnlApiUrlPreferences.saveToPreferences();
         return false;
     }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/Connection");
+    }
 }

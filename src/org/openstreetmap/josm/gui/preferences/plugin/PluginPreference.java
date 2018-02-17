@@ -648,4 +648,9 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             return ret;
         }
     }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/Plugins");
+    }
 }

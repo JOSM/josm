@@ -61,6 +61,7 @@ import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -955,5 +956,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         OffsetBookmark.loadBookmarks();
         MainApplication.getMenu().imageryMenu.refreshImageryMenu();
         MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
+    }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/Imagery");
     }
 }

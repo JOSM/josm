@@ -68,6 +68,7 @@ import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -992,6 +993,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             return false;
         }
 
+        @Override
+        public String getHelpContext() {
+            return HelpUtil.ht("/Preferences/Toolbar");
+        }
     }
 
     /**

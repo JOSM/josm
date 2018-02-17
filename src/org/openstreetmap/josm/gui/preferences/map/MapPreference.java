@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.JTabbedPane;
 
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -39,5 +40,10 @@ public final class MapPreference extends DefaultTabPreferenceSetting {
     @Override
     public void addGui(PreferenceTabbedPane gui) {
         gui.createPreferenceTab(this).add(getTabPane(), GBC.eol().fill(GBC.BOTH));
+    }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/Map");
     }
 }

@@ -41,6 +41,7 @@ import org.openstreetmap.josm.tools.InputMapUtils;
 public class PreferenceDialog extends JDialog {
 
     private final PreferenceTabbedPane tpPreferences = new PreferenceTabbedPane();
+    private final ContextSensitiveHelpAction helpAction = new ContextSensitiveHelpAction();
     private boolean canceled;
 
     /**
@@ -67,7 +68,7 @@ public class PreferenceDialog extends JDialog {
         btns.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         btns.add(new JButton(new OKAction()));
         btns.add(new JButton(new CancelAction()));
-        btns.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Action/Preferences"))));
+        btns.add(new JButton(helpAction));
         pnl.add(expert, GBC.std().insets(5, 0, 0, 0));
         pnl.add(btns, GBC.std().fill(GBC.HORIZONTAL));
         return pnl;
@@ -84,7 +85,17 @@ public class PreferenceDialog extends JDialog {
         addWindowListener(new WindowEventHandler());
 
         InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
-        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Action/Preferences"));
+        setHelpContext(HelpUtil.ht("/Action/Preferences"));
+    }
+
+    /**
+     * Sets the help context of the preferences dialog.
+     * @param helpContext new help context
+     * @since 13431
+     */
+    public final void setHelpContext(String helpContext) {
+        helpAction.setHelpTopic(helpContext);
+        HelpUtil.setHelpContext(getRootPane(), helpContext);
     }
 
     /**
@@ -96,6 +107,10 @@ public class PreferenceDialog extends JDialog {
         return tpPreferences;
     }
 
+    /**
+     * Determines if preferences changes have been canceled.
+     * @return {@code true} if preferences changes have been canceled
+     */
     public boolean isCanceled() {
         return canceled;
     }
@@ -108,12 +123,11 @@ public class PreferenceDialog extends JDialog {
     public void setVisible(boolean visible) {
         if (visible) {
             // Make the pref window at most as large as the parent JOSM window
-            // Have to take window decorations into account or the windows will
-            // be too large
+            // Have to take window decorations into account or the windows will be too large
             Insets i = this.getParent().getInsets();
             Dimension p = this.getParent().getSize();
             p = new Dimension(Math.min(p.width-i.left-i.right, 700),
-                    Math.min(p.height-i.top-i.bottom, 800));
+                              Math.min(p.height-i.top-i.bottom, 800));
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
