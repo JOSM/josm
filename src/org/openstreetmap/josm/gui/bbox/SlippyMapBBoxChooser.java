@@ -22,11 +22,11 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ButtonModel;
-import javax.swing.JToggleButton;
 import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -164,7 +164,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
 
         uncachedLoader = new OsmTileLoader(this);
         uncachedLoader.headers.putAll(headers);
-        setZoomContolsVisible(Config.getPref().getBoolean("slippy_map_chooser.zoomcontrols", false));
+        setZoomControlsVisible(Config.getPref().getBoolean("slippy_map_chooser.zoomcontrols", false));
         setMapMarkerVisible(false);
         setMinimumSize(new Dimension(350, 350 / 2));
         // We need to set an initial size - this prevents a wrong zoom selection
