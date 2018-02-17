@@ -1072,8 +1072,18 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Sets whether zoom controls are displayed or not.
      * @param visible {@code true} if zoom controls are displayed, {@code false} otherwise
+     * @deprecated use {@link #setZoomControlsVisible(boolean)}
      */
+    @Deprecated
     public void setZoomContolsVisible(boolean visible) {
+        setZoomControlsVisible(visible);
+    }
+
+    /**
+     * Sets whether zoom controls are displayed or not.
+     * @param visible {@code true} if zoom controls are displayed, {@code false} otherwise
+     */
+    public void setZoomControlsVisible(boolean visible) {
         zoomSlider.setVisible(visible);
         zoomInButton.setVisible(visible);
         zoomOutButton.setVisible(visible);
