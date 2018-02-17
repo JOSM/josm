@@ -2,7 +2,9 @@
 /*
  * This is the CSS file used in the internal help browser.
  * Refer to https://docs.oracle.com/javase/8/docs/api/javax/swing/text/html/CSS.html
- * and https://www.w3.org/TR/CSS1/ to see what CSS properties are supported by Java. 
+ * and https://www.w3.org/TR/CSS1/ to see what CSS properties are supported by Java.
+ * - Not rendered are width, height, float, clear, display, font-variant and others.
+ * - Inline elements can't have borders, margins and paddings.
  */
 body {margin-left: 0.2cm; font-family: Arial, sans-serif; font-size:14pt; font-weight:normal}
 p {margin-top: 5px; margin-bottom: 5px;}
@@ -20,10 +22,8 @@ em {font-style: italic}
 i {font-style: italic}
 code, pre, samp, tt {font-family: Courier New}
 code, tt {
-	background-color: #fafafa;
-	border-color: rgb(238, 221, 204);
-	border-style: solid; 
-	border-width: 1px;
+	background-color: rgb(240, 240, 240);
+	font-size: 110%;
 	color: rgb(102, 0, 0);
 }
 .warning-header {
