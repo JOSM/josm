@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -134,5 +135,10 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
     @Override
     public final Component getSubTab(SubPreferenceSetting sub) {
         return subSettingMap != null ? subSettingMap.get(sub) : null;
+    }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Action/Preferences");
     }
 }

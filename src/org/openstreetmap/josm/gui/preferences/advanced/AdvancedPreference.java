@@ -39,9 +39,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
-import org.openstreetmap.josm.spi.preferences.Setting;
-import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.gui.dialogs.LogShowDialog;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CustomConfigurator;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
@@ -51,6 +50,8 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -461,5 +462,10 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/Advanced");
     }
 }

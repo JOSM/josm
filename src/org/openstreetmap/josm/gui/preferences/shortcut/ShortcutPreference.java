@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -56,5 +57,10 @@ public final class ShortcutPreference extends DefaultTabPreferenceSetting {
      */
     public void setDefaultFilter(String substring) {
         defaultFilter = substring;
+    }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/Shortcuts");
     }
 }

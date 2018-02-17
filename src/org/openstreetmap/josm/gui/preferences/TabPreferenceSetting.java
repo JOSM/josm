@@ -77,4 +77,11 @@ public interface TabPreferenceSetting extends PreferenceSetting {
      * @since 5631
      */
     boolean selectSubTab(SubPreferenceSetting subPref);
+
+    /**
+     * Returns the help context for this preferences settings tab.
+     * @return the help context for this preferences settings tab
+     * @since 13431
+     */
+    String getHelpContext();
 }
