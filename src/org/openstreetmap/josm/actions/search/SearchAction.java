@@ -483,10 +483,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''")),
                 GBC.eol());
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
+                .addKeyword("<i>key</i>", null, tr("matches if ''key'' exists"))
                 .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
                 .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
+                .addKeyword("<i>key</i>=", null, tr("''key'' with empty value"))
                 .addKeyword("*=<i>value</i>", null, tr("''value'' in any key"))
-                .addKeyword("<i>key</i>=", null, tr("matches if ''key'' exists"))
                 .addKeyword("<i>key</i>><i>value</i>", null, tr("matches if ''key'' is greater than ''value'' (analogously, less than)"))
                 .addKeyword("\"key\"=\"value\"", "\"\"=\"\"",
                         tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped " +
