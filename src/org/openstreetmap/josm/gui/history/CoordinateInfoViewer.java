@@ -117,7 +117,7 @@ public class CoordinateInfoViewer extends JPanel {
         gc.weighty = 1.0;
         mapViewer = new MapViewer(model);
         add(mapViewer, gc);
-        mapViewer.setZoomContolsVisible(false);
+        mapViewer.setZoomControlsVisible(false);
     }
 
     /**

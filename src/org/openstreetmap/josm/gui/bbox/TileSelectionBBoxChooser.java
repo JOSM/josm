@@ -114,7 +114,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
         gc.insets = new Insets(2, 2, 2, 2);
         add(mapViewer, gc);
         mapViewer.setFocusable(false);
-        mapViewer.setZoomContolsVisible(false);
+        mapViewer.setZoomControlsVisible(false);
         mapViewer.setMapMarkerVisible(false);
 
         pnlTileAddress.addPropertyChangeListener(pnlTileGrid);

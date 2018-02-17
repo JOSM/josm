@@ -352,7 +352,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     }
                 }
             });
-            defaultMap.setZoomContolsVisible(false);
+            defaultMap.setZoomControlsVisible(false);
             defaultMap.setMinimumSize(new Dimension(100, 200));
             add(defaultMap, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
 
