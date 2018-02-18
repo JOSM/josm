@@ -25,7 +25,7 @@ public class CertificateAmendmentTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().https();
+    public JOSMTestRules test = new JOSMTestRules().platform().https().timeout(20000);
 
     /**
      * Tests that {@code CertificateAmendment} satisfies utility class criterias.

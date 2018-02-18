@@ -45,6 +45,7 @@ public class BuildProjectionDefinitions {
     private static int noProj4 = 0;
     private static int noEsri = 0;
     private static int noOmercNoBounds = 0;
+    private static int noEquatorStereo = 0;
 
     /**
      * Program entry point
@@ -109,6 +110,9 @@ public class BuildProjectionDefinitions {
             System.out.println(String.format(" * requires data file for datum conversion: %d entries", noDatumgrid));
             if (noOmercNoBounds > 0) {
                 System.out.println(String.format(" * projection is Oblique Mercator (requires bounds), but no bounds specified: %d entries", noOmercNoBounds));
+            }
+            if (noEquatorStereo > 0) {
+                System.out.println(String.format(" * projection is Equatorial Stereographic (see #15970): %d entries", noEquatorStereo));
             }
             System.out.println();
             System.out.println(String.format("written %d entries from %s", noJosm, JOSM_EPSG_FILE));
@@ -192,6 +196,11 @@ public class BuildProjectionDefinitions {
         if (result && "omerc".equals(proj) && !parameters.containsKey(CustomProjection.Param.bounds.key)) {
             result = false;
             noOmercNoBounds++;
+        }
+        // TODO: implement equatorial stereographic, see https://josm.openstreetmap.de/ticket/15970
+        if (result && "stere".equals(proj) && "0".equals(parameters.get(CustomProjection.Param.lat_0.key))) {
+            result = false;
+            noEquatorStereo++;
         }
 
         return result;
