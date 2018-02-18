@@ -130,8 +130,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
 
     private boolean requiresSaveToFile;
     private boolean requiresUploadToServer;
-    /** Flag used to know if the layer should not be editable */
-    private final AtomicBoolean isReadOnly = new AtomicBoolean(false);
+    /** Flag used to know if the layer is being uploaded */
+    private final AtomicBoolean isUploadInProgress = new AtomicBoolean(false);
 
     /**
      * List of validation errors in this layer.
@@ -424,9 +424,12 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
             base.addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0));
         }
 
-        if (isReadOnly()) {
-            // If the layer is read only then change the default icon to a clock
+        if (isUploadInProgress()) {
+            // If the layer is being uploaded then change the default icon to a clock
             base = new ImageProvider("clock").setMaxSize(ImageSizes.LAYER);
+        } else if (isReadOnly()) {
+            // If the layer is read only then change the default icon to a lock
+            base = new ImageProvider("lock").setMaxSize(ImageSizes.LAYER);
         }
         return base.get();
     }
@@ -1169,29 +1172,35 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         super.setName(name);
     }
 
-    /**
-     * Sets the isReadOnly flag for the OsmDataLayer as true
-     */
+    @Override
     public void setReadOnly() {
-        if (!isReadOnly.compareAndSet(false, true)) {
-            Logging.warn("Trying to set readOnly flag on a readOnly layer ", this.getName());
-        }
+        data.setReadOnly();
     }
 
-    /**
-     * Sets the isReadOnly flag for the OsmDataLayer as false
-     */
+    @Override
     public void unsetReadOnly() {
-        if (!isReadOnly.compareAndSet(true, false)) {
-            Logging.warn("Trying to unset readOnly flag on a non-readOnly layer ", this.getName());
+        data.unsetReadOnly();
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return data.isReadOnly();
+    }
+
+    public void setUploadInProgress() {
+        if (!isUploadInProgress.compareAndSet(false, true)) {
+            Logging.warn("Trying to set uploadInProgress flag on layer already being uploaded ", getName());
         }
     }
 
-    /**
-     * Returns the value of the isReadOnly flag for the OsmDataLayer
-     * @return isReadOnly
-     */
-    public boolean isReadOnly() {
-        return isReadOnly.get();
+    public void unsetUploadInProgress() {
+        if (!isUploadInProgress.compareAndSet(true, false)) {
+            Logging.warn("Trying to unset uploadInProgress flag on layer not being uploaded ", getName());
+        }
+    }
+
+    @Override
+    public boolean isUploadInProgress() {
+        return isUploadInProgress.get();
     }
 }

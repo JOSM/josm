@@ -11,6 +11,7 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -101,9 +102,9 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         referenceRelationMemberTableModel = new DiffTableModel();
 
         if (Main.main != null) {
-            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-            if (editLayer != null) {
-                editLayer.data.addDataSetListener(this);
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds != null) {
+                ds.addDataSetListener(this);
             }
         }
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
@@ -168,9 +169,9 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         this.history = history;
         if (history.getNumVersions() > 0) {
             HistoryOsmPrimitive newLatest = null;
-            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-            if (editLayer != null) {
-                OsmPrimitive p = editLayer.data.getPrimitiveById(history.getId(), history.getType());
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds != null) {
+                OsmPrimitive p = ds.getPrimitiveById(history.getId(), history.getType());
                 if (canShowAsLatest(p)) {
                     newLatest = new HistoryPrimitiveBuilder().build(p);
                 }
@@ -529,9 +530,9 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      *
      */
     public void unlinkAsListener() {
-        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-        if (editLayer != null) {
-            editLayer.data.removeDataSetListener(this);
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+        if (ds != null) {
+            ds.removeDataSetListener(this);
         }
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
     }

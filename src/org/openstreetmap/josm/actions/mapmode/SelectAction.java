@@ -91,7 +91,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     // contains all possible cases the cursor can be in the SelectAction
     enum SelectActionCursor {
 
-        rect(NORMAL, /* ICON(cursor/modifier/)*/ "selection"), 
+        rect(NORMAL, /* ICON(cursor/modifier/)*/ "selection"),
         rect_add(NORMAL, /* ICON(cursor/modifier/)*/ "select_add"),
         rect_rm(NORMAL, /* ICON(cursor/modifier/)*/ "select_remove"),
         way(NORMAL, /* ICON(cursor/modifier/)*/ "select_way"),
@@ -101,10 +101,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         node_add(NORMAL, /* ICON(cursor/modifier/)*/ "select_node_add"),
         node_rm(NORMAL, /* ICON(cursor/modifier/)*/ "select_node_remove"),
         virtual_node(NORMAL, /* ICON(cursor/modifier/)*/ "addnode"),
-        scale(/* ICON(cursor/)*/ "scale", null), 
+        scale(/* ICON(cursor/)*/ "scale", null),
         rotate(/* ICON(cursor/)*/ "rotate", null),
         merge(/* ICON(cursor/)*/ "crosshair", null),
-        lasso(NORMAL, /* ICON(cursor/modifier/)*/ "rope"), 
+        lasso(NORMAL, /* ICON(cursor/modifier/)*/ "rope"),
         merge_to_node(/* ICON(cursor/)*/ "crosshair", /* ICON(cursor/modifier/)*/"joinnode"),
         move(Cursor.MOVE_CURSOR);
 
@@ -264,8 +264,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         Optional<OsmPrimitive> newHighlight = Optional.empty();
 
         virtualManager.clear();
-        if (mode == Mode.MOVE && !dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
-            DataSet ds = getLayerManager().getEditDataSet();
+        if ((mode == Mode.MOVE || mode == Mode.SELECT)
+                && !dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
+            DataSet ds = getLayerManager().getActiveDataSet();
             if (ds != null && drawTargetHighlight) {
                 ds.setHighlightedVirtualNodes(virtualManager.virtualWays);
             }
@@ -277,7 +278,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         mv.setNewCursor(getCursor(c), this);
 
         // return early if there can't be any highlights
-        if (!drawTargetHighlight || mode != Mode.MOVE || !c.isPresent())
+        if (!drawTargetHighlight || (mode != Mode.MOVE && mode != Mode.SELECT) || !c.isPresent())
             return repaintIfRequired(newHighlight);
 
         // CTRL toggles selection, but if while dragging CTRL means merge
@@ -353,7 +354,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      */
     private boolean removeHighlighting() {
         boolean needsRepaint = false;
-        DataSet ds = getLayerManager().getEditDataSet();
+        DataSet ds = getLayerManager().getActiveDataSet();
         if (ds != null && !ds.getHighlightedVirtualNodes().isEmpty()) {
             needsRepaint = true;
             ds.clearHighlightedVirtualNodes();
@@ -582,7 +583,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             selectionManager.unregister(mv);
 
             // Select Draw Tool if no selection has been made
-            if (!cancelDrawMode && getLayerManager().getEditDataSet().selectionEmpty()) {
+            if (!cancelDrawMode && getLayerManager().getActiveDataSet().selectionEmpty()) {
                 map.selectDrawTool(true);
                 updateStatusLine();
                 return;
@@ -661,15 +662,16 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * @param hasSelectionNearby {@code true} if some primitves are selectable nearby
      */
     private void determineMapMode(boolean hasSelectionNearby) {
-        if (shift && ctrl) {
-            mode = Mode.ROTATE;
-        } else if (alt && ctrl) {
-            mode = Mode.SCALE;
-        } else if (hasSelectionNearby || dragInProgress()) {
-            mode = Mode.MOVE;
-        } else {
-            mode = Mode.SELECT;
+        if (getLayerManager().getEditDataSet() != null) {
+            if (shift && ctrl) {
+                mode = Mode.ROTATE;
+            } else if (alt && ctrl) {
+                mode = Mode.SCALE;
+            } else if (hasSelectionNearby || dragInProgress()) {
+                mode = Mode.MOVE;
+            }
         }
+        mode = Mode.SELECT;
     }
 
     /**
@@ -955,7 +957,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     }
 
     private void selectPrims(Collection<OsmPrimitive> prims, boolean released, boolean area) {
-        DataSet ds = getLayerManager().getEditDataSet();
+        DataSet ds = getLayerManager().getActiveDataSet();
 
         // not allowed together: do not change dataset selection, return early
         // Virtual Ways: if non-empty the cursor is above a virtual node. So don't highlight
@@ -1119,7 +1121,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             }
             // updateKeyModifiers() already called before!
 
-            DataSet ds = getLayerManager().getEditDataSet();
+            DataSet ds = getLayerManager().getActiveDataSet();
             OsmPrimitive first = cycleList.iterator().next(), foundInDS = null;
             OsmPrimitive nxt = first;
 

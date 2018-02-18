@@ -319,7 +319,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
 
     @Override
     public boolean layerIsSupported(Layer l) {
-        return l instanceof OsmDataLayer;
+        return isEditableDataLayer(l);
     }
 
     @Override

@@ -341,7 +341,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         protected void setCurrentRelationAsSelection() {
-            MainApplication.getLayerManager().getEditDataSet().setSelected(displaylist.getSelectedValue());
+            MainApplication.getLayerManager().getActiveDataSet().setSelected(displaylist.getSelectedValue());
         }
 
         protected void editCurrentRelation() {
@@ -350,9 +350,9 @@ public class RelationListDialog extends ToggleDialog
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (MainApplication.getLayerManager().getEditLayer() == null) return;
-            if (isDoubleClick(e)) {
-                if (e.isControlDown()) {
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds != null && isDoubleClick(e)) {
+                if (e.isControlDown() && !ds.isReadOnly()) {
                     editCurrentRelation();
                 } else {
                     setCurrentRelationAsSelection();
@@ -732,7 +732,6 @@ public class RelationListDialog extends ToggleDialog
         if (!(prim instanceof Relation))
             return;
         // trigger a sort of the relation list because the display name may have changed
-        //
         List<Relation> sel = model.getSelectedRelations();
         model.sort();
         model.setSelectedRelations(sel);
@@ -741,7 +740,7 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        initFromLayer(MainApplication.getLayerManager().getEditLayer());
+        initFromLayer(MainApplication.getLayerManager().getActiveDataLayer());
     }
 
     @Override

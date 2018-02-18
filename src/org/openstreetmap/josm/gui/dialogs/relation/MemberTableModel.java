@@ -113,7 +113,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     /* --------------------------------------------------------------------------- */
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        if (MainApplication.getLayerManager().getEditLayer() != this.layer) return;
+        if (MainApplication.getLayerManager().getActiveDataLayer() != this.layer) return;
         // just trigger a repaint
         Collection<RelationMember> sel = getSelectedMembers();
         fireTableDataChanged();

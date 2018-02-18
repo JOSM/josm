@@ -25,6 +25,7 @@ import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.SplitWayCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -293,16 +294,9 @@ public class SplitWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if (selection == null) {
-            setEnabled(false);
-            return;
-        }
-        for (OsmPrimitive primitive: selection) {
-            if (primitive instanceof Node) {
-                setEnabled(true); // Selection still can be wrong, but let SplitWayAction process and tell user what's wrong
-                return;
-            }
-        }
-        setEnabled(false);
+        // Selection still can be wrong, but let SplitWayAction process and tell user what's wrong
+        setEnabled(selection != null && !selection.isEmpty()
+                && selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isReadOnly)
+                && selection.stream().anyMatch(o -> o instanceof Node && !o.isIncomplete()));
     }
 }

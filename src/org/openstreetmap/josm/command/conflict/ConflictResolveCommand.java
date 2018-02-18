@@ -71,7 +71,7 @@ public abstract class ConflictResolveCommand extends Command {
                 return;
             }
 
-            Main.main.setEditDataSet(ds);
+            Main.main.setActiveDataSet(ds);
         }
         reconstituteConflicts();
     }

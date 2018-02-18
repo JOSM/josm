@@ -37,7 +37,7 @@ public class HistoryInfoAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        DataSet set = getLayerManager().getEditDataSet();
+        DataSet set = getLayerManager().getActiveDataSet();
         if (set != null && !set.selectionEmpty()) {
             HistoryBrowserDialogManager.getInstance().showHistory(set.getAllSelected());
         } else {

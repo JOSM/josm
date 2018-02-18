@@ -37,7 +37,7 @@ public class WireframeToggleAction extends ToggleAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getEditLayer() != null);
+        setEnabled(getLayerManager().getActiveDataSet() != null);
     }
 
     @Override

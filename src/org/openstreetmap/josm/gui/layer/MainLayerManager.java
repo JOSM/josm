@@ -47,34 +47,45 @@ public class MainLayerManager extends LayerManager {
     }
 
     /**
-     * This event is fired whenever the active or the edit layer changes.
+     * This event is fired whenever the active or the data layer changes.
      * @author Michael Zangl
      */
     public static class ActiveLayerChangeEvent extends LayerManagerEvent {
 
-        private final OsmDataLayer previousEditLayer;
+        private final OsmDataLayer previousDataLayer;
 
         private final Layer previousActiveLayer;
 
         /**
          * Create a new {@link ActiveLayerChangeEvent}
          * @param source The source
-         * @param previousEditLayer the previous edit layer
+         * @param previousDataLayer the previous data layer
          * @param previousActiveLayer the previous active layer
          */
-        ActiveLayerChangeEvent(MainLayerManager source, OsmDataLayer previousEditLayer,
+        ActiveLayerChangeEvent(MainLayerManager source, OsmDataLayer previousDataLayer,
                 Layer previousActiveLayer) {
             super(source);
-            this.previousEditLayer = previousEditLayer;
+            this.previousDataLayer = previousDataLayer;
             this.previousActiveLayer = previousActiveLayer;
         }
 
         /**
-         * Gets the edit layer that was previously used.
-         * @return The old edit layer, <code>null</code> if there is none.
+         * Gets the data layer that was previously used.
+         * @return The old data layer, <code>null</code> if there is none.
+         * @deprecated use {@link #getPreviousDataLayer}
          */
+        @Deprecated
         public OsmDataLayer getPreviousEditLayer() {
-            return previousEditLayer;
+            return getPreviousDataLayer();
+        }
+
+        /**
+         * Gets the data layer that was previously used.
+         * @return The old data layer, <code>null</code> if there is none.
+         * @since 13434
+         */
+        public OsmDataLayer getPreviousDataLayer() {
+            return previousDataLayer;
         }
 
         /**
@@ -87,11 +98,22 @@ public class MainLayerManager extends LayerManager {
 
         /**
          * Gets the data set that was previously used.
-         * @return The data set of {@link #getPreviousEditLayer()}.
+         * @return The data set of {@link #getPreviousDataLayer()}.
+         * @deprecated use {@link #getPreviousDataSet}
          */
+        @Deprecated
         public DataSet getPreviousEditDataSet() {
-            if (previousEditLayer != null) {
-                return previousEditLayer.data;
+            return getPreviousDataSet();
+        }
+
+        /**
+         * Gets the data set that was previously used.
+         * @return The data set of {@link #getPreviousDataLayer()}.
+         * @since 13434
+         */
+        public DataSet getPreviousDataSet() {
+            if (previousDataLayer != null) {
+                return previousDataLayer.data;
             } else {
                 return null;
             }
@@ -150,9 +172,9 @@ public class MainLayerManager extends LayerManager {
     private Layer activeLayer;
 
     /**
-     * The edit layer is the current active data layer.
+     * The current active data layer. It might be editable or not, based on its read-only status.
      */
-    private OsmDataLayer editLayer;
+    private OsmDataLayer dataLayer;
 
     private final List<ActiveLayerChangeListener> activeLayerChangeListeners = new CopyOnWriteArrayList<>();
     private final List<LayerAvailabilityListener> layerAvailabilityListeners = new CopyOnWriteArrayList<>();
@@ -213,14 +235,14 @@ public class MainLayerManager extends LayerManager {
     }
 
     /**
-     * Set the active layer, unless the layer is read-only.
+     * Set the active layer, unless the layer is being uploaded.
      * If the layer is an OsmDataLayer, the edit layer is also changed.
      * @param layer The active layer.
      */
     public void setActiveLayer(final Layer layer) {
         // we force this on to the EDT Thread to make events fire from there.
         // The synchronization lock needs to be held by the EDT.
-        if (layer instanceof OsmDataLayer && ((OsmDataLayer) layer).isReadOnly()) {
+        if (layer instanceof OsmDataLayer && ((OsmDataLayer) layer).isUploadInProgress()) {
             GuiHelper.runInEDT(() ->
                     JOptionPane.showMessageDialog(
                             MainApplication.parent,
@@ -239,19 +261,19 @@ public class MainLayerManager extends LayerManager {
     }
 
     private void setActiveLayer(Layer layer, boolean forceEditLayerUpdate) {
-        ActiveLayerChangeEvent event = new ActiveLayerChangeEvent(this, editLayer, activeLayer);
+        ActiveLayerChangeEvent event = new ActiveLayerChangeEvent(this, dataLayer, activeLayer);
         activeLayer = layer;
         if (activeLayer instanceof OsmDataLayer) {
-            editLayer = (OsmDataLayer) activeLayer;
+            dataLayer = (OsmDataLayer) activeLayer;
         } else if (forceEditLayerUpdate) {
-            editLayer = null;
+            dataLayer = null;
         }
         fireActiveLayerChange(event);
     }
 
     private void fireActiveLayerChange(ActiveLayerChangeEvent event) {
         GuiHelper.assertCallFromEdt();
-        if (event.getPreviousActiveLayer() != activeLayer || event.getPreviousEditLayer() != editLayer) {
+        if (event.getPreviousActiveLayer() != activeLayer || event.getPreviousDataLayer() != dataLayer) {
             for (ActiveLayerChangeListener l : activeLayerChangeListeners) {
                 l.activeOrEditLayerChanged(event);
             }
@@ -276,7 +298,7 @@ public class MainLayerManager extends LayerManager {
 
     @Override
     protected Collection<Layer> realRemoveSingleLayer(Layer layer) {
-        if ((layer instanceof OsmDataLayer) && (((OsmDataLayer) layer).isReadOnly())) {
+        if ((layer instanceof OsmDataLayer) && (((OsmDataLayer) layer).isUploadInProgress())) {
             GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.parent,
                     tr("Trying to delete the layer with background upload. Please wait until the upload is finished.")));
 
@@ -284,7 +306,7 @@ public class MainLayerManager extends LayerManager {
             return new ArrayList<>();
         }
 
-        if (layer == activeLayer || layer == editLayer) {
+        if (layer == activeLayer || layer == dataLayer) {
             Layer nextActive = suggestNextActiveLayer(layer);
             setActiveLayer(nextActive, true);
         }
@@ -336,7 +358,7 @@ public class MainLayerManager extends LayerManager {
      */
     public synchronized Layer getActiveLayer() {
         if (activeLayer instanceof OsmDataLayer) {
-            if (!((OsmDataLayer) activeLayer).isReadOnly()) {
+            if (!((OsmDataLayer) activeLayer).isUploadInProgress()) {
                 return activeLayer;
             } else {
                 return null;
@@ -350,21 +372,51 @@ public class MainLayerManager extends LayerManager {
      * Replies the current edit layer, if present and not readOnly
      *
      * @return the current edit layer. May be null.
+     * @see #getActiveDataLayer
      */
     public synchronized OsmDataLayer getEditLayer() {
-        if (editLayer != null && !editLayer.isReadOnly())
-            return editLayer;
+        if (dataLayer != null && !dataLayer.isReadOnly())
+            return dataLayer;
         else
             return null;
     }
 
     /**
-     * Gets the data set of the active edit layer.
+     * Replies the active data layer. The layer can be read-only.
+     *
+     * @return the current data layer. May be null or read-only.
+     * @see #getEditLayer
+     * @since 13434
+     */
+    public synchronized OsmDataLayer getActiveDataLayer() {
+        if (dataLayer != null)
+            return dataLayer;
+        else
+            return null;
+    }
+
+    /**
+     * Gets the data set of the active edit layer, if not readOnly.
      * @return That data set, <code>null</code> if there is no edit layer.
+     * @see #getActiveDataSet
      */
     public synchronized DataSet getEditDataSet() {
-        if (editLayer != null) {
-            return editLayer.data;
+        if (dataLayer != null && !dataLayer.isReadOnly()) {
+            return dataLayer.data;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the data set of the active data layer. The dataset can be read-only.
+     * @return That data set, <code>null</code> if there is no active data layer.
+     * @see #getEditDataSet
+     * @since 13434
+     */
+    public synchronized DataSet getActiveDataSet() {
+        if (dataLayer != null) {
+            return dataLayer.data;
         } else {
             return null;
         }
@@ -412,8 +464,8 @@ public class MainLayerManager extends LayerManager {
      * @since 13150
      */
     public void invalidateEditLayer() {
-        if (editLayer != null) {
-            editLayer.invalidate();
+        if (dataLayer != null) {
+            dataLayer.invalidate();
         }
     }
 
@@ -444,14 +496,14 @@ public class MainLayerManager extends LayerManager {
      * @param layer The OsmDataLayer to be uploaded
      */
     public void prepareLayerForUpload(OsmDataLayer layer) {
-
         GuiHelper.assertCallFromEdt();
+        layer.setUploadInProgress();
         layer.setReadOnly();
 
         // Reset only the edit layer as empty
-        if (editLayer == layer) {
-            ActiveLayerChangeEvent activeLayerChangeEvent = new ActiveLayerChangeEvent(this, editLayer, activeLayer);
-            editLayer = null;
+        if (dataLayer == layer) {
+            ActiveLayerChangeEvent activeLayerChangeEvent = new ActiveLayerChangeEvent(this, dataLayer, activeLayer);
+            dataLayer = null;
             fireActiveLayerChange(activeLayerChangeEvent);
         }
     }
@@ -466,11 +518,12 @@ public class MainLayerManager extends LayerManager {
     public void processLayerAfterUpload(OsmDataLayer layer) {
         GuiHelper.assertCallFromEdt();
         layer.unsetReadOnly();
+        layer.unsetUploadInProgress();
 
         // Set the layer as edit layer if the edit layer is empty.
-        if (editLayer == null) {
-            ActiveLayerChangeEvent layerChangeEvent = new ActiveLayerChangeEvent(this, editLayer, activeLayer);
-            editLayer = layer;
+        if (dataLayer == null) {
+            ActiveLayerChangeEvent layerChangeEvent = new ActiveLayerChangeEvent(this, dataLayer, activeLayer);
+            dataLayer = layer;
             fireActiveLayerChange(layerChangeEvent);
         }
     }

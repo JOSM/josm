@@ -39,6 +39,14 @@ public interface UploadToServer {
     boolean isUploadDiscouraged();
 
     /**
+     * Determines if upload of data managed by this layer is currently in progress.
+     *
+     * @return {@code true} if upload is in progress
+     * @since 13434
+     */
+    boolean isUploadInProgress();
+
+    /**
      * Initializes the layer after a successful upload to the server.
      */
     void onPostUploadToServer();

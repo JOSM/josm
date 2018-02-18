@@ -195,6 +195,6 @@ public class PurgeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        updateEnabledStateOnModifiableSelection(selection);
     }
 }

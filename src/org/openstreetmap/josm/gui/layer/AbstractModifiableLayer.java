@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
+import org.openstreetmap.josm.data.osm.ReadOnly;
 import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.AbstractUploadDialog;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -9,7 +10,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * A modifiable layer.
  * @since 7358
  */
-public abstract class AbstractModifiableLayer extends Layer implements UploadToServer, SaveToFile {
+public abstract class AbstractModifiableLayer extends Layer implements UploadToServer, SaveToFile, ReadOnly {
 
     /**
      * Constructs a new {@code ModifiableLayer}.
@@ -19,51 +20,24 @@ public abstract class AbstractModifiableLayer extends Layer implements UploadToS
         super(name);
     }
 
-    /**
-     * Determines if the layer is able to upload data and implements the
-     * {@code UploadToServer} interface.
-     *
-     * @return true if the layer is able to upload data; false, otherwise
-     */
     @Override
     public boolean isUploadable() {
         // Override if needed
         return false;
     }
 
-    /**
-     * Determines if the data managed by this layer needs to be uploaded to
-     * the server because it contains modified data.
-     *
-     * @return true if the data managed by this layer needs to be uploaded to
-     * the server because it contains modified data; false, otherwise
-     */
     @Override
     public boolean requiresUploadToServer() {
         // Override if needed
         return false;
     }
 
-    /**
-     * Determines if the data managed by this layer needs to be saved to
-     * a file. Only replies true if a file is assigned to this layer and
-     * if the data managed by this layer has been modified since the last
-     * save operation to the file.
-     *
-     * @return true if the data managed by this layer needs to be saved to a file
-     */
     @Override
     public boolean requiresSaveToFile() {
         // Override if needed
         return false;
     }
 
-    /**
-     * Determines if upload of data managed by this layer is discouraged.
-     * This feature allows to use "private" data layers.
-     *
-     * @return true if upload is discouraged for this layer; false, otherwise
-     */
     @Override
     public boolean isUploadDiscouraged() {
         // Override if needed
@@ -76,9 +50,6 @@ public abstract class AbstractModifiableLayer extends Layer implements UploadToS
      */
     public abstract boolean isModified();
 
-    /**
-     * Initializes the layer after a successful save of data to a file.
-     */
     @Override
     public void onPostSaveToFile() {
         // Override if needed
@@ -92,24 +63,37 @@ public abstract class AbstractModifiableLayer extends Layer implements UploadToS
         // Override if needed
     }
 
-    /**
-     * Creates a new {@code AbstractIOTask} for uploading data.
-     * @param monitor The progress monitor
-     * @return a new {@code AbstractIOTask} for uploading data, or {@code null} if not applicable
-     */
     @Override
     public AbstractIOTask createUploadTask(ProgressMonitor monitor) {
         // Override if needed
         return null;
     }
 
-    /**
-     * Returns the upload dialog for this layer.
-     * @return the upload dialog for this layer, or {@code null} if not applicable
-     */
     @Override
     public AbstractUploadDialog getUploadDialog() {
         // Override if needed
         return null;
+    }
+
+    @Override
+    public boolean isUploadInProgress() {
+        // Override if needed
+        return false;
+    }
+
+    @Override
+    public void setReadOnly() {
+        // Override if needed
+    }
+
+    @Override
+    public void unsetReadOnly() {
+        // Override if needed
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        // Override if needed
+        return false;
     }
 }

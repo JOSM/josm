@@ -75,7 +75,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        updateEnabledStateOnModifiableSelection(selection);
     }
 
     /**

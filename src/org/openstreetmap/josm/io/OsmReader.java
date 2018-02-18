@@ -140,12 +140,14 @@ public class OsmReader extends AbstractReader {
         ds.setVersion(v);
         String upload = parser.getAttributeValue(null, "upload");
         if (upload != null) {
-            for (UploadPolicy policy : UploadPolicy.values()) {
-                if (policy.getXmlFlag().equalsIgnoreCase(upload)) {
-                    ds.setUploadPolicy(policy);
-                    break;
-                }
+            try {
+                ds.setUploadPolicy(UploadPolicy.of(upload));
+            } catch (IllegalArgumentException e) {
+                throwException(MessageFormat.format("Illegal value for attribute ''upload''. Got ''{0}''.", upload), e);
             }
+        }
+        if ("true".equalsIgnoreCase(parser.getAttributeValue(null, "read-only"))) {
+            ds.setReadOnly();
         }
         String generator = parser.getAttributeValue(null, "generator");
         Long uploadChangesetId = null;
@@ -180,8 +182,9 @@ public class OsmReader extends AbstractReader {
                 default:
                     parseUnknown();
                 }
-            } else if (event == XMLStreamConstants.END_ELEMENT)
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
+            }
         }
     }
 
@@ -617,8 +620,16 @@ public class OsmReader extends AbstractReader {
             }
             progressMonitor.worked(1);
 
+            boolean readOnly = getDataSet().isReadOnly();
+
             progressMonitor.indeterminateSubTask(tr("Preparing data set..."));
+            if (readOnly) {
+                getDataSet().unsetReadOnly();
+            }
             prepareDataSet();
+            if (readOnly) {
+                getDataSet().setReadOnly();
+            }
             progressMonitor.worked(1);
 
             // iterate over registered postprocessors and give them each a chance
@@ -627,6 +638,10 @@ public class OsmReader extends AbstractReader {
                 for (OsmServerReadPostprocessor pp : postprocessors) {
                     pp.postprocessDataSet(getDataSet(), progressMonitor);
                 }
+            }
+            // Make sure postprocessors did not change the read-only state
+            if (readOnly && !getDataSet().isReadOnly()) {
+                getDataSet().setReadOnly();
             }
             return getDataSet();
         } catch (IllegalDataException e) {

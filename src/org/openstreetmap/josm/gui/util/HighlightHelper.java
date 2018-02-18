@@ -131,7 +131,7 @@ public class HighlightHelper {
      * Slow method to remove highlights from all primitives
      */
     public static void clearAllHighlighted() {
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (ds != null) {
             for (OsmPrimitive p: ds.allNonDeletedPrimitives()) {
                 p.setHighlighted(false);

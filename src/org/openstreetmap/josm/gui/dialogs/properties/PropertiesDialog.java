@@ -63,6 +63,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Node;
@@ -90,6 +91,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
@@ -230,7 +232,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             + tr("Select objects for which to change tags.") + "</p></html>");
 
     private final PreferenceChangedListener preferenceListener = e -> {
-                if (MainApplication.getLayerManager().getEditDataSet() != null) {
+                if (MainApplication.getLayerManager().getActiveDataSet() != null) {
                     // Re-load data when display preference change
                     updateSelection();
                 }
@@ -486,11 +488,11 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     private void editMembership(int row) {
         Relation relation = (Relation) membershipData.getValueAt(row, 0);
         MainApplication.getMap().relationListDialog.selectRelation(relation);
-        RelationEditor.getEditor(
-                MainApplication.getLayerManager().getEditLayer(),
-                relation,
-                ((MemberInfo) membershipData.getValueAt(row, 1)).role
-        ).setVisible(true);
+        OsmDataLayer layer = MainApplication.getLayerManager().getActiveDataLayer();
+        if (!layer.isReadOnly()) {
+            RelationEditor.getEditor(
+                    layer, relation, ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
+        }
     }
 
     private static int findViewRow(JTable table, TableModel model, Object value) {
@@ -533,7 +535,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b && MainApplication.getLayerManager().getEditDataSet() != null) {
+        if (b && MainApplication.getLayerManager().getActiveDataSet() != null) {
             updateSelection();
         }
     }
@@ -643,12 +645,14 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);
 
+        DataSet ds = Main.main.getActiveDataSet();
+        boolean isReadOnly = ds != null && ds.isReadOnly();
         boolean hasSelection = !newSel.isEmpty();
         boolean hasTags = hasSelection && tagData.getRowCount() > 0;
         boolean hasMemberships = hasSelection && membershipData.getRowCount() > 0;
-        addAction.setEnabled(hasSelection);
-        editAction.setEnabled(hasTags || hasMemberships);
-        deleteAction.setEnabled(hasTags || hasMemberships);
+        addAction.setEnabled(!isReadOnly && hasSelection);
+        editAction.setEnabled(!isReadOnly && (hasTags || hasMemberships));
+        deleteAction.setEnabled(!isReadOnly && (hasTags || hasMemberships));
         tagTable.setVisible(hasTags);
         tagTable.getTableHeader().setVisible(hasTags);
         tagTableFilter.setVisible(hasTags);
@@ -1054,10 +1058,11 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
 
         @Override
         protected final void updateEnabledState() {
-            setEnabled(
-                    (tagTable != null && tagTable.getSelectedRowCount() >= 1)
+            DataSet ds = Main.main.getActiveDataSet();
+            setEnabled(ds != null && !ds.isReadOnly() &&
+                    ((tagTable != null && tagTable.getSelectedRowCount() >= 1)
                     || (membershipTable != null && membershipTable.getSelectedRowCount() > 0)
-                    );
+                    ));
         }
 
         @Override
@@ -1109,10 +1114,11 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
 
         @Override
         protected void updateEnabledState() {
-            setEnabled(
-                    (tagTable != null && tagTable.getSelectedRowCount() == 1)
+            DataSet ds = Main.main.getActiveDataSet();
+            setEnabled(ds != null && !ds.isReadOnly() &&
+                    ((tagTable != null && tagTable.getSelectedRowCount() == 1)
                     ^ (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
-                    );
+                    ));
         }
 
         @Override

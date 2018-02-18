@@ -433,6 +433,6 @@ public final class AlignInLineAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        updateEnabledStateOnModifiableSelection(selection);
     }
 }

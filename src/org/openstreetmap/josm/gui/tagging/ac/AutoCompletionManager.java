@@ -144,9 +144,10 @@ public class AutoCompletionManager implements DataSetListener {
     /**
      * Constructs a new {@code AutoCompletionManager}.
      * @param ds data set
+     * @throws NullPointerException if ds is null
      */
     public AutoCompletionManager(DataSet ds) {
-        this.ds = ds;
+        this.ds = Objects.requireNonNull(ds);
         this.dirty = true;
     }
 

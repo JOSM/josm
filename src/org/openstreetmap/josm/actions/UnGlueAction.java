@@ -653,7 +653,7 @@ public class UnGlueAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        updateEnabledStateOnModifiableSelection(selection);
     }
 
     protected void checkAndConfirmOutlyingUnglue() throws UserCancelException {

@@ -75,7 +75,7 @@ public class AutoScaleAction extends JosmAction {
      *
      */
     public static void zoomToSelection() {
-        DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
+        DataSet dataSet = MainApplication.getLayerManager().getActiveDataSet();
         if (dataSet == null) {
             return;
         }
@@ -285,7 +285,7 @@ public class AutoScaleAction extends JosmAction {
     private BoundingXYVisitor modeSelectionOrConflict(BoundingXYVisitor v) {
         Collection<OsmPrimitive> sel = new HashSet<>();
         if ("selection".equals(mode)) {
-            DataSet dataSet = getLayerManager().getEditDataSet();
+            DataSet dataSet = getLayerManager().getActiveDataSet();
             if (dataSet != null) {
                 sel = dataSet.getSelected();
             }
@@ -323,7 +323,7 @@ public class AutoScaleAction extends JosmAction {
                 System.currentTimeMillis() - lastZoomTime > Config.getPref().getLong("zoom.bounds.reset.time", TimeUnit.SECONDS.toMillis(10))) {
             lastZoomTime = -1;
         }
-        final DataSet dataset = getLayerManager().getEditDataSet();
+        final DataSet dataset = getLayerManager().getActiveDataSet();
         if (dataset != null) {
             List<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
             int s = dataSources.size();
@@ -336,7 +336,7 @@ public class AutoScaleAction extends JosmAction {
                     v.visit(dataSources.get(lastZoomArea).bounds);
                 } else {
                     lastZoomArea = -1;
-                    Area sourceArea = getLayerManager().getEditDataSet().getDataSourceArea();
+                    Area sourceArea = getLayerManager().getActiveDataSet().getDataSourceArea();
                     if (sourceArea != null) {
                         v.visit(new Bounds(sourceArea.getBounds2D()));
                     }
@@ -352,7 +352,7 @@ public class AutoScaleAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
+        DataSet ds = getLayerManager().getActiveDataSet();
         MapFrame map = MainApplication.getMap();
         switch (mode) {
         case "selection":

@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -49,17 +48,11 @@ public final class PasteTagsAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
-            setEnabled(false);
-            return;
-        }
-        // buffer listening slows down the program and is not very good for arbitrary text in buffer
-        setEnabled(!ds.selectionEmpty());
+        updateEnabledStateOnCurrentSelection();
     }
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        updateEnabledStateOnModifiableSelection(selection);
     }
 }

@@ -380,12 +380,12 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     /**
-     * Replies true if the active data layer (edit layer) is visible.
+     * Replies true if the active data layer is visible.
      *
-     * @return true if the active data layer (edit layer) is visible, false otherwise
+     * @return true if the active data layer is visible, false otherwise
      */
     public boolean isActiveLayerVisible() {
-        OsmDataLayer e = layerManager.getEditLayer();
+        OsmDataLayer e = layerManager.getActiveDataLayer();
         return e != null && e.isVisible();
     }
 

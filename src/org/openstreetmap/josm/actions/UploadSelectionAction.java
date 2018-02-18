@@ -62,7 +62,7 @@ public class UploadSelectionAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        updateEnabledStateOnModifiableSelection(selection);
     }
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {

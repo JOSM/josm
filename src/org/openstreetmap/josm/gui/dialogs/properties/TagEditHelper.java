@@ -446,7 +446,7 @@ public class TagEditHelper {
             JPanel p = new JPanel(new GridBagLayout());
             mainPanel.add(p, BorderLayout.CENTER);
 
-            AutoCompletionManager autocomplete = AutoCompletionManager.of(MainApplication.getLayerManager().getEditLayer().data);
+            AutoCompletionManager autocomplete = AutoCompletionManager.of(Main.main.getActiveDataSet());
             List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
 
             keys = new AutoCompletingComboBox(key);
@@ -563,6 +563,7 @@ public class TagEditHelper {
         @Override
         public void setupDialog() {
             super.setupDialog();
+            buttons.get(0).setEnabled(!Main.main.getActiveDataSet().isReadOnly());
             final Dimension size = getSize();
             // Set resizable only in width
             setMinimumSize(size);
@@ -698,7 +699,7 @@ public class TagEditHelper {
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
 
             cacheRecentTags();
-            AutoCompletionManager autocomplete = AutoCompletionManager.of(Main.main.getEditDataSet());
+            AutoCompletionManager autocomplete = AutoCompletionManager.of(Main.main.getActiveDataSet());
             List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
 
             // remove the object's tag keys from the list

@@ -131,7 +131,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+                final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
                 if (ds == null) {
                     return;
                 }
@@ -180,7 +180,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     @Override
     public void showNotify() {
         DataSet.addSelectionListener(this);
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (ds != null) {
             updateSelection(ds.getAllSelected());
         }
@@ -349,7 +349,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
             }
         }
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (ds != null) {
             ds.setSelected(sel);
         }
@@ -493,7 +493,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             fixButton.setEnabled(hasFixes);
 
             if (isDblClick) {
-                DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+                DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
                 if (ds != null) {
                     ds.setSelected(sel);
                 }
@@ -629,7 +629,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             ProgressMonitor monitor = getProgressMonitor();
             try {
                 monitor.setTicksCount(testErrors.size());
-                final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+                final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
                 int i = 0;
                 SwingUtilities.invokeAndWait(ds::beginUpdate);
                 try {

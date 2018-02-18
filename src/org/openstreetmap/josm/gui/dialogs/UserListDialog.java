@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
@@ -346,14 +347,15 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
             for (int index: rows) {
                 users.add(data.get(index).user);
             }
-            Collection<OsmPrimitive> selected = MainApplication.getLayerManager().getEditDataSet().getAllSelected();
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            Collection<OsmPrimitive> selected = ds.getAllSelected();
             Collection<OsmPrimitive> byUser = new LinkedList<>();
             for (OsmPrimitive p : selected) {
                 if (users.contains(p.getUser())) {
                     byUser.add(p);
                 }
             }
-            MainApplication.getLayerManager().getEditDataSet().setSelected(byUser);
+            ds.setSelected(byUser);
         }
 
         public List<User> getSelectedUsers(int... rows) {
