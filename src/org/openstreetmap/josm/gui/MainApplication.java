@@ -960,7 +960,7 @@ public class MainApplication extends Main {
             XMLCommandProcessor config = new XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 try {
-                    URL url = i.contains("://") ? new URL(i) : Paths.get(i).toUri().toURL();
+                    URL url = i.contains(":/") ? new URL(i) : Paths.get(i).toUri().toURL();
                     Logging.info("Reading preferences from " + url);
                     try (InputStream is = Utils.openStream(url)) {
                         config.openAndReadXML(is);
