@@ -304,7 +304,12 @@ public final class MapPaintStyles {
         Collection<? extends SourceEntry> sourceEntries = MapPaintPrefHelper.INSTANCE.get();
 
         for (SourceEntry entry : sourceEntries) {
-            styles.add(fromSourceEntry(entry));
+            try {
+                styles.add(fromSourceEntry(entry));
+            } catch (IllegalArgumentException e) {
+                Logging.error("Failed to load map paint style {0}", entry);
+                Logging.error(e);
+            }
         }
         for (StyleSource source : styles.getStyleSources()) {
             loadStyleForFirstTime(source);

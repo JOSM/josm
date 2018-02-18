@@ -190,7 +190,6 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
         /**
          * Constructs a new {@code AbstractInternalTask}.
-         *
          * @param newLayer if {@code true}, force download to a new layer
          * @param title message for the user
          * @param ignoreException If true, exception will be propagated to calling code. If false then
@@ -206,7 +205,6 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
         /**
          * Constructs a new {@code AbstractInternalTask}.
-         *
          * @param newLayer if {@code true}, force download to a new layer
          * @param title message for the user
          * @param progressMonitor progress monitor
@@ -286,7 +284,6 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
                 // the user explicitly wants a new layer, we don't have any layer at all
                 // or it is not clear which layer to merge to
-                //
                 final OsmDataLayer layer = createNewLayer(newLayerName);
                 MainApplication.getLayerManager().addLayer(layer, zoomAfterDownload);
                 return layer;

@@ -1187,12 +1187,20 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         return data.isReadOnly();
     }
 
+    /**
+     * Sets the "upload in progress" flag, which will result in displaying a new icon and forbid to remove the layer.
+     * @since 13434
+     */
     public void setUploadInProgress() {
         if (!isUploadInProgress.compareAndSet(false, true)) {
             Logging.warn("Trying to set uploadInProgress flag on layer already being uploaded ", getName());
         }
     }
 
+    /**
+     * Unsets the "upload in progress" flag, which will result in displaying the standard icon and allow to remove the layer.
+     * @since 13434
+     */
     public void unsetUploadInProgress() {
         if (!isUploadInProgress.compareAndSet(true, false)) {
             Logging.warn("Trying to unset uploadInProgress flag on layer not being uploaded ", getName());

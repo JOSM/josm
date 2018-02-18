@@ -669,9 +669,12 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 mode = Mode.SCALE;
             } else if (hasSelectionNearby || dragInProgress()) {
                 mode = Mode.MOVE;
+            } else {
+                mode = Mode.SELECT;
             }
+        } else {
+            mode = Mode.SELECT;
         }
-        mode = Mode.SELECT;
     }
 
     /**

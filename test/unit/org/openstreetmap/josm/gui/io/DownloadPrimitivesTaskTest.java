@@ -27,7 +27,7 @@ public class DownloadPrimitivesTaskTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().devAPI();
+    public JOSMTestRules test = new JOSMTestRules().preferences().devAPI().timeout(20000);
 
     /**
      * Test of {@link DownloadPrimitivesTask} class.
