@@ -21,6 +21,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.security.AllPermission;
 import java.security.CodeSource;
@@ -964,7 +965,7 @@ public class MainApplication extends Main {
                     try (InputStream is = Utils.openStream(url)) {
                         config.openAndReadXML(is);
                     }
-                } catch (IOException ex) {
+                } catch (IOException | InvalidPathException ex) {
                     Logging.error(ex);
                     return;
                 }
