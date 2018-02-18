@@ -219,9 +219,19 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         // we always clean up the data, even in case of errors. It's possible the data was
         // partially uploaded. Better run on EDT.
         Runnable r = () -> {
-            layer.cleanupAfterUpload(processedPrimitives);
-            layer.onPostUploadToServer();
-            ChangesetCache.getInstance().update(changeset);
+            boolean readOnly = layer.isReadOnly();
+            if (readOnly) {
+                layer.unsetReadOnly();
+            }
+            try {
+                layer.cleanupAfterUpload(processedPrimitives);
+                layer.onPostUploadToServer();
+                ChangesetCache.getInstance().update(changeset);
+            } finally {
+                if (readOnly) {
+                    layer.setReadOnly();
+                }
+            }
         };
 
         try {
