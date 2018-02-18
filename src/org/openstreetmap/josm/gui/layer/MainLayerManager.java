@@ -423,6 +423,16 @@ public class MainLayerManager extends LayerManager {
     }
 
     /**
+     * Returns the unique note layer, if present.
+     * @return the unique note layer, or null
+     * @since 13437
+     */
+    public NoteLayer getNoteLayer() {
+        List<NoteLayer> col = getLayersOfType(NoteLayer.class);
+        return col.isEmpty() ? null : col.get(0);
+    }
+
+    /**
      * Creates a list of the visible layers in Z-Order, the layer with the lowest Z-Order
      * first, layer with the highest Z-Order last.
      * <p>

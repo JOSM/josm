@@ -67,13 +67,8 @@ public class NoteImporter extends FileImporter {
     public NoteLayer loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor)
             throws SAXException, IOException {
         final List<Note> fileNotes = new NoteReader(in).parse();
-        List<NoteLayer> noteLayers = null;
-        if (MainApplication.getMap() != null) {
-            noteLayers = MainApplication.getLayerManager().getLayersOfType(NoteLayer.class);
-        }
-        final NoteLayer layer;
-        if (noteLayers != null && !noteLayers.isEmpty()) {
-            layer = noteLayers.get(0);
+        NoteLayer layer = MainApplication.getLayerManager().getNoteLayer();
+        if (layer != null) {
             layer.getNoteData().addNotes(fileNotes);
         } else {
             layer = new NoteLayer(fileNotes, associatedFile != null ? associatedFile.getName() : tr("Notes"));
