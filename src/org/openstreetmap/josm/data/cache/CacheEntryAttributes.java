@@ -26,7 +26,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     private static final String ETAG = "Etag";
     private static final String LAST_MODIFICATION = "lastModification";
     private static final String EXPIRATION_TIME = "expirationTime";
-    private static final String HTTP_RESPONSE_CODE = "httpResponceCode";
+    private static final String HTTP_RESPONSE_CODE = "httpResponseCode";
     private static final String ERROR_MESSAGE = "errorMessage";
     // this contains all of the above
     private static final Set<String> RESERVED_KEYS = new HashSet<>(Arrays.asList(
