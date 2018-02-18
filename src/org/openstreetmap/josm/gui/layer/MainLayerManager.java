@@ -495,7 +495,7 @@ public class MainLayerManager extends LayerManager {
      *
      * @param layer The OsmDataLayer to be uploaded
      */
-    public void prepareLayerForUpload(OsmDataLayer layer) {
+    public synchronized void prepareLayerForUpload(OsmDataLayer layer) {
         GuiHelper.assertCallFromEdt();
         layer.setUploadInProgress();
         layer.setReadOnly();
@@ -515,7 +515,7 @@ public class MainLayerManager extends LayerManager {
      *
      * @param layer The OsmDataLayer uploaded
      */
-    public void processLayerAfterUpload(OsmDataLayer layer) {
+    public synchronized void processLayerAfterUpload(OsmDataLayer layer) {
         GuiHelper.assertCallFromEdt();
         layer.unsetReadOnly();
         layer.unsetUploadInProgress();
