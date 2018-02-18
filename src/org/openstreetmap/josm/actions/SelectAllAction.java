@@ -29,16 +29,15 @@ public class SelectAllAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        DataSet ds = getLayerManager().getEditDataSet();
+        DataSet ds = getLayerManager().getActiveDataSet();
         ds.setSelected(ds.getPrimitives(OsmPrimitive::isSelectable));
     }
 
     /**
      * Refreshes the enabled state
-     *
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getEditLayer() != null);
+        setEnabled(getLayerManager().getActiveDataSet() != null);
     }
 }

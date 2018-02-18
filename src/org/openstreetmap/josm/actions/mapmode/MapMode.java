@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
@@ -238,5 +239,16 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     @Deprecated
     public Collection<? extends OsmPrimitive> getPreservedPrimitives() {
         return Collections.emptySet();
+    }
+
+    /**
+     * Determines if the given layer is a data layer that can be modified.
+     * Useful for {@link #layerIsSupported(Layer)} implementations.
+     * @param l layer
+     * @return {@code true} if the given layer is a data layer that can be modified
+     * @since 13434
+     */
+    protected boolean isEditableDataLayer(Layer l) {
+        return l instanceof OsmDataLayer && !((OsmDataLayer) l).isReadOnly();
     }
 }

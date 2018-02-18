@@ -16,6 +16,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -98,5 +100,10 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
     @Override
     public void doKeyReleased(KeyEvent e) {
         // Do nothing
+    }
+
+    @Override
+    public boolean layerIsSupported(Layer l) {
+        return l instanceof NoteLayer;
     }
 }

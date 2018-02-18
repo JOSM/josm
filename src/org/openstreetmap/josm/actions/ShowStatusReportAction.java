@@ -26,7 +26,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
-import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.sources.MapPaintPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.PresetPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.SourcePrefHelper;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -177,7 +177,7 @@ public final class ShowStatusReportAction extends JosmAction {
             text.append("Program arguments: ").append(Arrays.toString(paramCleanup(commandLineArgs).toArray())).append('\n');
         }
         if (Main.main != null) {
-            DataSet dataset = MainApplication.getLayerManager().getEditDataSet();
+            DataSet dataset = MainApplication.getLayerManager().getActiveDataSet();
             if (dataset != null) {
                 String result = DatasetConsistencyTest.runTests(dataset);
                 if (result.isEmpty()) {

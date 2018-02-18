@@ -159,7 +159,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     @Override
     public void hideNotify() {
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
-        removeEditLayerListeners(MainApplication.getLayerManager().getEditLayer());
+        removeDataLayerListeners(MainApplication.getLayerManager().getEditLayer());
     }
 
     /**
@@ -268,19 +268,19 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        removeEditLayerListeners(e.getPreviousEditLayer());
-        addEditLayerListeners(e.getSource().getEditLayer());
+        removeDataLayerListeners(e.getPreviousDataLayer());
+        addDataLayerListeners(e.getSource().getActiveDataLayer());
         refreshView();
     }
 
-    private void addEditLayerListeners(OsmDataLayer newLayer) {
+    private void addDataLayerListeners(OsmDataLayer newLayer) {
         if (newLayer != null) {
             newLayer.getConflicts().addConflictListener(this);
             newLayer.data.addSelectionListener(this);
         }
     }
 
-    private void removeEditLayerListeners(OsmDataLayer oldLayer) {
+    private void removeDataLayerListeners(OsmDataLayer oldLayer) {
         if (oldLayer != null) {
             oldLayer.getConflicts().removeConflictListener(this);
             oldLayer.data.removeSelectionListener(this);

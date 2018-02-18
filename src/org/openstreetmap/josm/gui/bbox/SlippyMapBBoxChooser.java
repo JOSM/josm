@@ -47,12 +47,12 @@ import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
@@ -236,11 +236,11 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // draw shaded area for non-downloaded region of current "edit layer", but only if there *is* a current "edit layer",
+        // draw shaded area for non-downloaded region of current data set, but only if there *is* a current data set,
         // and it has defined bounds. Routine is analogous to that in OsmDataLayer's paint routine (but just different
         // enough to make sharing code impractical)
-        final OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-        if (editLayer != null && this.showDownloadAreaButtonModel.isSelected() && !editLayer.data.getDataSources().isEmpty()) {
+        final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+        if (ds != null && this.showDownloadAreaButtonModel.isSelected() && !ds.getDataSources().isEmpty()) {
             // initialize area with current viewport
             Rectangle b = this.getBounds();
             // ensure we comfortably cover full area
@@ -248,7 +248,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
             Path2D p = new Path2D.Float();
 
             // combine successively downloaded areas after converting to screen-space
-            for (Bounds bounds : editLayer.data.getDataSourceBounds()) {
+            for (Bounds bounds : ds.getDataSourceBounds()) {
                 if (bounds.isCollapsed()) {
                     continue;
                 }

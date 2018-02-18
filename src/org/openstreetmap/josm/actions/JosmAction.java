@@ -334,15 +334,38 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Updates enabled state according to primitives currently selected in edit data set, if any.
      * Can be called in {@link #updateEnabledState()} implementations.
+     * @see #updateEnabledStateOnCurrentSelection(boolean)
      * @since 10409
      */
     protected final void updateEnabledStateOnCurrentSelection() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
-            setEnabled(false);
-        } else {
+        updateEnabledStateOnCurrentSelection(false);
+    }
+
+    /**
+     * Updates enabled state according to primitives currently selected in active data set, if any.
+     * Can be called in {@link #updateEnabledState()} implementations.
+     * @param allowReadOnly if {@code true}, read-only data sets are considered
+     * @since 13434
+     */
+    protected final void updateEnabledStateOnCurrentSelection(boolean allowReadOnly) {
+        DataSet ds = getLayerManager().getActiveDataSet();
+        if (ds != null && (allowReadOnly || !ds.isReadOnly())) {
             updateEnabledState(ds.getSelected());
+        } else {
+            setEnabled(false);
         }
+    }
+
+    /**
+     * Updates enabled state according to selected primitives, if any.
+     * Enables action if the colleciton is not empty and references primitives in a modifiable data layer.
+     * Can be called in {@link #updateEnabledState(Collection)} implementations.
+     * @param selection the collection of selected primitives
+     * @since 13434
+     */
+    protected final void updateEnabledStateOnModifiableSelection(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty()
+                && selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isReadOnly));
     }
 
     /**

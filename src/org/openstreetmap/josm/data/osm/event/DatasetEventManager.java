@@ -181,12 +181,12 @@ public class DatasetEventManager implements ActiveLayerChangeListener, Listener 
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        DataSet oldData = e.getPreviousEditDataSet();
+        DataSet oldData = e.getPreviousDataSet();
         if (oldData != null) {
             oldData.removeDataSetListener(myListener);
         }
 
-        DataSet newData = e.getSource().getEditDataSet();
+        DataSet newData = e.getSource().getActiveDataSet();
         if (newData != null) {
             newData.addDataSetListener(myListener);
         }

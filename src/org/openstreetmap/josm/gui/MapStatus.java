@@ -326,7 +326,7 @@ public final class MapStatus extends JPanel implements
                 boolean isAtOldPosition = mouseNotMoved && popup != null;
                 boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
 
-                ds = mv.getLayerManager().getEditDataSet();
+                ds = mv.getLayerManager().getActiveDataSet();
                 if (ds != null) {
                     // This is not perfect, if current dataset was changed during execution, the lock would be useless
                     if (isAtOldPosition && middleMouseDown) {
@@ -511,7 +511,7 @@ public final class MapStatus extends JPanel implements
          * @param mods modifiers (i.e. control keys)
          */
         private void popupCycleSelection(Collection<OsmPrimitive> osms, int mods) {
-            DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
             // Find some items that are required for cycling through
             OsmPrimitive firstItem = null;
             OsmPrimitive firstSelected = null;
@@ -602,7 +602,7 @@ public final class MapStatus extends JPanel implements
          * @param osm The primitive to derive the colors from
          */
         private void popupSetLabelColors(JLabel lbl, OsmPrimitive osm) {
-            DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
             if (ds.isSelected(osm)) {
                 lbl.setBackground(SystemColor.textHighlight);
                 lbl.setForeground(SystemColor.textHighlightText);
@@ -675,7 +675,7 @@ public final class MapStatus extends JPanel implements
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+                    DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
                     // Let the user toggle the selection
                     ds.toggleSelected(osm);
                     l.validate();

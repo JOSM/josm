@@ -53,7 +53,6 @@ import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
@@ -291,7 +290,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     @Override
     public boolean layerIsSupported(Layer l) {
-        return l instanceof OsmDataLayer;
+        return isEditableDataLayer(l);
     }
 
     @Override

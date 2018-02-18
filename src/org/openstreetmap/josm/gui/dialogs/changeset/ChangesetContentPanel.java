@@ -35,6 +35,7 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
@@ -48,7 +49,6 @@ import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -278,7 +278,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
             if (selected.isEmpty()) return;
             showHistory(selected);
@@ -300,7 +300,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             final List<PrimitiveId> primitiveIds = model.getSelectedPrimitives().stream().map(HistoryOsmPrimitive::getPrimitiveId)
                     .collect(Collectors.toList());
             MainApplication.worker.submit(new DownloadPrimitivesWithReferrersTask(false, primitiveIds, true, true, null, null));
@@ -322,13 +322,13 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             if (!isEnabled()) {
                 return null;
             }
-            OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
-            if (layer == null) {
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds == null) {
                 return null;
             }
             Set<OsmPrimitive> target = new HashSet<>();
             for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
-                OsmPrimitive op = layer.data.getPrimitiveById(p.getPrimitiveId());
+                OsmPrimitive op = ds.getPrimitiveById(p.getPrimitiveId());
                 if (op != null) {
                     target.add(op);
                 }
@@ -337,7 +337,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         public final void updateEnabledState() {
-            setEnabled(MainApplication.getLayerManager().getEditLayer() != null && model.hasSelectedPrimitives());
+            setEnabled(MainApplication.getLayerManager().getActiveDataSet() != null && model.hasSelectedPrimitives());
         }
 
         @Override
@@ -349,7 +349,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
             updateEnabledState();
         }
-
     }
 
     class SelectInCurrentLayerAction extends SelectionBasedAction {
@@ -362,7 +361,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             final Set<OsmPrimitive> target = getTarget();
             if (target == null) {
                 return;
@@ -371,7 +370,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer"));
                 return;
             }
-            MainApplication.getLayerManager().getEditLayer().data.setSelected(target);
+            MainApplication.getLayerManager().getActiveDataSet().setSelected(target);
         }
     }
 
@@ -385,7 +384,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             final Set<OsmPrimitive> target = getTarget();
             if (target == null) {
                 return;
@@ -394,7 +393,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo"));
                 return;
             }
-            MainApplication.getLayerManager().getEditLayer().data.setSelected(target);
+            MainApplication.getLayerManager().getActiveDataSet().setSelected(target);
             AutoScaleAction.zoomToSelection();
         }
     }

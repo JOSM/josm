@@ -447,7 +447,7 @@ class DrawSnapHelper {
 
         projectionSource = null;
         if (DrawAction.SNAP_TO_PROJECTIONS.get()) {
-            DataSet ds = drawAction.getLayerManager().getEditDataSet();
+            DataSet ds = drawAction.getLayerManager().getActiveDataSet();
             Collection<Way> selectedWays = ds.getSelectedWays();
             if (selectedWays.size() == 1) {
                 Way w = selectedWays.iterator().next();

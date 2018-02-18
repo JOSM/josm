@@ -27,6 +27,7 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -363,7 +364,8 @@ public class MergeNodesAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if (selection == null || selection.isEmpty()) {
+        if (selection == null || selection.isEmpty()
+                || selection.stream().map(OsmPrimitive::getDataSet).anyMatch(DataSet::isReadOnly)) {
             setEnabled(false);
             return;
         }

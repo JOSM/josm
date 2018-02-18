@@ -46,7 +46,6 @@ import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
@@ -209,7 +208,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     @Override
     public boolean layerIsSupported(Layer l) {
-        return l instanceof OsmDataLayer;
+        return isEditableDataLayer(l);
     }
 
     @Override

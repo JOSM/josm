@@ -34,9 +34,9 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
-import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -45,7 +45,6 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
@@ -211,8 +210,8 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
     }
 
     @Override
-    public boolean layerIsSupported(Layer layer) {
-        return layer instanceof OsmDataLayer;
+    public boolean layerIsSupported(Layer l) {
+        return isEditableDataLayer(l);
     }
 
     @Override

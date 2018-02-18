@@ -97,7 +97,7 @@ public class FilterModel {
      * Runs the filters on the current edit data set.
      */
     public void executeFilters() {
-        DataSet ds = Main.main.getEditDataSet();
+        DataSet ds = Main.main.getActiveDataSet();
         changed = false;
         if (ds == null) {
             disabledAndHiddenCount = 0;

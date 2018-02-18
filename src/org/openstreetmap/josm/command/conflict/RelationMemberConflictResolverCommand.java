@@ -71,16 +71,16 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
 
     @Override
     public void undoCommand() {
-        DataSet editDs = getAffectedDataSet();
-        if (!Main.main.containsDataSet(editDs)) {
+        DataSet ds = getAffectedDataSet();
+        if (!Main.main.containsDataSet(ds)) {
             Logging.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
-                    editDs.getName()
+                    ds.getName()
             ));
             return;
         }
 
-        Main.main.setEditDataSet(editDs);
+        Main.main.setActiveDataSet(ds);
 
         // restore the former state
         //
@@ -88,8 +88,8 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
 
         // restore a conflict if necessary
         //
-        if (!editDs.getConflicts().hasConflictForMy(conflict.getMy())) {
-            editDs.getConflicts().add(conflict);
+        if (!ds.getConflicts().hasConflictForMy(conflict.getMy())) {
+            ds.getConflicts().add(conflict);
         }
     }
 

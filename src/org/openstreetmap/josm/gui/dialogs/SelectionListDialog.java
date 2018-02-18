@@ -72,7 +72,6 @@ import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
@@ -199,13 +198,13 @@ public class SelectionListDialog extends ToggleDialog {
             int idx = lstPrimitives.locationToIndex(e.getPoint());
             if (idx < 0) return;
             if (isDoubleClick(e)) {
-                OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
-                if (layer == null) return;
+                DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+                if (ds == null) return;
                 OsmPrimitive osm = model.getElementAt(idx);
-                Collection<OsmPrimitive> sel = layer.data.getSelected();
+                Collection<OsmPrimitive> sel = ds.getSelected();
                 if (sel.size() != 1 || !sel.iterator().next().equals(osm)) {
                     // Select primitive if it's not the whole current selection
-                    layer.data.setSelected(Collections.singleton(osm));
+                    ds.setSelected(Collections.singleton(osm));
                 } else if (osm instanceof Relation) {
                     // else open relation editor if applicable
                     actEditRelationSelection.actionPerformed(null);
@@ -295,7 +294,7 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(MainApplication.getLayerManager().getEditLayer() != null);
+            setEnabled(MainApplication.getLayerManager().getActiveDataSet() != null);
         }
 
         @Override
@@ -320,9 +319,9 @@ public class SelectionListDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty()) return;
-            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-            if (editLayer == null) return;
-            editLayer.data.setSelected(sel);
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds == null) return;
+            ds.setSelected(sel);
             model.selectionModel.setSelectionInterval(0, sel.size()-1);
         }
 
@@ -829,7 +828,7 @@ public class SelectionListDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            MainApplication.getLayerManager().getEditDataSet().setSelected(sel);
+            MainApplication.getLayerManager().getActiveDataSet().setSelected(sel);
         }
     }
 

@@ -526,7 +526,7 @@ public class MainApplication extends Main {
         if (map != null && map.mapMode instanceof DrawAction) {
             return ((DrawAction) map.mapMode).getInProgressSelection();
         } else {
-            DataSet ds = layerManager.getEditDataSet();
+            DataSet ds = layerManager.getActiveDataSet();
             if (ds == null) return null;
             return ds.getSelected();
         }
@@ -538,7 +538,12 @@ public class MainApplication extends Main {
     }
 
     @Override
-    public void setEditDataSet(DataSet ds) {
+    public DataSet getActiveDataSet() {
+        return getLayerManager().getActiveDataSet();
+    }
+
+    @Override
+    public void setActiveDataSet(DataSet ds) {
         Optional<OsmDataLayer> layer = getLayerManager().getLayersOfType(OsmDataLayer.class).stream()
                 .filter(l -> l.data.equals(ds)).findFirst();
         if (layer.isPresent()) {

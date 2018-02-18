@@ -760,7 +760,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         static SearchTask newSearchTask(SearchSetting setting, SearchReceiver resultReceiver) {
-            final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+            final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
             return newSearchTask(setting, ds, resultReceiver);
         }
 
@@ -878,11 +878,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     /**
      * Refreshes the enabled state
-     *
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getEditLayer() != null);
+        setEnabled(getLayerManager().getActiveDataSet() != null);
     }
 
     @Override

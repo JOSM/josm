@@ -269,18 +269,27 @@ public abstract class Main {
     }
 
     /**
-     * Gets the active edit data set.
+     * Gets the active edit data set (not read-only).
      * @return That data set, <code>null</code>.
+     * @see #getActiveDataSet
      * @since 12691
      */
     public abstract DataSet getEditDataSet();
 
     /**
-     * Sets the active data set.
-     * @param ds New edit data set, or <code>null</code>
-     * @since 12718
+     * Gets the active data set (can be read-only).
+     * @return That data set, <code>null</code>.
+     * @see #getEditDataSet
+     * @since 13434
      */
-    public abstract void setEditDataSet(DataSet ds);
+    public abstract DataSet getActiveDataSet();
+
+    /**
+     * Sets the active data set (and also edit data set if not read-only).
+     * @param ds New data set, or <code>null</code>
+     * @since 13434
+     */
+    public abstract void setActiveDataSet(DataSet ds);
 
     /**
      * Determines if the list of data sets managed by JOSM contains {@code ds}.

@@ -75,9 +75,9 @@ public class ValidateAction extends JosmAction {
 
         Collection<OsmPrimitive> selection;
         if (getSelectedItems) {
-            selection = getLayerManager().getEditDataSet().getAllSelected();
+            selection = getLayerManager().getActiveDataSet().getAllSelected();
             if (selection.isEmpty()) {
-                selection = getLayerManager().getEditDataSet().allNonDeletedPrimitives();
+                selection = getLayerManager().getActiveDataSet().allNonDeletedPrimitives();
                 lastSelection = null;
             } else {
                 AggregatePrimitivesVisitor v = new AggregatePrimitivesVisitor();
@@ -86,7 +86,7 @@ public class ValidateAction extends JosmAction {
             }
         } else {
             selection = Optional.ofNullable(lastSelection).orElseGet(
-                    () -> getLayerManager().getEditDataSet().allNonDeletedPrimitives());
+                    () -> getLayerManager().getActiveDataSet().allNonDeletedPrimitives());
         }
 
         MainApplication.worker.submit(new ValidationTask(tests, selection, lastSelection));
@@ -94,7 +94,7 @@ public class ValidateAction extends JosmAction {
 
     @Override
     public void updateEnabledState() {
-        setEnabled(getLayerManager().getEditLayer() != null);
+        setEnabled(getLayerManager().getActiveDataSet() != null);
     }
 
     @Override
@@ -104,9 +104,7 @@ public class ValidateAction extends JosmAction {
     }
 
     /**
-     * Asynchronous task for running a collection of tests against a collection
-     * of primitives
-     *
+     * Asynchronous task for running a collection of tests against a collection of primitives
      */
     static class ValidationTask extends PleaseWaitRunnable {
         private Collection<Test> tests;
@@ -116,7 +114,7 @@ public class ValidateAction extends JosmAction {
         private List<TestError> errors;
 
         /**
-         *
+         * Constructs a new {@code ValidationTask}
          * @param tests  the tests to run
          * @param validatedPrimitives the collection of primitives to validate.
          * @param formerValidatedPrimitives the last collection of primitives being validates. May be null.

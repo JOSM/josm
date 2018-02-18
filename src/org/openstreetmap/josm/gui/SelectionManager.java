@@ -182,7 +182,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1 && MainApplication.getLayerManager().getEditDataSet() != null) {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1 && MainApplication.getLayerManager().getActiveDataSet() != null) {
             SelectByInternalPointAction.performSelection(MainApplication.getMap().mapView.getEastNorth(e.getX(), e.getY()),
                     (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0,
                     (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0);
@@ -373,7 +373,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             clicked = true;
         }
 
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (clicked) {
             Point center = new Point(selectionResult.xpoints[0], selectionResult.ypoints[0]);
             OsmPrimitive osm = nc.getNearestNodeOrWay(center, OsmPrimitive::isSelectable, false);

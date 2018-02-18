@@ -100,7 +100,7 @@ public abstract class AbstractInfoAction extends JosmAction {
 
     protected void launchInfoBrowsersForSelectedPrimitivesAndNote() {
         List<OsmPrimitive> primitivesToShow = new ArrayList<>();
-        DataSet ds = getLayerManager().getEditDataSet();
+        DataSet ds = getLayerManager().getActiveDataSet();
         if (ds != null) {
             primitivesToShow.addAll(ds.getAllSelected());
         }
@@ -154,7 +154,7 @@ public abstract class AbstractInfoAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
+        DataSet ds = getLayerManager().getActiveDataSet();
         setEnabled(ds != null && !ds.selectionEmpty());
     }
 

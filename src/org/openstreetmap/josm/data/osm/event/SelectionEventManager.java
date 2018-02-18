@@ -183,7 +183,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        DataSet oldDataSet = e.getPreviousEditDataSet();
+        DataSet oldDataSet = e.getPreviousDataSet();
         if (oldDataSet != null) {
             // Fake a selection removal
             // Relying on this allows components to not have to monitor layer changes.
@@ -193,7 +193,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
                     new HashSet<>(oldDataSet.getAllSelected()), Stream.empty()));
             oldDataSet.removeSelectionListener(this);
         }
-        DataSet newDataSet = e.getSource().getEditDataSet();
+        DataSet newDataSet = e.getSource().getActiveDataSet();
         if (newDataSet != null) {
             newDataSet.addSelectionListener(this);
             // Fake a selection add

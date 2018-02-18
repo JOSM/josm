@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -38,7 +39,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
     public void actionPerformed(ActionEvent e) {
         Collection<Command> cmds = new LinkedList<>();
         for (Relation orig : relations) {
-            Command c = GenericRelationEditor.addPrimitivesToRelation(orig, MainApplication.getLayerManager().getEditDataSet().getSelected());
+            Command c = GenericRelationEditor.addPrimitivesToRelation(orig, MainApplication.getLayerManager().getActiveDataSet().getSelected());
             if (c != null) {
                 cmds.add(c);
             }
@@ -56,12 +57,19 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
 
     @Override
     public void updateEnabledState() {
-        putValue(NAME, trn("Add selection to {0} relation", "Add selection to {0} relations",
-                relations.size(), relations.size()));
+        int size = relations.size();
+        putValue(NAME, trn("Add selection to {0} relation", "Add selection to {0} relations", size, size));
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+        if (ds != null) {
+            selectionChanged(ds.getSelected());
+        } else {
+            setEnabled(false);
+        }
     }
 
     @Override
     public void selectionChanged(final Collection<? extends OsmPrimitive> newSelection) {
-        GuiHelper.runInEDT(() -> setEnabled(newSelection != null && !newSelection.isEmpty()));
+        GuiHelper.runInEDT(() -> setEnabled(newSelection != null && !newSelection.isEmpty() && !relations.isEmpty()
+                && relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isReadOnly)));
     }
 }

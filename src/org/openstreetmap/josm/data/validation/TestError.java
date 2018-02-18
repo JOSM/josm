@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import java.util.function.Supplier;
 
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -357,7 +358,8 @@ public class TestError implements Comparable<TestError> {
      * @return true if the error can be fixed
      */
     public boolean isFixable() {
-        return fixingCommand != null || ((tester != null) && tester.isFixable(this));
+        return (fixingCommand != null || ((tester != null) && tester.isFixable(this)))
+                && primitives.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isReadOnly);
     }
 
     /**

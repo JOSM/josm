@@ -319,7 +319,7 @@ public final class Projections {
             try {
                 cproj.update(pd.definition);
             } catch (ProjectionConfigurationException ex) {
-                throw new RuntimeException("Error loading " + code, ex);
+                throw new JosmRuntimeException("Error loading " + code, ex);
             }
             proj = cproj;
         }

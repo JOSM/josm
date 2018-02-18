@@ -1372,7 +1372,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
     @Override
     public boolean layerIsSupported(Layer l) {
-        return l instanceof OsmDataLayer;
+        return isEditableDataLayer(l);
     }
 
     @Override

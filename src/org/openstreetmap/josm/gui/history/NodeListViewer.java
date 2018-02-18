@@ -21,6 +21,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -28,7 +29,6 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -248,9 +248,9 @@ public class NodeListViewer extends JPanel {
                 return;
             OsmPrimitive p = getPrimitiveToZoom();
             if (p != null) {
-                OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-                if (editLayer != null) {
-                    editLayer.data.setSelected(p.getPrimitiveId());
+                DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+                if (ds != null) {
+                    ds.setSelected(p.getPrimitiveId());
                     AutoScaleAction.autoScale("selection");
                 }
             }
@@ -264,14 +264,14 @@ public class NodeListViewer extends JPanel {
         protected OsmPrimitive getPrimitiveToZoom() {
             if (primitiveId == null)
                 return null;
-            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-            if (editLayer == null)
+            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds == null)
                 return null;
-            return editLayer.data.getPrimitiveById(primitiveId);
+            return ds.getPrimitiveById(primitiveId);
         }
 
         public void updateEnabledState() {
-            setEnabled(MainApplication.getLayerManager().getEditLayer() != null && getPrimitiveToZoom() != null);
+            setEnabled(MainApplication.getLayerManager().getActiveDataSet() != null && getPrimitiveToZoom() != null);
         }
     }
 

@@ -126,15 +126,15 @@ public class MainLayerManagerTest extends LayerManagerTest {
         CapturingActiveLayerChangeListener listener2 = new CapturingActiveLayerChangeListener();
         layerManagerWithActive.addAndFireActiveLayerChangeListener(listener2);
         assertSame(listener2.lastEvent.getPreviousActiveLayer(), null);
-        assertSame(listener2.lastEvent.getPreviousEditLayer(), null);
+        assertSame(listener2.lastEvent.getPreviousDataLayer(), null);
 
         layerManagerWithActive.setActiveLayer(layer1);
         assertSame(listener2.lastEvent.getPreviousActiveLayer(), layer2);
-        assertSame(listener2.lastEvent.getPreviousEditLayer(), layer2);
+        assertSame(listener2.lastEvent.getPreviousDataLayer(), layer2);
 
         layerManagerWithActive.setActiveLayer(layer2);
         assertSame(listener2.lastEvent.getPreviousActiveLayer(), layer1);
-        assertSame(listener2.lastEvent.getPreviousEditLayer(), layer2);
+        assertSame(listener2.lastEvent.getPreviousDataLayer(), layer2);
     }
 
     /**

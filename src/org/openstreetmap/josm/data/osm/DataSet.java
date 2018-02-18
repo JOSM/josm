@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -102,7 +103,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  *
  * @author imi
  */
-public final class DataSet extends QuadBucketPrimitiveStore implements Data, ProjectionChangeListener {
+public final class DataSet extends QuadBucketPrimitiveStore implements Data, ProjectionChangeListener, ReadOnly {
 
     /**
      * Upload policy.
@@ -142,6 +143,22 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         public String getXmlFlag() {
             return xmlFlag;
         }
+
+        /**
+         * Returns the {@code UploadPolicy} for the given <code>upload='...'</code> XML-attribute
+         * @param xmlFlag <code>upload='...'</code> XML-attribute to convert
+         * @return {@code UploadPolicy} value
+         * @throws IllegalArgumentException for invalid values
+         * @since 13434
+         */
+        public static UploadPolicy of(String xmlFlag) {
+            for (UploadPolicy policy : values()) {
+                if (policy.getXmlFlag().equalsIgnoreCase(xmlFlag)) {
+                    return policy;
+                }
+            }
+            throw new IllegalArgumentException(xmlFlag);
+        }
     }
 
     /**
@@ -170,6 +187,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
 
     private String name;
     private UploadPolicy uploadPolicy;
+    /** Flag used to know if the dataset should not be editable */
+    private final AtomicBoolean isReadOnly = new AtomicBoolean(false);
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -258,6 +277,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             }
             version = copyFrom.version;
             uploadPolicy = copyFrom.uploadPolicy;
+            isReadOnly.set(copyFrom.isReadOnly.get());
         } finally {
             copyFrom.getReadLock().unlock();
         }
@@ -352,8 +372,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * Sets the API version this dataset was created from.
      *
      * @param version the API version, i.e. "0.6"
+     * @throws IllegalStateException if the dataset is read-only
      */
     public void setVersion(String version) {
+        checkModifiable();
         this.version = version;
     }
 
@@ -532,10 +554,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * Adds a primitive to the dataset.
      *
      * @param primitive the primitive.
+     * @throws IllegalStateException if the dataset is read-only
      */
     @Override
     public void addPrimitive(OsmPrimitive primitive) {
         Objects.requireNonNull(primitive, "primitive");
+        checkModifiable();
         beginUpdate();
         try {
             if (getPrimitiveById(primitive) != null)
@@ -560,8 +584,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * primitive are left unchanged.
      *
      * @param primitiveId the id of the primitive
+     * @throws IllegalStateException if the dataset is read-only
      */
     public void removePrimitive(PrimitiveId primitiveId) {
+        checkModifiable();
         beginUpdate();
         try {
             OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
@@ -586,6 +612,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
 
     @Override
     protected void removePrimitive(OsmPrimitive primitive) {
+        checkModifiable();
         beginUpdate();
         try {
             removePrimitiveImpl(primitive);
@@ -997,8 +1024,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      *
      * @param node the node
      * @return The set of ways that have been modified
+     * @throws IllegalStateException if the dataset is read-only
      */
     public Set<Way> unlinkNodeFromWays(Node node) {
+        checkModifiable();
         Set<Way> result = new HashSet<>();
         beginUpdate();
         try {
@@ -1024,8 +1053,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      *
      * @param primitive the primitive
      * @return The set of relations that have been modified
+     * @throws IllegalStateException if the dataset is read-only
      */
     public Set<Relation> unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
+        checkModifiable();
         Set<Relation> result = new HashSet<>();
         beginUpdate();
         try {
@@ -1058,8 +1089,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      *
      * @param referencedPrimitive the referenced primitive
      * @return The set of primitives that have been modified
+     * @throws IllegalStateException if the dataset is read-only
      */
     public Set<OsmPrimitive> unlinkReferencesToPrimitive(OsmPrimitive referencedPrimitive) {
+        checkModifiable();
         Set<OsmPrimitive> result = new HashSet<>();
         beginUpdate();
         try {
@@ -1130,6 +1163,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      *   ds.endUpdate();
      * }
      * </pre>
+     * @see #endUpdate()
      */
     public void beginUpdate() {
         lock.writeLock().lock();
@@ -1137,6 +1171,17 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     /**
+     * Must be called after a previous call to {@link #beginUpdate()} to fire change events.
+     * <br>
+     * Typical usecase should look like this:
+     * <pre>
+     * ds.beginUpdate();
+     * try {
+     *   ...
+     * } finally {
+     *   ds.endUpdate();
+     * }
+     * </pre>
      * @see DataSet#beginUpdate()
      */
     public void endUpdate() {
@@ -1272,9 +1317,11 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     /**
      * Removes all primitives from the dataset and resets the currently selected primitives
      * to the empty collection. Also notifies selection change listeners if necessary.
+     * @throws IllegalStateException if the dataset is read-only
      */
     @Override
     public void clear() {
+        checkModifiable();
         beginUpdate();
         try {
             clearSelection();
@@ -1291,9 +1338,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     /**
      * Marks all "invisible" objects as deleted. These objects should be always marked as
      * deleted when downloaded from the server. They can be undeleted later if necessary.
-     *
+     * @throws IllegalStateException if the dataset is read-only
      */
     public void deleteInvisible() {
+        checkModifiable();
         for (OsmPrimitive primitive:allPrimitives) {
             if (!primitive.isVisible()) {
                 primitive.setDeleted(true);
@@ -1313,9 +1361,11 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * Moves all primitives and datasources from DataSet "from" to this DataSet.
      * @param from The source DataSet
      * @param progressMonitor The progress monitor
+     * @throws IllegalStateException if the dataset is read-only
      */
     public synchronized void mergeFrom(DataSet from, ProgressMonitor progressMonitor) {
         if (from != null) {
+            checkModifiable();
             new DataSetMerger(this, from).merge(progressMonitor);
             synchronized (from) {
                 if (!from.dataSources.isEmpty()) {
@@ -1400,5 +1450,34 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      */
     public void clearMappaintCache() {
         mappaintCacheIdx++;
+    }
+
+    @Override
+    public void setReadOnly() {
+        if (!isReadOnly.compareAndSet(false, true)) {
+            Logging.warn("Trying to set readOnly flag on a readOnly dataset ", getName());
+        }
+    }
+
+    @Override
+    public void unsetReadOnly() {
+        if (!isReadOnly.compareAndSet(true, false)) {
+            Logging.warn("Trying to unset readOnly flag on a non-readOnly dataset ", getName());
+        }
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return isReadOnly.get();
+    }
+
+    /**
+     * Checks the dataset is modifiable (not read-only).
+     * @throws IllegalStateException if the dataset is read-only
+     */
+    private void checkModifiable() {
+        if (isReadOnly()) {
+            throw new IllegalStateException("DataSet is read-only");
+        }
     }
 }

@@ -274,6 +274,14 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
             throw new DataIntegrityProblemException("Primitive must be part of the dataset: " + toString());
     }
 
+    /**
+     * Throws exception if primitive is in a read-only dataset
+     */
+    protected final void checkDatasetNotReadOnly() {
+        if (dataSet != null && dataSet.isReadOnly())
+            throw new DataIntegrityProblemException("Primitive cannot be modified in read-only dataset: " + toString());
+    }
+
     protected boolean writeLock() {
         if (dataSet != null) {
             dataSet.beginUpdate();
@@ -304,6 +312,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     @Override
     public void setOsmId(long id, int version) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             if (id <= 0)
@@ -342,6 +351,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public void setUser(User user) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.setUser(user);
@@ -352,6 +362,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public void setChangesetId(int changesetId) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             int old = this.changesetId;
@@ -366,6 +377,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public void setTimestamp(Date timestamp) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.setTimestamp(timestamp);
@@ -533,6 +545,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public void setModified(boolean modified) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.setModified(modified);
@@ -547,6 +560,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public void setVisible(boolean visible) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.setVisible(visible);
@@ -558,6 +572,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public void setDeleted(boolean deleted) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.setDeleted(deleted);
@@ -576,6 +591,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     protected final void setIncomplete(boolean incomplete) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             if (dataSet != null && incomplete != this.isIncomplete()) {
@@ -890,6 +906,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public final void setKeys(TagMap keys) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.setKeys(keys);
@@ -900,6 +917,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public final void setKeys(Map<String, String> keys) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.setKeys(keys);
@@ -910,6 +928,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public final void put(String key, String value) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.put(key, value);
@@ -920,6 +939,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public final void remove(String key) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.remove(key);
@@ -930,6 +950,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     @Override
     public final void removeAll() {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             super.removeAll();
@@ -965,6 +986,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param referrer The referrer to add
      */
     protected void addReferrer(OsmPrimitive referrer) {
+        checkDatasetNotReadOnly();
         if (referrers == null) {
             referrers = referrer;
         } else if (referrers instanceof OsmPrimitive) {
@@ -985,6 +1007,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param referrer The referrer to remove
      */
     protected void removeReferrer(OsmPrimitive referrer) {
+        checkDatasetNotReadOnly();
         if (referrers instanceof OsmPrimitive) {
             if (referrers == referrer) {
                 referrers = null;
@@ -1147,6 +1170,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @throws DataIntegrityProblemException if other isn't new and other.getId() != this.getId()
      */
     public void mergeFrom(OsmPrimitive other) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             CheckParameterUtil.ensureParameterNotNull(other, "other");
@@ -1238,6 +1262,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param data The object which should be cloned
      */
     public void load(PrimitiveData data) {
+        checkDatasetNotReadOnly();
         // Write lock is provided by subclasses
         setKeys(data.hasKeys() ? data.getKeys() : null);
         setRawTimestamp(data.getRawTimestamp());

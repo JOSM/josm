@@ -45,6 +45,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @since 1925
      */
     public void setMembers(List<RelationMember> members) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             for (RelationMember rm : this.members) {
@@ -87,6 +88,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @param member the member to add
      */
     public void addMember(RelationMember member) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             members = Utils.addInArrayCopy(members, member);
@@ -104,6 +106,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @param index the index at which the specified element is to be inserted
      */
     public void addMember(int index, RelationMember member) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             RelationMember[] newMembers = new RelationMember[members.length + 1];
@@ -126,6 +129,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @return Member that was at the position
      */
     public RelationMember setMember(int index, RelationMember member) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             RelationMember originalMember = members[index];
@@ -149,6 +153,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @return Member that was at the position
      */
     public RelationMember removeMember(int index) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             List<RelationMember> members = getMembers();
@@ -375,6 +380,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @since 5613
      */
     public void removeMembersFor(Collection<? extends OsmPrimitive> primitives) {
+        checkDatasetNotReadOnly();
         if (primitives == null || primitives.isEmpty())
             return;
 

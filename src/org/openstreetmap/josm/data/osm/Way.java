@@ -52,6 +52,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 1862
      */
     public void setNodes(List<Node> nodes) {
+        checkDatasetNotReadOnly();
         boolean locked = writeLock();
         try {
             for (Node node:this.nodes) {
@@ -360,6 +361,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 1463
      */
     public void removeNode(Node n) {
+        checkDatasetNotReadOnly();
         if (n == null || isIncomplete()) return;
         boolean locked = writeLock();
         try {
@@ -388,6 +390,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 5408
      */
     public void removeNodes(Set<? extends Node> selection) {
+        checkDatasetNotReadOnly();
         if (selection == null || isIncomplete()) return;
         boolean locked = writeLock();
         try {
@@ -424,6 +427,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 1313
      */
     public void addNode(Node n) {
+        checkDatasetNotReadOnly();
         if (n == null) return;
 
         boolean locked = writeLock();
@@ -451,6 +455,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 1313
      */
     public void addNode(int offs, Node n) {
+        checkDatasetNotReadOnly();
         if (n == null) return;
 
         boolean locked = writeLock();

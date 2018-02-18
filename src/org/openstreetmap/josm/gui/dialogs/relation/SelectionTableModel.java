@@ -106,7 +106,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        if (layer == MainApplication.getLayerManager().getEditLayer()) {
+        if (layer == MainApplication.getLayerManager().getActiveDataLayer()) {
             cache.clear();
             cache.addAll(newSelection);
         } else {

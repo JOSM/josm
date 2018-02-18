@@ -42,14 +42,14 @@ public class CopyAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        DataSet set = getLayerManager().getEditDataSet();
+        DataSet set = getLayerManager().getActiveDataSet();
         Collection<OsmPrimitive> selection = set == null ? Collections.<OsmPrimitive>emptySet() : set.getSelected();
         if (selection.isEmpty()) {
             showEmptySelectionWarning();
             return;
         }
 
-        copy(getLayerManager().getEditLayer(), selection);
+        copy(getLayerManager().getActiveDataLayer(), selection);
     }
 
     /**
@@ -65,7 +65,7 @@ public class CopyAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        updateEnabledStateOnCurrentSelection();
+        updateEnabledStateOnCurrentSelection(true);
     }
 
     @Override

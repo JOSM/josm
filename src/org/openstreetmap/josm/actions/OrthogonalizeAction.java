@@ -138,7 +138,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
         @Override
         protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-            setEnabled(selection != null && !selection.isEmpty());
+            updateEnabledStateOnModifiableSelection(selection);
         }
     }
 
@@ -645,6 +645,6 @@ public final class OrthogonalizeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        updateEnabledStateOnModifiableSelection(selection);
     }
 }
