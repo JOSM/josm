@@ -137,7 +137,10 @@ public class SessionLoadAction extends DiskAccessAction {
                 for (Layer l : layers) {
                     if (canceled)
                         return;
-                    MainApplication.getLayerManager().addLayer(l);
+                    // NoteImporter directly loads notes into current note layer
+                    if (!MainApplication.getLayerManager().containsLayer(l)) {
+                        MainApplication.getLayerManager().addLayer(l);
+                    }
                 }
                 if (active != null) {
                     MainApplication.getLayerManager().setActiveLayer(active);

@@ -133,9 +133,9 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             }
 
             noteLayer = new NoteLayer(notesData, tr("Notes"));
-            List<NoteLayer> noteLayers = MainApplication.getLayerManager().getLayersOfType(NoteLayer.class);
-            if (!noteLayers.isEmpty()) {
-                noteLayers.get(0).getNoteData().addNotes(notesData);
+            NoteLayer l = MainApplication.getLayerManager().getNoteLayer();
+            if (l != null) {
+                l.mergeFrom(noteLayer);
                 MapFrame map = MainApplication.getMap();
                 if (map != null && zoomAfterDownload) {
                     map.mapView.scheduleZoomTo(new ViewportData(noteLayer.getViewProjectionBounds()));

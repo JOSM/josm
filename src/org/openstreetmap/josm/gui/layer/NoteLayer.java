@@ -348,12 +348,15 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
 
     @Override
     public String getToolTipText() {
-        return trn("{0} note", "{0} notes", noteData.getNotes().size(), noteData.getNotes().size());
+        int size = noteData.getNotes().size();
+        return trn("{0} note", "{0} notes", size, size);
     }
 
     @Override
     public void mergeFrom(Layer from) {
-        throw new UnsupportedOperationException("Notes layer does not support merging yet");
+        if (from instanceof NoteLayer && this != from) {
+            noteData.mergeFrom(((NoteLayer) from).noteData);
+        }
     }
 
     @Override

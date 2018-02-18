@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 import org.openstreetmap.josm.actions.upload.UploadNotesTask;
 import org.openstreetmap.josm.data.osm.NoteData;
@@ -17,7 +16,7 @@ import org.openstreetmap.josm.tools.Logging;
  * Action to initiate uploading changed notes to the OSM server.
  * On click, it finds the note layer and fires off an upload task
  * with the note data contained in the layer.
- *
+ * @since 7699
  */
 public class UploadNotesAction extends JosmAction {
 
@@ -30,11 +29,8 @@ public class UploadNotesAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<NoteLayer> noteLayers = getLayerManager().getLayersOfType(NoteLayer.class);
-        NoteLayer layer;
-        if (!noteLayers.isEmpty()) {
-            layer = noteLayers.get(0);
-        } else {
+        NoteLayer layer = getLayerManager().getNoteLayer();
+        if (layer == null) {
             Logging.error("No note layer found");
             return;
         }

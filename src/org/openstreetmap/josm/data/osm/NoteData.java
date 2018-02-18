@@ -121,6 +121,17 @@ public class NoteData {
     }
 
     /**
+     * Merge notes from an existing note data.
+     * @param from existing note data
+     * @since 13437
+     */
+    public synchronized void mergeFrom(NoteData from) {
+        if (this != from) {
+            addNotes(from.noteList);
+        }
+    }
+
+    /**
      * Add notes to the data set. It only adds a note if the ID is not already present
      * @param newNotes A list of notes to add
      */
