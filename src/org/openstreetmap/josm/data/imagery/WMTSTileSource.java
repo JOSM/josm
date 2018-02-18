@@ -783,7 +783,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 .replaceAll("(?i)\\{style\\}", this.currentLayer.style);
 
         for (Dimension d : currentLayer.dimensions) {
-            url = url.replaceAll("\\{"+d.identifier+"\\}", d.defaultValue);
+            url = url.replaceAll("(?i)\\{"+d.identifier+"\\}", d.defaultValue);
         }
 
         return url;
