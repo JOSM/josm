@@ -372,7 +372,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             HtmlPanel help = new HtmlPanel(tr("New default entries can be added in the <a href=\"{0}\">Wiki</a>.",
                 Main.getJOSMWebsite()+"/wiki/Maps"));
             help.enableClickableHyperlinks();
-            add(help, GBC.eol().insets(10, 0, 0, 10).fill(GBC.HORIZONTAL));
+            add(help, GBC.eol().insets(10, 0, 0, 0).fill(GBC.HORIZONTAL));
 
             ActivateAction activate = new ActivateAction();
             defaultTable.getSelectionModel().addListSelectionListener(activate);
@@ -383,7 +383,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             middleToolbar.setBorderPainted(false);
             middleToolbar.setOpaque(false);
             middleToolbar.add(btnActivate);
-            add(middleToolbar, GBC.eol().anchor(GBC.CENTER).insets(5, 15, 5, 0));
+            add(middleToolbar, GBC.eol().anchor(GBC.CENTER).insets(5, 5, 5, 0));
 
             add(Box.createHorizontalGlue(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
