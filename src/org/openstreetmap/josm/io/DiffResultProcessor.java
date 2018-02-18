@@ -120,7 +120,12 @@ public class DiffResultProcessor {
         if (!primitives.isEmpty()) {
             ds = primitives.iterator().next().getDataSet();
         }
+        boolean readOnly = false;
         if (ds != null) {
+            readOnly = ds.isReadOnly();
+            if (readOnly) {
+                ds.unsetReadOnly();
+            }
             ds.beginUpdate();
         }
         try {
@@ -151,6 +156,9 @@ public class DiffResultProcessor {
         } finally {
             if (ds != null) {
                 ds.endUpdate();
+                if (readOnly) {
+                    ds.setReadOnly();
+                }
             }
             monitor.finishTask();
         }
