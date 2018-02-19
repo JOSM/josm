@@ -66,6 +66,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(!relations.isEmpty() && !incompleteMembers.isEmpty() && !Main.isOffline(OnlineResource.OSM_API));
+        setEnabled(!relations.isEmpty() && !incompleteMembers.isEmpty() && !Main.isOffline(OnlineResource.OSM_API)
+                && !relations.iterator().next().getDataSet().isReadOnly());
     }
 }
