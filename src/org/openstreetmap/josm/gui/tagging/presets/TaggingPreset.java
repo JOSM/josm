@@ -492,7 +492,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             }
 
             answer = new PresetDialog(p, title, preset_name_label ? null : (ImageIcon) getValue(Action.SMALL_ICON),
-                    sel.isEmpty(), showNewRelation).getValue();
+                    sel.isEmpty() || sel.iterator().next().getDataSet().isReadOnly(), showNewRelation).getValue();
         }
         if (!showNewRelation && answer == 2)
             return DIALOG_ANSWER_CANCEL;
