@@ -264,8 +264,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         Optional<OsmPrimitive> newHighlight = Optional.empty();
 
         virtualManager.clear();
-        if ((mode == Mode.MOVE || mode == Mode.SELECT)
-                && !dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
+        if (mode == Mode.MOVE && !dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
             DataSet ds = getLayerManager().getActiveDataSet();
             if (ds != null && drawTargetHighlight) {
                 ds.setHighlightedVirtualNodes(virtualManager.virtualWays);
