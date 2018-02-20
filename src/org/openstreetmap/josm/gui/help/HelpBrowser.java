@@ -652,7 +652,11 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
                 OpenBrowser.displayUrl(e.getURL().toExternalForm());
             } else {
                 url = e.getURL().toExternalForm();
-                openUrl(url);
+                if (url.startsWith(HelpUtil.getWikiBaseUrl())) {
+                    openUrl(url);
+                } else {
+                    OpenBrowser.displayUrl(url);
+                }
             }
         }
     }
