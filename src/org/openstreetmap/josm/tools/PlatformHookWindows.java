@@ -70,7 +70,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
-import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
+import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -438,11 +438,11 @@ public class PlatformHookWindows implements PlatformHook {
     }
 
     @Override
-    public X509Certificate getX509Certificate(CertAmend certAmend)
+    public X509Certificate getX509Certificate(NativeCertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         KeyStore ks = getRootKeystore();
         // Search by alias (fast)
-        Certificate result = ks.getCertificate(certAmend.getId());
+        Certificate result = ks.getCertificate(certAmend.getWinAlias());
         if (result instanceof X509Certificate) {
             return (X509Certificate) result;
         }

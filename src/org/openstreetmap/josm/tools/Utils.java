@@ -846,8 +846,8 @@ public final class Utils {
                 if (all == null) {
                     all = new StringBuilder(line);
                 } else {
-                    all.append('\n');
-                    all.append(line);
+                    all.append('\n')
+                       .append(line);
                 }
             }
             String msg = all != null ? all.toString() : null;

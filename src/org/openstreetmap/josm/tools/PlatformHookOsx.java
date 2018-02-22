@@ -7,19 +7,28 @@ import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 
 /**
  * {@code PlatformHook} implementation for Apple Mac OS X systems.
@@ -425,5 +434,20 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     public File getDefaultUserDataDirectory() {
         return new File(System.getProperty("user.home")+"/Library",
                 Main.pref.getJOSMDirectoryBaseName());
+    }
+
+    @Override
+    public X509Certificate getX509Certificate(NativeCertAmend certAmend)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        try {
+            // Get platform certificate in PEM format
+            String pem = Utils.execOutput(Arrays.asList("security", "find-certificate",
+                    "-c", certAmend.getMacAlias(), "-p", "/System/Library/Keychains/SystemRootCertificates.keychain"));
+            Logging.debug(pem);
+            return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(
+                    new ByteArrayInputStream(pem.getBytes(StandardCharsets.UTF_8)));
+        } catch (ExecutionException | InterruptedException | IllegalArgumentException e) {
+            throw new IOException(e);
+        }
     }
 }

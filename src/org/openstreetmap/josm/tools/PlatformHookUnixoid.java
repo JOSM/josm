@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
+import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -397,7 +397,7 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     @Override
-    public X509Certificate getX509Certificate(CertAmend certAmend)
+    public X509Certificate getX509Certificate(NativeCertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         File f = new File("/usr/share/ca-certificates/mozilla", certAmend.getFilename());
         if (f.exists()) {

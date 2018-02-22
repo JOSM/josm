@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
-import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
+import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -210,9 +210,9 @@ public interface PlatformHook {
      * @throws IOException in case of error
      * @throws CertificateException in case of error
      * @throws NoSuchAlgorithmException in case of error
-     * @since 11943
+     * @since 13450
      */
-    default X509Certificate getX509Certificate(CertAmend certAmend)
+    default X509Certificate getX509Certificate(NativeCertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         return null;
     }
