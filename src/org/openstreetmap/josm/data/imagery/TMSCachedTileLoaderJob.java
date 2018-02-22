@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -41,6 +44,7 @@ import org.openstreetmap.josm.tools.Logging;
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener {
     private static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires", TimeUnit.DAYS.toMillis(30));
     private static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires", TimeUnit.HOURS.toMillis(1));
+    private static final Pattern SERVICE_EXCEPTION_PATTERN = Pattern.compile("(?s).+<ServiceException>(.+)</ServiceException>.+");
     protected final Tile tile;
     private volatile URL url;
 
@@ -269,14 +273,22 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         if (object != null) {
             byte[] content = object.getContent();
             if (content.length > 0) {
-                try {
-                    tile.loadImage(new ByteArrayInputStream(content));
+                try (ByteArrayInputStream in = new ByteArrayInputStream(content)) {
+                    tile.loadImage(in);
+                    if (tile.getImage() == null) {
+                        String s = new String(content, StandardCharsets.UTF_8);
+                        Matcher m = SERVICE_EXCEPTION_PATTERN.matcher(s);
+                        if (m.matches()) {
+                            tile.setError(m.group(1));
+                            Logging.error(m.group(1));
+                            Logging.debug(s);
+                        } else {
+                            tile.setError(tr("Could not load image from tile server"));
+                        }
+                        return false;
+                    }
                 } catch (UnsatisfiedLinkError e) {
                     throw new IOException(e);
-                }
-                if (tile.getImage() == null) {
-                    tile.setError(tr("Could not load image from tile server"));
-                    return false;
                 }
             }
         }
