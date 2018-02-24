@@ -58,11 +58,13 @@ import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
 
@@ -440,6 +442,19 @@ public class PlatformHookWindows implements PlatformHook {
     @Override
     public X509Certificate getX509Certificate(NativeCertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        // Make a web request to target site to force Windows to update if needed its trust root store from its certificate trust list
+        // A better, but a lot more complex method might be to get certificate list from Windows Registry with PowerShell
+        // using (Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\SystemCertificates\\AuthRoot\\AutoUpdate').EncodedCtl)
+        // then decode it using CertUtil -dump or calling CertCreateCTLContext API using JNI, and finally find and decode the certificate
+        try {
+            // https://stackoverflow.com/a/41618979/2257172
+            Utils.execOutput(Arrays.asList("powershell", "-Command",
+                    "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;" +
+                    "Invoke-WebRequest " + certAmend.getWebSite()));
+        } catch (ExecutionException | InterruptedException e) {
+            Logging.error(e);
+        }
+        // Get Windows Trust Root Store
         KeyStore ks = getRootKeystore();
         // Search by alias (fast)
         Certificate result = ks.getCertificate(certAmend.getWinAlias());
