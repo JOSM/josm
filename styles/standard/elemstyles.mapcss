@@ -4,7 +4,7 @@ Main JOSM map paint style.
 Originally in XML format, migrated to MapCSS.
 Documentation of MapCSS format:
 
- http://josm.openstreetmap.de/wiki/Help/Styles/MapCSSImplementation
+ https://josm.openstreetmap.de/wiki/Help/Styles/MapCSSImplementation
 
 */
 
