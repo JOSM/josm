@@ -365,7 +365,7 @@ public class MergeNodesAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         if (selection == null || selection.isEmpty()
-                || selection.stream().map(OsmPrimitive::getDataSet).anyMatch(DataSet::isReadOnly)) {
+                || selection.stream().map(OsmPrimitive::getDataSet).anyMatch(DataSet::isLocked)) {
             setEnabled(false);
             return;
         }

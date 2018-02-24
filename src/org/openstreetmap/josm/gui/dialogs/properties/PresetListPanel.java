@@ -40,7 +40,7 @@ public class PresetListPanel extends JPanel {
                 return;
             int answer = t.showDialog(selection, false);
 
-            if (answer == TaggingPreset.DIALOG_ANSWER_APPLY && !selection.iterator().next().getDataSet().isReadOnly()) {
+            if (answer == TaggingPreset.DIALOG_ANSWER_APPLY && !selection.iterator().next().getDataSet().isLocked()) {
                 presetHandler.updateTags(t.getChangedTags());
             }
         }

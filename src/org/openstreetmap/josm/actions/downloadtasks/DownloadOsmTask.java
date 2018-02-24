@@ -237,7 +237,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
         private static Stream<OsmDataLayer> getModifiableDataLayers() {
             return MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class)
-                    .stream().filter(l -> !l.isReadOnly());
+                    .stream().filter(OsmDataLayer::isDownloadable);
         }
 
         /**

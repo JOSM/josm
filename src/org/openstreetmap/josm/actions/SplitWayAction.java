@@ -296,7 +296,7 @@ public class SplitWayAction extends JosmAction {
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         // Selection still can be wrong, but let SplitWayAction process and tell user what's wrong
         setEnabled(selection != null && !selection.isEmpty()
-                && selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isReadOnly)
+                && selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isLocked)
                 && selection.stream().anyMatch(o -> o instanceof Node && !o.isIncomplete()));
     }
 }

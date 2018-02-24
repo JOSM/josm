@@ -20,7 +20,7 @@ way[zip_left                   ][!highway],
 way[zip_right                  ][!highway],
 way[detail                     ][!railway][route!=railway],
 way[eddy_current_brake         ][!railway][route!=railway],
-way[electrified                ][!railway][route!=railway],
+way[electrified                ][!railway][route!=railway][!highway], /* #16007 */
 way[etcs                       ][!railway][route!=railway],
 way[gauge                      ][!railway][route!=railway],
 way[grade_of_track             ][!railway][route!=railway],

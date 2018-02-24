@@ -70,6 +70,6 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
     @Override
     public void selectionChanged(final Collection<? extends OsmPrimitive> newSelection) {
         GuiHelper.runInEDT(() -> setEnabled(newSelection != null && !newSelection.isEmpty() && !relations.isEmpty()
-                && relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isReadOnly)));
+                && relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isLocked)));
     }
 }

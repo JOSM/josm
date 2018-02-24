@@ -133,6 +133,11 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
     }
 
     @Override
+    public boolean isDownloadable() {
+        return true;
+    }
+
+    @Override
     public boolean isUploadable() {
         return true;
     }

@@ -88,7 +88,7 @@ public class EditRelationAction extends AbstractRelationAction {
     @Override
     protected void updateEnabledState() {
         boolean enabled = false;
-        if (relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isReadOnly)) {
+        if (relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isLocked)) {
             for (Relation r : relations) {
                 if (!r.isDeleted()) {
                     enabled = true;

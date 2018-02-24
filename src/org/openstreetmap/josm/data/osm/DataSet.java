@@ -103,13 +103,62 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  *
  * @author imi
  */
-public final class DataSet extends QuadBucketPrimitiveStore implements Data, ProjectionChangeListener, ReadOnly {
+public final class DataSet extends QuadBucketPrimitiveStore implements Data, ProjectionChangeListener, Lockable {
+
+    /**
+     * Download policy.
+     *
+     * Determines if download from the OSM server is intended, discouraged, or disabled / blocked.
+     * @see UploadPolicy
+     * @since 13453
+     */
+    public enum DownloadPolicy {
+        /**
+         * Normal dataset, download intended.
+         */
+        NORMAL("true"),
+        /**
+         * Download blocked.
+         * Download options completely disabled. Intended for private layers, see #8039.
+         */
+        BLOCKED("never");
+
+        final String xmlFlag;
+
+        DownloadPolicy(String xmlFlag) {
+            this.xmlFlag = xmlFlag;
+        }
+
+        /**
+         * Get the corresponding value of the <code>upload='...'</code> XML-attribute
+         * in the .osm file.
+         * @return value of the <code>download</code> attribute
+         */
+        public String getXmlFlag() {
+            return xmlFlag;
+        }
+
+        /**
+         * Returns the {@code DownloadPolicy} for the given <code>upload='...'</code> XML-attribute
+         * @param xmlFlag <code>download='...'</code> XML-attribute to convert
+         * @return {@code DownloadPolicy} value
+         * @throws IllegalArgumentException for invalid values
+         */
+        public static DownloadPolicy of(String xmlFlag) {
+            for (DownloadPolicy policy : values()) {
+                if (policy.getXmlFlag().equalsIgnoreCase(xmlFlag)) {
+                    return policy;
+                }
+            }
+            throw new IllegalArgumentException(xmlFlag);
+        }
+    }
 
     /**
      * Upload policy.
      *
-     * Determines if upload to the OSM server is intended, discouraged, or
-     * disabled / blocked.
+     * Determines if upload to the OSM server is intended, discouraged, or disabled / blocked.
+     * @see DownloadPolicy
      */
     public enum UploadPolicy {
         /**
@@ -172,7 +221,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     private static final int MAX_EVENTS = 1000;
 
     private final Storage<OsmPrimitive> allPrimitives = new Storage<>(new Storage.PrimitiveIdHash(), true);
-    private final Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new Storage.PrimitiveIdHash());
+    private final Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives
+            .foreignKey(new Storage.PrimitiveIdHash());
     private final CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<>();
 
     // provide means to highlight map elements that are not osm primitives
@@ -186,6 +236,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<>();
 
     private String name;
+    private DownloadPolicy downloadPolicy;
     private UploadPolicy uploadPolicy;
     /** Flag used to know if the dataset should not be editable */
     private final AtomicBoolean isReadOnly = new AtomicBoolean(false);
@@ -249,7 +300,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
                 Way newWay = new Way(w);
                 primMap.put(w, newWay);
                 List<Node> newNodes = new ArrayList<>();
-                for (Node n: w.getNodes()) {
+                for (Node n : w.getNodes()) {
                     newNodes.add((Node) primMap.get(n));
                 }
                 newWay.setNodes(newNodes);
@@ -267,7 +318,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             for (Relation r : relations) {
                 Relation newRelation = (Relation) primMap.get(r);
                 List<RelationMember> newMembers = new ArrayList<>();
-                for (RelationMember rm: r.getMembers()) {
+                for (RelationMember rm : r.getMembers()) {
                     newMembers.add(new RelationMember(rm.getRole(), primMap.get(rm.getMember())));
                 }
                 newRelation.setMembers(newMembers);
@@ -377,6 +428,26 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     public void setVersion(String version) {
         checkModifiable();
         this.version = version;
+    }
+
+    /**
+     * Get the download policy.
+     * @return the download policy
+     * @see #setDownloadPolicy(DownloadPolicy)
+     * @since 13453
+     */
+    public DownloadPolicy getDownloadPolicy() {
+        return this.downloadPolicy;
+    }
+
+    /**
+     * Sets the download policy.
+     * @param downloadPolicy the download policy
+     * @see #getUploadPolicy()
+     * @since 13453
+     */
+    public void setDownloadPolicy(DownloadPolicy downloadPolicy) {
+        this.downloadPolicy = downloadPolicy;
     }
 
     /**
@@ -528,7 +599,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * @see OsmPrimitive#isIncomplete
      */
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
-        return getPrimitives(primitive -> !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation));
+        return getPrimitives(
+                primitive -> !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation));
     }
 
     /**
@@ -564,7 +636,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         try {
             if (getPrimitiveById(primitive) != null)
                 throw new DataIntegrityProblemException(
-                        tr("Unable to add primitive {0} to the dataset because it is already included", primitive.toString()));
+                        tr("Unable to add primitive {0} to the dataset because it is already included",
+                                primitive.toString()));
 
             allPrimitives.add(primitive);
             primitive.setDataset(this);
@@ -689,7 +762,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * @return selected nodes and ways
      */
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
-        return new SubclassFilteredCollection<>(getSelected(), primitive -> primitive instanceof Node || primitive instanceof Way);
+        return new SubclassFilteredCollection<>(getSelected(),
+                primitive -> primitive instanceof Node || primitive instanceof Way);
     }
 
     /**
@@ -1005,8 +1079,9 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     private OsmPrimitive getPrimitiveByIdChecked(PrimitiveId primitiveId) {
         OsmPrimitive result = getPrimitiveById(primitiveId);
         if (result == null && primitiveId != null) {
-            Logging.warn(tr("JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
-                    + "at {2}. This is not a critical error, it should be safe to continue in your work.",
+            Logging.warn(tr(
+                    "JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
+                            + "at {2}. This is not a critical error, it should be safe to continue in your work.",
                     primitiveId.getType(), Long.toString(primitiveId.getUniqueId()), Main.getJOSMWebsite()));
             Logging.error(new Exception());
         }
@@ -1114,7 +1189,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * {@link OsmPrimitive#isModified()} == <code>true</code>.
      */
     public boolean isModified() {
-        for (OsmPrimitive p: allPrimitives) {
+        for (OsmPrimitive p : allPrimitives) {
             if (p.isModified())
                 return true;
         }
@@ -1127,7 +1202,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * @since 13161
      */
     public boolean requiresUploadToServer() {
-        for (OsmPrimitive p: allPrimitives) {
+        for (OsmPrimitive p : allPrimitives) {
             if (APIOperation.of(p) != null)
                 return true;
         }
@@ -1198,7 +1273,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
                 lock.writeLock().unlock();
                 try {
                     if (eventsToFire.size() < MAX_SINGLE_EVENTS) {
-                        for (AbstractDatasetChangedEvent event: eventsToFire) {
+                        for (AbstractDatasetChangedEvent event : eventsToFire) {
                             fireEventToListeners(event);
                         }
                     } else if (eventsToFire.size() == MAX_EVENTS) {
@@ -1218,7 +1293,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     private void fireEventToListeners(AbstractDatasetChangedEvent event) {
-        for (DataSetListener listener: listeners) {
+        for (DataSetListener listener : listeners) {
             event.fire(listener);
         }
     }
@@ -1259,7 +1334,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     void fireChangesetIdChanged(OsmPrimitive primitive, int oldChangesetId, int newChangesetId) {
-        fireEvent(new ChangesetIdChangedEvent(this, Collections.singletonList(primitive), oldChangesetId, newChangesetId));
+        fireEvent(new ChangesetIdChangedEvent(this, Collections.singletonList(primitive), oldChangesetId,
+                newChangesetId));
     }
 
     void firePrimitiveFlagsChanged(OsmPrimitive primitive) {
@@ -1282,10 +1358,11 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * changed.
      */
     public void invalidateEastNorthCache() {
-        if (Main.getProjection() == null) return; // sanity check
+        if (Main.getProjection() == null)
+            return; // sanity check
         beginUpdate();
         try {
-            for (Node n: getNodes()) {
+            for (Node n : getNodes()) {
                 n.invalidateEastNorthCache();
             }
         } finally {
@@ -1325,7 +1402,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         beginUpdate();
         try {
             clearSelection();
-            for (OsmPrimitive primitive:allPrimitives) {
+            for (OsmPrimitive primitive : allPrimitives) {
                 primitive.setDataset(null);
             }
             super.clear();
@@ -1342,7 +1419,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      */
     public void deleteInvisible() {
         checkModifiable();
-        for (OsmPrimitive primitive:allPrimitives) {
+        for (OsmPrimitive primitive : allPrimitives) {
             if (!primitive.isVisible()) {
                 primitive.setDeleted(true);
             }
@@ -1453,21 +1530,21 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     @Override
-    public void setReadOnly() {
+    public void lock() {
         if (!isReadOnly.compareAndSet(false, true)) {
             Logging.warn("Trying to set readOnly flag on a readOnly dataset ", getName());
         }
     }
 
     @Override
-    public void unsetReadOnly() {
+    public void unlock() {
         if (!isReadOnly.compareAndSet(true, false)) {
             Logging.warn("Trying to unset readOnly flag on a non-readOnly dataset ", getName());
         }
     }
 
     @Override
-    public boolean isReadOnly() {
+    public boolean isLocked() {
         return isReadOnly.get();
     }
 
@@ -1476,7 +1553,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * @throws IllegalStateException if the dataset is read-only
      */
     private void checkModifiable() {
-        if (isReadOnly()) {
+        if (isLocked()) {
             throw new IllegalStateException("DataSet is read-only");
         }
     }

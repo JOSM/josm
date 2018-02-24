@@ -50,6 +50,6 @@ public class DeleteRelationsAction extends AbstractRelationAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(!relations.isEmpty() && relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isReadOnly));
+        setEnabled(!relations.isEmpty() && relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isLocked));
     }
 }

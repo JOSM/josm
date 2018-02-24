@@ -63,6 +63,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
@@ -420,14 +421,17 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     @Override
     public Icon getIcon() {
         ImageProvider base = getBaseIconProvider().setMaxSize(ImageSizes.LAYER);
-        if (isUploadDiscouraged() || data.getUploadPolicy() == UploadPolicy.BLOCKED) {
+        if (data.getDownloadPolicy() != null && data.getDownloadPolicy() != DownloadPolicy.NORMAL) {
+            base.addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.0, 1.0, 0.5));
+        }
+        if (data.getUploadPolicy() != null && data.getUploadPolicy() != UploadPolicy.NORMAL) {
             base.addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0));
         }
 
         if (isUploadInProgress()) {
             // If the layer is being uploaded then change the default icon to a clock
             base = new ImageProvider("clock").setMaxSize(ImageSizes.LAYER);
-        } else if (isReadOnly()) {
+        } else if (isLocked()) {
             // If the layer is read only then change the default icon to a lock
             base = new ImageProvider("lock").setMaxSize(ImageSizes.LAYER);
         }
@@ -939,8 +943,13 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     }
 
     @Override
+    public boolean isDownloadable() {
+        return data.getDownloadPolicy() != DownloadPolicy.BLOCKED && !isLocked();
+    }
+
+    @Override
     public boolean isUploadable() {
-        return data.getUploadPolicy() != UploadPolicy.BLOCKED;
+        return data.getUploadPolicy() != UploadPolicy.BLOCKED && !isLocked();
     }
 
     @Override
@@ -1030,11 +1039,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
          // change listener and already got notified.
     }
 
-    /**
-     * Determines if upload is being discouraged.
-     * (i.e. this dataset contains private data which should not be uploaded)
-     * @return {@code true} if upload is being discouraged, {@code false} otherwise
-     */
     @Override
     public final boolean isUploadDiscouraged() {
         return data.getUploadPolicy() == UploadPolicy.DISCOURAGED;
@@ -1173,18 +1177,18 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     }
 
     @Override
-    public void setReadOnly() {
-        data.setReadOnly();
+    public void lock() {
+        data.lock();
     }
 
     @Override
-    public void unsetReadOnly() {
-        data.unsetReadOnly();
+    public void unlock() {
+        data.unlock();
     }
 
     @Override
-    public boolean isReadOnly() {
-        return data.isReadOnly();
+    public boolean isLocked() {
+        return data.isLocked();
     }
 
     /**

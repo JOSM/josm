@@ -352,7 +352,7 @@ public class RelationListDialog extends ToggleDialog
         public void mouseClicked(MouseEvent e) {
             DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
             if (ds != null && isDoubleClick(e)) {
-                if (e.isControlDown() && !ds.isReadOnly()) {
+                if (e.isControlDown() && !ds.isLocked()) {
                     editCurrentRelation();
                 } else {
                     setCurrentRelationAsSelection();

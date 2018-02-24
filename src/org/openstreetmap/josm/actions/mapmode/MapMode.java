@@ -249,6 +249,6 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * @since 13434
      */
     protected boolean isEditableDataLayer(Layer l) {
-        return l instanceof OsmDataLayer && !((OsmDataLayer) l).isReadOnly();
+        return l instanceof OsmDataLayer && !((OsmDataLayer) l).isLocked();
     }
 }
