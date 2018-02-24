@@ -107,11 +107,13 @@ public final class CertificateAmendment {
     public static class NativeCertAmend extends CertAmend {
         private final String winAlias;
         private final String macAlias;
+        private final String httpsWebSite;
 
-        NativeCertAmend(String winAlias, String macAlias, String filename, String sha256) {
+        NativeCertAmend(String winAlias, String macAlias, String filename, String sha256, String httpsWebSite) {
             super(filename, sha256);
             this.winAlias = Objects.requireNonNull(winAlias);
             this.macAlias = Objects.requireNonNull(macAlias);
+            this.httpsWebSite = Objects.requireNonNull(httpsWebSite);
         }
 
         /**
@@ -128,6 +130,15 @@ public final class CertificateAmendment {
          */
         public final String getMacAlias() {
             return macAlias;
+        }
+
+        /**
+         * Returns the https website we need to call to notify Windows we need its root certificate.
+         * @return the https website signed with this root CA
+         * @since 13451
+         */
+        public String getWebSite() {
+            return httpsWebSite;
         }
 
         @Override
@@ -156,14 +167,17 @@ public final class CertificateAmendment {
         // Government of Netherlands
         new NativeCertAmend("Staat der Nederlanden Root CA - G2", "Staat der Nederlanden Root CA - G2",
                 "Staat_der_Nederlanden_Root_CA_-_G2.crt",
-                "668c83947da63b724bece1743c31a0e6aed0db8ec5b31be377bb784f91b6716f"),
+                "668c83947da63b724bece1743c31a0e6aed0db8ec5b31be377bb784f91b6716f",
+                "https://roottest-g2.pkioverheid.nl"),
         // Government of Netherlands
         new NativeCertAmend("Government of Netherlands G3", "Staat der Nederlanden Root CA - G3",
                 "Staat_der_Nederlanden_Root_CA_-_G3.crt",
-                "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428"),
+                "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428",
+                "https://roottest-g3.pkioverheid.nl"),
         // Trusted and used by French Government - https://www.certigna.fr/autorites/index.xhtml?ac=Racine#lracine
         new NativeCertAmend("Certigna", "Certigna", "Certigna.crt",
-                "e3b6a2db2ed7ce48842f7ac53241c7b71d54144bfb40c11f3f1d0b42f5eea12d"),
+                "e3b6a2db2ed7ce48842f7ac53241c7b71d54144bfb40c11f3f1d0b42f5eea12d",
+                "https://www.certigna.fr"),
     };
 
     private CertificateAmendment() {
