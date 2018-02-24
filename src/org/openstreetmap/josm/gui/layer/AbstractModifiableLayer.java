@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import org.openstreetmap.josm.data.osm.ReadOnly;
+import org.openstreetmap.josm.data.osm.Lockable;
 import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.AbstractUploadDialog;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * A modifiable layer.
  * @since 7358
  */
-public abstract class AbstractModifiableLayer extends Layer implements UploadToServer, SaveToFile, ReadOnly {
+public abstract class AbstractModifiableLayer extends Layer implements DownloadFromServer, UploadToServer, SaveToFile, Lockable {
 
     /**
      * Constructs a new {@code ModifiableLayer}.
@@ -18,6 +18,12 @@ public abstract class AbstractModifiableLayer extends Layer implements UploadToS
      */
     public AbstractModifiableLayer(String name) {
         super(name);
+    }
+
+    @Override
+    public boolean isDownloadable() {
+        // Override if needed
+        return false;
     }
 
     @Override
@@ -82,17 +88,17 @@ public abstract class AbstractModifiableLayer extends Layer implements UploadToS
     }
 
     @Override
-    public void setReadOnly() {
+    public void lock() {
         // Override if needed
     }
 
     @Override
-    public void unsetReadOnly() {
+    public void unlock() {
         // Override if needed
     }
 
     @Override
-    public boolean isReadOnly() {
+    public boolean isLocked() {
         // Override if needed
         return false;
     }

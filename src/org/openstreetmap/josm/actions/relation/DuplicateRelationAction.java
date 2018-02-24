@@ -51,6 +51,6 @@ public class DuplicateRelationAction extends AbstractRelationAction {
     @Override
     protected void updateEnabledState() {
         // only one selected relation can be edited
-        setEnabled(relations.size() == 1 && !relations.iterator().next().getDataSet().isReadOnly());
+        setEnabled(relations.size() == 1 && !relations.iterator().next().getDataSet().isLocked());
     }
 }

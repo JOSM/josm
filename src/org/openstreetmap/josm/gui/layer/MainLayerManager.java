@@ -375,7 +375,7 @@ public class MainLayerManager extends LayerManager {
      * @see #getActiveDataLayer
      */
     public synchronized OsmDataLayer getEditLayer() {
-        if (dataLayer != null && !dataLayer.isReadOnly())
+        if (dataLayer != null && !dataLayer.isLocked())
             return dataLayer;
         else
             return null;
@@ -401,7 +401,7 @@ public class MainLayerManager extends LayerManager {
      * @see #getActiveDataSet
      */
     public synchronized DataSet getEditDataSet() {
-        if (dataLayer != null && !dataLayer.isReadOnly()) {
+        if (dataLayer != null && !dataLayer.isLocked()) {
             return dataLayer.data;
         } else {
             return null;
@@ -508,7 +508,7 @@ public class MainLayerManager extends LayerManager {
     public synchronized void prepareLayerForUpload(OsmDataLayer layer) {
         GuiHelper.assertCallFromEdt();
         layer.setUploadInProgress();
-        layer.setReadOnly();
+        layer.lock();
 
         // Reset only the edit layer as empty
         if (dataLayer == layer) {
@@ -527,7 +527,7 @@ public class MainLayerManager extends LayerManager {
      */
     public synchronized void processLayerAfterUpload(OsmDataLayer layer) {
         GuiHelper.assertCallFromEdt();
-        layer.unsetReadOnly();
+        layer.unlock();
         layer.unsetUploadInProgress();
 
         // Set the layer as edit layer if the edit layer is empty.

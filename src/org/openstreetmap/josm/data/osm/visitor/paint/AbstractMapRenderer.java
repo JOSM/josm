@@ -127,7 +127,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param bbox The bounding box being displayed.
      */
     public void drawVirtualNodes(DataSet data, BBox bbox) {
-        if (virtualNodeSize == 0 || data == null || bbox == null || data.isReadOnly())
+        if (virtualNodeSize == 0 || data == null || bbox == null || data.isLocked())
             return;
         // print normal virtual nodes
         GeneralPath path = new GeneralPath();

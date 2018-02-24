@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
@@ -138,16 +140,10 @@ public class OsmReader extends AbstractReader {
             throwException(tr("Unsupported version: {0}", v));
         }
         ds.setVersion(v);
-        String upload = parser.getAttributeValue(null, "upload");
-        if (upload != null) {
-            try {
-                ds.setUploadPolicy(UploadPolicy.of(upload));
-            } catch (IllegalArgumentException e) {
-                throwException(MessageFormat.format("Illegal value for attribute ''upload''. Got ''{0}''.", upload), e);
-            }
-        }
-        if ("true".equalsIgnoreCase(parser.getAttributeValue(null, "read-only"))) {
-            ds.setReadOnly();
+        parsePolicy("download", policy -> ds.setDownloadPolicy(DownloadPolicy.of(policy)));
+        parsePolicy("upload", policy -> ds.setUploadPolicy(UploadPolicy.of(policy)));
+        if ("true".equalsIgnoreCase(parser.getAttributeValue(null, "locked"))) {
+            ds.lock();
         }
         String generator = parser.getAttributeValue(null, "generator");
         Long uploadChangesetId = null;
@@ -184,6 +180,17 @@ public class OsmReader extends AbstractReader {
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
+            }
+        }
+    }
+
+    private void parsePolicy(String key, Consumer<String> consumer) throws XMLStreamException {
+        String policy = parser.getAttributeValue(null, key);
+        if (policy != null) {
+            try {
+                consumer.accept(policy);
+            } catch (IllegalArgumentException e) {
+                throwException(MessageFormat.format("Illegal value for attribute ''{0}''. Got ''{1}''.", key, policy), e);
             }
         }
     }
@@ -620,15 +627,15 @@ public class OsmReader extends AbstractReader {
             }
             progressMonitor.worked(1);
 
-            boolean readOnly = getDataSet().isReadOnly();
+            boolean readOnly = getDataSet().isLocked();
 
             progressMonitor.indeterminateSubTask(tr("Preparing data set..."));
             if (readOnly) {
-                getDataSet().unsetReadOnly();
+                getDataSet().unlock();
             }
             prepareDataSet();
             if (readOnly) {
-                getDataSet().setReadOnly();
+                getDataSet().lock();
             }
             progressMonitor.worked(1);
 
@@ -640,8 +647,8 @@ public class OsmReader extends AbstractReader {
                 }
             }
             // Make sure postprocessors did not change the read-only state
-            if (readOnly && !getDataSet().isReadOnly()) {
-                getDataSet().setReadOnly();
+            if (readOnly && !getDataSet().isLocked()) {
+                getDataSet().lock();
             }
             return getDataSet();
         } catch (IllegalDataException e) {

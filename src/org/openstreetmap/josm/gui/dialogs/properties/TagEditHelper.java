@@ -563,7 +563,7 @@ public class TagEditHelper {
         @Override
         public void setupDialog() {
             super.setupDialog();
-            buttons.get(0).setEnabled(!Main.main.getActiveDataSet().isReadOnly());
+            buttons.get(0).setEnabled(!Main.main.getActiveDataSet().isLocked());
             final Dimension size = getSize();
             // Set resizable only in width
             setMinimumSize(size);

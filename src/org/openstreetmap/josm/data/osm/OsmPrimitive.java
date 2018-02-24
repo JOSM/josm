@@ -278,7 +278,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Throws exception if primitive is in a read-only dataset
      */
     protected final void checkDatasetNotReadOnly() {
-        if (dataSet != null && dataSet.isReadOnly())
+        if (dataSet != null && dataSet.isLocked())
             throw new DataIntegrityProblemException("Primitive cannot be modified in read-only dataset: " + toString());
     }
 

@@ -250,7 +250,7 @@ public class CombineWayAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         int numWays = 0;
-        if (selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isReadOnly)) {
+        if (selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isLocked)) {
             for (OsmPrimitive osm : selection) {
                 if (osm instanceof Way && !osm.isIncomplete() && ++numWays >= 2) {
                     break;

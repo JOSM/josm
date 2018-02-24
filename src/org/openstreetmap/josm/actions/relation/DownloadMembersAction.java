@@ -47,6 +47,6 @@ public class DownloadMembersAction extends AbstractRelationAction {
     @Override
     protected void updateEnabledState() {
         setEnabled(!relations.isEmpty() && !Main.isOffline(OnlineResource.OSM_API)
-                && !relations.iterator().next().getDataSet().isReadOnly());
+                && !relations.iterator().next().getDataSet().isLocked());
     }
 }

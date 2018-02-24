@@ -122,9 +122,9 @@ public class DiffResultProcessor {
         }
         boolean readOnly = false;
         if (ds != null) {
-            readOnly = ds.isReadOnly();
+            readOnly = ds.isLocked();
             if (readOnly) {
-                ds.unsetReadOnly();
+                ds.unlock();
             }
             ds.beginUpdate();
         }
@@ -157,7 +157,7 @@ public class DiffResultProcessor {
             if (ds != null) {
                 ds.endUpdate();
                 if (readOnly) {
-                    ds.setReadOnly();
+                    ds.lock();
                 }
             }
             monitor.finishTask();

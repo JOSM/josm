@@ -489,7 +489,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         Relation relation = (Relation) membershipData.getValueAt(row, 0);
         MainApplication.getMap().relationListDialog.selectRelation(relation);
         OsmDataLayer layer = MainApplication.getLayerManager().getActiveDataLayer();
-        if (!layer.isReadOnly()) {
+        if (!layer.isLocked()) {
             RelationEditor.getEditor(
                     layer, relation, ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
         }
@@ -646,7 +646,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         membershipTable.setVisible(membershipData.getRowCount() > 0);
 
         DataSet ds = Main.main.getActiveDataSet();
-        boolean isReadOnly = ds != null && ds.isReadOnly();
+        boolean isReadOnly = ds != null && ds.isLocked();
         boolean hasSelection = !newSel.isEmpty();
         boolean hasTags = hasSelection && tagData.getRowCount() > 0;
         boolean hasMemberships = hasSelection && membershipData.getRowCount() > 0;
@@ -1059,7 +1059,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         @Override
         protected final void updateEnabledState() {
             DataSet ds = Main.main.getActiveDataSet();
-            setEnabled(ds != null && !ds.isReadOnly() &&
+            setEnabled(ds != null && !ds.isLocked() &&
                     ((tagTable != null && tagTable.getSelectedRowCount() >= 1)
                     || (membershipTable != null && membershipTable.getSelectedRowCount() > 0)
                     ));
@@ -1115,7 +1115,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         @Override
         protected void updateEnabledState() {
             DataSet ds = Main.main.getActiveDataSet();
-            setEnabled(ds != null && !ds.isReadOnly() &&
+            setEnabled(ds != null && !ds.isLocked() &&
                     ((tagTable != null && tagTable.getSelectedRowCount() == 1)
                     ^ (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
                     ));
@@ -1270,7 +1270,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             String key = editHelper.getDataKey(tagTable.getSelectedRow());
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             String clipboard = ClipboardUtils.getClipboardStringContent();
-            if (sel.isEmpty() || clipboard == null || sel.iterator().next().getDataSet().isReadOnly())
+            if (sel.isEmpty() || clipboard == null || sel.iterator().next().getDataSet().isLocked())
                 return;
             MainApplication.undoRedo.add(new ChangePropertyCommand(sel, key, Utils.strip(clipboard)));
         }

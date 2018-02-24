@@ -349,7 +349,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      */
     protected final void updateEnabledStateOnCurrentSelection(boolean allowReadOnly) {
         DataSet ds = getLayerManager().getActiveDataSet();
-        if (ds != null && (allowReadOnly || !ds.isReadOnly())) {
+        if (ds != null && (allowReadOnly || !ds.isLocked())) {
             updateEnabledState(ds.getSelected());
         } else {
             setEnabled(false);
@@ -365,7 +365,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      */
     protected final void updateEnabledStateOnModifiableSelection(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty()
-                && selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isReadOnly));
+                && selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isLocked));
     }
 
     /**

@@ -359,7 +359,7 @@ public class TestError implements Comparable<TestError> {
      */
     public boolean isFixable() {
         return (fixingCommand != null || ((tester != null) && tester.isFixable(this)))
-                && primitives.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isReadOnly);
+                && primitives.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isLocked);
     }
 
     /**

@@ -7,6 +7,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Interface for layers that can upload data.
+ * @see DownloadFromServer
  * @since 9751
  */
 public interface UploadToServer {
