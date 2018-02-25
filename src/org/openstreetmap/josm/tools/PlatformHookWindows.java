@@ -65,6 +65,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -690,6 +692,30 @@ public class PlatformHookWindows implements PlatformHook {
     }
 
     /**
+     * Determines if the .NET framework 4.5 (or later) is installed.
+     * Windows 7 ships by default with an older version.
+     * @return {@code true} if the .NET framework 4.5 (or later) is installed.
+     * @since 13463
+     */
+    public static boolean isDotNet45Installed() {
+        try {
+            // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed#net_d
+            // "The existence of the Release DWORD indicates that the .NET Framework 4.5 or later has been installed"
+            // Great, but our WinRegistry only handles REG_SZ type, so we have to check the Version key
+            String version = WinRegistry.readString(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full", "Version");
+            Matcher m = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+.*)?").matcher(version);
+            if (m.matches()) {
+                int maj = Integer.valueOf(m.group(1));
+                int min = Integer.valueOf(m.group(2));
+                return (maj == 4 && min >= 5) || maj > 4;
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NumberFormatException e) {
+            Logging.error(e);
+        }
+        return false;
+    }
+
+    /**
      * Performs a web request using Windows CryptoAPI (through PowerShell).
      * This is useful to ensure Windows trust store will contain a specific root CA.
      * @param uri the web URI to request
@@ -700,18 +726,18 @@ public class PlatformHookWindows implements PlatformHook {
     public static String webRequest(String uri) throws IOException {
         // With PS 6.0 (not yet released in Windows) we could simply use:
         // Invoke-WebRequest -SSlProtocol Tsl12 $uri
-        // With PS 3.0 (Windows 8+) we can use (https://stackoverflow.com/a/41618979/2257172):
-        // [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 ; Invoke-WebRequest $uri
-        // Unfortunately there are still a lot of users with Windows 7 (PS 2.0) and Invoke-WebRequest is not available:
-        try {
-            // https://stackoverflow.com/a/25121601/2257172
-            return Utils.execOutput(Arrays.asList("powershell", "-Command",
-                    "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;"+
-                    "[System.Net.WebRequest]::Create('"+uri+"').GetResponse()"
-                    ));
-        } catch (ExecutionException | InterruptedException e) {
-            Logging.error(e);
-            return null;
+        // .NET framework < 4.5 does not support TLS 1.2 (https://stackoverflow.com/a/43240673/2257172)
+        if (isDotNet45Installed()) {
+            try {
+                // The following works with PS 3.0 (Windows 8+), https://stackoverflow.com/a/41618979/2257172
+                return Utils.execOutput(Arrays.asList("powershell", "-Command",
+                        "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;"+
+                        "[System.Net.WebRequest]::Create('"+uri+"').GetResponse()"
+                        ));
+            } catch (ExecutionException | InterruptedException e) {
+                Logging.error(e);
+            }
         }
+        return null;
     }
 }
