@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -616,8 +618,9 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
             if (value == null)
                 return null;
             String s = (String) value;
-            if (s.matches("#.*"))
-                return s.substring(1);
+            Matcher m = Pattern.compile("(?:"+url+")?#(.+)").matcher(s);
+            if (m.matches())
+                return m.group(1);
             return null;
         }
 
@@ -638,7 +641,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
                     }
                 } else {
                     HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
+                            instance,
                             tr("Failed to open help page. The target URL is empty."),
                             tr("Failed to open help page"),
                             JOptionPane.ERROR_MESSAGE,
