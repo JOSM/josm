@@ -310,7 +310,12 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 @Override
                 public String getToolTipText(MouseEvent e) {
                     java.awt.Point p = e.getPoint();
-                    return activeModel.getValueAt(rowAtPoint(p), columnAtPoint(p)).toString();
+                    try {
+                        return activeModel.getValueAt(rowAtPoint(p), columnAtPoint(p)).toString();
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        Logging.debug(ex);
+                        return null;
+                    }
                 }
             };
             activeTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -713,7 +718,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 case 1:
                     return info.getExtendedUrl();
                 default:
-                    throw new ArrayIndexOutOfBoundsException();
+                    throw new ArrayIndexOutOfBoundsException(Integer.toString(column));
                 }
             }
 
@@ -731,7 +736,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     info.clearId();
                     break;
                 default:
-                    throw new ArrayIndexOutOfBoundsException();
+                    throw new ArrayIndexOutOfBoundsException(Integer.toString(column));
                 }
             }
         }
