@@ -446,14 +446,7 @@ public class PlatformHookWindows implements PlatformHook {
         // A better, but a lot more complex method might be to get certificate list from Windows Registry with PowerShell
         // using (Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\SystemCertificates\\AuthRoot\\AutoUpdate').EncodedCtl)
         // then decode it using CertUtil -dump or calling CertCreateCTLContext API using JNI, and finally find and decode the certificate
-        try {
-            // https://stackoverflow.com/a/41618979/2257172
-            Utils.execOutput(Arrays.asList("powershell", "-Command",
-                    "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;" +
-                    "Invoke-WebRequest " + certAmend.getWebSite()));
-        } catch (ExecutionException | InterruptedException e) {
-            Logging.error(e);
-        }
+        Logging.trace(webRequest(certAmend.getWebSite()));
         // Get Windows Trust Root Store
         KeyStore ks = getRootKeystore();
         // Search by alias (fast)
@@ -694,5 +687,31 @@ public class PlatformHookWindows implements PlatformHook {
         def.add(new FontEntry("arialuni", "Arial Unicode MS", "ARIALUNI.TTF"));
 
         return def;
+    }
+
+    /**
+     * Performs a web request using Windows CryptoAPI (through PowerShell).
+     * This is useful to ensure Windows trust store will contain a specific root CA.
+     * @param uri the web URI to request
+     * @return HTTP response from the given URI
+     * @throws IOException if any I/O error occurs
+     * @since 13458
+     */
+    public static String webRequest(String uri) throws IOException {
+        // With PS 6.0 (not yet released in Windows) we could simply use:
+        // Invoke-WebRequest -SSlProtocol Tsl12 $uri
+        // With PS 3.0 (Windows 8+) we can use (https://stackoverflow.com/a/41618979/2257172):
+        // [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 ; Invoke-WebRequest $uri
+        // Unfortunately there are still a lot of users with Windows 7 (PS 2.0) and Invoke-WebRequest is not available:
+        try {
+            // https://stackoverflow.com/a/25121601/2257172
+            return Utils.execOutput(Arrays.asList("powershell", "-Command",
+                    "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;"+
+                    "[System.Net.WebRequest]::Create('"+uri+"').GetResponse()"
+                    ));
+        } catch (ExecutionException | InterruptedException e) {
+            Logging.error(e);
+            return null;
+        }
     }
 }
