@@ -390,9 +390,6 @@ public class JOSMTestRules implements TestRule {
      * @throws ReflectiveOperationException if a reflective access error occurs
      */
     protected void before() throws InitializationError, ReflectiveOperationException {
-        // Tests are running headless by default.
-        System.setProperty("java.awt.headless", "true");
-
         cleanUpFromJosmFixture();
 
         if (this.assumeRevisionString != null) {
