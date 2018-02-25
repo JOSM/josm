@@ -205,7 +205,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         boolean oldValue = requiresSaveToFile;
         requiresSaveToFile = newValue;
         if (oldValue != newValue) {
-            propertyChangeSupport.firePropertyChange(REQUIRES_SAVE_TO_DISK_PROP, oldValue, newValue);
+            GuiHelper.runInEDT(() ->
+                propertyChangeSupport.firePropertyChange(REQUIRES_SAVE_TO_DISK_PROP, oldValue, newValue)
+            );
         }
     }
 
@@ -213,7 +215,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         boolean oldValue = requiresUploadToServer;
         requiresUploadToServer = newValue;
         if (oldValue != newValue) {
-            propertyChangeSupport.firePropertyChange(REQUIRES_UPLOAD_TO_SERVER_PROP, oldValue, newValue);
+            GuiHelper.runInEDT(() ->
+                propertyChangeSupport.firePropertyChange(REQUIRES_UPLOAD_TO_SERVER_PROP, oldValue, newValue)
+            );
         }
     }
 
