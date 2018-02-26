@@ -716,6 +716,20 @@ public class PlatformHookWindows implements PlatformHook {
     }
 
     /**
+     * Returns the major version number of PowerShell.
+     * @return the major version number of PowerShell. -1 in case of error
+     * @since 13465
+     */
+    public static int getPowerShellVersion() {
+        try {
+            return Integer.valueOf(Utils.execOutput(Arrays.asList("powershell", "-Command", "$PSVersionTable.PSVersion.Major")));
+        } catch (NumberFormatException | IOException | ExecutionException | InterruptedException e) {
+            Logging.error(e);
+            return -1;
+        }
+    }
+
+    /**
      * Performs a web request using Windows CryptoAPI (through PowerShell).
      * This is useful to ensure Windows trust store will contain a specific root CA.
      * @param uri the web URI to request
@@ -727,7 +741,7 @@ public class PlatformHookWindows implements PlatformHook {
         // With PS 6.0 (not yet released in Windows) we could simply use:
         // Invoke-WebRequest -SSlProtocol Tsl12 $uri
         // .NET framework < 4.5 does not support TLS 1.2 (https://stackoverflow.com/a/43240673/2257172)
-        if (isDotNet45Installed()) {
+        if (isDotNet45Installed() && getPowerShellVersion() >= 3) {
             try {
                 // The following works with PS 3.0 (Windows 8+), https://stackoverflow.com/a/41618979/2257172
                 return Utils.execOutput(Arrays.asList("powershell", "-Command",
