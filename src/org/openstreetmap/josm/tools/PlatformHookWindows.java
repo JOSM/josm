@@ -703,11 +703,13 @@ public class PlatformHookWindows implements PlatformHook {
             // "The existence of the Release DWORD indicates that the .NET Framework 4.5 or later has been installed"
             // Great, but our WinRegistry only handles REG_SZ type, so we have to check the Version key
             String version = WinRegistry.readString(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full", "Version");
-            Matcher m = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+.*)?").matcher(version);
-            if (m.matches()) {
-                int maj = Integer.valueOf(m.group(1));
-                int min = Integer.valueOf(m.group(2));
-                return (maj == 4 && min >= 5) || maj > 4;
+            if (version != null) {
+                Matcher m = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+.*)?").matcher(version);
+                if (m.matches()) {
+                    int maj = Integer.valueOf(m.group(1));
+                    int min = Integer.valueOf(m.group(2));
+                    return (maj == 4 && min >= 5) || maj > 4;
+                }
             }
         } catch (IllegalAccessException | InvocationTargetException | NumberFormatException e) {
             Logging.error(e);
