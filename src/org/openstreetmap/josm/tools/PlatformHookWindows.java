@@ -65,6 +65,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -724,7 +725,8 @@ public class PlatformHookWindows implements PlatformHook {
      */
     public static int getPowerShellVersion() {
         try {
-            return Integer.valueOf(Utils.execOutput(Arrays.asList("powershell", "-Command", "$PSVersionTable.PSVersion.Major")));
+            return Integer.valueOf(Utils.execOutput(Arrays.asList(
+                    "powershell", "-Command", "$PSVersionTable.PSVersion.Major"), 2, TimeUnit.SECONDS));
         } catch (NumberFormatException | IOException | ExecutionException | InterruptedException e) {
             Logging.error(e);
             return -1;
@@ -749,7 +751,7 @@ public class PlatformHookWindows implements PlatformHook {
                 return Utils.execOutput(Arrays.asList("powershell", "-Command",
                         "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;"+
                         "[System.Net.WebRequest]::Create('"+uri+"').GetResponse()"
-                        ));
+                        ), 5, TimeUnit.SECONDS);
             } catch (ExecutionException | InterruptedException e) {
                 Logging.error(e);
             }

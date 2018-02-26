@@ -826,7 +826,7 @@ public final class Utils {
     /**
      * Runs an external command and returns the standard output.
      *
-     * The program is expected to execute fast.
+     * The program is expected to execute fast, as this call waits 10 seconds at most.
      *
      * @param command the command with arguments
      * @return the output
@@ -835,6 +835,23 @@ public final class Utils {
      * @throws InterruptedException if the current thread is {@linkplain Thread#interrupt() interrupted} by another thread while waiting
      */
     public static String execOutput(List<String> command) throws IOException, ExecutionException, InterruptedException {
+        return execOutput(command, 10, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Runs an external command and returns the standard output. Waits at most the specified time.
+     *
+     * @param command the command with arguments
+     * @param timeout the maximum time to wait
+     * @param unit the time unit of the {@code timeout} argument. Must not be null
+     * @return the output
+     * @throws IOException when there was an error, e.g. command does not exist
+     * @throws ExecutionException when the return code is != 0. The output is can be retrieved in the exception message
+     * @throws InterruptedException if the current thread is {@linkplain Thread#interrupt() interrupted} by another thread while waiting
+     * @since 13467
+     */
+    public static String execOutput(List<String> command, long timeout, TimeUnit unit)
+            throws IOException, ExecutionException, InterruptedException {
         if (Logging.isDebugEnabled()) {
             Logging.debug(join(" ", command));
         }
@@ -851,7 +868,10 @@ public final class Utils {
                 }
             }
             String msg = all != null ? all.toString() : null;
-            if (p.waitFor() != 0) {
+            if (!p.waitFor(timeout, unit)) {
+                throw new ExecutionException(msg, null);
+            }
+            if (p.exitValue() != 0) {
                 throw new ExecutionException(msg, null);
             }
             return msg;
