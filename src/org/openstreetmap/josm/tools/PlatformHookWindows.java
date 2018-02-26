@@ -707,8 +707,8 @@ public class PlatformHookWindows implements PlatformHook {
             if (version != null) {
                 Matcher m = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+.*)?").matcher(version);
                 if (m.matches()) {
-                    int maj = Integer.valueOf(m.group(1));
-                    int min = Integer.valueOf(m.group(2));
+                    int maj = Integer.parseInt(m.group(1));
+                    int min = Integer.parseInt(m.group(2));
                     return (maj == 4 && min >= 5) || maj > 4;
                 }
             }
@@ -725,7 +725,7 @@ public class PlatformHookWindows implements PlatformHook {
      */
     public static int getPowerShellVersion() {
         try {
-            return Integer.valueOf(Utils.execOutput(Arrays.asList(
+            return Integer.parseInt(Utils.execOutput(Arrays.asList(
                     "powershell", "-Command", "$PSVersionTable.PSVersion.Major"), 2, TimeUnit.SECONDS));
         } catch (NumberFormatException | IOException | ExecutionException | InterruptedException e) {
             Logging.error(e);

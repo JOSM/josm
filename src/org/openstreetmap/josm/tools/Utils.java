@@ -868,10 +868,7 @@ public final class Utils {
                 }
             }
             String msg = all != null ? all.toString() : null;
-            if (!p.waitFor(timeout, unit)) {
-                throw new ExecutionException(msg, null);
-            }
-            if (p.exitValue() != 0) {
+            if (!p.waitFor(timeout, unit) || p.exitValue() != 0) {
                 throw new ExecutionException(msg, null);
             }
             return msg;
