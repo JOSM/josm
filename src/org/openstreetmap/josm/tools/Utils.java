@@ -855,7 +855,7 @@ public final class Utils {
         if (Logging.isDebugEnabled()) {
             Logging.debug(join(" ", command));
         }
-        Process p = new ProcessBuilder(command).start();
+        Process p = new ProcessBuilder(command).redirectErrorStream(true).start();
         try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder all = null;
             String line;
