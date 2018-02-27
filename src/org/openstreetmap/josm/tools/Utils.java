@@ -9,14 +9,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.AccessibleObject;
 import java.net.MalformedURLException;
@@ -855,24 +853,18 @@ public final class Utils {
         if (Logging.isDebugEnabled()) {
             Logging.debug(join(" ", command));
         }
-        Process p = new ProcessBuilder(command).redirectErrorStream(true).start();
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-            StringBuilder all = null;
-            String line;
-            while ((line = input.readLine()) != null) {
-                if (all == null) {
-                    all = new StringBuilder(line);
-                } else {
-                    all.append('\n')
-                       .append(line);
-                }
-            }
-            String msg = all != null ? all.toString() : null;
-            if (!p.waitFor(timeout, unit) || p.exitValue() != 0) {
-                throw new ExecutionException(msg, null);
-            }
-            return msg;
+        Path out = Files.createTempFile("josm_exec_", ".txt");
+        Process p = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(out.toFile()).start();
+        if (!p.waitFor(timeout, unit) || p.exitValue() != 0) {
+            throw new ExecutionException(command.toString(), null);
         }
+        String msg = String.join("\n", Files.readAllLines(out)).trim();
+        try {
+            Files.delete(out);
+        } catch (IOException e) {
+            Logging.warn(e);
+        }
+        return msg;
     }
 
     /**
