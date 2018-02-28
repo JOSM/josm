@@ -51,15 +51,13 @@ public class ButtonMarker extends Marker {
         Point screen = mv.getPoint(this);
         buttonRectangle.setLocation(screen.x+4, screen.y+2);
         paintIcon(mv, g, screen.x+4, screen.y+2);
-        Border b;
-        Point mousePosition = mv.getMousePosition();
-
-        // mouse is inside the window
-        if (mousePosition != null && mousePressed && containsPoint(mousePosition)) {
-            b = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-        } else {
-            b = BorderFactory.createBevelBorder(BevelBorder.RAISED);
+        boolean lowered = false;
+        if (mousePressed) {
+            Point mousePosition = mv.getMousePosition(); // slow and can throw NPE, see JDK-6840067
+            // mouse is inside the window
+            lowered = mousePosition != null && containsPoint(mousePosition);
         }
+        Border b = BorderFactory.createBevelBorder(lowered ? BevelBorder.LOWERED : BevelBorder.RAISED);
         Insets inset = b.getBorderInsets(mv);
         Rectangle r = new Rectangle(buttonRectangle);
         r.grow((inset.top+inset.bottom)/2, (inset.left+inset.right)/2);
