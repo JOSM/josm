@@ -211,12 +211,11 @@ class SyncEditorLayerIndex {
         String t = getType(entry)
         String res = offset + "<type>$t</type>\n"
         res += offset + "<url>${cdata(getUrl(entry))}</url>\n"
-        if(t == "tms") {
-            if(getMinZoom(entry) != null)
-                res += offset + "<min-zoom>${getMinZoom(entry)}</min-zoom>\n"
-            if(getMaxZoom(entry) != null)
-                res += offset + "<max-zoom>${getMaxZoom(entry)}</max-zoom>\n"
-        } else if (t == "wms") {
+        if(getMinZoom(entry) != null)
+            res += offset + "<min-zoom>${getMinZoom(entry)}</min-zoom>\n"
+        if(getMaxZoom(entry) != null)
+            res += offset + "<max-zoom>${getMaxZoom(entry)}</max-zoom>\n"
+        if (t == "tms") {
             def p = getProjections(entry)
             if (p) {
                 res += offset + "<projections>\n"
