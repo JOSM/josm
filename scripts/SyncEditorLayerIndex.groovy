@@ -215,7 +215,7 @@ class SyncEditorLayerIndex {
             res += offset + "<min-zoom>${getMinZoom(entry)}</min-zoom>\n"
         if(getMaxZoom(entry) != null)
             res += offset + "<max-zoom>${getMaxZoom(entry)}</max-zoom>\n"
-        if (t == "tms") {
+        if (t == "wms") {
             def p = getProjections(entry)
             if (p) {
                 res += offset + "<projections>\n"
