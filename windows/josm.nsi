@@ -6,7 +6,7 @@
 SetCompressor /SOLID lzma
 
 ; Load StdUtils plugin (ANSI until we switch to Unicode installer with NSIS 3)
-!addplugindir plugins/stdutils/Plugins/Release_ANSI
+!addplugindir plugins/stdutils/Plugins/ANSI
 !addincludedir plugins/stdutils/Include
 
 !include "StdUtils.nsh"
