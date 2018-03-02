@@ -112,6 +112,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
         public Component getListCellRendererComponent(JList<? extends PresetListEntry> list, PresetListEntry item, int index,
                 boolean isSelected, boolean cellHasFocus) {
 
+            if (list == null || item == null) {
+                return lbl;
+            }
+
             // Only return cached size, item is not shown
             if (!list.isShowing() && item.prefferedWidth != -1 && item.prefferedHeight != -1) {
                 if (index == -1) {
