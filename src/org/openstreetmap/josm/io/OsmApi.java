@@ -16,10 +16,11 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -360,6 +361,36 @@ public class OsmApi extends OsmConnection {
         return serverUrl;
     }
 
+    private void individualPrimitiveModification(String method, String verb, IPrimitive osm, ProgressMonitor monitor,
+            Consumer<String> consumer, Function<String, String> errHandler) throws OsmTransferException {
+        String ret = "";
+        try {
+            ensureValidChangeset();
+            initialize(monitor);
+            // Perform request
+            ret = sendRequest(method, OsmPrimitiveType.from(osm).getAPIName() + '/' + verb, toXml(osm, true), monitor);
+            // Unlock dataset if needed
+            boolean locked = false;
+            if (osm instanceof OsmPrimitive) {
+                locked = ((OsmPrimitive) osm).getDataSet().isLocked();
+                if (locked) {
+                    ((OsmPrimitive) osm).getDataSet().unlock();
+                }
+            }
+            try {
+                // Update local primitive
+                consumer.accept(ret);
+            } finally {
+                // Lock dataset back if needed
+                if (locked) {
+                    ((OsmPrimitive) osm).getDataSet().lock();
+                }
+            }
+        } catch (NumberFormatException e) {
+            throw new OsmTransferException(errHandler.apply(ret), e);
+        }
+    }
+
     /**
      * Creates an OSM primitive on the server. The OsmPrimitive object passed in
      * is modified by giving it the server-assigned id.
@@ -369,16 +400,10 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if something goes wrong
      */
     public void createPrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
-        String ret = "";
-        try {
-            ensureValidChangeset();
-            initialize(monitor);
-            ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true), monitor);
+        individualPrimitiveModification("PUT", "create", osm, monitor, ret -> {
             osm.setOsmId(Long.parseLong(ret.trim()), 1);
             osm.setChangesetId(getChangeset().getId());
-        } catch (NumberFormatException e) {
-            throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret), e);
-        }
+        }, ret -> tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret));
     }
 
     /**
@@ -389,41 +414,33 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if something goes wrong
      */
     public void modifyPrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
-        String ret = null;
-        try {
-            ensureValidChangeset();
-            initialize(monitor);
-            // normal mode (0.6 and up) returns new object version.
-            ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+'/' + osm.getId(), toXml(osm, true), monitor);
+        individualPrimitiveModification("PUT", Long.toString(osm.getId()), osm, monitor, ret -> {
+            // API returns new object version
             osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
             osm.setChangesetId(getChangeset().getId());
             osm.setVisible(true);
-        } catch (NumberFormatException e) {
-            throw new OsmTransferException(tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.",
-                    osm.getId(), ret), e);
-        }
+        }, ret -> tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.", osm.getId(), ret));
     }
 
     /**
      * Deletes an OSM primitive on the server.
+     *
      * @param osm the primitive
      * @param monitor the progress monitor
      * @throws OsmTransferException if something goes wrong
      */
     public void deletePrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
-        ensureValidChangeset();
-        initialize(monitor);
-        // can't use a the individual DELETE method in the 0.6 API. Java doesn't allow
-        // submitting a DELETE request with content, the 0.6 API requires it, however. Falling back
-        // to diff upload.
-        //
-        uploadDiff(Collections.singleton(osm), monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+        individualPrimitiveModification("DELETE", Long.toString(osm.getId()), osm, monitor, ret -> {
+            // API returns new object version
+            osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
+            osm.setChangesetId(getChangeset().getId());
+            osm.setVisible(false);
+        }, ret -> tr("Unexpected format of new version of deleted primitive ''{0}''. Got ''{1}''.", osm.getId(), ret));
     }
 
     /**
      * Creates a new changeset based on the keys in <code>changeset</code>. If this
-     * method succeeds, changeset.getId() replies the id the server assigned to the new
-     * changeset
+     * method succeeds, changeset.getId() replies the id the server assigned to the new changeset
      *
      * The changeset must not be null, but its key/value-pairs may be empty.
      *
