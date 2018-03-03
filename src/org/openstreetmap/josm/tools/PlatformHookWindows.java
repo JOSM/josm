@@ -727,7 +727,11 @@ public class PlatformHookWindows implements PlatformHook {
         try {
             return Integer.parseInt(Utils.execOutput(Arrays.asList(
                     "powershell", "-Command", "$PSVersionTable.PSVersion.Major"), 2, TimeUnit.SECONDS));
-        } catch (NumberFormatException | IOException | ExecutionException | InterruptedException e) {
+        } catch (ExecutionException e) {
+            // PowerShell 2.0 (included in Windows 7) does not even support this
+            Logging.debug(e);
+            return -1;
+        } catch (NumberFormatException | IOException | InterruptedException e) {
             Logging.error(e);
             return -1;
         }
