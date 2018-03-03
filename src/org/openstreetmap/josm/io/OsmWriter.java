@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateForma
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -89,21 +90,54 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         this.version = v;
     }
 
+    /**
+     * Writes OSM header with normal download and upload policies.
+     */
     public void header() {
-        header(UploadPolicy.NORMAL);
+        header(DownloadPolicy.NORMAL, UploadPolicy.NORMAL);
     }
 
+    /**
+     * Writes OSM header with normal download policy and given upload policy.
+     * @deprecated Use {@link #header(DownloadPolicy, UploadPolicy)} instead
+     * @param upload upload policy
+     */
+    @Deprecated
     public void header(UploadPolicy upload) {
+        header(DownloadPolicy.NORMAL, upload);
+    }
+
+    /**
+     * Writes OSM header with given download upload policies.
+     * @param download download policy
+     * @param upload upload policy
+     * @since 13485
+     */
+    public void header(DownloadPolicy download, UploadPolicy upload) {
+        header(download, upload, false);
+    }
+
+    private void header(DownloadPolicy download, UploadPolicy upload, boolean locked) {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.print("<osm version='");
         out.print(version);
+        if (download != null && download != DownloadPolicy.NORMAL) {
+            out.print("' download='");
+            out.print(download.getXmlFlag());
+        }
         if (upload != null && upload != UploadPolicy.NORMAL) {
             out.print("' upload='");
             out.print(upload.getXmlFlag());
         }
+        if (locked) {
+            out.print("' locked=true");
+        }
         out.println("' generator='JOSM'>");
     }
 
+    /**
+     * Writes OSM footer.
+     */
     public void footer() {
         out.println("</osm>");
     }
@@ -134,7 +168,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
      * @since 12800
      */
     public void write(DataSet data) {
-        header(data.getUploadPolicy());
+        header(data.getDownloadPolicy(), data.getUploadPolicy(), data.isLocked());
         writeDataSources(data);
         writeContent(data);
         footer();

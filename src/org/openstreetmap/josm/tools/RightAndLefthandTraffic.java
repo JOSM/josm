@@ -23,6 +23,8 @@ import org.openstreetmap.josm.actions.JoinAreasAction.Multipolygon;
 import org.openstreetmap.josm.command.PurgeCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
+import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -157,7 +159,7 @@ public final class RightAndLefthandTraffic {
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
              OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, ds.getVersion())
             ) {
-            w.header(DataSet.UploadPolicy.DISCOURAGED);
+            w.header(DownloadPolicy.NORMAL, UploadPolicy.DISCOURAGED);
             w.writeContent(ds);
             w.footer();
         } catch (IOException ex) {
