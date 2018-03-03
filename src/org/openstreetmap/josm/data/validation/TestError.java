@@ -190,7 +190,7 @@ public class TestError implements Comparable<TestError> {
         /**
          * Sets a supplier to obtain a command to fix the error.
          *
-         * @param fixingCommand the fix supplier
+         * @param fixingCommand the fix supplier. Can be null
          * @return {@code this}
          */
         public Builder fix(Supplier<Command> fixingCommand) {

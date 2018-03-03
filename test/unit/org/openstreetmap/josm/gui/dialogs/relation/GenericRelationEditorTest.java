@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -90,8 +91,7 @@ public class GenericRelationEditorTest {
      */
     @Test
     public void testAddPrimitivesToRelation() {
-        Relation r = new Relation(1);
-        new DataSet(r);
+        Relation r = TestUtils.addFakeDataSet(new Relation(1));
         assertNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.<OsmPrimitive>emptyList()));
         assertNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Relation(1))));
 

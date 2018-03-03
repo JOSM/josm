@@ -101,13 +101,12 @@ public class MapCSSTagCheckerTest {
      */
     @Test
     public void testTicket10913() throws ParseException {
-        final OsmPrimitive p = OsmUtils.createPrimitive("way highway=tertiary construction=yes");
+        final OsmPrimitive p = TestUtils.addFakeDataSet(TestUtils.newWay("highway=tertiary construction=yes"));
         final TagCheck check = TagCheck.readMapCSS(new StringReader("way {" +
                 "throwError: \"error\";" +
                 "fixChangeKey: \"highway => construction\";\n" +
                 "fixAdd: \"highway=construction\";\n" +
                 "}")).parseChecks.get(0);
-        new DataSet(p);
         final Command command = check.fixPrimitive(p);
         assertTrue(command instanceof SequenceCommand);
         final Iterator<PseudoCommand> it = command.getChildren().iterator();

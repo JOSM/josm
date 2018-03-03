@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
@@ -33,11 +33,10 @@ public class TagCheckerTest {
     public JOSMTestRules rule = new JOSMTestRules().presets();
 
     List<TestError> test(OsmPrimitive primitive) throws IOException {
-        new DataSet(primitive);
         final TagChecker checker = new TagChecker();
         checker.initialize();
         checker.startTest(null);
-        checker.check(primitive);
+        checker.check(TestUtils.addFakeDataSet(primitive));
         return checker.getErrors();
     }
 
