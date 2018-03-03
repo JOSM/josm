@@ -33,7 +33,6 @@
         <property name="error_prone_ant.jar" location="${tools.dir}/error_prone_ant.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
-        <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
         <property name="java.lang.version" value="1.8" />
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
         <property name="jacoco.inclbootstrapclasses" value="false" />
@@ -47,6 +46,14 @@
         <!-- For Java9-specific stuff -->
         <condition property="isJava9">
             <matches string="${ant.java.version}" pattern="(1.)?(9|1[0-9])" />
+        </condition>
+        <!-- For Java10-specific stuff -->
+        <condition property="isJava10">
+            <matches string="${ant.java.version}" pattern="1[0-9]" />
+        </condition>
+        <!-- Disable error_prone on Java 10+, see https://github.com/google/error-prone/issues/860 -->
+        <condition property="javac.compiler" value="modern" else="com.google.errorprone.ErrorProneAntCompilerAdapter">
+            <isset property="isJava10"/>
         </condition>
         <path id="test.classpath">
             <fileset dir="${test.dir}/lib">
