@@ -491,8 +491,15 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 }
             }
 
+            boolean disableApply = false;
+            if (!sel.isEmpty()) {
+                DataSet ds = sel.iterator().next().getDataSet();
+                if (ds != null) {
+                    disableApply = ds.isLocked();
+                }
+            }
             answer = new PresetDialog(p, title, preset_name_label ? null : (ImageIcon) getValue(Action.SMALL_ICON),
-                    sel.isEmpty() || sel.iterator().next().getDataSet().isLocked(), showNewRelation).getValue();
+                    disableApply, showNewRelation).getValue();
         }
         if (!showNewRelation && answer == 2)
             return DIALOG_ANSWER_CANCEL;
