@@ -6,14 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -53,6 +51,6 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationEdi
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(memberTableModel.hasIncompleteSelectedMembers() && !Main.isOffline(OnlineResource.OSM_API));
+        setEnabled(memberTableModel.hasIncompleteSelectedMembers() && canDownload());
     }
 }

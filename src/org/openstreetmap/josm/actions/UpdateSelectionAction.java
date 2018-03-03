@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -118,7 +119,13 @@ public class UpdateSelectionAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty() && !Main.isOffline(OnlineResource.OSM_API));
+        if (selection == null || selection.isEmpty()) {
+            setEnabled(false);
+        } else {
+            DataSet ds = selection.iterator().next().getDataSet();
+            setEnabled(!ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy())
+                    && !Main.isOffline(OnlineResource.OSM_API));
+        }
     }
 
     @Override

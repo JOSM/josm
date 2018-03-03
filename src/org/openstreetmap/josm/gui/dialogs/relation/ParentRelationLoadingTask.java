@@ -77,6 +77,9 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
         super(tr("Download referring relations"), monitor, false /* don't ignore exception */);
         CheckParameterUtil.ensure(child, "child", "id > 0", ch -> ch.getUniqueId() > 0);
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
+        if (!layer.isDownloadable()) {
+            throw new IllegalArgumentException("Non-downloadable layer: " + layer);
+        }
         referrers = null;
         this.layer = layer;
         parents = new ArrayList<>();

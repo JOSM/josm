@@ -14,7 +14,6 @@ import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -58,6 +57,6 @@ public class DownloadIncompleteMembersAction extends AbstractRelationEditorActio
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(memberTableModel.hasIncompleteMembers() && !Main.isOffline(OnlineResource.OSM_API));
+        setEnabled(memberTableModel.hasIncompleteMembers() && canDownload());
     }
 }

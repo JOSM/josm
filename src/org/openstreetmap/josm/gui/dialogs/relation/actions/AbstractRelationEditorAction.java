@@ -7,10 +7,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.OnlineResource;
 
 /**
  * Abstract superclass of relation editor actions.
@@ -48,4 +52,10 @@ public abstract class AbstractRelationEditorAction extends AbstractAction implem
     }
 
     protected abstract void updateEnabledState();
+
+    protected final boolean canDownload() {
+        DataSet ds = editor.getRelation().getDataSet();
+        return !Main.isOffline(OnlineResource.OSM_API)
+            && ds != null && !ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
+    }
 }

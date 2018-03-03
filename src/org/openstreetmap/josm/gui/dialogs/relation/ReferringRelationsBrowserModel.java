@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 
@@ -34,6 +35,10 @@ public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> 
         fireContentsChanged(this, 0, upper);
     }
 
+    /**
+     * Sets the relation.
+     * @param relation the relation
+     */
     public void setRelation(Relation relation) {
         this.relation = relation;
         referrers.clear();
@@ -61,6 +66,10 @@ public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> 
         return false;
     }
 
+    /**
+     * Populates the model with parent referrers.
+     * @param parents parent referrers
+     */
     public void populate(List<Relation> parents) {
         referrers.clear();
         if (parents != null) {
@@ -92,10 +101,20 @@ public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> 
         fireModelUpdate();
     }
 
+    /**
+     * Determines if reloading the relation is possible/authorized.
+     * @return {@code true} if reloading the relation is possible/authorized
+     */
     public boolean canReload() {
-        return relation != null && !relation.isNew();
+        return relation != null && !relation.isNew()
+                && !relation.getDataSet().isLocked()
+                && !DownloadPolicy.BLOCKED.equals(relation.getDataSet().getDownloadPolicy());
     }
 
+    /**
+     * Returns the relation.
+     * @return the relation
+     */
     public Relation getRelation() {
         return relation;
     }

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
@@ -293,7 +292,10 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         protected void loadData(String newLayerName, Bounds bounds) {
             OsmDataLayer layer = addNewLayerIfRequired(newLayerName);
             if (layer == null) {
-                layer = Optional.ofNullable(getEditLayer()).orElseGet(this::getFirstModifiableDataLayer);
+                layer = getEditLayer();
+                if (layer == null || !layer.isDownloadable()) {
+                    layer = getFirstModifiableDataLayer();
+                }
                 Collection<OsmPrimitive> primitivesToUpdate = searchPrimitivesToUpdate(bounds, layer.data);
                 layer.mergeFrom(dataSet);
                 MapFrame map = MainApplication.getMap();

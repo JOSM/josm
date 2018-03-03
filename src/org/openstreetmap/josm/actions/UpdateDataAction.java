@@ -46,13 +46,14 @@ public class UpdateDataAction extends JosmAction {
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getEditLayer() != null && !Main.isOffline(OnlineResource.OSM_API));
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
+        setEnabled(editLayer != null && editLayer.isDownloadable() && !Main.isOffline(OnlineResource.OSM_API));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
-        if (!isEnabled() || editLayer == null)
+        if (!isEnabled() || editLayer == null || !editLayer.isDownloadable())
             return;
 
         List<Area> areas = new ArrayList<>();

@@ -6,9 +6,13 @@ import java.util.Collections;
 
 import javax.swing.AbstractAction;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OsmPrimitiveAction;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -44,5 +48,14 @@ public abstract class AbstractRelationAction extends AbstractAction implements O
      */
     protected void updateEnabledState() {
         setEnabled(!relations.isEmpty());
+    }
+
+    protected final boolean canDownload() {
+        if (relations.isEmpty()) {
+            return false;
+        }
+        DataSet ds = relations.iterator().next().getDataSet();
+        return !Main.isOffline(OnlineResource.OSM_API)
+            && ds != null && !ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
     }
 }
