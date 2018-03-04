@@ -278,7 +278,7 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
         }
 
         @Override
-        public void boudingBoxChanged(Bounds bbox) {
+        public void boundingBoxChanged(Bounds bbox) {
             updateSizeCheck(bbox);
         }
 
