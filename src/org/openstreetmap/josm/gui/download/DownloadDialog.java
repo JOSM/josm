@@ -265,6 +265,7 @@ public class DownloadDialog extends JDialog {
      *
      * @param eventSource - the DownloadSelection object that fired this notification.
      */
+    @SuppressWarnings("deprecation")
     public void boundingBoxChanged(Bounds b, DownloadSelection eventSource) {
         this.currentBounds = b;
         for (DownloadSelection s : downloadSelections) {
@@ -274,6 +275,7 @@ public class DownloadDialog extends JDialog {
         }
 
         for (AbstractDownloadSourcePanel<?> ds : downloadSourcesTab.getAllPanels()) {
+            ds.boundingBoxChanged(b);
             ds.boudingBoxChanged(b);
         }
     }

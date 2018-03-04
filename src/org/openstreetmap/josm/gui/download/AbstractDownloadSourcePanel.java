@@ -91,8 +91,19 @@ public abstract class AbstractDownloadSourcePanel<T> extends JPanel {
     /**
      * Updates GUI components of the panel according to the bbox changes.
      * @param bbox The new value for the bounding box.
+     * @deprecated Use {@link #boundingBoxChanged} instead
      */
+    @Deprecated
     public void boudingBoxChanged(Bounds bbox) {
+        // override this if the panel must react on bbox changes
+    }
+
+    /**
+     * Updates GUI components of the panel according to the bbox changes.
+     * @param bbox The new value for the bounding box.
+     * @since 13498
+     */
+    public void boundingBoxChanged(Bounds bbox) {
         // override this if the panel must react on bbox changes
     }
 
