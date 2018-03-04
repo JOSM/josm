@@ -570,7 +570,7 @@ public final class I18n {
      * given by <code>localName</code>.
      *
      * Ignored if localeName is null. If the locale with name <code>localName</code>
-     * isn't found the default local is set to <tt>en</tt> (english).
+     * isn't found the default local is set to <code>en</code> (english).
      *
      * @param localeName the locale name. Ignored if null.
      */

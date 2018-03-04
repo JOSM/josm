@@ -245,7 +245,7 @@ public final class GuiHelper {
      * Executes synchronously a callable in
      * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>
      * and return a value.
-     * @param <V> the result type of method <tt>call</tt>
+     * @param <V> the result type of method <code>call</code>
      * @param callable The callable to execute
      * @return The computed result
      * @since 7204

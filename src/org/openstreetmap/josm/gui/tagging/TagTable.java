@@ -565,7 +565,7 @@ public class TagTable extends JosmTable implements EndEditListener {
 
     /**
      * This is a custom implementation of the CellEditorRemover used in JTable
-     * to handle the client property <tt>terminateEditOnFocusLost</tt>.
+     * to handle the client property <code>terminateEditOnFocusLost</code>.
      *
      * This implementation also checks whether focus is transferred to one of a list
      * of dedicated components, see {@link TagTable#doNotStopCellEditingWhenFocused}.

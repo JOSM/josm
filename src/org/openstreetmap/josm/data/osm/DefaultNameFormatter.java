@@ -95,7 +95,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     /**
      * Replies the list of naming tags used in relations. The list is given (in this order) by:
      * <ul>
-     *   <li>by the tag names in the preference <tt>relation.nameOrder</tt></li>
+     *   <li>by the tag names in the preference <code>relation.nameOrder</code></li>
      *   <li>by the default tags in {@link #DEFAULT_NAMING_TAGS_FOR_RELATIONS}
      * </ul>
      *
@@ -112,7 +112,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     /**
      * Decorates the name of primitive with its id, if the preference
-     * <tt>osm-primitives.showid</tt> is set. Shows unique id if osm-primitives.showid.new-primitives is set
+     * <code>osm-primitives.showid</code> is set. Shows unique id if osm-primitives.showid.new-primitives is set
      *
      * @param name  the name without the id
      * @param primitive the primitive
@@ -510,7 +510,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     /**
      * Decorates the name of primitive with its id, if the preference
-     * <tt>osm-primitives.showid</tt> is set.
+     * <code>osm-primitives.showid</code> is set.
      *
      * The id is append to the {@link StringBuilder} passed in <code>name</code>.
      *

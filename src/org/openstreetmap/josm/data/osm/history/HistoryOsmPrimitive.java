@@ -300,7 +300,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
 
     /**
      * Replies the name of this primitive. The default implementation replies the value
-     * of the tag <tt>name</tt> or null, if this tag is not present.
+     * of the tag <code>name</code> or null, if this tag is not present.
      *
      * @return the name of this primitive
      */

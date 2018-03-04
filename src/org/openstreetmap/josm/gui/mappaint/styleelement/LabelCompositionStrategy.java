@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  *   <li>{@link DeriveLabelFromNameTagsCompositionStrategy} - the label is given by the value
  *   of one of the configured "name tags". The list of relevant name tags can be configured
  *   in the JOSM preferences
- *   see the preference options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.</li>
+ *   see the preference options <code>mappaint.nameOrder</code> and <code>mappaint.nameComplementOrder</code>.</li>
  * </ul>
  * @since  3987 (creation)
  * @since 10599 (functional interface)
@@ -135,7 +135,7 @@ public interface LabelCompositionStrategy {
     /**
      * Strategy where the label is given by the value of one of the configured "name tags".
      * The list of relevant name tags can be configured in the JOSM preferences
-     * see the preference options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>
+     * see the preference options <code>mappaint.nameOrder</code> and <code>mappaint.nameComplementOrder</code>
      */
     class DeriveLabelFromNameTagsCompositionStrategy implements LabelCompositionStrategy, PreferenceChangedListener {
 
@@ -229,7 +229,7 @@ public interface LabelCompositionStrategy {
          * Initializes the name tags to use from a list of default name tags (see
          * {@link #DEFAULT_NAME_TAGS} and {@link #DEFAULT_NAME_COMPLEMENT_TAGS})
          * and from name tags configured in the preferences using the keys
-         * <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.
+         * <code>mappaint.nameOrder</code> and <code>mappaint.nameComplementOrder</code>.
          */
         public final void initNameTagsFromPreferences() {
             if (Config.getPref() == null) {

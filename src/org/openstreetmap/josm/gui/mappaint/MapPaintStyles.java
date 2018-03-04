@@ -84,7 +84,7 @@ public final class MapPaintStyles {
      * <pre>
      *    text: a_tag_name;
      * </pre>
-     * results in a tag reference for the tag <tt>a_tag_name</tt> in the
+     * results in a tag reference for the tag <code>a_tag_name</code> in the
      * style cascade.
      */
     public static class TagKeyReference {

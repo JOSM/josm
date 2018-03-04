@@ -22,7 +22,7 @@ public class HelpContentReaderException extends Exception {
     /**
      * Constructs a new {@code HelpContentReaderException}.
      * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
-     *        (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or unknown.)
+     *        (A <code>null</code> value is permitted, and indicates that the cause is nonexistent or unknown.)
      * @param responseCode HTTP response code related to the wiki access exception (0 if not applicable)
      */
     public HelpContentReaderException(Throwable cause, int responseCode) {

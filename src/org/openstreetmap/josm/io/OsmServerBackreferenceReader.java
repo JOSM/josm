@@ -169,7 +169,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
 
     /**
      * Scans a dataset for incomplete primitives. Depending on the configuration of this reader
-     * incomplete primitives are read from the server with an individual <tt>/api/0.6/[way,relation]/#id/full</tt>
+     * incomplete primitives are read from the server with an individual <code>/api/0.6/[way,relation]/#id/full</code>
      * request.
      *
      * <ul>

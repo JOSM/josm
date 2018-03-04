@@ -359,7 +359,7 @@ public class ImageProvider {
 
     /**
      * Set an id used for caching.
-     * If name starts with <tt>http://</tt> Id is not used for the cache.
+     * If name starts with <code>http://</code> Id is not used for the cache.
      * (A URL is unique anyway.)
      * @param id the id for the cached image
      * @return the current object, for convenience

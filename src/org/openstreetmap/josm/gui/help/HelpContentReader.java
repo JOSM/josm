@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.WikiReader;
  * Reads help content from the JOSM Wiki and prepares it for rendering in the internal
  * help browser.
  *
- * The help content has to be <strong>filtered</strong> because only the main content <tt>&lt;div&gt;</tt>
+ * The help content has to be <strong>filtered</strong> because only the main content <code>&lt;div&gt;</code>
  * of a Wiki help page is displayed in the internal help browser.
  *
  * It also has to be <strong>transformed</strong> because the internal help browser required slightly

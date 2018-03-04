@@ -50,7 +50,7 @@ public class DefaultProxySelector extends ProxySelector {
 
     /**
      * The {@link ProxySelector} provided by the JDK will retrieve proxy information
-     * from the system settings, if the system property <tt>java.net.useSystemProxies</tt>
+     * from the system settings, if the system property <code>java.net.useSystemProxies</code>
      * is defined <strong>at startup</strong>. It has no effect if the property is set
      * later by the application.
      *
@@ -66,11 +66,11 @@ public class DefaultProxySelector extends ProxySelector {
 
     /**
      * The {@link ProxySelector} provided by the JDK will retrieve proxy information
-     * from the system settings, if the system property <tt>java.net.useSystemProxies</tt>
+     * from the system settings, if the system property <code>java.net.useSystemProxies</code>
      * is defined <strong>at startup</strong>. If the property is set later by the application,
      * this has no effect.
      *
-     * @return true, if <tt>java.net.useSystemProxies</tt> was set to true at class initialization time
+     * @return true, if <code>java.net.useSystemProxies</code> was set to true at class initialization time
      *
      */
     public static boolean willJvmRetrieveSystemProxies() {

@@ -526,7 +526,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * Returns the last node of this way.
-     * The result equals <tt>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</tt>.
+     * The result equals <code>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</code>.
      * @return the last node of this way
      * @since 1400
      */

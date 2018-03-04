@@ -38,7 +38,7 @@ public class PluginException extends Exception {
 
     /**
      * Constructs a new {@code PluginException} with the specified plugin name, cause and a detail message of
-     * <tt>(cause==null ? null : cause.toString())</tt> (which typically contains the class and detail message of <tt>cause</tt>).
+     * <code>(cause==null ? null : cause.toString())</code> (which typically contains the class and detail message of <code>cause</code>).
      * @param name plugin name
      * @param cause cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
      */

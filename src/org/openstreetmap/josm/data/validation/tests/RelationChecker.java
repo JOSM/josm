@@ -177,7 +177,7 @@ public class RelationChecker extends Test {
      * @param allroles containing list of possible role presets of the member
      * @param member to be verified
      * @param n relation to be verified
-     * @return <tt>true</tt> if member passed any of definition within preset
+     * @return <code>true</code> if member passed any of definition within preset
      *
      */
     private boolean checkMemberExpressionAndType(Map<Role, String> allroles, RelationMember member, Relation n) {

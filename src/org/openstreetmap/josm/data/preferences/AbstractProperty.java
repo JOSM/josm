@@ -139,7 +139,7 @@ public abstract class AbstractProperty<T> {
 
         /**
          * Constructs a new {@code InvalidPreferenceValueException} with the specified cause and a detail message of
-         * <tt>(cause==null ? null : cause.toString())</tt> (which typically contains the class and detail message of <tt>cause</tt>).
+         * <code>(cause==null ? null : cause.toString())</code> (which typically contains the class and detail message of <code>cause</code>).
          *
          * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
          */

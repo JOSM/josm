@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.Logging;
 public class Multipolygon {
 
     /** preference key for a collection of roles which indicate that the respective member belongs to an
-     * <em>outer</em> polygon. Default is <tt>outer</tt>.
+     * <em>outer</em> polygon. Default is <code>outer</code>.
      */
     public static final String PREF_KEY_OUTER_ROLES = "mappaint.multipolygon.outer.roles";
 
@@ -49,7 +49,7 @@ public class Multipolygon {
     public static final String PREF_KEY_OUTER_ROLE_PREFIXES = "mappaint.multipolygon.outer.role-prefixes";
 
     /** preference key for a collection of roles which indicate that the respective member belongs to an
-     * <em>inner</em> polygon. Default is <tt>inner</tt>.
+     * <em>inner</em> polygon. Default is <code>inner</code>.
      */
     public static final String PREF_KEY_INNER_ROLES = "mappaint.multipolygon.inner.roles";
 
