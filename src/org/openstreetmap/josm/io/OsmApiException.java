@@ -11,6 +11,7 @@ import org.openstreetmap.josm.tools.Logging;
 public class OsmApiException extends OsmTransferException {
 
     private int responseCode;
+    private String contentType;
     private String errorHeader;
     private String errorBody;
     private String accessedUrl;
@@ -24,14 +25,30 @@ public class OsmApiException extends OsmTransferException {
      * @param errorBody The error body, as transmitted in the HTTP response body
      * @param accessedUrl The complete URL accessed when this error occured
      * @param login the login used to connect to OSM API (can be null)
-     * @since 12992
+     * @param contentType the response content-type
+     * @since 13499
      */
-    public OsmApiException(int responseCode, String errorHeader, String errorBody, String accessedUrl, String login) {
+    public OsmApiException(int responseCode, String errorHeader, String errorBody, String accessedUrl, String login, String contentType) {
         this.responseCode = responseCode;
         this.errorHeader = errorHeader;
         this.errorBody = errorBody;
         this.accessedUrl = accessedUrl;
         this.login = login;
+        this.contentType = contentType;
+    }
+
+    /**
+     * Constructs an {@code OsmApiException} with the specified response code, error header and error body
+     * @param responseCode The HTTP response code replied by the OSM server.
+     * See {@link java.net.HttpURLConnection HttpURLConnection} for predefined HTTP response code values
+     * @param errorHeader The error header, as transmitted in the {@code Error} field of the HTTP response header
+     * @param errorBody The error body, as transmitted in the HTTP response body
+     * @param accessedUrl The complete URL accessed when this error occured
+     * @param login the login used to connect to OSM API (can be null)
+     * @since 12992
+     */
+    public OsmApiException(int responseCode, String errorHeader, String errorBody, String accessedUrl, String login) {
+        this(responseCode, errorHeader, errorBody, accessedUrl, login, null);
     }
 
     /**
@@ -231,5 +248,23 @@ public class OsmApiException extends OsmTransferException {
      */
     public String getLogin() {
         return login;
+    }
+
+    /**
+     * Sets the response content-type.
+     * @param contentType the response content-type.
+     * @since 13499
+     */
+    public final void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    /**
+     * Replies the response content-type.
+     * @return the response content-type
+     * @since 13499
+     */
+    public final String getContentType() {
+        return contentType;
     }
 }

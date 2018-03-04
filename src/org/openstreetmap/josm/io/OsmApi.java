@@ -726,7 +726,7 @@ public class OsmApi extends OsmConnection {
                 case HttpURLConnection.HTTP_FORBIDDEN:
                     CredentialsManager.getInstance().purgeCredentialsCache(RequestorType.SERVER);
                     throw new OsmApiException(retCode, errorHeader, errorBody, activeConnection.getURL().toString(),
-                            doAuthenticate ? retrieveBasicAuthorizationLogin(client) : null);
+                            doAuthenticate ? retrieveBasicAuthorizationLogin(client) : null, response.getContentType());
                 default:
                     throw new OsmApiException(retCode, errorHeader, errorBody);
                 }
