@@ -20,7 +20,7 @@ public class ValidateUploadHookTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().fakeAPI().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().platform().fakeAPI().timeout(30000);
 
     /**
      * Test of {@link ValidateUploadHook#checkUpload} method.
