@@ -343,7 +343,7 @@ public final class TaggingPresetReader {
         ) {
             if (zip != null) {
                 zipIcons = cf.getFile();
-                I18n.addTextsZip(zipIcons);
+                I18n.addTexts(zipIcons);
             }
             try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip)) {
                 tp = readAll(new BufferedReader(r), validate, all);

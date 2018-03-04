@@ -744,7 +744,7 @@ public class MapCSSTagChecker extends Test.TagTest {
              InputStream s = zip != null ? zip : cache.getInputStream();
              Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
             if (zip != null)
-                I18n.addTextsZip(cache.getFile());
+                I18n.addTexts(cache.getFile());
             result = TagCheck.readMapCSS(reader);
             checks.remove(url);
             checks.putAll(url, result.parseChecks);

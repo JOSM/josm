@@ -19,7 +19,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -369,51 +368,10 @@ public final class I18n {
 
     /**
      * I18n initialization for plugins.
-     * @param source file path/name of the JAR file containing translation strings
+     * @param source file path/name of the JAR or Zip file containing translation strings
      * @since 4159
      */
     public static void addTexts(File source) {
-        if ("en".equals(loadedCode))
-            return;
-        final String enfile = "data/en.lang";
-        final String langfile = "data/"+loadedCode+".lang";
-        try (
-            InputStream fis = Files.newInputStream(source.toPath());
-            JarInputStream jar = new JarInputStream(fis)
-        ) {
-            ZipEntry e;
-            boolean found = false;
-            while (!found && (e = jar.getNextEntry()) != null) {
-                String name = e.getName();
-                if (enfile.equals(name))
-                    found = true;
-            }
-            if (found) {
-                try (
-                    InputStream fisTrans = Files.newInputStream(source.toPath());
-                    JarInputStream jarTrans = new JarInputStream(fisTrans)
-                ) {
-                    found = false;
-                    while (!found && (e = jarTrans.getNextEntry()) != null) {
-                        String name = e.getName();
-                        if (name.equals(langfile))
-                            found = true;
-                    }
-                    if (found)
-                        load(jar, jarTrans, true);
-                }
-            }
-        } catch (IOException | InvalidPathException e) {
-            Logging.trace(e);
-        }
-    }
-
-    /**
-     * I18n initialization for Zip based resources.
-     * @param source input Zip source
-     * @since 13502
-     */
-    public static void addTextsZip(File source) {
         if ("en".equals(loadedCode))
             return;
         final ZipEntry enfile = new ZipEntry("data/en.lang");

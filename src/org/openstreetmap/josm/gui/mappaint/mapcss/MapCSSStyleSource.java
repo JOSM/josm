@@ -515,7 +515,7 @@ public class MapCSSStyleSource extends StyleSource {
             File file = cf.getFile();
             zipFile = new ZipFile(file, StandardCharsets.UTF_8);
             zipIcons = file;
-            I18n.addTextsZip(zipIcons);
+            I18n.addTexts(zipIcons);
             ZipEntry zipEntry = zipFile.getEntry(zipEntryPath);
             return zipFile.getInputStream(zipEntry);
         } else {
