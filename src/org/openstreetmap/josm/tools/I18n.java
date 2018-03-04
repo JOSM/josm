@@ -411,7 +411,7 @@ public final class I18n {
     /**
      * I18n initialization for Zip based resources.
      * @param source input Zip source
-     * @since xxx
+     * @since 13502
      */
     public static void addTextsZip(File source) {
         if ("en".equals(loadedCode))
