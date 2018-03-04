@@ -383,7 +383,7 @@ Build-Date: ${build.tstamp}
             <link href="http://docs.oracle.com/javase/8/docs/api"/>
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
-            <arg value="-html4" if:set="isJava9" />
+            <arg value="-html5" if:set="isJava9" />
             <arg value="--add-exports" if:set="isJava9" />
             <arg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
             <arg value="--add-exports" if:set="isJava9" />
