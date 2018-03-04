@@ -58,6 +58,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
@@ -514,6 +515,7 @@ public class MapCSSStyleSource extends StyleSource {
             File file = cf.getFile();
             zipFile = new ZipFile(file, StandardCharsets.UTF_8);
             zipIcons = file;
+            I18n.addTextsZip(zipIcons);
             ZipEntry zipEntry = zipFile.getEntry(zipEntryPath);
             return zipFile.getInputStream(zipEntry);
         } else {

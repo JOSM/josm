@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.tagging.presets.items.Text;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
@@ -342,6 +343,7 @@ public final class TaggingPresetReader {
         ) {
             if (zip != null) {
                 zipIcons = cf.getFile();
+                I18n.addTextsZip(zipIcons);
             }
             try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip)) {
                 tp = readAll(new BufferedReader(r), validate, all);
