@@ -283,6 +283,7 @@ public interface PlatformHook {
      * @since 12748 (as a replacement to {@code GuiHelper.getMenuShortcutKeyMaskEx()})
      */
     default int getMenuShortcutKeyMaskEx() {
+        // To remove when switching to Java 10+, and use Toolkit.getMenuShortcutKeyMaskEx instead
         return KeyEvent.CTRL_DOWN_MASK;
     }
 
