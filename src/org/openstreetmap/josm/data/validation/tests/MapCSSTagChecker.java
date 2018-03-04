@@ -66,6 +66,7 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -742,6 +743,8 @@ public class MapCSSTagChecker extends Test.TagTest {
              InputStream zip = cache.findZipEntryInputStream("validator.mapcss", "");
              InputStream s = zip != null ? zip : cache.getInputStream();
              Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
+            if (zip != null)
+                I18n.addTextsZip(cache.getFile());
             result = TagCheck.readMapCSS(reader);
             checks.remove(url);
             checks.putAll(url, result.parseChecks);

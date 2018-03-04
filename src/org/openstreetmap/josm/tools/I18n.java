@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Internationalisation support.
@@ -366,6 +367,11 @@ public final class I18n {
         }
     }
 
+    /**
+     * I18n initialization for plugins.
+     * @param source file path/name of the JAR file containing translation strings
+     * @since 4159
+     */
     public static void addTexts(File source) {
         if ("en".equals(loadedCode))
             return;
@@ -397,6 +403,28 @@ public final class I18n {
                         load(jar, jarTrans, true);
                 }
             }
+        } catch (IOException | InvalidPathException e) {
+            Logging.trace(e);
+        }
+    }
+
+    /**
+     * I18n initialization for Zip based resources.
+     * @param source input Zip source
+     * @since xxx
+     */
+    public static void addTextsZip(File source) {
+        if ("en".equals(loadedCode))
+            return;
+        final ZipEntry enfile = new ZipEntry("data/en.lang");
+        final ZipEntry langfile = new ZipEntry("data/"+loadedCode+".lang");
+        try (
+            ZipFile zipFile = new ZipFile(source, StandardCharsets.UTF_8);
+            InputStream orig = zipFile.getInputStream(enfile);
+            InputStream trans = zipFile.getInputStream(langfile);
+        ) {
+            if (orig != null && trans != null)
+                load(orig, trans, true);
         } catch (IOException | InvalidPathException e) {
             Logging.trace(e);
         }
