@@ -551,21 +551,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
             return;
         }
 
-        Area a = data.getDataSourceArea();
-
-        // copy the merged layer's data source info.
-        // only add source rectangles if they are not contained in the layer already.
-        for (DataSource src : from.getDataSources()) {
-            if (a == null || !a.contains(src.bounds.asRect())) {
-                data.addDataSource(src);
-            }
-        }
-
-        // copy the merged layer's API version
-        if (data.getVersion() == null) {
-            data.setVersion(from.getVersion());
-        }
-
         int numNewConflicts = 0;
         for (Conflict<?> c : visitor.getConflicts()) {
             if (!data.getConflicts().hasConflict(c)) {

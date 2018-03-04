@@ -328,6 +328,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             }
             version = copyFrom.version;
             uploadPolicy = copyFrom.uploadPolicy;
+            downloadPolicy = copyFrom.downloadPolicy;
             isReadOnly.set(copyFrom.isReadOnly.get());
         } finally {
             copyFrom.getReadLock().unlock();

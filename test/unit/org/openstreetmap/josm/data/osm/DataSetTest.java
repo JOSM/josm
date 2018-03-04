@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -193,6 +195,41 @@ public class DataSetTest {
         assertEqualsDataSet(ds, new DataSet(ds));
     }
 
+    /**
+     * Unit test for {@link DataSet#mergeFrom} - Policies.
+     */
+    @Test
+    public void testMergePolicies() {
+        DataSet ds1 = new DataSet();
+        DataSet ds2 = new DataSet();
+
+        ds1.setUploadPolicy(UploadPolicy.BLOCKED);
+        ds2.setUploadPolicy(UploadPolicy.NORMAL);
+        ds1.mergeFrom(ds2);
+        assertEquals(UploadPolicy.BLOCKED, ds1.getUploadPolicy());
+
+        ds1.setUploadPolicy(UploadPolicy.NORMAL);
+        ds2.setUploadPolicy(UploadPolicy.BLOCKED);
+        ds1.mergeFrom(ds2);
+        assertEquals(UploadPolicy.BLOCKED, ds1.getUploadPolicy());
+
+        ds1.setDownloadPolicy(DownloadPolicy.BLOCKED);
+        ds2.setDownloadPolicy(DownloadPolicy.NORMAL);
+        ds1.mergeFrom(ds2);
+        assertEquals(DownloadPolicy.BLOCKED, ds1.getDownloadPolicy());
+
+        ds1.setDownloadPolicy(DownloadPolicy.NORMAL);
+        ds2.setDownloadPolicy(DownloadPolicy.BLOCKED);
+        ds1.mergeFrom(ds2);
+        assertEquals(DownloadPolicy.BLOCKED, ds1.getDownloadPolicy());
+
+        ds2.lock();
+        assertFalse(ds1.isLocked());
+        assertTrue(ds2.isLocked());
+        ds1.mergeFrom(ds2);
+        assertTrue(ds1.isLocked());
+    }
+
     private static void assertEqualsDataSet(DataSet ds1, DataSet ds2) {
         assertEquals(new ArrayList<>(ds1.getNodes()), new ArrayList<>(ds2.getNodes()));
         assertEquals(new ArrayList<>(ds1.getWays()), new ArrayList<>(ds2.getWays()));
@@ -200,5 +237,16 @@ public class DataSetTest {
         assertEquals(new ArrayList<>(ds1.getDataSources()), new ArrayList<>(ds2.getDataSources()));
         assertEquals(ds1.getUploadPolicy(), ds2.getUploadPolicy());
         assertEquals(ds1.getVersion(), ds2.getVersion());
+    }
+
+    /**
+     * Checks that enum values are defined in the correct order.
+     */
+    @Test
+    public void testEnumOrder() {
+        assertTrue(DownloadPolicy.BLOCKED.compareTo(DownloadPolicy.NORMAL) > 0);
+        assertTrue(UploadPolicy.BLOCKED.compareTo(UploadPolicy.NORMAL) > 0);
+        assertTrue(UploadPolicy.BLOCKED.compareTo(UploadPolicy.DISCOURAGED) > 0);
+        assertTrue(UploadPolicy.DISCOURAGED.compareTo(UploadPolicy.NORMAL) > 0);
     }
 }

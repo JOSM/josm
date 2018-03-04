@@ -10,6 +10,7 @@ import java.util.Collections;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -45,7 +46,9 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
     //
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getEditDataSet() != null && !Main.isOffline(OnlineResource.OSM_API));
+        DataSet ds = getLayerManager().getEditDataSet();
+        setEnabled(ds != null && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy())
+                && !Main.isOffline(OnlineResource.OSM_API));
     }
 
     @Override

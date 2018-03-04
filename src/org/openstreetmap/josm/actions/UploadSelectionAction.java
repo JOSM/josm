@@ -63,6 +63,10 @@ public class UploadSelectionAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         updateEnabledStateOnModifiableSelection(selection);
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
+        if (editLayer != null && !editLayer.isUploadable()) {
+            setEnabled(false);
+        }
     }
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {
@@ -88,7 +92,7 @@ public class UploadSelectionAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
-        if (!isEnabled())
+        if (!isEnabled() || !editLayer.isUploadable())
             return;
         if (editLayer.isUploadDiscouraged() && UploadAction.warnUploadDiscouraged(editLayer)) {
             return;
@@ -202,8 +206,7 @@ public class UploadSelectionAction extends JosmAction {
                 // upload new ways as well as modified and deleted ones
                 hull.add(w);
                 for (Node n: w.getNodes()) {
-                    // we upload modified nodes even if they aren't in the current
-                    // selection.
+                    // we upload modified nodes even if they aren't in the current selection.
                     n.accept(this);
                 }
             }
