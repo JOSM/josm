@@ -54,6 +54,8 @@ public abstract class AbstractRelationEditorAction extends AbstractAction implem
     protected abstract void updateEnabledState();
 
     protected final boolean canDownload() {
+        if (editor.getRelation() == null)
+            return false;
         DataSet ds = editor.getRelation().getDataSet();
         return !Main.isOffline(OnlineResource.OSM_API)
             && ds != null && !ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
