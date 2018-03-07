@@ -102,6 +102,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         PATTERN_HEADER,
     };
 
+    private int cachedTileSize = -1;
+
     private static class TileMatrix {
         private String identifier;
         private double scaleDenominator;
@@ -732,12 +734,16 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     @Override
     public int getTileSize() {
+        if (cachedTileSize > 0) {
+            return cachedTileSize;
+        }
         if (tileProjection != null) {
             // no support for non-square tiles (tileHeight != tileWidth)
             // and for different tile sizes at different zoom levels
             Collection<Layer> projLayers = getLayers(null, tileProjection.toCode());
             if (!projLayers.isEmpty()) {
-                return projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
+                cachedTileSize = projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
+                return cachedTileSize;
             }
         }
         // if no layers is found, fallback to default mercator tile size. Maybe it will work
