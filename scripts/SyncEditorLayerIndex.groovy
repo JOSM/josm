@@ -647,6 +647,9 @@ class SyncEditorLayerIndex {
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
             def id = getId(j)
+            if("wms".equals(getType(j)) && !getProjections(j)) {
+                myprintln "* WMS without projections: ${getDescription(j)}"
+            }
             if(josmMirrors.containsKey(url)) {
                 continue
             }
