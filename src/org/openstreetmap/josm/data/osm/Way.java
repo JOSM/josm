@@ -122,7 +122,7 @@ public final class Way extends OsmPrimitive implements IWay {
      *
      * @param index the position
      * @return  the node at position <code>index</code>
-     * @throws IndexOutOfBoundsException if <code>index</code> &lt; 0
+     * @throws ArrayIndexOutOfBoundsException if <code>index</code> &lt; 0
      * or <code>index</code> &gt;= {@link #getNodesCount()}
      * @since 1862
      */

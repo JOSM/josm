@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -254,8 +255,12 @@ public class ImproveWayAccuracyAction extends MapMode implements
             Node p2 = null;
             if (ctrl && candidateSegment != null) {
                 g.setStroke(ADD_NODE_STROKE.get());
-                p1 = candidateSegment.getFirstNode();
-                p2 = candidateSegment.getSecondNode();
+                try {
+                    p1 = candidateSegment.getFirstNode();
+                    p2 = candidateSegment.getSecondNode();
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    Logging.error(e);
+                }
             } else if (!alt && !ctrl && candidateNode != null) {
                 g.setStroke(MOVE_NODE_STROKE.get());
                 List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
