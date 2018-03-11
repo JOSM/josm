@@ -333,7 +333,8 @@ class SyncEditorLayerIndex {
 
     List inOneButNotTheOther(Map m1, Map m2, String code, String https) {
         def l = []
-        for (def url : m1.keySet()) {
+        def k = new LinkedList<String>(m1.keySet())
+        for (def url : k) {
             if (!m2.containsKey(url)) {
                 String urlhttps = url.replace("http:","https:")
                 if(!https || !m2.containsKey(urlhttps))
@@ -344,6 +345,8 @@ class SyncEditorLayerIndex {
                 else
                 {
                     l += https+" Missing https: "+getDescription(m1.get(url))
+                    m1.put(urlhttps, m1.get(url))
+                    m1.remove(url)
                 }
             }
         }
@@ -520,7 +523,12 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "- Missing JOSM attribution URL (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "* Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    def ethttps = et.replace("http:","https:")
+                    if(jt.equals(ethttps)) {
+                        myprintln "+ Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    } else {
+                        myprintln "* Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    }
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI attribution URL ('${jt}'): ${getDescription(j)}"
                 }
