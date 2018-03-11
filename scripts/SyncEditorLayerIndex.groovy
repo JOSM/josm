@@ -331,31 +331,39 @@ class SyncEditorLayerIndex {
         myprintln "*** Loaded ${josmEntries.size()} entries (JOSM). ***"
     }
 
-    List inOneButNotTheOther(Map m1, Map m2) {
+    List inOneButNotTheOther(Map m1, Map m2, String code, String https) {
         def l = []
         for (def url : m1.keySet()) {
             if (!m2.containsKey(url)) {
-                def name = getName(m1.get(url))
-                l += "  "+getDescription(m1.get(url))
+                String urlhttps = url.replace("http:","https:")
+                if(!https || !m2.containsKey(urlhttps))
+                {
+                    def name = getName(m1.get(url))
+                    l += code+"  "+getDescription(m1.get(url))
+                }
+                else
+                {
+                    l += https+" Missing https: "+getDescription(m1.get(url))
+                }
             }
         }
         l.sort()
     }
 
     void checkInOneButNotTheOther() {
-        def l1 = inOneButNotTheOther(eliUrls, josmUrls)
+        def l1 = inOneButNotTheOther(eliUrls, josmUrls, "-", "+")
         myprintln "*** URLs found in ELI but not in JOSM (${l1.size()}): ***"
         if (!l1.isEmpty()) {
             for (def l : l1) {
-                myprintln "-" + l
+                myprintln l
             }
         }
 
-        def l2 = inOneButNotTheOther(josmUrls, eliUrls)
+        def l2 = inOneButNotTheOther(josmUrls, eliUrls, "+", "")
         myprintln "*** URLs found in JOSM but not in ELI (${l2.size()}): ***"
         if (!l2.isEmpty()) {
             for (def l : l2) {
-                myprintln "+" + l
+                myprintln l
             }
         }
     }
