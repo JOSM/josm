@@ -243,6 +243,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @StructEntry Map<String, String> metadataHeaders;
         @StructEntry boolean valid_georeference;
         @StructEntry boolean bestMarked;
+        @StructEntry boolean modTileFeatures;
         // TODO: disabled until change of layers is implemented
         // @StructEntry String default_layers;
 
@@ -308,6 +309,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             tileSize = i.getTileSize();
 
             valid_georeference = i.isGeoreferenceValid();
+            modTileFeatures = i.isModTileFeatures();
             // TODO disabled until change of layers is implemented
             // default_layers = i.defaultLayers.stream().collect(Collectors.joining(","));
         }
@@ -449,6 +451,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         setTileSize(e.tileSize);
         metadataHeaders = e.metadataHeaders;
         isGeoreferenceValid = e.valid_georeference;
+        modTileFeatures = e.modTileFeatures;
         // TODO disabled until change of layers is implemented
         // defaultLayers = Arrays.asList(e.default_layers.split(","));
     }
