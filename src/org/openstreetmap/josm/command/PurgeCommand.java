@@ -159,8 +159,8 @@ public class PurgeCommand extends Command {
      */
     public static List<OsmPrimitive> topoSort(Collection<OsmPrimitive> sel) {
         Set<OsmPrimitive> in = new HashSet<>(sel);
-
         List<OsmPrimitive> out = new ArrayList<>(in.size());
+        Set<Relation> inR = new HashSet<>();
 
         // Nodes not deleted in the first pass
         Set<OsmPrimitive> remainingNodes = new HashSet<>(in.size());
@@ -200,19 +200,16 @@ public class PurgeCommand extends Command {
                     }
                 }
                 out.add(w);
+            } else if (u instanceof Relation) {
+                inR.add((Relation) u);
             }
         }
 
         if (!remainingNodes.isEmpty())
             throw new AssertionError("topo sort algorithm failed (nodes remaining)");
 
-        /**
-          * Rest are relations. Do topological sorting on a DAG where each
-          * arrow points from child to parent. (Because it is faster to
-          * loop over getReferrers() than getMembers().)
-          */
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        Set<Relation> inR = (Set) in;
+        // Do topological sorting on a DAG where each arrow points from child to parent.
+        //  (Because it is faster to loop over getReferrers() than getMembers().)
 
         Map<Relation, Integer> numChilds = new HashMap<>();
 
