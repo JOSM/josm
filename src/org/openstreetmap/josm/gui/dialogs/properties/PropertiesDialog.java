@@ -13,9 +13,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,7 +20,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -79,7 +75,6 @@ import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
-import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -104,12 +99,8 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.HttpClient;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
-import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -181,12 +172,17 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     private final transient TagEditHelper editHelper = new TagEditHelper(tagTable, tagData, valueCount);
 
     private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
-    private final HelpAction helpAction = new HelpAction();
-    private final TaginfoAction taginfoAction = new TaginfoAction();
+    private final HelpAction helpAction = new HelpAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
+            membershipTable, x -> (Relation) membershipData.getValueAt(x, 0));
+    private final TaginfoAction taginfoAction = new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
+            membershipTable, x -> (Relation) membershipData.getValueAt(x, 0));
     private final PasteValueAction pasteValueAction = new PasteValueAction();
-    private final CopyValueAction copyValueAction = new CopyValueAction();
-    private final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction();
-    private final CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction();
+    private final CopyValueAction copyValueAction = new CopyValueAction(
+            tagTable, editHelper::getDataKey, Main.main::getInProgressSelection);
+    private final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction(
+            tagTable, editHelper::getDataKey, Main.main::getInProgressSelection);
+    private final CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction(
+            tagTable, editHelper::getDataKey, Main.main::getInProgressSelection);
     private final SearchAction searchActionSame = new SearchAction(true);
     private final SearchAction searchActionAny = new SearchAction(false);
     private final AddAction addAction = new AddAction();
@@ -1127,136 +1123,6 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         }
     }
 
-    class HelpAction extends AbstractAction {
-        HelpAction() {
-            putValue(NAME, tr("Go to OSM wiki for tag help"));
-            putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help for selected object"));
-            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
-            putValue(ACCELERATOR_KEY, getKeyStroke());
-        }
-
-        public KeyStroke getKeyStroke() {
-            return KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                String base = Config.getPref().get("url.openstreetmap-wiki", "https://wiki.openstreetmap.org/wiki/");
-                String lang = LanguageInfo.getWikiLanguagePrefix();
-                final List<URI> uris = new ArrayList<>();
-                int row;
-                if (tagTable.getSelectedRowCount() == 1) {
-                    row = tagTable.getSelectedRow();
-                    String key = Utils.encodeUrl(editHelper.getDataKey(row));
-                    Map<String, Integer> m = editHelper.getDataValues(row);
-                    String val = Utils.encodeUrl(m.entrySet().iterator().next().getKey());
-
-                    uris.add(new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)));
-                    uris.add(new URI(String.format("%sTag:%s=%s", base, key, val)));
-                    uris.add(new URI(String.format("%s%sKey:%s", base, lang, key)));
-                    uris.add(new URI(String.format("%sKey:%s", base, key)));
-                    uris.add(new URI(String.format("%s%sMap_Features", base, lang)));
-                    uris.add(new URI(String.format("%sMap_Features", base)));
-                } else if (membershipTable.getSelectedRowCount() == 1) {
-                    row = membershipTable.getSelectedRow();
-                    String type = ((Relation) membershipData.getValueAt(row, 0)).get("type");
-                    if (type != null) {
-                        type = Utils.encodeUrl(type);
-                    }
-
-                    if (type != null && !type.isEmpty()) {
-                        uris.add(new URI(String.format("%s%sRelation:%s", base, lang, type)));
-                        uris.add(new URI(String.format("%sRelation:%s", base, type)));
-                    }
-
-                    uris.add(new URI(String.format("%s%sRelations", base, lang)));
-                    uris.add(new URI(String.format("%sRelations", base)));
-                } else {
-                    // give the generic help page, if more than one element is selected
-                    uris.add(new URI(String.format("%s%sMap_Features", base, lang)));
-                    uris.add(new URI(String.format("%sMap_Features", base)));
-                }
-
-                MainApplication.worker.execute(() -> displayHelp(uris));
-            } catch (URISyntaxException e1) {
-                Logging.error(e1);
-            }
-        }
-
-        private void displayHelp(final List<URI> uris) {
-            try {
-                // find a page that actually exists in the wiki
-                HttpClient.Response conn;
-                for (URI u : uris) {
-                    conn = HttpClient.create(u.toURL(), "HEAD").connect();
-
-                    if (conn.getResponseCode() != 200) {
-                        conn.disconnect();
-                    } else {
-                        long osize = conn.getContentLength();
-                        if (osize > -1) {
-                            conn.disconnect();
-
-                            final URI newURI = new URI(u.toString()
-                                    .replace("=", "%3D") /* do not URLencode whole string! */
-                                    .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                            );
-                            conn = HttpClient.create(newURI.toURL(), "HEAD").connect();
-                        }
-
-                        /* redirect pages have different content length, but retrieving a "nonredirect"
-                         *  page using index.php and the direct-link method gives slightly different
-                         *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
-                         */
-                        if (osize > -1 && conn.getContentLength() != -1 && Math.abs(conn.getContentLength() - osize) > 200) {
-                            Logging.info("{0} is a mediawiki redirect", u);
-                            conn.disconnect();
-                        } else {
-                            conn.disconnect();
-
-                            OpenBrowser.displayUrl(u.toString());
-                            break;
-                        }
-                    }
-                }
-            } catch (URISyntaxException | IOException e1) {
-                Logging.error(e1);
-            }
-        }
-    }
-
-    class TaginfoAction extends JosmAction {
-
-        final transient StringProperty TAGINFO_URL_PROP = new StringProperty("taginfo.url", "https://taginfo.openstreetmap.org/");
-
-        TaginfoAction() {
-            super(tr("Go to Taginfo"), "dialogs/taginfo", tr("Launch browser with Taginfo statistics for selected object"), null, false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final String url;
-            if (tagTable.getSelectedRowCount() == 1) {
-                final int row = tagTable.getSelectedRow();
-                final String key = Utils.encodeUrl(editHelper.getDataKey(row)).replaceAll("\\+", "%20");
-                Map<String, Integer> values = editHelper.getDataValues(row);
-                if (values.size() == 1) {
-                    url = TAGINFO_URL_PROP.get() + "tags/" + key
-                            + '=' + Utils.encodeUrl(values.keySet().iterator().next()).replaceAll("\\+", "%20");
-                } else {
-                    url = TAGINFO_URL_PROP.get() + "keys/" + key;
-                }
-            } else if (membershipTable.getSelectedRowCount() == 1) {
-                final String type = ((Relation) membershipData.getValueAt(membershipTable.getSelectedRow(), 0)).get("type");
-                url = TAGINFO_URL_PROP.get() + "relations/" + type;
-            } else {
-                return;
-            }
-            OpenBrowser.displayUrl(url);
-        }
-    }
-
     class PasteValueAction extends AbstractAction {
         PasteValueAction() {
             putValue(NAME, tr("Paste Value"));
@@ -1273,85 +1139,6 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             if (sel.isEmpty() || clipboard == null || sel.iterator().next().getDataSet().isLocked())
                 return;
             MainApplication.undoRedo.add(new ChangePropertyCommand(sel, key, Utils.strip(clipboard)));
-        }
-    }
-
-    abstract class AbstractCopyAction extends AbstractAction {
-
-        protected abstract Collection<String> getString(OsmPrimitive p, String key);
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            int[] rows = tagTable.getSelectedRows();
-            Set<String> values = new TreeSet<>();
-            Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
-            if (rows.length == 0 || sel.isEmpty()) return;
-
-            for (int row: rows) {
-                String key = editHelper.getDataKey(row);
-                if (sel.isEmpty())
-                    return;
-                for (OsmPrimitive p : sel) {
-                    Collection<String> s = getString(p, key);
-                    if (s != null) {
-                        values.addAll(s);
-                    }
-                }
-            }
-            if (!values.isEmpty()) {
-                ClipboardUtils.copyString(Utils.join("\n", values));
-            }
-        }
-    }
-
-    class CopyValueAction extends AbstractCopyAction {
-
-        /**
-         * Constructs a new {@code CopyValueAction}.
-         */
-        CopyValueAction() {
-            putValue(NAME, tr("Copy Value"));
-            putValue(SHORT_DESCRIPTION, tr("Copy the value of the selected tag to clipboard"));
-        }
-
-        @Override
-        protected Collection<String> getString(OsmPrimitive p, String key) {
-            String v = p.get(key);
-            return v == null ? null : Collections.singleton(v);
-        }
-    }
-
-    class CopyKeyValueAction extends AbstractCopyAction {
-
-        CopyKeyValueAction() {
-            putValue(NAME, tr("Copy selected Key(s)/Value(s)"));
-            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tag(s) to clipboard"));
-        }
-
-        @Override
-        protected Collection<String> getString(OsmPrimitive p, String key) {
-            String v = p.get(key);
-            return v == null ? null : Collections.singleton(new Tag(key, v).toString());
-        }
-    }
-
-    class CopyAllKeyValueAction extends AbstractCopyAction {
-
-        CopyAllKeyValueAction() {
-            putValue(NAME, tr("Copy all Keys/Values"));
-            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
-            Shortcut sc = Shortcut.registerShortcut("system:copytags", tr("Edit: {0}", tr("Copy Tags")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
-            MainApplication.registerActionShortcut(this, sc);
-            sc.setAccelerator(this);
-        }
-
-        @Override
-        protected Collection<String> getString(OsmPrimitive p, String key) {
-            List<String> r = new LinkedList<>();
-            for (Entry<String, String> kv : p.getKeys().entrySet()) {
-                r.add(new Tag(kv.getKey(), kv.getValue()).toString());
-            }
-            return r;
         }
     }
 

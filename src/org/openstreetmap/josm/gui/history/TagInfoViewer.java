@@ -3,9 +3,25 @@ package org.openstreetmap.josm.gui.history;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+
+import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
+import org.openstreetmap.josm.gui.dialogs.properties.CopyAllKeyValueAction;
+import org.openstreetmap.josm.gui.dialogs.properties.CopyKeyValueAction;
+import org.openstreetmap.josm.gui.dialogs.properties.CopyValueAction;
+import org.openstreetmap.josm.gui.dialogs.properties.HelpAction;
+import org.openstreetmap.josm.gui.dialogs.properties.TaginfoAction;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 
 /**
  * TagInfoViewer is a UI component which displays the list of tags of two
@@ -15,7 +31,7 @@ import javax.swing.ListSelectionModel;
  *   <li>on the left, it displays the list of tags for the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
  *   <li>on the right, it displays the list of tags for the version at {@link PointInTimeType#CURRENT_POINT_IN_TIME}</li>
  * </ul>
- *
+ * @since 1709
  */
 public class TagInfoViewer extends HistoryViewerPanel {
     private static final class RepaintOnFocusChange implements FocusListener {
@@ -45,30 +61,43 @@ public class TagInfoViewer extends HistoryViewerPanel {
 
     @Override
     protected JTable buildReferenceTable() {
-        JTable table = new JTable(
-                model.getTagTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME),
-                new TagTableColumnModel()
-        );
-        table.setName("table.referencetagtable");
-        setUpDataTransfer(table);
-        return table;
+        return buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME, "table.referencetagtable", model::getReferencePointInTime);
     }
 
     @Override
     protected JTable buildCurrentTable() {
-        JTable table = new JTable(
-                model.getTagTableModel(PointInTimeType.CURRENT_POINT_IN_TIME),
-                new TagTableColumnModel()
-        );
-        table.setName("table.currenttagtable");
-        setUpDataTransfer(table);
-        return table;
+        return buildTable(PointInTimeType.CURRENT_POINT_IN_TIME, "table.currenttagtable", model::getCurrentPointInTime);
     }
 
-    private void setUpDataTransfer(JTable table) {
+    private JTable buildTable(PointInTimeType pointInTime, String name, Supplier<HistoryOsmPrimitive> histoSp) {
+        TagTableModel tagTableModel = model.getTagTableModel(pointInTime);
+        JTable table = new JTable(tagTableModel, new TagTableColumnModel());
+        table.setName(name);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.setTransferHandler(new TagInfoTransferHandler());
         table.addFocusListener(new RepaintOnFocusChange());
+        JPopupMenu tagMenu = new JPopupMenu();
+
+        Function<Integer, String> tagKeyFn = x -> (String) table.getValueAt(x, 0);
+        Function<Integer, Map<String, Integer>> tagValuesFn = x -> {
+            Map<String, Integer> map = new HashMap<>();
+            String key = tagTableModel.getValue((String) table.getValueAt(x, 0));
+            if (key != null) {
+                map.put(key, 1);
+            }
+            return map;
+        };
+        Supplier<Collection<? extends Tagged>> objectSp = () -> Arrays.asList(histoSp.get());
+
+        tagMenu.add(new CopyValueAction(table, tagKeyFn, objectSp));
+        tagMenu.add(new CopyKeyValueAction(table, tagKeyFn, objectSp));
+        tagMenu.add(new CopyAllKeyValueAction(table, tagKeyFn, objectSp));
+        tagMenu.addSeparator();
+        tagMenu.add(new HelpAction(table, tagKeyFn, tagValuesFn, null, null));
+        tagMenu.add(new TaginfoAction(table, tagKeyFn, tagValuesFn, null, null));
+
+        table.addMouseListener(new PopupMenuLauncher(tagMenu));
+        return table;
     }
 }
