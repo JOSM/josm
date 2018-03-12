@@ -1574,7 +1574,7 @@ public final class Utils {
 
     /**
      * Returns the Java version as an int value.
-     * @return the Java version as an int value (8, 9, etc.)
+     * @return the Java version as an int value (8, 9, 10, etc.)
      * @since 12130
      */
     public static int getJavaVersion() {
@@ -1590,7 +1590,7 @@ public final class Utils {
         int dotPos = version.indexOf('.');
         int dashPos = version.indexOf('-');
         return Integer.parseInt(version.substring(0,
-                dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
+                dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : version.length()));
     }
 
     /**

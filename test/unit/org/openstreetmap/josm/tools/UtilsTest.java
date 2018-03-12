@@ -212,6 +212,15 @@ public class UtilsTest {
 
             System.setProperty("java.version", "9.0.1");
             assertEquals(9, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "10");
+            assertEquals(10, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "10-ea");
+            assertEquals(10, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "10.0.1");
+            assertEquals(10, Utils.getJavaVersion());
         } finally {
             System.setProperty("java.version", javaVersion);
         }
