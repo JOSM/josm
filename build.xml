@@ -59,6 +59,12 @@
         <condition property="javac.compiler" value="modern" else="com.google.errorprone.ErrorProneAntCompilerAdapter">
             <isset property="isJava10"/>
         </condition>
+        <!-- Disable jacoco on Java 11+, see https://github.com/jacoco/jacoco/issues/629 -->
+        <condition property="coverageByDefault">
+            <not>
+                <isset property="isJava11"/>
+            </not>
+        </condition>
         <path id="test.classpath">
             <fileset dir="${test.dir}/lib">
                 <include name="**/*.jar"/>
@@ -473,7 +479,7 @@ Build-Date: ${build.tstamp}
     <macrodef name="call-junit">
         <attribute name="testfamily"/>
         <attribute name="testITsuffix" default=""/>
-        <attribute name="coverage" default="true"/>
+        <attribute name="coverage" default="${coverageByDefault}"/>
         <sequential>
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
             <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="${jacoco.includes}"
