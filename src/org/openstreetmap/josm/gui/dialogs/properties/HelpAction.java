@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -75,39 +76,20 @@ public class HelpAction extends AbstractAction {
             String base = Config.getPref().get("url.openstreetmap-wiki", "https://wiki.openstreetmap.org/wiki/");
             String lang = LanguageInfo.getWikiLanguagePrefix();
             final List<URI> uris = new ArrayList<>();
-            int row;
             if (tagTable.getSelectedRowCount() == 1) {
-                row = tagTable.getSelectedRow();
+                int row = tagTable.getSelectedRow();
                 String key = Utils.encodeUrl(tagKeySupplier.apply(row));
                 Map<String, Integer> m = tagValuesSupplier.apply(row);
                 if (!m.isEmpty()) {
                     String val = Utils.encodeUrl(m.entrySet().iterator().next().getKey());
-
-                    uris.add(new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)));
-                    uris.add(new URI(String.format("%sTag:%s=%s", base, key, val)));
-                    uris.add(new URI(String.format("%s%sKey:%s", base, lang, key)));
-                    uris.add(new URI(String.format("%sKey:%s", base, key)));
-                    uris.add(new URI(String.format("%s%sMap_Features", base, lang)));
-                    uris.add(new URI(String.format("%sMap_Features", base)));
+                    uris.addAll(getTagURIs(base, lang, key, val));
                 }
             } else if (membershipTable != null && membershipTable.getSelectedRowCount() == 1) {
-                row = membershipTable.getSelectedRow();
-                String type = (memberValueSupplier.apply(row)).get("type");
-                if (type != null) {
-                    type = Utils.encodeUrl(type);
-                }
-
-                if (type != null && !type.isEmpty()) {
-                    uris.add(new URI(String.format("%s%sRelation:%s", base, lang, type)));
-                    uris.add(new URI(String.format("%sRelation:%s", base, type)));
-                }
-
-                uris.add(new URI(String.format("%s%sRelations", base, lang)));
-                uris.add(new URI(String.format("%sRelations", base)));
+                int row = membershipTable.getSelectedRow();
+                uris.addAll(getRelationURIs(base, lang, memberValueSupplier.apply(row)));
             } else {
                 // give the generic help page, if more than one element is selected
-                uris.add(new URI(String.format("%s%sMap_Features", base, lang)));
-                uris.add(new URI(String.format("%sMap_Features", base)));
+                uris.addAll(getGenericURIs(base, lang));
             }
 
             MainApplication.worker.execute(() -> displayHelp(uris));
@@ -116,7 +98,74 @@ public class HelpAction extends AbstractAction {
         }
     }
 
-    private void displayHelp(final List<URI> uris) {
+    /**
+     * Returns a list of URIs for the given key/value.
+     * @param base OSM wiki base URL
+     * @param lang Language prefix
+     * @param key Key
+     * @param val Value
+     * @return a list of URIs for the given key/value by order of relevance
+     * @throws URISyntaxException in case of internal error
+     * @since 13522
+     */
+    public static List<URI> getTagURIs(String base, String lang, String key, String val) throws URISyntaxException {
+        return Arrays.asList(
+            new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)),
+            new URI(String.format("%sTag:%s=%s", base, key, val)),
+            new URI(String.format("%s%sKey:%s", base, lang, key)),
+            new URI(String.format("%sKey:%s", base, key)),
+            new URI(String.format("%s%sMap_Features", base, lang)),
+            new URI(String.format("%sMap_Features", base))
+        );
+    }
+
+    /**
+     * Returns a list of URIs for the given relation.
+     * @param base OSM wiki base URL
+     * @param lang Language prefix
+     * @param rel Relation
+     * @return a list of URIs for the given relation by order of relevance
+     * @throws URISyntaxException in case of internal error
+     * @since 13522
+     */
+    public static List<URI> getRelationURIs(String base, String lang, Relation rel) throws URISyntaxException {
+        List<URI> uris = new ArrayList<>();
+        String type = rel.get("type");
+        if (type != null) {
+            type = Utils.encodeUrl(type);
+        }
+
+        if (type != null && !type.isEmpty()) {
+            uris.add(new URI(String.format("%s%sRelation:%s", base, lang, type)));
+            uris.add(new URI(String.format("%sRelation:%s", base, type)));
+        }
+
+        uris.add(new URI(String.format("%s%sRelations", base, lang)));
+        uris.add(new URI(String.format("%sRelations", base)));
+        return uris;
+    }
+
+    /**
+     * Returns a list of generic URIs (Map Features).
+     * @param base OSM wiki base URL
+     * @param lang Language prefix
+     * @return a list of generic URIs (Map Features)
+     * @throws URISyntaxException in case of internal error
+     * @since 13522
+     */
+    public static List<URI> getGenericURIs(String base, String lang) throws URISyntaxException {
+        return Arrays.asList(
+            new URI(String.format("%s%sMap_Features", base, lang)),
+            new URI(String.format("%sMap_Features", base))
+        );
+    }
+
+    /**
+     * Display help by searching the forst valid URI in the given list.
+     * @param uris list of URIs to test
+     * @since 13522
+     */
+    public static void displayHelp(final List<URI> uris) {
         try {
             // find a page that actually exists in the wiki
             HttpClient.Response conn;
