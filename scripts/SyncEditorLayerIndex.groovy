@@ -723,7 +723,7 @@ class SyncEditorLayerIndex {
                         myprintln "! Projections ${s} not supported by JOSM: ${getDescription(j)}"
                     }
                     for (def o : old) {
-                        myprintln "! Projections ${o} is an old unsupported code and has been replaced by ${oldproj.get(o)}: ${getDescription(j)}"
+                        myprintln "! Projection ${o} is an old unsupported code and has been replaced by ${oldproj.get(o)}: ${getDescription(j)}"
                     }
                 }
                 if((url =~ /(?i)version=1\.3/) && !(url =~ /[Cc][Rr][Ss]=\{proj\}/)) {
