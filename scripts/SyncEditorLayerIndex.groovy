@@ -24,6 +24,7 @@ import javax.json.JsonReader
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.data.imagery.Shape
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.imagery.ImageryReader
 
 class SyncEditorLayerIndex {
@@ -154,7 +155,8 @@ class SyncEditorLayerIndex {
                 return
             }
         } else if(options.xhtmlbody || options.xhtml) {
-            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :  (s.startsWith("#") ? "indigo" : "red"))
+            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :
+            (s.startsWith("#") ? "indigo" : (s.startsWith("!") ? "orange" : "red")))
             s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
         }
         if ((s.startsWith("+ ") || s.startsWith("+++ ELI") || s.startsWith("#")) && options.noeli) {
@@ -663,8 +665,32 @@ class SyncEditorLayerIndex {
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
             def id = getId(j)
-            if("wms".equals(getType(j)) && !getProjections(j)) {
-                myprintln "* WMS without projections: ${getDescription(j)}"
+            if("wms".equals(getType(j))) {
+                if(!getProjections(j)) {
+                    myprintln "* WMS without projections: ${getDescription(j)}"
+                } else {
+                    def all = Projections.getAllProjectionCodes();
+                    def unsupported = new LinkedList<String>();
+                    for (def p : getProjections(j)) {
+                        if("CRS:84".equals(p)) {
+                            if(!(url =~ /(?i)version=1\.3/)) {
+                                myprintln "! CRS:84 without WMS 1.3: ${getDescription(j)}"
+                            }
+                        } else if(!all.contains(p)) {
+                            unsupported.add(p)
+                        }
+                    }
+                    if (unsupported) {
+                        def s = String.join(" ", unsupported)
+                        myprintln "! Projections ${s} not supported by JOSM (maybe Obsolete code): ${getDescription(j)}"
+                    }
+                }
+                if((url =~ /(?i)version=1\.3/) && !(url =~ /[Cc][Rr][Ss]=\{proj\}/)) {
+                    myprintln "* WMS 1.3 with strange CRS specification: ${getDescription(j)}"
+                }
+                if((url =~ /(?i)version=1\.1/) && !(url =~ /[Ss][Rr][Ss]=\{proj\}/)) {
+                    myprintln "* WMS 1.1 with strange SRS specification: ${getDescription(j)}"
+                }
             }
             if(josmMirrors.containsKey(url)) {
                 continue
