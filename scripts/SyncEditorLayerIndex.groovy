@@ -35,6 +35,8 @@ class SyncEditorLayerIndex {
     def eliUrls = new HashMap<String, JsonObject>()
     def josmUrls = new HashMap<String, ImageryInfo>()
     def josmMirrors = new HashMap<String, ImageryInfo>()
+    static def oldproj = new HashMap<String, String>()
+    static def ignoreproj = new LinkedList<String>()
 
     static String eliInputFile = 'imagery_eli.geojson'
     static String josmInputFile = 'imagery_josm.imagery.xml'
@@ -52,6 +54,7 @@ class SyncEditorLayerIndex {
         Locale.setDefault(Locale.ROOT);
         parse_command_line_arguments(args)
         def script = new SyncEditorLayerIndex()
+        script.setupProj()
         script.loadSkip()
         script.start()
         script.loadJosmEntries()
@@ -117,6 +120,24 @@ class SyncEditorLayerIndex {
             outputFile = new FileOutputStream(options.output)
             outputStream = new OutputStreamWriter(outputFile, "UTF-8")
         }
+    }
+
+    void setupProj() {
+        oldproj.put("EPSG:3359", "EPSG:3404")
+        oldproj.put("EPSG:3785", "EPSG:3857")
+        oldproj.put("EPSG:31297", "EPGS:31287")
+        oldproj.put("EPSG:54004", "EPSG:3857")
+        oldproj.put("EPSG:102100", "EPSG:3857")
+        oldproj.put("EPSG:102113", "EPSG:3857")
+        oldproj.put("EPSG:900913", "EPGS:3857")
+        ignoreproj.add("EPSG:4267")
+        ignoreproj.add("EPSG:5221")
+        ignoreproj.add("EPSG:5514")
+        ignoreproj.add("EPSG:32019")
+        ignoreproj.add("EPSG:102066")
+        ignoreproj.add("EPSG:102067")
+        ignoreproj.add("EPSG:102685")
+        ignoreproj.add("EPSG:102711")
     }
 
     void loadSkip() {
@@ -197,6 +218,20 @@ class SyncEditorLayerIndex {
                 myprintln "+++ ELI-URL is not unique: "+url
             } else {
                 eliUrls.put(url, e)
+            }
+            def s = e.get("properties").get("available_projections")
+            if (s) {
+                def old = new LinkedList<String>()
+                for (def p : s) {
+                    def proj = p.getString()
+                    if(oldproj.containsKey(proj) || ("CRS:84".equals(proj) && !(url =~ /(?i)version=1\.3/))) {
+                        old.add(proj)
+                    }
+                }
+                if (old) {
+                    def str = String.join(", ", old)
+                    myprintln "+ ELI Projections ${str} not useful: ${getDescription(e)}"
+                }
             }
         }
         myprintln "*** Loaded ${eliEntries.size()} entries (ELI). ***"
@@ -663,23 +698,6 @@ class SyncEditorLayerIndex {
         myprintln "*** Miscellaneous checks: ***"
         def josmIds = new HashMap<String, ImageryInfo>()
         def all = Projections.getAllProjectionCodes()
-        def oldproj = new HashMap<String, String>()
-        def ignoreproj = new LinkedList<String>()
-        oldproj.put("EPSG:3359", "EPSG:3404")
-        oldproj.put("EPSG:3785", "EPSG:3857")
-        oldproj.put("EPSG:31297", "EPGS:31287")
-        oldproj.put("EPSG:54004", "EPSG:3857")
-        oldproj.put("EPSG:102100", "EPSG:3857")
-        oldproj.put("EPSG:102113", "EPSG:3857")
-        oldproj.put("EPSG:900913", "EPGS:3857")
-        ignoreproj.add("EPSG:4267")
-        ignoreproj.add("EPSG:5221")
-        ignoreproj.add("EPSG:5514")
-        ignoreproj.add("EPSG:32019")
-        ignoreproj.add("EPSG:102066")
-        ignoreproj.add("EPSG:102067")
-        ignoreproj.add("EPSG:102685")
-        ignoreproj.add("EPSG:102711")
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
             def id = getId(j)
@@ -689,7 +707,7 @@ class SyncEditorLayerIndex {
                 } else {
                     def unsupported = new LinkedList<String>()
                     def old = new LinkedList<String>()
-                    for (def p : getProjections(j)) {
+                    for (def p : getProjectionsUnstripped(j)) {
                         if("CRS:84".equals(p)) {
                             if(!(url =~ /(?i)version=1\.3/)) {
                                 myprintln "! CRS:84 without WMS 1.3: ${getDescription(j)}"
@@ -823,6 +841,18 @@ class SyncEditorLayerIndex {
         return []
     }
     static List<Object> getProjections(Object e) {
+        def r = []
+        def u = getProjectionsUnstripped(e)
+        if(u) {
+            for (def p : u) {
+                if(!oldproj.containsKey(p) && !("CRS:84".equals(p) && !(getUrlStripped(e) =~ /(?i)version=1\.3/))) {
+                    r += p
+                }
+            }
+        }
+        return r
+    }
+    static List<Object> getProjectionsUnstripped(Object e) {
         def r
         if (e instanceof ImageryInfo) {
             r = e.getServerProjections()
@@ -830,8 +860,9 @@ class SyncEditorLayerIndex {
             def s = e.get("properties").get("available_projections")
             if (s) {
                 r = []
-                for (def p : s)
+                for (def p : s) {
                     r += p.getString()
+                }
             }
         }
         return r ? r : []
