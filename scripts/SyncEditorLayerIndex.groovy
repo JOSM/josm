@@ -662,6 +662,12 @@ class SyncEditorLayerIndex {
         }
         myprintln "*** Miscellaneous checks: ***"
         def josmIds = new HashMap<String, ImageryInfo>()
+        def all = Projections.getAllProjectionCodes()
+        def oldproj = new HashMap<String, String>()
+        oldproj.put("EPSG:3785", "EPSG:3857")
+        oldproj.put("EPSG:102100", "EPSG:3857")
+        oldproj.put("EPSG:102113", "EPSG:3857")
+        oldproj.put("EPSG:900913", "EPGS:3857")
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
             def id = getId(j)
@@ -669,20 +675,25 @@ class SyncEditorLayerIndex {
                 if(!getProjections(j)) {
                     myprintln "* WMS without projections: ${getDescription(j)}"
                 } else {
-                    def all = Projections.getAllProjectionCodes();
-                    def unsupported = new LinkedList<String>();
+                    def unsupported = new LinkedList<String>()
+                    def old = new LinkedList<String>()
                     for (def p : getProjections(j)) {
                         if("CRS:84".equals(p)) {
                             if(!(url =~ /(?i)version=1\.3/)) {
                                 myprintln "! CRS:84 without WMS 1.3: ${getDescription(j)}"
                             }
+                        } else if(oldproj.containsKey(p)) {
+                            old.add(p)
                         } else if(!all.contains(p)) {
                             unsupported.add(p)
                         }
                     }
                     if (unsupported) {
-                        def s = String.join(" ", unsupported)
-                        myprintln "! Projections ${s} not supported by JOSM (maybe Obsolete code): ${getDescription(j)}"
+                        def s = String.join(", ", unsupported)
+                        myprintln "! Projections ${s} not supported by JOSM: ${getDescription(j)}"
+                    }
+                    for (def o : old) {
+                        myprintln "! Projections ${o} is an old unsupported code and has been replaced by ${oldproj.get(o)}: ${getDescription(j)}"
                     }
                 }
                 if((url =~ /(?i)version=1\.3/) && !(url =~ /[Cc][Rr][Ss]=\{proj\}/)) {
