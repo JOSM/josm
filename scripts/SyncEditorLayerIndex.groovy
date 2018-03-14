@@ -664,10 +664,17 @@ class SyncEditorLayerIndex {
         def josmIds = new HashMap<String, ImageryInfo>()
         def all = Projections.getAllProjectionCodes()
         def oldproj = new HashMap<String, String>()
+        def ignoreproj = new LinkedList<String>()
         oldproj.put("EPSG:3785", "EPSG:3857")
+        oldproj.put("EPSG:31297", "EPGS:31287")
         oldproj.put("EPSG:102100", "EPSG:3857")
         oldproj.put("EPSG:102113", "EPSG:3857")
         oldproj.put("EPSG:900913", "EPGS:3857")
+        ignoreproj.add("EPSG:4267")
+        ignoreproj.add("EPSG:5221")
+        ignoreproj.add("EPSG:5514")
+        ignoreproj.add("EPSG:102066")
+        ignoreproj.add("EPSG:102067")
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
             def id = getId(j)
@@ -684,7 +691,7 @@ class SyncEditorLayerIndex {
                             }
                         } else if(oldproj.containsKey(p)) {
                             old.add(p)
-                        } else if(!all.contains(p)) {
+                        } else if(!all.contains(p) && !ignoreproj.contains(p)) {
                             unsupported.add(p)
                         }
                     }
