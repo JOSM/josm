@@ -22,7 +22,7 @@
 	<classpathentry kind="lib" path="test/lib/unitils-core/unitils-core-3.4.6.jar"/>
 	<classpathentry kind="lib" path="test/lib/commons-testing/commons-testing-2.1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="test/lib/wiremock-standalone-2.13.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="test/lib/awaitility-3.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="test/lib/awaitility-3.1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/commons-collections-3.2.2.jar"/>
