@@ -126,6 +126,7 @@ class SyncEditorLayerIndex {
         oldproj.put("EPSG:3359", "EPSG:3404")
         oldproj.put("EPSG:3785", "EPSG:3857")
         oldproj.put("EPSG:31297", "EPGS:31287")
+        oldproj.put("EPSG:31464", "EPSG:31468")
         oldproj.put("EPSG:54004", "EPSG:3857")
         oldproj.put("EPSG:102100", "EPSG:3857")
         oldproj.put("EPSG:102113", "EPSG:3857")
@@ -710,7 +711,7 @@ class SyncEditorLayerIndex {
                     for (def p : getProjectionsUnstripped(j)) {
                         if("CRS:84".equals(p)) {
                             if(!(url =~ /(?i)version=1\.3/)) {
-                                myprintln "! CRS:84 without WMS 1.3: ${getDescription(j)}"
+                                myprintln "* CRS:84 without WMS 1.3: ${getDescription(j)}"
                             }
                         } else if(oldproj.containsKey(p)) {
                             old.add(p)
@@ -720,10 +721,10 @@ class SyncEditorLayerIndex {
                     }
                     if (unsupported) {
                         def s = String.join(", ", unsupported)
-                        myprintln "! Projections ${s} not supported by JOSM: ${getDescription(j)}"
+                        myprintln "* Projections ${s} not supported by JOSM: ${getDescription(j)}"
                     }
                     for (def o : old) {
-                        myprintln "! Projection ${o} is an old unsupported code and has been replaced by ${oldproj.get(o)}: ${getDescription(j)}"
+                        myprintln "* Projection ${o} is an old unsupported code and has been replaced by ${oldproj.get(o)}: ${getDescription(j)}"
                     }
                 }
                 if((url =~ /(?i)version=1\.3/) && !(url =~ /[Cc][Rr][Ss]=\{proj\}/)) {
