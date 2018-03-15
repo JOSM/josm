@@ -733,6 +733,9 @@ class SyncEditorLayerIndex {
                     myprintln "* WMS 1.1 with strange SRS specification: ${getDescription(j)}"
                 }
             }
+            if(!(url =~ /^https?:\/\//) && !"scanex".equals(getType(j))) {
+                myprintln "* Strange URL: ${getDescription(j)}"
+            }
             if(josmMirrors.containsKey(url)) {
                 continue
             }
