@@ -65,6 +65,7 @@ public class JOSMTestRules implements TestRule {
     private Version originalVersion;
     private Runnable mapViewStateMockingRunnable;
     private Runnable navigableComponentMockingRunnable;
+    private Runnable edtAssertionMockingRunnable;
     private boolean platform;
     private boolean useProjection;
     private boolean useProjectionNadGrids;
@@ -257,6 +258,25 @@ public class JOSMTestRules implements TestRule {
     public JOSMTestRules rlTraffic() {
         territories();
         rlTraffic = true;
+        return this;
+    }
+
+    /**
+     * Re-raise AssertionErrors thrown in the EDT where they would have normally been swallowed.
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules assertionsInEDT() {
+        return this.assertionsInEDT(EDTAssertionMocker::new);
+    }
+
+    /**
+     * Re-raise AssertionErrors thrown in the EDT where they would have normally been swallowed.
+     * @param edtAssertionMockingRunnable Runnable for initializing this functionality
+     *
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules assertionsInEDT(final Runnable edtAssertionMockingRunnable) {
+        this.edtAssertionMockingRunnable = edtAssertionMockingRunnable;
         return this;
     }
 
@@ -470,6 +490,10 @@ public class JOSMTestRules implements TestRule {
 
         if (rlTraffic) {
             RightAndLefthandTraffic.initialize();
+        }
+
+        if (this.edtAssertionMockingRunnable != null) {
+            this.edtAssertionMockingRunnable.run();
         }
 
         if (commands) {
