@@ -59,6 +59,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
     private final OpenChangesetDialogAction changesetCommentsDialogAction = new OpenChangesetDialogAction(ChangesetDiscussionPanel.class);
     private final OpenChangesetDialogAction changesetDialogAction = new OpenChangesetDialogAction(null);
     private final JButton changesetButton = new JButton(changesetDialogAction);
+    private final BasicArrowButton arrowButton = new BasicArrowButton(BasicArrowButton.SOUTH);
     private JPanel pnlChangesetSource;
     private JPanel pnlChangesetImageryUsed;
     private JLabel lblSource;
@@ -113,9 +114,8 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         final JPanel changesetPanel = new JPanel(new BorderLayout());
         changesetButton.setMargin(new Insets(0, 0, 0, 2));
         changesetPanel.add(changesetButton, BorderLayout.CENTER);
-        final BasicArrowButton arrowButton = new BasicArrowButton(BasicArrowButton.SOUTH);
         arrowButton.addActionListener(action -> {
-            if (changesetDialogAction != null) { // fix #15444
+            if (changesetDialogAction.id != null) { // fix #15444, #16097
                 final OpenChangesetPopupMenu popupMenu = new OpenChangesetPopupMenu(changesetDialogAction.id);
                 popupMenu.insert(changesetDialogAction, 0);
                 ((AbstractButton) popupMenu.getComponent(0)).setText(tr("Open Changeset Manager"));
@@ -257,6 +257,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
                     cs.getCommentsCount(), cs.getCommentsCount()));
             changesetDialogAction.setId(cs.getId());
             changesetButton.setEnabled(true);
+            arrowButton.setEnabled(true);
 
             String username = "";
             if (user != null) {
@@ -282,6 +283,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
             lblChangesetComments.setVisible(false);
             changesetDialogAction.setId(null);
             changesetButton.setEnabled(false);
+            arrowButton.setEnabled(false);
         }
 
         final Changeset oppCs = model != null ? model.getPointInTime(pointInTimeType.opposite()).getChangeset() : null;
