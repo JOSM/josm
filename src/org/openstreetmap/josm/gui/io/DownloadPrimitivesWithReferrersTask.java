@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -75,6 +76,13 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         this.downloadReferrers = downloadReferrers;
         this.full = full;
         this.newLayer = newLayer;
+        // Check we don't try to download new primitives
+        for (PrimitiveId primitiveId : ids) {
+            if (primitiveId.isNew()) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Cannot download new primitives (ID {0})", primitiveId.getUniqueId()));
+            }
+        }
         // All downloaded primitives are put in a tmpLayer
         tmpLayer = new OsmDataLayer(new DataSet(), newLayerName != null ? newLayerName : OsmDataLayer.createNewName(), null);
     }
