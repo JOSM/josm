@@ -49,7 +49,7 @@ public class ImageryLayerInfo {
     private static final Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
-        Main.getJOSMWebsite()+"/maps"
+        Main.getJOSMWebsite()+"/maps%<?ids=>"
     };
 
     /**
@@ -223,6 +223,17 @@ public class ImageryLayerInfo {
                     continue;
                 }
                 idMap.put(i.getId(), i);
+                Collection<String> old = i.getOldIds();
+                if(old != null) {
+                    for (String id : old) {
+                        if (idMap.containsKey(id)) {
+                            Logging.error("Old Id ''{0}'' is not unique - used by ''{1}'' and ''{2}''!",
+                                    i.getId(), i.getName(), idMap.get(i.getId()).getName());
+                        } else {
+                            idMap.put(id, i);
+                        }
+                    }
+                }
             }
         }
         for (String i : notUnique) {

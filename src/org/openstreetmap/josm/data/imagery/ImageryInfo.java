@@ -26,10 +26,12 @@ import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -198,6 +200,16 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
       * @since 11575
       */
     private boolean bestMarked;
+    /**
+      * marked as overlay
+      * @since 13536
+      */
+    private boolean overlay;
+    /**
+      * list of old IDs, only for loading, not handled anywhere else
+      * @since 13536
+      */
+    private Collection<String> oldIds;
     /** mirrors of different type for this entry */
     private List<ImageryInfo> mirrors;
     /** icon used in menu */
@@ -244,6 +256,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @StructEntry boolean valid_georeference;
         @StructEntry boolean bestMarked;
         @StructEntry boolean modTileFeatures;
+        @StructEntry boolean overlay;
         // TODO: disabled until change of layers is implemented
         // @StructEntry String default_layers;
 
@@ -270,6 +283,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             permission_reference_url = i.permissionReferenceURL;
             date = i.date;
             bestMarked = i.bestMarked;
+            overlay = i.overlay;
             logo_image = i.attributionImage;
             logo_url = i.attributionImageURL;
             terms_of_use_text = i.termsOfUseText;
@@ -438,6 +452,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         attributionImageURL = e.logo_url;
         date = e.date;
         bestMarked = e.bestMarked;
+        overlay = e.overlay;
         termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
@@ -493,6 +508,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.countryCode = i.countryCode;
         this.date = i.date;
         this.bestMarked = i.bestMarked;
+        this.overlay = i.overlay;
         // do not copy field {@code mirrors}
         this.icon = i.icon;
         this.isGeoreferenceValid = i.isGeoreferenceValid;
@@ -525,6 +541,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.url, other.url) &&
                 Objects.equals(this.modTileFeatures, other.modTileFeatures) &&
                 Objects.equals(this.bestMarked, other.bestMarked) &&
+                Objects.equals(this.overlay, other.overlay) &&
                 Objects.equals(this.isGeoreferenceValid, other.isGeoreferenceValid) &&
                 Objects.equals(this.cookies, other.cookies) &&
                 Objects.equals(this.eulaAcceptanceRequired, other.eulaAcceptanceRequired) &&
@@ -900,6 +917,27 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
+     * Return the sorted list of activated Imagery IDs
+     * @since 13536
+     */
+    static public Collection<String> getActiveIds() {
+        ArrayList<String> ids = new ArrayList<String>();
+        IPreferences pref = Config.getPref();
+        if (pref != null) {
+            List<ImageryPreferenceEntry> entries = StructUtils.getListOfStructs(
+                pref, "imagery.entries", null, ImageryPreferenceEntry.class);
+            if (entries != null) {
+                for (ImageryPreferenceEntry prefEntry : entries) {
+                    if(prefEntry.id != null && prefEntry.id.length() != 0)
+                        ids.add(prefEntry.id);
+                }
+                Collections.sort(ids);
+            }
+        }
+        return ids;
+    }
+    
+    /**
      * Returns a tool tip text for display.
      * @return The text
      * @since 8065
@@ -914,6 +952,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
         if (bestMarked) {
             res.append("<br>").append(tr("This imagery is marked as best in this region in other editors."));
+            html = true;
+        }
+        if (overlay) {
+            res.append("<br>").append(tr("This imagery is an overlay."));
             html = true;
         }
         String desc = getDescription();
@@ -1214,12 +1256,53 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
+     * Returns the overlay indication.
+     * @return <code>true</code> if it is and overlay.
+     * @since 13536
+     */
+    public boolean isOverlay() {
+        return overlay;
+    }
+
+    /**
      * Sets an indicator that in other editors it is marked as best imagery
      * @param bestMarked <code>true</code> if it is marked as best in other editors.
      * @since 11575
      */
     public void setBestMarked(boolean bestMarked) {
         this.bestMarked = bestMarked;
+    }
+
+    /**
+     * Sets overlay indication
+     * @param overlay <code>true</code> if it is an overlay.
+     * @since 13536
+     */
+    public void setOverlay(boolean overlay) {
+        this.overlay = overlay;
+    }
+
+    /**
+     * Adds an old Id.
+     *
+     * @param id the Id to be added
+     * @since 13536
+     */
+    public void addOldId(String id) {
+       if (oldIds == null) {
+           oldIds = new ArrayList<>();
+       }
+       oldIds.add(id);
+    }
+
+    /**
+     * Get old Ids.
+     *
+     * @return collection of ids
+     * @since 13536
+     */
+    public Collection<String> getOldIds() {
+        return oldIds;
     }
 
     /**

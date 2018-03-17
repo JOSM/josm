@@ -74,6 +74,7 @@ public class CachedFile implements Closeable {
     private HttpClient activeConnection;
     protected File cacheFile;
     protected boolean initialized;
+    protected String parameter;
 
     public static final long DEFAULT_MAXTIME = -1L;
     public static final long DAYS = TimeUnit.DAYS.toSeconds(1); // factor to get caching time in days
@@ -172,7 +173,18 @@ public class CachedFile implements Closeable {
         this.fastFail = fastFail;
     }
 
+    /**
+     * Sets additional URL parameter (used e.g. for maps)
+     * @param parameter the URL parameter
+     * @since 13536
+     */
+    public void setParam(String parameter) {
+        this.parameter = parameter;
+    }
+
     public String getName() {
+        if(parameter != null)
+            return name.replaceAll("%<(.*)>", "");
         return name;
     }
 
@@ -283,7 +295,7 @@ public class CachedFile implements Closeable {
             }
         }
         if (cacheFile == null)
-            throw new IOException("Unable to get cache file for "+name);
+            throw new IOException("Unable to get cache file for "+getName());
         return cacheFile;
     }
 
@@ -297,7 +309,7 @@ public class CachedFile implements Closeable {
      *
      * @param extension  the extension of the file we're looking for
      * @param namepart the name part
-     * @return The zip entry path of the matching file. Null if this cached file
+     * @return The zip entry path of the matching file. <code>null</code> if this cached file
      * doesn't represent a zip file or if there was no matching
      * file in the ZIP file.
      */
@@ -311,7 +323,7 @@ public class CachedFile implements Closeable {
      * Like {@link #findZipEntryPath}, but returns the corresponding InputStream.
      * @param extension  the extension of the file we're looking for
      * @param namepart the name part
-     * @return InputStream to the matching file. Null if this cached file
+     * @return InputStream to the matching file. <code>null</code> if this cached file
      * doesn't represent a zip file or if there was no matching
      * file in the ZIP file.
      * @since 6148
@@ -379,7 +391,7 @@ public class CachedFile implements Closeable {
         try {
             url = new URL(name);
             if (!"file".equals(url.getProtocol())) {
-                String prefKey = getPrefKey(url, destDir);
+                String prefKey = getPrefKey(url, destDir, null);
                 List<String> localPath = new ArrayList<>(Config.getPref().getList(prefKey));
                 if (localPath.size() == 2) {
                     File lfile = new File(localPath.get(1));
@@ -402,18 +414,24 @@ public class CachedFile implements Closeable {
      * @param destDir destination directory
      * @return Preference key
      */
-    private static String getPrefKey(URL url, String destDir) {
+    private static String getPrefKey(URL url, String destDir, String parameter) {
         StringBuilder prefKey = new StringBuilder("mirror.");
         if (destDir != null) {
             prefKey.append(destDir).append('.');
         }
-        prefKey.append(url.toString());
+        if (parameter != null) {
+            prefKey.append(url.toString().replaceAll("%<(.*)>", ""));
+        } else {
+            prefKey.append(url.toString());
+        }
         return prefKey.toString().replaceAll("=", "_");
     }
 
     private File checkLocal(URL url) throws IOException {
-        String prefKey = getPrefKey(url, destDir);
+        String prefKey = getPrefKey(url, destDir, parameter);
         String urlStr = url.toExternalForm();
+        if (parameter != null)
+            urlStr = urlStr.replaceAll("%<(.*)>", "");
         long age = 0L;
         long maxAgeMillis = maxAge;
         Long ifModifiedSince = null;
@@ -457,6 +475,18 @@ public class CachedFile implements Closeable {
         // No local file + offline => nothing to do
         if (offline) {
             return null;
+        }
+
+        if(parameter != null) {
+            String u = url.toExternalForm();
+            String uc;
+            if("".equals(parameter)) {
+                uc = u.replaceAll("%<(.*)>", "");
+            } else {
+                uc = u.replaceAll("%<(.*)>", "$1"+parameter);
+            }
+            if(!uc.equals(u))
+                url = new URL(uc);
         }
 
         String a = urlStr.replaceAll("[^A-Za-z0-9_.-]", "_");

@@ -271,8 +271,10 @@ class SyncEditorLayerIndex {
         stream.write "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
         stream.write "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n"
         for (def e : entries) {
-            def best = "eli-best".equals(getQuality(e))
-            stream.write "    <entry"+(best ? " eli-best=\"true\"" : "" )+">\n"
+            stream.write("    <entry"
+                + ("eli-best".equals(getQuality(e)) ? " eli-best=\"true\"" : "" )
+                + (getOverlay(e) ? " overlay=\"true\"" : "" )
+                + ">\n")
             stream.write "        <name>${cdata(getName(e), true)}</name>\n"
             stream.write "        <id>${getId(e)}</id>\n"
             def t
@@ -607,6 +609,15 @@ class SyncEditorLayerIndex {
                     myprintln "+ Missing ELI default: ${getDescription(j)}"
                 }
             }
+            et = getOverlay(e)
+            jt = getOverlay(j)
+            if (!et.equals(jt)) {
+                if (!jt) {
+                    myprintln "! Missing JOSM overlay flag: ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI overlay flag: ${getDescription(j)}"
+                }
+            }
         }
         myprintln "*** Mismatching shapes: ***"
         for (def url : josmUrls.keySet()) {
@@ -934,6 +945,11 @@ class SyncEditorLayerIndex {
         if (e instanceof ImageryInfo) return e.isBestMarked() ? "eli-best" : null
         return (e.get("properties").containsKey("best")
             && e.get("properties").getBoolean("best")) ? "eli-best" : null
+    }
+    static Boolean getOverlay(Object e) {
+        if (e instanceof ImageryInfo) return e.isOverlay()
+        return (e.get("properties").containsKey("overlay")
+            && e.get("properties").getBoolean("overlay"))
     }
     static String getIcon(Object e) {
         if (e instanceof ImageryInfo) return e.getIcon()
