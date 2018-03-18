@@ -224,7 +224,7 @@ public class ImageryLayerInfo {
                 }
                 idMap.put(i.getId(), i);
                 Collection<String> old = i.getOldIds();
-                if(old != null) {
+                if (old != null) {
                     for (String id : old) {
                         if (idMap.containsKey(id)) {
                             Logging.error("Old Id ''{0}'' is not unique - used by ''{1}'' and ''{2}''!",

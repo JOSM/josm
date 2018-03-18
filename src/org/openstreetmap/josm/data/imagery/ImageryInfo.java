@@ -917,18 +917,19 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Return the sorted list of activated Imagery IDs
+     * Return the sorted list of activated Imagery IDs.
+     * @return sorted list of activated Imagery IDs
      * @since 13536
      */
-    static public Collection<String> getActiveIds() {
-        ArrayList<String> ids = new ArrayList<String>();
+    public static Collection<String> getActiveIds() {
+        ArrayList<String> ids = new ArrayList<>();
         IPreferences pref = Config.getPref();
         if (pref != null) {
             List<ImageryPreferenceEntry> entries = StructUtils.getListOfStructs(
                 pref, "imagery.entries", null, ImageryPreferenceEntry.class);
             if (entries != null) {
                 for (ImageryPreferenceEntry prefEntry : entries) {
-                    if(prefEntry.id != null && prefEntry.id.length() != 0)
+                    if (prefEntry.id != null && !prefEntry.id.isEmpty())
                         ids.add(prefEntry.id);
                 }
                 Collections.sort(ids);
@@ -936,7 +937,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
         return ids;
     }
-    
+
     /**
      * Returns a tool tip text for display.
      * @return The text
@@ -1257,7 +1258,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
     /**
      * Returns the overlay indication.
-     * @return <code>true</code> if it is and overlay.
+     * @return <code>true</code> if it is an overlay.
      * @since 13536
      */
     public boolean isOverlay() {

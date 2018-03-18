@@ -183,7 +183,7 @@ public class CachedFile implements Closeable {
     }
 
     public String getName() {
-        if(parameter != null)
+        if (parameter != null)
             return name.replaceAll("%<(.*)>", "");
         return name;
     }
@@ -477,15 +477,15 @@ public class CachedFile implements Closeable {
             return null;
         }
 
-        if(parameter != null) {
+        if (parameter != null) {
             String u = url.toExternalForm();
             String uc;
-            if("".equals(parameter)) {
+            if (parameter.isEmpty()) {
                 uc = u.replaceAll("%<(.*)>", "");
             } else {
                 uc = u.replaceAll("%<(.*)>", "$1"+parameter);
             }
-            if(!uc.equals(u))
+            if (!uc.equals(u))
                 url = new URL(uc);
         }
 
