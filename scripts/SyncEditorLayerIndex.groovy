@@ -594,7 +594,11 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "- Missing JOSM projections (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "* Projections differ ('${et}' != '${jt}'): ${getDescription(j)}"
+                    if("EPSG:3857 EPSG:4326".equals(et) || "EPSG:3857".equals(et) || "EPSG:4326".equals(et)) {
+                        myprintln "+ ELI has minimal projections ('${et}' != '${jt}'): ${getDescription(j)}"
+                    } else {
+                        myprintln "* Projections differ ('${et}' != '${jt}'): ${getDescription(j)}"
+                    }
                 } else if (!options.nomissingeli && !getType(e).equals("tms")) {
                     myprintln "+ Missing ELI projections ('${jt}'): ${getDescription(j)}"
                 }
