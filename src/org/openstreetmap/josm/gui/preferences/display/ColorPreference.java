@@ -12,7 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,8 +36,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.gui.MapScaler;
@@ -264,39 +263,11 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
     }
 
     /**
-     * Set the colors to be shown in the preference table. This method creates a table model if
-     * none exists and overwrites all existing values.
-     * @param colorMap the map holding the colors
-     * (key = color id (without prefixes, so only <code>background</code>; not <code>color.background</code>),
-     * value = html representation of the color.
-     * @deprecated (since 12987) replaced by {@link #setColors(java.util.Map)}
-     */
-    @Deprecated
-    public void setColorModel(Map<String, String> colorMap) {
-        setColors(colorMap.entrySet().stream().collect(Collectors.toMap(e->e.getKey(), e->
-            new ColorInfo(NamedColorProperty.COLOR_CATEGORY_GENERAL, null, e.getKey(), ColorHelper.html2color(e.getValue()), null))));
-    }
-
-    /**
      * Returns a map with the colors in the table (key = preference key, value = color info).
      * @return a map holding the colors.
      */
     public Map<String, ColorInfo> getColors() {
         return tableModel.getData().stream().collect(Collectors.toMap(e -> e.key, e -> e.info));
-    }
-
-    /**
-     * Returns a map with the colors in the table (key = color name without prefix, value = html color code).
-     * @return a map holding the colors.
-     * @deprecated replaced by {@link #getColors()}
-     */
-    @Deprecated
-    public Map<String, String> getColorModel() {
-        Map<String, String> colorMap = new HashMap<>();
-        for (ColorEntry e : tableModel.getData()) {
-            colorMap.put(e.key, ColorHelper.color2html(e.getDisplayColor()));
-        }
-        return colorMap;
     }
 
     @Override

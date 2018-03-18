@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,7 +26,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -48,8 +46,6 @@ import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.ColorHelper;
-import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -115,13 +111,6 @@ public class Preferences extends AbstractPreferences {
             e -> !e.getValue().equals(defaultsMap.get(e.getKey()));
 
     /**
-     * Maps color keys to human readable color name
-     * @deprecated (since 12987) no longer supported
-     */
-    @Deprecated
-    protected final SortedMap<String, String> colornames = new TreeMap<>();
-
-    /**
      * Indicates whether {@link #init(boolean)} completed successfully.
      * Used to decide whether to write backup preference file in {@link #save()}
      */
@@ -152,12 +141,10 @@ public class Preferences extends AbstractPreferences {
      * @param pref existing preferences to copy
      * @since 12634
      */
-    @SuppressWarnings("deprecation")
     public Preferences(Preferences pref) {
         this(pref.dirs);
         settingsMap.putAll(pref.settingsMap);
         defaultsMap.putAll(pref.defaultsMap);
-        colornames.putAll(pref.colornames);
     }
 
     /**
@@ -444,32 +431,6 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
-     * Gets all known colors (preferences starting with the color prefix)
-     * @return All colors
-     * @deprecated (since 12987) replaced by {@link #getAllNamedColors()}
-     */
-    @Deprecated
-    public synchronized Map<String, String> getAllColors() {
-        final Map<String, String> all = new TreeMap<>();
-        for (final Entry<String, Setting<?>> e : defaultsMap.entrySet()) {
-            if (e.getKey().startsWith(COLOR_PREFIX) && e.getValue() instanceof StringSetting) {
-                if (e.getKey().startsWith(COLOR_PREFIX+"layer."))
-                    continue; // do not add unchanged layer colors
-                StringSetting d = (StringSetting) e.getValue();
-                if (d.getValue() != null) {
-                    all.put(e.getKey().substring(6), d.getValue());
-                }
-            }
-        }
-        for (final Entry<String, Setting<?>> e : settingsMap.entrySet()) {
-            if (e.getKey().startsWith(COLOR_PREFIX) && (e.getValue() instanceof StringSetting)) {
-                all.put(e.getKey().substring(6), ((StringSetting) e.getValue()).getValue());
-            }
-        }
-        return all;
-    }
-
-    /**
      * Called after every put. In case of a problem, do nothing but output the error in log.
      * @throws IOException if any I/O error occurs
      */
@@ -697,72 +658,6 @@ public class Preferences extends AbstractPreferences {
      */
     public final void resetToDefault() {
         settingsMap.clear();
-    }
-
-    /**
-     * only for preferences
-     * @param o color key
-     * @return translated color name
-     * @deprecated (since 12987) no longer supported
-     */
-    @Deprecated
-    public synchronized String getColorName(String o) {
-        Matcher m = COLOR_LAYER_PATTERN.matcher(o);
-        if (m.matches()) {
-            return tr("Layer: {0}", tr(I18n.escape(m.group(1))));
-        }
-        String fullKey = COLOR_PREFIX + o;
-        if (colornames.containsKey(fullKey)) {
-            String name = colornames.get(fullKey);
-            Matcher m2 = COLOR_MAPPAINT_PATTERN.matcher(name);
-            if (m2.matches()) {
-                return tr("Paint style {0}: {1}", tr(I18n.escape(m2.group(1))), tr(I18n.escape(m2.group(2))));
-            } else {
-                return tr(I18n.escape(colornames.get(fullKey)));
-            }
-        } else {
-            return fullKey;
-        }
-    }
-
-    /**
-     * Registers a color name conversion for the global color registry.
-     * @param colKey The key
-     * @param colName The name of the color.
-     * @since 10824
-     * @deprecated (since 12987) no longer supported
-     */
-    @Deprecated
-    public void registerColor(String colKey, String colName) {
-        if (!colKey.equals(colName)) {
-            colornames.put(colKey, colName);
-        }
-    }
-
-    /**
-     * Gets the default color that was registered with the preference
-     * @param colKey The color name
-     * @return The color
-     * @deprecated (since 12989) no longer supported
-     */
-    @Deprecated
-    public synchronized Color getDefaultColor(String colKey) {
-        StringSetting col = Utils.cast(defaultsMap.get(COLOR_PREFIX+colKey), StringSetting.class);
-        String colStr = col == null ? null : col.getValue();
-        return colStr == null || colStr.isEmpty() ? null : ColorHelper.html2color(colStr);
-    }
-
-    /**
-     * Stores a color
-     * @param colKey The color name
-     * @param val The color
-     * @return true if the setting was modified
-     * @see NamedColorProperty#put(Color)
-     * @deprecated (since 12987) no longer supported (see {@link NamedColorProperty})
-     */
-    @Deprecated
-    public synchronized boolean putColor(String colKey, Color val) {
-        return put(COLOR_PREFIX+colKey, val != null ? ColorHelper.color2html(val, true) : null);
     }
 
     /**
