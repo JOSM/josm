@@ -140,19 +140,19 @@ public class SimplifyWayAction extends JosmAction {
      * in order to simplify the way.
      */
     protected static boolean isRequiredNode(Way way, Node node) {
-        int frequency = Collections.frequency(way.getNodes(), node);
-        if ((way.getNode(0) == node) && (way.getNode(way.getNodesCount()-1) == node)) {
-            frequency = frequency - 1; // closed way closing node counted only once
+        boolean isRequired = node.isTagged();
+        if (!isRequired) {
+            int frequency = Collections.frequency(way.getNodes(), node);
+            if ((way.getNode(0) == node) && (way.getNode(way.getNodesCount()-1) == node)) {
+                frequency = frequency - 1; // closed way closing node counted only once
+            }
+            isRequired = frequency > 1;
         }
-        boolean isRequired = frequency > 1;
         if (!isRequired) {
             List<OsmPrimitive> parents = new LinkedList<>();
             parents.addAll(node.getReferrers());
             parents.remove(way);
             isRequired = !parents.isEmpty();
-        }
-        if (!isRequired) {
-            isRequired = node.isTagged();
         }
         return isRequired;
     }
@@ -209,6 +209,8 @@ public class SimplifyWayAction extends JosmAction {
                 newNodes.set(newNodes.size() - 1, newNodes.get(0)); // close the way
             }
         }
+
+        if (newNodes.size() == w.getNodesCount()) return null;
 
         Set<Node> delNodes = new HashSet<>();
         delNodes.addAll(w.getNodes());
