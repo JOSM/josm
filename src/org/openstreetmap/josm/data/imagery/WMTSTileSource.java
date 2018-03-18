@@ -711,27 +711,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         this.crsScale = getTileSize() * 0.28e-03 / this.tileProjection.getMetersPerUnit();
     }
 
-    /**
-     *
-     * @param searchLayer which layer do we look for
-     * @param projectionCode projection code to match
-     * @return Collection of layers matching the name of the layer and projection, or only projection if name is not provided
-     */
-    private Collection<Layer> getLayers(WMTSDefaultLayer searchLayer, String projectionCode) {
-        Collection<Layer> ret = new ArrayList<>();
-        if (this.layers != null) {
-            for (Layer layer: this.layers) {
-                if ((searchLayer == null || (// if it's null, then accept all layers
-                        searchLayer.getLayerName().equals(layer.identifier)))
-                        && (projectionCode == null || // if it's null, then accept any projection
-                        projectionCode.equals(layer.tileMatrixSet.crs))) {
-                    ret.add(layer);
-                }
-            }
-        }
-        return ret;
-    }
-
     @Override
     public int getTileSize() {
         if (cachedTileSize > 0) {
