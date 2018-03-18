@@ -737,16 +737,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         if (cachedTileSize > 0) {
             return cachedTileSize;
         }
-        if (tileProjection != null) {
+        if (currentTileMatrixSet != null) {
             // no support for non-square tiles (tileHeight != tileWidth)
             // and for different tile sizes at different zoom levels
-            Collection<Layer> projLayers = getLayers(null, tileProjection.toCode());
-            if (!projLayers.isEmpty()) {
-                cachedTileSize = projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
-                return cachedTileSize;
-            }
+            cachedTileSize = currentTileMatrixSet.tileMatrix.get(0).tileHeight;
+            return cachedTileSize;
         }
-        // if no layers is found, fallback to default mercator tile size. Maybe it will work
+        // Fallback to default mercator tile size. Maybe it will work
         Logging.warn("WMTS: Could not determine tile size. Using default tile size of: {0}", getDefaultTileSize());
         return getDefaultTileSize();
     }
