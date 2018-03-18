@@ -378,7 +378,7 @@ public final class I18n {
         try (
             ZipFile zipFile = new ZipFile(source, StandardCharsets.UTF_8);
             InputStream orig = zipFile.getInputStream(enfile);
-            InputStream trans = zipFile.getInputStream(langfile);
+            InputStream trans = zipFile.getInputStream(langfile)
         ) {
             if (orig != null && trans != null)
                 load(orig, trans, true);
