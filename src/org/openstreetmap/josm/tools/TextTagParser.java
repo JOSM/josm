@@ -35,6 +35,7 @@ public final class TextTagParser {
         private boolean quotesStarted;
         private boolean esc;
         private final StringBuilder s = new StringBuilder(200);
+        private String valueStops = "\n\r\t";
         private int pos;
         private final String data;
         private final int n;
@@ -45,8 +46,12 @@ public final class TextTagParser {
          */
         public TextAnalyzer(String text) {
             pos = 0;
-            data = text;
+            data = Utils.strip(text);
             n = data.length();
+            // fix #1604: allow space characters as value stops for single-line input only
+            if (data.indexOf('\r') == -1 && data.indexOf('\n') == -1) {
+                valueStops += " ";
+            }
         }
 
         /**
@@ -72,7 +77,7 @@ public final class TextTagParser {
                     tags.clear();
                     break;
                 }
-                v = parseString("\n\r\t ");
+                v = parseString(valueStops);
                 tags.put(k, v);
             }
             return tags;
