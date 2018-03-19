@@ -26,7 +26,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
@@ -75,13 +74,7 @@ import org.xml.sax.SAXException;
  */
 public class Preferences extends AbstractPreferences {
 
-    private static final String COLOR_PREFIX = "color.";
-    private static final Pattern COLOR_LAYER_PATTERN = Pattern.compile("layer\\.(.+)");
-    private static final Pattern COLOR_MAPPAINT_PATTERN = Pattern.compile("mappaint\\.(.+?)\\.(.+)");
-
     private static final String[] OBSOLETE_PREF_KEYS = {
-      "projection", /* remove entry after Nov. 2017 */
-      "projection.sub", /* remove entry after Nov. 2017 */
     };
 
     private static final long MAX_AGE_DEFAULT_PREFERENCES = TimeUnit.DAYS.toSeconds(50);
