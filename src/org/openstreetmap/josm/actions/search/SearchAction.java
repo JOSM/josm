@@ -761,6 +761,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         static SearchTask newSearchTask(SearchSetting setting, SearchReceiver resultReceiver) {
             final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds == null) {
+                throw new IllegalStateException("No active dataset");
+            }
             return newSearchTask(setting, ds, resultReceiver);
         }
 

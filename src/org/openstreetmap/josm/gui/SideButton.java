@@ -25,6 +25,8 @@ import org.openstreetmap.josm.tools.ImageResource;
 public class SideButton extends JButton implements Destroyable {
 
     private transient PropertyChangeListener propertyChangeListener;
+    private BasicArrowButton arrowButton;
+    private boolean arrowEnabledWithButton;
 
     /**
      * Constructs a new {@code SideButton}.
@@ -86,12 +88,35 @@ public class SideButton extends JButton implements Destroyable {
      * @since 9668
      */
     public BasicArrowButton createArrow(ActionListener listener) {
+        return createArrow(listener, false);
+    }
+
+    /**
+     * Create the arrow for opening a drop-down menu
+     * @param listener listener to use for button actions (e.g. pressing)
+     * @param enabledWithButton determines if the button arrow enabled state is the same as main button
+     * @return the created button
+     * @since 13545
+     */
+    public BasicArrowButton createArrow(ActionListener listener, boolean enabledWithButton) {
         setMargin(new Insets(0, 0, 0, 0));
-        BasicArrowButton arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
+        arrowEnabledWithButton = enabledWithButton;
+        arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
         arrowButton.setBorder(BorderFactory.createEmptyBorder());
         add(arrowButton, BorderLayout.EAST);
         arrowButton.addActionListener(listener);
+        if (arrowEnabledWithButton) {
+            arrowButton.setEnabled(isEnabled());
+        }
         return arrowButton;
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        super.setEnabled(b);
+        if (arrowButton != null && arrowEnabledWithButton) {
+            arrowButton.setEnabled(b);
+        }
     }
 
     @Override
@@ -106,5 +131,6 @@ public class SideButton extends JButton implements Destroyable {
             }
             setAction(null);
         }
+        arrowButton = null;
     }
 }
