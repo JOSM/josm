@@ -617,7 +617,7 @@ class SyncEditorLayerIndex {
             jt = getOverlay(j)
             if (!et.equals(jt)) {
                 if (!jt) {
-                    myprintln "! Missing JOSM overlay flag: ${getDescription(j)}"
+                    myprintln "- Missing JOSM overlay flag: ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI overlay flag: ${getDescription(j)}"
                 }
