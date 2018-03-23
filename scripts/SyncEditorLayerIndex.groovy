@@ -24,7 +24,8 @@ import javax.json.JsonReader
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.data.imagery.Shape
-import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.data.projection.Projections
+import org.openstreetmap.josm.data.validation.routines.DomainValidator
 import org.openstreetmap.josm.io.imagery.ImageryReader
 
 class SyncEditorLayerIndex {
@@ -551,7 +552,12 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "- Missing JOSM license URL (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    def ethttps = et.replace("http:","https:")
+                    if(jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
+                        myprintln "+ License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    } else {
+                        myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    }
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI license URL ('${jt}'): ${getDescription(j)}"
                 }
@@ -564,7 +570,7 @@ class SyncEditorLayerIndex {
                     myprintln "- Missing JOSM attribution URL (${et}): ${getDescription(j)}"
                 } else if (et) {
                     def ethttps = et.replace("http:","https:")
-                    if(jt.equals(ethttps)) {
+                    if(jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
                         myprintln "+ Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
                     } else {
                         myprintln "* Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
@@ -714,6 +720,7 @@ class SyncEditorLayerIndex {
         myprintln "*** Miscellaneous checks: ***"
         def josmIds = new HashMap<String, ImageryInfo>()
         def all = Projections.getAllProjectionCodes()
+        DomainValidator dv = DomainValidator.getInstance();
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
             def id = getId(j)
@@ -749,9 +756,30 @@ class SyncEditorLayerIndex {
                     myprintln "* WMS 1.1 with strange SRS specification: ${getDescription(j)}"
                 }
             }
-            if(!(url =~ /^https?:\/\//) && !"scanex".equals(getType(j))) {
-                myprintln "* Strange URL: ${getDescription(j)}"
+            def urls = new LinkedList<String>()
+            if(!"scanex".equals(getType(j))) {
+              urls += url
             }
+            def jt = getPermissionReferenceUrl(j)
+            if(jt)
+              urls += jt
+            jt = getTermsOfUseUrl(j)
+            if(jt)
+              urls += jt
+            jt = getAttributionUrl(j)
+            if(jt)
+              urls += jt
+            for(def u : urls) {
+                def m = u =~ /^https?:\/\/([^\/]+?)(:\d+)?\//
+                if(!m)
+                    myprintln "* Strange URL '${u}': ${getDescription(j)}"
+                else {
+                    def domain = m[0][1].replaceAll("\\{switch:.*\\}","x")
+                    if (!(domain =~ /^\d+\.\d+\.\d+\.\d+$/) && !dv.isValid(domain))
+                        myprintln "* Strange Domain '${domain}': ${getDescription(j)}"
+                }
+            }
+
             if(josmMirrors.containsKey(url)) {
                 continue
             }
