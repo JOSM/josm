@@ -769,6 +769,9 @@ class SyncEditorLayerIndex {
             jt = getAttributionUrl(j)
             if(jt)
               urls += jt
+            jt = getIcon(j)
+            if(jt && !(jt =~ /^data:image\/png;base64,/))
+              urls += jt
             for(def u : urls) {
                 def m = u =~ /^https?:\/\/([^\/]+?)(:\d+)?\//
                 if(!m)
