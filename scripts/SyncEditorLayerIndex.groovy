@@ -761,7 +761,7 @@ class SyncEditorLayerIndex {
               urls += url
             }
             def jt = getPermissionReferenceUrl(j)
-            if(jt)
+            if(jt && !"Public Domain".equals(jt))
               urls += jt
             jt = getTermsOfUseUrl(j)
             if(jt)
