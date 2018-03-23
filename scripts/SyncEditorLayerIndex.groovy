@@ -778,8 +778,12 @@ class SyncEditorLayerIndex {
                     myprintln "* Strange URL '${u}': ${getDescription(j)}"
                 else {
                     def domain = m[0][1].replaceAll("\\{switch:.*\\}","x")
+                    def port = m[0][2]
                     if (!(domain =~ /^\d+\.\d+\.\d+\.\d+$/) && !dv.isValid(domain))
                         myprintln "* Strange Domain '${domain}': ${getDescription(j)}"
+                    else if (port != null && (port == ":80" || port == ":443")) {
+                        myprintln "* Useless port '${port}': ${getDescription(j)}"
+                    }
                 }
             }
 
