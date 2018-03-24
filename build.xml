@@ -18,7 +18,7 @@
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="test.dir" location="${base.dir}/test"/>
         <property name="src.dir" location="${base.dir}/src"/>
-        <property name="noJavaFX" value="1"/>
+        <property name="noJavaFX" value="0"/>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
         <property name="tools.dir" location="${base.dir}/tools"/>
