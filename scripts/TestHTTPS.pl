@@ -4,41 +4,84 @@ use strict;
 use utf8;
 use open qw/:std :encoding(utf8)/;
 use Net::HTTPS;
-
 use XML::LibXML;
 
-my $dom = XML::LibXML->load_xml(location => "imagery_josm.imagery.xml");
-my $xpc = XML::LibXML::XPathContext->new($dom);
-$xpc->registerNs('j',  'http://josm.openstreetmap.de/maps-1.0');
 my %urls;
 
-foreach my $entry ($xpc->findnodes("//j:entry"))
+sub getmaps
 {
-  my $name = $xpc->findvalue("./j:name", $entry);
-  for my $e ($xpc->findnodes(".//j:*", $entry))
+  my $dom = XML::LibXML->load_xml(location => "imagery_josm.imagery.xml");
+  my $xpc = XML::LibXML::XPathContext->new($dom);
+  $xpc->registerNs('j',  'http://josm.openstreetmap.de/maps-1.0');
+  foreach my $entry ($xpc->findnodes("//j:entry"))
   {
-    if($e->textContent =~ /^http:\/\/(.*?)[\/]/)
+    my $name = $xpc->findvalue("./j:name", $entry);
+    for my $e ($xpc->findnodes(".//j:*", $entry))
     {
-      my $u = $1;
-      if($u =~ /^(.*)\{switch:(.*)\}(.*)$/)
+      if($e->textContent =~ /^http:\/\/(.*?)[\/]/)
       {
-        my ($f,$switch,$e) = ($1, $2, $3);
-        for my $s (split(",", $switch))
+        my $u = $1;
+        if($u =~ /^(.*)\{switch:(.*)\}(.*)$/)
         {
-          $urls{"$f$s$e"}{$name}++;
+          my ($f,$switch,$e) = ($1, $2, $3);
+          for my $s (split(",", $switch))
+          {
+            $urls{"$f$s$e"}{"MAP:$name"}++;
+          }
+        }
+        else
+        {
+          $urls{$u}{"MAP:$name"}++;
         }
       }
-      else
-      {
-        $urls{$u}{$name}++;
-      }
     }
+  }
+}
+
+sub getfile($$)
+{
+  my ($type, $file) = @_;
+  open FILE,"<:encoding(utf-8)",$file or die;
+  my $name;
+  for my $line (<FILE>)
+  {
+    if($line =~ /^([^ \t].*);/)
+    {
+      $name = $1;
+    }
+    if($line =~ /http:\/\/(.*?)[\/]/)
+    {
+      $urls{$1}{"$type:$name"}++;
+    }
+  }
+}
+
+print "Options: PLUGIN, STYLE, RULE, PRESET, MAP, GETPLUGIN, GETSTYLE, GETRULE, GETPRESET, GETMAP, LOCAL\n" if !@ARGV;
+
+my $local = 0;
+for my $ARG (@ARGV)
+{
+  if($ARG eq "LOCAL") {$local = 1; }
+  if($ARG eq "GETMAP") { system "curl https://josm.openstreetmap.de/maps -o imagery_josm.imagery.xml"; getmaps();}
+  if($ARG eq "MAP") { getmaps(); }
+  for my $x ("PLUGIN", "STYLE", "RULE", "PRESET")
+  {
+    my $t = lc($x);
+    my $url = $x eq "PLUGIN" ? $t : "${t}s";
+    my $file = "josm_$t.xml";
+    if($ARG eq "GET$x") { system "curl https://josm.openstreetmap.de/$url -o $file"; getfile($x, $file);}
+    if($ARG eq $x) { getfile($x, $file); }
   }
 }
 
 for my $url (sort keys %urls)
 {
   my $i = join(" # ", sort keys %{$urls{$url}});
+  if($local) # skip test
+  {
+    print "* $url:$i\n";
+    next;
+  }
   eval
   {
     local $SIG{ALRM} = sub {die "--Alarm--"};
