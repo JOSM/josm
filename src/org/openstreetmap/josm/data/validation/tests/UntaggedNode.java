@@ -7,9 +7,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Locale;
 
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.osm.AbstractPrimitive;
+import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -19,7 +20,7 @@ import org.openstreetmap.josm.data.validation.TestError;
  *
  * @author frsantos
  */
-public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisitor {
+public class UntaggedNode extends Test implements KeyValueVisitor {
 
     protected static final int UNTAGGED_NODE_BLANK = 201;
     protected static final int UNTAGGED_NODE_FIXME = 202;
@@ -53,12 +54,12 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
         }
     }
 
-    private static OsmPrimitive[] castPrim(AbstractPrimitive n) {
+    private static OsmPrimitive[] castPrim(Tagged n) {
         return n instanceof OsmPrimitive ? (new OsmPrimitive[]{(OsmPrimitive) n}) : (new OsmPrimitive[0]);
     }
 
     @Override
-    public void visitKeyValue(AbstractPrimitive n, String key, String value) {
+    public void visitKeyValue(Tagged n, String key, String value) {
         if (key.toLowerCase(Locale.ENGLISH).contains("fixme") || value.toLowerCase(Locale.ENGLISH).contains("fixme")) {
             /* translation note: don't translate quoted words */
             errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_NODE_FIXME)

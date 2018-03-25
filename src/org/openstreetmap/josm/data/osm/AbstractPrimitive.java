@@ -26,26 +26,6 @@ import org.openstreetmap.josm.tools.Utils;
 */
 public abstract class AbstractPrimitive implements IPrimitive {
 
-    /**
-     * This is a visitor that can be used to loop over the keys/values of this primitive.
-     *
-     * @author Michael Zangl
-     * @since 8742
-     * @since 10600 (functional interface)
-     */
-    @FunctionalInterface
-    public interface KeyValueVisitor {
-
-        /**
-         * This method gets called for every tag received.
-         *
-         * @param primitive This primitive
-         * @param key   The key
-         * @param value The value
-         */
-        void visitKeyValue(AbstractPrimitive primitive, String key, String value);
-    }
-
     private static final AtomicLong idCounter = new AtomicLong(0);
 
     /**

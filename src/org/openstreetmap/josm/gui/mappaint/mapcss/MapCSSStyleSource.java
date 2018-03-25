@@ -29,11 +29,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.data.osm.AbstractPrimitive;
-import org.openstreetmap.josm.data.osm.AbstractPrimitive.KeyValueVisitor;
+import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
@@ -196,7 +196,7 @@ public class MapCSSStyleSource extends StyleSource {
             }
 
             @Override
-            public void visitKeyValue(AbstractPrimitive p, String key, String value) {
+            public void visitKeyValue(Tagged p, String key, String value) {
                 MapCSSKeyRules v = index.get(key);
                 if (v != null) {
                     BitSet rs = v.get(value);
