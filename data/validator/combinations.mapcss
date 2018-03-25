@@ -12,7 +12,7 @@ way[motorroad                  ][!highway],
 node[ntd_id                    ][!highway],
 way[sac_scale                  ][!highway],
 way[sidewalk                   ][!highway],
-way[step_count                 ][!highway],
+way[step_count                 ][!highway][man_made!=tower],
 way[tracktype                  ][!highway],
 way[trail_visibility           ][!highway], /* #15029 */
 way[trolley_wire               ][!highway],
