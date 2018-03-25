@@ -412,6 +412,7 @@ public class CachedFile implements Closeable {
      * directories will not share a cache file.
      * @param url URL
      * @param destDir destination directory
+     * @param parameter additional URL parameter (used e.g. for maps)
      * @return Preference key
      */
     private static String getPrefKey(URL url, String destDir, String parameter) {
