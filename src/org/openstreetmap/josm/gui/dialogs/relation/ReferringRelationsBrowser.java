@@ -23,7 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -58,7 +58,7 @@ public class ReferringRelationsBrowser extends JPanel {
     protected void build() {
         setLayout(new BorderLayout());
         referrers = new JList<>(model);
-        referrers.setCellRenderer(new OsmPrimitivRenderer());
+        referrers.setCellRenderer(new PrimitiveRenderer());
         add(new JScrollPane(referrers), BorderLayout.CENTER);
         referrers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         referrers.addMouseListener(new MouseAdapter() {

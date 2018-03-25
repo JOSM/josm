@@ -317,14 +317,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
 
-    /**
-     * Gets the type this primitive is displayed at
-     * @return A {@link OsmPrimitiveType}
-     */
-    public OsmPrimitiveType getDisplayType() {
-        return getType();
-    }
-
     @Override
     public void setTimestamp(Date timestamp) {
         this.timestamp = (int) TimeUnit.MILLISECONDS.toSeconds(timestamp.getTime());

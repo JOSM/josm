@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 
 /**
  * The table cell renderer used in the changeset content table, except for the "name"
- * column in which we use a {@link org.openstreetmap.josm.gui.OsmPrimitivRenderer}.
+ * column in which we use a {@link org.openstreetmap.josm.gui.PrimitiveRenderer}.
  */
 public class ChangesetContentTableCellRenderer extends AbstractCellRenderer {
 

@@ -4,34 +4,37 @@ package org.openstreetmap.josm.data.osm;
 import java.util.Comparator;
 
 /**
- * Formats a name for a {@link OsmPrimitive}.
+ * Formats a name for an {@link IPrimitive}.
  * @since 1990
  */
 public interface NameFormatter {
 
     /**
-     * Formats a name for a {@link Node}.
+     * Formats a name for a {@link INode}.
      *
      * @param node the node
      * @return the name
+     * @since 13564 (signature)
      */
-    String format(Node node);
+    String format(INode node);
 
     /**
-     * Formats a name for a {@link Way}.
+     * Formats a name for a {@link IWay}.
      *
      * @param way the way
      * @return the name
+     * @since 13564 (signature)
      */
-    String format(Way way);
+    String format(IWay way);
 
     /**
-     * Formats a name for a {@link Relation}.
+     * Formats a name for a {@link IRelation}.
      *
      * @param relation the relation
      * @return the name
+     * @since 13564 (signature)
      */
-    String format(Relation relation);
+    String format(IRelation relation);
 
     /**
      * Formats a name for a {@link Changeset}.
@@ -44,18 +47,21 @@ public interface NameFormatter {
     /**
      * Gets a comparator that sorts the nodes by the string that this formatter would create for them
      * @return That comparator
+     * @since 13564 (signature)
      */
-    Comparator<Node> getNodeComparator();
+    Comparator<INode> getNodeComparator();
 
     /**
      * Gets a comparator that sorts the ways by the string that this formatter would create for them
      * @return That comparator
+     * @since 13564 (signature)
      */
-    Comparator<Way> getWayComparator();
+    Comparator<IWay> getWayComparator();
 
     /**
      * Gets a comparator that sorts the relations by the string that this formatter would create for them
      * @return That comparator
+     * @since 13564 (signature)
      */
-    Comparator<Relation> getRelationComparator();
+    Comparator<IRelation> getRelationComparator();
 }

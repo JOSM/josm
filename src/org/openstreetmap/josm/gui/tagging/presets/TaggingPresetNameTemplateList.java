@@ -6,7 +6,7 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -51,7 +51,7 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
      * @param primitive The primitive to match
      * @return the first occurence of preset with template name matching the primitive
      */
-    public TaggingPreset findPresetTemplate(OsmPrimitive primitive) {
+    public TaggingPreset findPresetTemplate(IPrimitive primitive) {
         synchronized (this) {
             for (TaggingPreset t : presetsWithPattern) {
                 Collection<TaggingPresetType> type = EnumSet.of(TaggingPresetType.forPrimitive(primitive));

@@ -316,11 +316,6 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     @Override
-    public String getDisplayName(NameFormatter formatter) {
-        return formatter.format(this);
-    }
-
-    @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.NODE;
     }

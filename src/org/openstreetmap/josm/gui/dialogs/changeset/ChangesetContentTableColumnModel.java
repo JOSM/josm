@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 
 /**
  * The column model for the changeset content
@@ -47,7 +47,7 @@ public class ChangesetContentTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("Name"));
         col.setResizable(true);
         col.setPreferredWidth(200);
-        col.setCellRenderer(new OsmPrimitivRenderer());
+        col.setCellRenderer(new PrimitiveRenderer());
         addColumn(col);
     }
 }

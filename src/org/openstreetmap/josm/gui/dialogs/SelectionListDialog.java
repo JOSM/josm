@@ -64,7 +64,7 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
@@ -112,7 +112,7 @@ public class SelectionListDialog extends ToggleDialog {
         lstPrimitives = new JList<>(model);
         lstPrimitives.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstPrimitives.setSelectionModel(selectionModel);
-        lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
+        lstPrimitives.setCellRenderer(new PrimitiveRenderer());
         lstPrimitives.setTransferHandler(new SelectionTransferHandler());
         if (!GraphicsEnvironment.isHeadless()) {
             lstPrimitives.setDragEnabled(true);

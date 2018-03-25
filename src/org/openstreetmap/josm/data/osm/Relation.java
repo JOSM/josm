@@ -394,11 +394,6 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    @Override
-    public String getDisplayName(NameFormatter formatter) {
-        return formatter.format(this);
-    }
-
     /**
      * Replies the set of  {@link OsmPrimitive}s referred to by at least one
      * member of this relation
@@ -524,11 +519,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    /**
-     * Determines if at least one child primitive is incomplete.
-     *
-     * @return true if at least one child primitive is incomplete
-     */
+    @Override
     public boolean hasIncompleteMembers() {
         RelationMember[] members = this.members;
         for (RelationMember rm: members) {

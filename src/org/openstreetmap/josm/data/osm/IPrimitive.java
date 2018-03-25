@@ -232,4 +232,22 @@ public interface IPrimitive extends Tagged, PrimitiveId {
      * @see LanguageInfo#getLanguageCodes
      */
     String getLocalName();
+
+    /**
+     * Replies the display name of a primitive formatted by <code>formatter</code>
+     * @param formatter formatter to use
+     *
+     * @return the display name
+     * @since 13564
+     */
+    String getDisplayName(NameFormatter formatter);
+
+    /**
+     * Gets the type this primitive is displayed at
+     * @return A {@link OsmPrimitiveType}
+     * @since 13564
+     */
+    default OsmPrimitiveType getDisplayType() {
+        return getType();
+    }
 }

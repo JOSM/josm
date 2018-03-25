@@ -15,6 +15,21 @@ public interface IWay extends IPrimitive {
     int getNodesCount();
 
     /**
+     * Replies the real number of nodes in this way (full number of nodes minus one if this way is closed)
+     *
+     * @return the real number of nodes in this way.
+     *
+     * @see #getNodesCount()
+     * @see #isClosed()
+     * @since 5847
+     * @since 13564 (IWay)
+     */
+    default int getRealNodesCount() {
+        int count = getNodesCount();
+        return isClosed() ? count-1 : count;
+    }
+
+    /**
      * Returns id of the node at given index.
      * @param idx node index
      * @return id of the node at given index
@@ -26,4 +41,9 @@ public interface IWay extends IPrimitive {
      * @return {@code true} if this way is closed, {@code false} otherwise
      */
     boolean isClosed();
+
+    @Override
+    default String getDisplayName(NameFormatter formatter) {
+        return formatter.format(this);
+    }
 }

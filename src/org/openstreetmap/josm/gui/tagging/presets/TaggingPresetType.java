@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 
 /**
@@ -48,7 +48,7 @@ public enum TaggingPresetType {
      * @param p The OSM primitive
      * @return the {@code TaggingPresetType} of {@code p}
      */
-    public static TaggingPresetType forPrimitive(OsmPrimitive p) {
+    public static TaggingPresetType forPrimitive(IPrimitive p) {
         return forPrimitiveType(p.getDisplayType());
     }
 

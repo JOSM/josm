@@ -28,4 +28,9 @@ public interface INode extends IPrimitive, ILatLon {
      * @param eastNorth east/north coordinates of this node
      */
     void setEastNorth(EastNorth eastNorth);
+
+    @Override
+    default String getDisplayName(NameFormatter formatter) {
+        return formatter.format(this);
+    }
 }

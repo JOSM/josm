@@ -13,22 +13,22 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
- * Renderer that renders the objects from an OsmPrimitive as data.
+ * Renderer that renders the objects from an {@link IPrimitive} as data.
  *
  * Can be used in lists and tables.
  *
  * @author imi
  * @author Frederik Ramm
- * @deprecated since 13564. Use {@link PrimitiveRenderer} instead
+ * @since 13564 (successor to {@link OsmPrimitivRenderer}
  */
-@Deprecated
-public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, TableCellRenderer {
+public class PrimitiveRenderer implements ListCellRenderer<IPrimitive>, TableCellRenderer {
     private final DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
 
     /**
@@ -45,7 +45,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      * Adapter method supporting the ListCellRenderer interface.
      */
     @Override
-    public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list, OsmPrimitive value, int index,
+    public Component getListCellRendererComponent(JList<? extends IPrimitive> list, IPrimitive value, int index,
             boolean isSelected, boolean cellHasFocus) {
         Component def = defaultListCellRenderer.getListCellRendererComponent(list, null, index, isSelected, cellHasFocus);
         return renderer(def, value, list.getModel().getSize() > 1000);
@@ -57,8 +57,8 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component def = defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        if (value instanceof OsmPrimitive)
-            return renderer(def, (OsmPrimitive) value, table.getModel().getRowCount() > 1000);
+        if (value instanceof IPrimitive)
+            return renderer(def, (IPrimitive) value, table.getModel().getRowCount() > 1000);
         else if (value instanceof HistoryOsmPrimitive)
             return renderer(def, (HistoryOsmPrimitive) value);
         else
@@ -69,16 +69,16 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      * Internal method that stuffs information into the rendering component
      * provided that it's a kind of JLabel.
      * @param def the rendering component
-     * @param value the OsmPrimitive to render
+     * @param value the IPrimitive to render
      * @param fast whether the icons should be loaded fast since many items are being displayed
      * @return the modified rendering component
      */
-    private Component renderer(Component def, OsmPrimitive value, boolean fast) {
+    private Component renderer(Component def, IPrimitive value, boolean fast) {
         if (value != null && def instanceof JLabel) {
             ((JLabel) def).setText(getComponentText(value));
-            final ImageIcon icon = fast
+            final ImageIcon icon = (fast || !(value instanceof OsmPrimitive))
                     ? ImageProvider.get(value.getType())
-                    : ImageProvider.getPadded(value,
+                    : ImageProvider.getPadded((OsmPrimitive) value,
                         // Height of component no yet known, assume the default 16px.
                         ImageProvider.ImageSizes.SMALLICON.getImageDimension());
             if (icon != null) {
@@ -113,7 +113,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      * @param value OSM primitive
      * @return text representing the OSM primitive
      */
-    protected String getComponentText(OsmPrimitive value) {
+    protected String getComponentText(IPrimitive value) {
         return value.getDisplayName(DefaultNameFormatter.getInstance());
     }
 
@@ -123,7 +123,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      * @param value OSM primitive
      * @return text representing the OSM primitive
      */
-    protected String getComponentToolTipText(OsmPrimitive value) {
+    protected String getComponentToolTipText(IPrimitive value) {
         return formatter.buildDefaultToolTip(value);
     }
 }

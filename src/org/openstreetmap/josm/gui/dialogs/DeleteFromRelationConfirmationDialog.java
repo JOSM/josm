@@ -36,7 +36,7 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -295,7 +295,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             col.setResizable(true);
             col.setWidth(100);
             col.setPreferredWidth(100);
-            col.setCellRenderer(new OsmPrimitivRenderer());
+            col.setCellRenderer(new PrimitiveRenderer());
             addColumn(col);
 
             // column 0 - From Relation
@@ -304,7 +304,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             col.setResizable(true);
             col.setWidth(100);
             col.setPreferredWidth(100);
-            col.setCellRenderer(new OsmPrimitivRenderer());
+            col.setCellRenderer(new PrimitiveRenderer());
             addColumn(col);
 
             // column 1 - Pos.
