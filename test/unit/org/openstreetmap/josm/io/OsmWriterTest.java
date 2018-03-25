@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
-import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
+import org.openstreetmap.josm.data.osm.DownloadPolicy;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.NodeData;
 
 /**

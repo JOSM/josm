@@ -9,7 +9,7 @@ import javax.swing.AbstractAction;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OsmPrimitiveAction;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
+import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.io.OnlineResource;
