@@ -414,6 +414,15 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     }
 
     /**
+     * Returns the {@link DataSet} behind this layer.
+     * @return the {@link DataSet} behind this layer.
+     * @since 13558
+     */
+    public DataSet getDataSet() {
+        return data;
+    }
+
+    /**
      * Return the image provider to get the base icon
      * @return image provider class which can be modified
      * @since 8323
