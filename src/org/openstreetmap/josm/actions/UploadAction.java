@@ -157,7 +157,7 @@ public class UploadAction extends JosmAction {
      */
     public static boolean checkPreUploadConditions(AbstractModifiableLayer layer) {
         return checkPreUploadConditions(layer,
-                layer instanceof OsmDataLayer ? new APIDataSet(((OsmDataLayer) layer).data) : null);
+                layer instanceof OsmDataLayer ? new APIDataSet(((OsmDataLayer) layer).getDataSet()) : null);
     }
 
     protected static void alertUnresolvedConflicts(OsmDataLayer layer) {
@@ -242,7 +242,7 @@ public class UploadAction extends JosmAction {
             return;
 
         final UploadDialog dialog = UploadDialog.getUploadDialog();
-        dialog.setChangesetTags(layer.data);
+        dialog.setChangesetTags(layer.getDataSet());
         dialog.setUploadedPrimitives(apiData);
         dialog.setVisible(true);
         dialog.rememberUserInput();

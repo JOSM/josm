@@ -98,7 +98,7 @@ public class UploadSelectionAction extends JosmAction {
             return;
         }
         Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(editLayer.data.getAllSelected());
-        Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(editLayer.data);
+        Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(editLayer.getDataSet());
         if (modifiedCandidates.isEmpty() && deletedCandidates.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,

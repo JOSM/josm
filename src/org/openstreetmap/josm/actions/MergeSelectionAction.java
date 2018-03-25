@@ -56,7 +56,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
                 && warnMergingUploadDiscouragedObjects(targetLayer)) {
             return;
         }
-        MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(editLayer.data);
+        MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(editLayer.getDataSet());
         ((OsmDataLayer) targetLayer).mergeFrom(builder.build());
     }
 

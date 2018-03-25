@@ -1469,7 +1469,7 @@ public class JoinAreasAction extends JosmAction {
         for (Way w : inner) {
             newRel.addMember(new RelationMember("inner", w));
         }
-        cmds.add(layer != null ? new AddCommand(layer.data, newRel) :
+        cmds.add(layer != null ? new AddCommand(layer.getDataSet(), newRel) :
             new AddCommand(inner.iterator().next().getDataSet(), newRel));
         addedRelations.add(newRel);
 
