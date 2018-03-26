@@ -2,11 +2,14 @@
 package org.openstreetmap.josm.testutils;
 
 import java.awt.Color;
+import java.awt.Window;
+import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.TimeZone;
 
 import org.junit.rules.TemporaryFolder;
@@ -574,6 +577,21 @@ public class JOSMTestRules implements TestRule {
         if (this.assumeRevisionString != null && this.originalVersion != null) {
             TestUtils.setPrivateStaticField(Version.class, "instance", this.originalVersion);
         }
+
+        Window[] windows = Window.getWindows();
+        if (windows.length != 0) {
+            Logging.info(
+                "Attempting to close {0} windows left open by tests: {1}",
+                windows.length,
+                Arrays.toString(windows)
+            );
+        }
+        GuiHelper.runInEDTAndWait(() -> {
+            for (Window window : windows) {
+                window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+                window.dispose();
+            }
+        });
 
         // Parts of JOSM uses weak references - destroy them.
         System.gc();
