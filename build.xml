@@ -738,6 +738,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.jaitools.*"/>
             <ignore classname="org.jaxen.*"/>
             <ignore classname="org.jboss.*"/>
+            <ignore classname="org.jdom.*"/>
             <ignore classname="org.jdom2.*"/>
             <ignore classname="org.jfree.*"/>
             <ignore classname="org.jgraph.*"/>
