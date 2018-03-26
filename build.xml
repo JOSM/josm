@@ -641,6 +641,7 @@ Build-Date: ${build.tstamp}
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
             <classpath path="${tools.dir}/animal-sniffer-ant-tasks.jar"/>
         </typedef>
+        <delete dir="${dir}" failonerror="false"/>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
         <loadfile property="deprecated-plugins" srcFile="${src.dir}/org/openstreetmap/josm/plugins/PluginHandler.java">
