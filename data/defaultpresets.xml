@@ -3632,6 +3632,7 @@
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:amenity=vending_machine"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:amenity=vending_machine"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"
+                  nl.href="https://wiki.openstreetmap.org/wiki/NL:Tag:amenity=vending_machine"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=vending_machine"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=vending_machine"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine" />
@@ -4669,6 +4670,7 @@
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:leisure=fitness_station"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=fitness_station"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:leisure=fitness_station"
+                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:leisure=fitness_station"
                   sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:leisure=fitness_station" />
             <space />
             <key key="leisure" value="fitness_station" />
@@ -4753,6 +4755,7 @@
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=bbq"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bbq"
                   el.href="https://wiki.openstreetmap.org/wiki/El:Tag:amenity=bbq"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:amenity=bbq"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bbq"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=bbq"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=bbq"
@@ -7284,6 +7287,7 @@
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:highway=street_lamp"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:highway=street_lamp"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:highway=street_lamp"
+                  hu.href="https://wiki.openstreetmap.org/wiki/Hu:Tag:highway=street_lamp"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:highway=street_lamp"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:highway=street_lamp"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:highway=street_lamp" />
@@ -9749,6 +9753,7 @@
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=caterer"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=caterer"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=caterer"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:craft=caterer"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=caterer"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:craft=caterer"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:craft=caterer" />
@@ -9819,6 +9824,7 @@
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=hvac"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=hvac"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=hvac"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:craft=hvac"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=hvac"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:craft=hvac" />
         <space />
@@ -9926,6 +9932,7 @@
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=gardener"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=gardener"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=gardener"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:craft=gardener"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=gardener"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:craft=gardener" />
         <space />
@@ -9975,6 +9982,7 @@
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=blacksmith"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=blacksmith"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=blacksmith"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:craft=blacksmith"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=blacksmith"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:craft=blacksmith"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:craft=blacksmith"
