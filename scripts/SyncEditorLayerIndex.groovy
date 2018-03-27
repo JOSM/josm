@@ -558,7 +558,12 @@ class SyncEditorLayerIndex {
                         if(jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
                             myprintln "+ License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
                         } else {
-                            myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                            def ja = getAttributionUrl(j)
+                            if (ja && (ja.equals(ethttps) || ja.equals(et+"/") || ja.equals(ethttps+"/"))) {
+                               myprintln "+ ELI License URL in JOSM Attribution: ${getDescription(j)}"
+                            } else {
+                                myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                            }
                         }
                     }
                 } else if (!options.nomissingeli) {
