@@ -547,16 +547,19 @@ class SyncEditorLayerIndex {
 
             et = getPermissionReferenceUrl(e)
             jt = getPermissionReferenceUrl(j)
-            if (!jt) jt = getTermsOfUseUrl(j)
+            def jt2 = getTermsOfUseUrl(j)
+            if (!jt) jt = jt2
             if (!et.equals(jt)) {
                 if (!jt) {
                     myprintln "- Missing JOSM license URL (${et}): ${getDescription(j)}"
                 } else if (et) {
                     def ethttps = et.replace("http:","https:")
-                    if(jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
-                        myprintln "+ License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
-                    } else {
-                        myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    if(!jt2 || !(jt2.equals(ethttps) || jt2.equals(et+"/") || jt2.equals(ethttps+"/"))) {
+                        if(jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
+                            myprintln "+ License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                        } else {
+                            myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                        }
                     }
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI license URL ('${jt}'): ${getDescription(j)}"
