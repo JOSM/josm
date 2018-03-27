@@ -559,7 +559,7 @@ class SyncEditorLayerIndex {
                             myprintln "+ License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
                         } else {
                             def ja = getAttributionUrl(j)
-                            if (ja && (ja.equals(ethttps) || ja.equals(et+"/") || ja.equals(ethttps+"/"))) {
+                            if (ja && (ja.equals(et) || ja.equals(ethttps) || ja.equals(et+"/") || ja.equals(ethttps+"/"))) {
                                myprintln "+ ELI License URL in JOSM Attribution: ${getDescription(j)}"
                             } else {
                                 myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
