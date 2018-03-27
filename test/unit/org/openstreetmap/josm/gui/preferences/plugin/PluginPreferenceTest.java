@@ -9,28 +9,31 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.testutils.HelpAwareOptionPaneMocker;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import com.google.common.collect.ImmutableMap;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link PluginPreference} class.
  */
 public class PluginPreferenceTest {
-
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().assertionsInEDT();
 
     /**
      * Unit test of {@link PluginPreference#PluginPreference}.
@@ -88,6 +91,12 @@ public class PluginPreferenceTest {
      */
     @Test
     public void testNotifyDownloadResults() {
+        new HelpAwareOptionPaneMocker(ImmutableMap.<String, Object>builder()
+            .put("<html></html>", "OK")  // (buildDownloadSummary() output was empty)
+            .put("<html>Please restart JOSM to activate the downloaded plugins.</html>", "OK")
+            .build()
+        );
+
         PluginDownloadTask task = new PluginDownloadTask(NullProgressMonitor.INSTANCE, Collections.<PluginInformation>emptyList(), "");
         PluginPreference.notifyDownloadResults(null, task, false);
         PluginPreference.notifyDownloadResults(null, task, true);
