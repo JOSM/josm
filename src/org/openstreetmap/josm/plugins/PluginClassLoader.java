@@ -68,6 +68,7 @@ public class PluginClassLoader extends URLClassLoader {
                 } catch (ClassNotFoundException e) {
                     // do nothing
                     Logging.trace("Plugin class not found in {0}: {1}", dep, e.getMessage());
+                    Logging.trace(e);
                 }
             }
             result = super.loadClass(name, resolve);

@@ -1589,6 +1589,7 @@ public class SearchCompiler {
 
                 return group != null && groupSuffix.equalsIgnoreCase(group.getRawName());
             } catch (StringIndexOutOfBoundsException ex) {
+                Logging.trace(ex);
                 return false;
             }
         }
