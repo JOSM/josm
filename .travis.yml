@@ -1,18 +1,20 @@
 language: java
-os:
-  - linux
-  - osx
+script: (eval "$ANT_INVOCATION $(test $TRAVIS_JDK_VERSION = openjdk8 && echo -DnoJavaFX=true) test")
+os: linux
+dist: trusty
+env:
+  - ANT_INVOCATION="xvfb-run ant -Dtest.headless=false"
+  - ANT_INVOCATION="ant -Dtest.headless=true"
+jdk:
+  - oraclejdk9
+  - oraclejdk8
+  - openjdk8
 matrix:
   include:
-    - os: linux
-      dist: trusty
-      sudo: required
-      jdk:
-        - oraclejdk9
-        - oraclejdk8
-        - openjdk8
-    - os: osx
-      osx_image: xcode9.2
+  - os: osx
+    osx_image: xcode9.2
+    jdk: ~
+    env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
   - >
     case "${TRAVIS_OS_NAME:-linux}" in
