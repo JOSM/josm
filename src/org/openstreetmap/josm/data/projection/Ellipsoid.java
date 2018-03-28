@@ -56,6 +56,26 @@ public final class Ellipsoid {
     public static final Ellipsoid ClarkeIGN = Ellipsoid.createAb(6378249.2, 6356515.0);
 
     /**
+     * Everest 1830
+     */
+    public static final Ellipsoid Everest = Ellipsoid.createArf(6377276.345, 300.8017);
+
+    /**
+     * Everest 1948
+     */
+    public static final Ellipsoid Everest1948 = Ellipsoid.createArf(6377304.063, 300.8017);
+
+    /**
+     * Everest 1956
+     */
+    public static final Ellipsoid Everest1956 = Ellipsoid.createArf(6377301.243, 300.8017);
+
+    /**
+     * Everest 1969
+     */
+    public static final Ellipsoid Everest1969 = Ellipsoid.createArf(6377295.664, 300.8017);
+
+    /**
      * Everest (Sabah &amp; Sarawak)
      */
     public static final Ellipsoid EverestSabahSarawak = Ellipsoid.createArf(6377298.556, 300.8017);
@@ -69,6 +89,11 @@ public final class Ellipsoid {
      * Modified Fischer 1960
      */
     public static final Ellipsoid FischerMod = Ellipsoid.createArf(6378155., 298.3);
+
+    /**
+     * Fischer 1968
+     */
+    public static final Ellipsoid Fischer1968 = Ellipsoid.createArf(6378150., 298.3);
 
     /**
      * GRS67 ellipsoid
@@ -93,9 +118,24 @@ public final class Ellipsoid {
     public static final Ellipsoid Helmert = Ellipsoid.createArf(6378200.0, 298.3);
 
     /**
+     * Hough
+     */
+    public static final Ellipsoid Hough = Ellipsoid.createArf(6378270.0, 297.0);
+
+    /**
      * Krassowsky 1940 ellipsoid
      */
     public static final Ellipsoid Krassowsky = Ellipsoid.createArf(6378245.0, 298.3);
+
+    /**
+     * Sphere
+     */
+    public static final Ellipsoid Sphere = Ellipsoid.createAb(6371008.7714, 6371008.7714);
+
+    /**
+     * Walbeck
+     */
+    public static final Ellipsoid Walbeck = Ellipsoid.createAb(6376896.0, 6355834.8467);
 
     /**
      * WGS66 ellipsoid
