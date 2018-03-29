@@ -430,7 +430,7 @@ public class TagChecker extends TagTest {
         }
 
         for (Entry<String, String> prop : p.getKeys().entrySet()) {
-            String s = marktr("Key ''{0}'' invalid.");
+            String s = marktr("Tag ''{0}'' invalid.");
             String key = prop.getKey();
             String value = prop.getValue();
             if (checkValues && (containsLow(value)) && !withErrors.contains(p, "ICV")) {
