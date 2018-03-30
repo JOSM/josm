@@ -13,7 +13,9 @@ import java.util.stream.Stream;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.json.stream.JsonGenerator;
 
@@ -172,16 +174,18 @@ public class GeoJSONWriter {
         for (Entry<String, String> t : p.getKeys().entrySet()) {
             propObj.add(t.getKey(), t.getValue());
         }
+        final JsonObject prop = propObj.build();
 
         // Geometry
         final JsonObjectBuilder geomObj = Json.createObjectBuilder();
         p.accept(new GeometryPrimitiveVisitor(geomObj));
+        final JsonObject geom = geomObj.build();
 
         // Build primitive JSON object
         array.add(Json.createObjectBuilder()
                 .add("type", "Feature")
-                .add("properties", propObj)
-                .add("geometry", geomObj));
+                .add("properties", prop.isEmpty() ? JsonValue.NULL : prop)
+                .add("geometry", geom.isEmpty() ? JsonValue.NULL : geom));
     }
 
     protected void appendLayerBounds(DataSet ds, JsonObjectBuilder object) {
