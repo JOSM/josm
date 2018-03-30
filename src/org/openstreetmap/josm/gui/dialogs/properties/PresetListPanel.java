@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
@@ -39,8 +40,10 @@ public class PresetListPanel extends JPanel {
             if (selection.isEmpty())
                 return;
             int answer = t.showDialog(selection, false);
+            DataSet ds = selection.iterator().next().getDataSet();
+            boolean locked = ds != null && ds.isLocked();
 
-            if (answer == TaggingPreset.DIALOG_ANSWER_APPLY && !selection.iterator().next().getDataSet().isLocked()) {
+            if (answer == TaggingPreset.DIALOG_ANSWER_APPLY && !locked) {
                 presetHandler.updateTags(t.getChangedTags());
             }
         }
