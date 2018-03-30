@@ -193,7 +193,7 @@ public class UrlValidator extends AbstractValidator {
     /**
      * Singleton instance of this class with default schemes and options.
      */
-    private static final UrlValidator DEFAULT_URL_VALIDATOR = new UrlValidator();
+    private static final UrlValidator DEFAULT_URL_VALIDATOR = new UrlValidator(UrlValidator.ALLOW_2_SLASHES);
 
     /**
      * Returns the singleton instance of this class with default schemes and options.
