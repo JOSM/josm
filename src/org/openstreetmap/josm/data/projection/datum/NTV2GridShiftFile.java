@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * Models the NTv2 format Grid Shift File and exposes methods to shift
  * coordinate values using the Sub Grids contained in the file.
- * <p>The principal reference for the alogrithms used is the
+ * <p>The principal reference for the algorithms used is the
  * 'GDAit Software Architecture Manual' produced by the <a
  * href='http://www.sli.unimelb.edu.au/gda94'>Geomatics
  * Department of the University of Melbourne</a>
