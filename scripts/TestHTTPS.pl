@@ -8,6 +8,25 @@ use XML::LibXML;
 
 my %urls;
 
+my %known = map {$_ => 1} qw(
+  a.tile.osm-tools.org
+  b.tile.osm-tools.org
+  c.tile.osm-tools.org
+  d.tile.osm-tools.org
+  e-mapa.net
+  ge.ch
+  gis.mapa.lodz.pl
+  osmdata.asitvd.ch
+  siglon.londrina.pr.gov.br
+  tiles.itoworld.com
+  tms.cadastre.openstreetmap.fr
+  wms.openstreetmap.de
+  www.jgoodies.com
+  www.osm-tools.org
+  www.webatlasde.de
+  zibi.openstreetmap.org.pl
+);
+
 sub getmaps
 {
   my $dom = XML::LibXML->load_xml(location => "imagery_josm.imagery.xml");
@@ -56,7 +75,7 @@ sub getfile($$)
   }
 }
 
-print "Options: PLUGIN, STYLE, RULE, PRESET, MAP, GETPLUGIN, GETSTYLE, GETRULE, GETPRESET, GETMAP, LOCAL\n" if !@ARGV;
+print "Options: PLUGIN STYLE RULE PRESET MAP GETPLUGIN GETSTYLE GETRULE GETPRESET GETMAP LOCAL\n" if !@ARGV;
 
 my $local = 0;
 for my $ARG (@ARGV)
@@ -79,7 +98,7 @@ for my $url (sort keys %urls)
   my $i = join(" # ", sort keys %{$urls{$url}});
   if($local) # skip test
   {
-    print "* $url:$i\n";
+    print "* ".($known{$url} ? "~~" : "")."$url:$i\n";
     next;
   }
   eval
@@ -91,13 +110,13 @@ for my $url (sort keys %urls)
     $s->write_request(GET => "/", 'User-Agent' => "TestHTTPS/1.0");
     my($code, $mess, %h) = $s->read_response_headers;
     alarm(0);
-    print "* $url [$code $mess]: $i\n";
+    print "* ".($known{$url} ? "~~" : "")."$url [$code $mess]: $i\n";
   };
   if($@ && $@ !~ "(--Alarm--|Connection refused)")
   {
     my $e = $@;
     $e =~ s/[\r\n]//g;
     $e =~ s/ at scripts\/TestHTTPS.pl .*//;
-    print "* $url [Error $e] :$i\n";
+    print "* ".($known{$url} ? "~~" : "")."$url [Error $e] :$i\n";
   }
 }
