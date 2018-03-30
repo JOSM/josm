@@ -18,7 +18,7 @@ public class PluginListParseException extends Exception {
 
     /**
      * Constructs a new {@code PluginListParseException} with the specified cause and a detail message of
-     * <tt>(cause==null ? null : cause.toString())</tt> (which typically contains the class and detail message of <tt>cause</tt>).
+     * <code>(cause==null ? null : cause.toString())</code> (which typically contains the class and detail message of <code>cause</code>).
      * @param cause cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
      */
     public PluginListParseException(Throwable cause) {

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.widgets;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
@@ -22,6 +21,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -85,9 +85,9 @@ public class TextContextualPopupMenu extends JPopupMenu {
                 component.getDocument().addUndoableEditListener(undoEditListener);
                 if (!GraphicsEnvironment.isHeadless()) {
                     component.getInputMap().put(
-                            KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), undoAction);
+                            KeyStroke.getKeyStroke(KeyEvent.VK_Z, Main.platform.getMenuShortcutKeyMaskEx()), undoAction);
                     component.getInputMap().put(
-                            KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), redoAction);
+                            KeyStroke.getKeyStroke(KeyEvent.VK_Y, Main.platform.getMenuShortcutKeyMaskEx()), redoAction);
                 }
             }
             addMenuEntries();

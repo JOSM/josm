@@ -8,6 +8,7 @@ import java.awt.Dialog;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.SwingUtilities;
@@ -29,7 +30,7 @@ import org.xml.sax.SAXException;
 
 /**
  * The asynchronous task for downloading relation members.
- *
+ * @since 2563
  */
 public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     private boolean canceled;
@@ -43,16 +44,18 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
         super(tr("Download relation members"), new PleaseWaitProgressMonitor(dialog), false /* don't ignore exception */);
         if (parent != null)
             this.parents.add(parent);
-        this.children = children;
-        this.curLayer = curLayer;
+        this.children = Objects.requireNonNull(children);
+        this.curLayer = Objects.requireNonNull(curLayer);
+        checkLayer();
     }
 
     public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer) {
         super(tr("Download relation members"), false /* don't ignore exception */);
         if (parent != null)
             this.parents.add(parent);
-        this.children = children;
-        this.curLayer = curLayer;
+        this.children = Objects.requireNonNull(children);
+        this.curLayer = Objects.requireNonNull(curLayer);
+        checkLayer();
     }
 
     /**
@@ -66,8 +69,15 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     public DownloadRelationMemberTask(Collection<Relation> parents, Collection<OsmPrimitive> children, OsmDataLayer curLayer) {
         super(tr("Download relation members"), false /* don't ignore exception */);
         this.parents.addAll(parents);
-        this.children = children;
-        this.curLayer = curLayer;
+        this.children = Objects.requireNonNull(children);
+        this.curLayer = Objects.requireNonNull(curLayer);
+        checkLayer();
+    }
+
+    private void checkLayer() {
+        if (!curLayer.isDownloadable()) {
+            throw new IllegalArgumentException("Non-downloadable layer: " + curLayer);
+        }
     }
 
     @Override

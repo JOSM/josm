@@ -105,7 +105,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 }
             }
             if (!exported) {
-                GuiHelper.runInEDTAndWait(() ->
+                GuiHelper.runInEDT(() ->
                     JOptionPane.showMessageDialog(Main.parent, tr("No Exporter found! Nothing saved."), tr("Warning"),
                         JOptionPane.WARNING_MESSAGE));
                 return false;

@@ -56,7 +56,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
@@ -126,7 +126,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
             lstConflicts = new JList<>(model);
             lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
+            lstConflicts.setCellRenderer(new PrimitiveRenderer());
             lstConflicts.addMouseListener(new MouseEventHandler());
         }
         addListSelectionListener(e -> MainApplication.getMap().mapView.repaint());

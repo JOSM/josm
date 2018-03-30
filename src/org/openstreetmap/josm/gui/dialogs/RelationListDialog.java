@@ -48,6 +48,7 @@ import org.openstreetmap.josm.actions.relation.SelectMembersAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -65,8 +66,8 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -321,9 +322,9 @@ public class RelationListDialog extends ToggleDialog
         return f;
     }
 
-    static final class NoTooltipOsmRenderer extends OsmPrimitivRenderer {
+    static final class NoTooltipOsmRenderer extends PrimitiveRenderer {
         @Override
-        protected String getComponentToolTipText(OsmPrimitive value) {
+        protected String getComponentToolTipText(IPrimitive value) {
             // Don't show the default tooltip in the relation list
             return null;
         }

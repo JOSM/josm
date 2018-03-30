@@ -19,7 +19,7 @@ public class JosmRuntimeException extends RuntimeException {
 
     /**
      * Constructs a new {@code JosmRuntimeException} with the specified cause and a detail message of
-     * <tt>(cause==null ? null : cause.toString())</tt> (which typically contains the class and detail message of <tt>cause</tt>).
+     * <code>(cause==null ? null : cause.toString())</code> (which typically contains the class and detail message of <code>cause</code>).
      * This constructor is useful for runtime exceptions that are little more than wrappers for other throwables.
      *
      * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).

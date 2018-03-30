@@ -207,7 +207,8 @@ public abstract class OsmServerReader extends OsmConnection {
                 if (response.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     String errorHeader = response.getHeaderField("Error");
                     String errorBody = fetchResponseText(response);
-                    throw new OsmApiException(response.getResponseCode(), errorHeader, errorBody, url.toString());
+                    throw new OsmApiException(response.getResponseCode(), errorHeader, errorBody, url.toString(), null,
+                            response.getContentType());
                 }
 
                 response.uncompressAccordingToContentDisposition(uncompressAccordingToContentDisposition);

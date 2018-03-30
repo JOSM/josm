@@ -277,7 +277,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     /**
      * The action to toggle the visibility state of this toggle dialog.
      *
-     * Emits {@link PropertyChangeEvent}s for the property <tt>selected</tt>:
+     * Emits {@link PropertyChangeEvent}s for the property <code>selected</code>:
      * <ul>
      *   <li>true, if the dialog is currently visible</li>
      *   <li>false, if the dialog is currently invisible</li>

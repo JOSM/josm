@@ -9,14 +9,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.AccessibleObject;
 import java.net.MalformedURLException;
@@ -826,7 +824,7 @@ public final class Utils {
     /**
      * Runs an external command and returns the standard output.
      *
-     * The program is expected to execute fast.
+     * The program is expected to execute fast, as this call waits 10 seconds at most.
      *
      * @param command the command with arguments
      * @return the output
@@ -835,27 +833,38 @@ public final class Utils {
      * @throws InterruptedException if the current thread is {@linkplain Thread#interrupt() interrupted} by another thread while waiting
      */
     public static String execOutput(List<String> command) throws IOException, ExecutionException, InterruptedException {
+        return execOutput(command, 10, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Runs an external command and returns the standard output. Waits at most the specified time.
+     *
+     * @param command the command with arguments
+     * @param timeout the maximum time to wait
+     * @param unit the time unit of the {@code timeout} argument. Must not be null
+     * @return the output
+     * @throws IOException when there was an error, e.g. command does not exist
+     * @throws ExecutionException when the return code is != 0. The output is can be retrieved in the exception message
+     * @throws InterruptedException if the current thread is {@linkplain Thread#interrupt() interrupted} by another thread while waiting
+     * @since 13467
+     */
+    public static String execOutput(List<String> command, long timeout, TimeUnit unit)
+            throws IOException, ExecutionException, InterruptedException {
         if (Logging.isDebugEnabled()) {
             Logging.debug(join(" ", command));
         }
-        Process p = new ProcessBuilder(command).start();
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-            StringBuilder all = null;
-            String line;
-            while ((line = input.readLine()) != null) {
-                if (all == null) {
-                    all = new StringBuilder(line);
-                } else {
-                    all.append('\n')
-                       .append(line);
-                }
-            }
-            String msg = all != null ? all.toString() : null;
-            if (p.waitFor() != 0) {
-                throw new ExecutionException(msg, null);
-            }
-            return msg;
+        Path out = Files.createTempFile("josm_exec_", ".txt");
+        Process p = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(out.toFile()).start();
+        if (!p.waitFor(timeout, unit) || p.exitValue() != 0) {
+            throw new ExecutionException(command.toString(), null);
         }
+        String msg = String.join("\n", Files.readAllLines(out)).trim();
+        try {
+            Files.delete(out);
+        } catch (IOException e) {
+            Logging.warn(e);
+        }
+        return msg;
     }
 
     /**
@@ -1565,7 +1574,7 @@ public final class Utils {
 
     /**
      * Returns the Java version as an int value.
-     * @return the Java version as an int value (8, 9, etc.)
+     * @return the Java version as an int value (8, 9, 10, etc.)
      * @since 12130
      */
     public static int getJavaVersion() {
@@ -1581,7 +1590,7 @@ public final class Utils {
         int dotPos = version.indexOf('.');
         int dashPos = version.indexOf('-');
         return Integer.parseInt(version.substring(0,
-                dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
+                dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : version.length()));
     }
 
     /**

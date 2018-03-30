@@ -9,7 +9,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -19,8 +18,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Internationalisation support.
@@ -366,37 +365,23 @@ public final class I18n {
         }
     }
 
+    /**
+     * I18n initialization for plugins.
+     * @param source file path/name of the JAR or Zip file containing translation strings
+     * @since 4159
+     */
     public static void addTexts(File source) {
         if ("en".equals(loadedCode))
             return;
-        final String enfile = "data/en.lang";
-        final String langfile = "data/"+loadedCode+".lang";
+        final ZipEntry enfile = new ZipEntry("data/en.lang");
+        final ZipEntry langfile = new ZipEntry("data/"+loadedCode+".lang");
         try (
-            InputStream fis = Files.newInputStream(source.toPath());
-            JarInputStream jar = new JarInputStream(fis)
+            ZipFile zipFile = new ZipFile(source, StandardCharsets.UTF_8);
+            InputStream orig = zipFile.getInputStream(enfile);
+            InputStream trans = zipFile.getInputStream(langfile)
         ) {
-            ZipEntry e;
-            boolean found = false;
-            while (!found && (e = jar.getNextEntry()) != null) {
-                String name = e.getName();
-                if (enfile.equals(name))
-                    found = true;
-            }
-            if (found) {
-                try (
-                    InputStream fisTrans = Files.newInputStream(source.toPath());
-                    JarInputStream jarTrans = new JarInputStream(fisTrans)
-                ) {
-                    found = false;
-                    while (!found && (e = jarTrans.getNextEntry()) != null) {
-                        String name = e.getName();
-                        if (name.equals(langfile))
-                            found = true;
-                    }
-                    if (found)
-                        load(jar, jarTrans, true);
-                }
-            }
+            if (orig != null && trans != null)
+                load(orig, trans, true);
         } catch (IOException | InvalidPathException e) {
             Logging.trace(e);
         }
@@ -570,7 +555,7 @@ public final class I18n {
      * given by <code>localName</code>.
      *
      * Ignored if localeName is null. If the locale with name <code>localName</code>
-     * isn't found the default local is set to <tt>en</tt> (english).
+     * isn't found the default local is set to <code>en</code> (english).
      *
      * @param localeName the locale name. Ignored if null.
      */

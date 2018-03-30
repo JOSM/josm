@@ -52,6 +52,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
     private transient AbstractTileSourceLayer<?> layer;
     private MapMode oldMapMode;
     private boolean exitingMode;
+    private boolean restoreOldMode;
 
     /**
      * Constructs a new {@code ImageryAdjustAction} for the given layer.
@@ -112,6 +113,18 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
 
     @Override
     public void exitMode() {
+        // do not restore old mode here - this is called when the new mode is already known.
+        restoreOldMode = false;
+        doExitMode();
+    }
+
+    private void exitModeAndRestoreOldMode() {
+        restoreOldMode = true;
+        doExitMode();
+        restoreOldMode = false;
+    }
+
+    private void doExitMode() {
         exitingMode = true;
         super.exitMode();
         if (offsetDialog != null) {
@@ -119,7 +132,6 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 layer.getDisplaySettings().setOffsetBookmark(old);
             }
             hideOffsetDialog();
-            // do not restore old mode here - this is called when the new mode is already known.
         }
         removeListeners();
         exitingMode = false;
@@ -351,10 +363,12 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             if (map == null)
                 return;
             if (oldMapMode != null) {
-                map.selectMapMode(oldMapMode);
+                if (restoreOldMode) {
+                    map.selectMapMode(oldMapMode);
+                }
                 oldMapMode = null;
             } else if (!exitingMode && !map.selectSelectTool(false)) {
-                exitMode();
+                exitModeAndRestoreOldMode();
                 map.mapMode = null;
             }
         }

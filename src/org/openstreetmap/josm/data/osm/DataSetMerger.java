@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -431,6 +433,34 @@ public class DataSetMerger {
             }
             candidates.clear();
             fixReferences();
+
+            Area a = targetDataSet.getDataSourceArea();
+
+            // copy the merged layer's data source info.
+            // only add source rectangles if they are not contained in the layer already.
+            for (DataSource src : sourceDataSet.getDataSources()) {
+                if (a == null || !a.contains(src.bounds.asRect())) {
+                    targetDataSet.addDataSource(src);
+                }
+            }
+
+            // copy the merged layer's API version
+            if (targetDataSet.getVersion() == null) {
+                targetDataSet.setVersion(sourceDataSet.getVersion());
+            }
+
+            // copy the merged layer's policies and locked status
+            if (sourceDataSet.getUploadPolicy() != null && (targetDataSet.getUploadPolicy() == null
+                    || sourceDataSet.getUploadPolicy().compareTo(targetDataSet.getUploadPolicy()) > 0)) {
+                targetDataSet.setUploadPolicy(sourceDataSet.getUploadPolicy());
+            }
+            if (sourceDataSet.getDownloadPolicy() != null && (targetDataSet.getDownloadPolicy() == null
+                    || sourceDataSet.getDownloadPolicy().compareTo(targetDataSet.getDownloadPolicy()) > 0)) {
+                targetDataSet.setDownloadPolicy(sourceDataSet.getDownloadPolicy());
+            }
+            if (sourceDataSet.isLocked() && !targetDataSet.isLocked()) {
+                targetDataSet.lock();
+            }
         } finally {
             targetDataSet.endUpdate();
         }

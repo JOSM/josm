@@ -84,6 +84,7 @@ public class ImageryReader implements Closeable {
         Parser parser = new Parser();
         try {
             cachedFile = new CachedFile(source);
+            cachedFile.setParam(Utils.join(",", ImageryInfo.getActiveIds()));
             cachedFile.setFastFail(fastFail);
             try (BufferedReader in = cachedFile
                     .setMaxAge(CachedFile.DAYS)
@@ -167,12 +168,17 @@ public class ImageryReader implements Closeable {
                     if (TRUE.equals(best)) {
                         entry.setBestMarked(true);
                     }
+                    String overlay = atts.getValue("overlay");
+                    if (TRUE.equals(overlay)) {
+                        entry.setOverlay(true);
+                    }
                 }
                 break;
             case MIRROR:
                 if (Arrays.asList(
                         "type",
                         "url",
+                        "id",
                         MIN_ZOOM,
                         MAX_ZOOM,
                         TILE_SIZE
@@ -188,6 +194,7 @@ public class ImageryReader implements Closeable {
                 if (Arrays.asList(
                         "name",
                         "id",
+                        "oldid",
                         "type",
                         "description",
                         "default",
@@ -327,6 +334,9 @@ public class ImageryReader implements Closeable {
                             mirrorEntry = null;
                         }
                         break;
+                    case "id":
+                        mirrorEntry.setId(accumulator.toString());
+                        break;
                     case "url":
                         mirrorEntry.setUrl(accumulator.toString());
                         break;
@@ -378,6 +388,9 @@ public class ImageryReader implements Closeable {
                     break;
                 case "id":
                     entry.setId(accumulator.toString());
+                    break;
+                case "oldid":
+                    entry.addOldId(accumulator.toString());
                     break;
                 case "type":
                     boolean found = false;

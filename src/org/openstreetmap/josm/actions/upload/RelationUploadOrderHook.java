@@ -20,7 +20,7 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 
 /**
@@ -54,7 +54,7 @@ public class RelationUploadOrderHook implements UploadHook {
             model.addRow(new Relation[] {r1, r2});
         }
         JTable tbl = new JTable(model);
-        OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
+        PrimitiveRenderer renderer = new PrimitiveRenderer();
         tbl.getColumnModel().getColumn(0).setCellRenderer(renderer);
         tbl.getColumnModel().getColumn(1).setCellRenderer(renderer);
         pnl.add(new JScrollPane(tbl), BorderLayout.CENTER);

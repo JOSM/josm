@@ -1364,14 +1364,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return Long.hashCode(id);
     }
 
-    /**
-     * Replies the display name of a primitive formatted by <code>formatter</code>
-     * @param formatter formatter to use
-     *
-     * @return the display name
-     */
-    public abstract String getDisplayName(NameFormatter formatter);
-
     @Override
     public Collection<String> getTemplateKeys() {
         Collection<String> keySet = keySet();

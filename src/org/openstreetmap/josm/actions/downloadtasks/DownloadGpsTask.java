@@ -77,7 +77,8 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         if (mappedUrl.isPresent()) {
             return loadUrl(newLayer, mappedUrl.get(), progressMonitor);
         }
-        if (Stream.of(GpxUrlPattern.TRACE_ID, GpxUrlPattern.EXTERNAL_GPX_SCRIPT, GpxUrlPattern.EXTERNAL_GPX_FILE)
+        if (Stream.of(GpxUrlPattern.TRACE_ID, GpxUrlPattern.EXTERNAL_GPX_SCRIPT,
+                      GpxUrlPattern.EXTERNAL_GPX_FILE, GpxUrlPattern.TASKING_MANAGER)
                 .anyMatch(p -> url.matches(p.pattern()))) {
             downloadTask = new DownloadTask(newLayer,
                     new OsmServerLocationReader(url), progressMonitor);

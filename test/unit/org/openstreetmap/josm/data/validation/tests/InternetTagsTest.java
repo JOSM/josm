@@ -1,12 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.routines.AbstractValidator;
 import org.openstreetmap.josm.data.validation.routines.EmailValidator;
@@ -74,20 +76,31 @@ public class InternetTagsTest {
         testEmail("contact:email", "john.doe@other-domain.invalidtld", false); // invalid TLD
     }
 
-    private static void testKey(String key, String value, boolean valid, AbstractValidator validator, int code) {
-        TestError error = TEST.validateTag(OsmUtils.createPrimitive("node "+key+"="+value+""), key, validator, code);
+    /**
+     * Test of invalid slashes.
+     */
+    @Test
+    public void testInvalidSlashes() {
+        TestError error = testUrl("website", "http:\\\\www.sjoekurs.no", false);
+        assertEquals(tr("''{0}'': {1}", "website", tr("URL contains backslashes instead of slashes")), error.getDescription());
+        assertNotNull(error.getFix());
+    }
+
+    private static TestError testKey(String key, String value, boolean valid, AbstractValidator validator, int code) {
+        TestError error = TEST.validateTag(TestUtils.addFakeDataSet(TestUtils.newNode(key+"="+value+"")), key, validator, code);
         if (valid) {
             assertNull(error != null ? error.getMessage() : null, error);
         } else {
             assertNotNull(error);
         }
+        return error;
     }
 
-    private static void testUrl(String key, String value, boolean valid) {
-        testKey(key, value, valid, UrlValidator.getInstance(), InternetTags.INVALID_URL);
+    private static TestError testUrl(String key, String value, boolean valid) {
+        return testKey(key, value, valid, UrlValidator.getInstance(), InternetTags.INVALID_URL);
     }
 
-    private static void testEmail(String key, String value, boolean valid) {
-        testKey(key, value, valid, EmailValidator.getInstance(), InternetTags.INVALID_EMAIL);
+    private static TestError testEmail(String key, String value, boolean valid) {
+        return testKey(key, value, valid, EmailValidator.getInstance(), InternetTags.INVALID_EMAIL);
     }
 }

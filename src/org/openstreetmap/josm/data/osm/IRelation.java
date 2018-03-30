@@ -33,4 +33,19 @@ public interface IRelation extends IPrimitive {
      * @return type of the member at given index
      */
     OsmPrimitiveType getMemberType(int idx);
+
+    /**
+     * Determines if at least one child primitive is incomplete.
+     *
+     * @return true if at least one child primitive is incomplete
+     * @since 13564
+     */
+    default boolean hasIncompleteMembers() {
+        return false;
+    }
+
+    @Override
+    default String getDisplayName(NameFormatter formatter) {
+        return formatter.format(this);
+    }
 }

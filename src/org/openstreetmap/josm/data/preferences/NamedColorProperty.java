@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.preferences;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 
@@ -71,50 +71,13 @@ public class NamedColorProperty extends AbstractProperty<Color> {
         if (super.isSet() && data != null && !data.isEmpty()) {
             return ColorHelper.html2color(data.get(0));
         }
-        return Optional.ofNullable(migrate()).orElse(defaultValue);
-    }
-
-    /**
-     * migrate to new color preferences scheme - remove 4 months after {@link ColorProperty} is removed.
-     * @return the old preferences value
-     */
-    private Color migrate() {
-        String s = getPreferences().get(getOldColorKey(), null);
-        if (s != null) {
-            Color c = ColorHelper.html2color(s);
-            if (c != null) {
-                put(c);
-                return c;
-            }
-        }
-        return null;
+        return defaultValue;
     }
 
     @Override
     public boolean isSet() {
         get(); // trigger migration
         return super.isSet();
-    }
-
-    @SuppressWarnings("deprecation")
-    private String getOldColorKey() {
-        switch (category) {
-            case COLOR_CATEGORY_MAPPAINT:
-                return ColorProperty.getColorKey("mappaint." + (source == null ? "MapCSS" : source) + "." + name);
-            case COLOR_CATEGORY_LAYER:
-            {
-                String k = "layer " + (source == null ? "" : source);
-                return ColorProperty.getColorKey(k);
-            }
-            default:
-            {
-                String k = name;
-                if (source != null) {
-                    k = source + "." + k;
-                }
-                return ColorProperty.getColorKey(k);
-            }
-        }
     }
 
     /**

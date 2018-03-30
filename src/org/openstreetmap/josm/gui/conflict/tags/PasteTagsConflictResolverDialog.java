@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,7 +37,6 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.TagCollection;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
@@ -120,11 +120,11 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
         for (TagConflictResolver r : resolvers.values()) {
             r.getModel().addPropertyChangeListener(applyAction);
         }
-        pnl.add(new SideButton(applyAction));
+        pnl.add(new JButton(applyAction));
 
         // -- cancel button
         CancelAction cancelAction = new CancelAction();
-        pnl.add(new SideButton(cancelAction));
+        pnl.add(new JButton(cancelAction));
 
         return pnl;
     }

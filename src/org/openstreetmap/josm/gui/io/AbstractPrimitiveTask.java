@@ -52,6 +52,9 @@ public abstract class AbstractPrimitiveTask extends PleaseWaitRunnable {
         super(title, progressMonitor, false);
         ensureParameterNotNull(layer, "layer");
         this.layer = layer;
+        if (!layer.isDownloadable()) {
+            throw new IllegalArgumentException("Non-downloadable layer: " + layer);
+        }
     }
 
     protected abstract void initMultiFetchReader(MultiFetchServerObjectReader reader);

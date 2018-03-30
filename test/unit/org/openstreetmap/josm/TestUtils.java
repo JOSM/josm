@@ -259,6 +259,17 @@ public final class TestUtils {
     }
 
     /**
+     * Makes sure the given primitive belongs to a data set.
+     * @param <T> OSM primitive type
+     * @param osm OSM primitive
+     * @return OSM primitive, attached to a new {@code DataSet}
+     */
+    public static <T extends OsmPrimitive> T addFakeDataSet(T osm) {
+        new DataSet(osm);
+        return osm;
+    }
+
+    /**
      * Creates a new node with the given tags (see {@link OsmUtils#createPrimitive(java.lang.String)})
      *
      * @param tags  the tags to set

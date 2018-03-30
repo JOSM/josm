@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
@@ -360,9 +361,16 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGenericHttpException(OsmApiException e) {
+        String body = e.getErrorBody();
+        Object msg = null;
+        if ("text/html".equals(e.getContentType()) && body != null && body.startsWith("<") && body.contains("<html>")) {
+            msg = new HtmlPanel(body);
+        } else {
+            msg = ExceptionUtil.explainGeneric(e);
+        }
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
-                ExceptionUtil.explainGeneric(e),
+                msg,
                 tr("Communication with OSM server failed"),
                 JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#GenericCommunicationError")

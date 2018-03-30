@@ -765,6 +765,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                         image = bi;
                     }
                 } catch (OutOfMemoryError oom) {
+                    Logging.trace(oom);
                     // fall-back to the non-bilinear scaler
                     r.x = visibleRect.x;
                     r.y = visibleRect.y;

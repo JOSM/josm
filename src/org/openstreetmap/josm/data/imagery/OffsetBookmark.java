@@ -311,7 +311,7 @@ public class OffsetBookmark {
      * @param index bookmark index
      * @return the bookmark at the given index
      * @throws IndexOutOfBoundsException if the index is out of range
-     *         (<tt>index &lt; 0 || index &gt;= size()</tt>)
+     *         (<code>index &lt; 0 || index &gt;= size()</code>)
      * @since 11651
      */
     public static OffsetBookmark getBookmarkByIndex(int index) {

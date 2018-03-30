@@ -11,7 +11,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberTable;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
  */
 public class RelationMemberConflictResolverColumnModel extends DefaultTableColumnModel {
 
-    static final class MemberRenderer extends OsmPrimitivRenderer {
+    static final class MemberRenderer extends PrimitiveRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table,
                 Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -32,7 +32,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
 
     private final DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
 
-    private final transient OsmPrimitivRenderer primitiveRenderer = new MemberRenderer();
+    private final transient PrimitiveRenderer primitiveRenderer = new MemberRenderer();
 
     private final transient TableCellRenderer tableRenderer = (table, value, isSelected, hasFocus, row, column)
             -> setColors(defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),

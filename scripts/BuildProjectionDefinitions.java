@@ -88,6 +88,7 @@ public class BuildProjectionDefinitions {
             }
             out.write("## ESRI-specific projections (source: proj.4):\n");
             for (ProjectionDefinition pd : esriProj4.values()) {
+                pd = new ProjectionDefinition(pd.code, "ESRI: " + pd.name, pd.definition);
                 if (doInclude(pd, true, true)) {
                     write(out, pd);
                     noEsri++;

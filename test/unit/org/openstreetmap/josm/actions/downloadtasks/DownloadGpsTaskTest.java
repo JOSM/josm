@@ -31,6 +31,7 @@ public class DownloadGpsTaskTest extends AbstractDownloadTaskTestParent {
         assertTrue(task.acceptsUrl("https://www.openstreetmap.org/user/simon04/traces/750057"));
         assertTrue(task.acceptsUrl("https://www.openstreetmap.org/edit?gpx=750057"));
         assertTrue(task.acceptsUrl("http://www.openstreetmap.org/edit?gpx=2277313#map=14/-20.7321/-40.5328"));
+        assertTrue(task.acceptsUrl("https://tasks.hotosm.org/api/v1/project/4019/tasks_as_gpx?tasks=125&as_file=true"));
         assertTrue(task.acceptsUrl(getRemoteFileUrl()));
     }
 

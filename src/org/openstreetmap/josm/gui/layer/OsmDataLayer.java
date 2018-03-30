@@ -63,8 +63,8 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSet.DownloadPolicy;
-import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
+import org.openstreetmap.josm.data.osm.DownloadPolicy;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.osm.HighlightUpdateListener;
@@ -205,7 +205,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         boolean oldValue = requiresSaveToFile;
         requiresSaveToFile = newValue;
         if (oldValue != newValue) {
-            propertyChangeSupport.firePropertyChange(REQUIRES_SAVE_TO_DISK_PROP, oldValue, newValue);
+            GuiHelper.runInEDT(() ->
+                propertyChangeSupport.firePropertyChange(REQUIRES_SAVE_TO_DISK_PROP, oldValue, newValue)
+            );
         }
     }
 
@@ -213,7 +215,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         boolean oldValue = requiresUploadToServer;
         requiresUploadToServer = newValue;
         if (oldValue != newValue) {
-            propertyChangeSupport.firePropertyChange(REQUIRES_UPLOAD_TO_SERVER_PROP, oldValue, newValue);
+            GuiHelper.runInEDT(() ->
+                propertyChangeSupport.firePropertyChange(REQUIRES_UPLOAD_TO_SERVER_PROP, oldValue, newValue)
+            );
         }
     }
 
@@ -410,6 +414,15 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     }
 
     /**
+     * Returns the {@link DataSet} behind this layer.
+     * @return the {@link DataSet} behind this layer.
+     * @since 13558
+     */
+    public DataSet getDataSet() {
+        return data;
+    }
+
+    /**
      * Return the image provider to get the base icon
      * @return image provider class which can be modified
      * @since 8323
@@ -545,21 +558,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
                     JOptionPane.ERROR_MESSAGE
             );
             return;
-        }
-
-        Area a = data.getDataSourceArea();
-
-        // copy the merged layer's data source info.
-        // only add source rectangles if they are not contained in the layer already.
-        for (DataSource src : from.getDataSources()) {
-            if (a == null || !a.contains(src.bounds.asRect())) {
-                data.addDataSource(src);
-            }
-        }
-
-        // copy the merged layer's API version
-        if (data.getVersion() == null) {
-            data.setVersion(from.getVersion());
         }
 
         int numNewConflicts = 0;

@@ -102,6 +102,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         PATTERN_HEADER,
     };
 
+    private int cachedTileSize = -1;
+
     private static class TileMatrix {
         private String identifier;
         private double scaleDenominator;
@@ -709,38 +711,18 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         this.crsScale = getTileSize() * 0.28e-03 / this.tileProjection.getMetersPerUnit();
     }
 
-    /**
-     *
-     * @param searchLayer which layer do we look for
-     * @param projectionCode projection code to match
-     * @return Collection of layers matching the name of the layer and projection, or only projection if name is not provided
-     */
-    private Collection<Layer> getLayers(WMTSDefaultLayer searchLayer, String projectionCode) {
-        Collection<Layer> ret = new ArrayList<>();
-        if (this.layers != null) {
-            for (Layer layer: this.layers) {
-                if ((searchLayer == null || (// if it's null, then accept all layers
-                        searchLayer.getLayerName().equals(layer.identifier)))
-                        && (projectionCode == null || // if it's null, then accept any projection
-                        projectionCode.equals(layer.tileMatrixSet.crs))) {
-                    ret.add(layer);
-                }
-            }
-        }
-        return ret;
-    }
-
     @Override
     public int getTileSize() {
-        if (tileProjection != null) {
+        if (cachedTileSize > 0) {
+            return cachedTileSize;
+        }
+        if (currentTileMatrixSet != null) {
             // no support for non-square tiles (tileHeight != tileWidth)
             // and for different tile sizes at different zoom levels
-            Collection<Layer> projLayers = getLayers(null, tileProjection.toCode());
-            if (!projLayers.isEmpty()) {
-                return projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
-            }
+            cachedTileSize = currentTileMatrixSet.tileMatrix.get(0).tileHeight;
+            return cachedTileSize;
         }
-        // if no layers is found, fallback to default mercator tile size. Maybe it will work
+        // Fallback to default mercator tile size. Maybe it will work
         Logging.warn("WMTS: Could not determine tile size. Using default tile size of: {0}", getDefaultTileSize());
         return getDefaultTileSize();
     }

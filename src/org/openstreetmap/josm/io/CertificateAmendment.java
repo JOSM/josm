@@ -47,11 +47,11 @@ public final class CertificateAmendment {
      * A certificate amendment.
      * @since 11943
      */
-    public abstract static class CertAmend {
+    public static class CertAmend {
         private final String filename;
         private final String sha256;
 
-        CertAmend(String filename, String sha256) {
+        protected CertAmend(String filename, String sha256) {
             this.filename = Objects.requireNonNull(filename);
             this.sha256 = Objects.requireNonNull(sha256);
         }

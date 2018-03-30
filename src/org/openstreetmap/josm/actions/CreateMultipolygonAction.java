@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorter;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Pair;
@@ -159,14 +160,15 @@ public class CreateMultipolygonAction extends JosmAction {
                 : null;
 
         // download incomplete relation or incomplete members if necessary
-        if (multipolygonRelation != null) {
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
+        if (multipolygonRelation != null && editLayer != null && editLayer.isDownloadable()) {
             if (!multipolygonRelation.isNew() && multipolygonRelation.isIncomplete()) {
                 MainApplication.worker.submit(
-                        new DownloadRelationTask(Collections.singleton(multipolygonRelation), getLayerManager().getEditLayer()));
+                        new DownloadRelationTask(Collections.singleton(multipolygonRelation), editLayer));
             } else if (multipolygonRelation.hasIncompleteMembers()) {
                 MainApplication.worker.submit(new DownloadRelationMemberTask(multipolygonRelation,
                         DownloadSelectedIncompleteMembersAction.buildSetOfIncompleteMembers(Collections.singleton(multipolygonRelation)),
-                        getLayerManager().getEditLayer()));
+                        editLayer));
             }
         }
         // create/update multipolygon relation

@@ -358,7 +358,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
 
     /**
      * Updates enabled state according to selected primitives, if any.
-     * Enables action if the colleciton is not empty and references primitives in a modifiable data layer.
+     * Enables action if the collection is not empty and references primitives in a modifiable data layer.
      * Can be called in {@link #updateEnabledState(Collection)} implementations.
      * @param selection the collection of selected primitives
      * @since 13434

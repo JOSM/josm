@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 
 /**
  * This panel displays a summary of the objects to upload. It is displayed in the upper part of the {@link UploadDialog}.
@@ -51,7 +51,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
 
     protected void build() {
         setLayout(new GridBagLayout());
-        OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
+        PrimitiveRenderer renderer = new PrimitiveRenderer();
         // initialize the three lists for uploaded primitives, but don't add them to the dialog yet, see setUploadedPrimitives()
         //
         lstAdd = new PrimitiveList();

@@ -19,9 +19,18 @@
     <xs:simpleType name="id">
         <!-- exclude white space characters and characters that are not valid for file names in Windows -->
         <xs:restriction base="xs:string">
-            <xs:pattern value='[^\s/\\:*?"&lt;>|]+' />
+            <xs:pattern value='[^\s/\\:*?"&lt;>|,;]+' />
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="oldid">
+        <xs:simpleContent>
+            <xs:extension base="tns:id">
+                <!-- date of the retirement of this ID -->
+                <xs:attribute name="date" type="xs:date" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
 
     <xs:simpleType name="type">
         <xs:restriction base="xs:string">
@@ -622,6 +631,8 @@
                             <xs:element name="description" minOccurs="0" type="tns:description" />
                             <!-- A unique id for the imagery source -->
                             <xs:element name="id" minOccurs="0" maxOccurs="1" type="tns:id" />
+                            <!-- Historic id for the imagery source -->
+                            <xs:element name="oldid" minOccurs="0" maxOccurs="unbounded" type="tns:oldid" />
                             <!-- The type. Can be tms, wms and html. In addition, there are the special types bing and scanex 
                                 with hardcoded behaviour. -->
                             <xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
@@ -665,6 +676,7 @@
                                 <xs:complexType>
                                     <xs:all>
                                         <xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
+                                        <xs:element name="id" minOccurs="0" maxOccurs="1" type="tns:id" />
                                         <xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
                                         <xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
                                         <xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
@@ -706,6 +718,7 @@
                     </xs:sequence>
                     <xs:attribute name="last-check" type="xs:date" use="optional" />
                     <xs:attribute name="eli-best" type="xs:boolean" use="optional" />
+                    <xs:attribute name="overlay" type="xs:boolean" use="optional" />
                 </xs:complexType>
             </xs:element>
         </xs:sequence>

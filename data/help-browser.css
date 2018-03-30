@@ -58,6 +58,10 @@ code, tt {
  TRAC CSS
  ********/
 
+dl.wiki { margin-top: 5px; margin-bottom: 5px }
+dl.wiki dt { font-weight: bold }
+dl.wiki dd { margin-left: 40px }
+
 div.code pre .hll { background-color: #ffffcc }
 div.code pre  { background: #ffffff; }
 div.code pre .c { color: #999988; font-style: italic } /* Comment */

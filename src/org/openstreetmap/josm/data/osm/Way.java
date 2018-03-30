@@ -104,25 +104,11 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     /**
-     * Replies the real number of nodes in this way (full number of nodes minus one if this way is closed)
-     *
-     * @return the real number of nodes in this way.
-     *
-     * @see #getNodesCount()
-     * @see #isClosed()
-     * @since 5847
-     */
-    public int getRealNodesCount() {
-        int count = getNodesCount();
-        return isClosed() ? count-1 : count;
-    }
-
-    /**
      * Replies the node at position <code>index</code>.
      *
      * @param index the position
      * @return  the node at position <code>index</code>
-     * @throws IndexOutOfBoundsException if <code>index</code> &lt; 0
+     * @throws ArrayIndexOutOfBoundsException if <code>index</code> &lt; 0
      * or <code>index</code> &gt;= {@link #getNodesCount()}
      * @since 1862
      */
@@ -526,7 +512,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * Returns the last node of this way.
-     * The result equals <tt>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</tt>.
+     * The result equals <code>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</code>.
      * @return the last node of this way
      * @since 1400
      */
@@ -575,11 +561,6 @@ public final class Way extends OsmPrimitive implements IWay {
             if (nodes[i] == n) return true;
         }
         return false;
-    }
-
-    @Override
-    public String getDisplayName(NameFormatter formatter) {
-        return formatter.format(this);
     }
 
     @Override

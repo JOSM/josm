@@ -103,7 +103,12 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
         public void remove(int offs, int len) throws BadLocationException {
             if (selecting)
                 return;
-            super.remove(offs, len);
+            try {
+                super.remove(offs, len);
+            } catch (IllegalArgumentException e) {
+                // IAE can happen with Devanagari script, see #15825
+                Logging.error(e);
+            }
         }
 
         @Override

@@ -59,6 +59,7 @@ public class OsmServerLocationReader extends OsmServerReader {
         EDIT_TRACE_ID("https?://.*(osm|openstreetmap).org/edit/?\\?gpx=(\\p{Digit}+)(#.*)?"),
 
         TRACKPOINTS_BBOX("https?://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*"),
+        TASKING_MANAGER("https?://.*/api/v\\p{Digit}+/project/\\p{Digit}+/tasks_as_gpx?.*"),
 
         EXTERNAL_GPX_SCRIPT("https?://.*exportgpx.*"),
         EXTERNAL_GPX_FILE  ("https?://.*/(.*\\.gpx)");

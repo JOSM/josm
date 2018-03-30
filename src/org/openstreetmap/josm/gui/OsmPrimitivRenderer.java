@@ -25,7 +25,9 @@ import org.openstreetmap.josm.tools.Logging;
  *
  * @author imi
  * @author Frederik Ramm
+ * @deprecated since 13564. Use {@link PrimitiveRenderer} instead
  */
+@Deprecated
 public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, TableCellRenderer {
     private final DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
 

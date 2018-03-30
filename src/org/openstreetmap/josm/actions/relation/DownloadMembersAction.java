@@ -7,11 +7,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
-import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
@@ -46,7 +44,6 @@ public class DownloadMembersAction extends AbstractRelationAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(!relations.isEmpty() && !Main.isOffline(OnlineResource.OSM_API)
-                && !relations.iterator().next().getDataSet().isLocked());
+        setEnabled(canDownload());
     }
 }

@@ -61,7 +61,7 @@ sub handle_start
       }
       foreach my $l (sort keys %datan)
       {
-        $v .= "\n" . (" " x 18) . "$l.href=\"http://wiki.openstreetmap.org$datan{$l}\"";
+        $v .= "\n" . (" " x 18) . "$l.href=\"https://wiki.openstreetmap.org$datan{$l}\"";
       }
       print "$v\n";
       print "Replace failed for $data{href}.\n" if !($file =~ s/(<link )href="\Q$data{href}\E".*?( ?\/>)/$1$v$2/s);

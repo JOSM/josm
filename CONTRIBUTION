@@ -76,10 +76,19 @@ and license free Public Domain.
 
 ------------------------------- PROJECTION DATA -------------------------------
 
+Australian A66_National NTV2 grid: Source: Intergovernmental Committee on
+                                           Surveying and Mapping (CC BY 4.0)
+
+British OSTN02 NTV2 grid: Source: Ordnance Survey (BSD)
+© Crown copyright, Ordnance Survey and the Ministry of Defence (MOD) 2002.
+All rights reserved.
+
 French NTF_R93 NTV2 grid: Source: IGN - Institut national de l'information
                                         géographique et forestière
 
 German BETA2007 NTV2 grid: Source: BKG - Bundesamt für Kartographie und Geodäsie
+
+Portuguese HGDLx / HGD73 NTV2 grids: Source: Direção Geral do Território
 
 Swiss CHENYX06 NTV2 grid: Source: Swiss Federal Office of Topography
 

@@ -62,7 +62,7 @@ public class DefaultNameFormatterTest {
                     .withBodyFile(source)));
         TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll("http://localhost:" + wireMockRule.port() + "/" + source, true));
 
-        Comparator<Relation> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
+        Comparator<IRelation> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
 
         try (InputStream is = TestUtils.getRegressionDataStream(9632, "data.osm.zip")) {
             DataSet ds = OsmReader.parseDataSet(is, null);

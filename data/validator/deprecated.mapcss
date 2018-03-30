@@ -1222,3 +1222,11 @@ way[water=tidal] {
   group: tr("misspelled value");
   fixAdd: "amenity=toilets";
 }
+
+way[power=busbar] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "power=line + line=busbar";
+  group: tr("deprecated tagging");
+  fixAdd: "power=line";
+  fixAdd: "line=busbar";
+}

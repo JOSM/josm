@@ -4,6 +4,10 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.function.Supplier;
+
+import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -96,15 +100,22 @@ public class InternetTags extends Test {
         TestError error = null;
         String value = v != null ? v : p.get(k);
         if (!validator.isValid(value)) {
+            Supplier<Command> fix = null;
             String errMsg = validator.getErrorMessage();
-            // Special treatment to allow URLs without protocol. See UrlValidator#isValid
             if (tr("URL contains an invalid protocol: {0}", (String) null).equals(errMsg)) {
+                // Special treatment to allow URLs without protocol. See UrlValidator#isValid
                 String proto = validator instanceof EmailValidator ? "mailto://" : "http://";
                 return doValidateTag(p, k, proto+value, validator, code);
+            } else if (tr("URL contains an invalid authority: {0}", (String) null).equals(errMsg)
+                    && value.contains("\\") && validator.isValid(value.replaceAll("\\\\", "/"))) {
+                // Special treatment to autofix URLs with backslashes. See UrlValidator#isValid
+                errMsg = tr("URL contains backslashes instead of slashes");
+                fix = () -> new ChangePropertyCommand(p, k, value.replaceAll("\\\\", "/"));
             }
             error = TestError.builder(this, Severity.WARNING, code)
                     .message(validator.getValidatorName(), marktr("''{0}'': {1}"), k, errMsg)
                     .primitives(p)
+                    .fix(fix)
                     .build();
         }
         return error;

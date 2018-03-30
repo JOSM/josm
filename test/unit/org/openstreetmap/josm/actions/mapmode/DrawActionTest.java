@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -43,7 +43,7 @@ public class DrawActionTest {
 
     /**
      * Non regression test case for bug #12011.
-     * Add a new node in the middle of way then undo. The rendering of the node, selected, must not cause any crash in OsmPrimitivRenderer.
+     * Add a new node in the middle of way then undo. The rendering of the node, selected, must not cause any crash in PrimitiveRenderer.
      * @throws SecurityException see {@link Class#getDeclaredField} for details
      * @throws NoSuchFieldException see {@link Class#getDeclaredField} for details
      * @throws IllegalAccessException see {@link Field#set} for details
@@ -81,7 +81,7 @@ public class DrawActionTest {
                     2, false, MouseEvent.BUTTON1));
 
             JList<OsmPrimitive> lstPrimitives = new JList<>();
-            OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
+            PrimitiveRenderer renderer = new PrimitiveRenderer();
 
             assertEquals(3, w.getNodesCount());
             Collection<Node> sel = dataSet.getSelectedNodes();

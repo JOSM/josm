@@ -24,6 +24,8 @@ import javax.json.JsonReader
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.data.imagery.Shape
+import org.openstreetmap.josm.data.projection.Projections
+import org.openstreetmap.josm.data.validation.routines.DomainValidator
 import org.openstreetmap.josm.io.imagery.ImageryReader
 
 class SyncEditorLayerIndex {
@@ -34,6 +36,8 @@ class SyncEditorLayerIndex {
     def eliUrls = new HashMap<String, JsonObject>()
     def josmUrls = new HashMap<String, ImageryInfo>()
     def josmMirrors = new HashMap<String, ImageryInfo>()
+    static def oldproj = new HashMap<String, String>()
+    static def ignoreproj = new LinkedList<String>()
 
     static String eliInputFile = 'imagery_eli.geojson'
     static String josmInputFile = 'imagery_josm.imagery.xml'
@@ -51,6 +55,7 @@ class SyncEditorLayerIndex {
         Locale.setDefault(Locale.ROOT);
         parse_command_line_arguments(args)
         def script = new SyncEditorLayerIndex()
+        script.setupProj()
         script.loadSkip()
         script.start()
         script.loadJosmEntries()
@@ -118,6 +123,25 @@ class SyncEditorLayerIndex {
         }
     }
 
+    void setupProj() {
+        oldproj.put("EPSG:3359", "EPSG:3404")
+        oldproj.put("EPSG:3785", "EPSG:3857")
+        oldproj.put("EPSG:31297", "EPGS:31287")
+        oldproj.put("EPSG:31464", "EPSG:31468")
+        oldproj.put("EPSG:54004", "EPSG:3857")
+        oldproj.put("EPSG:102100", "EPSG:3857")
+        oldproj.put("EPSG:102113", "EPSG:3857")
+        oldproj.put("EPSG:900913", "EPGS:3857")
+        ignoreproj.add("EPSG:4267")
+        ignoreproj.add("EPSG:5221")
+        ignoreproj.add("EPSG:5514")
+        ignoreproj.add("EPSG:32019")
+        ignoreproj.add("EPSG:102066")
+        ignoreproj.add("EPSG:102067")
+        ignoreproj.add("EPSG:102685")
+        ignoreproj.add("EPSG:102711")
+    }
+
     void loadSkip() {
         def fr = new InputStreamReader(new FileInputStream(ignoreInputFile), "UTF-8")
         def line
@@ -154,7 +178,8 @@ class SyncEditorLayerIndex {
                 return
             }
         } else if(options.xhtmlbody || options.xhtml) {
-            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :  (s.startsWith("#") ? "indigo" : "red"))
+            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :
+            (s.startsWith("#") ? "indigo" : (s.startsWith("!") ? "orange" : "red")))
             s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
         }
         if ((s.startsWith("+ ") || s.startsWith("+++ ELI") || s.startsWith("#")) && options.noeli) {
@@ -196,6 +221,20 @@ class SyncEditorLayerIndex {
             } else {
                 eliUrls.put(url, e)
             }
+            def s = e.get("properties").get("available_projections")
+            if (s) {
+                def old = new LinkedList<String>()
+                for (def p : s) {
+                    def proj = p.getString()
+                    if(oldproj.containsKey(proj) || ("CRS:84".equals(proj) && !(url =~ /(?i)version=1\.3/))) {
+                        old.add(proj)
+                    }
+                }
+                if (old) {
+                    def str = String.join(", ", old)
+                    myprintln "+ ELI Projections ${str} not useful: ${getDescription(e)}"
+                }
+            }
         }
         myprintln "*** Loaded ${eliEntries.size()} entries (ELI). ***"
     }
@@ -211,12 +250,11 @@ class SyncEditorLayerIndex {
         String t = getType(entry)
         String res = offset + "<type>$t</type>\n"
         res += offset + "<url>${cdata(getUrl(entry))}</url>\n"
-        if(t == "tms") {
-            if(getMinZoom(entry) != null)
-                res += offset + "<min-zoom>${getMinZoom(entry)}</min-zoom>\n"
-            if(getMaxZoom(entry) != null)
-                res += offset + "<max-zoom>${getMaxZoom(entry)}</max-zoom>\n"
-        } else if (t == "wms") {
+        if(getMinZoom(entry) != null)
+            res += offset + "<min-zoom>${getMinZoom(entry)}</min-zoom>\n"
+        if(getMaxZoom(entry) != null)
+            res += offset + "<max-zoom>${getMaxZoom(entry)}</max-zoom>\n"
+        if (t == "wms") {
             def p = getProjections(entry)
             if (p) {
                 res += offset + "<projections>\n"
@@ -234,8 +272,10 @@ class SyncEditorLayerIndex {
         stream.write "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
         stream.write "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n"
         for (def e : entries) {
-            def best = "eli-best".equals(getQuality(e))
-            stream.write "    <entry"+(best ? " eli-best=\"true\"" : "" )+">\n"
+            stream.write("    <entry"
+                + ("eli-best".equals(getQuality(e)) ? " eli-best=\"true\"" : "" )
+                + (getOverlay(e) ? " overlay=\"true\"" : "" )
+                + ">\n")
             stream.write "        <name>${cdata(getName(e), true)}</name>\n"
             stream.write "        <id>${getId(e)}</id>\n"
             def t
@@ -332,31 +372,42 @@ class SyncEditorLayerIndex {
         myprintln "*** Loaded ${josmEntries.size()} entries (JOSM). ***"
     }
 
-    List inOneButNotTheOther(Map m1, Map m2) {
+    List inOneButNotTheOther(Map m1, Map m2, String code, String https) {
         def l = []
-        for (def url : m1.keySet()) {
+        def k = new LinkedList<String>(m1.keySet())
+        for (def url : k) {
             if (!m2.containsKey(url)) {
-                def name = getName(m1.get(url))
-                l += "  "+getDescription(m1.get(url))
+                String urlhttps = url.replace("http:","https:")
+                if(!https || !m2.containsKey(urlhttps))
+                {
+                    def name = getName(m1.get(url))
+                    l += code+"  "+getDescription(m1.get(url))
+                }
+                else
+                {
+                    l += https+" Missing https: "+getDescription(m1.get(url))
+                    m1.put(urlhttps, m1.get(url))
+                    m1.remove(url)
+                }
             }
         }
         l.sort()
     }
 
     void checkInOneButNotTheOther() {
-        def l1 = inOneButNotTheOther(eliUrls, josmUrls)
+        def l1 = inOneButNotTheOther(eliUrls, josmUrls, "-", "+")
         myprintln "*** URLs found in ELI but not in JOSM (${l1.size()}): ***"
         if (!l1.isEmpty()) {
             for (def l : l1) {
-                myprintln "-" + l
+                myprintln l
             }
         }
 
-        def l2 = inOneButNotTheOther(josmUrls, eliUrls)
+        def l2 = inOneButNotTheOther(josmUrls, eliUrls, "+", "")
         myprintln "*** URLs found in JOSM but not in ELI (${l2.size()}): ***"
         if (!l2.isEmpty()) {
             for (def l : l2) {
-                myprintln "+" + l
+                myprintln l
             }
         }
     }
@@ -496,12 +547,25 @@ class SyncEditorLayerIndex {
 
             et = getPermissionReferenceUrl(e)
             jt = getPermissionReferenceUrl(j)
-            if (!jt) jt = getTermsOfUseUrl(j)
+            def jt2 = getTermsOfUseUrl(j)
+            if (!jt) jt = jt2
             if (!et.equals(jt)) {
                 if (!jt) {
                     myprintln "- Missing JOSM license URL (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    def ethttps = et.replace("http:","https:")
+                    if(!jt2 || !(jt2.equals(ethttps) || jt2.equals(et+"/") || jt2.equals(ethttps+"/"))) {
+                        if(jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
+                            myprintln "+ License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                        } else {
+                            def ja = getAttributionUrl(j)
+                            if (ja && (ja.equals(et) || ja.equals(ethttps) || ja.equals(et+"/") || ja.equals(ethttps+"/"))) {
+                               myprintln "+ ELI License URL in JOSM Attribution: ${getDescription(j)}"
+                            } else {
+                                myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                            }
+                        }
+                    }
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI license URL ('${jt}'): ${getDescription(j)}"
                 }
@@ -513,7 +577,12 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "- Missing JOSM attribution URL (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "* Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    def ethttps = et.replace("http:","https:")
+                    if(jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
+                        myprintln "+ Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    } else {
+                        myprintln "* Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    }
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI attribution URL ('${jt}'): ${getDescription(j)}"
                 }
@@ -539,7 +608,11 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "- Missing JOSM projections (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "* Projections differ ('${et}' != '${jt}'): ${getDescription(j)}"
+                    if("EPSG:3857 EPSG:4326".equals(et) || "EPSG:3857".equals(et) || "EPSG:4326".equals(et)) {
+                        myprintln "+ ELI has minimal projections ('${et}' != '${jt}'): ${getDescription(j)}"
+                    } else {
+                        myprintln "* Projections differ ('${et}' != '${jt}'): ${getDescription(j)}"
+                    }
                 } else if (!options.nomissingeli && !getType(e).equals("tms")) {
                     myprintln "+ Missing ELI projections ('${jt}'): ${getDescription(j)}"
                 }
@@ -552,6 +625,15 @@ class SyncEditorLayerIndex {
                     myprintln "- Missing JOSM default: ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI default: ${getDescription(j)}"
+                }
+            }
+            et = getOverlay(e)
+            jt = getOverlay(j)
+            if (!et.equals(jt)) {
+                if (!jt) {
+                    myprintln "- Missing JOSM overlay flag: ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI overlay flag: ${getDescription(j)}"
                 }
             }
         }
@@ -645,9 +727,74 @@ class SyncEditorLayerIndex {
         }
         myprintln "*** Miscellaneous checks: ***"
         def josmIds = new HashMap<String, ImageryInfo>()
+        def all = Projections.getAllProjectionCodes()
+        DomainValidator dv = DomainValidator.getInstance();
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
             def id = getId(j)
+            if("wms".equals(getType(j))) {
+                if(!getProjections(j)) {
+                    myprintln "* WMS without projections: ${getDescription(j)}"
+                } else {
+                    def unsupported = new LinkedList<String>()
+                    def old = new LinkedList<String>()
+                    for (def p : getProjectionsUnstripped(j)) {
+                        if("CRS:84".equals(p)) {
+                            if(!(url =~ /(?i)version=1\.3/)) {
+                                myprintln "* CRS:84 without WMS 1.3: ${getDescription(j)}"
+                            }
+                        } else if(oldproj.containsKey(p)) {
+                            old.add(p)
+                        } else if(!all.contains(p) && !ignoreproj.contains(p)) {
+                            unsupported.add(p)
+                        }
+                    }
+                    if (unsupported) {
+                        def s = String.join(", ", unsupported)
+                        myprintln "* Projections ${s} not supported by JOSM: ${getDescription(j)}"
+                    }
+                    for (def o : old) {
+                        myprintln "* Projection ${o} is an old unsupported code and has been replaced by ${oldproj.get(o)}: ${getDescription(j)}"
+                    }
+                }
+                if((url =~ /(?i)version=1\.3/) && !(url =~ /[Cc][Rr][Ss]=\{proj\}/)) {
+                    myprintln "* WMS 1.3 with strange CRS specification: ${getDescription(j)}"
+                }
+                if((url =~ /(?i)version=1\.1/) && !(url =~ /[Ss][Rr][Ss]=\{proj\}/)) {
+                    myprintln "* WMS 1.1 with strange SRS specification: ${getDescription(j)}"
+                }
+            }
+            def urls = new LinkedList<String>()
+            if(!"scanex".equals(getType(j))) {
+              urls += url
+            }
+            def jt = getPermissionReferenceUrl(j)
+            if(jt && !"Public Domain".equals(jt))
+              urls += jt
+            jt = getTermsOfUseUrl(j)
+            if(jt)
+              urls += jt
+            jt = getAttributionUrl(j)
+            if(jt)
+              urls += jt
+            jt = getIcon(j)
+            if(jt && !(jt =~ /^data:image\/png;base64,/))
+              urls += jt
+            for(def u : urls) {
+                def m = u =~ /^https?:\/\/([^\/]+?)(:\d+)?\//
+                if(!m)
+                    myprintln "* Strange URL '${u}': ${getDescription(j)}"
+                else {
+                    def domain = m[0][1].replaceAll("\\{switch:.*\\}","x")
+                    def port = m[0][2]
+                    if (!(domain =~ /^\d+\.\d+\.\d+\.\d+$/) && !dv.isValid(domain))
+                        myprintln "* Strange Domain '${domain}': ${getDescription(j)}"
+                    else if (port != null && (port == ":80" || port == ":443")) {
+                        myprintln "* Useless port '${port}': ${getDescription(j)}"
+                    }
+                }
+            }
+
             if(josmMirrors.containsKey(url)) {
                 continue
             }
@@ -756,6 +903,18 @@ class SyncEditorLayerIndex {
         return []
     }
     static List<Object> getProjections(Object e) {
+        def r = []
+        def u = getProjectionsUnstripped(e)
+        if(u) {
+            for (def p : u) {
+                if(!oldproj.containsKey(p) && !("CRS:84".equals(p) && !(getUrlStripped(e) =~ /(?i)version=1\.3/))) {
+                    r += p
+                }
+            }
+        }
+        return r
+    }
+    static List<Object> getProjectionsUnstripped(Object e) {
         def r
         if (e instanceof ImageryInfo) {
             r = e.getServerProjections()
@@ -763,8 +922,9 @@ class SyncEditorLayerIndex {
             def s = e.get("properties").get("available_projections")
             if (s) {
                 r = []
-                for (def p : s)
+                for (def p : s) {
                     r += p.getString()
+                }
             }
         }
         return r ? r : []
@@ -832,6 +992,11 @@ class SyncEditorLayerIndex {
         if (e instanceof ImageryInfo) return e.isBestMarked() ? "eli-best" : null
         return (e.get("properties").containsKey("best")
             && e.get("properties").getBoolean("best")) ? "eli-best" : null
+    }
+    static Boolean getOverlay(Object e) {
+        if (e instanceof ImageryInfo) return e.isOverlay()
+        return (e.get("properties").containsKey("overlay")
+            && e.get("properties").getBoolean("overlay"))
     }
     static String getIcon(Object e) {
         if (e instanceof ImageryInfo) return e.getIcon()

@@ -29,10 +29,11 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.PurgeCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -75,10 +76,10 @@ public class PurgeAction extends JosmAction {
     }
 
     /** force selection to be active for all entries */
-    static class SelectionForcedOsmPrimitivRenderer extends OsmPrimitivRenderer {
+    static class SelectionForcedPrimitiveRenderer extends PrimitiveRenderer {
         @Override
-        public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list,
-                OsmPrimitive value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends IPrimitive> list,
+                IPrimitive value, int index, boolean isSelected, boolean cellHasFocus) {
             return super.getListCellRendererComponent(list, value, index, true, false);
         }
     }
@@ -150,7 +151,7 @@ public class PurgeAction extends JosmAction {
             });
             JList<OsmPrimitive> list = new JList<>(toPurgeAdditionally.toArray(new OsmPrimitive[0]));
             /* force selection to be active for all entries */
-            list.setCellRenderer(new SelectionForcedOsmPrimitivRenderer());
+            list.setCellRenderer(new SelectionForcedPrimitiveRenderer());
             JScrollPane scroll = new JScrollPane(list);
             scroll.setPreferredSize(new Dimension(250, 300));
             scroll.setMinimumSize(new Dimension(250, 300));

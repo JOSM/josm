@@ -19,7 +19,7 @@ public final class OsmPrimitiveComparator {
     /**
      * Returns a comparator comparing primitives by their name using {@link DefaultNameFormatter}.
      *
-     * {@linkplain DefaultNameFormatter#format(OsmPrimitive) Formatted names} are cached.
+     * {@linkplain DefaultNameFormatter#format(IPrimitive) Formatted names} are cached.
      *
      * @return a comparator comparing primitives by their name using {@link DefaultNameFormatter}
      */

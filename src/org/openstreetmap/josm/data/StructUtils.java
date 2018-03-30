@@ -38,8 +38,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Utility methods to convert struct-like classes to a string map and back.
  *
  * A "struct" is a class that has some fields annotated with {@link StructEntry}.
- * Those fields will be respected when converting an object to a {@link Map} and
- * back.
+ * Those fields will be respected when converting an object to a {@link Map} and back.
  * @since 12851
  */
 public final class StructUtils {
@@ -69,7 +68,7 @@ public final class StructUtils {
 
     /**
      * Get a list of hashes which are represented by a struct-like class.
-     * Possible properties are given by fields of the class klass that have the @pref annotation.
+     * Possible properties are given by fields of the class klass that have the @StructEntry annotation.
      * Default constructor is used to initialize the struct objects, properties then override some of these default values.
      * @param <T> klass type
      * @param preferences preferences to look up the value

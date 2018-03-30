@@ -8,7 +8,7 @@
 **   https://josm.openstreetmap.de/wiki/DevelopersGuide/CreateBuild
 **
 -->
-<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" xmlns:jacoco="antlib:org.jacoco.ant" xmlns:if="ant:if">
+<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" xmlns:jacoco="antlib:org.jacoco.ant" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <target name="init-properties">
         <!-- Load properties in a target and not at top level, so this build file can be
         imported from an IDE ant file (Netbeans) without messing up IDE properties.
@@ -18,6 +18,7 @@
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="test.dir" location="${base.dir}/test"/>
         <property name="src.dir" location="${base.dir}/src"/>
+        <property name="noJavaFX" value="0"/>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
         <property name="tools.dir" location="${base.dir}/tools"/>
@@ -33,7 +34,6 @@
         <property name="error_prone_ant.jar" location="${tools.dir}/error_prone_ant.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
-        <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
         <property name="java.lang.version" value="1.8" />
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
         <property name="jacoco.inclbootstrapclasses" value="false" />
@@ -47,6 +47,24 @@
         <!-- For Java9-specific stuff -->
         <condition property="isJava9">
             <matches string="${ant.java.version}" pattern="(1.)?(9|1[0-9])" />
+        </condition>
+        <!-- For Java10-specific stuff -->
+        <condition property="isJava10">
+            <matches string="${ant.java.version}" pattern="1[0-9]" />
+        </condition>
+        <!-- For Java11-specific stuff -->
+        <condition property="isJava11">
+            <matches string="${ant.java.version}" pattern="1[1-9]" />
+        </condition>
+        <!-- Disable error_prone on Java 10+, see https://github.com/google/error-prone/issues/860 -->
+        <condition property="javac.compiler" value="modern" else="com.google.errorprone.ErrorProneAntCompilerAdapter">
+            <isset property="isJava10"/>
+        </condition>
+        <!-- Disable jacoco on Java 11+, see https://github.com/jacoco/jacoco/issues/629 -->
+        <condition property="coverageByDefault">
+            <not>
+                <isset property="isJava11"/>
+            </not>
         </condition>
         <path id="test.classpath">
             <fileset dir="${test.dir}/lib">
@@ -376,6 +394,7 @@ Build-Date: ${build.tstamp}
             <link href="http://docs.oracle.com/javase/8/docs/api"/>
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
+            <arg value="-html5" if:set="isJava9" />
             <arg value="--add-exports" if:set="isJava9" />
             <arg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
             <arg value="--add-exports" if:set="isJava9" />
@@ -461,15 +480,15 @@ Build-Date: ${build.tstamp}
     <macrodef name="call-junit">
         <attribute name="testfamily"/>
         <attribute name="testITsuffix" default=""/>
-        <attribute name="coverage" default="true"/>
+        <attribute name="coverage" default="${coverageByDefault}"/>
         <sequential>
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
             <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="${jacoco.includes}"
                 inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}">
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
-                    <jvmarg value="--add-modules" if:set="isJava9" />
-                    <jvmarg value="java.activation,java.se.ee" if:set="isJava9" />
+                    <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
+                    <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
                     <jvmarg value="--add-exports" if:set="isJava9" />
                     <jvmarg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-exports" if:set="isJava9" />
@@ -622,6 +641,7 @@ Build-Date: ${build.tstamp}
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
             <classpath path="${tools.dir}/animal-sniffer-ant-tasks.jar"/>
         </typedef>
+        <delete dir="${dir}" failonerror="false"/>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
         <loadfile property="deprecated-plugins" srcFile="${src.dir}/org/openstreetmap/josm/plugins/PluginHandler.java">
@@ -718,6 +738,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.jaitools.*"/>
             <ignore classname="org.jaxen.*"/>
             <ignore classname="org.jboss.*"/>
+            <ignore classname="org.jdom.*"/>
             <ignore classname="org.jdom2.*"/>
             <ignore classname="org.jfree.*"/>
             <ignore classname="org.jgraph.*"/>
