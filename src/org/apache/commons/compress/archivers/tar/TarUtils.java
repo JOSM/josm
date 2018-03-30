@@ -571,7 +571,7 @@ public class TarUtils {
     }
 
     /**
-     * Wikipedia <a href="http://en.wikipedia.org/wiki/Tar_(file_format)#File_header">says</a>:
+     * Wikipedia <a href="https://en.wikipedia.org/wiki/Tar_(file_format)#File_header">says</a>:
      * <blockquote>
      * The checksum is calculated by taking the sum of the unsigned byte values
      * of the header block with the eight checksum bytes taken to be ascii

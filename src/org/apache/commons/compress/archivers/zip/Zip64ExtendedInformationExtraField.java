@@ -34,7 +34,7 @@ import static org.apache.commons.compress.archivers.zip.ZipConstants.WORD;
  * <p>The implementation relies on data being read from the local file
  * header and assumes that both size values are always present.</p>
  *
- * @see <a href="http://www.pkware.com/documents/casestudies/APPNOTE.TXT">PKWARE
+ * @see <a href="https://www.pkware.com/documents/casestudies/APPNOTE.TXT">PKWARE
  * APPNOTE.TXT, section 4.5.3</a>
  *
  * @since 1.2

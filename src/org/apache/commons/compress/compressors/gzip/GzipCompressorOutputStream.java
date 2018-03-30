@@ -36,7 +36,7 @@ import org.apache.commons.compress.utils.CharsetNames;
  * the configuration of the compression level and the header metadata (filename,
  * comment, modification time, operating system and extra flags).
  *
- * @see <a href="http://tools.ietf.org/html/rfc1952">GZIP File Format Specification</a>
+ * @see <a href="https://tools.ietf.org/html/rfc1952">GZIP File Format Specification</a>
  */
 public class GzipCompressorOutputStream extends CompressorOutputStream {
 

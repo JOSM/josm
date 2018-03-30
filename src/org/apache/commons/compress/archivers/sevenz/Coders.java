@@ -114,7 +114,7 @@ class Coders {
             } catch (final AssertionError e) {
                 throw new IOException("BCJ filter used in " + archiveName
                                       + " needs XZ for Java > 1.4 - see "
-                                      + "http://commons.apache.org/proper/commons-compress/limitations.html#7Z",
+                                      + "https://commons.apache.org/proper/commons-compress/limitations.html#7Z",
                                       e);
             }
         }

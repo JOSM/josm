@@ -29,7 +29,7 @@ import java.io.InputStream;
  * <p>
  * The algorithm is described in the ZIP File Format Specification.
  *
- * @see <a href="http://www.pkware.com/documents/casestudies/APPNOTE.TXT">ZIP File Format Specification</a>
+ * @see <a href="https://www.pkware.com/documents/casestudies/APPNOTE.TXT">ZIP File Format Specification</a>
  *
  * @author Emmanuel Bourg
  * @since 1.7

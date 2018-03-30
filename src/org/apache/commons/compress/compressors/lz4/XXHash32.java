@@ -45,7 +45,7 @@ public class XXHash32 implements Checksum {
     private final byte[] oneByte = new byte[1];
     private final int[] state = new int[4];
     // Note: the code used to use ByteBuffer but the manual method is 50% faster
-    // See: http://git-wip-us.apache.org/repos/asf/commons-compress/diff/2f56fb5c
+    // See: https://git-wip-us.apache.org/repos/asf/commons-compress/diff/2f56fb5c
     private final byte[] buffer = new byte[BUF_SIZE];
     private final int seed;
 

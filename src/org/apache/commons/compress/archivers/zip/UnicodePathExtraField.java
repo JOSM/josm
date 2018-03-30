@@ -24,7 +24,7 @@ package org.apache.commons.compress.archivers.zip;
  * <p>Stores the UTF-8 version of the file name field as stored in the
  * local header and central directory header.</p>
  *
- * @see <a href="http://www.pkware.com/documents/casestudies/APPNOTE.TXT">PKWARE
+ * @see <a href="https://www.pkware.com/documents/casestudies/APPNOTE.TXT">PKWARE
  * APPNOTE.TXT, section 4.6.9</a>
  *
  * @NotThreadSafe super-class is not thread-safe

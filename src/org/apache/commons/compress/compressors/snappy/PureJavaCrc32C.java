@@ -28,7 +28,7 @@ import java.util.zip.Checksum;
  * and implemented on many Intel chipsets supporting SSE4.2.
  *
  * <p>This file is a copy of the implementation at the Apache Hadoop project.</p>
- * @see "http://svn.apache.org/repos/asf/hadoop/common/trunk/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/util/PureJavaCrc32C.java"
+ * @see "https://svn.apache.org/repos/asf/hadoop/common/trunk/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/util/PureJavaCrc32C.java"
  * @NotThreadSafe
  * @since 1.7
  */

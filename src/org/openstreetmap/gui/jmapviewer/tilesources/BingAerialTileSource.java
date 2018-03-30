@@ -161,9 +161,7 @@ public class BingAerialTileSource extends TMSTileSource {
         } catch (SAXException e) {
             System.err.println("Could not parse Bing aerials attribution metadata.");
             e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (XPathExpressionException e) {
+        } catch (ParserConfigurationException | XPathExpressionException | NumberFormatException e) {
             e.printStackTrace();
         }
         return null;
@@ -216,7 +214,7 @@ public class BingAerialTileSource extends TMSTileSource {
 
     @Override
     public String getAttributionImageURL() {
-        return "http://opengeodata.org/microsoft-imagery-details";
+        return "https://opengeodata.org/microsoft-imagery-details";
     }
 
     @Override
@@ -226,7 +224,7 @@ public class BingAerialTileSource extends TMSTileSource {
 
     @Override
     public String getTermsOfUseURL() {
-        return "http://opengeodata.org/microsoft-imagery-details";
+        return "https://opengeodata.org/microsoft-imagery-details";
     }
 
     protected Callable<List<Attribution>> getAttributionLoaderCallable() {

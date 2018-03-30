@@ -141,7 +141,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
  * N.B. does not handle the cpio "tar" format
  * </p>
  * @NotThreadSafe
- * @see <a href="http://people.freebsd.org/~kientzle/libarchive/man/cpio.5.txt">http://people.freebsd.org/~kientzle/libarchive/man/cpio.5.txt</a>
+ * @see <a href="https://people.freebsd.org/~kientzle/libarchive/man/cpio.5.txt">https://people.freebsd.org/~kientzle/libarchive/man/cpio.5.txt</a>
  */
 public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
 

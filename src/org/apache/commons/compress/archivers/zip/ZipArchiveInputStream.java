@@ -773,7 +773,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         // each, otherwise four bytes each.  Unfortunately some
         // implementations - namely Java7 - use eight bytes without
         // using a ZIP64 extra field -
-        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7073588
+        // https://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7073588
 
         // just read 16 bytes and check whether bytes nine to twelve
         // look like one of the signatures of what could follow a data

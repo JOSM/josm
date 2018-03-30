@@ -11,7 +11,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 
 /**
  * This class encapsulates a Point2D.Double and provide access
- * via <tt>lat</tt> and <tt>lon</tt>.
+ * via <code>lat</code> and <code>lon</code>.
  *
  * @author Jan Peter Stotz
  *
