@@ -11,6 +11,7 @@ import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.TimeZone;
+import java.util.logging.Handler;
 
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
@@ -413,8 +414,17 @@ public class JOSMTestRules implements TestRule {
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
+
+        // Force log handers to reacquire reference to (junit's fake) stdout/stderr
+        for (Handler handler : Logging.getLogger().getHandlers()) {
+            if (handler instanceof Logging.ReacquiringConsoleHandler) {
+                handler.flush();
+                ((Logging.ReacquiringConsoleHandler) handler).reacquireOutputStream();
+            }
+        }
         // Set log level to info
         Logging.setLogLevel(Logging.LEVEL_INFO);
+
         // Assume anonymous user
         UserIdentityManager.getInstance().setAnonymous();
         User.clearUserMap();
