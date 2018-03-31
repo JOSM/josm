@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
@@ -57,7 +58,7 @@ public class MainApplicationTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().https().devAPI().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().main().projection().https().devAPI().timeout(20000).platform();
 
     /**
      * Make sure {@link MainApplication#contentPanePrivate} is initialized.
@@ -194,6 +195,7 @@ public class MainApplicationTest {
      */
     @Test
     public void testSetupUIManager() {
+        assumeTrue(!MainApplication.isPlatformWindows());
         MainApplication.setupUIManager();
         assertEquals(Config.getPref().get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
     }
