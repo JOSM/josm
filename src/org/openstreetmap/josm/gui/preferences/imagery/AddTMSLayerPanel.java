@@ -35,7 +35,8 @@ public class AddTMSLayerPanel extends AddImageryPanel {
      */
     public AddTMSLayerPanel() {
 
-        add(new JLabel(tr("1. Enter URL")), GBC.eol());
+        add(new JLabel(tr("{0} Make sure OSM has the permission to use this service", "1.")), GBC.eol());
+        add(new JLabel(tr("{0} Enter URL", "2.")), GBC.eol());
         add(new JLabel("<html>" + Utils.joinAsHtmlUnorderedList(Arrays.asList(
                 tr("{0} is replaced by tile zoom level, also supported:<br>" +
                         "offsets to the zoom level: {1} or {2}<br>" +
@@ -51,15 +52,15 @@ public class AddTMSLayerPanel extends AddImageryPanel {
         rawUrl.setLineWrap(true);
         rawUrl.addKeyListener(keyAdapter);
 
-        add(new JLabel(tr("2. Enter maximum zoom (optional)")), GBC.eol());
+        add(new JLabel(tr("{0} Enter maximum zoom (optional)", "3.")), GBC.eol());
         tmsZoom.addKeyListener(keyAdapter);
         add(tmsZoom, GBC.eop().fill());
 
-        add(new JLabel(tr("3. Verify generated TMS URL")), GBC.eol());
+        add(new JLabel(tr("{0} Edit generated {1} URL (optional)", "4.", "TMS")), GBC.eol());
         add(tmsUrl, GBC.eop().fill());
         tmsUrl.setLineWrap(true);
 
-        add(new JLabel(tr("4. Enter name for this layer")), GBC.eol());
+        add(new JLabel(tr("{0} Enter name for this layer", "5.")), GBC.eol());
         add(name, GBC.eop().fill());
 
         registerValidableComponent(tmsUrl);

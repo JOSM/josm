@@ -23,11 +23,12 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
      * default constructor
      */
     public AddWMTSLayerPanel() {
-        add(new JLabel(tr("1. Enter getCapabilities URL")), GBC.eol());
+        add(new JLabel(tr("{0} Make sure OSM has the permission to use this service", "1.")), GBC.eol());
+        add(new JLabel(tr("{0} Enter GetCapabilities URL", "2.")), GBC.eol());
         add(rawUrl, GBC.eop().fill());
         rawUrl.setLineWrap(true);
         rawUrl.setAlignmentY(TOP_ALIGNMENT);
-        add(new JLabel(tr("2. Enter name for this layer")), GBC.eol());
+        add(new JLabel(tr("{0} Enter name for this layer", "3.")), GBC.eol());
         add(name, GBC.eol().fill(GBC.HORIZONTAL));
         registerValidableComponent(rawUrl);
     }
