@@ -45,29 +45,30 @@ public class AddWMSLayerPanel extends AddImageryPanel {
      */
     public AddWMSLayerPanel() {
 
-        add(new JLabel(tr("1. Enter service URL")), GBC.eol());
+        add(new JLabel(tr("{0} Make sure OSM has the permission to use this service", "1.")), GBC.eol());
+        add(new JLabel(tr("{0} Enter GetCapabilities URL", "2.")), GBC.eol());
         add(rawUrl, GBC.eol().fill());
         rawUrl.setLineWrap(true);
-        JButton getLayers = new JButton(tr("Get layers"));
+        JButton getLayers = new JButton(tr("{0} Get layers", "3."));
         add(getLayers, GBC.eop().fill());
 
-        add(new JLabel(tr("2. Select layers")), GBC.eol());
+        add(new JLabel(tr("{0} Select layers", "4.")), GBC.eol());
         add(endpoint, GBC.eol().fill());
         add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill().weight(1, 100));
 
         showBounds.setEnabled(false);
         add(showBounds, GBC.eop().fill());
 
-        add(new JLabel(tr("3. Select image format")), GBC.eol());
+        add(new JLabel(tr("{0} Select image format", "5.")), GBC.eol());
         add(formats, GBC.eol().fill());
 
-        wmsInstruction = new JLabel(tr("4. Verify generated WMS URL"));
+        wmsInstruction = new JLabel(tr("{0} Edit generated {1} URL (optional)", "6.", "WMS"));
         add(wmsInstruction, GBC.eol());
         wmsInstruction.setLabelFor(wmsUrl);
         add(wmsUrl, GBC.eop().fill());
         wmsUrl.setLineWrap(true);
 
-        add(new JLabel(tr("5. Enter name for this layer")), GBC.eol());
+        add(new JLabel(tr("{0} Enter name for this layer", "7.")), GBC.eol());
         add(name, GBC.eop().fill());
 
         getLayers.addActionListener(e -> {
