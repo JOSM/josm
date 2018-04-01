@@ -606,7 +606,13 @@ class SyncEditorLayerIndex {
             if (jt) { jt = new LinkedList(jt); Collections.sort(jt); jt = String.join(" ", jt) }
             if (!et.equals(jt)) {
                 if (!jt) {
-                    myprintln "- Missing JOSM projections (${et}): ${getDescription(j)}"
+                    def t = getType(e)
+                    if(t == "wms_endpoint" || t == "tms") {
+                        myprintln "+ ELI projections for type ${t}: ${getDescription(j)}"
+                    }
+                    else {
+                        myprintln "- Missing JOSM projections (${et}): ${getDescription(j)}"
+                    }
                 } else if (et) {
                     if("EPSG:3857 EPSG:4326".equals(et) || "EPSG:3857".equals(et) || "EPSG:4326".equals(et)) {
                         myprintln "+ ELI has minimal projections ('${et}' != '${jt}'): ${getDescription(j)}"
