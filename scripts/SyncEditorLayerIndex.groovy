@@ -372,42 +372,63 @@ class SyncEditorLayerIndex {
         myprintln "*** Loaded ${josmEntries.size()} entries (JOSM). ***"
     }
 
-    List inOneButNotTheOther(Map m1, Map m2, String code, String https) {
-        def l = []
-        def k = new LinkedList<String>(m1.keySet())
-        for (def url : k) {
-            if (!m2.containsKey(url)) {
-                String urlhttps = url.replace("http:","https:")
-                if(!https || !m2.containsKey(urlhttps))
-                {
-                    def name = getName(m1.get(url))
-                    l += code+"  "+getDescription(m1.get(url))
-                }
-                else
-                {
-                    l += https+" Missing https: "+getDescription(m1.get(url))
-                    m1.put(urlhttps, m1.get(url))
-                    m1.remove(url)
-                }
-            }
-        }
-        l.sort()
-    }
-
     void checkInOneButNotTheOther() {
-        def l1 = inOneButNotTheOther(eliUrls, josmUrls, "-", "+")
-        myprintln "*** URLs found in ELI but not in JOSM (${l1.size()}): ***"
-        if (!l1.isEmpty()) {
-            for (def l : l1) {
-                myprintln l
+        def le = new LinkedList<String>(eliUrls.keySet())
+        def lj = new LinkedList<String>(josmUrls.keySet())
+
+        def ke = new LinkedList<String>(le)
+        for (def url : ke) {
+            if(lj.contains(url)) {
+                le.remove(url)
+                lj.remove(url)
             }
         }
 
-        def l2 = inOneButNotTheOther(josmUrls, eliUrls, "+", "")
-        myprintln "*** URLs found in JOSM but not in ELI (${l2.size()}): ***"
-        if (!l2.isEmpty()) {
-            for (def l : l2) {
-                myprintln l
+        if(le && lj) {
+            ke = new LinkedList<String>(le)
+            for (def urle : ke) {
+                def e = eliUrls.get(urle)
+                def ide = getId(e)
+                String urlhttps = urle.replace("http:","https:")
+                if(lj.contains(urlhttps))
+                {
+                    myprintln l += "+ Missing https: ${getDescription(e)}"
+                    eliUrls.put(urlhttps, eliUrls.get(urle))
+                    eliUrls.remove(urle)
+                    le.remove(urle)
+                    lj.remove(urlj)
+                } else if(ide) {
+                    def kj = new LinkedList<String>(lj)
+                    for (def urlj : kj) {
+                        def j = josmUrls.get(urlj)
+                        def idj = getId(j)
+                    
+                        if (ide.equals(idj) && getType(j) == getType(e)) {
+                            myprintln "* URL for id ${idj} differs ($urle): ${getDescription(j)}"
+                            le.remove(urle)
+                            lj.remove(urlj)
+                            /* replace key for this entry with JOSM URL */
+                            eliUrls.remove(e)
+                            eliUrls.put(urlj,e)
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        myprintln "*** URLs found in ELI but not in JOSM (${le.size()}): ***"
+        le.sort()
+        if (!le.isEmpty()) {
+            for (def l : le) {
+                myprintln "-  " + getDescription(eliUrls.get(l))
+            }
+        }
+        myprintln "*** URLs found in JOSM but not in ELI (${lj.size()}): ***"
+        lj.sort()
+        if (!lj.isEmpty()) {
+            for (def l : lj) {
+                myprintln "+  " + getDescription(josmUrls.get(l))
             }
         }
     }
