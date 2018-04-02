@@ -1,22 +1,24 @@
 ###########################################################################
 # A module with regression test suite
 #
-# Copyright (C) 2016-2017 Andrey Ponomarenko's ABI Laboratory
+# Copyright (C) 2016-2018 Andrey Ponomarenko's ABI Laboratory
 #
 # Written by Andrey Ponomarenko
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License or the GNU Lesser
-# General Public License as published by the Free Software Foundation.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# and the GNU Lesser General Public License along with this program.
-# If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA  02110-1301  USA.
 ###########################################################################
 use strict;
 use File::Copy qw(copy);
@@ -383,6 +385,28 @@ sub testTool()
             }
         }");
         
+        # Added vararg parameter
+        writeFile($Path_v1."/AddedVarargParam.java",
+        "package $PackageName;
+        public class AddedVarargParam {
+            public void method(Integer x, String... y) { }
+        }");
+        writeFile($Path_v2."/AddedVarargParam.java",
+        "package $PackageName;
+        public class AddedVarargParam {
+            public void method(Integer x, String... y) { }
+        }");
+        
+        writeFile($TestsPath."/Test_AddedVarargParam.java",
+        "import $PackageName.*;
+        public class Test_AddedVarargParam
+        {
+            public static void main(String[] args) {
+                AddedVarargParam X = new AddedVarargParam();
+                X.method(0);
+            }
+        }");
+        
         # Removed_Annotation
         writeFile($Path_v1."/RemovedAnnotation.java",
         "package $PackageName;
@@ -397,6 +421,61 @@ sub testTool()
             }
             
             \@RemovedAnnotation
+            static void testMethod() {
+            }
+        }");
+        
+        # Changed Annotation
+        writeFile($Path_v1."/ChangedAnnotation.java",
+        "package $PackageName;
+        
+        enum MyEnum {
+            SUNDAY, MONDAY
+        }
+        
+        public \@interface ChangedAnnotation {
+            String value();
+            String datatype() default \"Str\";
+            int num1() default 1;
+            String[] values() default {\"Alice\", \"Bob\", \"Cindy\"};
+            int[] nums() default {1, 2, 3};
+            String safe_change() default \"Str\";
+            MyEnum day() default MyEnum.SUNDAY;
+            short num2() default 1;
+            long num3() default 1;
+            byte num4() default 1;
+            float num5() default 1.5f;
+            double num6() default 1.5;
+            boolean bit() default true;
+            char ch() default 'A';
+        }");
+        
+        writeFile($Path_v2."/ChangedAnnotation.java",
+        "package $PackageName;
+        
+        enum MyEnum {
+            SUNDAY, MONDAY
+        }
+        
+        public \@interface ChangedAnnotation {
+            String value() default \"Str\";
+            String datatype();
+            int[] values();
+            int[] nums() default {1, 2};
+            int[] new_default_param() default {1, 2};
+            int[] new_param();
+            String[] safe_change() default {\"Str\"};
+            MyEnum day() default MyEnum.MONDAY;
+        }");
+        
+        writeFile($TestsPath."/Test_ChangedAnnotation.java",
+        "import $PackageName.*;
+        public class Test_ChangedAnnotation {
+            public static void main(String[] args) {
+                testMethod();
+            }
+            
+            \@ChangedAnnotation(value=\"Val\")
             static void testMethod() {
             }
         }");
@@ -751,14 +830,22 @@ sub testTool()
     writeFile($Path_v1."/ChangedFinalFieldValue.java",
     "package $PackageName;
     public class ChangedFinalFieldValue {
-        public final int field = 1;
+        enum MyEnum {
+            ONE, TWO
+        }
+        public final int    field1 = 1;
         public final String field2 = \" \";
+        public final MyEnum field3 = MyEnum.ONE;
     }");
     writeFile($Path_v2."/ChangedFinalFieldValue.java",
     "package $PackageName;
     public class ChangedFinalFieldValue {
-        public final int field = 2;
+        enum MyEnum {
+            ONE, TWO
+        }
+        public final int    field1 = 2;
         public final String field2 = \"newValue\";
+        public final MyEnum field3 = MyEnum.TWO;
     }");
     
     # NonConstant_Field_Became_Static
@@ -1918,6 +2005,9 @@ sub runChecker($$$)
     }
     if(defined $In::Opt{"OldStyle"}) {
         $Cmd .= " -old-style";
+    }
+    if(my $JdkPath = $In::Opt{"JdkPath"}) {
+        $Cmd .= " -jdk-path \"$JdkPath\"";
     }
     
     my $TmpDir = $In::Opt{"Tmp"};
