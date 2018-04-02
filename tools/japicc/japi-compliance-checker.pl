@@ -1,11 +1,11 @@
 #!/usr/bin/perl
-###########################################################################
-# Java API Compliance Checker (JAPICC) 2.3
+#########################################################################
+# Java API Compliance Checker (JAPICC) 2.4
 # A tool for checking backward compatibility of a Java library API
 #
 # Written by Andrey Ponomarenko
 #
-# Copyright (C) 2011-2017 Andrey Ponomarenko's ABI Laboratory
+# Copyright (C) 2011-2018 Andrey Ponomarenko's ABI Laboratory
 #
 # PLATFORMS
 # =========
@@ -14,26 +14,28 @@
 # REQUIREMENTS
 # ============
 #  Linux, FreeBSD, Mac OS X
-#    - JDK or OpenJDK - development files (javap, javac)
+#    - JDK or OpenJDK - development files (javap, javac, jar, jmod)
 #    - Perl 5 (5.8 or newer)
 #
 #  MS Windows
-#    - JDK or OpenJDK (javap, javac)
+#    - JDK or OpenJDK (javap, javac, jar, jmod)
 #    - Active Perl 5 (5.8 or newer)
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License or the GNU Lesser
-# General Public License as published by the Free Software Foundation.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# and the GNU Lesser General Public License along with this program.
-# If not, see <http://www.gnu.org/licenses/>.
-###########################################################################
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA  02110-1301  USA.
+#########################################################################
 use Getopt::Long;
 Getopt::Long::Configure ("posix_default", "no_ignore_case", "permute");
 use File::Path qw(mkpath rmtree);
@@ -42,8 +44,8 @@ use File::Basename qw(dirname);
 use Cwd qw(abs_path cwd);
 use Data::Dumper;
 
-my $TOOL_VERSION = "2.3";
-my $API_DUMP_VERSION = "2.2";
+my $TOOL_VERSION = "2.4";
+my $API_DUMP_VERSION = "2.4";
 my $API_DUMP_VERSION_MIN = "2.2";
 
 # Internal modules
@@ -77,11 +79,13 @@ my %HomePage = (
 
 my $ShortUsage = "Java API Compliance Checker (JAPICC) $TOOL_VERSION
 A tool for checking backward compatibility of a Java library API
-Copyright (C) 2017 Andrey Ponomarenko's ABI Laboratory
-License: GNU LGPL or GNU GPL
+Copyright (C) 2018 Andrey Ponomarenko's ABI Laboratory
+License: LGPLv2.1+
 
 Usage: $CmdName [options]
-Example: $CmdName OLD.jar NEW.jar
+Example:
+ $CmdName OLD.jar NEW.jar
+ $CmdName OLD.jmod NEW.jmod
 
 More info: $CmdName --help";
 
@@ -109,6 +113,7 @@ GetOptions("h|help!" => \$In::Opt{"Help"},
   "skip-internal-packages|skip-internal=s" => \$In::Opt{"SkipInternalPackages"},
   "skip-internal-types=s" => \$In::Opt{"SkipInternalTypes"},
   "dump|dump-api=s" => \$In::Opt{"DumpAPI"},
+  "check-annotations!" => \$In::Opt{"CheckAnnotations"},
   "check-packages=s" => \$In::Opt{"CheckPackages"},
   "classes-list=s" => \$In::Opt{"ClassListPath"},
   "annotations-list=s" => \$In::Opt{"AnnotationsListPath"},
@@ -116,6 +121,8 @@ GetOptions("h|help!" => \$In::Opt{"Help"},
   "skip-deprecated!" => \$In::Opt{"SkipDeprecated"},
   "skip-classes=s" => \$In::Opt{"SkipClassesList"},
   "skip-packages=s" => \$In::Opt{"SkipPackagesList"},
+  "non-impl=s" => \$In::Opt{"NonImplClassesList"},
+  "non-impl-all!" => \$In::Opt{"NonImplAll"},
   "short" => \$In::Opt{"ShortMode"},
   "dump-path=s" => \$In::Opt{"OutputDumpPath"},
   "report-path=s" => \$In::Opt{"OutputReportPath"},
@@ -188,15 +195,18 @@ DESCRIPTION:
   versions.
 
   This tool is free software: you can redistribute it and/or modify it
-  under the terms of the GNU LGPL or GNU GPL.
+  under the terms of the GNU LGPL.
 
 USAGE:
   $CmdName [options]
 
-EXAMPLE 1:
+EXAMPLE (1):
   $CmdName OLD.jar NEW.jar
 
-EXAMPLE 2:
+EXAMPLE (2):
+  $CmdName OLD.jmod NEW.jmod
+
+EXAMPLE (3):
   $CmdName -lib NAME -old OLD.xml -new NEW.xml
   OLD.xml and NEW.xml are XML-descriptors:
 
@@ -205,8 +215,8 @@ EXAMPLE 2:
     </version>
     
     <archives>
-        /path1/to/JAR(s)/
-        /path2/to/JAR(s)/
+        /path1/to/JAR(s) OR JMOD(s)/
+        /path2/to/JAR(s) OR JMOD(s)/
         ...
     </archives>
 
@@ -228,7 +238,7 @@ GENERAL OPTIONS:
       Descriptor of the 1st (old) library version.
       It may be one of the following:
       
-         1. Java archive (*.jar)
+         1. Java archive (*.jar or *.jmod)
          2. XML-descriptor (VERSION.xml file):
 
               <version>
@@ -236,8 +246,8 @@ GENERAL OPTIONS:
               </version>
               
               <archives>
-                  /path1/to/JAR(s)/
-                  /path2/to/JAR(s)/
+                  /path1/to/JAR(s) OR JMOD(s)/
+                  /path2/to/JAR(s) OR JMOD(s)/
                    ...
               </archives>
 
@@ -245,10 +255,10 @@ GENERAL OPTIONS:
          
          3. API dump generated by -dump option
 
-      If you are using *.jar as a descriptor then you should
-      specify version numbers with -v1 and -v2 options too.
-      If version numbers are not specified then the tool will
-      try to detect them automatically.
+      If you are using *.jar or *.jmod as a descriptor then
+      you should specify version numbers with -v1 and -v2
+      options too. If version numbers are not specified then
+      the tool will try to detect them automatically.
 
   -new|-d2 PATH
       Descriptor of the 2nd (new) library version.
@@ -304,6 +314,9 @@ EXTRA OPTIONS:
       for debugging the tool. PATH is the path to the Java archive or
       XML descriptor of the library.
   
+  -check-annotations
+      Check for changes in annotations like in any other interfaces.
+  
   -check-packages PATTERN
       Check packages matched by the regular expression. Other packages
       will not be checked.
@@ -324,13 +337,17 @@ EXTRA OPTIONS:
       Skip analysis of deprecated methods and classes.
       
   -skip-classes PATH
-      This option allows to specify a file with a list
-      of classes that should not be checked.
-      
+      List of classes that should not be checked.
+  
   -skip-packages PATH
-      This option allows to specify a file with a list
-      of packages that should not be checked.
-      
+      List of packages that should not be checked.
+  
+  -non-impl PATH
+      List of interfaces that should not be implemented by users.
+  
+  -non-impl-all
+      All interfaces should not be implemented by users.
+  
   -short
       Do not list added/removed methods.
   
@@ -804,6 +821,116 @@ sub mergeClasses()
                     }
                 }
             }
+            
+            if(defined $Class1->{"Annotation"})
+            {
+                my %AnnParam = ();
+                foreach my $VN (1, 2)
+                {
+                    foreach my $Method (keys(%{$Class_Methods{$VN}{$ClassName}}))
+                    {
+                        my $MInfo = $MethodInfo{$VN}{$Method};
+                        $AnnParam{$VN}{$MInfo->{"ShortName"}} = {"Default"=>$MInfo->{"Default"}, "Return"=>getTypeName($MInfo->{"Return"}, $VN)};
+                    }
+                }
+                foreach my $AParam (sort keys(%{$AnnParam{1}}))
+                {
+                    my $R1 = $AnnParam{1}{$AParam}{"Return"};
+                    my $D1 = $AnnParam{1}{$AParam}{"Default"};
+                    
+                    if(defined $AnnParam{2}{$AParam})
+                    {
+                        my $R2 = $AnnParam{2}{$AParam}{"Return"};
+                        my $D2 = $AnnParam{2}{$AParam}{"Default"};
+                        
+                        if($R1 ne $R2)
+                        {
+                            if($R1 eq "java.lang.String" and $R2 eq "java.lang.String[]")
+                            {
+                                %{$CompatProblems{".client_method"}{"Annotation_Element_Changed_Type_Safe"}{$AParam}} = (
+                                    "Type_Name"=>$ClassName,
+                                    "Old_Value"=>$R1,
+                                    "New_Value"=>$R2,
+                                    "Target"=>$AParam);
+                            }
+                            else
+                            {
+                                %{$CompatProblems{".client_method"}{"Annotation_Element_Changed_Type"}{$AParam}} = (
+                                    "Type_Name"=>$ClassName,
+                                    "Old_Value"=>$R1,
+                                    "New_Value"=>$R2,
+                                    "Target"=>$AParam);
+                            }
+                        }
+                        
+                        if(defined $D1 and not defined $D2)
+                        {
+                            %{$CompatProblems{".client_method"}{"Annotation_Element_Removed_Default_Value"}{$AParam}} = (
+                                "Type_Name"=>$ClassName,
+                                "Old_Value"=>$D1,
+                                "Target"=>$AParam);
+                        }
+                        elsif(not defined $D1 and defined $D2)
+                        {
+                            %{$CompatProblems{".client_method"}{"Annotation_Element_Added_Default_Value"}{$AParam}} = (
+                                "Type_Name"=>$ClassName,
+                                "New_Value"=>$D2,
+                                "Target"=>$AParam);
+                        }
+                        elsif($D1 ne $D2)
+                        {
+                            %{$CompatProblems{".client_method"}{"Annotation_Element_Changed_Default_Value"}{$AParam}} = (
+                                "Type_Name"=>$ClassName,
+                                "Old_Value"=>$D1,
+                                "New_Value"=>$D2,
+                                "Target"=>$AParam);
+                        }
+                    }
+                    else
+                    {
+                        if(defined $D1)
+                        {
+                            %{$CompatProblems{".client_method"}{"Removed_Annotation_Default_Element"}{$AParam}} = (
+                                "Type_Name"=>$ClassName,
+                                "Elem_Type"=>$R1,
+                                "Old_Value"=>$D1,
+                                "Target"=>$AParam);
+                        }
+                        else
+                        {
+                            %{$CompatProblems{".client_method"}{"Removed_Annotation_NonDefault_Element"}{$AParam}} = (
+                                "Type_Name"=>$ClassName,
+                                "Elem_Type"=>$R1,
+                                "Target"=>$AParam);
+                        }
+                    }
+                }
+                
+                foreach my $AParam (sort keys(%{$AnnParam{2}}))
+                {
+                    if(not defined $AnnParam{1}{$AParam})
+                    {
+                        my $R2 = $AnnParam{2}{$AParam}{"Return"};
+                        
+                        if(defined $AnnParam{2}{$AParam}{"Default"})
+                        {
+                            my $D2 = $AnnParam{2}{$AParam}{"Default"};
+                            %{$CompatProblems{".client_method"}{"Added_Annotation_Default_Element"}{$AParam}} = (
+                                "Type_Name"=>$ClassName,
+                                "Elem_Type"=>$R2,
+                                "New_Value"=>$D2,
+                                "Target"=>$AParam);
+                        }
+                        else
+                        {
+                            %{$CompatProblems{".client_method"}{"Added_Annotation_NonDefault_Element"}{$AParam}} = (
+                                "Type_Name"=>$ClassName,
+                                "Elem_Type"=>$R2,
+                                "Target"=>$AParam);
+                        }
+                    }
+                }
+            }
         }
         else
         { # removed
@@ -1050,7 +1177,14 @@ sub mergeTypes($$)
         }
         else
         {
-            if(my @InvokedBy = sort keys(%{$MethodUsed{2}{$AddedMethod}}))
+            if(nonImplClass(\%Type1))
+            {
+                %{$SubProblems{"NonImpl_Interface_Added_Abstract_Method"}{getSFormat($AddedMethod)}} = (
+                    "Type_Name"=>$Type1{"Name"},
+                    "Type_Type"=>$Type1{"Type"},
+                    "Target"=>$AddedMethod);
+            }
+            elsif(my @InvokedBy = sort keys(%{$MethodUsed{2}{$AddedMethod}}))
             {
                 %{$SubProblems{"Interface_Added_Abstract_Method_Invoked_By_Others"}{getSFormat($AddedMethod)}} = (
                     "Type_Name"=>$Type1{"Name"},
@@ -1753,8 +1887,14 @@ sub mergeMethods()
         }
         
         my $ClassId1 = $MethodInfo{1}{$Method}{"Class"};
-        my $Class1_Name = getTypeName($ClassId1, 1);
-        my $Class1_Type = getTypeType($ClassId1, 1);
+        my $Class1 = getType($ClassId1, 1);
+        
+        if(not defined $In::Opt{"CheckAnnotations"} and $Class1->{"Annotation"}) {
+            next;
+        }
+        
+        my $Class1_Name = $Class1->{"Name"};
+        my $Class1_Type = $Class1->{"Type"};
         
         $CheckedTypes{$Class1_Name} = 1;
         $CheckedMethods{$Method} = 1;
@@ -2519,14 +2659,14 @@ sub getSummary($)
     # check rules
     foreach my $Method (sort keys(%CompatProblems))
     {
-        foreach my $Kind (keys(%{$CompatProblems{$Method}}))
+        foreach my $Kind (sort keys(%{$CompatProblems{$Method}}))
         {
             if(not defined $CompatRules{"Binary"}{$Kind} and not defined $CompatRules{"Source"}{$Kind})
             { # unknown rule
                 if(not $UnknownRules{$Level}{$Kind})
                 { # only one warning
                     printMsg("WARNING", "unknown rule \"$Kind\" (\"$Level\")");
-                    $UnknownRules{$Level}{$Kind}=1;
+                    $UnknownRules{$Level}{$Kind} = 1;
                 }
             }
         }
@@ -2693,7 +2833,7 @@ sub getSummary($)
     my $Checked_Archives_Link = "0";
     $Checked_Archives_Link = "<a href='#Checked_Archives' style='color:Blue;'>".keys(%{$LibArchives{1}})."</a>" if(keys(%{$LibArchives{1}})>0);
     
-    $TestResults .= "<tr><th>Total JARs</th><td>$Checked_Archives_Link</td></tr>\n";
+    $TestResults .= "<tr><th>Total Java Modules</th><td>$Checked_Archives_Link</td></tr>\n";
     $TestResults .= "<tr><th>Total Methods / Classes</th><td>".keys(%CheckedMethods)." / ".keys(%CheckedTypes)."</td></tr>\n";
     
     $RESULT{$Level}{"Problems"} += $Removed+$M_Problems_High+$T_Problems_High+$T_Problems_Medium+$M_Problems_Medium;
@@ -3362,7 +3502,13 @@ sub getReportMethodProblems($$)
 sub showType($$$)
 {
     my ($Name, $Html, $LVer) = @_;
-    my $TType = $TypeInfo{$LVer}{$TName_Tid{$LVer}{$Name}}{"Type"};
+    my $TInfo = $TypeInfo{$LVer}{$TName_Tid{$LVer}{$Name}};
+    my $TType = $TInfo->{"Type"};
+    
+    if($TInfo->{"Annotation"}) {
+        $TType = '@'.$TType;
+    }
+    
     if($Html) {
         $Name = "<span class='ttype'>".$TType."</span> ".specChars($Name);
     }
@@ -3893,6 +4039,7 @@ sub composeHTML_Head($$$$$$$)
     $Head .= "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n";
     $Head .= "<head>\n";
     $Head .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
+    $Head .= "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n";
     $Head .= "<meta name=\"keywords\" content=\"$Keywords\" />\n";
     $Head .= "<meta name=\"description\" content=\"$Description\" />\n";
     
@@ -3973,6 +4120,10 @@ sub detectAdded()
             
             my $Class = getType($MethodInfo{2}{$Method}{"Class"}, 2);
             
+            if(not defined $In::Opt{"CheckAnnotations"} and $Class->{"Annotation"}) {
+                next;
+            }
+            
             $CheckedTypes{$Class->{"Name"}} = 1;
             $CheckedMethods{$Method} = 1;
             
@@ -4047,6 +4198,10 @@ sub detectRemoved()
             
             my $Class = getType($MethodInfo{1}{$Method}{"Class"}, 1);
             
+            if(not defined $In::Opt{"CheckAnnotations"} and $Class->{"Annotation"}) {
+                next;
+            }
+            
             $CheckedTypes{$Class->{"Name"}} = 1;
             $CheckedMethods{$Method} = 1;
             
@@ -4076,28 +4231,6 @@ sub detectRemoved()
             }
         }
     }
-}
-
-sub getArchivePaths($$)
-{
-    my ($Dest, $LVer) = @_;
-    if(-f $Dest) {
-        return ($Dest);
-    }
-    elsif(-d $Dest)
-    {
-        $Dest=~s/[\/\\]+\Z//g;
-        next if(not $Dest);
-        
-        my @Archives = ();
-        foreach my $Path (cmdFind($Dest, "", "*\\.jar"))
-        {
-            next if(ignorePath($Path, $Dest));
-            push(@Archives, realpath_F($Path));
-        }
-        return @Archives;
-    }
-    return ();
 }
 
 sub isCyclical($$) {
@@ -4205,14 +4338,17 @@ sub checkVersionNum($$)
         return;
     }
     
-    if($Path!~/\.jar\Z/i) {
+    if($Path!~/\.(jar|jmod)\Z/i) {
         return;
     }
     
     my $Ver = undef;
     
-    if(not defined $Ver) {
-        $Ver = getManifestVersion(getAbsPath($Path));
+    if($Path=~/\.jar\Z/i)
+    {
+        if(not defined $Ver) {
+            $Ver = getManifestVersion(getAbsPath($Path));
+        }
     }
     
     if(not defined $Ver) {
@@ -4874,7 +5010,7 @@ sub scenario()
     }
     if(defined $In::Opt{"ShowVersion"})
     {
-        printMsg("INFO", "Java API Compliance Checker (JAPICC) $TOOL_VERSION\nCopyright (C) 2017 Andrey Ponomarenko's ABI Laboratory\nLicense: LGPL or GPL <http://www.gnu.org/licenses/>\nThis program is free software: you can redistribute it and/or modify it.\n\nWritten by Andrey Ponomarenko.");
+        printMsg("INFO", "Java API Compliance Checker (JAPICC) $TOOL_VERSION\nCopyright (C) 2018 Andrey Ponomarenko's ABI Laboratory\nLicense: LGPLv2.1+ <http://www.gnu.org/licenses/>\nThis program is free software: you can redistribute it and/or modify it.\n\nWritten by Andrey Ponomarenko.");
         exit(0);
     }
     if(defined $In::Opt{"DumpVersion"})
@@ -4910,7 +5046,7 @@ sub scenario()
     {
         if($In::Opt{"DumpAPI"})
         {
-            if($In::Opt{"DumpAPI"}=~/\.jar\Z/)
+            if($In::Opt{"DumpAPI"}=~/\.(jar|jmod)\Z/)
             { # short usage
                 my ($Name, $Version) = getPkgVersion(getFilename($In::Opt{"DumpAPI"}));
                 if($Name and $Version ne "")
@@ -4924,7 +5060,7 @@ sub scenario()
         }
         else
         {
-            if($In::Desc{1}{"Path"}=~/\.jar\Z/ and $In::Desc{2}{"Path"}=~/\.jar\Z/)
+            if($In::Desc{1}{"Path"}=~/\.(jar|jmod)\Z/ and $In::Desc{2}{"Path"}=~/\.(jar|jmod)\Z/)
             { # short usage
                 my ($Name1, $Version1) = getPkgVersion(getFilename($In::Desc{1}{"Path"}));
                 my ($Name2, $Version2) = getPkgVersion(getFilename($In::Desc{2}{"Path"}));
@@ -4996,6 +5132,17 @@ sub scenario()
         {
             $Class=~s/\//./g;
             $In::Opt{"SkipClasses"}{$Class} = 1;
+        }
+    }
+    if(my $NonImplClassesList = $In::Opt{"NonImplClassesList"})
+    {
+        if(not -f $NonImplClassesList) {
+            exitStatus("Access_Error", "can't access file \'$NonImplClassesList\'");
+        }
+        foreach my $Class (split(/\n/, readFile($NonImplClassesList)))
+        {
+            $Class=~s/\//./g;
+            $In::Opt{"NonImplClasses"}{$Class} = 1;
         }
     }
     if(my $SkipPackagesList = $In::Opt{"SkipPackagesList"})

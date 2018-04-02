@@ -495,6 +495,24 @@
 
 <rule>
     <id>
+        NonImpl_Interface_Added_Abstract_Method
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this interface.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
         Class_Method_Became_Abstract
     </id>
     <severity>
@@ -1359,6 +1377,168 @@
     </change>
     <effect>
         A client program may be interrupted by **NoClassDefFoundError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Added_Annotation_Default_Element
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Element @target of type @elem_type with default value @new_value has been added to this annotation type.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Added_Annotation_NonDefault_Element
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Element @target of type @elem_type without a default value has been added to this annotation type.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Annotation_Default_Element
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Element @target of type @elem_type with default value @old_value has been removed from this annotation type.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Annotation_NonDefault_Element
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Element @target of type @elem_type without a default value has been removed from this annotation type.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Annotation_Element_Changed_Default_Value
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Changed default value of the element @target from @old_value to @new_value in this annotation type.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Annotation_Element_Removed_Default_Value
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed default value @old_value from the element @target of this annotation type.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Annotation_Element_Added_Default_Value
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added default value @new_value for the element @target of this annotation type.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Annotation_Element_Changed_Type
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Changed type of the element @target from @old_value to @new_value in this annotation type.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Annotation_Element_Changed_Type_Safe
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Changed type of the element @target from @old_value to @new_value in this annotation type.
+    </change>
+    <effect>
+        No effect.
     </effect>
 </rule>
 

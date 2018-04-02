@@ -1,22 +1,24 @@
 ###########################################################################
 # A module to find system files
 #
-# Copyright (C) 2016-2017 Andrey Ponomarenko's ABI Laboratory
+# Copyright (C) 2016-2018 Andrey Ponomarenko's ABI Laboratory
 #
 # Written by Andrey Ponomarenko
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License or the GNU Lesser
-# General Public License as published by the Free Software Foundation.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# and the GNU Lesser General Public License along with this program.
-# If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA  02110-1301  USA.
 ###########################################################################
 use strict;
 
@@ -222,6 +224,33 @@ sub detectBinDefaultPaths()
             $DefaultBinPaths{$Path} = 1;
         }
     }
+}
+
+sub getArchivePaths($$)
+{
+    my ($Dest, $LVer) = @_;
+    if(-f $Dest) {
+        return ($Dest);
+    }
+    elsif(-d $Dest)
+    {
+        $Dest=~s/[\/\\]+\Z//g;
+        next if(not $Dest);
+        
+        my @Archives = ();
+        foreach my $Path (cmdFind($Dest, "", "*\\.jar"))
+        {
+            next if(ignorePath($Path, $Dest));
+            push(@Archives, realpath_F($Path));
+        }
+        foreach my $Path (cmdFind($Dest, "", "*\\.jmod"))
+        {
+            next if(ignorePath($Path, $Dest));
+            push(@Archives, realpath_F($Path));
+        }
+        return @Archives;
+    }
+    return ();
 }
 
 return 1;
