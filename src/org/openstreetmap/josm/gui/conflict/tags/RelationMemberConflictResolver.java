@@ -30,7 +30,6 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This component presents the user with the ability to resolve a relation member conflict
@@ -196,7 +196,7 @@ public class RelationMemberConflictResolver extends JPanel {
             return null;
         if (primitives == null || primitives.isEmpty())
             return null;
-        return new ChangePropertyCommand(primitives, Tag.removeWhiteSpaces(tfKey.getText()), Tag.removeWhiteSpaces(tfValue.getText()));
+        return new ChangePropertyCommand(primitives, Utils.removeWhiteSpaces(tfKey.getText()), Utils.removeWhiteSpaces(tfValue.getText()));
     }
 
     public void prepareForEditing() {

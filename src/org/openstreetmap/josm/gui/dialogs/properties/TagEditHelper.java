@@ -493,12 +493,12 @@ public class TagEditHelper {
 
         @Override
         public void performTagEdit() {
-            String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
+            String value = Utils.removeWhiteSpaces(values.getEditor().getItem().toString());
             value = Normalizer.normalize(value, Normalizer.Form.NFC);
             if (value.isEmpty()) {
                 value = null; // delete the key
             }
-            String newkey = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
+            String newkey = Utils.removeWhiteSpaces(keys.getEditor().getItem().toString());
             newkey = Normalizer.normalize(newkey, Normalizer.Form.NFC);
             if (newkey.isEmpty()) {
                 newkey = key;
@@ -1059,8 +1059,8 @@ public class TagEditHelper {
          * Read tags from comboboxes and add it to all selected objects
          */
         public final void performTagAdding() {
-            String key = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
-            String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
+            String key = Utils.removeWhiteSpaces(keys.getEditor().getItem().toString());
+            String value = Utils.removeWhiteSpaces(values.getEditor().getItem().toString());
             if (key.isEmpty() || value.isEmpty())
                 return;
             for (OsmPrimitive osm : sel) {
