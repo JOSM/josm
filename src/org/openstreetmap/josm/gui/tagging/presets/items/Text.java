@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Text field type.
@@ -206,7 +207,7 @@ public class Text extends KeyedItem {
             return;
         }
 
-        v = Tag.removeWhiteSpaces(v);
+        v = Utils.removeWhiteSpaces(v);
 
         if (!"false".equals(use_last_as_default) || auto_increment != null) {
             LAST_VALUES.put(key, v);

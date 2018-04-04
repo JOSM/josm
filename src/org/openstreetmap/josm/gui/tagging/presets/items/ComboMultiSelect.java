@@ -529,7 +529,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         } else {
             value = "";
         }
-        value = Tag.removeWhiteSpaces(value);
+        value = Utils.removeWhiteSpaces(value);
 
         // no change if same as before
         if (originalValue == null) {

@@ -17,9 +17,9 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Fixes defective data entries for all modified objects before upload
@@ -81,8 +81,8 @@ public class FixDataHook implements UploadHook {
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
             Map<String, String> newKeys = new HashMap<>(keys);
             for (Entry<String, String> e : keys.entrySet()) {
-                String v = Tag.removeWhiteSpaces(e.getValue());
-                String k = Tag.removeWhiteSpaces(e.getKey());
+                String v = Utils.removeWhiteSpaces(e.getValue());
+                String k = Utils.removeWhiteSpaces(e.getKey());
                 boolean drop = k.isEmpty() || v.isEmpty();
                 if (!e.getKey().equals(k)) {
                     if (drop || !keys.containsKey(k)) {

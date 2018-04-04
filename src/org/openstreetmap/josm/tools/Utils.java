@@ -822,6 +822,19 @@ public final class Utils {
     }
 
     /**
+     * Removes leading, trailing, and multiple inner whitespaces from the given string, to be used as a key or value.
+     * @param s The string
+     * @return The string without leading, trailing or multiple inner whitespaces
+     * @since 13597
+     */
+    public static String removeWhiteSpaces(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return strip(s).replaceAll("\\s+", " ");
+    }
+
+    /**
      * Runs an external command and returns the standard output.
      *
      * The program is expected to execute fast, as this call waits 10 seconds at most.

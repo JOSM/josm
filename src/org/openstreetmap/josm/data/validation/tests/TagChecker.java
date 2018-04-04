@@ -709,9 +709,9 @@ public class TagChecker extends TagTest {
                 if (value == null || value.trim().isEmpty()) {
                     commands.add(new ChangePropertyCommand(p, key, null));
                 } else if (value.startsWith(" ") || value.endsWith(" ") || value.contains("  ")) {
-                    commands.add(new ChangePropertyCommand(p, key, Tag.removeWhiteSpaces(value)));
+                    commands.add(new ChangePropertyCommand(p, key, Utils.removeWhiteSpaces(value)));
                 } else if (key.startsWith(" ") || key.endsWith(" ") || key.contains("  ")) {
-                    commands.add(new ChangePropertyKeyCommand(p, key, Tag.removeWhiteSpaces(key)));
+                    commands.add(new ChangePropertyKeyCommand(p, key, Utils.removeWhiteSpaces(key)));
                 } else {
                     String evalue = Entities.unescape(value);
                     if (!evalue.equals(value)) {

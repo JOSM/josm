@@ -58,8 +58,8 @@ public final class TextTagParser {
             if (line.trim().isEmpty()) continue; // skip empty lines
             Matcher m = p.matcher(line);
             if (m.matches()) {
-                 k = m.group(1).trim();
-                 v = m.group(2).trim();
+                 k = Utils.removeWhiteSpaces(m.group(1));
+                 v = Utils.removeWhiteSpaces(m.group(2));
                  if (unescapeTextInQuotes) {
                      k = unescape(k);
                      v = unescape(v);

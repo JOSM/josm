@@ -144,12 +144,11 @@ public class Tag implements Tagged, Entry<String, String>, Serializable {
      * @param s The string
      * @return The string without leading, trailing or multiple inner whitespaces
      * @since 6699
+     * @deprecated since 13597. Use {@link Utils#removeWhiteSpaces(String)} instead
      */
+    @Deprecated
     public static String removeWhiteSpaces(String s) {
-        if (s == null || s.isEmpty()) {
-            return s;
-        }
-        return Utils.strip(s).replaceAll("\\s+", " ");
+        return Utils.removeWhiteSpaces(s);
     }
 
     /**
