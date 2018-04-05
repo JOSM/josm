@@ -6,11 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.openstreetmap.josm.data.projection.CustomProjection;
+import org.openstreetmap.josm.data.projection.CustomProjection.Param;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.projection.Projections.ProjectionDefinition;
@@ -22,9 +26,10 @@ import org.openstreetmap.josm.data.projection.proj.Proj;
  */
 public class BuildProjectionDefinitions {
 
-    private static final String JOSM_EPSG_FILE = "data_nodist/projection/josm-epsg";
-    private static final String PROJ4_EPSG_FILE = "data_nodist/projection/epsg";
-    private static final String PROJ4_ESRI_FILE = "data_nodist/projection/esri";
+    private static final String PROJ_DIR = "data_nodist/projection";
+    private static final String JOSM_EPSG_FILE = "josm-epsg";
+    private static final String PROJ4_EPSG_FILE = "epsg";
+    private static final String PROJ4_ESRI_FILE = "esri";
     private static final String OUTPUT_EPSG_FILE = "data/projection/custom-epsg";
 
     private static final Map<String, ProjectionDefinition> epsgProj4 = new LinkedHashMap<>();
@@ -39,13 +44,22 @@ public class BuildProjectionDefinitions {
     private static int noDeprecated = 0;
     private static int noGeocent = 0;
     private static int noBaseProjection = 0;
-    private static final Map<String, Integer> baseProjectionMap = new HashMap<>();
+    private static int noEllipsoid = 0;
+    private static int noNadgrid = 0;
     private static int noDatumgrid = 0;
     private static int noJosm = 0;
     private static int noProj4 = 0;
     private static int noEsri = 0;
     private static int noOmercNoBounds = 0;
     private static int noEquatorStereo = 0;
+
+    private static final Map<String, Integer> baseProjectionMap = new TreeMap<>();
+    private static final Map<String, Integer> ellipsoidMap = new TreeMap<>();
+    private static final Map<String, Integer> nadgridMap = new TreeMap<>();
+    private static final Map<String, Integer> datumgridMap = new TreeMap<>();
+
+    private static List<String> knownGeoidgrids;
+    private static List<String> knownNadgrids;
 
     /**
      * Program entry point
@@ -56,8 +70,14 @@ public class BuildProjectionDefinitions {
         buildList(args[0]);
     }
 
+    static List<String> initList(String baseDir, String ext) {
+        return Arrays.asList(new File(baseDir + File.separator + PROJ_DIR)
+                .list((dir, name) -> !name.contains(".") || name.toLowerCase(Locale.ENGLISH).endsWith(ext)));
+    }
+
     static void initMap(String baseDir, String file, Map<String, ProjectionDefinition> map) throws IOException {
-        for (ProjectionDefinition pd : Projections.loadProjectionDefinitions(baseDir + File.separator + file)) {
+        for (ProjectionDefinition pd : Projections.loadProjectionDefinitions(
+                baseDir + File.separator + PROJ_DIR + File.separator + file)) {
             map.put(pd.code, pd);
         }
     }
@@ -66,6 +86,9 @@ public class BuildProjectionDefinitions {
         initMap(baseDir, JOSM_EPSG_FILE, epsgJosm);
         initMap(baseDir, PROJ4_EPSG_FILE, epsgProj4);
         initMap(baseDir, PROJ4_ESRI_FILE, esriProj4);
+
+        knownGeoidgrids = initList(baseDir, ".gtx");
+        knownNadgrids = initList(baseDir, ".gsb");
 
         try (FileOutputStream output = new FileOutputStream(baseDir + File.separator + OUTPUT_EPSG_FILE);
              BufferedWriter out = new BufferedWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8))) {
@@ -103,12 +126,27 @@ public class BuildProjectionDefinitions {
             System.out.println();
             System.out.println("some entries from proj.4 have not been included:");
             System.out.println(String.format(" * already in the maintained JOSM list: %d entries", noInJosm));
-            System.out.println(String.format(" * ESRI already in the standard EPSG list: %d entries", noInProj4));
+            if (noInProj4 > 0) {
+                System.out.println(String.format(" * ESRI already in the standard EPSG list: %d entries", noInProj4));
+            }
             System.out.println(String.format(" * deprecated: %d entries", noDeprecated));
             System.out.println(String.format(" * using +proj=geocent, which is 3D (X,Y,Z) and not useful in JOSM: %d entries", noGeocent));
-            System.out.println(String.format(" * unsupported base projection: %d entries", noBaseProjection));
-            System.out.println("   in particular: " + baseProjectionMap);
-            System.out.println(String.format(" * requires data file for datum conversion: %d entries", noDatumgrid));
+            if (noEllipsoid > 0) {
+                System.out.println(String.format(" * unsupported ellipsoids: %d entries", noEllipsoid));
+                System.out.println("   in particular: " + ellipsoidMap);
+            }
+            if (noBaseProjection > 0) {
+                System.out.println(String.format(" * unsupported base projection: %d entries", noBaseProjection));
+                System.out.println("   in particular: " + baseProjectionMap);
+            }
+            if (noDatumgrid > 0) {
+                System.out.println(String.format(" * requires data file for vertical datum conversion: %d entries", noDatumgrid));
+                System.out.println("   in particular: " + datumgridMap);
+            }
+            if (noNadgrid > 0) {
+                System.out.println(String.format(" * requires data file for datum conversion: %d entries", noNadgrid));
+                System.out.println("   in particular: " + nadgridMap);
+            }
             if (noOmercNoBounds > 0) {
                 System.out.println(String.format(" * projection is Oblique Mercator (requires bounds), but no bounds specified: %d entries", noOmercNoBounds));
             }
@@ -146,9 +184,10 @@ public class BuildProjectionDefinitions {
             }
         }
 
-        // exclude deprecated projections
+        // exclude deprecated/discontinued projections
         // EPSG:4296 is also deprecated, but this is not mentioned in the name
-        if (pd.name.contains("deprecated") || pd.code.equals("EPSG:4296")) {
+        String lowName = pd.name.toLowerCase(Locale.ENGLISH);
+        if (lowName.contains("deprecated") || lowName.contains("discontinued") || pd.code.equals("EPSG:4296")) {
             result = false;
             noDeprecated++;
         }
@@ -175,10 +214,20 @@ public class BuildProjectionDefinitions {
             noDatumgrid++;
         }
 
-        // requires datum conversion database
-        if (parameters.containsKey("geoidgrids")) {
+        // requires vertical datum conversion database (.gtx)
+        String geoidgrids = parameters.get("geoidgrids");
+        if (geoidgrids != null && !"@null".equals(geoidgrids) && !knownGeoidgrids.contains(geoidgrids)) {
             result = false;
             noDatumgrid++;
+            incMap(datumgridMap, geoidgrids);
+        }
+
+        // requires datum conversion database (.gsb)
+        String nadgrids = parameters.get("nadgrids");
+        if (nadgrids != null && !"@null".equals(nadgrids) && !knownNadgrids.contains(nadgrids)) {
+            result = false;
+            noNadgrid++;
+            incMap(nadgridMap, nadgrids);
         }
 
         // exclude entries where we don't support the base projection
@@ -187,23 +236,66 @@ public class BuildProjectionDefinitions {
             result = false;
             noBaseProjection++;
             if (!"geocent".equals(proj)) {
-                if (!baseProjectionMap.containsKey(proj)) {
-                    baseProjectionMap.put(proj, 0);
-                }
-                baseProjectionMap.put(proj, baseProjectionMap.get(proj)+1);
+                incMap(baseProjectionMap, proj);
             }
+        }
+
+        // exclude entries where we don't support the base ellipsoid
+        String ellps = parameters.get("ellps");
+        if (result && ellps != null && Projections.getEllipsoid(ellps) == null) {
+            result = false;
+            noEllipsoid++;
+            incMap(ellipsoidMap, ellps);
         }
 
         if (result && "omerc".equals(proj) && !parameters.containsKey(CustomProjection.Param.bounds.key)) {
             result = false;
             noOmercNoBounds++;
         }
-        // TODO: implement equatorial stereographic, see https://josm.openstreetmap.de/ticket/15970
-        if (result && "stere".equals(proj) && "0".equals(parameters.get(CustomProjection.Param.lat_0.key))) {
+
+        final double EPS10 = 1.e-10;
+
+        String lat0 = parameters.get("lat_0");
+        if (lat0 != null) {
+            try {
+                final double latitudeOfOrigin = Math.toRadians(CustomProjection.parseAngle(lat0, Param.lat_0.key));
+                // TODO: implement equatorial stereographic, see https://josm.openstreetmap.de/ticket/15970
+                if (result && "stere".equals(proj) && Math.abs(latitudeOfOrigin) < EPS10) {
+                    result = false;
+                    noEquatorStereo++;
+                }
+
+                // exclude entries which need geodesic computation (equatorial/oblique azimuthal equidistant)
+                if (result && "aeqd".equals(proj)) {
+                    final double HALF_PI = Math.PI / 2;
+                    if (Math.abs(latitudeOfOrigin - HALF_PI) >= EPS10 &&
+                        Math.abs(latitudeOfOrigin + HALF_PI) >= EPS10) {
+                        // See https://josm.openstreetmap.de/ticket/16129#comment:21
+                        result = false;
+                    }
+                }
+            } catch (NumberFormatException | ProjectionConfigurationException e) {
+                e.printStackTrace();
+                result = false;
+            }
+        }
+
+        if (result && "0.0".equals(parameters.get("rf"))) {
+            // Proj fails with "reciprocal flattening (1/f) = 0" for
+            result = false; // FIXME Only for some projections?
+        }
+
+        String k_0 = parameters.get("k_0");
+        if (result && k_0 != null && k_0.startsWith("-")) {
+            // Proj fails with "k <= 0" for ESRI:102470
             result = false;
-            noEquatorStereo++;
         }
 
         return result;
+    }
+
+    private static void incMap(Map<String, Integer> map, String key) {
+        map.putIfAbsent(key, 0);
+        map.put(key, map.get(key)+1);
     }
 }

@@ -295,9 +295,7 @@ public class CustomProjection extends AbstractProjection {
                 this.k0 *= ((IScaleFactorProvider) proj).getScaleFactor();
             }
             s = parameters.get(Param.bounds.key);
-            if (s != null) {
-                this.bounds = parseBounds(s);
-            }
+            this.bounds = s != null ? parseBounds(s) : null;
             s = parameters.get(Param.wmssrs.key);
             if (s != null) {
                 this.code = s;
@@ -588,6 +586,10 @@ public class CustomProjection extends AbstractProjection {
         s = parameters.get(Param.gamma.key);
         if (s != null) {
             projParams.gamma = parseAngle(s, Param.gamma.key);
+        }
+        s = parameters.get(Param.lon_0.key);
+        if (s != null) {
+            projParams.lon0 = parseAngle(s, Param.lon_0.key);
         }
         s = parameters.get(Param.lon_1.key);
         if (s != null) {
