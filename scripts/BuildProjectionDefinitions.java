@@ -76,8 +76,11 @@ public class BuildProjectionDefinitions {
     }
 
     static void initMap(String baseDir, String file, Map<String, ProjectionDefinition> map) throws IOException {
-        for (ProjectionDefinition pd : Projections.loadProjectionDefinitions(
-                baseDir + File.separator + PROJ_DIR + File.separator + file)) {
+        List<ProjectionDefinition> list = Projections.loadProjectionDefinitions(
+                baseDir + File.separator + PROJ_DIR + File.separator + file);
+        if (list.isEmpty())
+            throw new AssertionError("EPSG file seems corrupted");
+        for (ProjectionDefinition pd : list) {
             map.put(pd.code, pd);
         }
     }
@@ -199,6 +202,9 @@ public class BuildProjectionDefinitions {
             throw new RuntimeException(pd.code+":"+ex);
         }
         String proj = parameters.get(CustomProjection.Param.proj.key);
+        if (proj == null) {
+            result = false;
+        }
 
         // +proj=geocent is 3D (X,Y,Z) "projection" - this is not useful in
         // JOSM as we only deal with 2D maps
