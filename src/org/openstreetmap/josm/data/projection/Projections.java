@@ -24,9 +24,11 @@ import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.AlbersEqualArea;
+import org.openstreetmap.josm.data.projection.proj.AzimuthalEquidistant;
 import org.openstreetmap.josm.data.projection.proj.CassiniSoldner;
 import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
 import org.openstreetmap.josm.data.projection.proj.DoubleStereographic;
+import org.openstreetmap.josm.data.projection.proj.EquidistantCylindrical;
 import org.openstreetmap.josm.data.projection.proj.LambertAzimuthalEqualArea;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.LonLat;
@@ -54,8 +56,17 @@ public final class Projections {
      * Class to hold information about one projection.
      */
     public static class ProjectionDefinition {
+        /**
+         * EPSG code
+         */
         public final String code;
+        /**
+         * Projection name
+         */
         public final String name;
+        /**
+         * projection definition (EPSG format)
+         */
         public final String definition;
 
         /**
@@ -88,7 +99,9 @@ public final class Projections {
 
     static {
         registerBaseProjection("aea", AlbersEqualArea.class, "core");
+        registerBaseProjection("aeqd", AzimuthalEquidistant.class, "core");
         registerBaseProjection("cass", CassiniSoldner.class, "core");
+        registerBaseProjection("eqc", EquidistantCylindrical.class, "core");
         registerBaseProjection("laea", LambertAzimuthalEqualArea.class, "core");
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
         registerBaseProjection("lonlat", LonLat.class, "core");
@@ -198,6 +211,15 @@ public final class Projections {
         projs.put(id, fac);
     }
 
+    /**
+     * Plugins can register additional base projections.
+     *
+     * @param id The "official" PROJ.4 id. In case the projection is not supported
+     * by PROJ.4, use some prefix, e.g. josm:myproj or gdal:otherproj.
+     * @param projClass The base projection class.
+     * @param origin Multiple plugins may implement the same base projection.
+     * Provide plugin name or similar string, so it be differentiated.
+     */
     public static void registerBaseProjection(String id, Class<? extends Proj> projClass, String origin) {
         registerBaseProjection(id, new ClassProjFactory(projClass), origin);
     }
@@ -292,23 +314,32 @@ public final class Projections {
     public static List<ProjectionDefinition> loadProjectionDefinitions(BufferedReader r) throws IOException {
         List<ProjectionDefinition> result = new ArrayList<>();
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
-        String line, lastline = "";
+        StringBuilder sb = new StringBuilder();
+        String line;
         while ((line = r.readLine()) != null) {
             line = line.trim();
-            if (!line.startsWith("#") && !line.isEmpty()) {
-                if (!lastline.startsWith("#")) throw new AssertionError("EPSG file seems corrupted");
-                String name = lastline.substring(1).trim();
-                Matcher m = epsgPattern.matcher(line);
-                if (m.matches()) {
-                    String code = "EPSG:" + m.group(1);
-                    String definition = m.group(2).trim();
-                    result.add(new ProjectionDefinition(code, name, definition));
-                } else {
-                    Logging.warn("Failed to parse line from the EPSG projection definition: "+line);
+            if (!line.isEmpty()) {
+                if (!line.startsWith("#")) {
+                    Matcher m = epsgPattern.matcher(line);
+                    if (m.matches()) {
+                        String code = "EPSG:" + m.group(1);
+                        String definition = m.group(2).trim();
+                        result.add(new ProjectionDefinition(code, sb.toString(), definition));
+                    } else {
+                        Logging.warn("Failed to parse line from the EPSG projection definition: "+line);
+                    }
+                    sb.setLength(0);
+                } else if (!line.startsWith("# area: ")) {
+                    if (sb.length() == 0) {
+                        sb.append(line.substring(1).trim());
+                    } else {
+                        sb.append('(').append(line.substring(1).trim()).append(')');
+                    }
                 }
             }
-            lastline = line;
         }
+        if (result.isEmpty())
+            throw new AssertionError("EPSG file seems corrupted");
         return result;
     }
 

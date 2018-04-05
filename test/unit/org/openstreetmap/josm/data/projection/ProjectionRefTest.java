@@ -78,6 +78,8 @@ public class ProjectionRefTest {
 
     static Random rand = new SecureRandom();
 
+    static boolean debug;
+
     /**
      * Setup test.
      */
@@ -91,6 +93,7 @@ public class ProjectionRefTest {
      * @throws IOException in case of I/O error
      */
     public static void main(String[] args) throws IOException {
+        debug = args.length > 0 && "debug".equals(args[0]);
         Collection<RefEntry> refs = readData();
         refs = updateData(refs);
         writeData(refs);
@@ -235,16 +238,33 @@ public class ProjectionRefTest {
         ProcessBuilder pb = new ProcessBuilder(args);
         pb.environment().put("PROJ_LIB", new File(PROJ_LIB_DIR).getAbsolutePath());
 
-        String output;
+        String output = "";
         try {
             Process process = pb.start();
             OutputStream stdin = process.getOutputStream();
             InputStream stdout = process.getInputStream();
+            InputStream stderr = process.getErrorStream();
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin, StandardCharsets.UTF_8))) {
-                writer.write(String.format("%.9f %.9f%n", ll.lon(), ll.lat()));
+                String s = String.format("%.9f %.9f%n", ll.lon(), ll.lat());
+                if (debug) {
+                    System.out.println("\n" + String.join(" ", args) + "\n" + s);
+                }
+                writer.write(s);
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8))) {
-                output = reader.readLine();
+                String line;
+                while (null != (line = reader.readLine())) {
+                    if (debug) {
+                        System.out.println("> " + line);
+                    }
+                    output = line;
+                }
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stderr, StandardCharsets.UTF_8))) {
+                String line;
+                while (null != (line = reader.readLine())) {
+                    System.err.println("! " + line);
+                }
             }
         } catch (IOException e) {
             System.err.println("Error: Running external command failed: " + e + "\nCommand was: "+Utils.join(" ", args));

@@ -23,6 +23,9 @@ public class ProjectionTest {
     boolean error;
     String text;
 
+    /**
+     * Tests that projections are numerically stable in their definition bounds (round trip error &lt; 1e-5)
+     */
     @Test
     public void testProjections() {
         error = false;
@@ -54,6 +57,13 @@ public class ProjectionTest {
         for (int i = 0; i <= 8; ++i) {
             testProjection(Projections.getProjectionByCode("EPSG:"+Integer.toString(3942+i))); // Lambert CC9 Zones France
         }
+
+        for (int i = 0; i <= 17; ++i) {
+            testProjection(Projections.getProjectionByCode("EPSG:"+Integer.toString(102421+i))); // WGS_1984_ARC_System Zones
+        }
+
+        testProjection(Projections.getProjectionByCode("EPSG:102016")); // North Pole
+        testProjection(Projections.getProjectionByCode("EPSG:102019")); // South Pole
 
         if (error) {
             System.err.println(text);
@@ -103,6 +113,9 @@ public class ProjectionTest {
     String text2;
     Collection<String> projIds;
 
+    /**
+     * Tests that projections are numerically stable in their definition bounds (round trip error &lt; epsilon)
+     */
     @Test
     public void testProjs() {
         error2 = false;
@@ -126,6 +139,9 @@ public class ProjectionTest {
         testProj("laea", 3e-3, "+lat_0=34");
         testProj("merc", 1e-5, "");
         testProj("sinu", 1e-4, "");
+        testProj("aeqd", 1e-5, "+lon_0=0dE +lat_0=90dN");
+        testProj("aeqd", 1e-5, "+lon_0=0dE +lat_0=90dS");
+        testProj("eqc", 1e-5, "");
 
         if (error2) {
             System.err.println(text2);

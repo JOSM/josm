@@ -154,6 +154,19 @@ public abstract class AbstractProj implements Proj {
         }
     }
 
+    /**
+     * Tolerant asin that will just return the limits of its output range if the input is out of range
+     * @param v the value whose arc sine is to be returned.
+     * @return the arc sine of the argument.
+     */
+    protected final double aasin(double v) {
+        double av = Math.abs(v);
+        if (av >= 1.) {
+            return (v < 0. ? -Math.PI / 2 : Math.PI / 2);
+        }
+        return Math.asin(v);
+    }
+
     // Iteratively solve equation (7-9) from Snyder.
     final double cphi2(final double ts) {
         final double eccnth = 0.5 * e;
