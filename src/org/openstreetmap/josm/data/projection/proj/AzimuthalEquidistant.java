@@ -218,7 +218,6 @@ public class AzimuthalEquidistant extends AbstractProj {
             if (c_rh - EPS10 > Math.PI) {
                 throw new JosmRuntimeException("TOLERANCE_ERROR");
             }
-            c_rh = Math.PI;
         } else if (c_rh < EPS10) {
             phi = latitudeOfOrigin;
             lambda = 0.;
