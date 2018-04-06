@@ -327,7 +327,7 @@ public class ProjectionRefTest {
         for (RefEntry ref : refs) {
             String def0 = Projections.getInit(ref.code);
             if (def0 == null) {
-                Assert.fail("unkown code: "+ref.code);
+                Assert.fail("unknown code: "+ref.code);
             }
             if (!ref.def.equals(def0)) {
                 fail.append("definitions for ").append(ref.code).append(" do not match\n");
