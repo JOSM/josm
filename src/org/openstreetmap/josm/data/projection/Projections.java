@@ -338,8 +338,6 @@ public final class Projections {
                 }
             }
         }
-        if (result.isEmpty())
-            throw new AssertionError("EPSG file seems corrupted");
         return result;
     }
 

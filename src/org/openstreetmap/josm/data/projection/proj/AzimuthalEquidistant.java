@@ -195,6 +195,7 @@ public class AzimuthalEquidistant extends AbstractProj {
         case NORTH_POLAR:
             latRad = -latRad;
             coslam = -coslam;
+            // fall through
         case SOUTH_POLAR:
             if (Math.abs(latRad - HALF_PI) < EPS10) {
                 throw new JosmRuntimeException("TOLERANCE_ERROR");
@@ -255,6 +256,7 @@ public class AzimuthalEquidistant extends AbstractProj {
         switch (mode) {
         case NORTH_POLAR:
             coslam = -coslam;
+            // fall through
         case SOUTH_POLAR:
             double rho = Math.abs(mp - mlfn(latRad, sinphi, cosphi));
             x = rho * Math.sin(lonRad);
