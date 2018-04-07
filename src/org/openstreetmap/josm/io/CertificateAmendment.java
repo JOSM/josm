@@ -155,8 +155,6 @@ public final class CertificateAmendment {
      * Certificates embedded in JOSM
      */
     private static final EmbeddedCertAmend[] CERT_AMEND = {
-        new EmbeddedCertAmend("resource://data/security/DST_Root_CA_X3.pem", "DST_Root_CA_X3.pem",
-                "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739")
     };
 
     /**

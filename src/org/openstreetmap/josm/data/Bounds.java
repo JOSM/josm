@@ -354,9 +354,9 @@ public class Bounds {
      */
     public String toShortString(DecimalFormat format) {
         return format.format(minLat) + ' '
-        + format.format(minLon) + " / "
-        + format.format(maxLat) + ' '
-        + format.format(maxLon);
+             + format.format(minLon) + " / "
+             + format.format(maxLat) + ' '
+             + format.format(maxLon);
     }
 
     /**
@@ -512,8 +512,7 @@ public class Bounds {
      * @return The area
      */
     public double getArea() {
-        double w = getWidth();
-        return w * (maxLat - minLat);
+        return getWidth() * (maxLat - minLat);
     }
 
     /**
@@ -522,11 +521,9 @@ public class Bounds {
      * @return The string encoded bounds
      */
     public String encodeAsString(String separator) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(minLat).append(separator).append(minLon)
-        .append(separator).append(maxLat).append(separator)
-        .append(maxLon);
-        return sb.toString();
+        return new StringBuilder()
+          .append(minLat).append(separator).append(minLon).append(separator)
+          .append(maxLat).append(separator).append(maxLon).toString();
     }
 
     /**
@@ -573,8 +570,8 @@ public class Bounds {
         if (obj == null || getClass() != obj.getClass()) return false;
         Bounds bounds = (Bounds) obj;
         return Double.compare(bounds.minLat, minLat) == 0 &&
-                Double.compare(bounds.minLon, minLon) == 0 &&
-                Double.compare(bounds.maxLat, maxLat) == 0 &&
-                Double.compare(bounds.maxLon, maxLon) == 0;
+               Double.compare(bounds.minLon, minLon) == 0 &&
+               Double.compare(bounds.maxLat, maxLat) == 0 &&
+               Double.compare(bounds.maxLon, maxLon) == 0;
     }
 }
