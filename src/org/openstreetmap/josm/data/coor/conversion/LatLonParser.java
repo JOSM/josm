@@ -50,6 +50,16 @@ public final class LatLonParser {
     private static final Pattern P_XML = Pattern.compile(
             "lat=[\"']([+|-]?\\d+[.,]\\d+)[\"']\\s+lon=[\"']([+|-]?\\d+[.,]\\d+)[\"']");
 
+    private static final String FLOAT = "(\\d+(\\.\\d*)?)";
+    /** Degree-Minute-Second pattern **/
+    private static final String DMS = "(?<neg1>-)?"
+            + "(?=\\d)(?:(?<single>" + FLOAT + ")|"
+            + "((?<degree>" + FLOAT + ")d)?"
+            + "((?<minutes>" + FLOAT + ")\')?"
+            + "((?<seconds>" + FLOAT + ")\")?)"
+            + "(?:[NE]|(?<neg2>[SW]))?";
+    private static final Pattern P_DMS = Pattern.compile("^" + DMS + "$");
+
     private static class LatLonHolder {
         private double lat = Double.NaN;
         private double lon = Double.NaN;
@@ -198,14 +208,8 @@ public final class LatLonParser {
      * @since 12792
      */
     public static double parseCoordinate(String angleStr) {
-        final String floatPattern = "(\\d+(\\.\\d*)?)";
         // pattern does all error handling.
-        Matcher in = Pattern.compile("^(?<neg1>-)?"
-                + "(?=\\d)(?:(?<single>" + floatPattern + ")|"
-                + "((?<degree>" + floatPattern + ")d)?"
-                + "((?<minutes>" + floatPattern + ")\')?"
-                + "((?<seconds>" + floatPattern + ")\")?)"
-                + "(?:[NE]|(?<neg2>[SW]))?$").matcher(angleStr);
+        Matcher in = P_DMS.matcher(angleStr);
 
         if (!in.find()) {
             throw new IllegalArgumentException(

@@ -314,26 +314,39 @@ public final class Projections {
     public static List<ProjectionDefinition> loadProjectionDefinitions(BufferedReader r) throws IOException {
         List<ProjectionDefinition> result = new ArrayList<>();
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
+        String coor = "(-?\\d+\\.\\d+)";
+        Pattern areaPattern = Pattern.compile("# area: \\(lat: "+coor+", "+coor+"\\) - \\(lon: "+coor+", "+coor+"\\).*");
         StringBuilder sb = new StringBuilder();
+        String bounds = null;
         String line;
         while ((line = r.readLine()) != null) {
             line = line.trim();
-            if (!line.isEmpty()) {
+            if (!line.isEmpty() && !line.startsWith("##")) {
                 if (!line.startsWith("#")) {
                     Matcher m = epsgPattern.matcher(line);
                     if (m.matches()) {
                         String code = "EPSG:" + m.group(1);
                         String definition = m.group(2).trim();
+                        if (!definition.contains("+bounds=") && bounds != null) {
+                            definition += bounds;
+                        }
                         result.add(new ProjectionDefinition(code, sb.toString(), definition));
                     } else {
                         Logging.warn("Failed to parse line from the EPSG projection definition: "+line);
                     }
                     sb.setLength(0);
-                } else if (!line.startsWith("# area: ")) {
+                    bounds = null;
+                } else if (line.startsWith("# area: ")) {
+                    Matcher m = areaPattern.matcher(line);
+                    if (m.matches()) {
+                        bounds = " +bounds=" + String.join(",", m.group(3), m.group(1), m.group(4), m.group(2));
+                    }
+                } else {
+                    String s = line.substring(1).trim();
                     if (sb.length() == 0) {
-                        sb.append(line.substring(1).trim());
+                        sb.append(s);
                     } else {
-                        sb.append('(').append(line.substring(1).trim()).append(')');
+                        sb.append('(').append(s).append(')');
                     }
                 }
             }

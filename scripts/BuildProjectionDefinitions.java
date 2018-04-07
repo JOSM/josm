@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.CustomProjection.Param;
@@ -80,8 +82,16 @@ public class BuildProjectionDefinitions {
                 baseDir + File.separator + PROJ_DIR + File.separator + file);
         if (list.isEmpty())
             throw new AssertionError("EPSG file seems corrupted");
+        Pattern badDmsPattern = Pattern.compile("(\\d+(?:\\.\\d+)?d\\d+(?:\\.\\d+)?')(N|S|E|W)");
         for (ProjectionDefinition pd : list) {
-            map.put(pd.code, pd);
+            // DMS notation without second causes problems with cs2cs, add 0"
+            Matcher matcher = badDmsPattern.matcher(pd.definition);
+            StringBuffer sb = new StringBuffer();
+            while (matcher.find()) {
+                matcher.appendReplacement(sb, matcher.group(1) + "0\"" + matcher.group(2));
+            }
+            matcher.appendTail(sb);
+            map.put(pd.code, new ProjectionDefinition(pd.code, pd.name, sb.toString()));
         }
     }
 
@@ -112,7 +122,7 @@ public class BuildProjectionDefinitions {
                     noProj4++;
                 }
             }
-            out.write("## ESRI-specific projections (source: proj.4):\n");
+            out.write("## ESRI-specific projections (source: ESRI):\n");
             for (ProjectionDefinition pd : esriProj4.values()) {
                 pd = new ProjectionDefinition(pd.code, "ESRI: " + pd.name, pd.definition);
                 if (doInclude(pd, true, true)) {
@@ -193,6 +203,17 @@ public class BuildProjectionDefinitions {
         if (lowName.contains("deprecated") || lowName.contains("discontinued") || pd.code.equals("EPSG:4296")) {
             result = false;
             noDeprecated++;
+        }
+
+        // exclude projections failing
+        if (Arrays.asList("EPSG:53025", "EPSG:54025", "EPSG:65062",
+                "EPSG:102061", "EPSG:102062", "EPSG:102121", "EPSG:102212", "EPSG:102366", "EPSG:102445",
+                "EPSG:102491", "EPSG:102591", "EPSG:102631", "EPSG:103232", "EPSG:103235", "EPSG:103238",
+                "EPSG:103241", "EPSG:103371", "EPSG:103471", "EPSG:103474", "EPSG:103475"
+                ).contains(pd.code)) {
+            // 53025/54025: Unsuitable parameters 'lat_1' and 'lat_2' for two point method
+            // Others: cs2cs errors to investigate
+            result = false;
         }
 
         Map<String, String> parameters;

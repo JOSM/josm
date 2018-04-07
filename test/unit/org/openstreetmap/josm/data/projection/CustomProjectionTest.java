@@ -60,6 +60,14 @@ public class CustomProjectionTest {
         // combine
         assertEquals(1.1 + 3 / 60.0 + 5.2 / 3600.0, CustomProjection.parseAngle("1.1d3'5.2\"", "xxx"), 1e-10);
 
+        assertEquals(1.1, CustomProjection.parseAngle("1.1dN", "xxx"), 1e-10);
+        assertEquals(-1.1, CustomProjection.parseAngle("1.1dS", "xxx"), 1e-10);
+        assertEquals(1.1, CustomProjection.parseAngle("1.1dE", "xxx"), 1e-10);
+        assertEquals(-1.1, CustomProjection.parseAngle("1.1dW", "xxx"), 1e-10);
+
+        assertEquals(49.5, CustomProjection.parseAngle("49d30'N", "xxx"), 1e-10);
+        assertEquals(-120.8333333333, CustomProjection.parseAngle("120.0d50'W", "xxx"), 1e-10);
+
         // fail
         Stream.of("", "-", "-N", "N", "1.1 ", "x", "1.1d1.1d", "1.1e", "1.1.1", ".1", "1.1d3\"5.2'").forEach(
                 s -> {
