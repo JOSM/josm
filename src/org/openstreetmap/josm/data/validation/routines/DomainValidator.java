@@ -432,7 +432,6 @@ public final class DomainValidator extends AbstractValidator {
         "boo", // boo Charleston Road Registry Inc.
         "book", // book Amazon Registry Services, Inc.
         "booking", // booking Booking.com B.V.
-        "boots", // boots THE BOOTS COMPANY PLC
         "bosch", // bosch Robert Bosch GMBH
         "bostik", // bostik Bostik SA
         "boston", // boston Boston TLD Management, LLC
