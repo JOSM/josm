@@ -255,7 +255,7 @@ public class OpenLocationAction extends JosmAction {
             return Collections.emptyList();
         }
 
-        PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
+        PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
 
         List<Future<?>> result = new ArrayList<>();
         for (final DownloadTask task : tasks) {

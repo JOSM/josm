@@ -42,6 +42,8 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeLayerAction;
+import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -56,6 +58,7 @@ import org.openstreetmap.josm.gui.dialogs.layer.MergeAction;
 import org.openstreetmap.josm.gui.dialogs.layer.MoveDownAction;
 import org.openstreetmap.josm.gui.dialogs.layer.MoveUpAction;
 import org.openstreetmap.josm.gui.dialogs.layer.ShowHideLayerAction;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
@@ -66,6 +69,8 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
+import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeEvent;
+import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeListener;
 import org.openstreetmap.josm.gui.util.MultikeyActionsHandler;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction.MultikeyInfo;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
@@ -85,7 +90,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Support for multiple {@link LayerListDialog} is currently not complete but intended for the future.
  * @since 17
  */
-public class LayerListDialog extends ToggleDialog {
+public class LayerListDialog extends ToggleDialog implements DisplaySettingsChangeListener {
     /** the unique instance of the dialog */
     private static volatile LayerListDialog instance;
 
@@ -205,14 +210,20 @@ public class LayerListDialog extends ToggleDialog {
         layerList.getColumnModel().getColumn(1).setPreferredWidth(12);
         layerList.getColumnModel().getColumn(1).setResizable(false);
 
-        layerList.getColumnModel().getColumn(2).setCellRenderer(new LayerVisibleCellRenderer());
-        layerList.getColumnModel().getColumn(2).setCellEditor(new LayerVisibleCellEditor(new LayerVisibleCheckBox()));
+        layerList.getColumnModel().getColumn(2).setCellRenderer(new OffsetLayerCellRenderer());
+        layerList.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new OffsetLayerCheckBox()));
         layerList.getColumnModel().getColumn(2).setMaxWidth(16);
         layerList.getColumnModel().getColumn(2).setPreferredWidth(16);
         layerList.getColumnModel().getColumn(2).setResizable(false);
 
-        layerList.getColumnModel().getColumn(3).setCellRenderer(new LayerNameCellRenderer());
-        layerList.getColumnModel().getColumn(3).setCellEditor(new LayerNameCellEditor(new DisableShortcutsOnFocusGainedTextField()));
+        layerList.getColumnModel().getColumn(3).setCellRenderer(new LayerVisibleCellRenderer());
+        layerList.getColumnModel().getColumn(3).setCellEditor(new LayerVisibleCellEditor(new LayerVisibleCheckBox()));
+        layerList.getColumnModel().getColumn(3).setMaxWidth(16);
+        layerList.getColumnModel().getColumn(3).setPreferredWidth(16);
+        layerList.getColumnModel().getColumn(3).setResizable(false);
+
+        layerList.getColumnModel().getColumn(4).setCellRenderer(new LayerNameCellRenderer());
+        layerList.getColumnModel().getColumn(4).setCellEditor(new LayerNameCellEditor(new DisableShortcutsOnFocusGainedTextField()));
         // Disable some default JTable shortcuts to use JOSM ones (see #5678, #10458)
         for (KeyStroke ks : new KeyStroke[] {
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, Main.platform.getMenuShortcutKeyMaskEx()),
@@ -441,6 +452,16 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
+    private static class OffsetLayerCheckBox extends JCheckBox {
+        OffsetLayerCheckBox() {
+            setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            ImageIcon blank = ImageProvider.get("dialogs/layerlist", "blank");
+            ImageIcon withOffset = ImageProvider.get("dialogs/layerlist", "offset");
+            setIcon(blank);
+            setSelectedIcon(withOffset);
+        }
+    }
+
     private static class ActiveLayerCellRenderer implements TableCellRenderer {
         private final JCheckBox cb;
 
@@ -517,6 +538,40 @@ public class LayerListDialog extends ToggleDialog {
             } else {
                 cb.setSelected(false);
                 cb.setToolTipText(tr("this layer has no native resolution"));
+            }
+            return cb;
+        }
+    }
+
+    private static class OffsetLayerCellRenderer implements TableCellRenderer {
+        private final JCheckBox cb;
+
+        /**
+         * Constructs a new {@code OffsetLayerCellRenderer}.
+         */
+        OffsetLayerCellRenderer() {
+            cb = new OffsetLayerCheckBox();
+            cb.setEnabled(false);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Layer layer = (Layer) value;
+            if (layer instanceof AbstractTileSourceLayer<?>) {
+                if (EastNorth.ZERO.equals(((AbstractTileSourceLayer<?>) layer).getDisplaySettings().getDisplacement())) {
+                    cb.setSelected(false);
+                    cb.setEnabled(false); // TODO: allow reselecting checkbox and thereby setting the old offset again
+                    cb.setToolTipText(tr("layer is without a user-defined offset"));
+                } else {
+                    cb.setSelected(true);
+                    cb.setEnabled(true);
+                    cb.setToolTipText(tr("layer has a user-defined offset (click to remove offset)"));
+                }
+
+            } else {
+                cb.setSelected(false);
+                cb.setEnabled(false);
+                cb.setToolTipText(tr("this layer can not have an offset"));
             }
             return cb;
         }
@@ -780,6 +835,9 @@ public class LayerListDialog extends ToggleDialog {
             }
             selectionModel.setSelectionInterval(idx, idx);
             ensureSelectedIsVisible();
+            if (layer instanceof AbstractTileSourceLayer<?>) {
+                ((AbstractTileSourceLayer<?>) layer).getDisplaySettings().addSettingsChangeListener(LayerListDialog.getInstance());
+            }
         }
 
         /**
@@ -964,7 +1022,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public int getColumnCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -975,7 +1033,8 @@ public class LayerListDialog extends ToggleDialog {
                 case 0: return layers.get(row) == getActiveLayer();
                 case 1:
                 case 2:
-                case 3: return layers.get(row);
+                case 3:
+                case 4: return layers.get(row);
                 default: // Do nothing
                 }
             }
@@ -1004,8 +1063,8 @@ public class LayerListDialog extends ToggleDialog {
                         map.mapView.setNativeScaleLayer(null);
                     } else if (l instanceof NativeScaleLayer) {
                         map.mapView.setNativeScaleLayer((NativeScaleLayer) l);
-                        if (oldLayer != null) {
-                            int idx = getLayers().indexOf(oldLayer);
+                        if (oldLayer instanceof Layer) {
+                            int idx = getLayers().indexOf((Layer) oldLayer);
                             if (idx >= 0) {
                                 fireTableCellUpdated(idx, col);
                             }
@@ -1013,9 +1072,20 @@ public class LayerListDialog extends ToggleDialog {
                     }
                     break;
                 case 2:
-                    l.setVisible((Boolean) value);
+                    // reset layer offset
+                    if (l instanceof AbstractTileSourceLayer<?>) {
+                        AbstractTileSourceLayer<?> abstractTileSourceLayer = (AbstractTileSourceLayer<?>) l;
+                        OffsetBookmark offsetBookmark = abstractTileSourceLayer.getDisplaySettings().getOffsetBookmark();
+                        if (offsetBookmark != null) {
+                            offsetBookmark.setDisplacement(EastNorth.ZERO);
+                            abstractTileSourceLayer.getDisplaySettings().setOffsetBookmark(offsetBookmark);
+                        }
+                    }
                     break;
                 case 3:
+                    l.setVisible((Boolean) value);
+                    break;
+                case 4:
                     l.rename((String) value);
                     break;
                 default:
@@ -1212,5 +1282,12 @@ public class LayerListDialog extends ToggleDialog {
             return null;
 
         return new MultikeyInfo(index, l.getName());
+    }
+
+    @Override
+    public void displaySettingsChanged(DisplaySettingsChangeEvent e) {
+        if ("displacement".equals(e.getChangedSetting())) {
+            layerList.repaint();
+        }
     }
 }
