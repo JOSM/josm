@@ -64,6 +64,8 @@ public class ProjectionRefTest {
     private static final String REFERENCE_DATA_FILE = "data_nodist/projection/projection-reference-data";
     private static final String PROJ_LIB_DIR = "data_nodist/projection";
 
+    private static final int MAX_LENGTH = 524288;
+
     private static class RefEntry {
         String code;
         String def;
@@ -360,8 +362,13 @@ public class ProjectionRefTest {
             Assert.fail("no reference data for following projections: "+allCodes);
         }
         if (fail.length() > 0) {
-            System.err.println(fail.toString());
-            throw new AssertionError(fail.toString());
+            String s = fail.toString();
+            if (s.length() > MAX_LENGTH) {
+                // SonarQube/Surefire can't parse XML attributes longer than 524288 characters
+                s = s.substring(0, MAX_LENGTH - 4) + "...";
+            }
+            System.err.println(s);
+            throw new AssertionError(s);
         }
     }
 
