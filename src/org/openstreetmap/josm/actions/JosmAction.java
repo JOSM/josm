@@ -19,6 +19,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
@@ -364,8 +365,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @since 13434
      */
     protected final void updateEnabledStateOnModifiableSelection(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty()
-                && selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isLocked));
+        setEnabled(OsmUtils.isOsmCollectionEditable(selection));
     }
 
     /**

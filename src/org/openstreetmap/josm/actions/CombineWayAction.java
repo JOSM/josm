@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeGraph;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -114,7 +116,7 @@ public class CombineWayAction extends JosmAction {
         if (ways.size() < 2)
             return null;
 
-        List<DataSet> dataSets = ways.stream().map(Way::getDataSet).distinct().collect(Collectors.toList());
+        List<DataSet> dataSets = ways.stream().map(Way::getDataSet).filter(Objects::nonNull).distinct().collect(Collectors.toList());
         if (dataSets.size() != 1) {
             throw new IllegalArgumentException("Cannot combine ways of multiple data sets.");
         }
@@ -250,7 +252,7 @@ public class CombineWayAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         int numWays = 0;
-        if (selection.stream().map(OsmPrimitive::getDataSet).noneMatch(DataSet::isLocked)) {
+        if (OsmUtils.isOsmCollectionEditable(selection)) {
             for (OsmPrimitive osm : selection) {
                 if (osm instanceof Way && !osm.isIncomplete() && ++numWays >= 2) {
                     break;
