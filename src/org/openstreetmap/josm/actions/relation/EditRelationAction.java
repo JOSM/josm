@@ -12,8 +12,8 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -88,7 +88,7 @@ public class EditRelationAction extends AbstractRelationAction {
     @Override
     protected void updateEnabledState() {
         boolean enabled = false;
-        if (relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isLocked)) {
+        if (OsmUtils.isOsmCollectionEditable(relations)) {
             for (Relation r : relations) {
                 if (!r.isDeleted()) {
                     enabled = true;

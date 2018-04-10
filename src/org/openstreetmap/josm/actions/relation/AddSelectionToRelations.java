@@ -15,6 +15,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
@@ -69,7 +70,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
 
     @Override
     public void selectionChanged(final Collection<? extends OsmPrimitive> newSelection) {
-        GuiHelper.runInEDT(() -> setEnabled(newSelection != null && !newSelection.isEmpty() && !relations.isEmpty()
-                && relations.stream().map(Relation::getDataSet).noneMatch(DataSet::isLocked)));
+        GuiHelper.runInEDT(() -> setEnabled(newSelection != null && !newSelection.isEmpty()
+                && OsmUtils.isOsmCollectionEditable(relations)));
     }
 }
