@@ -25,6 +25,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -232,7 +233,7 @@ public class MapCSSTagCheckerTest {
             test.visit(OsmReader.parseDataSet(is, null).allPrimitives());
             List<TestError> errors = test.getErrors();
             assertEquals(errorsCount, errors.size());
-            Set<Set<OsmPrimitive>> primitives = new HashSet<>();
+            Set<Set<IPrimitive>> primitives = new HashSet<>();
             for (TestError e : errors) {
                 primitives.add(new HashSet<>(e.getPrimitives()));
             }

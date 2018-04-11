@@ -62,7 +62,7 @@ public class PurgeCommandTest {
         Relation relationParent2 = testData.createRelation(101, new RelationMember("child", testData.existingRelation));
         // to check that algorithm ignores it:
         Relation relationParent3 = testData.createRelation(102, new RelationMember("child", testData.existingRelation));
-        PurgeCommand command = new PurgeCommand(testData.layer.data,
+        PurgeCommand command = new PurgeCommand(testData.layer.getDataSet(),
                 Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingNode2, testData.existingWay,
                         testData.existingRelation, relationParent, relationParent2),
                 Arrays.<OsmPrimitive>asList(testData.existingNode2, testData.existingWay, testData.existingRelation));
@@ -83,7 +83,7 @@ public class PurgeCommandTest {
      */
     @Test
     public void testUndo() {
-        PurgeCommand command = new PurgeCommand(testData.layer.data,
+        PurgeCommand command = new PurgeCommand(testData.layer.getDataSet(),
                 Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingWay),
                 Arrays.<OsmPrimitive>asList(testData.existingWay));
         command.executeCommand();
@@ -107,7 +107,7 @@ public class PurgeCommandTest {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
-        PurgeCommand command = new PurgeCommand(testData.layer.data, Arrays.<OsmPrimitive>asList(testData.existingNode),
+        PurgeCommand command = new PurgeCommand(testData.layer.getDataSet(), Arrays.<OsmPrimitive>asList(testData.existingNode),
                 Arrays.<OsmPrimitive>asList(testData.existingRelation));
         command.fillModifiedData(modified, deleted, added);
         // intentianally empty (?)
@@ -121,7 +121,7 @@ public class PurgeCommandTest {
      */
     @Test
     public void testGetParticipatingPrimitives() {
-        PurgeCommand command = new PurgeCommand(testData.layer.data, Arrays.<OsmPrimitive>asList(testData.existingNode),
+        PurgeCommand command = new PurgeCommand(testData.layer.getDataSet(), Arrays.<OsmPrimitive>asList(testData.existingNode),
                 Arrays.<OsmPrimitive>asList(testData.existingRelation));
         assertArrayEquals(new Object[] {testData.existingNode }, command.getParticipatingPrimitives().toArray());
     }
@@ -132,11 +132,11 @@ public class PurgeCommandTest {
     @Test
     public void testDescription() {
         List<OsmPrimitive> shortList = Arrays.<OsmPrimitive>asList(testData.existingWay);
-        assertTrue(new PurgeCommand(testData.layer.data, shortList, Arrays.<OsmPrimitive>asList()).getDescriptionText()
+        assertTrue(new PurgeCommand(testData.layer.getDataSet(), shortList, Arrays.<OsmPrimitive>asList()).getDescriptionText()
                 .matches("Purged 1 object"));
         List<OsmPrimitive> longList = Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingNode2,
                 testData.existingWay);
-        assertTrue(new PurgeCommand(testData.layer.data, longList, Arrays.<OsmPrimitive>asList()).getDescriptionText()
+        assertTrue(new PurgeCommand(testData.layer.getDataSet(), longList, Arrays.<OsmPrimitive>asList()).getDescriptionText()
                 .matches("Purged 3 objects"));
     }
 
