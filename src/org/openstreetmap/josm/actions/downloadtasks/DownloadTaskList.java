@@ -289,7 +289,7 @@ public class DownloadTaskList {
             }
             final OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             if (editLayer != null && osmData) {
-                final Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.data);
+                final Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.getDataSet());
                 for (DownloadTask task : tasks) {
                     if (task instanceof DownloadOsmTask) {
                         DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
