@@ -192,7 +192,7 @@ public class OsmApiUrlInputPanel extends JPanel {
                     return;
                 Runnable r1 = () -> {
                     if (task.isSuccess()) {
-                        lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
+                        lblValid.setIcon(ImageProvider.get("misc", "green_check"));
                         lblValid.setToolTipText(tr("The API URL is valid."));
                         lastTestedUrl = url;
                         updateEnabledState();
