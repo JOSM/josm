@@ -119,7 +119,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             return;
         }
 
-        DataSetMerger visitor = new DataSetMerger(targetLayer.data, parents);
+        DataSetMerger visitor = new DataSetMerger(targetLayer.getDataSet(), parents);
         visitor.merge();
         SwingUtilities.invokeLater(targetLayer::onPostDownloadFromServer);
         if (visitor.getConflicts().isEmpty())

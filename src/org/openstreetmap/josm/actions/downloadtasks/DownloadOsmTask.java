@@ -296,7 +296,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 if (layer == null || !layer.isDownloadable()) {
                     layer = getFirstModifiableDataLayer();
                 }
-                Collection<OsmPrimitive> primitivesToUpdate = searchPrimitivesToUpdate(bounds, layer.data);
+                Collection<OsmPrimitive> primitivesToUpdate = searchPrimitivesToUpdate(bounds, layer.getDataSet());
                 layer.mergeFrom(dataSet);
                 MapFrame map = MainApplication.getMap();
                 if (map != null && zoomAfterDownload && bounds != null) {
