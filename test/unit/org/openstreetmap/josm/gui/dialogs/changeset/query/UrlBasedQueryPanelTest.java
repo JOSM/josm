@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.changeset.query;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,5 +28,15 @@ public class UrlBasedQueryPanelTest {
     @Test
     public void testUrlBasedQueryPanel() {
         assertNotNull(new UrlBasedQueryPanel());
+    }
+
+    /**
+     * Checks that examples displayed in panel are correct.
+     */
+    @Test
+    public void testExamplesAreCorrect() {
+        for (String example : UrlBasedQueryPanel.getExamples()) {
+            assertTrue(example, UrlBasedQueryPanel.isValidChangesetQueryUrl(example));
+        }
     }
 }
