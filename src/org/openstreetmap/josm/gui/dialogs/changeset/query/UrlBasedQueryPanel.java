@@ -173,7 +173,7 @@ public class UrlBasedQueryPanel extends JPanel {
         protected void feedbackValid() {
             if ("valid".equals(getCurrentFeedback()))
                 return;
-            lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
+            lblValid.setIcon(ImageProvider.get("misc", "green_check"));
             lblValid.setToolTipText(null);
             lblValid.putClientProperty("valid", "valid");
         }
