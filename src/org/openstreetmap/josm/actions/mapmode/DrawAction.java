@@ -230,7 +230,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
         Node baseNode = getCurrentBaseNode();
         if (editLayer != null && baseNode != null && !editLayer.data.selectionEmpty()) {
-            DataSet currentDataSet = editLayer.data;
+            DataSet currentDataSet = editLayer.getDataSet();
             Way continueFrom = getWayForNode(baseNode);
             if (alt && continueFrom != null && (!baseNode.isSelected() || continueFrom.isSelected())) {
                 addRemoveSelection(currentDataSet, baseNode, continueFrom);
