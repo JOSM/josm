@@ -161,7 +161,7 @@ public class DeleteCommandTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testConsistencyDataset() {
-        testData.layer.data.removePrimitive(testData.existingNode);
+        testData.layer.getDataSet().removePrimitive(testData.existingNode);
         new DeleteCommand(Arrays.asList(testData.existingNode, testData.existingWay));
     }
 

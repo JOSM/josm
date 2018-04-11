@@ -48,7 +48,7 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testExecuteUndoCommand() {
-        DataSet ds = testData.layer.data;
+        DataSet ds = testData.layer.getDataSet();
         Conflict<Node> conflict = new Conflict<>(testData.existingNode, testData.existingNode2);
         ConflictAddCommand cmd = new ConflictAddCommand(ds, conflict);
         assertTrue(cmd.executeCommand());
@@ -65,7 +65,7 @@ public class ConflictAddCommandTest {
     @Test
     public void testGetDescriptionIcon() {
         Conflict<Node> conflict = new Conflict<>(testData.existingNode, testData.existingNode2);
-        assertNotNull(new ConflictAddCommand(testData.layer.data, conflict).getDescriptionIcon());
+        assertNotNull(new ConflictAddCommand(testData.layer.getDataSet(), conflict).getDescriptionIcon());
     }
 
     /**

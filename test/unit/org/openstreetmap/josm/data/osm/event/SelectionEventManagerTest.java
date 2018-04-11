@@ -76,13 +76,13 @@ public class SelectionEventManagerTest {
         assertSelectionEquals(listeners, null);
 
         // active layer, should change
-        testData1.layer.data.setSelected(testData1.existingNode.getPrimitiveId());
+        testData1.layer.getDataSet().setSelected(testData1.existingNode.getPrimitiveId());
         assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList(testData1.existingNode)));
 
-        testData1.layer.data.clearSelection(testData1.existingNode.getPrimitiveId());
+        testData1.layer.getDataSet().clearSelection(testData1.existingNode.getPrimitiveId());
         assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList()));
 
-        testData1.layer.data.addSelected(testData1.existingNode2.getPrimitiveId());
+        testData1.layer.getDataSet().addSelected(testData1.existingNode2.getPrimitiveId());
         assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList(testData1.existingNode2)));
 
         // changing to other dataset should trigger a empty selection
@@ -90,10 +90,10 @@ public class SelectionEventManagerTest {
         assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList()));
 
         // This should not trigger anything, since the layer is not active any more.
-        testData1.layer.data.clearSelection(testData1.existingNode.getPrimitiveId());
+        testData1.layer.getDataSet().clearSelection(testData1.existingNode.getPrimitiveId());
         assertSelectionEquals(listeners, null);
 
-        testData2.layer.data.setSelected(testData2.existingNode.getPrimitiveId());
+        testData2.layer.getDataSet().setSelected(testData2.existingNode.getPrimitiveId());
         assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList(testData2.existingNode)));
 
         // removal
@@ -103,7 +103,7 @@ public class SelectionEventManagerTest {
         instance.removeSelectionListener((DataSelectionListener) listener4);
 
         // no event triggered now
-        testData2.layer.data.setSelected(testData2.existingNode2.getPrimitiveId());
+        testData2.layer.getDataSet().setSelected(testData2.existingNode2.getPrimitiveId());
         assertSelectionEquals(listeners, null);
     }
 
