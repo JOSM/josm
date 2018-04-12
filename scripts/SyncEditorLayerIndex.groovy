@@ -101,6 +101,7 @@ class SyncEditorLayerIndex {
         cli.p(longOpt:'elixml', args:1, argName:"elixml", "ELI entries for use in JOSM as XML file (incomplete)")
         cli.q(longOpt:'josmxml', args:1, argName:"josmxml", "JOSM entries reoutput as XML file (incomplete)")
         cli.m(longOpt:'noeli', argName:"noeli", "don't show output for ELI problems")
+        cli.c(longOpt:'encoding', args:1, argName:"encoding", "output encoding (defaults to UTF-8 or cp850 on Windows)")
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
 
@@ -118,8 +119,18 @@ class SyncEditorLayerIndex {
             ignoreInputFile = options.ignore_input
         }
         if (options.output && options.output != "-") {
+            String ccp = options.encoding
+            if (ccp == null)
+                ccp = "UTF-8"
             outputFile = new FileOutputStream(options.output)
-            outputStream = new OutputStreamWriter(outputFile, "UTF-8")
+            outputStream = new OutputStreamWriter(outputFile, ccp)
+        } else {
+            String ccp = options.encoding
+            if (ccp == null) {
+                String osn  = System.getProperty("os.name")
+                ccp = (osn != null && osn.contains("Windows")) ? "cp850" : "UTF-8"
+            }
+            outputStream = new OutputStreamWriter(System.out, ccp)
         }
     }
 
@@ -205,7 +216,7 @@ class SyncEditorLayerIndex {
     }
 
     void loadELIEntries() {
-        FileReader fr = new FileReader(eliInputFile)
+        def fr = new InputStreamReader(new FileInputStream(eliInputFile), "UTF-8")
         JsonReader jr = Json.createReader(fr)
         eliEntries = jr.readObject().get("features")
         jr.close()
