@@ -119,11 +119,8 @@ class SyncEditorLayerIndex {
             ignoreInputFile = options.ignore_input
         }
         if (options.output && options.output != "-") {
-            String ccp = options.encoding
-            if (ccp == null)
-                ccp = "UTF-8"
             outputFile = new FileOutputStream(options.output)
-            outputStream = new OutputStreamWriter(outputFile, ccp)
+            outputStream = new OutputStreamWriter(outputFile, options.encoding ? options.encoding : "UTF-8")
         } else if (options.encoding) {
             outputStream = new OutputStreamWriter(System.out, options.encoding)
         }
