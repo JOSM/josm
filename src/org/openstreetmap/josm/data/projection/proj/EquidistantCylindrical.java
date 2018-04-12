@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Equidistant cylindrical projection (EPSG code 9823).
@@ -33,12 +34,6 @@ public class EquidistantCylindrical extends AbstractProj {
      */
     private double cosStandardParallel;
 
-    /**
-     * Standard parallel parameter.
-     * Set to 0° for the {@code PlateCarree} case.
-     */
-    private double standardParallel;
-
     @Override
     public String getName() {
         return tr("Equidistant Cylindrical (Plate Caree)");
@@ -52,12 +47,10 @@ public class EquidistantCylindrical extends AbstractProj {
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
         super.initialize(params);
-        if (params.lat1 != null) {
-            standardParallel = Math.abs(params.lat1);
-            cosStandardParallel = Math.cos(standardParallel);
+        if (params.lat_ts != null) {
+            cosStandardParallel = Math.cos(Utils.toRadians(Math.abs(params.lat_ts)));
         } else {
             // standard parallel is the equator (Plate Carree or Equirectangular)
-            standardParallel = 0;
             cosStandardParallel = 1.0;
         }
     }
