@@ -247,7 +247,9 @@ public class ProjectionRefTest {
             InputStream stdout = process.getInputStream();
             InputStream stderr = process.getErrorStream();
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin, StandardCharsets.UTF_8))) {
-                String s = String.format("%.9f %.9f%n", ll.lon(), ll.lat());
+                String s = String.format("%s %s%n",
+                        LatLon.cDdHighPecisionFormatter.format(ll.lon()),
+                        LatLon.cDdHighPecisionFormatter.format(ll.lat()));
                 if (debug) {
                     System.out.println("\n" + String.join(" ", args) + "\n" + s);
                 }

@@ -11,6 +11,9 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -74,6 +77,12 @@ public class UrlBasedQueryPanel extends JPanel {
         return pnl;
     }
 
+    protected static List<String> getExamples() {
+        return Arrays.asList(
+                Main.getOSMWebsite()+"/history?open=true",
+                OsmApi.getOsmApi().getBaseUrl()+"/changesets?open=true");
+    }
+
     protected JPanel buildHelpPanel() {
         String apiUrl = OsmApi.getOsmApi().getBaseUrl();
         HtmlPanel pnl = new HtmlPanel();
@@ -82,8 +91,8 @@ public class UrlBasedQueryPanel extends JPanel {
                 + tr("Please enter or paste an URL to retrieve changesets from the OSM API.")
                 + "<p><strong>" + tr("Examples") + "</strong></p>"
                 + "<ul>"
-                + "<li><a href=\""+Main.getOSMWebsite()+"/history?open=true\">"+Main.getOSMWebsite()+"/history?open=true</a></li>"
-                + "<li><a href=\""+apiUrl+"/changesets?open=true\">"+apiUrl+"/changesets?open=true</a></li>"
+                + String.join("", getExamples().stream().map(
+                        s -> "<li><a href=\""+s+"\">"+s+"</a></li>").collect(Collectors.toList()))
                 + "</ul>"
                 + tr("Note that changeset queries are currently always submitted to ''{0}'', regardless of the "
                         + "host, port and path of the URL entered below.", apiUrl)
@@ -120,11 +129,11 @@ public class UrlBasedQueryPanel extends JPanel {
         add(new JPanel(), gc);
     }
 
-    protected boolean isValidChangesetQueryUrl(String text) {
+    protected static boolean isValidChangesetQueryUrl(String text) {
         return buildChangesetQuery(text) != null;
     }
 
-    protected ChangesetQuery buildChangesetQuery(String text) {
+    protected static ChangesetQuery buildChangesetQuery(String text) {
         URL url = null;
         try {
             url = new URL(text);
@@ -132,7 +141,7 @@ public class UrlBasedQueryPanel extends JPanel {
             return null;
         }
         String path = url.getPath();
-        if (path == null || !path.endsWith("/changesets"))
+        if (path == null || (!path.endsWith("/changesets") && !path.endsWith("/history")))
             return null;
 
         try {
