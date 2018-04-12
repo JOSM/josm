@@ -124,13 +124,8 @@ class SyncEditorLayerIndex {
                 ccp = "UTF-8"
             outputFile = new FileOutputStream(options.output)
             outputStream = new OutputStreamWriter(outputFile, ccp)
-        } else {
-            String ccp = options.encoding
-            if (ccp == null) {
-                String osn  = System.getProperty("os.name")
-                ccp = (osn != null && osn.contains("Windows")) ? "cp850" : "UTF-8"
-            }
-            outputStream = new OutputStreamWriter(System.out, ccp)
+        } else if (options.encoding) {
+            outputStream = new OutputStreamWriter(System.out, options.encoding)
         }
     }
 
