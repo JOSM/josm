@@ -20,7 +20,7 @@ public class ProjParameters {
     /** {@link Param#lat_2} */
     public Double lat2;
 
-    // Polar Stereographic and Mercator
+    // Polar Stereographic, Mercator and Equidistant Cylindrical
     /** {@link Param#lat_ts} */
     public Double lat_ts;
 
