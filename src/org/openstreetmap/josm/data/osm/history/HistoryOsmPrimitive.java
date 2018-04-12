@@ -261,6 +261,11 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
         return Collections.unmodifiableSet(tags.keySet());
     }
 
+    @Override
+    public int getNumKeys() {
+        return tags.size();
+    }
+
     /**
      * Replies the key/value map.
      * @return the key/value map

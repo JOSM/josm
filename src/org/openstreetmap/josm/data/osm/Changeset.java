@@ -404,6 +404,11 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
         return tags.keySet();
     }
 
+    @Override
+    public int getNumKeys() {
+        return tags.size();
+    }
+
     /**
      * Determines if this changeset is new.
      * @return {@code true} if this changeset is new ({@code id <= 0})

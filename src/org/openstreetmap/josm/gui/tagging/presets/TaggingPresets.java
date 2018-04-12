@@ -13,7 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
@@ -188,10 +188,10 @@ public final class TaggingPresets {
      *
      * @param primitive the primitive
      * @return a new collection of all presets matching the given preset.
-     * @see TaggingPreset#test(OsmPrimitive)
-     * @since 9265
+     * @see TaggingPreset#test(IPrimitive)
+     * @since 13623 (signature)
      */
-    public static Collection<TaggingPreset> getMatchingPresets(final OsmPrimitive primitive) {
+    public static Collection<TaggingPreset> getMatchingPresets(final IPrimitive primitive) {
         return SubclassFilteredCollection.filter(getTaggingPresets(), preset -> preset.test(primitive));
     }
 

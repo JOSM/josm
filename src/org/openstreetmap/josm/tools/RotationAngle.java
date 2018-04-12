@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.util.Locale;
 
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -21,7 +22,7 @@ public interface RotationAngle {
      */
     final class WayDirectionRotationAngle implements RotationAngle {
         @Override
-        public double getRotationAngle(OsmPrimitive p) {
+        public double getRotationAngle(IPrimitive p) {
             if (!(p instanceof Node)) {
                 return 0;
             }
@@ -69,7 +70,7 @@ public interface RotationAngle {
         }
 
         @Override
-        public double getRotationAngle(OsmPrimitive p) {
+        public double getRotationAngle(IPrimitive p) {
             return angle;
         }
 
@@ -110,8 +111,9 @@ public interface RotationAngle {
      * Calculates the rotation angle depending on the primitive to be displayed.
      * @param p primitive
      * @return rotation angle
+     * @since 13623 (signature)
      */
-    double getRotationAngle(OsmPrimitive p);
+    double getRotationAngle(IPrimitive p);
 
     /**
      * Always returns the fixed {@code angle}.
