@@ -202,6 +202,11 @@ public class Tag implements Tagged, Entry<String, String>, Serializable {
         return Collections.singleton(key);
     }
 
+    @Override
+    public final int getNumKeys() {
+        return 1;
+    }
+
     /**
      * Unsupported.
      * @throws UnsupportedOperationException always

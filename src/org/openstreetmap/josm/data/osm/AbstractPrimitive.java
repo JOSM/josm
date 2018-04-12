@@ -692,10 +692,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return null;
     }
 
-    /**
-     * Gets the number of keys
-     * @return The number of keys set for this primitive.
-     */
+    @Override
     public final int getNumKeys() {
         String[] keys = this.keys;
         return keys == null ? 0 : keys.length / 2;

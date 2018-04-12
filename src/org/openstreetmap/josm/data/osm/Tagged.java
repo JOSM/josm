@@ -107,6 +107,13 @@ public interface Tagged {
     Collection<String> keySet();
 
     /**
+     * Gets the number of keys
+     * @return The number of keys set for this tagged object.
+     * @since 13625
+     */
+    int getNumKeys();
+
+    /**
      * Removes all tags
      */
     void removeAll();
