@@ -130,7 +130,7 @@ public final class Ellipsoid {
     /**
      * Sphere
      */
-    public static final Ellipsoid Sphere = Ellipsoid.createAb(6371008.7714, 6371008.7714);
+    public static final Ellipsoid Sphere = Ellipsoid.createAb(6370997.0, 6370997.0);
 
     /**
      * Walbeck
