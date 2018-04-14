@@ -8,6 +8,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  * Represents a geodetic datum.
  *
  * Basically it provides conversion functions from and to the WGS84 datum.
+ * @since 4285
  */
 public interface Datum {
 

@@ -7,9 +7,16 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 /**
  * A datum with different ellipsoid than WGS84, but does not require
  * shift, rotation or scaling.
+ * @since 4285
  */
 public class CentricDatum extends AbstractDatum {
 
+    /**
+     * Constructs a new {@code CentricDatum}.
+     * @param name Datum name
+     * @param proj4Id proj.4 identifier
+     * @param ellps Ellipsoid. Must be non-null and different from WGS84
+     */
     public CentricDatum(String name, String proj4Id, Ellipsoid ellps) {
         super(name, proj4Id, ellps);
     }
