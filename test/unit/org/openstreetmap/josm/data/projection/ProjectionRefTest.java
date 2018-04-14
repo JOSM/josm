@@ -87,7 +87,7 @@ public class ProjectionRefTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().projectionNadGrids().timeout(30_000);
+    public JOSMTestRules test = new JOSMTestRules().platform().projectionNadGrids().timeout(90_000);
 
     /**
      * Program entry point.
