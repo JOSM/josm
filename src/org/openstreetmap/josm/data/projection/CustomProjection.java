@@ -453,16 +453,17 @@ public class CustomProjection extends AbstractProjection {
      * @throws ProjectionConfigurationException in case of invalid parameters
      */
     public Datum parseDatum(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
+        Datum result = null;
         String datumId = parameters.get(Param.datum.key);
         if (datumId != null) {
-            return Optional.ofNullable(Projections.getDatum(datumId)).orElseThrow(
+            result = Optional.ofNullable(Projections.getDatum(datumId)).orElseThrow(
                     () -> new ProjectionConfigurationException(tr("Unknown datum identifier: ''{0}''", datumId)));
         }
         if (ellps == null) {
-            if (parameters.containsKey(Param.no_defs.key))
+            if (result == null && parameters.containsKey(Param.no_defs.key))
                 throw new ProjectionConfigurationException(tr("Ellipsoid required (+ellps=* or +a=*, +b=*)"));
             // nothing specified, use WGS84 as default
-            ellps = Ellipsoid.WGS84;
+            ellps = result != null ? result.getEllipsoid() : Ellipsoid.WGS84;
         }
 
         String nadgridsId = parameters.get(Param.nadgrids.key);
@@ -478,10 +479,15 @@ public class CustomProjection extends AbstractProjection {
         }
 
         String towgs84 = parameters.get(Param.towgs84.key);
-        if (towgs84 != null)
-            return parseToWGS84(towgs84, ellps);
+        if (towgs84 != null) {
+            Datum towgs84Datum = parseToWGS84(towgs84, ellps);
+            if (result == null || towgs84Datum instanceof ThreeParameterDatum || towgs84Datum instanceof SevenParameterDatum) {
+                // +datum has priority over +towgs84=0,0,0[,0,0,0,0]
+                return towgs84Datum;
+            }
+        }
 
-        return new NullDatum(null, ellps);
+        return result != null ? result : new NullDatum(null, ellps);
     }
 
     /**
@@ -512,7 +518,7 @@ public class CustomProjection extends AbstractProjection {
             }
         }
         if (isCentric)
-            return new CentricDatum(null, null, ellps);
+            return Ellipsoid.WGS84.equals(ellps) ? WGS84Datum.INSTANCE : new CentricDatum(null, null, ellps);
         boolean is3Param = true;
         for (int i = 3; i < towgs84Param.size(); i++) {
             if (towgs84Param.get(i) != 0) {

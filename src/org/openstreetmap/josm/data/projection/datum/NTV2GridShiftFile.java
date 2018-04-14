@@ -62,6 +62,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @author Peter Yuill
  * Modified for JOSM :
  * - removed the RandomAccessFile mode (Pieren)
+ * @since 2507
  */
 public class NTV2GridShiftFile implements Serializable {
 
@@ -298,10 +299,18 @@ public class NTV2GridShiftFile implements Serializable {
             .toString();
     }
 
+    /**
+     * Returns "from" ellipsoid identifier.
+     * @return "from" ellipsoid identifier
+     */
     public String getFromEllipsoid() {
         return fromEllipsoid;
     }
 
+    /**
+     * Returns "to" ellipsoid identifier.
+     * @return "to" ellipsoid identifier
+     */
     public String getToEllipsoid() {
         return toEllipsoid;
     }

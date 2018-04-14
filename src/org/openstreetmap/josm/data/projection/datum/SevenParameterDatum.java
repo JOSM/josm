@@ -15,13 +15,14 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * This method is described by EPSG as EPSG:9606.
  * Also known as Bursa-Wolf.
+ * @since 4285
  */
 public class SevenParameterDatum extends AbstractDatum {
 
     protected double dx, dy, dz, rx, ry, rz, s;
 
     /**
-     *
+     * Constructs a new {@code SevenParameterDatum}
      * @param name name of the datum
      * @param proj4Id Proj.4 identifier for this datum (or null)
      * @param ellps the ellipsoid used

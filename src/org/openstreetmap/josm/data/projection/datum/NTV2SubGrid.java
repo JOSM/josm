@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Models the NTv2 Sub Grid within a Grid Shift File
+ * Models the NTv2 Sub Grid within a Grid Shift File.
  *
  * @author Peter Yuill
  * Modified for JOSM :
@@ -36,6 +36,7 @@ import org.openstreetmap.josm.tools.Utils;
  * - read grid file by single bytes. Workaround for a bug in some VM not supporting
  *   file reading by group of 4 bytes from a jar file.
  * - removed the Cloneable interface
+ * @since 2507
  */
 public class NTV2SubGrid implements Serializable {
 
@@ -260,18 +261,34 @@ public class NTV2SubGrid implements Serializable {
         }
     }
 
+    /**
+     * Returns the parent sub grid name.
+     * @return the parent sub grid name
+     */
     public String getParentSubGridName() {
         return parentSubGridName;
     }
 
+    /**
+     * Returns the sub grid name.
+     * @return the sub grid name
+     */
     public String getSubGridName() {
         return subGridName;
     }
 
+    /**
+     * Returns the node count.
+     * @return the node count
+     */
     public int getNodeCount() {
         return nodeCount;
     }
 
+    /**
+     * Returns the sub grid count.
+     * @return the sub grid count
+     */
     public int getSubGridCount() {
         return subGrid == null ? 0 : subGrid.length;
     }

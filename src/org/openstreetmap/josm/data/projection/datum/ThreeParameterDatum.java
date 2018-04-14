@@ -6,11 +6,21 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 
 /**
  * Datum provides 3 dimensional offset and ellipsoid conversion.
+ * @since 4285
  */
 public class ThreeParameterDatum extends AbstractDatum {
 
     protected double dx, dy, dz;
 
+    /**
+     * Constructs a new {@code ThreeParameterDatum}.
+     * @param name name of the datum
+     * @param proj4Id Proj.4 identifier for this datum (or null)
+     * @param ellps the ellipsoid used
+     * @param dx x offset in meters
+     * @param dy y offset in meters
+     * @param dz z offset in meters
+     */
     public ThreeParameterDatum(String name, String proj4Id, Ellipsoid ellps, double dx, double dy, double dz) {
         super(name, proj4Id, ellps);
         this.dx = dx;
