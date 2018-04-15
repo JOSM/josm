@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.proj;
 
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;
@@ -10,19 +9,48 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import static java.lang.Math.tan;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.toRadians;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.CustomProjection.Param;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Implementation of the Lambert Conformal Conic projection.
+ * Lambert Conical Conformal Projection. Areas and shapes are deformed as one moves away from standard parallels.
+ * The angles are true in a limited area. This projection is used for the charts of North America, France and Belgium.
+ * <p>
+ * This implementation provides transforms for two cases of the lambert conic conformal projection:
+ * <p>
+ * <ul>
+ *   <li>{@code Lambert_Conformal_Conic_1SP} (EPSG code 9801)</li>
+ *   <li>{@code Lambert_Conformal_Conic_2SP} (EPSG code 9802)</li>
+ * </ul>
+ * <p>
+ * For the 1SP case the latitude of origin is used as the standard parallel (SP).
+ * To use 1SP with a latitude of origin different from the SP, use the 2SP and set the SP1 to the single SP.
+ * The {@code "standard_parallel_2"} parameter is optional and will be given the same value
+ * as {@code "standard_parallel_1"} if not set (creating a 1 standard parallel projection).
+ * <p>
+ * <b>References:</b>
+ * <ul>
+ *   <li>John P. Snyder (Map Projections - A Working Manual,<br>U.S. Geological Survey Professional Paper 1395, 1987)</li>
+ *   <li>"Coordinate Conversions and Transformations including Formulas",<br>EPSG Guidence Note Number 7, Version 19.</li>
+ * </ul>
  *
  * @author Pieren
+ * @author André Gosselin
+ * @author Martin Desruisseaux (PMO, IRD)
+ * @author Rueben Schulz
+ *
+ * @see <A HREF="http://mathworld.wolfram.com/LambertConformalConicProjection.html">Lambert conformal conic projection on MathWorld</A>
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/lambert_conic_conformal_1sp.html">lambert_conic_conformal_1sp</A>
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/lambert_conic_conformal_2sp.html">lambert_conic_conformal_2sp</A>
+ *
+ * @since 13639 (align implementation with proj.4 / GeoTools)
+ * @since 4285 (reworked from Lambert / LambertCC9Zones)
+ * @since 2304 (initial implementation by Pieren)
  */
 public class LambertConformalConic extends AbstractProj {
 
@@ -86,13 +114,14 @@ public class LambertConformalConic extends AbstractProj {
      * projection exponent
      */
     protected double n;
+
     /**
      * projection factor
      */
     protected double f;
+
     /**
-     * radius of the parallel of latitude of the false origin (2SP) or at
-     * natural origin (1SP)
+     * radius of the parallel of latitude of the false origin (2SP) or at natural origin (1SP)
      */
     protected double r0;
 
@@ -108,68 +137,53 @@ public class LambertConformalConic extends AbstractProj {
         if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", Param.lat_0.key));
         if (params.lat1 != null && params.lat2 != null) {
-            initialize2SP(params.lat0, params.lat1, params.lat2);
+            this.params = new Parameters2SP(params.lat0, params.lat1, params.lat2);
+            initialize2SP(toRadians(params.lat0), toRadians(params.lat1), toRadians(params.lat2));
         } else {
-            initialize1SP(params.lat0);
+            this.params = new Parameters1SP(params.lat0);
+            initialize1SP(toRadians(params.lat0));
         }
     }
 
     /**
      * Initialize for LCC with 2 standard parallels.
      *
-     * @param lat0 latitude of false origin (in degrees)
-     * @param lat1 latitude of first standard parallel (in degrees)
-     * @param lat2 latitude of second standard parallel (in degrees)
+     * @param lat0 latitude of false origin (in radians)
+     * @param lat1 latitude of first standard parallel (in radians)
+     * @param lat2 latitude of second standard parallel (in radians)
      */
     private void initialize2SP(double lat0, double lat1, double lat2) {
-        this.params = new Parameters2SP(lat0, lat1, lat2);
 
-        final double m1 = m(Utils.toRadians(lat1));
-        final double m2 = m(Utils.toRadians(lat2));
+        final double cosphi1 = cos(lat1);
+        final double sinphi1 = sin(lat1);
 
-        final double t1 = t(Utils.toRadians(lat1));
-        final double t2 = t(Utils.toRadians(lat2));
-        final double tf = t(Utils.toRadians(lat0));
+        final double cosphi2 = cos(lat2);
+        final double sinphi2 = sin(lat2);
 
-        n = (log(m1) - log(m2)) / (log(t1) - log(t2));
-        f = m1 / (n * pow(t1, n));
-        r0 = f * pow(tf, n);
+        final double m1 = msfn(sinphi1, cosphi1);
+        final double m2 = msfn(sinphi2, cosphi2);
+
+        final double t0 = tsfn(lat0, sin(lat0));
+        final double t1 = tsfn(lat1, sinphi1);
+        final double t2 = tsfn(lat2, sinphi2);
+
+        n = log(m1/m2) / log(t1/t2);
+        f = m1 * pow(t1, -n) / n;
+        r0 = f * pow(t0, n);
     }
 
     /**
      * Initialize for LCC with 1 standard parallel.
      *
-     * @param lat0 latitude of natural origin (in degrees)
+     * @param lat0 latitude of natural origin (in radians)
      */
     private void initialize1SP(double lat0) {
-        this.params = new Parameters1SP(lat0);
-        final double lat0rad = Utils.toRadians(lat0);
+        final double m0 = msfn(sin(lat0), cos(lat0));
+        final double t0 = tsfn(lat0, sin(lat0));
 
-        final double m0 = m(lat0rad);
-        final double t0 = t(lat0rad);
-
-        n = sin(lat0rad);
-        f = m0 / (n * pow(t0, n));
+        n = sin(lat0);
+        f = m0 * pow(t0, -n) / n;
         r0 = f * pow(t0, n);
-    }
-
-    /**
-     * auxiliary function t
-     * @param latRad latitude in radians
-     * @return result
-     */
-    protected double t(double latRad) {
-        return tan(PI/4 - latRad / 2.0)
-            / pow((1.0 - e * sin(latRad)) / (1.0 + e * sin(latRad)), e/2);
-    }
-
-    /**
-     * auxiliary function m
-     * @param latRad latitude in radians
-     * @return result
-     */
-    protected double m(double latRad) {
-        return cos(latRad) / (sqrt(1 - e * e * pow(sin(latRad), 2)));
     }
 
     @Override
