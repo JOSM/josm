@@ -63,7 +63,7 @@ public class AlbersEqualArea extends AbstractProj {
     /**
      * Constants used by the spherical and elliptical Albers projection.
      */
-    private double n, c, rho0;
+    private double n, n2, c, rho0;
 
     /**
      * An error condition indicating iteration will not converge for the
@@ -115,13 +115,14 @@ public class AlbersEqualArea extends AbstractProj {
         rho0 = Math.sqrt(c - n * qsfn(Math.sin(lat0))) /n;
         ec = 1.0 - .5 * (1.0-e2) *
              Math.log((1.0 - e) / (1.0 + e)) / e;
+        n2 = n * n;
         this.n = n;
     }
 
     @Override
     public double[] project(double y, double x) {
-        x *= n;
-        double rho = c - n * qsfn(Math.sin(y));
+        double theta = n * x;
+        double rho = c - (spherical ? n2 * Math.sin(y) : n * qsfn(Math.sin(y)));
         if (rho < 0.0) {
             if (rho > -EPSILON) {
                 rho = 0.0;
@@ -131,8 +132,8 @@ public class AlbersEqualArea extends AbstractProj {
         }
         rho = Math.sqrt(rho) / n;
         // CHECKSTYLE.OFF: SingleSpaceSeparator
-        y = rho0 - rho * Math.cos(x);
-        x =        rho * Math.sin(x);
+        y = rho0 - rho * Math.cos(theta);
+        x =        rho * Math.sin(theta);
         // CHECKSTYLE.ON: SingleSpaceSeparator
         return new double[] {x, y};
     }
@@ -149,11 +150,15 @@ public class AlbersEqualArea extends AbstractProj {
             }
             x = Math.atan2(x, y) / n;
             y = rho * n;
-            y = (c - y*y) / n;
-            if (Math.abs(y) <= ec) {
-                y = phi1(y);
+            if (spherical) {
+                y = aasin((c - y*y) / n2);
             } else {
-                y = (y < 0.0) ? -Math.PI/2.0 : Math.PI/2.0;
+                y = (c - y*y) / n;
+                if (Math.abs(y) <= ec) {
+                    y = phi1(y);
+                } else {
+                    y = (y < 0.0) ? -Math.PI/2.0 : Math.PI/2.0;
+                }
             }
         } else {
             x = 0.0;

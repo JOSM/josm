@@ -32,7 +32,12 @@ public class CassiniSoldner extends AbstractProj {
     private double ml0;
 
     /**
-     * Contants used for the forward and inverse transform for the eliptical
+     * Latitude of origin.
+     */
+    private double phi0;
+
+    /**
+     * Constants used for the forward and inverse transform for the elliptical
      * case of the Cassini-Soldner.
      */
     private static final double C1 = 0.16666666666666666666;
@@ -56,41 +61,54 @@ public class CassiniSoldner extends AbstractProj {
         super.initialize(params);
         if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
-        double latitudeOfOrigin = Utils.toRadians(params.lat0);
-        ml0 = mlfn(latitudeOfOrigin, Math.sin(latitudeOfOrigin), Math.cos(latitudeOfOrigin));
+        phi0 = Utils.toRadians(params.lat0);
+        ml0 = mlfn(phi0, Math.sin(phi0), Math.cos(phi0));
     }
 
     @Override
     public double[] project(double phi, double lam) {
-        double sinphi = Math.sin(phi);
-        double cosphi = Math.cos(phi);
+        if (spherical) {
+            double x = aasin(Math.cos(phi) * Math.sin(lam));
+            double y = Math.atan2(Math.tan(phi), Math.cos(lam));
+            return new double[] {x, y};
+        } else {
+            double sinphi = Math.sin(phi);
+            double cosphi = Math.cos(phi);
 
-        double n = 1.0 / (Math.sqrt(1.0 - e2 * sinphi * sinphi));
-        double tn = Math.tan(phi);
-        double t = tn * tn;
-        double a1 = lam * cosphi;
-        double c = cosphi * cosphi * e2 / (1 - e2);
-        double a2 = a1 * a1;
+            double n = 1.0 / (Math.sqrt(1.0 - e2 * sinphi * sinphi));
+            double tn = Math.tan(phi);
+            double t = tn * tn;
+            double a1 = lam * cosphi;
+            double c = cosphi * cosphi * e2 / (1 - e2);
+            double a2 = a1 * a1;
 
-        double x = n * a1 * (1.0 - a2 * t * (C1 - (8.0 - t + 8.0 * c) * a2 * C2));
-        double y = mlfn(phi, sinphi, cosphi) - ml0 + n * tn * a2 * (0.5 + (5.0 - t + 6.0 * c) * a2 * C3);
-        return new double[] {x, y};
+            double x = n * a1 * (1.0 - a2 * t * (C1 - (8.0 - t + 8.0 * c) * a2 * C2));
+            double y = mlfn(phi, sinphi, cosphi) - ml0 + n * tn * a2 * (0.5 + (5.0 - t + 6.0 * c) * a2 * C3);
+            return new double[] {x, y};
+        }
     }
 
     @Override
     public double[] invproject(double x, double y) {
-        double ph1 = invMlfn(ml0 + y);
-        double tn = Math.tan(ph1);
-        double t = tn * tn;
-        double n = Math.sin(ph1);
-        double r = 1.0 / (1.0 - e2 * n * n);
-        n = Math.sqrt(r);
-        r *= (1.0 - e2) * n;
-        double dd = x / n;
-        double d2 = dd * dd;
-        double phi = ph1 - (n * tn / r) * d2 * (0.5 - (1.0 + 3.0 * t) * d2 * C3);
-        double lam = dd * (1.0 + t * d2 * (-C4 + (1.0 + 3.0 * t) * d2 * C5)) / Math.cos(ph1);
-        return new double[] {phi, lam};
+        if (spherical) {
+            double dd = y + phi0;
+            double phi = aasin(Math.sin(dd * Math.cos(x)));
+            double lam = Math.atan2(Math.tan(x), Math.cos(dd));
+            return new double[] {phi, lam};
+        } else {
+            double ph1 = invMlfn(ml0 + y);
+            double tn = Math.tan(ph1);
+            double t = tn * tn;
+            double n = Math.sin(ph1);
+            double r = 1.0 / (1.0 - e2 * n * n);
+            n = Math.sqrt(r);
+            r *= (1.0 - e2) * n;
+            double dd = x / n;
+            double d2 = dd * dd;
+            double phi = ph1 - (n * tn / r) * d2 * (0.5 - (1.0 + 3.0 * t) * d2 * C3);
+            double lam = dd * (1.0 + t * d2 * (-C4 + (1.0 + 3.0 * t) * d2 * C5)) / Math.cos(ph1);
+            return new double[] {phi, lam};
+        }
     }
 
     @Override
