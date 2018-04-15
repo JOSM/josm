@@ -21,13 +21,14 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
@@ -526,11 +527,12 @@ public final class Geometry {
      * @param polygon Nodes, forming a closed polygon
      * @param path2d path to add to; can be null, then a new path is created
      * @return the path (LatLon coordinates)
+     * @since 13638 (signature)
      */
-    public static Path2D buildPath2DLatLon(List<Node> polygon, Path2D path2d) {
+    public static Path2D buildPath2DLatLon(List<? extends ILatLon> polygon, Path2D path2d) {
         Path2D path = path2d != null ? path2d : new Path2D.Double();
         boolean begin = true;
-        for (Node n : polygon) {
+        for (ILatLon n : polygon) {
             if (begin) {
                 path.moveTo(n.lon(), n.lat());
                 begin = false;
@@ -700,8 +702,9 @@ public final class Geometry {
      *
      * @param osm the primitive to measure
      * @return area of the primitive, or {@code null}
+     * @since 13638 (signature)
      */
-    public static Double computeArea(OsmPrimitive osm) {
+    public static Double computeArea(IPrimitive osm) {
         if (osm instanceof Way && ((Way) osm).isClosed()) {
             return closedWayArea((Way) osm);
         } else if (osm instanceof Relation && ((Relation) osm).isMultipolygon() && !((Relation) osm).hasIncompleteMembers()) {
@@ -1011,8 +1014,9 @@ public final class Geometry {
      * @param nodes the list of nodes representing the polygon
      * @param projection the projection to use for the calculation, {@code null} defaults to {@link Main#getProjection()}
      * @return area and perimeter
+     * @since 13638 (signature)
      */
-    public static AreaAndPerimeter getAreaAndPerimeter(List<Node> nodes, Projection projection) {
+    public static AreaAndPerimeter getAreaAndPerimeter(List<? extends ILatLon> nodes, Projection projection) {
         CheckParameterUtil.ensureParameterNotNull(nodes, "nodes");
         double area = 0;
         double perimeter = 0;
@@ -1023,7 +1027,7 @@ public final class Geometry {
             int numSegments = closed ? nodes.size() - 1 : nodes.size();
             EastNorth p1 = nodes.get(0).getEastNorth(useProjection);
             for (int i = 1; i <= numSegments; i++) {
-                final Node node = nodes.get(i == numSegments ? 0 : i);
+                final ILatLon node = nodes.get(i == numSegments ? 0 : i);
                 final EastNorth p2 = node.getEastNorth(useProjection);
                 if (p1 != null && p2 != null) {
                     area += p1.east() * p2.north() - p2.east() * p1.north();
