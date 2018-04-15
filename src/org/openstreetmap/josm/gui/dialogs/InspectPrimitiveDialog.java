@@ -150,8 +150,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
         if (sel.size() == 2) {
             List<OsmPrimitive> selList = new ArrayList<>(sel);
-            StyleCache sc1 = selList.get(0).mappaintStyle;
-            StyleCache sc2 = selList.get(1).mappaintStyle;
+            StyleCache sc1 = selList.get(0).getCachedStyle();
+            StyleCache sc2 = selList.get(1).getCachedStyle();
             if (sc1 == sc2) {
                 txtMappaint.append(tr("The 2 selected objects have identical style caches."));
             }

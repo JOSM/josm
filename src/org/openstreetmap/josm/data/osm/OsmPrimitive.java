@@ -192,51 +192,27 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /*----------
      * MAPPAINT
      *--------*/
-    public StyleCache mappaintStyle;
+    private StyleCache mappaintStyle;
     private short mappaintCacheIdx;
 
-    /* This should not be called from outside. Fixing the UI to add relevant
-       get/set functions calling this implicitely is preferred, so we can have
-       transparent cache handling in the future. */
-    public void clearCachedStyle() {
-        mappaintStyle = null;
+    @Override
+    public final StyleCache getCachedStyle() {
+        return mappaintStyle;
     }
 
-    /**
-     * Check if the cached style for this primitive is up to date.
-     * @return true if the cached style for this primitive is up to date
-     * @since 13420
-     */
+    @Override
+    public final void setCachedStyle(StyleCache mappaintStyle) {
+        this.mappaintStyle = mappaintStyle;
+    }
+
+    @Override
     public final boolean isCachedStyleUpToDate() {
         return mappaintStyle != null && mappaintCacheIdx == dataSet.getMappaintCacheIndex();
     }
 
-    /**
-     * Declare that the cached style for this primitive is up to date.
-     * @since 13420
-     */
+    @Override
     public final void declareCachedStyleUpToDate() {
         this.mappaintCacheIdx = dataSet.getMappaintCacheIndex();
-    }
-
-    /**
-     * Returns mappaint cache index.
-     * @return mappaint cache index
-     * @deprecated no longer supported (see also {@link #isCachedStyleUpToDate()})
-     */
-    @Deprecated
-    public final short getMappaintCacheIdx() {
-        return mappaintCacheIdx;
-    }
-
-    /**
-     * Sets the mappaint cache index.
-     * @param mappaintCacheIdx mappaint cache index
-     * @deprecated no longer supported (see also {@link #declareCachedStyleUpToDate()})
-     */
-    @Deprecated
-    public final void setMappaintCacheIdx(short mappaintCacheIdx) {
-        this.mappaintCacheIdx = mappaintCacheIdx;
     }
 
     /* end of mappaint data */
