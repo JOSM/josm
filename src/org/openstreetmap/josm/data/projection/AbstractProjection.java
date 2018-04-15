@@ -119,7 +119,9 @@ public abstract class AbstractProjection implements Projection {
         // TODO: Use ILatLon in datum, so we don't need to wrap it here.
         LatLon ll = datum.fromWGS84(new LatLon(toConvert));
         double[] en = proj.project(Utils.toRadians(ll.lat()), Utils.toRadians(LatLon.normalizeLon(ll.lon() - lon0 - pm)));
-        return new EastNorth((ellps.a * k0 * en[0] + x0) / toMeter, (ellps.a * k0 * en[1] + y0) / toMeter);
+        return new EastNorth(
+                (ellps.a * k0 * en[0] + x0) / toMeter,
+                (ellps.a * k0 * en[1] + y0) / toMeter);
     }
 
     @Override
@@ -133,11 +135,13 @@ public abstract class AbstractProjection implements Projection {
         ILatLon ll = eastNorth2latlon(en, lon -> Utils.clamp(lon, -180, 180));
         Bounds bounds = getWorldBoundsLatLon();
         return new LatLon(Utils.clamp(ll.lat(), bounds.getMinLat(), bounds.getMaxLat()),
-                Utils.clamp(ll.lon(), bounds.getMinLon(), bounds.getMaxLon()));
+                          Utils.clamp(ll.lon(), bounds.getMinLon(), bounds.getMaxLon()));
     }
 
     private LatLon eastNorth2latlon(EastNorth en, DoubleUnaryOperator normalizeLon) {
-        double[] latlonRad = proj.invproject((en.east() * toMeter - x0) / ellps.a / k0, (en.north() * toMeter - y0) / ellps.a / k0);
+        double[] latlonRad = proj.invproject(
+                 (en.east() * toMeter - x0) / ellps.a / k0,
+                (en.north() * toMeter - y0) / ellps.a / k0);
         double lon = Utils.toDegrees(latlonRad[1]) + lon0 + pm;
         LatLon ll = new LatLon(Utils.toDegrees(latlonRad[0]), normalizeLon.applyAsDouble(lon));
         return datum.toWGS84(ll);
@@ -159,7 +163,7 @@ public abstract class AbstractProjection implements Projection {
                 HashMap<ProjectionBounds, Projecting> ret = new HashMap<>();
                 for (int chunk = minChunk; chunk <= maxChunk; chunk++) {
                     ret.put(new ProjectionBounds(Math.max(area.minEast, minEast + chunk * dEast), area.minNorth,
-                            Math.min(area.maxEast, maxEast + chunk * dEast), area.maxNorth),
+                                                 Math.min(area.maxEast, maxEast + chunk * dEast), area.maxNorth),
                             new ShiftedProjecting(this, new EastNorth(-chunk * dEast, 0)));
                 }
                 return ret;
