@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="16px" height="16px">
+  <defs>
+    <linearGradient id="strokeGrad" x1="0" y1="0" x2="0" y2="100%">
+      <stop offset="30%" stop-color="#777777"/>
+      <stop offset="70%" stop-color="#4f4f4f"/>
+    </linearGradient>
+    <linearGradient id="fillGrad" x1="0" y1="0" x2="100%" y2="0">
+      <stop offset="30%" stop-color="#fcfcfc"/>
+      <stop offset="70%" stop-color="#e0e0e0"/>
+    </linearGradient>
+    <g id="bar">
+      <path d="m12,0a1,1 0 0 1 1,1v1a1,1 0 0 1 -1,1h-11a1,1 0 0 1 -1,-1v-1a1,1 0 0 1 1,-1z" fill="url(#strokeGrad)"/>
+      <path d="m1,2v-1h11v1z" fill="url(#fillGrad)"/>
+    </g>
+  </defs>
+  <use xlink:href="#bar" x="2" y="1"/>
+  <use xlink:href="#bar" x="2" y="6"/>
+  <use xlink:href="#bar" x="2" y="11"/>
+</svg>
