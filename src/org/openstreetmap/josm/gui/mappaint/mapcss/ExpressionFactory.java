@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -554,7 +555,7 @@ public final class ExpressionFactory {
          * Returns the area of a closed way or multipolygon in square meters or {@code null}.
          * @param env the environment
          * @return the area of a closed way or multipolygon in square meters or {@code null}
-         * @see Geometry#computeArea(OsmPrimitive)
+         * @see Geometry#computeArea(IPrimitive)
          */
         public static Float areasize(final Environment env) { // NO_UCD (unused code)
             final Double area = Geometry.computeArea(env.osm);

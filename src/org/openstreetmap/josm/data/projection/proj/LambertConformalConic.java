@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * The angles are true in a limited area. This projection is used for the charts of North America, France and Belgium.
  * <p>
  * This implementation provides transforms for two cases of the lambert conic conformal projection:
- * <p>
+ * </p>
  * <ul>
  *   <li>{@code Lambert_Conformal_Conic_1SP} (EPSG code 9801)</li>
  *   <li>{@code Lambert_Conformal_Conic_2SP} (EPSG code 9802)</li>
@@ -32,7 +32,7 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * To use 1SP with a latitude of origin different from the SP, use the 2SP and set the SP1 to the single SP.
  * The {@code "standard_parallel_2"} parameter is optional and will be given the same value
  * as {@code "standard_parallel_1"} if not set (creating a 1 standard parallel projection).
- * <p>
+ * </p>
  * <b>References:</b>
  * <ul>
  *   <li>John P. Snyder (Map Projections - A Working Manual,<br>U.S. Geological Survey Professional Paper 1395, 1987)</li>
