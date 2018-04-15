@@ -48,7 +48,9 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.PseudoClassCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
@@ -433,6 +435,8 @@ public class MapCSSStyleSource extends StyleSource {
                     loadMeta();
                     loadCanvas();
                     loadSettings();
+                    // remove "areaStyle" pseudo classes intended only for validator (causes StackOverflowError otherwise)
+                    removeAreaStyleClasses();
                 } finally {
                     closeSourceInputStream(in);
                 }
@@ -711,6 +715,60 @@ public class MapCSSStyleSource extends StyleSource {
                 return max != null && Math.round(max) >= Version.getInstance().getVersion();
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Removes "meta" rules. Not needed for validator.
+     * @since 13633
+     */
+    public void removeMetaRules() {
+        for (Iterator<MapCSSRule> it = rules.iterator(); it.hasNext();) {
+            MapCSSRule x = it.next();
+            if (x.selector instanceof GeneralSelector) {
+                GeneralSelector gs = (GeneralSelector) x.selector;
+                if ("meta".equals(gs.base)) {
+                    it.remove();
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes "areaStyle" pseudo-classes. Only needed for validator.
+     * @since 13633
+     */
+    public void removeAreaStyleClasses() {
+        for (Iterator<MapCSSRule> it = rules.iterator(); it.hasNext();) {
+            removeAreaStyleClasses(it.next().selector);
+        }
+    }
+
+    private static void removeAreaStyleClasses(Selector sel) {
+        if (sel instanceof ChildOrParentSelector) {
+            removeAreaStyleClasses((ChildOrParentSelector) sel);
+        } else if (sel instanceof AbstractSelector) {
+            removeAreaStyleClasses((AbstractSelector) sel);
+        }
+    }
+
+    private static void removeAreaStyleClasses(ChildOrParentSelector sel) {
+        removeAreaStyleClasses(sel.left);
+        removeAreaStyleClasses(sel.right);
+    }
+
+    private static void removeAreaStyleClasses(AbstractSelector sel) {
+        if (sel.conds != null) {
+            for (Iterator<Condition> it = sel.conds.iterator(); it.hasNext();) {
+                Condition c = it.next();
+                if (c instanceof PseudoClassCondition) {
+                    PseudoClassCondition cc = (PseudoClassCondition) c;
+                    if ("areaStyle".equals(cc.method.getName())) {
+                        Logging.warn("Removing 'areaStyle' pseudo-class from "+sel+". This class is only meant for validator");
+                        it.remove();
+                    }
+                }
+            }
         }
     }
 

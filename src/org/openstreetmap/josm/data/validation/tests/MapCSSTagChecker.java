@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -375,7 +374,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             final MapCSSParser parser = new MapCSSParser(mapcss, MapCSSParser.LexicalState.DEFAULT);
             parser.sheet(source);
             // Ignore "meta" rule(s) from external rules of JOSM wiki
-            removeMetaRules(source);
+            source.removeMetaRules();
             // group rules with common declaration block
             Map<Declaration, List<Selector>> g = new LinkedHashMap<>();
             for (MapCSSRule rule : source.rules) {
@@ -398,18 +397,6 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
             }
             return new ParseResult(parseChecks, source.getErrors());
-        }
-
-        private static void removeMetaRules(MapCSSStyleSource source) {
-            for (Iterator<MapCSSRule> it = source.rules.iterator(); it.hasNext();) {
-                MapCSSRule x = it.next();
-                if (x.selector instanceof GeneralSelector) {
-                    GeneralSelector gs = (GeneralSelector) x.selector;
-                    if ("meta".equals(gs.base)) {
-                        it.remove();
-                    }
-                }
-            }
         }
 
         @Override
