@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class bridging TMS requests to JCS cache requests
@@ -44,7 +45,7 @@ import org.openstreetmap.josm.tools.Logging;
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener {
     private static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires", TimeUnit.DAYS.toMillis(30));
     private static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires", TimeUnit.HOURS.toMillis(1));
-    private static final Pattern SERVICE_EXCEPTION_PATTERN = Pattern.compile("(?s).+<ServiceException>(.+)</ServiceException>.+");
+    static final Pattern SERVICE_EXCEPTION_PATTERN = Pattern.compile("(?s).+<ServiceException[^>]*>(.+)</ServiceException>.+");
     protected final Tile tile;
     private volatile URL url;
 
@@ -279,8 +280,9 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                         String s = new String(content, StandardCharsets.UTF_8);
                         Matcher m = SERVICE_EXCEPTION_PATTERN.matcher(s);
                         if (m.matches()) {
-                            tile.setError(m.group(1));
-                            Logging.error(m.group(1));
+                            String message = Utils.strip(m.group(1));
+                            tile.setError(message);
+                            Logging.error(message);
                             Logging.debug(s);
                         } else {
                             tile.setError(tr("Could not load image from tile server"));
