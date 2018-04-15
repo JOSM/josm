@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.gui.mappaint.StyleCache;
+
 /**
  * This class can be used to save properties of OsmPrimitive.
  *
@@ -128,5 +130,25 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         keys = (String[]) ois.readObject();
         flags = ois.readShort();
         ois.defaultReadObject();
+    }
+
+    @Override
+    public StyleCache getCachedStyle() {
+        return null;
+    }
+
+    @Override
+    public void setCachedStyle(StyleCache mappaintStyle) {
+        // Override if needed
+    }
+
+    @Override
+    public boolean isCachedStyleUpToDate() {
+        return false;
+    }
+
+    @Override
+    public void declareCachedStyleUpToDate() {
+        // Override if needed
     }
 }

@@ -546,12 +546,12 @@ public class JoinAreasAction extends JosmAction {
                 }
                 commitCommands(tr("Move tags from ways to relations"));
 
-                List<Way> allWays = new ArrayList<>();
-                for (Multipolygon pol : result.polygons) {
-                    allWays.add(pol.outerWay);
-                    allWays.addAll(pol.innerWays);
-                }
-                if (ds != null) {
+                if (result.polygons != null && ds != null) {
+                    List<Way> allWays = new ArrayList<>();
+                    for (Multipolygon pol : result.polygons) {
+                        allWays.add(pol.outerWay);
+                        allWays.addAll(pol.innerWays);
+                    }
                     ds.setSelected(allWays);
                 }
             } else {

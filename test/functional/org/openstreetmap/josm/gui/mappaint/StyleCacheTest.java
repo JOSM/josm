@@ -154,9 +154,9 @@ public class StyleCacheTest {
         int noPrimitives = 0;
         for (OsmPrimitive osm : dsCity2.allPrimitives()) {
             // primitives, that have been rendered, should have the cache populated
-            if (osm.mappaintStyle != null) {
+            if (osm.getCachedStyle() != null) {
                 noPrimitives++;
-                Pair<StyleElementList, Range> p = osm.mappaintStyle.getWithRange(nc.getDist100Pixel(), false);
+                Pair<StyleElementList, Range> p = osm.getCachedStyle().getWithRange(nc.getDist100Pixel(), false);
                 StyleElementList sel = p.a;
                 Assert.assertNotNull(sel);
                 Integer k = counter.get(sel);

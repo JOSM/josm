@@ -104,6 +104,10 @@ public class ElemStyles implements PreferenceChangedListener {
         return Collections.<StyleSource>unmodifiableList(styleSources);
     }
 
+    /**
+     * Returns the background color.
+     * @return the background color
+     */
     public Color getBackgroundColor() {
         if (backgroundColorCache != null)
             return backgroundColorCache;
@@ -143,9 +147,9 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     public Pair<StyleElementList, Range> getStyleCacheWithRange(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (!osm.isCachedStyleUpToDate() || scale <= 0) {
-            osm.mappaintStyle = StyleCache.EMPTY_STYLECACHE;
+            osm.setCachedStyle(StyleCache.EMPTY_STYLECACHE);
         } else {
-            Pair<StyleElementList, Range> lst = osm.mappaintStyle.getWithRange(scale, osm.isSelected());
+            Pair<StyleElementList, Range> lst = osm.getCachedStyle().getWithRange(scale, osm.isSelected());
             if (lst.a != null)
                 return lst;
         }
@@ -190,12 +194,12 @@ public class ElemStyles implements PreferenceChangedListener {
                 p.a = new StyleElementList(p.a, line);
             }
         }
-        StyleCache style = osm.mappaintStyle != null ? osm.mappaintStyle : StyleCache.EMPTY_STYLECACHE;
+        StyleCache style = osm.getCachedStyle() != null ? osm.getCachedStyle() : StyleCache.EMPTY_STYLECACHE;
         try {
-            osm.mappaintStyle = style.put(p.a, p.b, osm.isSelected());
+            osm.setCachedStyle(style.put(p.a, p.b, osm.isSelected()));
         } catch (RangeViolatedError e) {
             throw new AssertionError("Range violated: " + e.getMessage()
-                    + " (object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
+                    + " (object: " + osm.getPrimitiveId() + ", current style: "+osm.getCachedStyle()
                     + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b + ')', e);
         }
         osm.declareCachedStyleUpToDate();
@@ -461,10 +465,18 @@ public class ElemStyles implements PreferenceChangedListener {
         return mc.getCascade("default").get(key, def, c);
     }
 
+    /**
+     * Determines whether multipolygons must be drawn.
+     * @return whether multipolygons must be drawn.
+     */
     public boolean isDrawMultipolygon() {
         return drawMultipolygon;
     }
 
+    /**
+     * Sets whether multipolygons must be drawn.
+     * @param drawMultipolygon whether multipolygons must be drawn
+     */
     public void setDrawMultipolygon(boolean drawMultipolygon) {
         this.drawMultipolygon = drawMultipolygon;
     }

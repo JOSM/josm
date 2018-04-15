@@ -10,7 +10,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  * IPrimitive captures the common functions of {@link OsmPrimitive} and {@link PrimitiveData}.
  * @since 4098
  */
-public interface IPrimitive extends Tagged, PrimitiveId {
+public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
 
     /**
      * Replies <code>true</code> if the object has been modified since it was loaded from
