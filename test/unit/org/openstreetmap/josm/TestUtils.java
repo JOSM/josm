@@ -2,12 +2,15 @@
 package org.openstreetmap.josm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Graphics2D;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -44,6 +47,8 @@ import org.openstreetmap.josm.tools.Utils;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+
+import com.google.common.io.ByteStreams;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -427,5 +432,30 @@ public final class TestUtils {
      */
     public static String getHTTPDate(long time) {
         return getHTTPDate(Instant.ofEpochMilli(time));
+    }
+
+    /**
+     * Throws AssertionError if contents of both files are not equal
+     * @param fileA File A
+     * @param fileB File B
+     */
+    public static void assertFileContentsEqual(final File fileA, final File fileB) {
+        assertTrue(fileA.exists());
+        assertTrue(fileA.canRead());
+        assertTrue(fileB.exists());
+        assertTrue(fileB.canRead());
+        try {
+            try (
+                FileInputStream streamA = new FileInputStream(fileA);
+                FileInputStream streamB = new FileInputStream(fileB);
+            ) {
+                assertArrayEquals(
+                    ByteStreams.toByteArray(streamA),
+                    ByteStreams.toByteArray(streamB)
+                );
+            }
+        } catch (IOException e) {
+            fail(e.toString());
+        }
     }
 }
