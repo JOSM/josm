@@ -279,7 +279,7 @@ public class DuplicateRelation extends Test {
         Collection<Command> commands = new LinkedList<>();
 
         // Fix relations.
-        if (relationWithRelations != null && relationToKeep != relationWithRelations) {
+        if (relationWithRelations != null && relRef != null && relationToKeep != relationWithRelations) {
             for (Relation rel : relRef) {
                 Relation newRel = new Relation(rel);
                 for (int i = 0; i < newRel.getMembers().size(); ++i) {

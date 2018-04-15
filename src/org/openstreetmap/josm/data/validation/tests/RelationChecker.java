@@ -338,8 +338,9 @@ public class RelationChecker extends Test {
 
     @Override
     public Command fixError(TestError testError) {
-        if (isFixable(testError) && !testError.getPrimitives().iterator().next().isDeleted()) {
-            return new DeleteCommand(testError.getPrimitives());
+        Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
+        if (isFixable(testError) && !primitives.iterator().next().isDeleted()) {
+            return new DeleteCommand(primitives);
         }
         return null;
     }

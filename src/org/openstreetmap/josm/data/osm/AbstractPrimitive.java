@@ -20,10 +20,10 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
-* Abstract class to represent common features of the datatypes primitives.
-*
-* @since 4099
-*/
+ * Abstract class to represent common features of the datatypes primitives.
+ *
+ * @since 4099
+ */
 public abstract class AbstractPrimitive implements IPrimitive {
 
     private static final AtomicLong idCounter = new AtomicLong(0);
