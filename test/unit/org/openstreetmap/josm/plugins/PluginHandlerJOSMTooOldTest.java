@@ -3,10 +3,8 @@ package org.openstreetmap.josm.plugins;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.List;
 
 import org.junit.Before;
@@ -18,18 +16,17 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.PluginServer;
 
-import com.google.common.io.CharStreams;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 /**
- * Test parts of {@link PluginHandler} class when the reported JOSm version is too old for the plugin.
+ * Test parts of {@link PluginHandler} class when the reported JOSM version is too old for the plugin.
  */
 public class PluginHandlerJOSMTooOldTest {
     /**
@@ -42,48 +39,24 @@ public class PluginHandlerJOSMTooOldTest {
     );
 
     /**
-     * HTTP mock.
+     * Plugin server mock.
      */
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(
-        options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot())
-    );
+    public PluginServer.PluginServerRule pluginServerRule = new PluginServer(
+        new PluginServer.RemotePlugin(new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.jar")),
+        new PluginServer.RemotePlugin(
+            new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.jar"),
+            ImmutableMap.of("Plugin-Mainversion", "1000")
+        )
+    ).asWireMockRule();
 
     @Before
     public void setUp() throws Exception {
-        try (
-            FileReader pluginListReader = new FileReader(
-                new File(TestUtils.getTestDataRoot(), "plugin/remotePluginsList")
-            );
-        ) {
-            final String pluginList = String.format(
-                CharStreams.toString(pluginListReader),
-                this.wireMockRule.port()
-            );
-
-            this.wireMockRule.stubFor(
-                WireMock.get(WireMock.urlEqualTo("/plugins")).willReturn(
-                    WireMock.aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "text/plain")
-                    .withBody(pluginList)
-                )
-            );
-            ImmutableList.of("dummy_plugin", "baz_plugin").forEach(plugin_name -> this.wireMockRule.stubFor(
-                WireMock.get(WireMock.urlEqualTo("/plugin/" + plugin_name + ".jar")).willReturn(
-                    WireMock.aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/java-archive")
-                    .withBodyFile("plugin/" + plugin_name + ".jar")
-                )
-            ));
-        }
-
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin", "baz_plugin"));
         Config.getPref().putList("pluginmanager.sites",
-            ImmutableList.of(String.format("http://localhost:%s/plugins", this.wireMockRule.port()))
+            ImmutableList.of(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
         );
     }
 
@@ -129,9 +102,9 @@ public class PluginHandlerJOSMTooOldTest {
         assertEquals(updatedPlugins.get(1).name, "dummy_plugin");
         assertEquals("31772", updatedPlugins.get(1).localversion);
 
-        this.wireMockRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        this.wireMockRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.jar")));
-        this.wireMockRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.jar")));
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.jar")));
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.jar")));
 
         assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 6000);
         // not mocking the time so just check it's not its original value
@@ -188,9 +161,9 @@ public class PluginHandlerJOSMTooOldTest {
         assertEquals(updatedPlugins.get(1).name, "dummy_plugin");
         assertEquals(null, updatedPlugins.get(1).localversion);
 
-        this.wireMockRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        this.wireMockRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.jar")));
-        this.wireMockRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.jar")));
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.jar")));
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.jar")));
 
         // shouldn't have been updated
         assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 999);
