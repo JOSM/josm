@@ -81,7 +81,7 @@ public class TransverseMercator extends AbstractProj {
     }
 
     /**
-     * Contants used for the forward and inverse transform for the eliptical
+     * Constants used for the forward and inverse transform for the elliptical
      * case of the Transverse Mercator.
      */
     private static final double FC1 = 1.00000000000000000000000,  // 1/1
@@ -100,17 +100,13 @@ public class TransverseMercator extends AbstractProj {
 
     /**
      * A derived quantity of excentricity, computed by <code>e'² = (a²-b²)/b² = es/(1-es)</code>
-     * where <var>a</var> is the semi-major axis length and <var>b</var> is the semi-minor axis
-     * length.
+     * where <var>a</var> is the semi-major axis length and <var>b</var> is the semi-minor axis length.
      */
     private double eb2;
 
     /**
      * Latitude of origin in <u>radians</u>. Default value is 0, the equator.
      * This is called '<var>phi0</var>' in Snyder.
-     * <p>
-     * <strong>Consider this field as final</strong>. It is not final only
-     * because some classes need to modify it at construction time.
      */
     protected double latitudeOfOrigin;
 
@@ -150,13 +146,12 @@ public class TransverseMercator extends AbstractProj {
         ml0 = mlfn(latitudeOfOrigin, Math.sin(latitudeOfOrigin), Math.cos(latitudeOfOrigin));
 
         if (params.gamma != null) {
-                rectifiedGridAngle = Utils.toRadians(params.gamma);
+            rectifiedGridAngle = Utils.toRadians(params.gamma);
         } else {
-                rectifiedGridAngle = 0.0;
+            rectifiedGridAngle = 0.0;
         }
         sinrot = Math.sin(rectifiedGridAngle);
         cosrot = Math.cos(rectifiedGridAngle);
-
     }
 
     @Override
@@ -219,7 +214,7 @@ public class TransverseMercator extends AbstractProj {
                 FC2 * (1.0 - ds *
                 FC4 * (5.0 + t*(3.0 - 9.0*n) + n*(1.0 - 4*n) - ds *
                 FC6 * (61.0 + t*(90.0 - 252.0*n + 45.0*t) + 46.0*n - ds *
-                FC8 * (1385.0 + t*(3633.0 + t*(4095.0 + 1574.0*t))))));
+                FC8 * (1385.0 + t*(3633.0 + t*(4095.0 + 1575.0*t))))));
 
             x = d*(FC1 - ds * FC3 * (1.0 + 2.0*t + n -
                 ds*FC5*(5.0 + t*(28.0 + 24* t + 8.0*n) + 6.0*n -
