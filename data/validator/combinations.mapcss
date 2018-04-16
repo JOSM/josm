@@ -332,13 +332,14 @@ node[amenity][amenity =~ /^(restaurant|cafe|fast_food)$/][!name][noname!=yes] {
   assertNoMatch: "node amenity=restaurant name=Foobar";
 }
 
+/* #10193, #16157 */
 way[highway][barrier],
 *[highway][waterway][waterway!=dam][waterway!=weir],
 way[highway][natural][natural!=ridge],
-*[landuse][building] {
+*[landuse][landuse!=retail][building] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
   group: tr("suspicious tag combination");
-  assertNoMatch: "node highway=street_lamp natural=birds_nest note=josm#10193";
+  assertNoMatch: "node highway=street_lamp natural=birds_nest";
 }
 
 /* #6932 */
