@@ -10,6 +10,7 @@
 -->
 <project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" xmlns:jacoco="antlib:org.jacoco.ant" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <target name="init-properties">
+        <property environment="env"/>
         <!-- Load properties in a target and not at top level, so this build file can be
         imported from an IDE ant file (Netbeans) without messing up IDE properties.
         When imported from another file, ${basedir} will point to the parent directory
@@ -18,7 +19,9 @@
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="test.dir" location="${base.dir}/test"/>
         <property name="src.dir" location="${base.dir}/src"/>
-        <property name="noJavaFX" value="0"/>
+        <condition property="noJavaFX" value="${env.JOSM_NOJAVAFX}" else="0">
+                <isset property="env.NOJAVAFX"/>
+        </condition>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
         <property name="tools.dir" location="${base.dir}/tools"/>
