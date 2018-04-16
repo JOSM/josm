@@ -20,7 +20,7 @@
         <property name="test.dir" location="${base.dir}/test"/>
         <property name="src.dir" location="${base.dir}/src"/>
         <condition property="noJavaFX" value="${env.JOSM_NOJAVAFX}" else="0">
-                <isset property="env.NOJAVAFX"/>
+                <isset property="env.JOSM_NOJAVAFX"/>
         </condition>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
