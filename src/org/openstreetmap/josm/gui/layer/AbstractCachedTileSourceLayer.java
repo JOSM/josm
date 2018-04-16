@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,7 +14,6 @@ import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  *
@@ -83,16 +81,11 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
         if (cache != null) {
             return cache;
         }
-        try {
-            cache = JCSCacheManager.getCache(getCacheName(),
-                    0,
-                    getDiskCacheSize(),
-                    CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
-            return cache;
-        } catch (IOException e) {
-            Logging.warn(e);
-            return null;
-        }
+        cache = JCSCacheManager.getCache(getCacheName(),
+                0,
+                getDiskCacheSize(),
+                CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
+        return cache;
     }
 
 
@@ -124,15 +117,10 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
      * @return cache configured object for specified cache region
      */
     public static CacheAccess<String, BufferedImageCacheEntry> getCache(String name) {
-            try {
-                return JCSCacheManager.getCache(name,
-                        0,
-                        MAX_DISK_CACHE_SIZE.get() * 1024, // MAX_DISK_CACHE_SIZE is in MB, needs to by in sync with getDiskCacheSize
-                        CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
-            } catch (IOException e) {
-                Logging.warn(e);
-                return null;
-            }
+            return JCSCacheManager.getCache(name,
+                    0,
+                    MAX_DISK_CACHE_SIZE.get() * 1024, // MAX_DISK_CACHE_SIZE is in MB, needs to by in sync with getDiskCacheSize
+                    CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
     }
 
     protected abstract Class<? extends TileLoader> getTileLoaderClass();
