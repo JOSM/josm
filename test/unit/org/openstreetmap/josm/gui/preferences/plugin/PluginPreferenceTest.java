@@ -50,7 +50,7 @@ public class PluginPreferenceTest {
      */
     public static PluginInformation getDummyPluginInformation() throws PluginException {
         return new PluginInformation(
-                new File(TestUtils.getTestDataRoot() + "plugin/dummy_plugin.jar"), "dummy_plugin");
+                new File(TestUtils.getTestDataRoot() + "__files/plugin/dummy_plugin.v31772.jar"), "dummy_plugin");
     }
 
     /**

@@ -43,10 +43,9 @@ public class PluginHandlerJOSMTooOldTest {
      */
     @Rule
     public PluginServer.PluginServerRule pluginServerRule = new PluginServer(
-        new PluginServer.RemotePlugin(new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.jar")),
+        new PluginServer.RemotePlugin(new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31772.jar")),
         new PluginServer.RemotePlugin(
-            new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.jar"),
-            ImmutableMap.of("Plugin-Mainversion", "1000")
+            new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.v7.jar")
         )
     ).asWireMockRule();
 
@@ -103,8 +102,8 @@ public class PluginHandlerJOSMTooOldTest {
         assertEquals("31772", updatedPlugins.get(1).localversion);
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.jar")));
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.jar")));
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
 
         assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 6000);
         // not mocking the time so just check it's not its original value
@@ -162,8 +161,8 @@ public class PluginHandlerJOSMTooOldTest {
         assertEquals(null, updatedPlugins.get(1).localversion);
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
-        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.jar")));
-        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.jar")));
+        this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
 
         // shouldn't have been updated
         assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 999);

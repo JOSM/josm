@@ -55,7 +55,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
      */
     @Test
     public void testUpdatePluginValid() throws Exception {
-        this.pluginPath = "plugin/dummy_plugin.jar";
+        this.pluginPath = "plugin/dummy_plugin.v31772.jar";
         this.mockHttp();
 
         final File srcPluginFile = new File(
@@ -73,7 +73,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
         }
 
         // get PluginInformation from jar file
-        final PluginInformation pluginInformation = new PluginInformation(srcPluginFile);
+        final PluginInformation pluginInformation = new PluginInformation(srcPluginFile, "dummy_plugin");
         // ...and grafting on the downloadlink
         pluginInformation.downloadlink = this.getRemoteFileUrl();
 
