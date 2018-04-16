@@ -67,13 +67,8 @@ public class ThumbsLoader implements Runnable {
      */
     private void initCache() {
         if (!cacheOff) {
-            try {
-                cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120,
-                        Config.getDirs().getCacheDirectory(true).getPath() + File.separator + "geoimage-thumbnails");
-            } catch (IOException e) {
-                Logging.warn("Failed to initialize cache for geoimage-thumbnails");
-                Logging.warn(e);
-            }
+            cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120,
+                    Config.getDirs().getCacheDirectory(true).getPath() + File.separator + "geoimage-thumbnails");
         }
     }
 

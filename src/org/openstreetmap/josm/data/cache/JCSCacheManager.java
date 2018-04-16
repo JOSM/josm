@@ -100,21 +100,26 @@ public final class JCSCacheManager {
     }
 
     @SuppressWarnings("resource")
-    private static void initialize() throws IOException {
+    private static void initialize()  {
         File cacheDir = new File(Config.getDirs().getCacheDirectory(true), "jcs");
 
-        if (!cacheDir.exists() && !cacheDir.mkdirs())
-            throw new IOException("Cannot access cache directory");
+        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+            Logging.warn("Cache directory " + cacheDir.toString() + " does not exists and could not create it");
+        } else {
+            File cacheDirLockPath = new File(cacheDir, ".lock");
+            try {
+                if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
+                    Logging.warn("Cannot create cache dir lock file");
+                }
+                cacheDirLock = FileChannel.open(cacheDirLockPath.toPath(), StandardOpenOption.WRITE).tryLock();
 
-        File cacheDirLockPath = new File(cacheDir, ".lock");
-        if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
-            Logging.warn("Cannot create cache dir lock file");
+                if (cacheDirLock == null)
+                    Logging.warn("Cannot lock cache directory. Will not use disk cache");
+            } catch (IOException e) {
+                Logging.warn("Cannot create cache dir \"" + cacheDirLockPath.toString() + "\" lock file: " + e.toString());
+                Logging.warn("Will not use disk cache");
+            }
         }
-        cacheDirLock = FileChannel.open(cacheDirLockPath.toPath(), StandardOpenOption.WRITE).tryLock();
-
-        if (cacheDirLock == null)
-            Logging.warn("Cannot lock cache directory. Will not use disk cache");
-
         // this could be moved to external file
         Properties props = new Properties();
         // these are default common to all cache regions
@@ -141,9 +146,8 @@ public final class JCSCacheManager {
      * @param <V> value type
      * @param cacheName region name
      * @return cache access object
-     * @throws IOException if directory is not found
      */
-    public static <K, V> CacheAccess<K, V> getCache(String cacheName) throws IOException {
+    public static <K, V> CacheAccess<K, V> getCache(String cacheName) {
         return getCache(cacheName, DEFAULT_MAX_OBJECTS_IN_MEMORY.get().intValue(), 0, null);
     }
 
@@ -156,10 +160,8 @@ public final class JCSCacheManager {
      * @param maxDiskObjects    maximum size of the objects stored on disk in kB
      * @param cachePath         path to disk cache. if null, no disk cache will be created
      * @return cache access object
-     * @throws IOException if directory is not found
      */
-    public static <K, V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath)
-            throws IOException {
+    public static <K, V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
         if (cacheManager != null)
             return getCacheInner(cacheName, maxMemoryObjects, maxDiskObjects, cachePath);
 
@@ -171,8 +173,7 @@ public final class JCSCacheManager {
     }
 
     @SuppressWarnings("unchecked")
-    private static <K, V> CacheAccess<K, V> getCacheInner(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath)
-            throws IOException {
+    private static <K, V> CacheAccess<K, V> getCacheInner(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
         CompositeCache<K, V> cc = cacheManager.getCache(cacheName, getCacheAttributes(maxMemoryObjects));
 
         if (cachePath != null && cacheDirLock != null) {
@@ -182,10 +183,9 @@ public final class JCSCacheManager {
                     cc.setAuxCaches(new AuxiliaryCache[]{DISK_CACHE_FACTORY.createCache(
                             diskAttributes, cacheManager, null, new StandardSerializer())});
                 }
-            } catch (IOException e) {
-                throw e;
-            } catch (Exception e) { // NOPMD
-                throw new IOException(e);
+            } catch (Exception e) {
+                // in case any error in setting auxiliary cache, do not use disk cache at all - only memory
+                cc.setAuxCaches(new AuxiliaryCache[0]);
             }
         }
         return new CacheAccess<>(cc);
