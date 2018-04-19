@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.Optional;
 
 import org.openstreetmap.josm.tools.Utils;
 
@@ -30,8 +31,8 @@ public class Handler extends URLStreamHandler {
         String pkg = pkgName.substring(0, pkgName.lastIndexOf('.'));
 
         String protocolHandlers = Utils.getSystemProperty("java.protocol.handler.pkgs");
-        if (protocolHandlers != null && !protocolHandlers.contains(pkg)) {
-            StringBuilder sb = new StringBuilder(protocolHandlers);
+        if (protocolHandlers == null || !protocolHandlers.contains(pkg)) {
+            StringBuilder sb = new StringBuilder(Optional.ofNullable(protocolHandlers).orElse(""));
             if (sb.length() > 0) {
                 sb.append('|');
             }

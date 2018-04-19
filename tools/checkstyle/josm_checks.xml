@@ -112,6 +112,7 @@ JOSM Checkstyle rules
   </module>
   <module name="FileLength">
     <property name="fileExtensions" value=".java"/>
+    <property name="max" value="2500"/>
   </module>
   <module name="FileTabCharacter"/>
   <module name="NewlineAtEndOfFile">
