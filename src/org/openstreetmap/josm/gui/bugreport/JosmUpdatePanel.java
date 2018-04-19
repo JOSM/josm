@@ -91,7 +91,7 @@ public class JosmUpdatePanel extends JPanel {
     private void showUpdateButton() {
         add(new JMultilineLabel(tr("Before you file a bug report make sure you have updated to the latest version of JOSM here:")), GBC.eol());
         add(new UrlLabel(Main.getJOSMWebsite(), 2), GBC.eop().insets(8, 0, 0, 0));
-        JButton updateButton = new JButton(tr("Update JOSM"), ImageProvider.get("download"));
+        JButton updateButton = new JButton(tr("Update JOSM"), ImageProvider.getIfAvailable("download"));
         updateButton.addActionListener(e -> openJosmUpdateSite());
         add(updateButton, GBC.eol().anchor(GBC.EAST));
     }

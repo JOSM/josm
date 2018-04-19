@@ -172,7 +172,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
             JMenuItem mi = new JMenuItem(action);
             mi.setText(label);
             if (iconName != null && Config.getPref().getBoolean("text.popupmenu.useicons", true)) {
-                ImageIcon icon = ImageProvider.get(iconName, ImageProvider.ImageSizes.SMALLICON);
+                ImageIcon icon = new ImageProvider(iconName).setOptional(true).setSize(ImageProvider.ImageSizes.SMALLICON).get();
                 if (icon != null) {
                     mi.setIcon(icon);
                 }

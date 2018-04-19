@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.io.File;
 import java.io.IOException;
@@ -217,7 +219,7 @@ public class Preferences extends AbstractPreferences {
      * @return the base name of the JOSM directories for preferences, cache and user data
      */
     public String getJOSMDirectoryBaseName() {
-        String name = System.getProperty("josm.dir.name");
+        String name = getSystemProperty("josm.dir.name");
         if (name != null)
             return name;
         else
@@ -342,14 +344,14 @@ public class Preferences extends AbstractPreferences {
         Set<String> locations = new HashSet<>();
         addPossibleResourceDir(locations, dirs.getPreferencesDirectory(false).getPath());
         addPossibleResourceDir(locations, dirs.getUserDataDirectory(false).getPath());
-        addPossibleResourceDir(locations, System.getenv("JOSM_RESOURCES"));
-        addPossibleResourceDir(locations, System.getProperty("josm.resources"));
+        addPossibleResourceDir(locations, getSystemEnv("JOSM_RESOURCES"));
+        addPossibleResourceDir(locations, getSystemProperty("josm.resources"));
         if (Main.isPlatformWindows()) {
-            String appdata = System.getenv("APPDATA");
-            if (appdata != null && System.getenv("ALLUSERSPROFILE") != null
+            String appdata = getSystemEnv("APPDATA");
+            if (appdata != null && getSystemEnv("ALLUSERSPROFILE") != null
                     && appdata.lastIndexOf(File.separator) != -1) {
                 appdata = appdata.substring(appdata.lastIndexOf(File.separator));
-                locations.add(new File(new File(System.getenv("ALLUSERSPROFILE"),
+                locations.add(new File(new File(getSystemEnv("ALLUSERSPROFILE"),
                         appdata), "JOSM").getPath());
             }
         } else {
@@ -455,6 +457,8 @@ public class Preferences extends AbstractPreferences {
         try (PreferencesWriter writer = new PreferencesWriter(
                 new PrintWriter(new File(prefFile + "_tmp"), StandardCharsets.UTF_8.name()), false, defaults)) {
             writer.write(settings);
+        } catch (SecurityException e) {
+            throw new IOException(e);
         }
 
         File tmpFile = new File(prefFile + "_tmp");
@@ -685,7 +689,13 @@ public class Preferences extends AbstractPreferences {
                 try {
                     save();
                 } catch (IOException e) {
-                    Logging.log(Logging.LEVEL_WARN, tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()), e);
+                    File file = getPreferenceFile();
+                    try {
+                        file = file.getAbsoluteFile();
+                    } catch (SecurityException ex) {
+                        Logging.trace(ex);
+                    }
+                    Logging.log(Logging.LEVEL_WARN, tr("Failed to persist preferences to ''{0}''", file), e);
                 }
             }
         }

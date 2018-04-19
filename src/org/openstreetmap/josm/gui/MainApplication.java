@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -356,8 +357,8 @@ public class MainApplication extends Main {
             ed.setMinimumSize(new Dimension(480, 300));
             ed.setIcon(JOptionPane.WARNING_MESSAGE);
             StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.",
-                    "<b>"+System.getProperty("java.version")+"</b>")).append("<br><br>");
-            if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor")) && !platform.isOpenJDK()) {
+                    "<b>"+getSystemProperty("java.version")+"</b>")).append("<br><br>");
+            if ("Sun Microsystems Inc.".equals(getSystemProperty("java.vendor")) && !platform.isOpenJDK()) {
                 content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
                         "Oracle", eolDate)).append("</b><br><br>");
             }
@@ -420,7 +421,7 @@ public class MainApplication extends Main {
                     // if it goes wrong that's not critical at this stage.
                     try {
                         OsmApi.getOsmApi().initialize(null, true);
-                    } catch (OsmTransferCanceledException | OsmApiInitializationException e) {
+                    } catch (OsmTransferCanceledException | OsmApiInitializationException | SecurityException e) {
                         Logging.warn(Logging.getErrorMessage(Utils.getRootCause(e)));
                     }
                 }),
@@ -484,7 +485,11 @@ public class MainApplication extends Main {
     @Override
     protected void shutdown() {
         if (!GraphicsEnvironment.isHeadless()) {
-            worker.shutdown();
+            try {
+                worker.shutdown();
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
+            }
             JCSCacheManager.shutdown();
         }
         if (mainFrame != null) {
@@ -497,7 +502,11 @@ public class MainApplication extends Main {
         layerManager.resetState();
         super.shutdown();
         if (!GraphicsEnvironment.isHeadless()) {
-            worker.shutdownNow();
+            try {
+                worker.shutdownNow();
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
+            }
         }
     }
 
@@ -871,22 +880,30 @@ public class MainApplication extends Main {
         Optional<String> language = args.getSingle(Option.LANGUAGE);
         I18n.set(language.orElse(null));
 
-        Policy.setPolicy(new Policy() {
-            // Permissions for plug-ins loaded when josm is started via webstart
-            private PermissionCollection pc;
+        try {
+            Policy.setPolicy(new Policy() {
+                // Permissions for plug-ins loaded when josm is started via webstart
+                private PermissionCollection pc;
 
-            {
-                pc = new Permissions();
-                pc.add(new AllPermission());
-            }
+                {
+                    pc = new Permissions();
+                    pc.add(new AllPermission());
+                }
 
-            @Override
-            public PermissionCollection getPermissions(CodeSource codesource) {
-                return pc;
-            }
-        });
+                @Override
+                public PermissionCollection getPermissions(CodeSource codesource) {
+                    return pc;
+                }
+            });
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to set permissions", e);
+        }
 
-        Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
+        try {
+            Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to set uncaught exception handler", e);
+        }
 
         // initialize the platform hook, and
         Main.determinePlatformHook();
@@ -916,7 +933,11 @@ public class MainApplication extends Main {
             Logging.info(tr("Enabled detailed debug level (trace)"));
         }
 
-        Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
+        try {
+            Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to initialize preferences", e);
+        }
 
         args.getPreferencesToSet().forEach(Main.pref::put);
 
@@ -978,9 +999,24 @@ public class MainApplication extends Main {
             Logging.warn(ex);
             Logging.warn(Logging.getErrorMessage(Utils.getRootCause(ex)));
         }
-        Authenticator.setDefault(DefaultAuthenticator.getInstance());
-        DefaultProxySelector proxySelector = new DefaultProxySelector(ProxySelector.getDefault());
-        ProxySelector.setDefault(proxySelector);
+        try {
+            Authenticator.setDefault(DefaultAuthenticator.getInstance());
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to set default authenticator", e);
+        }
+        DefaultProxySelector proxySelector = null;
+        try {
+            proxySelector = new DefaultProxySelector(ProxySelector.getDefault());
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to get default proxy selector", e);
+        }
+        try {
+            if (proxySelector != null) {
+                ProxySelector.setDefault(proxySelector);
+            }
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to set default proxy selector", e);
+        }
         OAuthAccessTokenHolder.getInstance().init(CredentialsManager.getInstance());
 
         setupCallbacks();
@@ -1092,7 +1128,7 @@ public class MainApplication extends Main {
                 field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
             } catch (ReflectiveOperationException | RuntimeException e) { // NOPMD
                 // Catch RuntimeException in order to catch InaccessibleObjectException, new in Java 9
-                Logging.warn(e);
+                Logging.log(Logging.LEVEL_WARN, null, e);
             }
         }
         // Possibility to disable SNI (not by default) in case of misconfigured https servers
@@ -1119,7 +1155,7 @@ public class MainApplication extends Main {
     static void applyWorkarounds() {
         // Workaround for JDK-8180379: crash on Windows 10 1703 with Windows L&F and java < 8u141 / 9+172
         // To remove during Java 9 migration
-        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
+        if (getSystemProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
                 platform.getDefaultStyle().equals(LafPreference.LAF.get())) {
             try {
                 final int currentBuild = Integer.parseInt(PlatformHookWindows.getCurrentBuild());
@@ -1134,6 +1170,8 @@ public class MainApplication extends Main {
                 }
             } catch (NumberFormatException | ReflectiveOperationException | JosmRuntimeException e) {
                 Logging.error(e);
+            } catch (ExceptionInInitializerError e) {
+                Logging.log(Logging.LEVEL_ERROR, null, e);
             }
         }
     }
@@ -1195,9 +1233,9 @@ public class MainApplication extends Main {
             Logging.error(e);
         }
 
-        UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
+        UIManager.put("OptionPane.okIcon", ImageProvider.getIfAvailable("ok"));
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
-        UIManager.put("OptionPane.cancelIcon", ImageProvider.get("cancel"));
+        UIManager.put("OptionPane.cancelIcon", ImageProvider.getIfAvailable("cancel"));
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
         // Ensures caret color is the same than text foreground color, see #12257
         // See http://docs.oracle.com/javase/8/docs/api/javax/swing/plaf/synth/doc-files/componentProperties.html
@@ -1227,7 +1265,11 @@ public class MainApplication extends Main {
         }
 
         monitor.indeterminateSubTask(tr("Installing updated plugins"));
-        PluginHandler.installDownloadedPlugins(pluginsToLoad, true);
+        try {
+            PluginHandler.installDownloadedPlugins(pluginsToLoad, true);
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to install plugins", e);
+        }
 
         monitor.indeterminateSubTask(tr("Loading early plugins"));
         PluginHandler.loadEarlyPlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
@@ -1403,7 +1445,11 @@ public class MainApplication extends Main {
                         autosaveTask.discardUnsavedLayers();
                     }
                 }
-                autosaveTask.schedule();
+                try {
+                    autosaveTask.schedule();
+                } catch (SecurityException e) {
+                    Logging.log(Logging.LEVEL_ERROR, "Unable to schedule autosave!", e);
+                }
             }
         }
 
@@ -1425,7 +1471,8 @@ public class MainApplication extends Main {
         }
 
         private boolean handleProxyErrors() {
-            return handleNetworkOrProxyErrors(proxySelector.hasErrors(), tr("Proxy errors occurred"),
+            return proxySelector != null &&
+                handleNetworkOrProxyErrors(proxySelector.hasErrors(), tr("Proxy errors occurred"),
                     tr("JOSM tried to access the following resources:<br>" +
                             "{0}" +
                             "but <b>failed</b> to do so, because of the following proxy errors:<br>" +

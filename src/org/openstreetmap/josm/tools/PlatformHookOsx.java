@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.Desktop;
 import java.awt.Image;
@@ -392,7 +393,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
     @Override
     public String getOSDescription() {
-        return System.getProperty("os.name") + ' ' + System.getProperty("os.version");
+        return getSystemProperty("os.name") + ' ' + getSystemProperty("os.version");
     }
 
     private String buildOSBuildNumber() {
@@ -420,19 +421,19 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
     @Override
     public File getDefaultCacheDirectory() {
-        return new File(System.getProperty("user.home")+"/Library/Caches",
+        return new File(getSystemProperty("user.home")+"/Library/Caches",
                 Main.pref.getJOSMDirectoryBaseName());
     }
 
     @Override
     public File getDefaultPrefDirectory() {
-        return new File(System.getProperty("user.home")+"/Library/Preferences",
+        return new File(getSystemProperty("user.home")+"/Library/Preferences",
                 Main.pref.getJOSMDirectoryBaseName());
     }
 
     @Override
     public File getDefaultUserDataDirectory() {
-        return new File(System.getProperty("user.home")+"/Library",
+        return new File(getSystemProperty("user.home")+"/Library",
                 Main.pref.getJOSMDirectoryBaseName());
     }
 

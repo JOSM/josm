@@ -204,8 +204,8 @@ public abstract class CacheCustomContent<T extends Throwable> {
         try (BufferedOutputStream output = new BufferedOutputStream(Files.newOutputStream(path.toPath()))) {
             output.write(this.data);
             output.flush();
-        } catch (IOException | InvalidPathException e) {
-            Logging.error(e);
+        } catch (IOException | InvalidPathException | SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to save data", e);
         }
     }
 

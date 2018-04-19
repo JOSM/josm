@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the default proxy selector used in JOSM.
@@ -58,7 +59,7 @@ public class DefaultProxySelector extends ProxySelector {
      */
     private static boolean jvmWillUseSystemProxies;
     static {
-        String v = System.getProperty("java.net.useSystemProxies");
+        String v = Utils.getSystemProperty("java.net.useSystemProxies");
         if (v != null && v.equals(Boolean.TRUE.toString())) {
             jvmWillUseSystemProxies = true;
         }

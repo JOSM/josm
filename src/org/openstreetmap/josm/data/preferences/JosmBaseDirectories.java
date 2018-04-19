@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.io.File;
 
@@ -26,6 +27,10 @@ public final class JosmBaseDirectories implements IBaseDirectories {
         static final JosmBaseDirectories INSTANCE = new JosmBaseDirectories();
     }
 
+    /**
+     * Returns the unique instance.
+     * @return the unique instance
+     */
     public static JosmBaseDirectories getInstance() {
         return InstanceHolder.INSTANCE;
     }
@@ -48,12 +53,11 @@ public final class JosmBaseDirectories implements IBaseDirectories {
     @Override
     public File getPreferencesDirectory(boolean createIfMissing) {
         if (preferencesDir == null) {
-            String path;
-            path = System.getProperty("josm.pref");
+            String path = getSystemProperty("josm.pref");
             if (path != null) {
                 preferencesDir = new File(path).getAbsoluteFile();
             } else {
-                path = System.getProperty("josm.home");
+                path = getSystemProperty("josm.home");
                 if (path != null) {
                     preferencesDir = new File(path).getAbsoluteFile();
                 } else {
@@ -61,14 +65,18 @@ public final class JosmBaseDirectories implements IBaseDirectories {
                 }
             }
         }
-        if (createIfMissing && !preferencesDir.exists() && !preferencesDir.mkdirs()) {
-            Logging.warn(tr("Failed to create missing preferences directory: {0}", preferencesDir.getAbsoluteFile()));
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Failed to create missing preferences directory: {0}</html>", preferencesDir.getAbsoluteFile()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
+        try {
+            if (createIfMissing && !preferencesDir.exists() && !preferencesDir.mkdirs()) {
+                Logging.warn(tr("Failed to create missing preferences directory: {0}", preferencesDir.getAbsoluteFile()));
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Failed to create missing preferences directory: {0}</html>", preferencesDir.getAbsoluteFile()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to check if preferences dir must be created", e);
         }
         return preferencesDir;
     }
@@ -76,12 +84,11 @@ public final class JosmBaseDirectories implements IBaseDirectories {
     @Override
     public File getUserDataDirectory(boolean createIfMissing) {
         if (userdataDir == null) {
-            String path;
-            path = System.getProperty("josm.userdata");
+            String path = getSystemProperty("josm.userdata");
             if (path != null) {
                 userdataDir = new File(path).getAbsoluteFile();
             } else {
-                path = System.getProperty("josm.home");
+                path = getSystemProperty("josm.home");
                 if (path != null) {
                     userdataDir = new File(path).getAbsoluteFile();
                 } else {
@@ -89,14 +96,18 @@ public final class JosmBaseDirectories implements IBaseDirectories {
                 }
             }
         }
-        if (createIfMissing && !userdataDir.exists() && !userdataDir.mkdirs()) {
-            Logging.warn(tr("Failed to create missing user data directory: {0}", userdataDir.getAbsoluteFile()));
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Failed to create missing user data directory: {0}</html>", userdataDir.getAbsoluteFile()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
+        try {
+            if (createIfMissing && !userdataDir.exists() && !userdataDir.mkdirs()) {
+                Logging.warn(tr("Failed to create missing user data directory: {0}", userdataDir.getAbsoluteFile()));
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Failed to create missing user data directory: {0}</html>", userdataDir.getAbsoluteFile()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to check if user data dir must be created", e);
         }
         return userdataDir;
     }
@@ -104,11 +115,11 @@ public final class JosmBaseDirectories implements IBaseDirectories {
     @Override
     public File getCacheDirectory(boolean createIfMissing) {
         if (cacheDir == null) {
-            String path = System.getProperty("josm.cache");
+            String path = getSystemProperty("josm.cache");
             if (path != null) {
                 cacheDir = new File(path).getAbsoluteFile();
             } else {
-                path = System.getProperty("josm.home");
+                path = getSystemProperty("josm.home");
                 if (path != null) {
                     cacheDir = new File(path, "cache");
                 } else {
@@ -121,14 +132,18 @@ public final class JosmBaseDirectories implements IBaseDirectories {
                 }
             }
         }
-        if (createIfMissing && !cacheDir.exists() && !cacheDir.mkdirs()) {
-            Logging.warn(tr("Failed to create missing cache directory: {0}", cacheDir.getAbsoluteFile()));
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Failed to create missing cache directory: {0}</html>", cacheDir.getAbsoluteFile()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
+        try {
+            if (createIfMissing && !cacheDir.exists() && !cacheDir.mkdirs()) {
+                Logging.warn(tr("Failed to create missing cache directory: {0}", cacheDir.getAbsoluteFile()));
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Failed to create missing cache directory: {0}</html>", cacheDir.getAbsoluteFile()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to check if cache dir must be created", e);
         }
         return cacheDir;
     }

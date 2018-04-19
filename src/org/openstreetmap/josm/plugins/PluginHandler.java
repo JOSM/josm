@@ -964,7 +964,7 @@ public final class PluginHandler {
             monitor.beginTask(tr("Determining plugins to load..."));
             Set<String> plugins = new HashSet<>(Config.getPref().getList("plugins", new LinkedList<String>()));
             Logging.debug("Plugins list initialized to {0}", plugins);
-            String systemProp = System.getProperty("josm.plugins");
+            String systemProp = Utils.getSystemProperty("josm.plugins");
             if (systemProp != null) {
                 plugins.addAll(Arrays.asList(systemProp.split(",")));
                 Logging.debug("josm.plugins system property set to '{0}'. Plugins list is now {1}", systemProp, plugins);

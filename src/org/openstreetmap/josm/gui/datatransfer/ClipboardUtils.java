@@ -48,8 +48,8 @@ public final class ClipboardUtils {
         if (clipboard == null) {
             try {
                 clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            } catch (HeadlessException e) {
-                Logging.warn("Headless. Using fake clipboard.", e);
+            } catch (HeadlessException | SecurityException e) {
+                Logging.warn("Using fake clipboard.", e);
                 clipboard = new Clipboard("fake");
             }
         }

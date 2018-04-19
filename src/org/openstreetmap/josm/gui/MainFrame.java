@@ -16,6 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -81,13 +82,13 @@ public class MainFrame extends JFrame {
         setJMenuBar(menu);
         geometry.applySafe(this);
         List<Image> l = new LinkedList<>();
-        l.add(ImageProvider.get("logo_16x16x32").getImage());
-        l.add(ImageProvider.get("logo_16x16x8").getImage());
-        l.add(ImageProvider.get("logo_32x32x32").getImage());
-        l.add(ImageProvider.get("logo_32x32x8").getImage());
-        l.add(ImageProvider.get("logo_48x48x32").getImage());
-        l.add(ImageProvider.get("logo_48x48x8").getImage());
-        l.add(ImageProvider.get("logo").getImage());
+        for (String file : new String[] {
+                "logo_16x16x32", "logo_16x16x8", "logo_32x32x32", "logo_32x32x8", "logo_48x48x32", "logo_48x48x8", "logo"}) {
+            ImageIcon img = ImageProvider.getIfAvailable(file);
+            if (img != null) {
+                l.add(img.getImage());
+            }
+        }
         setIconImages(l);
         addWindowListener(new ExitWindowAdapter());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

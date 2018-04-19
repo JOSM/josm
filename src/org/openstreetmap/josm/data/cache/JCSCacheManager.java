@@ -61,38 +61,42 @@ public final class JCSCacheManager {
         // raising logging level gives ~500x performance gain
         // http://westsworld.dk/blog/2008/01/jcs-and-performance/
         jcsLog = Logger.getLogger("org.apache.commons.jcs");
-        jcsLog.setLevel(Level.INFO);
-        jcsLog.setUseParentHandlers(false);
-        // we need a separate handler from Main's, as we downgrade LEVEL.INFO to DEBUG level
-        Arrays.stream(jcsLog.getHandlers()).forEach(jcsLog::removeHandler);
-        jcsLog.addHandler(new Handler() {
-            final SimpleFormatter formatter = new SimpleFormatter();
+        try {
+            jcsLog.setLevel(Level.INFO);
+            jcsLog.setUseParentHandlers(false);
+            // we need a separate handler from Main's, as we downgrade LEVEL.INFO to DEBUG level
+            Arrays.stream(jcsLog.getHandlers()).forEach(jcsLog::removeHandler);
+            jcsLog.addHandler(new Handler() {
+                final SimpleFormatter formatter = new SimpleFormatter();
 
-            @Override
-            public void publish(LogRecord record) {
-                String msg = formatter.formatMessage(record);
-                if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
-                    Logging.error(msg);
-                } else if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
-                    Logging.warn(msg);
-                    // downgrade INFO level to debug, as JCS is too verbose at INFO level
-                } else if (record.getLevel().intValue() >= Level.INFO.intValue()) {
-                    Logging.debug(msg);
-                } else {
-                    Logging.trace(msg);
+                @Override
+                public void publish(LogRecord record) {
+                    String msg = formatter.formatMessage(record);
+                    if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
+                        Logging.error(msg);
+                    } else if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
+                        Logging.warn(msg);
+                        // downgrade INFO level to debug, as JCS is too verbose at INFO level
+                    } else if (record.getLevel().intValue() >= Level.INFO.intValue()) {
+                        Logging.debug(msg);
+                    } else {
+                        Logging.trace(msg);
+                    }
                 }
-            }
 
-            @Override
-            public void flush() {
-                // nothing to be done on flush
-            }
+                @Override
+                public void flush() {
+                    // nothing to be done on flush
+                }
 
-            @Override
-            public void close() {
-                // nothing to be done on close
-            }
-        });
+                @Override
+                public void close() {
+                    // nothing to be done on close
+                }
+            });
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to configure JCS logs", e);
+        }
     }
 
     private JCSCacheManager() {
@@ -100,7 +104,7 @@ public final class JCSCacheManager {
     }
 
     @SuppressWarnings("resource")
-    private static void initialize()  {
+    private static void initialize() {
         File cacheDir = new File(Config.getDirs().getCacheDirectory(true), "jcs");
 
         if (!cacheDir.exists() && !cacheDir.mkdirs()) {
@@ -123,7 +127,7 @@ public final class JCSCacheManager {
         // this could be moved to external file
         Properties props = new Properties();
         // these are default common to all cache regions
-        // use of auxiliary cache and sizing of the caches is done with giving proper geCache(...) params
+        // use of auxiliary cache and sizing of the caches is done with giving proper getCache(...) params
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         props.setProperty("jcs.default.cacheattributes",                      CompositeCacheAttributes.class.getCanonicalName());
         props.setProperty("jcs.default.cacheattributes.MaxObjects",           DEFAULT_MAX_OBJECTS_IN_MEMORY.get().toString());

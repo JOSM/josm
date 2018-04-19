@@ -222,7 +222,7 @@ public abstract class StyleSource extends SourceEntry {
         } else if (!getWarnings().isEmpty()) {
             i = new ImageProvider(i).addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1, 1));
         }
-        return i;
+        return i.setOptional(true);
     }
 
     /**

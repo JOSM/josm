@@ -281,7 +281,11 @@ public class CachedFile implements Closeable {
                     cacheFile = new File(name.substring("file://".length() - 1));
                 }
             } else {
-                cacheFile = checkLocal(url);
+                try {
+                    cacheFile = checkLocal(url);
+                } catch (SecurityException e) {
+                    throw new IOException(e);
+                }
             }
         } catch (MalformedURLException e) {
             if (name == null || name.startsWith("resource://")) {

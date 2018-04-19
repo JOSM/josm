@@ -159,8 +159,8 @@ public final class StructUtils {
             if (f.getAnnotation(StructEntry.class) == null) {
                 continue;
             }
-            Utils.setObjectsAccessible(f);
             try {
+                Utils.setObjectsAccessible(f);
                 Object fieldValue = f.get(struct);
                 Object defaultFieldValue = f.get(structPrototype);
                 if (fieldValue != null && (
@@ -175,7 +175,7 @@ public final class StructUtils {
                         hash.put(key, fieldValue.toString());
                     }
                 }
-            } catch (IllegalAccessException ex) {
+            } catch (IllegalAccessException | SecurityException ex) {
                 throw new JosmRuntimeException(ex);
             }
         }

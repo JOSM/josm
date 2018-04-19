@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -39,10 +40,10 @@ public class ReportedException extends RuntimeException {
     private static final long serialVersionUID = 737333873766201033L;
 
     /**
-     * We capture all stack traces on exception creation. This allows us to trace synchonization problems better. We cannot be really sure what
-     * happened but we at least see which threads
+     * We capture all stack traces on exception creation. This allows us to trace synchonization problems better.
+     * We cannot be really sure what happened but we at least see which threads
      */
-    private final transient Map<Thread, StackTraceElement[]> allStackTraces;
+    private final transient Map<Thread, StackTraceElement[]> allStackTraces = new HashMap<>();
     private final LinkedList<Section> sections = new LinkedList<>();
     private final transient Thread caughtOnThread;
     private String methodWarningFrom;
@@ -54,7 +55,11 @@ public class ReportedException extends RuntimeException {
     ReportedException(Throwable exception, Thread caughtOnThread) {
         super(exception);
 
-        allStackTraces = Thread.getAllStackTraces();
+        try {
+            allStackTraces.putAll(Thread.getAllStackTraces());
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to get thread stack traces", e);
+        }
         this.caughtOnThread = caughtOnThread;
     }
 

@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -363,7 +364,10 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close this dialog and resume editing in JOSM"));
-            new ImageProvider("cancel").getResource().attachImageIcon(this, true);
+            ImageResource resource = new ImageProvider("cancel").setOptional(true).getResource();
+            if (resource != null) {
+                resource.attachImageIcon(this, true);
+            }
             InputMapUtils.addEscapeAction(getRootPane(), this);
         }
 
@@ -397,20 +401,26 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 case EXIT:
                     putValue(NAME, tr("Exit now!"));
                     putValue(SHORT_DESCRIPTION, tr("Exit JOSM without saving. Unsaved changes are lost."));
-                    new ImageProvider("exit").getResource().attachImageIcon(this, true);
+                    attachImageIcon(new ImageProvider("exit"));
                     break;
                 case RESTART:
                     putValue(NAME, tr("Restart now!"));
                     putValue(SHORT_DESCRIPTION, tr("Restart JOSM without saving. Unsaved changes are lost."));
-                    new ImageProvider("restart").getResource().attachImageIcon(this, true);
+                    attachImageIcon(new ImageProvider("restart"));
                     break;
                 case DELETE:
                     putValue(NAME, tr("Delete now!"));
                     putValue(SHORT_DESCRIPTION, tr("Delete layers without saving. Unsaved changes are lost."));
-                    new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
+                    attachImageIcon(new ImageProvider("dialogs", "delete"));
                     break;
             }
+        }
 
+        private void attachImageIcon(ImageProvider provider) {
+            ImageResource resource = provider.setOptional(true).getResource();
+            if (resource != null) {
+                resource.attachImageIcon(this, true);
+            }
         }
 
         @Override
@@ -464,7 +474,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         }
 
         Image getImage(String name, boolean disabled) {
-            ImageIcon img = new ImageProvider(name).setDisabled(disabled).get();
+            ImageIcon img = new ImageProvider(name).setDisabled(disabled).setOptional(true).get();
             return img != null ? img.getImage() : null;
         }
 
@@ -473,30 +483,32 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 case EXIT:
                     putValue(NAME, tr("Perform actions before exiting"));
                     putValue(SHORT_DESCRIPTION, tr("Exit JOSM with saving. Unsaved changes are uploaded and/or saved."));
-                    putValue(BASE_ICON, ImageProvider.get("exit"));
+                    putValue(BASE_ICON, ImageProvider.getIfAvailable("exit"));
                     break;
                 case RESTART:
                     putValue(NAME, tr("Perform actions before restarting"));
                     putValue(SHORT_DESCRIPTION, tr("Restart JOSM with saving. Unsaved changes are uploaded and/or saved."));
-                    putValue(BASE_ICON, ImageProvider.get("restart"));
+                    putValue(BASE_ICON, ImageProvider.getIfAvailable("restart"));
                     break;
                 case DELETE:
                     putValue(NAME, tr("Perform actions before deleting"));
                     putValue(SHORT_DESCRIPTION, tr("Save/Upload layers before deleting. Unsaved changes are not lost."));
-                    putValue(BASE_ICON, ImageProvider.get("dialogs", "delete"));
+                    putValue(BASE_ICON, ImageProvider.getIfAvailable("dialogs", "delete"));
                     break;
             }
             redrawIcon();
         }
 
         public void redrawIcon() {
-            Image base = ((ImageIcon) getValue(BASE_ICON)).getImage();
+            ImageIcon base = ((ImageIcon) getValue(BASE_ICON));
             BufferedImage newIco = new BufferedImage(ICON_SIZE*3, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D g = newIco.createGraphics();
             // CHECKSTYLE.OFF: SingleSpaceSeparator
             g.drawImage(model.getLayersToUpload().isEmpty() ? upldDis : upld, ICON_SIZE*0, 0, ICON_SIZE, ICON_SIZE, null);
             g.drawImage(model.getLayersToSave().isEmpty()   ? saveDis : save, ICON_SIZE*1, 0, ICON_SIZE, ICON_SIZE, null);
-            g.drawImage(base,                                                 ICON_SIZE*2, 0, ICON_SIZE, ICON_SIZE, null);
+            if (base != null) {
+                g.drawImage(base.getImage(),                                  ICON_SIZE*2, 0, ICON_SIZE, ICON_SIZE, null);
+            }
             // CHECKSTYLE.ON: SingleSpaceSeparator
             putValue(SMALL_ICON, new ImageIcon(newIco));
         }

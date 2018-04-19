@@ -32,6 +32,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
 
 /**
@@ -84,7 +85,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
         }
 
         private final int myVersion = Version.getInstance().getVersion();
-        private final String myJava = System.getProperty("java.version");
+        private final String myJava = Utils.getSystemProperty("java.version");
         private final String myLang = LanguageInfo.getWikiLanguagePrefix();
 
         /**

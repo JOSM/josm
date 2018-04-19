@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -382,35 +383,39 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
      */
     public List<File> getUnsavedLayersFiles() {
         List<File> result = new ArrayList<>();
-        File[] files = autosaveDir.listFiles((FileFilter)
-                pathname -> OsmImporter.FILE_FILTER.accept(pathname) || NoteImporter.FILE_FILTER.accept(pathname));
-        if (files == null)
-            return result;
-        for (File file: files) {
-            if (file.isFile()) {
-                boolean skipFile = false;
-                File pidFile = getPidFile(file);
-                if (pidFile.exists()) {
-                    try (BufferedReader reader = Files.newBufferedReader(pidFile.toPath(), StandardCharsets.UTF_8)) {
-                        String jvmId = reader.readLine();
-                        if (jvmId != null) {
-                            String pid = jvmId.split("@")[0];
-                            skipFile = jvmPerfDataFileExists(pid);
+        try {
+            File[] files = autosaveDir.listFiles((FileFilter)
+                    pathname -> OsmImporter.FILE_FILTER.accept(pathname) || NoteImporter.FILE_FILTER.accept(pathname));
+            if (files == null)
+                return result;
+            for (File file: files) {
+                if (file.isFile()) {
+                    boolean skipFile = false;
+                    File pidFile = getPidFile(file);
+                    if (pidFile.exists()) {
+                        try (BufferedReader reader = Files.newBufferedReader(pidFile.toPath(), StandardCharsets.UTF_8)) {
+                            String jvmId = reader.readLine();
+                            if (jvmId != null) {
+                                String pid = jvmId.split("@")[0];
+                                skipFile = jvmPerfDataFileExists(pid);
+                            }
+                        } catch (IOException | SecurityException t) {
+                            Logging.error(t);
                         }
-                    } catch (IOException | SecurityException t) {
-                        Logging.error(t);
+                    }
+                    if (!skipFile) {
+                        result.add(file);
                     }
                 }
-                if (!skipFile) {
-                    result.add(file);
-                }
             }
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to list unsaved layers files", e);
         }
         return result;
     }
 
     private static boolean jvmPerfDataFileExists(final String jvmId) {
-        File jvmDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "hsperfdata_" + System.getProperty("user.name"));
+        File jvmDir = new File(getSystemProperty("java.io.tmpdir") + File.separator + "hsperfdata_" + getSystemProperty("user.name"));
         if (jvmDir.exists() && jvmDir.canRead()) {
             File[] files = jvmDir.listFiles((FileFilter) file -> file.getName().equals(jvmId) && file.isFile());
             return files != null && files.length == 1;
