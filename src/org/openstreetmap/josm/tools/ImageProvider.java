@@ -1655,7 +1655,7 @@ public class ImageProvider {
             throw new IIOException("Can't read input file!");
         }
 
-        ImageInputStream stream = ImageIO.createImageInputStream(input);
+        ImageInputStream stream = createImageInputStream(input);
         if (stream == null) {
             throw new IIOException("Can't create an ImageInputStream!");
         }
@@ -1705,7 +1705,7 @@ public class ImageProvider {
     public static BufferedImage read(InputStream input, boolean readMetadata, boolean enforceTransparency) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(input, "input");
 
-        ImageInputStream stream = ImageIO.createImageInputStream(input);
+        ImageInputStream stream = createImageInputStream(input);
         BufferedImage bi = read(stream, readMetadata, enforceTransparency);
         if (bi == null) {
             stream.close();
@@ -1749,7 +1749,7 @@ public class ImageProvider {
         CheckParameterUtil.ensureParameterNotNull(input, "input");
 
         try (InputStream istream = Utils.openStream(input)) {
-            ImageInputStream stream = ImageIO.createImageInputStream(istream);
+            ImageInputStream stream = createImageInputStream(istream);
             BufferedImage bi = read(stream, readMetadata, enforceTransparency);
             if (bi == null) {
                 stream.close();
@@ -2014,5 +2014,17 @@ public class ImageProvider {
             g2.dispose();
         }
         return buffImage;
+    }
+
+    private static ImageInputStream createImageInputStream(Object input) throws IOException {
+        try {
+            return ImageIO.createImageInputStream(input);
+        } catch (SecurityException e) {
+            if (ImageIO.getUseCache()) {
+                ImageIO.setUseCache(false);
+                return ImageIO.createImageInputStream(input);
+            }
+            throw new IOException(e);
+        }
     }
 }
