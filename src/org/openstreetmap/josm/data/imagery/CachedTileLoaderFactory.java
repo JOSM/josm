@@ -47,7 +47,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
                     int.class,
                     Map.class);
         } catch (NoSuchMethodException | SecurityException e) {
-            Logging.warn(e);
+            Logging.log(Logging.LEVEL_WARN, "Unable to initialize cache tile loader factory", e);
             throw new IllegalArgumentException(e);
         }
     }
@@ -57,7 +57,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
         try {
             defPath = new File(Config.getDirs().getCacheDirectory(true), "tiles").getAbsolutePath();
         } catch (SecurityException e) {
-            Logging.warn(e);
+            Logging.log(Logging.LEVEL_WARN, "Unable to get tile cache directory", e);
         }
         return new StringProperty("imagery.generic.loader.cachedir", defPath);
     }

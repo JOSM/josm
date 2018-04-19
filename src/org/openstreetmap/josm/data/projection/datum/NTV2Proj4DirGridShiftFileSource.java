@@ -13,6 +13,7 @@ import java.util.List;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Platform;
 import org.openstreetmap.josm.tools.PlatformVisitor;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Shift file source that scans the common data directories of the proj4 library.
@@ -50,7 +51,7 @@ public final class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileS
         }
         // If not, search into PROJ_LIB directory
         if (grid == null) {
-            String projLib = System.getProperty("PROJ_LIB");
+            String projLib = Utils.getSystemProperty("PROJ_LIB");
             if (projLib != null && !projLib.isEmpty()) {
                 File dir = new File(projLib);
                 if (dir.exists() && dir.isDirectory()) {

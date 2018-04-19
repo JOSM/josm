@@ -26,6 +26,8 @@ import static java.awt.event.KeyEvent.VK_X;
 import static java.awt.event.KeyEvent.VK_Y;
 import static java.awt.event.KeyEvent.VK_Z;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 import static org.openstreetmap.josm.tools.WinRegistry.HKEY_LOCAL_MACHINE;
 
 import java.awt.GraphicsEnvironment;
@@ -269,8 +271,8 @@ public class PlatformHookWindows implements PlatformHook {
 
     @Override
     public String getOSDescription() {
-        return Utils.strip(System.getProperty("os.name")) + ' ' +
-                ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
+        return Utils.strip(getSystemProperty("os.name")) + ' ' +
+                ((getSystemEnv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
     }
 
     /**
@@ -315,8 +317,9 @@ public class PlatformHookWindows implements PlatformHook {
                 sb.append(' ').append(releaseId);
             }
             sb.append(" (").append(getCurrentBuild()).append(')');
-        } catch (ReflectiveOperationException | JosmRuntimeException e) {
-            Logging.error(e);
+        } catch (ReflectiveOperationException | JosmRuntimeException | NoClassDefFoundError e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to get Windows build number", e);
+            Logging.debug(e);
         }
         return sb.toString();
     }
@@ -472,17 +475,17 @@ public class PlatformHookWindows implements PlatformHook {
 
     @Override
     public File getDefaultCacheDirectory() {
-        String p = System.getenv("LOCALAPPDATA");
+        String p = getSystemEnv("LOCALAPPDATA");
         if (p == null || p.isEmpty()) {
             // Fallback for Windows OS earlier than Windows Vista, where the variable is not defined
-            p = System.getenv("APPDATA");
+            p = getSystemEnv("APPDATA");
         }
         return new File(new File(p, Main.pref.getJOSMDirectoryBaseName()), "cache");
     }
 
     @Override
     public File getDefaultPrefDirectory() {
-        return new File(System.getenv("APPDATA"), Main.pref.getJOSMDirectoryBaseName());
+        return new File(getSystemEnv("APPDATA"), Main.pref.getJOSMDirectoryBaseName());
     }
 
     @Override
@@ -523,10 +526,11 @@ public class PlatformHookWindows implements PlatformHook {
         if (!Config.getPref().getBoolean("font.extended-unicode", true))
             return;
 
-        String javaLibPath = System.getProperty("java.home") + File.separator + "lib";
+        String javaLibPath = getSystemProperty("java.home") + File.separator + "lib";
         Path templateFile = FileSystems.getDefault().getPath(javaLibPath, templateFileName);
-        if (!Files.isReadable(templateFile)) {
-            Logging.warn("extended font config - unable to find font config template file {0}", templateFile.toString());
+        String templatePath = templateFile.toString();
+        if (templatePath.startsWith("null") || !Files.isReadable(templateFile)) {
+            Logging.warn("extended font config - unable to find font config template file {0}", templatePath);
             return;
         }
         try (InputStream fis = Files.newInputStream(templateFile)) {
@@ -611,7 +615,7 @@ public class PlatformHookWindows implements PlatformHook {
         // because we have to set the system property before Java initializes its fonts.
         // Use more low-level method to find the installed fonts.
         List<String> fontsAvail = new ArrayList<>();
-        Path fontPath = FileSystems.getDefault().getPath(System.getenv("SYSTEMROOT"), "Fonts");
+        Path fontPath = FileSystems.getDefault().getPath(getSystemEnv("SYSTEMROOT"), "Fonts");
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(fontPath)) {
             for (Path p : ds) {
                 Path filename = p.getFileName();

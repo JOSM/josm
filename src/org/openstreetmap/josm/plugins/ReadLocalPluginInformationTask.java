@@ -137,8 +137,16 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         ProgressMonitor monitor = progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE;
         try {
             monitor.beginTask("");
-            scanSiteCacheFiles(monitor, pluginsDirectory);
-            scanPluginFiles(monitor, pluginsDirectory);
+            try {
+                scanSiteCacheFiles(monitor, pluginsDirectory);
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to scan site cache files", e);
+            }
+            try {
+                scanPluginFiles(monitor, pluginsDirectory);
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to scan plugin files", e);
+            }
         } finally {
             monitor.setCustomText("");
             monitor.finishTask();

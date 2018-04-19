@@ -12,6 +12,7 @@ import java.util.Properties;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Provides basic information about the currently used JOSM build.
@@ -197,6 +198,6 @@ public class Version {
      * @since 5868
      */
     public String getFullAgentString() {
-        return getAgentString() + " Java/"+System.getProperty("java.version");
+        return getAgentString() + " Java/"+Utils.getSystemProperty("java.version");
     }
 }

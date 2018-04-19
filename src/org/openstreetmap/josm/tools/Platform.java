@@ -53,7 +53,7 @@ public enum Platform {
      */
     public static Platform determinePlatform() {
         if (platform == null) {
-            String os = System.getProperty("os.name");
+            String os = Utils.getSystemProperty("os.name");
             if (os == null) {
                 Logging.warn("Your operating system has no name, so I'm guessing its some kind of *nix.");
                 platform = Platform.UNIXOID;

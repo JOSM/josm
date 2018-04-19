@@ -350,7 +350,13 @@ public final class I18n {
         // http://docs.oracle.com/javase/8/docs/technotes/guides/intl/enhancements.8.html#cldr
         // FIXME: This must be updated after we switch to Java 9.
         // See https://docs.oracle.com/javase/9/docs/api/java/util/spi/LocaleServiceProvider.html
-        System.setProperty("java.locale.providers", "SPI,JRE,CLDR"); // Don't call Utils.updateSystemProperty to avoid spurious log at startup
+        try {
+            // Don't call Utils.updateSystemProperty to avoid spurious log at startup
+            System.setProperty("java.locale.providers", "SPI,JRE,CLDR");
+        } catch (SecurityException e) {
+            // Don't call Logging class, it may not be fully initialized yet
+            System.err.println("Unable to set locale providers: " + e.getMessage());
+        }
     }
 
     /**

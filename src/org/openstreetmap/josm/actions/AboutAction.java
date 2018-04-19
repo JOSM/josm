@@ -33,6 +33,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Nice about screen.
@@ -88,7 +89,7 @@ public final class AboutAction extends JosmAction {
                 "<p style='font-size:50%'></p>" +
                 "<p>" + tr("Last change at {0}", version.getTime()) + "</p>" +
                 "<p style='font-size:50%'></p>" +
-                "<p>" + tr("Java Version {0}", System.getProperty("java.version")) + "</p>" +
+                "<p>" + tr("Java Version {0}", Utils.getSystemProperty("java.version")) + "</p>" +
                 "<p style='font-size:50%'></p>" +
                 "</html>");
         info.add(label, GBC.eol().fill(GBC.HORIZONTAL).insets(10, 0, 0, 0));

@@ -65,6 +65,7 @@ import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Logging;
@@ -175,7 +176,13 @@ public final class OsmValidator {
      * @return The validator directory
      */
     public static String getValidatorDir() {
-        return new File(Config.getDirs().getUserDataDirectory(true), "validator").getAbsolutePath();
+        File dir = new File(Config.getDirs().getUserDataDirectory(true), "validator");
+        try {
+            return dir.getAbsolutePath();
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, null, e);
+            return dir.getPath();
+        }
     }
 
     /**
@@ -183,8 +190,12 @@ public final class OsmValidator {
      */
     private static void checkValidatorDir() {
         File pathDir = new File(getValidatorDir());
-        if (!pathDir.exists()) {
-            Utils.mkDirs(pathDir);
+        try {
+            if (!pathDir.exists()) {
+                Utils.mkDirs(pathDir);
+            }
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to check validator directory", e);
         }
     }
 
@@ -192,14 +203,18 @@ public final class OsmValidator {
         ignoredErrors.clear();
         if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
             Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
-            if (path.toFile().exists()) {
-                try {
-                    ignoredErrors.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
-                } catch (final FileNotFoundException e) {
-                    Logging.debug(Logging.getErrorMessage(e));
-                } catch (final IOException e) {
-                    Logging.error(e);
+            try {
+                if (path.toFile().exists()) {
+                    try {
+                        ignoredErrors.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
+                    } catch (FileNotFoundException e) {
+                        Logging.debug(Logging.getErrorMessage(e));
+                    } catch (IOException e) {
+                        Logging.error(e);
+                    }
                 }
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to load ignored errors", e);
             }
         }
     }
@@ -384,11 +399,12 @@ public final class OsmValidator {
                     test.initialize();
                 }
             } catch (Exception e) { // NOPMD
-                Logging.error(e);
+                String message = tr("Error initializing test {0}:\n {1}", test.getClass().getSimpleName(), e);
+                Logging.error(message);
                 if (!GraphicsEnvironment.isHeadless()) {
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("Error initializing test {0}:\n {1}", test.getClass().getSimpleName(), e),
-                            tr("Error"), JOptionPane.ERROR_MESSAGE);
+                    GuiHelper.runInEDT(() -> {
+                        JOptionPane.showMessageDialog(Main.parent, message, tr("Error"), JOptionPane.ERROR_MESSAGE);
+                    });
                 }
             }
         }

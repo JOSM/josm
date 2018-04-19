@@ -191,9 +191,12 @@ public final class CertificateAmendment {
         if (!Config.getPref().getBoolean("tls.add-missing-certificates", true))
             return;
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        Path cacertsPath = Paths.get(System.getProperty("java.home"), "lib", "security", "cacerts");
+        Path cacertsPath = Paths.get(Utils.getSystemProperty("java.home"), "lib", "security", "cacerts");
         try (InputStream is = Files.newInputStream(cacertsPath)) {
             keyStore.load(is, "changeit".toCharArray());
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to load keystore", e);
+            return;
         }
 
         MessageDigest md = MessageDigest.getInstance("SHA-256");

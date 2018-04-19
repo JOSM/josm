@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -136,7 +137,6 @@ public final class TagConflictResolutionUtil {
         for (String key: tc.getKeys()) {
             // make sure the empty value is in the tag set such that we can delete the tag
             // in the conflict dialog if necessary
-            //
             tc.add(new Tag(key, ""));
         }
     }
@@ -148,7 +148,11 @@ public final class TagConflictResolutionUtil {
      * @since 11606
      */
     public static void applyAutomaticTagConflictResolution(TagCollection tc) {
-        applyAutomaticTagConflictResolution(tc, getAutomaticTagConflictResolvers());
+        try {
+            applyAutomaticTagConflictResolution(tc, getAutomaticTagConflictResolvers());
+        } catch (JosmRuntimeException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to automatically resolve tag conflicts", e);
+        }
     }
 
     /**

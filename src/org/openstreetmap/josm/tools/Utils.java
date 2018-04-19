@@ -886,7 +886,7 @@ public final class Utils {
      * @since 6245
      */
     public static File getJosmTempDir() {
-        String tmpDir = System.getProperty("java.io.tmpdir");
+        String tmpDir = getSystemProperty("java.io.tmpdir");
         if (tmpDir == null) {
             return null;
         }
@@ -1267,6 +1267,41 @@ public final class Utils {
     }
 
     /**
+     * Gets the value of the specified environment variable.
+     * An environment variable is a system-dependent external named value.
+     * @param name name the name of the environment variable
+     * @return the string value of the variable;
+     *         {@code null} if the variable is not defined in the system environment or if a security exception occurs.
+     * @see System#getenv(String)
+     * @since 13647
+     */
+    public static String getSystemEnv(String name) {
+        try {
+            return System.getenv(name);
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to get system env", e);
+            return null;
+        }
+    }
+
+    /**
+     * Gets the system property indicated by the specified key.
+     * @param key the name of the system property.
+     * @return the string value of the system property;
+     *         {@code null} if there is no property with that key or if a security exception occurs.
+     * @see System#getProperty(String)
+     * @since 13647
+     */
+    public static String getSystemProperty(String key) {
+        try {
+            return System.getProperty(key);
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to get system property", e);
+            return null;
+        }
+    }
+
+    /**
      * Updates a given system property.
      * @param key The property key
      * @param value The property value
@@ -1275,15 +1310,20 @@ public final class Utils {
      */
     public static String updateSystemProperty(String key, String value) {
         if (value != null) {
-            String old = System.setProperty(key, value);
-            if (Logging.isDebugEnabled() && !value.equals(old)) {
-                if (!key.toLowerCase(Locale.ENGLISH).contains("password")) {
-                    Logging.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + '\'');
-                } else {
-                    Logging.debug("System property '" + key + "' changed.");
+            try {
+                String old = System.setProperty(key, value);
+                if (Logging.isDebugEnabled() && !value.equals(old)) {
+                    if (!key.toLowerCase(Locale.ENGLISH).contains("password")) {
+                        Logging.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + '\'');
+                    } else {
+                        Logging.debug("System property '" + key + "' changed.");
+                    }
                 }
+                return old;
+            } catch (SecurityException e) {
+                // Don't call Logging class, it may not be fully initialized yet
+                System.err.println("Unable to update system property: " + e.getMessage());
             }
-            return old;
         }
         return null;
     }
@@ -1591,7 +1631,7 @@ public final class Utils {
      * @since 12130
      */
     public static int getJavaVersion() {
-        String version = System.getProperty("java.version");
+        String version = getSystemProperty("java.version");
         if (version.startsWith("1.")) {
             version = version.substring(2);
         }
@@ -1612,7 +1652,7 @@ public final class Utils {
      * @since 12217
      */
     public static int getJavaUpdate() {
-        String version = System.getProperty("java.version");
+        String version = getSystemProperty("java.version");
         if (version.startsWith("1.")) {
             version = version.substring(2);
         }
@@ -1642,7 +1682,7 @@ public final class Utils {
      * @since 12217
      */
     public static int getJavaBuild() {
-        String version = System.getProperty("java.runtime.version");
+        String version = getSystemProperty("java.runtime.version");
         int bPos = version.indexOf('b');
         int pPos = version.indexOf('+');
         try {
@@ -1756,8 +1796,8 @@ public final class Utils {
     public static ScriptEngine getJavaScriptEngine() {
         try {
             return new ScriptEngineManager(null).getEngineByName("JavaScript");
-        } catch (SecurityException e) {
-            Logging.error(e);
+        } catch (SecurityException | ExceptionInInitializerError e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to get JavaScript engine", e);
             return null;
         }
     }
@@ -1788,7 +1828,7 @@ public final class Utils {
                             Path filename = jarFile.getFileName();
                             FileTime jarTime = Files.readAttributes(jarFile, BasicFileAttributes.class).lastModifiedTime();
                             // Copy it to temp directory (hopefully free of exclamation mark) if needed (missing or older jar)
-                            Path jarCopy = Paths.get(System.getProperty("java.io.tmpdir")).resolve(filename);
+                            Path jarCopy = Paths.get(getSystemProperty("java.io.tmpdir")).resolve(filename);
                             if (!jarCopy.toFile().exists() ||
                                     Files.readAttributes(jarCopy, BasicFileAttributes.class).lastModifiedTime().compareTo(jarTime) < 0) {
                                 Files.copy(jarFile, jarCopy, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);

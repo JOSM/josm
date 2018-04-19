@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -70,7 +71,7 @@ public class RestartAction extends JosmAction {
      * @since 5951
      */
     public static boolean isRestartSupported() {
-        return System.getProperty("sun.java.command") != null;
+        return getSystemProperty("sun.java.command") != null;
     }
 
     /**
@@ -81,7 +82,7 @@ public class RestartAction extends JosmAction {
         // If JOSM has been started with property 'josm.restart=true' this means
         // it is executed by a start script that can handle restart.
         // Request for restart is indicated by exit code 9.
-        String scriptRestart = System.getProperty("josm.restart");
+        String scriptRestart = getSystemProperty("josm.restart");
         if ("true".equals(scriptRestart)) {
             MainApplication.exitJosm(true, 9, SaveLayersDialog.Reason.RESTART);
         }
@@ -89,7 +90,7 @@ public class RestartAction extends JosmAction {
         if (isRestartSupported() && !MainApplication.exitJosm(false, 0, SaveLayersDialog.Reason.RESTART)) return;
         final List<String> cmd;
         // special handling for OSX .app package
-        if (Main.isPlatformOsx() && System.getProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
+        if (Main.isPlatformOsx() && getSystemProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
             cmd = getAppleCommands();
         } else {
             cmd = getCommands();
@@ -133,9 +134,9 @@ public class RestartAction extends JosmAction {
         addVMArguments(cmd);
         // Determine webstart JNLP file. Use jnlpx.origFilenameArg instead of jnlp.application.href,
         // because only this one is present when run from j2plauncher.exe (see #10795)
-        final String jnlp = System.getProperty("jnlpx.origFilenameArg");
+        final String jnlp = getSystemProperty("jnlpx.origFilenameArg");
         // program main and program arguments (be careful a sun property. might not be supported by all JVM)
-        final String javaCommand = System.getProperty("sun.java.command");
+        final String javaCommand = getSystemProperty("sun.java.command");
         if (javaCommand == null) {
             throw new IOException("Unable to retrieve sun.java.command property");
         }
@@ -159,7 +160,7 @@ public class RestartAction extends JosmAction {
             } else {
                 // else it's a .class, add the classpath and mainClass
                 cmd.add("-cp");
-                cmd.add('"' + System.getProperty("java.class.path") + '"');
+                cmd.add('"' + getSystemProperty("java.class.path") + '"');
                 cmd.add(mainCommand[0].replace("jdk.plugin/", "")); // Main class appears to be invalid on Java WebStart 9
             }
             // add JNLP file.
@@ -173,7 +174,7 @@ public class RestartAction extends JosmAction {
     }
 
     private static String getJavaRuntime() throws IOException {
-        final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator +
+        final String java = getSystemProperty("java.home") + File.separator + "bin" + File.separator +
                 (Main.isPlatformWindows() ? "java.exe" : "java");
         if (!new File(java).isFile()) {
             throw new IOException("Unable to find suitable java runtime at "+java);

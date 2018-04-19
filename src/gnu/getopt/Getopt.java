@@ -656,6 +656,7 @@ Getopt(String progname, String[] argv, String optstring,
   // Check for property "gnu.posixly_correct" to determine whether to
   // strictly follow the POSIX standard.  This replaces the "POSIXLY_CORRECT"
   // environment variable in the C version
+  try {
   if (System.getProperty("gnu.posixly_correct", null) == null)
     posixly_correct = false;
   else
@@ -664,6 +665,9 @@ Getopt(String progname, String[] argv, String optstring,
       _messages = new OptI18n();//ResourceBundle.getBundle("gnu/getopt/MessagesBundle",
                              //                      Locale.US);
     }
+  } catch (SecurityException e) {
+    System.err.println(e.getMessage());
+  }
 
   // Determine how to handle the ordering of options and non-options
   if (optstring.charAt(0) == '-')

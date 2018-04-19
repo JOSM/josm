@@ -24,10 +24,10 @@ import org.openstreetmap.josm.command.PurgeCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
-import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
@@ -68,7 +68,11 @@ public final class RightAndLefthandTraffic {
         Collection<Way> optimizedWays = loadOptimizedBoundaries();
         if (optimizedWays.isEmpty()) {
             optimizedWays = computeOptimizedBoundaries();
-            saveOptimizedBoundaries(optimizedWays);
+            try {
+                saveOptimizedBoundaries(optimizedWays);
+            } catch (IOException | SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to save optimized boundaries", e);
+            }
         }
         rlCache = new GeoPropertyIndex<>(new DefaultGeoProperty(optimizedWays), 24);
     }
@@ -153,7 +157,7 @@ public final class RightAndLefthandTraffic {
         ways.add(w);
     }
 
-    private static void saveOptimizedBoundaries(Collection<Way> optimizedWays) {
+    private static void saveOptimizedBoundaries(Collection<Way> optimizedWays) throws IOException {
         DataSet ds = optimizedWays.iterator().next().getDataSet();
         File file = new File(Config.getDirs().getCacheDirectory(true), "left-right-hand-traffic.osm");
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
@@ -162,8 +166,6 @@ public final class RightAndLefthandTraffic {
             w.header(DownloadPolicy.NORMAL, UploadPolicy.DISCOURAGED);
             w.writeContent(ds);
             w.footer();
-        } catch (IOException ex) {
-            throw new JosmRuntimeException(ex);
         }
     }
 
@@ -171,7 +173,7 @@ public final class RightAndLefthandTraffic {
         try (InputStream is = Files.newInputStream(Paths.get(
                 Config.getDirs().getCacheDirectory(false).getPath(), "left-right-hand-traffic.osm"))) {
            return OsmReader.parseDataSet(is, null).getWays();
-        } catch (IllegalDataException | IOException | InvalidPathException ex) {
+        } catch (IllegalDataException | IOException | InvalidPathException | SecurityException ex) {
             Logging.trace(ex);
             return Collections.emptyList();
         }

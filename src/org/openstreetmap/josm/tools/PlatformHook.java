@@ -267,7 +267,7 @@ public interface PlatformHook {
      * @since 12219
      */
     default boolean isOpenJDK() {
-        String javaHome = System.getProperty("java.home");
+        String javaHome = Utils.getSystemProperty("java.home");
         return javaHome != null && javaHome.contains("openjdk");
     }
 

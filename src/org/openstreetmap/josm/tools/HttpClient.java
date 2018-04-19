@@ -69,7 +69,11 @@ public final class HttpClient {
         Pattern.CASE_INSENSITIVE);
 
     static {
-        CookieHandler.setDefault(new CookieManager());
+        try {
+            CookieHandler.setDefault(new CookieManager());
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to set default cookie handler", e);
+        }
     }
 
     private HttpClient(URL url, String requestMethod) {

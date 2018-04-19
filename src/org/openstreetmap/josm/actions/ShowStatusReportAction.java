@@ -3,6 +3,8 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.Dimension;
 import java.awt.DisplayMode;
@@ -83,7 +85,7 @@ public final class ShowStatusReportAction extends JosmAction {
      */
     public static String getReportHeader() {
         StringBuilder text = new StringBuilder(256);
-        String runtimeVersion = System.getProperty("java.runtime.version");
+        String runtimeVersion = getSystemProperty("java.runtime.version");
         text.append(Version.getInstance().getReleaseAttributes())
             .append("\nIdentification: ").append(Version.getInstance().getAgentString());
         String buildNumber = Main.platform.getOSBuildNumber();
@@ -97,9 +99,9 @@ public final class ShowStatusReportAction extends JosmAction {
             .append(" MB (")
             .append(Runtime.getRuntime().freeMemory()/1024/1024)
             .append(" MB allocated, but free)\nJava version: ")
-            .append(runtimeVersion != null ? runtimeVersion : System.getProperty("java.version")).append(", ")
-            .append(System.getProperty("java.vendor")).append(", ")
-            .append(System.getProperty("java.vm.name"))
+            .append(runtimeVersion != null ? runtimeVersion : getSystemProperty("java.version")).append(", ")
+            .append(getSystemProperty("java.vendor")).append(", ")
+            .append(getSystemProperty("java.vm.name"))
             .append("\nScreen: ");
         if (!GraphicsEnvironment.isHeadless()) {
             text.append(Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()).map(gd -> {
@@ -226,9 +228,9 @@ public final class ShowStatusReportAction extends JosmAction {
      * @return shortened/anonymized parameter
      */
     private static String paramCleanup(String param) {
-        final String envJavaHome = System.getenv("JAVA_HOME");
+        final String envJavaHome = getSystemEnv("JAVA_HOME");
         final String envJavaHomeAlt = Main.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
-        final String propJavaHome = System.getProperty("java.home");
+        final String propJavaHome = getSystemProperty("java.home");
         final String propJavaHomeAlt = "<java.home>";
         final String prefDir = Config.getDirs().getPreferencesDirectory(false).toString();
         final String prefDirAlt = "<josm.pref>";
@@ -236,9 +238,9 @@ public final class ShowStatusReportAction extends JosmAction {
         final String userDataDirAlt = "<josm.userdata>";
         final String userCacheDir = Config.getDirs().getCacheDirectory(false).toString();
         final String userCacheDirAlt = "<josm.cache>";
-        final String userHomeDir = System.getProperty("user.home");
+        final String userHomeDir = getSystemProperty("user.home");
         final String userHomeDirAlt = Main.isPlatformWindows() ? "%UserProfile%" : "${HOME}";
-        final String userName = System.getProperty("user.name");
+        final String userName = getSystemProperty("user.name");
         final String userNameAlt = "<user.name>";
 
         String val = param;
@@ -249,7 +251,7 @@ public final class ShowStatusReportAction extends JosmAction {
         val = paramReplace(val, userDataDir, userDataDirAlt);
         val = paramReplace(val, userCacheDir, userCacheDirAlt);
         val = paramReplace(val, userHomeDir, userHomeDirAlt);
-        if (userName.length() >= 3) {
+        if (userName != null && userName.length() >= 3) {
             val = paramReplace(val, userName, userNameAlt);
         }
         return val;

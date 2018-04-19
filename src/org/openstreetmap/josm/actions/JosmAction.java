@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -80,8 +81,12 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     public JosmAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar,
             String toolbarId, boolean installAdapters) {
         super(name);
-        if (icon != null)
-            icon.getResource().attachImageIcon(this, true);
+        if (icon != null) {
+            ImageResource resource = icon.getResource();
+            if (resource != null) {
+                resource.attachImageIcon(this, true);
+            }
+        }
         setHelpId();
         sc = shortcut;
         if (sc != null && !sc.isAutomatic()) {
@@ -118,7 +123,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      */
     public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar,
             String toolbarId, boolean installAdapters) {
-        this(name, iconName == null ? null : new ImageProvider(iconName), tooltip, shortcut, registerInToolbar,
+        this(name, iconName == null ? null : new ImageProvider(iconName).setOptional(true), tooltip, shortcut, registerInToolbar,
                 toolbarId == null ? iconName : toolbarId, installAdapters);
     }
 

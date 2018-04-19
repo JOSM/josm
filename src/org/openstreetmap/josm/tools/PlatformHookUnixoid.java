@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
@@ -44,7 +46,7 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public void preStartupHook() {
         // See #12022 - Disable GNOME ATK Java wrapper as it causes a lot of serious trouble
-        if ("org.GNOME.Accessibility.AtkWrapper".equals(System.getProperty("assistive_technologies"))) {
+        if ("org.GNOME.Accessibility.AtkWrapper".equals(getSystemProperty("assistive_technologies"))) {
             System.clearProperty("assistive_technologies");
         }
     }
@@ -153,7 +155,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      * @return The package name and package version if it can be identified, null otherwise
      */
     public String getJavaPackageDetails() {
-        String home = System.getProperty("java.home");
+        String home = getSystemProperty("java.home");
         if (home.contains("java-8-openjdk") || home.contains("java-1.8.0-openjdk")) {
             return getPackageDetails("openjdk-8-jre", "java-1_8_0-openjdk", "java-1.8.0-openjdk");
         } else if (home.contains("java-9-openjdk") || home.contains("java-1.9.0-openjdk")) {
@@ -201,7 +203,7 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     private String buildOSDescription() {
-        String osName = System.getProperty("os.name");
+        String osName = getSystemProperty("os.name");
         if ("Linux".equalsIgnoreCase(osName)) {
             try {
                 // Try lsb_release (only available on LSB-compliant Linux systems,
@@ -338,7 +340,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      */
     private static File getDotDirectory() {
         String dirName = "." + Main.pref.getJOSMDirectoryBaseName().toLowerCase(Locale.ENGLISH);
-        return new File(System.getProperty("user.home"), dirName);
+        return new File(getSystemProperty("user.home"), dirName);
     }
 
     /**
@@ -356,11 +358,11 @@ public class PlatformHookUnixoid implements PlatformHook {
         if (useDotDirectory()) {
             return new File(getDotDirectory(), "cache");
         } else {
-            String xdgCacheDir = System.getenv("XDG_CACHE_HOME");
+            String xdgCacheDir = getSystemEnv("XDG_CACHE_HOME");
             if (xdgCacheDir != null && !xdgCacheDir.isEmpty()) {
                 return new File(xdgCacheDir, Main.pref.getJOSMDirectoryBaseName());
             } else {
-                return new File(System.getProperty("user.home") + File.separator +
+                return new File(getSystemProperty("user.home") + File.separator +
                         ".cache" + File.separator + Main.pref.getJOSMDirectoryBaseName());
             }
         }
@@ -371,11 +373,11 @@ public class PlatformHookUnixoid implements PlatformHook {
         if (useDotDirectory()) {
             return getDotDirectory();
         } else {
-            String xdgConfigDir = System.getenv("XDG_CONFIG_HOME");
+            String xdgConfigDir = getSystemEnv("XDG_CONFIG_HOME");
             if (xdgConfigDir != null && !xdgConfigDir.isEmpty()) {
                 return new File(xdgConfigDir, Main.pref.getJOSMDirectoryBaseName());
             } else {
-                return new File(System.getProperty("user.home") + File.separator +
+                return new File(getSystemProperty("user.home") + File.separator +
                         ".config" + File.separator + Main.pref.getJOSMDirectoryBaseName());
             }
         }
@@ -386,11 +388,11 @@ public class PlatformHookUnixoid implements PlatformHook {
         if (useDotDirectory()) {
             return getDotDirectory();
         } else {
-            String xdgDataDir = System.getenv("XDG_DATA_HOME");
+            String xdgDataDir = getSystemEnv("XDG_DATA_HOME");
             if (xdgDataDir != null && !xdgDataDir.isEmpty()) {
                 return new File(xdgDataDir, Main.pref.getJOSMDirectoryBaseName());
             } else {
-                return new File(System.getProperty("user.home") + File.separator +
+                return new File(getSystemProperty("user.home") + File.separator +
                         ".local" + File.separator + "share" + File.separator + Main.pref.getJOSMDirectoryBaseName());
             }
         }

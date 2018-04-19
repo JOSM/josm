@@ -63,7 +63,11 @@ public final class Logging {
 
         ConsoleHandler stderr = new ConsoleHandler();
         LOGGER.addHandler(stderr);
-        stderr.setLevel(LEVEL_WARN);
+        try {
+            stderr.setLevel(LEVEL_WARN);
+        } catch (SecurityException e) {
+            System.err.println("Unable to set logging level: " + e.getMessage());
+        }
 
         ConsoleHandler stdout = new ConsoleHandler() {
             @Override
@@ -80,7 +84,11 @@ public final class Logging {
             }
         };
         LOGGER.addHandler(stdout);
-        stdout.setLevel(Level.ALL);
+        try {
+            stdout.setLevel(Level.ALL);
+        } catch (SecurityException e) {
+            System.err.println("Unable to set logging level: " + e.getMessage());
+        }
 
         LOGGER.addHandler(WARNINGS);
         // Set log level to info, otherwise the first ListenerList created will be for debugging purposes and create memory leaks
@@ -403,10 +411,6 @@ public final class Logging {
         private final String[] log = new String[10];
         private int messagesLogged;
 
-        RememberWarningHandler() {
-            setLevel(LEVEL_WARN);
-        }
-
         synchronized void clear() {
             messagesLogged = 0;
             Arrays.fill(log, null);
@@ -414,7 +418,8 @@ public final class Logging {
 
         @Override
         public synchronized void publish(LogRecord record) {
-            if (!isLoggable(record)) {
+            // We don't use setLevel + isLoggable to work in WebStart Sandbox mode
+            if (record.getLevel().intValue() < LEVEL_WARN.intValue()) {
                 return;
             }
 

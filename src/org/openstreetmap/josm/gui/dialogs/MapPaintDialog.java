@@ -449,7 +449,7 @@ public class MapPaintDialog extends ToggleDialog {
                 return;
             final StyleSource s = model.getRow(sel);
 
-            FileChooserManager fcm = new FileChooserManager(false, "mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
+            FileChooserManager fcm = new FileChooserManager(false, "mappaint.clone-style.lastDirectory", Utils.getSystemProperty("user.home"));
             String suggestion = fcm.getInitialDirectory() + File.separator + s.getFileNamePart();
 
             FileFilter ff;

@@ -251,6 +251,8 @@ public class OsmApi extends OsmConnection {
                 // XML parsing may fail if JOSM previously stored a corrupted capabilities document (see #8278)
                 // In that case, force update and try again
                 initializeCapabilities(cache.updateForceString());
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to initialize OSM API", e);
             }
             if (capabilities == null) {
                 if (Main.isOffline(OnlineResource.OSM_API)) {

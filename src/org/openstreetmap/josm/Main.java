@@ -164,7 +164,11 @@ public abstract class Main {
             // asynchronous initializations to be completed eventually
             asynchronousRunnableTasks().forEach(service::submit);
             asynchronousCallableTasks().forEach(service::submit);
-            service.shutdown();
+            try {
+                service.shutdown();
+            } catch (SecurityException e) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown executor service", e);
+            }
         } catch (InterruptedException | ExecutionException ex) {
             throw new JosmRuntimeException(ex);
         }
