@@ -93,8 +93,17 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  */
 public class StyledMapRenderer extends AbstractMapRenderer {
 
-    private static final ForkJoinPool THREAD_POOL =
-            Utils.newForkJoinPool("mappaint.StyledMapRenderer.style_creation.numberOfThreads", "styled-map-renderer-%d", Thread.NORM_PRIORITY);
+    private static final ForkJoinPool THREAD_POOL = newForkJoinPool();
+
+    private static ForkJoinPool newForkJoinPool() {
+        try {
+            return Utils.newForkJoinPool(
+                    "mappaint.StyledMapRenderer.style_creation.numberOfThreads", "styled-map-renderer-%d", Thread.NORM_PRIORITY);
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to create new ForkJoinPool", e);
+            return null;
+        }
+    }
 
     /**
      * This stores a style and a primitive that should be painted with that style.
@@ -1599,10 +1608,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             // Need to process all relations first.
             // Reason: Make sure, ElemStyles.getStyleCacheWithRange is not called for the same primitive in parallel threads.
             // (Could be synchronized, but try to avoid this for performance reasons.)
-            THREAD_POOL.invoke(new ComputeStyleListWorker(circum, nc, relations, allStyleElems,
-                    Math.max(20, relations.size() / THREAD_POOL.getParallelism() / 3), styles));
-            THREAD_POOL.invoke(new ComputeStyleListWorker(circum, nc, new CompositeList<>(nodes, ways), allStyleElems,
-                    Math.max(100, (nodes.size() + ways.size()) / THREAD_POOL.getParallelism() / 3), styles));
+            if (THREAD_POOL != null) {
+                THREAD_POOL.invoke(new ComputeStyleListWorker(circum, nc, relations, allStyleElems,
+                        Math.max(20, relations.size() / THREAD_POOL.getParallelism() / 3), styles));
+                THREAD_POOL.invoke(new ComputeStyleListWorker(circum, nc, new CompositeList<>(nodes, ways), allStyleElems,
+                        Math.max(100, (nodes.size() + ways.size()) / THREAD_POOL.getParallelism() / 3), styles));
+            } else {
+                new ComputeStyleListWorker(circum, nc, relations, allStyleElems, 0, styles).computeDirectly();
+                new ComputeStyleListWorker(circum, nc, new CompositeList<>(nodes, ways), allStyleElems, 0, styles).computeDirectly();
+            }
 
             if (!benchmark.renderSort()) {
                 return;

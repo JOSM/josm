@@ -467,7 +467,11 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         if (Main.main != null) {
             MainApplication.getMenu().windowMenu.remove(windowMenuItem);
         }
-        Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+        try {
+            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to remove AWT event listener", e);
+        }
         Config.getPref().removePreferenceChangeListener(this);
         destroyComponents(this, false);
     }
@@ -976,10 +980,14 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     private void dynamicButtonsPropertyChanged() {
         boolean propEnabled = PROP_DYNAMIC_BUTTONS.get();
-        if (propEnabled) {
-            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
-        } else {
-            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+        try {
+            if (propEnabled) {
+                Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
+            } else {
+                Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+            }
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to add/remove AWT event listener", e);
         }
         titleBar.buttonsHide.setVisible(propEnabled);
         refreshHidingButtons();

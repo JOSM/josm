@@ -1210,10 +1210,14 @@ public final class MapStatus extends JPanel implements
     @Override
     public void zoomChanged() {
         if (!GraphicsEnvironment.isHeadless()) {
-            PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-            if (pointerInfo != null) {
-                Point mp = pointerInfo.getLocation();
-                updateLatLonText(mp.x, mp.y);
+            try {
+                PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+                if (pointerInfo != null) {
+                    Point mp = pointerInfo.getLocation();
+                    updateLatLonText(mp.x, mp.y);
+                }
+            } catch (SecurityException ex) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to get mouse pointer info", ex);
             }
         }
     }

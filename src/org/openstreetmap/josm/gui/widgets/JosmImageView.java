@@ -43,11 +43,20 @@ public class JosmImageView extends ImageView {
      */
     public JosmImageView(Element elem) throws NoSuchFieldException {
         super(elem);
-        imageField = ImageView.class.getDeclaredField("image");
-        stateField = ImageView.class.getDeclaredField("state");
-        widthField = ImageView.class.getDeclaredField("width");
-        heightField = ImageView.class.getDeclaredField("height");
+        imageField = getDeclaredField("image");
+        stateField = getDeclaredField("state");
+        widthField = getDeclaredField("width");
+        heightField = getDeclaredField("height");
         Utils.setObjectsAccessible(imageField, stateField, widthField, heightField);
+    }
+
+    private static Field getDeclaredField(String name) throws NoSuchFieldException {
+        try {
+            return ImageView.class.getDeclaredField(name);
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to access field by reflection", e);
+            return null;
+        }
     }
 
     /**

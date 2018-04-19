@@ -38,8 +38,17 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MultipolygonBuilder {
 
-    private static final ForkJoinPool THREAD_POOL =
-            Utils.newForkJoinPool("multipolygon_creation.numberOfThreads", "multipolygon-builder-%d", Thread.NORM_PRIORITY);
+    private static final ForkJoinPool THREAD_POOL = newForkJoinPool();
+
+    private static ForkJoinPool newForkJoinPool() {
+        try {
+            return Utils.newForkJoinPool(
+                    "multipolygon_creation.numberOfThreads", "multipolygon-builder-%d", Thread.NORM_PRIORITY);
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to create new ForkJoinPool", e);
+            return null;
+        }
+    }
 
     /**
      * Helper class to avoid unneeded costly intersection calculations.
@@ -384,8 +393,12 @@ public class MultipolygonBuilder {
      */
     private static List<PolygonLevel> findOuterWaysMultiThread(List<JoinedPolygon> boundaryWays) {
         final IntersectionMatrix cache = new IntersectionMatrix(boundaryWays);
-        return THREAD_POOL.invoke(new Worker(cache, boundaryWays, 0, boundaryWays.size(), new ArrayList<PolygonLevel>(),
-                Math.max(32, boundaryWays.size() / THREAD_POOL.getParallelism() / 3)));
+        if (THREAD_POOL != null) {
+            return THREAD_POOL.invoke(new Worker(cache, boundaryWays, 0, boundaryWays.size(), new ArrayList<PolygonLevel>(),
+                    Math.max(32, boundaryWays.size() / THREAD_POOL.getParallelism() / 3)));
+        } else {
+            return new Worker(cache, boundaryWays, 0, boundaryWays.size(), new ArrayList<PolygonLevel>(), 0).computeDirectly();
+        }
     }
 
     private static class Worker extends RecursiveTask<List<PolygonLevel>> {

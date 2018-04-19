@@ -71,7 +71,7 @@ public class RemoteControl {
     public static boolean supportsHttps() {
         try {
             return Class.forName("sun.security.x509.GeneralName") != null;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SecurityException e) {
             Logging.trace(e);
             return false;
         }
