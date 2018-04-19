@@ -23,6 +23,7 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.AlphanumComparator;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Menu that groups several presets from one topic.
@@ -99,10 +100,14 @@ public class TaggingPresetMenu extends TaggingPreset {
             for (Component c : menu.getMenuComponents()) {
                 pm.add(copyMenuComponent(c));
             }
-            PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-            if (pointerInfo != null) {
-                Point p = pointerInfo.getLocation();
-                pm.show(Main.parent, p.x-Main.parent.getX(), p.y-Main.parent.getY());
+            try {
+                PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+                if (pointerInfo != null) {
+                    Point p = pointerInfo.getLocation();
+                    pm.show(Main.parent, p.x-Main.parent.getX(), p.y-Main.parent.getY());
+                }
+            } catch (SecurityException ex) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to get mouse pointer info", ex);
             }
         }
     }

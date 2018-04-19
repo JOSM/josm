@@ -81,7 +81,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
-            Logging.warn(ex);
+            Logging.log(Logging.LEVEL_WARN, "Unable to add AWT event listener", ex);
         }
         timer = new Timer(0, e -> {
             timer.stop();
@@ -112,7 +112,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
-            Logging.warn(ex);
+            Logging.log(Logging.LEVEL_WARN, "Unable to remove AWT event listener", ex);
         }
     }
 

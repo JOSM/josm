@@ -107,23 +107,28 @@ public final class JCSCacheManager {
     private static void initialize() {
         File cacheDir = new File(Config.getDirs().getCacheDirectory(true), "jcs");
 
-        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
-            Logging.warn("Cache directory " + cacheDir.toString() + " does not exists and could not create it");
-        } else {
-            File cacheDirLockPath = new File(cacheDir, ".lock");
-            try {
-                if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
-                    Logging.warn("Cannot create cache dir lock file");
-                }
-                cacheDirLock = FileChannel.open(cacheDirLockPath.toPath(), StandardOpenOption.WRITE).tryLock();
+        try {
+            if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+                Logging.warn("Cache directory " + cacheDir.toString() + " does not exists and could not create it");
+            } else {
+                File cacheDirLockPath = new File(cacheDir, ".lock");
+                try {
+                    if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
+                        Logging.warn("Cannot create cache dir lock file");
+                    }
+                    cacheDirLock = FileChannel.open(cacheDirLockPath.toPath(), StandardOpenOption.WRITE).tryLock();
 
-                if (cacheDirLock == null)
-                    Logging.warn("Cannot lock cache directory. Will not use disk cache");
-            } catch (IOException e) {
-                Logging.warn("Cannot create cache dir \"" + cacheDirLockPath.toString() + "\" lock file: " + e.toString());
-                Logging.warn("Will not use disk cache");
+                    if (cacheDirLock == null)
+                        Logging.warn("Cannot lock cache directory. Will not use disk cache");
+                } catch (IOException e) {
+                    Logging.warn("Cannot create cache dir \"" + cacheDirLockPath.toString() + "\" lock file: " + e.toString());
+                    Logging.warn("Will not use disk cache");
+                }
             }
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_WARN, "Unable to configure disk cache. Will not use it", e);
         }
+
         // this could be moved to external file
         Properties props = new Properties();
         // these are default common to all cache regions
@@ -139,9 +144,13 @@ public final class JCSCacheManager {
         props.setProperty("jcs.default.elementattributes.IdleTime",           Long.toString(maxObjectTTL));
         props.setProperty("jcs.default.elementattributes.IsSpool",            "true");
         // CHECKSTYLE.ON: SingleSpaceSeparator
-        CompositeCacheManager cm = CompositeCacheManager.getUnconfiguredInstance();
-        cm.configure(props);
-        cacheManager = cm;
+        try {
+            CompositeCacheManager cm = CompositeCacheManager.getUnconfiguredInstance();
+            cm.configure(props);
+            cacheManager = cm;
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_WARN, "Unable to initialize JCS", e);
+        }
     }
 
     /**
@@ -172,7 +181,7 @@ public final class JCSCacheManager {
         synchronized (JCSCacheManager.class) {
             if (cacheManager == null)
                 initialize();
-            return getCacheInner(cacheName, maxMemoryObjects, maxDiskObjects, cachePath);
+            return cacheManager != null ? getCacheInner(cacheName, maxMemoryObjects, maxDiskObjects, cachePath) : null;
         }
     }
 

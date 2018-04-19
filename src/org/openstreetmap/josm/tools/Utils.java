@@ -1546,7 +1546,9 @@ public final class Utils {
         if (objects != null && objects.length > 0) {
             AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
                 for (AccessibleObject o : objects) {
-                    o.setAccessible(true);
+                    if (o != null) {
+                        o.setAccessible(true);
+                    }
                 }
                 return null;
             });
