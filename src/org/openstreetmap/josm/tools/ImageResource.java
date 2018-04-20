@@ -274,5 +274,12 @@ public class ImageResource {
             return getImageIcon(new Dimension(maxWidth, -1), multiResolution);
         else
             return getImageIcon(new Dimension(-1, maxHeight), multiResolution);
-   }
+    }
+
+    @Override
+    public String toString() {
+        return "ImageResource ["
+                + (svg != null ? "svg=" + svg : "")
+                + (baseImage != null ? "baseImage=" + baseImage : "") + ']';
+    }
 }

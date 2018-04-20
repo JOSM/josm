@@ -664,6 +664,8 @@ public class ImageProvider {
 
         if (ir == null) {
             return null;
+        } else if (Logging.isTraceEnabled()) {
+            Logging.trace("get {0} from {1}", this, Thread.currentThread());
         }
         if (virtualMaxWidth != -1 || virtualMaxHeight != -1)
             return ir.getImageIconBounded(new Dimension(virtualMaxWidth, virtualMaxHeight), multiResolution);
@@ -2026,5 +2028,14 @@ public class ImageProvider {
             }
             throw new IOException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return ("ImageProvider ["
+                + (dirs != null && !dirs.isEmpty() ? "dirs=" + dirs + ", " : "") + (id != null ? "id=" + id + ", " : "")
+                + (subdir != null && !subdir.isEmpty() ? "subdir=" + subdir + ", " : "") + (name != null ? "name=" + name + ", " : "")
+                + (archive != null ? "archive=" + archive + ", " : "")
+                + (inArchiveDir != null && !inArchiveDir.isEmpty() ? "inArchiveDir=" + inArchiveDir : "") + ']').replaceAll(", \\]", "]");
     }
 }

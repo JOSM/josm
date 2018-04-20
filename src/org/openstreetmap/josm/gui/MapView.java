@@ -164,8 +164,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          */
         protected synchronized void traceRandomRepaint() {
             if (!ignoreRepaint) {
-                System.err.println("Repaint:");
-                Thread.dumpStack();
+                Logging.trace("Repaint: {0} from {1}", Thread.currentThread().getStackTrace()[3], Thread.currentThread());
             }
             ignoreRepaint = false;
         }
