@@ -1158,15 +1158,18 @@ public class MainApplication extends Main {
         if (getSystemProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
                 platform.getDefaultStyle().equals(LafPreference.LAF.get())) {
             try {
-                final int currentBuild = Integer.parseInt(PlatformHookWindows.getCurrentBuild());
-                final int javaVersion = Utils.getJavaVersion();
-                final int javaUpdate = Utils.getJavaUpdate();
-                final int javaBuild = Utils.getJavaBuild();
-                // See https://technet.microsoft.com/en-us/windows/release-info.aspx
-                if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 141)
-                        || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 173))) {
-                    // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
-                    UIManager.put("FileChooser.useSystemExtensionHiding", Boolean.FALSE);
+                String build = PlatformHookWindows.getCurrentBuild();
+                if (build != null) {
+                    final int currentBuild = Integer.parseInt(build);
+                    final int javaVersion = Utils.getJavaVersion();
+                    final int javaUpdate = Utils.getJavaUpdate();
+                    final int javaBuild = Utils.getJavaBuild();
+                    // See https://technet.microsoft.com/en-us/windows/release-info.aspx
+                    if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 141)
+                            || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 173))) {
+                        // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
+                        UIManager.put("FileChooser.useSystemExtensionHiding", Boolean.FALSE);
+                    }
                 }
             } catch (NumberFormatException | ReflectiveOperationException | JosmRuntimeException e) {
                 Logging.error(e);
