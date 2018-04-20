@@ -40,7 +40,7 @@ public final class WinRegistry {
      */
     public static final int HKEY_LOCAL_MACHINE = 0x80000002;
 
-    private static final int REG_SUCCESS = 0;
+    private static final long REG_SUCCESS = 0L;
 
     private static final int KEY_READ = 0x20019;
     private static final Preferences userRoot = Preferences.userRoot();
@@ -53,18 +53,39 @@ public final class WinRegistry {
     private static final Method regQueryInfoKey;
     private static final Method regEnumKeyEx;
 
+    private static boolean java11;
+
     static {
+        regOpenKey = getDeclaredMethod("WindowsRegOpenKey", int.class, byte[].class, int.class);
+        regCloseKey = getDeclaredMethod("WindowsRegCloseKey", int.class);
+        regQueryValueEx = getDeclaredMethod("WindowsRegQueryValueEx", int.class, byte[].class);
+        regEnumValue = getDeclaredMethod("WindowsRegEnumValue", int.class, int.class, int.class);
+        regQueryInfoKey = getDeclaredMethod("WindowsRegQueryInfoKey1", int.class);
+        regEnumKeyEx = getDeclaredMethod("WindowsRegEnumKeyEx", int.class, int.class, int.class);
+        Utils.setObjectsAccessible(regOpenKey, regCloseKey, regQueryValueEx, regEnumValue, regQueryInfoKey, regEnumKeyEx);
+    }
+
+    private static Method getDeclaredMethod(String name, Class<?>... parameterTypes) {
         try {
-            regOpenKey = userClass.getDeclaredMethod("WindowsRegOpenKey", int.class, byte[].class, int.class);
-            regCloseKey = userClass.getDeclaredMethod("WindowsRegCloseKey", int.class);
-            regQueryValueEx = userClass.getDeclaredMethod("WindowsRegQueryValueEx", int.class, byte[].class);
-            regEnumValue = userClass.getDeclaredMethod("WindowsRegEnumValue", int.class, int.class, int.class);
-            regQueryInfoKey = userClass.getDeclaredMethod("WindowsRegQueryInfoKey1", int.class);
-            regEnumKeyEx = userClass.getDeclaredMethod("WindowsRegEnumKeyEx", int.class, int.class, int.class);
-            Utils.setObjectsAccessible(regOpenKey, regCloseKey, regQueryValueEx, regEnumValue, regQueryInfoKey, regEnumKeyEx);
-        } catch (RuntimeException | ReflectiveOperationException e) {
-            throw new JosmRuntimeException(e);
+            return userClass.getDeclaredMethod(name, parameterTypes);
+        } catch (NoSuchMethodException e) {
+            if (parameterTypes.length > 0 && parameterTypes[0] == int.class) {
+                // JDK-8198899: change of signature in Java 11. Old signature to drop when we switch to Java 11
+                Class<?>[] parameterTypesCopy = Utils.copyArray(parameterTypes);
+                parameterTypesCopy[0] = long.class;
+                java11 = true;
+                return getDeclaredMethod(name, parameterTypesCopy);
+            }
+            Logging.log(Logging.LEVEL_ERROR, "Unable to find WindowsReg method", e);
+            return null;
+        } catch (RuntimeException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to get WindowsReg method", e);
+            return null;
         }
+    }
+
+    private static Number hkey(int key) {
+        return java11 ? ((Number) Long.valueOf(key)) : ((Number) Integer.valueOf(key));
     }
 
     private WinRegistry() {
@@ -134,53 +155,76 @@ public final class WinRegistry {
 
     // =====================
 
+    private static Number getNumber(Object array, int index) {
+        if (array instanceof int[]) {
+            return ((int[]) array)[index];
+        } else if (array instanceof long[]) {
+            return ((long[]) array)[index];
+        }
+        throw new IllegalArgumentException();
+    }
+
     private static String readString(Preferences root, int hkey, String key, String value)
             throws IllegalAccessException, InvocationTargetException {
-        int[] handles = (int[]) regOpenKey.invoke(root, Integer.valueOf(hkey), toCstr(key), Integer.valueOf(KEY_READ));
-        if (handles[1] != REG_SUCCESS) {
+        if (regOpenKey == null || regQueryValueEx == null || regCloseKey == null) {
             return null;
         }
-        byte[] valb = (byte[]) regQueryValueEx.invoke(root, Integer.valueOf(handles[0]), toCstr(value));
-        regCloseKey.invoke(root, Integer.valueOf(handles[0]));
+        // Need to capture both int[] (Java 8-10) and long[] (Java 11+)
+        Object handles = regOpenKey.invoke(root, hkey(hkey), toCstr(key), Integer.valueOf(KEY_READ));
+        if (getNumber(handles, 1).longValue() != REG_SUCCESS) {
+            return null;
+        }
+        byte[] valb = (byte[]) regQueryValueEx.invoke(root, getNumber(handles, 0), toCstr(value));
+        regCloseKey.invoke(root, getNumber(handles, 0));
         return (valb != null ? new String(valb, StandardCharsets.UTF_8).trim() : null);
     }
 
     private static Map<String, String> readStringValues(Preferences root, int hkey, String key)
             throws IllegalAccessException, InvocationTargetException {
-        HashMap<String, String> results = new HashMap<>();
-        int[] handles = (int[]) regOpenKey.invoke(root, Integer.valueOf(hkey), toCstr(key), Integer.valueOf(KEY_READ));
-        if (handles[1] != REG_SUCCESS) {
+        if (regOpenKey == null || regQueryInfoKey == null || regEnumValue == null || regCloseKey == null) {
             return null;
         }
-        int[] info = (int[]) regQueryInfoKey.invoke(root, Integer.valueOf(handles[0]));
+        HashMap<String, String> results = new HashMap<>();
+        // Need to capture both int[] (Java 8-10) and long[] (Java 11+)
+        Object handles = regOpenKey.invoke(root, hkey(hkey), toCstr(key), Integer.valueOf(KEY_READ));
+        if (getNumber(handles, 1).longValue() != REG_SUCCESS) {
+            return null;
+        }
+        // Need to capture both int[] (Java 8-10) and long[] (Java 11+)
+        Object info = regQueryInfoKey.invoke(root, getNumber(handles, 0));
 
-        int count = info[0]; // count
-        int maxlen = info[3]; // value length max
+        int count = getNumber(info, 0).intValue();
+        int maxlen = getNumber(info, 3).intValue();
         for (int index = 0; index < count; index++) {
-            byte[] name = (byte[]) regEnumValue.invoke(root, Integer.valueOf(handles[0]), Integer.valueOf(index), Integer.valueOf(maxlen + 1));
+            byte[] name = (byte[]) regEnumValue.invoke(root, getNumber(handles, 0), Integer.valueOf(index), Integer.valueOf(maxlen + 1));
             String value = readString(hkey, key, new String(name, StandardCharsets.UTF_8));
             results.put(new String(name, StandardCharsets.UTF_8).trim(), value);
         }
-        regCloseKey.invoke(root, Integer.valueOf(handles[0]));
+        regCloseKey.invoke(root, getNumber(handles, 0));
         return results;
     }
 
     private static List<String> readStringSubKeys(Preferences root, int hkey, String key)
             throws IllegalAccessException, InvocationTargetException {
+        if (regOpenKey == null || regQueryInfoKey == null || regEnumKeyEx == null || regCloseKey == null) {
+            return null;
+        }
         List<String> results = new ArrayList<>();
-        int[] handles = (int[]) regOpenKey.invoke(root, Integer.valueOf(hkey), toCstr(key), Integer.valueOf(KEY_READ));
-        if (handles[1] != REG_SUCCESS) {
+        // Need to capture both int[] (Java 8-10) and long[] (Java 11+)
+        Object handles = regOpenKey.invoke(root, hkey(hkey), toCstr(key), Integer.valueOf(KEY_READ));
+        if (getNumber(handles, 1).longValue() != REG_SUCCESS) {
             return Collections.emptyList();
         }
-        int[] info = (int[]) regQueryInfoKey.invoke(root, Integer.valueOf(handles[0]));
+        // Need to capture both int[] (Java 8-10) and long[] (Java 11+)
+        Object info = regQueryInfoKey.invoke(root, getNumber(handles, 0));
 
-        int count = info[0]; // Fix: info[2] was being used here with wrong results. Suggested by davenpcj, confirmed by Petrucio
-        int maxlen = info[3]; // value length max
+        int count = getNumber(info, 0).intValue();
+        int maxlen = getNumber(info, 3).intValue();
         for (int index = 0; index < count; index++) {
-            byte[] name = (byte[]) regEnumKeyEx.invoke(root, Integer.valueOf(handles[0]), Integer.valueOf(index), Integer.valueOf(maxlen + 1));
+            byte[] name = (byte[]) regEnumKeyEx.invoke(root, getNumber(handles, 0), Integer.valueOf(index), Integer.valueOf(maxlen + 1));
             results.add(new String(name, StandardCharsets.UTF_8).trim());
         }
-        regCloseKey.invoke(root, Integer.valueOf(handles[0]));
+        regCloseKey.invoke(root, getNumber(handles, 0));
         return results;
     }
 
