@@ -618,7 +618,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         Layer oldLayer = e.getPreviousActiveLayer();
         if (oldLayer instanceof OsmDataLayer) {
             OsmDataLayer l = (OsmDataLayer) oldLayer;
-            l.data.removeDataSetListener(this);
+            l.getDataSet().removeDataSetListener(this);
         }
         Layer newLayer = e.getSource().getActiveLayer();
         if (!(newLayer instanceof OsmDataLayer)) {
@@ -627,7 +627,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
             return;
         }
         OsmDataLayer l = (OsmDataLayer) newLayer;
-        l.data.addDataSetListener(this);
+        l.getDataSet().addDataSetListener(this);
         OsmPrimitive primitive = history != null ? l.data.getPrimitiveById(history.getId(), history.getType()) : null;
         HistoryOsmPrimitive newLatest;
         if (canShowAsLatest(primitive)) {

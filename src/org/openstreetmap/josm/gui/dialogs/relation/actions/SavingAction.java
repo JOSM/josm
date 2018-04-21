@@ -72,7 +72,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         // tags, don't add an empty relation
         if (newRelation.getMembersCount() == 0 && !newRelation.hasKeys())
             return;
-        MainApplication.undoRedo.add(new AddCommand(layer.data, newRelation));
+        MainApplication.undoRedo.add(new AddCommand(layer.getDataSet(), newRelation));
 
         // make sure everybody is notified about the changes
         //
@@ -94,7 +94,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         tagEditorModel.applyToPrimitive(editedRelation);
         memberTableModel.applyToRelation(editedRelation);
         Conflict<Relation> conflict = new Conflict<>(editor.getRelation(), editedRelation);
-        MainApplication.undoRedo.add(new ConflictAddCommand(layer.data, conflict));
+        MainApplication.undoRedo.add(new ConflictAddCommand(layer.getDataSet(), conflict));
     }
 
     /**

@@ -238,7 +238,7 @@ public class MainApplication extends Main {
         public void layerRemoving(LayerRemoveEvent e) {
             Layer layer = e.getRemovedLayer();
             if (layer instanceof OsmDataLayer) {
-                undoRedo.clean(((OsmDataLayer) layer).data);
+                undoRedo.clean(((OsmDataLayer) layer).getDataSet());
             }
         }
 

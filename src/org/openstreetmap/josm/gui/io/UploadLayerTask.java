@@ -106,7 +106,7 @@ public class UploadLayerTask extends AbstractIOTask {
     @Override
     public void run() {
         monitor.indeterminateSubTask(tr("Preparing objects to upload ..."));
-        APIDataSet ds = new APIDataSet(layer.data);
+        APIDataSet ds = new APIDataSet(layer.getDataSet());
         try {
             ds.adjustRelationUploadOrder();
         } catch (CyclicUploadDependencyException e) {

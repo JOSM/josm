@@ -297,7 +297,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
     private void registerNewlayer(OsmDataLayer layer) {
         synchronized (layersLock) {
-            layer.data.addDataSetListener(datasetAdapter);
+            layer.getDataSet().addDataSetListener(datasetAdapter);
             layersInfo.add(new AutosaveLayerInfo<>(layer));
         }
     }
@@ -323,7 +323,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         if (e.getRemovedLayer() instanceof OsmDataLayer) {
             synchronized (layersLock) {
                 OsmDataLayer osmLayer = (OsmDataLayer) e.getRemovedLayer();
-                osmLayer.data.removeDataSetListener(datasetAdapter);
+                osmLayer.getDataSet().removeDataSetListener(datasetAdapter);
                 cleanupLayer(osmLayer);
             }
         } else if (e.getRemovedLayer() instanceof NoteLayer) {

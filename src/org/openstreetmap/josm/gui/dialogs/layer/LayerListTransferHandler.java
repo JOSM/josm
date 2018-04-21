@@ -137,7 +137,7 @@ public class LayerListTransferHandler extends TransferHandler {
         for (Layer layer : layersToUse) {
             if (layer instanceof OsmDataLayer) {
                 String newName = suggestNewLayerName(layer.getName(), layerNames);
-                OsmDataLayer newLayer = new OsmDataLayer(new DataSet(((OsmDataLayer) layer).data), newName, null);
+                OsmDataLayer newLayer = new OsmDataLayer(new DataSet(((OsmDataLayer) layer).getDataSet()), newName, null);
                 layers.add(newLayer);
                 layerNames.add(newName);
             }

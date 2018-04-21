@@ -113,7 +113,7 @@ public class MainLayerManager extends LayerManager {
          */
         public DataSet getPreviousDataSet() {
             if (previousDataLayer != null) {
-                return previousDataLayer.data;
+                return previousDataLayer.getDataSet();
             } else {
                 return null;
             }
@@ -402,7 +402,7 @@ public class MainLayerManager extends LayerManager {
      */
     public synchronized DataSet getEditDataSet() {
         if (dataLayer != null && !dataLayer.isLocked()) {
-            return dataLayer.data;
+            return dataLayer.getDataSet();
         } else {
             return null;
         }
@@ -416,7 +416,7 @@ public class MainLayerManager extends LayerManager {
      */
     public synchronized DataSet getActiveDataSet() {
         if (dataLayer != null) {
-            return dataLayer.data;
+            return dataLayer.getDataSet();
         } else {
             return null;
         }

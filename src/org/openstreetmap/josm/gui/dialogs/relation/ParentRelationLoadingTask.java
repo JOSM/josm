@@ -160,11 +160,11 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
             OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(child, full);
             referrers = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
             if (referrers != null) {
-                final DataSetMerger visitor = new DataSetMerger(getLayer().data, referrers);
+                final DataSetMerger visitor = new DataSetMerger(getLayer().getDataSet(), referrers);
                 visitor.merge();
 
                 // copy the merged layer's data source info
-                getLayer().data.addDataSources(referrers.getDataSources());
+                getLayer().getDataSet().addDataSources(referrers.getDataSources());
                 // FIXME: this is necessary because there are dialogs listening
                 // for DataChangeEvents which manipulate Swing components on this thread.
                 SwingUtilities.invokeLater(getLayer()::onPostDownloadFromServer);
