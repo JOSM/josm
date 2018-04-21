@@ -54,7 +54,7 @@ public final class DuplicateAction extends AbstractAction implements IEnabledSta
         if (layer instanceof OsmDataLayer) {
             String newName = LayerListTransferHandler.suggestNewLayerName(layer.getName(), MainApplication.getLayerManager().getLayers());
             OsmDataLayer oldLayer = (OsmDataLayer) layer;
-            MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(oldLayer.data), newName, null));
+            MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(oldLayer.getDataSet()), newName, null));
         }
     }
 

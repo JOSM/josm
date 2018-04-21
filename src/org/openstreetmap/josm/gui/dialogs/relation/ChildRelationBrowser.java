@@ -398,14 +398,13 @@ public class ChildRelationBrowser extends JPanel {
         }
 
         /**
-         * Merges the primitives in <code>ds</code> to the dataset of the
-         * edit layer
+         * Merges the primitives in <code>ds</code> to the dataset of the edit layer
          *
          * @param ds the data set
          */
         protected void mergeDataSet(DataSet ds) {
             if (ds != null) {
-                final DataSetMerger visitor = new DataSetMerger(getLayer().data, ds);
+                final DataSetMerger visitor = new DataSetMerger(getLayer().getDataSet(), ds);
                 visitor.merge();
                 if (!visitor.getConflicts().isEmpty()) {
                     getLayer().getConflicts().add(visitor.getConflicts());
@@ -464,7 +463,7 @@ public class ChildRelationBrowser extends JPanel {
 
         protected void mergeDataSet(DataSet dataSet) {
             if (dataSet != null) {
-                final DataSetMerger visitor = new DataSetMerger(getLayer().data, dataSet);
+                final DataSetMerger visitor = new DataSetMerger(getLayer().getDataSet(), dataSet);
                 visitor.merge();
                 if (!visitor.getConflicts().isEmpty()) {
                     getLayer().getConflicts().add(visitor.getConflicts());
