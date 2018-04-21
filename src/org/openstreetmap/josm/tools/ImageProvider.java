@@ -684,7 +684,7 @@ public class ImageProvider {
      */
     public CompletableFuture<Void> getAsync(Consumer<? super ImageIcon> action) {
         return isRemote()
-                ? CompletableFuture.supplyAsync(this::get, IMAGE_FETCHER).thenAcceptAsync(action)
+                ? CompletableFuture.supplyAsync(this::get, IMAGE_FETCHER).thenAcceptAsync(action, IMAGE_FETCHER)
                 : CompletableFuture.completedFuture(get()).thenAccept(action);
     }
 
@@ -729,7 +729,7 @@ public class ImageProvider {
      */
     public CompletableFuture<Void> getResourceAsync(Consumer<? super ImageResource> action) {
         return isRemote()
-                ? CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER).thenAcceptAsync(action)
+                ? CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER).thenAcceptAsync(action, IMAGE_FETCHER)
                 : CompletableFuture.completedFuture(getResource()).thenAccept(action);
     }
 
