@@ -2,9 +2,11 @@
 package org.openstreetmap.josm.plugins;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.junit.Before;
@@ -24,6 +26,9 @@ import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 /**
  * Test parts of {@link PluginHandler} class when the reported JOSM version is too old for the plugin.
@@ -42,22 +47,39 @@ public class PluginHandlerJOSMTooOldTest {
      * Plugin server mock.
      */
     @Rule
-    public PluginServer.PluginServerRule pluginServerRule = new PluginServer(
-        new PluginServer.RemotePlugin(new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31772.jar")),
-        new PluginServer.RemotePlugin(
-            new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.v7.jar")
-        )
-    ).asWireMockRule();
+    public WireMockRule pluginServerRule = new WireMockRule(
+        options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot())
+    );
 
     @Before
     public void setUp() throws Exception {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
-        Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin", "baz_plugin"));
         Config.getPref().putList("pluginmanager.sites",
             ImmutableList.of(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
         );
+
+        this.referenceDummyJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31701.jar");
+        this.referenceDummyJarNew = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31772.jar");
+        this.referenceBazJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.v6.jar");
+        this.referenceBazJarNew = new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.v7.jar");
+        this.pluginDir = Main.pref.getPluginsDirectory();
+        this.targetDummyJar = new File(this.pluginDir, "dummy_plugin.jar");
+        this.targetDummyJarNew = new File(this.pluginDir, "dummy_plugin.jar.new");
+        this.targetBazJar = new File(this.pluginDir, "baz_plugin.jar");
+        this.targetBazJarNew = new File(this.pluginDir, "baz_plugin.jar.new");
+        this.pluginDir.mkdirs();
     }
+
+    private File pluginDir;
+    private File referenceDummyJarOld;
+    private File referenceDummyJarNew;
+    private File referenceBazJarOld;
+    private File referenceBazJarNew;
+    private File targetDummyJar;
+    private File targetDummyJarNew;
+    private File targetBazJar;
+    private File targetBazJarNew;
 
     private final String bazPluginVersionReqString = "JOSM version 8,001 required for plugin baz_plugin.";
     private final String dummyPluginVersionReqString = "JOSM version 7,001 required for plugin dummy_plugin.";
@@ -69,12 +91,22 @@ public class PluginHandlerJOSMTooOldTest {
      * user chooses to update them anyway.
      */
     @Test
-    public void testUpdatePluginsDownloadBoth() {
+    public void testUpdatePluginsDownloadBoth() throws Exception {
+        final PluginServer pluginServer = new PluginServer(
+            new PluginServer.RemotePlugin(this.referenceDummyJarNew),
+            new PluginServer.RemotePlugin(this.referenceBazJarNew)
+        );
+        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin", "baz_plugin"));
+
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker(ImmutableMap.<String, Object>builder()
             .put(this.bazPluginVersionReqString, "Download Plugin")
             .put(this.dummyPluginVersionReqString, "Download Plugin")
             .build()
         );
+
+        Files.copy(this.referenceDummyJarOld.toPath(), this.targetDummyJar.toPath());
+        Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
 
         final List<PluginInformation> updatedPlugins = PluginHandler.updatePlugins(
             Main.parent,
@@ -101,6 +133,12 @@ public class PluginHandlerJOSMTooOldTest {
         assertEquals(updatedPlugins.get(1).name, "dummy_plugin");
         assertEquals("31772", updatedPlugins.get(1).localversion);
 
+        assertFalse(targetDummyJarNew.exists());
+        assertFalse(targetBazJarNew.exists());
+
+        TestUtils.assertFileContentsEqual(this.referenceDummyJarNew, this.targetDummyJar);
+        TestUtils.assertFileContentsEqual(this.referenceBazJarNew, this.targetBazJar);
+
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
@@ -115,7 +153,14 @@ public class PluginHandlerJOSMTooOldTest {
      * user chooses to update one and skip the other.
      */
     @Test
-    public void testUpdatePluginsSkipOne() {
+    public void testUpdatePluginsSkipOne() throws Exception {
+        final PluginServer pluginServer = new PluginServer(
+            new PluginServer.RemotePlugin(this.referenceDummyJarNew),
+            new PluginServer.RemotePlugin(this.referenceBazJarNew)
+        );
+        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin", "baz_plugin"));
+
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker(ImmutableMap.<String, Object>builder()
             .put(this.bazPluginVersionReqString, "Download Plugin")
             .put(this.dummyPluginVersionReqString, "Skip Download")
@@ -125,6 +170,9 @@ public class PluginHandlerJOSMTooOldTest {
             .put(this.dummyPluginFailedString, "OK")
             .build()
         );
+
+        Files.copy(this.referenceDummyJarOld.toPath(), this.targetDummyJar.toPath());
+        Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
 
         final List<PluginInformation> updatedPlugins = PluginHandler.updatePlugins(
             Main.parent,
@@ -158,7 +206,13 @@ public class PluginHandlerJOSMTooOldTest {
         assertEquals("7", updatedPlugins.get(0).localversion);
 
         assertEquals(updatedPlugins.get(1).name, "dummy_plugin");
-        assertEquals(null, updatedPlugins.get(1).localversion);
+        assertEquals("31701", updatedPlugins.get(1).localversion);
+
+        assertFalse(targetDummyJarNew.exists());
+        assertFalse(targetBazJarNew.exists());
+
+        TestUtils.assertFileContentsEqual(this.referenceDummyJarOld, this.targetDummyJar);
+        TestUtils.assertFileContentsEqual(this.referenceBazJarNew, this.targetBazJar);
 
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         this.pluginServerRule.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
