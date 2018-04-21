@@ -56,8 +56,8 @@ public class MapPaintPreferenceTestIT {
         ImageProvider.clearCache();
         Collection<ExtendedSourceEntry> sources = new MapPaintPreference.MapPaintSourceEditor()
                 .loadAndGetAvailableSources();
-        // Drop everything from yopaseopor and www.freietonne.de, too many errors
-        sources.removeIf(x -> x.url.contains("yopaseopor/") || x.url.contains("www.freietonne.de"));
+        // Drop everything from yopaseopor, pasharm and www.freietonne.de, too many errors
+        sources.removeIf(x -> x.url.contains("yopaseopor/") || x.url.contains("/pasharm") || x.url.contains("www.freietonne.de"));
         assertFalse(sources.isEmpty());
         Map<String, Collection<Throwable>> allErrors = new HashMap<>();
         Map<String, Collection<String>> allWarnings = new HashMap<>();
