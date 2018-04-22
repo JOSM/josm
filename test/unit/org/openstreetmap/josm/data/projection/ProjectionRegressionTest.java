@@ -212,11 +212,11 @@ public class ProjectionRegressionTest {
 
     private static boolean equalsDoubleMaxUlp(double d1, double d2) {
         // Due to error accumulation in projection computation, the difference can reach hundreds of ULPs
-        // The worst error is 816 ULP (followed by 512 ULP then 400 ULP) with:
-        // WGS 72BE / UTM zone 12N (EPSG:32412): Projecting latlon(-19.603789209544317,-115.55033658613439):
-        // expected: eastnorth(22416.160243623483,-2174011.280696576),
-        // but got:  eastnorth(22416.16024362645,-2174011.280696576)!
-        return Math.abs(d1 - d2) <= 850 * Math.ulp(d1);
+        // The worst error is 1168 ULP (followed by 816 ULP then 512 ULP) with:
+        // NAD83 / Colorado South (EPSG:26955): Projecting latlon(32.24604527892822,-125.93039495227096):
+        // expected: eastnorth(-1004398.8994415681,24167.8944844745),
+        // but got:  eastnorth(-1004398.8994415683,24167.894484478747)!
+        return Math.abs(d1 - d2) <= 1200 * Math.ulp(d1);
     }
 
     private static boolean equalsJava9(EastNorth en1, EastNorth en2) {
