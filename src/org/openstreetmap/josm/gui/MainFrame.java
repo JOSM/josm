@@ -82,14 +82,15 @@ public class MainFrame extends JFrame {
         setJMenuBar(menu);
         geometry.applySafe(this);
         List<Image> l = new LinkedList<>();
-        for (ImageIcon img : new ImageIcon[] {
-                ImageProvider.getIfAvailable("logo_16x16x32"),
-                ImageProvider.getIfAvailable("logo_16x16x8"),
-                ImageProvider.getIfAvailable("logo_32x32x32"),
-                ImageProvider.getIfAvailable("logo_32x32x8"),
-                ImageProvider.getIfAvailable("logo_48x48x32"),
-                ImageProvider.getIfAvailable("logo_48x48x8"),
-                ImageProvider.getIfAvailable("logo")}) {
+        for (String file : new String[] {
+                /* ICON */ "logo_16x16x32",
+                /* ICON */ "logo_16x16x8",
+                /* ICON */ "logo_32x32x32",
+                /* ICON */ "logo_32x32x8",
+                /* ICON */ "logo_48x48x32",
+                /* ICON */ "logo_48x48x8",
+                /* ICON */ "logo"}) {
+            ImageIcon img = ImageProvider.getIfAvailable(file);
             if (img != null) {
                 l.add(img.getImage());
             }
