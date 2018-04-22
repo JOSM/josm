@@ -111,7 +111,7 @@ public class MapImage {
 
     private Image getDisabled() {
         if (disabledImgCache != null)
-                return disabledImgCache;
+            return disabledImgCache;
         if (img == null)
             getImage(); // fix #7498 ?
         Image disImg = GuiHelper.getDisabledImage(img);

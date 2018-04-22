@@ -439,13 +439,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     g.setStroke(new BasicStroke());
                 }
             } else {
-                Image img = fillImage.getImage(disabled);
-                // TexturePaint requires BufferedImage -> get base image from
-                // possible multi-resolution image
-                img = HiDPISupport.getBaseImage(img);
-                TexturePaint texture = new TexturePaint((BufferedImage) img,
-                        new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
-                g.setPaint(texture);
+                // TexturePaint requires BufferedImage -> get base image from possible multi-resolution image
+                Image img = HiDPISupport.getBaseImage(fillImage.getImage(disabled));
+                if (img != null) {
+                    g.setPaint(new TexturePaint((BufferedImage) img,
+                            new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight())));
+                } else {
+                    Logging.warn("Unable to get image from " + fillImage);
+                }
                 Float alpha = fillImage.getAlphaFloat();
                 if (!Utils.equalsEpsilon(alpha, 1f)) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
