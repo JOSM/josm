@@ -175,11 +175,15 @@ public class ExtraFieldUtils {
             }
             try {
                 final ZipExtraField ze = createExtraField(headerId);
-                if (local) {
-                    ze.parseFromLocalFileData(data, start + WORD, length);
-                } else {
-                    ze.parseFromCentralDirectoryData(data, start + WORD,
-                                                     length);
+                try {
+                    if (local) {
+                        ze.parseFromLocalFileData(data, start + WORD, length);
+                    } else {
+                        ze.parseFromCentralDirectoryData(data, start + WORD, length);
+                    }
+                } catch (ArrayIndexOutOfBoundsException aiobe) {
+                    throw (ZipException) new ZipException("Failed to parse corrupt ZIP extra field of type "
+                        + Integer.toHexString(headerId.getValue())).initCause(aiobe);
                 }
                 v.add(ze);
             } catch (final InstantiationException | IllegalAccessException ie) {
