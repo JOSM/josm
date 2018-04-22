@@ -213,7 +213,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
         }
 
         final long available = entrySize - entryOffset;
-        final long skipped = is.skip(Math.min(n, available));
+        final long skipped = IOUtils.skip(is, Math.min(n, available));
         count(skipped);
         entryOffset += skipped;
         return skipped;
