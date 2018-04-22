@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
@@ -45,7 +45,7 @@ public interface LabelCompositionStrategy {
      * @return the text value to be rendered or null, if primitive is null or
      * if no suitable value could be composed
      */
-    String compose(OsmPrimitive primitive);
+    String compose(IPrimitive primitive);
 
     /**
      * Strategy where the label is given by a static text specified in the MapCSS style file.
@@ -58,7 +58,7 @@ public interface LabelCompositionStrategy {
         }
 
         @Override
-        public String compose(OsmPrimitive primitive) {
+        public String compose(IPrimitive primitive) {
             return defaultLabel;
         }
 
@@ -103,7 +103,7 @@ public interface LabelCompositionStrategy {
         }
 
         @Override
-        public String compose(OsmPrimitive primitive) {
+        public String compose(IPrimitive primitive) {
             if (defaultLabelTag == null) return null;
             if (primitive == null) return null;
             return primitive.get(defaultLabelTag);
@@ -245,7 +245,7 @@ public interface LabelCompositionStrategy {
             }
         }
 
-        private String getPrimitiveName(OsmPrimitive n) {
+        private String getPrimitiveName(IPrimitive n) {
             StringBuilder name = new StringBuilder();
             if (!n.hasKeys()) return null;
             for (String rn : nameTags) {
@@ -270,7 +270,7 @@ public interface LabelCompositionStrategy {
         }
 
         @Override
-        public String compose(OsmPrimitive primitive) {
+        public String compose(IPrimitive primitive) {
             if (primitive == null) return null;
             return getPrimitiveName(primitive);
         }
