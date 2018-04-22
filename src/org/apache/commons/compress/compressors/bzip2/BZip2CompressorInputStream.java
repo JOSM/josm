@@ -32,14 +32,15 @@ import java.util.Arrays;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.utils.BitInputStream;
 import org.apache.commons.compress.utils.CloseShieldFilterInputStream;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * An input stream that decompresses from the BZip2 format to be read as any other stream.
  *
  * @NotThreadSafe
  */
-public class BZip2CompressorInputStream extends CompressorInputStream implements
-                                                                          BZip2Constants {
+public class BZip2CompressorInputStream extends CompressorInputStream
+    implements BZip2Constants, InputStreamStatistics {
 
     /**
      * Index of the last char in the block, so the block size == last + 1.
@@ -179,6 +180,22 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
 
         return (destOffs == offs) ? -1 : (destOffs - offs);
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return bin.getBytesRead();
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getUncompressedCount() {
+        return getBytesRead();
     }
 
     private void makeMaps() {

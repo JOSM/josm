@@ -19,6 +19,9 @@
 
 package org.apache.commons.compress.archivers.zip;
 
+import org.apache.commons.compress.utils.CountingInputStream;
+import org.apache.commons.compress.utils.InputStreamStatistics;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,7 +37,7 @@ import java.io.InputStream;
  * @author Emmanuel Bourg
  * @since 1.7
  */
-class ExplodingInputStream extends InputStream {
+class ExplodingInputStream extends InputStream implements InputStreamStatistics {
 
     /** The underlying stream containing the compressed data */
     private final InputStream in;
@@ -61,6 +64,8 @@ class ExplodingInputStream extends InputStream {
 
     /** Output buffer holding the decompressed data */
     private final CircularBuffer buffer = new CircularBuffer(32 * 1024);
+
+    private long uncompressedCount = 0;
 
     /**
      * Create a new stream decompressing the content of the specified stream
@@ -107,7 +112,27 @@ class ExplodingInputStream extends InputStream {
             fillBuffer();
         }
 
-        return buffer.get();
+        final int ret = buffer.get();
+        if (ret > -1) {
+            uncompressedCount++;
+        }
+        return ret;
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return bits.getBytesRead();
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getUncompressedCount() {
+        return uncompressedCount;
     }
 
     /**

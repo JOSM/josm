@@ -155,6 +155,13 @@ class HuffmanDecoder implements Closeable {
         return -1;
     }
 
+    /**
+     * @since 1.17
+     */
+    long getBytesRead() {
+        return reader.getBytesRead();
+    }
+
     private void switchToUncompressedState() throws IOException {
         reader.alignWithByteBoundary();
         long bLen = readBits(16);

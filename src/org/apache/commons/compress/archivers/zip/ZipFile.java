@@ -40,7 +40,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipException;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;

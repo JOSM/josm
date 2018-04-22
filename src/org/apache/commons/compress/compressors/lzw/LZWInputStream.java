@@ -25,6 +25,7 @@ import java.nio.ByteOrder;
 import org.apache.commons.compress.MemoryLimitException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.utils.BitInputStream;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * <p>Generic LZW implementation. It is used internally for
@@ -34,7 +35,7 @@ import org.apache.commons.compress.utils.BitInputStream;
  * @NotThreadSafe
  * @since 1.10
  */
-public abstract class LZWInputStream extends CompressorInputStream {
+public abstract class LZWInputStream extends CompressorInputStream implements InputStreamStatistics {
     protected static final int DEFAULT_CODE_SIZE = 9;
     protected static final int UNUSED_PREFIX = -1;
 
@@ -85,6 +86,22 @@ public abstract class LZWInputStream extends CompressorInputStream {
         }
         count(bytesRead);
         return bytesRead;
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return in.getBytesRead();
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getUncompressedCount() {
+        return getBytesRead();
     }
 
     /**

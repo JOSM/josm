@@ -38,7 +38,7 @@ public class BitInputStream implements Closeable {
         }
     }
 
-    private final InputStream in;
+    private final CountingInputStream in;
     private final ByteOrder byteOrder;
     private long bitsCached = 0;
     private int bitsCachedSize = 0;
@@ -50,7 +50,7 @@ public class BitInputStream implements Closeable {
      *      either BIG_ENDIAN (aaaaabbb bb000000) or LITTLE_ENDIAN (bbbaaaaa 000000bb)
      */
     public BitInputStream(final InputStream in, final ByteOrder byteOrder) {
-        this.in = in;
+        this.in = new CountingInputStream(in);
         this.byteOrder = byteOrder;
     }
 
@@ -125,6 +125,17 @@ public class BitInputStream implements Closeable {
         }
     }
 
+    /**
+     * Returns the number of bytes read from the underlying stream.
+     *
+     * <p>This includes the bytes read to fill the current cache and
+     * not read as bits so far.</p>
+     * @since 1.17
+     */
+    public long getBytesRead() {
+        return in.getBytesRead();
+    }
+
     private long processBitsGreater57(final int count) throws IOException {
         final long bitsOut;
         int overflowBits = 0;
@@ -187,4 +198,5 @@ public class BitInputStream implements Closeable {
         }
         return false;
     }
+
 }
