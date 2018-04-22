@@ -478,7 +478,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream implements InputSt
     @Override
     public long getCompressedCount() {
         if (current.entry.getMethod() == ZipArchiveOutputStream.STORED) {
-            return current.bytesReadFromStream;
+            return current.bytesRead;
         } else if (current.entry.getMethod() == ZipArchiveOutputStream.DEFLATED) {
             return getBytesInflated();
         } else if (current.entry.getMethod() == ZipMethod.UNSHRINKING.getCode()) {

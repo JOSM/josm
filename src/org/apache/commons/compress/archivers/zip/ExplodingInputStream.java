@@ -67,6 +67,8 @@ class ExplodingInputStream extends InputStream implements InputStreamStatistics 
 
     private long uncompressedCount = 0;
 
+    private long treeSizes = 0;
+
     /**
      * Create a new stream decompressing the content of the specified stream
      * using the explode algorithm.
@@ -95,12 +97,20 @@ class ExplodingInputStream extends InputStream implements InputStreamStatistics 
      */
     private void init() throws IOException {
         if (bits == null) {
-            if (numberOfTrees == 3) {
-                literalTree = BinaryTree.decode(in, 256);
-            }
+            try (CountingInputStream i = new CountingInputStream(in) {
+                    @Override
+                    public void close() {
+                        // we do not want to close in
+                    }
+                }) {
+                if (numberOfTrees == 3) {
+                    literalTree = BinaryTree.decode(i, 256);
+                }
 
-            lengthTree = BinaryTree.decode(in, 64);
-            distanceTree = BinaryTree.decode(in, 64);
+                lengthTree = BinaryTree.decode(i, 64);
+                distanceTree = BinaryTree.decode(i, 64);
+                treeSizes += i.getBytesRead();
+            }
 
             bits = new BitStream(in);
         }
@@ -124,7 +134,7 @@ class ExplodingInputStream extends InputStream implements InputStreamStatistics 
      */
     @Override
     public long getCompressedCount() {
-        return bits.getBytesRead();
+        return bits.getBytesRead() + treeSizes;
     }
 
     /**
@@ -133,6 +143,14 @@ class ExplodingInputStream extends InputStream implements InputStreamStatistics 
     @Override
     public long getUncompressedCount() {
         return uncompressedCount;
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public void close() throws IOException {
+        in.close();
     }
 
     /**

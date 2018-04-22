@@ -34,6 +34,7 @@ import static org.apache.commons.compress.utils.IOUtils.closeQuietly;
 public class Deflate64CompressorInputStream extends CompressorInputStream implements InputStreamStatistics {
     private InputStream originalStream;
     private HuffmanDecoder decoder;
+    private long compressedBytesRead;
     private final byte[] oneByte = new byte[1];
 
     /**
@@ -78,6 +79,7 @@ public class Deflate64CompressorInputStream extends CompressorInputStream implem
         int read = -1;
         if (decoder != null) {
             read = decoder.decode(b, off, len);
+            compressedBytesRead = decoder.getBytesRead();
             count(read);
             if (read == -1) {
                 closeDecoder();
@@ -105,7 +107,7 @@ public class Deflate64CompressorInputStream extends CompressorInputStream implem
      */
     @Override
     public long getCompressedCount() {
-        return decoder.getBytesRead();
+        return compressedBytesRead;
     }
 
     /**
