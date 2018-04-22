@@ -23,6 +23,7 @@ import java.io.InputStream;
 
 import com.github.luben.zstd.ZstdInputStream;
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * {@link CompressorInputStream} implementation to decode Zstandard encoded stream.
@@ -55,7 +56,7 @@ public class ZstdCompressorInputStream extends CompressorInputStream {
 
     @Override
     public long skip(final long n) throws IOException {
-        return decIS.skip(n);
+        return IOUtils.skip(decIS, n);
     }
 
     @Override

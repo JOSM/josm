@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * {@link CompressorInputStream} implementation to decode Brotli encoded stream.
@@ -53,7 +54,7 @@ public class BrotliCompressorInputStream extends CompressorInputStream {
 
     @Override
     public long skip(final long n) throws IOException {
-        return decIS.skip(n);
+        return IOUtils.skip(decIS, n);
     }
 
     @Override

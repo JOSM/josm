@@ -28,6 +28,7 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * An input stream that decompresses from the Pack200 format to be read
@@ -235,7 +236,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
 
     @Override
     public long skip(final long count) throws IOException {
-        return streamBridge.getInput().skip(count);
+        return IOUtils.skip(streamBridge.getInput(), count);
     }
 
     @Override

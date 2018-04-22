@@ -24,6 +24,7 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * Deflate decompressor.
@@ -82,7 +83,7 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
     /** {@inheritDoc} */
     @Override
     public long skip(final long n) throws IOException {
-        return in.skip(n);
+        return IOUtils.skip(in, n);
     }
 
     /** {@inheritDoc} */

@@ -25,6 +25,7 @@ import org.apache.commons.compress.MemoryLimitException;
 import org.tukaani.xz.LZMAInputStream;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * LZMA decompressor.
@@ -96,7 +97,7 @@ public class LZMACompressorInputStream extends CompressorInputStream {
     /** {@inheritDoc} */
     @Override
     public long skip(final long n) throws IOException {
-        return in.skip(n);
+        return IOUtils.skip(in, n);
     }
 
     /** {@inheritDoc} */

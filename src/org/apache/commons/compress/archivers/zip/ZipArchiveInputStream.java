@@ -1161,7 +1161,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
         @Override
         public long skip(final long n) throws IOException {
             final long toSkip = max >= 0 ? Math.min(n, max - pos) : n;
-            final long skippedBytes = in.skip(toSkip);
+            final long skippedBytes = IOUtils.skip(in, toSkip);
             pos += skippedBytes;
             return skippedBytes;
         }
