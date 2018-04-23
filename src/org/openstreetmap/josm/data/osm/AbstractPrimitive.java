@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -466,13 +465,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return new TagMap(keys);
     }
 
-    /**
-     * Calls the visitor for every key/value pair of this primitive.
-     *
-     * @param visitor The visitor to call.
-     * @see #getKeys()
-     * @since 8742
-     */
+    @Override
     public void visitKeys(KeyValueVisitor visitor) {
         final String[] keys = this.keys;
         if (keys != null) {
@@ -767,70 +760,5 @@ public abstract class AbstractPrimitive implements IPrimitive {
         }
 
         return getName();
-    }
-
-    /**
-     * Tests whether this primitive contains a tag consisting of {@code key} and {@code value}.
-     * @param key the key forming the tag.
-     * @param value value forming the tag.
-     * @return true if primitive contains a tag consisting of {@code key} and {@code value}.
-     */
-    public boolean hasTag(String key, String value) {
-        return Objects.equals(value, get(key));
-    }
-
-    /**
-     * Tests whether this primitive contains a tag consisting of {@code key} and any of {@code values}.
-     * @param key the key forming the tag.
-     * @param values one or many values forming the tag.
-     * @return true if primitive contains a tag consisting of {@code key} and any of {@code values}.
-     */
-    public boolean hasTag(String key, String... values) {
-        return hasTag(key, Arrays.asList(values));
-    }
-
-    /**
-     * Tests whether this primitive contains a tag consisting of {@code key} and any of {@code values}.
-     * @param key the key forming the tag.
-     * @param values one or many values forming the tag.
-     * @return true if primitive contains a tag consisting of {@code key} and any of {@code values}.
-     */
-    public boolean hasTag(String key, Collection<String> values) {
-        return values.contains(get(key));
-    }
-
-    /**
-     * Tests whether this primitive contains a tag consisting of {@code key} and a value different from {@code value}.
-     * @param key the key forming the tag.
-     * @param value value not forming the tag.
-     * @return true if primitive contains a tag consisting of {@code key} and a value different from {@code value}.
-     * @since 11608
-     */
-    public boolean hasTagDifferent(String key, String value) {
-        String v = get(key);
-        return v != null && !v.equals(value);
-    }
-
-    /**
-     * Tests whether this primitive contains a tag consisting of {@code key} and none of {@code values}.
-     * @param key the key forming the tag.
-     * @param values one or many values forming the tag.
-     * @return true if primitive contains a tag consisting of {@code key} and none of {@code values}.
-     * @since 11608
-     */
-    public boolean hasTagDifferent(String key, String... values) {
-        return hasTagDifferent(key, Arrays.asList(values));
-    }
-
-    /**
-     * Tests whether this primitive contains a tag consisting of {@code key} and none of {@code values}.
-     * @param key the key forming the tag.
-     * @param values one or many values forming the tag.
-     * @return true if primitive contains a tag consisting of {@code key} and none of {@code values}.
-     * @since 11608
-     */
-    public boolean hasTagDifferent(String key, Collection<String> values) {
-        String v = get(key);
-        return v != null && !values.contains(v);
     }
 }
