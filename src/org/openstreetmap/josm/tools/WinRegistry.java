@@ -182,13 +182,13 @@ public final class WinRegistry {
     private static Map<String, String> readStringValues(Preferences root, int hkey, String key)
             throws IllegalAccessException, InvocationTargetException {
         if (regOpenKey == null || regQueryInfoKey == null || regEnumValue == null || regCloseKey == null) {
-            return null;
+            return Collections.emptyMap();
         }
         HashMap<String, String> results = new HashMap<>();
         // Need to capture both int[] (Java 8-10) and long[] (Java 11+)
         Object handles = regOpenKey.invoke(root, hkey(hkey), toCstr(key), Integer.valueOf(KEY_READ));
         if (getNumber(handles, 1).longValue() != REG_SUCCESS) {
-            return null;
+            return Collections.emptyMap();
         }
         // Need to capture both int[] (Java 8-10) and long[] (Java 11+)
         Object info = regQueryInfoKey.invoke(root, getNumber(handles, 0));
@@ -207,7 +207,7 @@ public final class WinRegistry {
     private static List<String> readStringSubKeys(Preferences root, int hkey, String key)
             throws IllegalAccessException, InvocationTargetException {
         if (regOpenKey == null || regQueryInfoKey == null || regEnumKeyEx == null || regCloseKey == null) {
-            return null;
+            return Collections.emptyList();
         }
         List<String> results = new ArrayList<>();
         // Need to capture both int[] (Java 8-10) and long[] (Java 11+)
