@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -22,6 +23,18 @@ public interface INode extends IPrimitive, ILatLon {
      * @param coor lat/lon coordinates of this node
      */
     void setCoor(LatLon coor);
+
+    /**
+     * Replies the projected east/north coordinates.
+     * <p>
+     * Uses the {@link Main#getProjection() global projection} to project the lat/lon-coordinates.
+     * <p>
+     * @return the east north coordinates or {@code null} if {@link #isLatLonKnown()} is false.
+     * @since 13666
+     */
+    default EastNorth getEastNorth() {
+        return getEastNorth(Main.getProjection());
+    }
 
     /**
      * Sets east/north coordinates of this node.
