@@ -6,8 +6,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.Objects;
 
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
@@ -281,7 +281,7 @@ public class BoxTextElement extends StyleElement {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings settings, StyledMapRenderer painter,
+    public void paintPrimitive(IPrimitive osm, MapPaintSettings settings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
         if (osm instanceof Node) {
             painter.drawBoxText((Node) osm, this);

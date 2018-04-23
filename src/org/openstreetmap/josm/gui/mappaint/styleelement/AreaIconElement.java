@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
@@ -42,7 +42,7 @@ public class AreaIconElement extends StyleElement {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings paintSettings, StyledMapRenderer painter,
+    public void paintPrimitive(IPrimitive osm, MapPaintSettings paintSettings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
         if (painter.isShowIcons()) {
             painter.drawAreaIcon(osm, iconImage, painter.isInactiveMode() || osm.isDisabled(), selected, member,

@@ -46,6 +46,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -753,7 +754,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param iconPosition Where to place the icon.
      * @since 11670
      */
-    public void drawAreaIcon(OsmPrimitive osm, MapImage img, boolean disabled, boolean selected, boolean member, double theta,
+    public void drawAreaIcon(IPrimitive osm, MapImage img, boolean disabled, boolean selected, boolean member, double theta,
             PositionForAreaStrategy iconPosition) {
         Rectangle2D.Double iconRect = new Rectangle2D.Double(-img.getWidth() / 2.0, -img.getHeight() / 2.0, img.getWidth(), img.getHeight());
 
@@ -1089,7 +1090,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param labelPositionStrategy The position of the text
      * @since 11722
      */
-    public void drawText(OsmPrimitive osm, TextLabel text, PositionForAreaStrategy labelPositionStrategy) {
+    public void drawText(IPrimitive osm, TextLabel text, PositionForAreaStrategy labelPositionStrategy) {
         if (!isShowNames()) {
             return;
         }
@@ -1125,7 +1126,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.setFont(defaultFont);
     }
 
-    private void displayText(OsmPrimitive osm, TextLabel text, String name, Rectangle2D nb,
+    private void displayText(IPrimitive osm, TextLabel text, String name, Rectangle2D nb,
             MapViewPositionAndRotation center) {
         AffineTransform at = new AffineTransform();
         if (Math.abs(center.getRotation()) < .01) {
@@ -1181,7 +1182,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param osm A way or a multipolygon
      * @param consumer The consumer to call.
      */
-    private void forEachPolygon(OsmPrimitive osm, Consumer<MapViewPath> consumer) {
+    private void forEachPolygon(IPrimitive osm, Consumer<MapViewPath> consumer) {
         if (osm instanceof Way) {
             consumer.accept(getPath((Way) osm));
         } else if (osm instanceof Relation) {
