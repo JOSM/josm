@@ -1,8 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Objects implement Tagged if they provide a map of key/value pairs.
@@ -32,6 +34,17 @@ public interface Tagged {
      * @return the map of key/value pairs
      */
     Map<String, String> getKeys();
+
+    /**
+     * Calls the visitor for every key/value pair.
+     *
+     * @param visitor The visitor to call.
+     * @see #getKeys()
+     * @since 13668
+     */
+    default void visitKeys(KeyValueVisitor visitor) {
+        getKeys().forEach((k, v) -> visitor.visitKeyValue(this, k, v));
+    }
 
     /**
      * Sets a key/value pairs
@@ -97,6 +110,74 @@ public interface Tagged {
     default boolean hasTag(String key) {
         String v = get(key);
         return v != null && !v.isEmpty();
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and {@code value}.
+     * @param key the key forming the tag.
+     * @param value value forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and {@code value}.
+     * @since 13668
+     */
+    default boolean hasTag(String key, String value) {
+        return Objects.equals(value, get(key));
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and any of {@code values}.
+     * @param key the key forming the tag.
+     * @param values one or many values forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and any of {@code values}.
+     * @since 13668
+     */
+    default boolean hasTag(String key, String... values) {
+        return hasTag(key, Arrays.asList(values));
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and any of {@code values}.
+     * @param key the key forming the tag.
+     * @param values one or many values forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and any of {@code values}.
+     * @since 13668
+     */
+    default boolean hasTag(String key, Collection<String> values) {
+        return values.contains(get(key));
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and a value different from {@code value}.
+     * @param key the key forming the tag.
+     * @param value value not forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and a value different from {@code value}.
+     * @since 13668
+     */
+    default boolean hasTagDifferent(String key, String value) {
+        String v = get(key);
+        return v != null && !v.equals(value);
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and none of {@code values}.
+     * @param key the key forming the tag.
+     * @param values one or many values forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and none of {@code values}.
+     * @since 13668
+     */
+    default boolean hasTagDifferent(String key, String... values) {
+        return hasTagDifferent(key, Arrays.asList(values));
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and none of {@code values}.
+     * @param key the key forming the tag.
+     * @param values one or many values forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and none of {@code values}.
+     * @since 13668
+     */
+    default boolean hasTagDifferent(String key, Collection<String> values) {
+        String v = get(key);
+        return v != null && !values.contains(v);
     }
 
     /**

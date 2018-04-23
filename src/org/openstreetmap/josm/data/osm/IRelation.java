@@ -53,4 +53,17 @@ public interface IRelation extends IPrimitive {
     default String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }
+
+    /**
+     * Determines if this relation is a boundary.
+     * @return {@code true} if a boundary relation
+     */
+    default boolean isBoundary() {
+        return "boundary".equals(get("type"));
+    }
+
+    @Override
+    default boolean isMultipolygon() {
+        return "multipolygon".equals(get("type")) || isBoundary();
+    }
 }

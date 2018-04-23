@@ -87,18 +87,6 @@ public final class Node extends OsmPrimitive implements INode {
         return lon;
     }
 
-    /**
-     * Replies the projected east/north coordinates.
-     * <p>
-     * Uses the {@link Main#getProjection() global projection} to project the lat/lon-coordinates.
-     * <p>
-     * @return the east north coordinates or {@code null} if {@link #isLatLonKnown()}
-     * is false.
-     */
-    public EastNorth getEastNorth() {
-        return getEastNorth(Main.getProjection());
-    }
-
     @Override
     public EastNorth getEastNorth(Projecting projection) {
         if (!isLatLonKnown()) return null;
@@ -336,14 +324,9 @@ public final class Node extends OsmPrimitive implements INode {
         return super.isDrawable() && isLatLonKnown();
     }
 
-    /**
-     * Check whether this node connects 2 ways.
-     *
-     * @return true if isReferredByWays(2) returns true
-     * @see #isReferredByWays(int)
-     */
-    public boolean isConnectionNode() {
-        return isReferredByWays(2);
+    @Override
+    public boolean isReferredByWays(int n) {
+        return isNodeReferredByWays(n);
     }
 
     /**

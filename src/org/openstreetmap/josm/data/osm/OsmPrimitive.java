@@ -1023,11 +1023,11 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     /**
-      Return true, if this primitive is referred by at least n ways
-      @param n Minimal number of ways to return true. Must be positive
+     * Return true, if this primitive is a node referred by at least n ways
+     * @param n Minimal number of ways to return true. Must be positive
      * @return {@code true} if this primitive is referred by at least n ways
      */
-    public final boolean isReferredByWays(int n) {
+    protected final boolean isNodeReferredByWays(int n) {
         // Count only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
         Object referrers = this.referrers;
@@ -1348,15 +1348,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * @return {@code true} if this primitive lies outside of the downloaded area
      */
     public abstract boolean isOutsideDownloadArea();
-
-    /**
-     * Determines if this object is a relation and behaves as a multipolygon.
-     * @return {@code true} if it is a real mutlipolygon or a boundary relation
-     * @since 10716
-     */
-    public boolean isMultipolygon() {
-        return false;
-    }
 
     /**
      * If necessary, extend the bbox to contain this primitive
