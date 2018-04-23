@@ -363,6 +363,15 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
     boolean isAnnotated();
 
     /**
+     * Determines if this object is a relation and behaves as a multipolygon.
+     * @return {@code true} if it is a real multipolygon or a boundary relation
+     * @since 13667
+     */
+    default boolean isMultipolygon() {
+        return false;
+    }
+
+    /**
      * true if this object has direction dependent tags (e.g. oneway)
      * @return {@code true} if this object has direction dependent tags
      * @since 13662

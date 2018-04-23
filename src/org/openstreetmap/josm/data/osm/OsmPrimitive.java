@@ -1350,15 +1350,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     public abstract boolean isOutsideDownloadArea();
 
     /**
-     * Determines if this object is a relation and behaves as a multipolygon.
-     * @return {@code true} if it is a real mutlipolygon or a boundary relation
-     * @since 10716
-     */
-    public boolean isMultipolygon() {
-        return false;
-    }
-
-    /**
      * If necessary, extend the bbox to contain this primitive
      * @param box a bbox instance
      * @param visited a set of visited members  or null
