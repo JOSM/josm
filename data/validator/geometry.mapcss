@@ -184,7 +184,7 @@ area:closed:areaStyle[tag("natural") = parent_tag("natural")] ⧉ area:closed:ar
   throwWarning: tr("Overlapping Identical Natural Areas");
 }
 
-area:closed:areaStyle[tag("landuse") = parent_tag("landuse")] ⧉ area:closed:areaStyle[landuse] {
+area:closed:areaStyle[landuse!=residential][tag("landuse") = parent_tag("landuse")] ⧉ area:closed:areaStyle[landuse][landuse!=residential] {
   throwWarning: tr("Overlapping Identical Landuses");
 }
 
