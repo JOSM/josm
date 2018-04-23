@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
@@ -87,8 +88,9 @@ public abstract class StyleElement implements StyleKeys {
      * @param selected true, if primitive is selected
      * @param outermember true, if primitive is not selected and outer member of a selected multipolygon relation
      * @param member true, if primitive is not selected and member of a selected relation
+     * @since 13662 (signature)
      */
-    public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
+    public abstract void paintPrimitive(IPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member);
 
     /**

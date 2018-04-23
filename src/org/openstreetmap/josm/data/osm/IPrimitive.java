@@ -100,6 +100,24 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
     boolean isNewOrUndeleted();
 
     /**
+     * Replies true, if this primitive is disabled. (E.g. a filter applies)
+     * @return {@code true} if this object has the "disabled" flag enabled
+     * @since 13662
+     */
+    default boolean isDisabled() {
+        return false;
+    }
+
+    /**
+     * Replies true, if this primitive is disabled and marked as completely hidden on the map.
+     * @return {@code true} if this object has both the "disabled" and "hide if disabled" flags enabled
+     * @since 13662
+     */
+    default boolean isDisabledAndHidden() {
+        return false;
+    }
+
+    /**
      * Replies the id of this primitive.
      *
      * @return the id of this primitive.
@@ -250,4 +268,35 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
     default OsmPrimitiveType getDisplayType() {
         return getType();
     }
+
+    /**
+     * Determines if this object is considered "tagged". To be "tagged", an object
+     * must have one or more "interesting" tags. "created_by" and "source"
+     * are typically considered "uninteresting" and do not make an object "tagged".
+     * @return true if this object is considered "tagged"
+     * @since 13662
+     */
+    boolean isTagged();
+
+    /**
+     * Determines if this object is considered "annotated". To be "annotated", an object
+     * must have one or more "work in progress" tags, such as "note" or "fixme".
+     * @return true if this object is considered "annotated"
+     * @since 13662
+     */
+    boolean isAnnotated();
+
+    /**
+     * true if this object has direction dependent tags (e.g. oneway)
+     * @return {@code true} if this object has direction dependent tags
+     * @since 13662
+     */
+    boolean hasDirectionKeys();
+
+    /**
+     * true if this object has the "reversed direction" flag enabled
+     * @return {@code true} if this object has the "reversed direction" flag enabled
+     * @since 13662
+     */
+    boolean reversedDirection();
 }

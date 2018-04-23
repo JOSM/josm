@@ -444,18 +444,12 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         updateFlags(FLAG_PRESERVED, isPreserved);
     }
 
-    /**
-     * Replies true, if this primitive is disabled. (E.g. a filter applies)
-     * @return {@code true} if this object has the "disabled" flag enabled
-     */
+    @Override
     public boolean isDisabled() {
         return (flags & FLAG_DISABLED) != 0;
     }
 
-    /**
-     * Replies true, if this primitive is disabled and marked as completely hidden on the map.
-     * @return {@code true} if this object has both the "disabled" and "hide if disabled" flags enabled
-     */
+    @Override
     public boolean isDisabledAndHidden() {
         return ((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0);
     }
@@ -824,23 +818,12 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         updateFlagsNoLock(FLAG_ANNOTATED, false);
     }
 
-    /**
-     * Determines if this object is considered "tagged". To be "tagged", an object
-     * must have one or more "interesting" tags. "created_by" and "source"
-     * are typically considered "uninteresting" and do not make an object
-     * "tagged".
-     * @return true if this object is considered "tagged"
-     */
+    @Override
     public boolean isTagged() {
         return (flags & FLAG_TAGGED) != 0;
     }
 
-    /**
-     * Determines if this object is considered "annotated". To be "annotated", an object
-     * must have one or more "work in progress" tags, such as "note" or "fixme".
-     * @return true if this object is considered "annotated"
-     * @since 5754
-     */
+    @Override
     public boolean isAnnotated() {
         return (flags & FLAG_ANNOTATED) != 0;
     }
@@ -860,18 +843,12 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         updateFlagsNoLock(FLAG_HAS_DIRECTIONS, hasDirections);
     }
 
-    /**
-     * true if this object has direction dependent tags (e.g. oneway)
-     * @return {@code true} if this object has direction dependent tags
-     */
+    @Override
     public boolean hasDirectionKeys() {
         return (flags & FLAG_HAS_DIRECTIONS) != 0;
     }
 
-    /**
-     * true if this object has the "reversed diretion" flag enabled
-     * @return {@code true} if this object has the "reversed diretion" flag enabled
-     */
+    @Override
     public boolean reversedDirection() {
         return (flags & FLAG_DIRECTION_REVERSED) != 0;
     }

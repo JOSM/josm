@@ -133,6 +133,26 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     }
 
     @Override
+    public boolean isTagged() {
+        return hasKeys();
+    }
+
+    @Override
+    public boolean isAnnotated() {
+        return false;
+    }
+
+    @Override
+    public boolean hasDirectionKeys() {
+        return false;
+    }
+
+    @Override
+    public boolean reversedDirection() {
+        return false;
+    }
+
+    @Override
     public StyleCache getCachedStyle() {
         return null;
     }

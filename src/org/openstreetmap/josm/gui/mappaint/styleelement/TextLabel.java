@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.util.Objects;
 
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -183,7 +184,7 @@ public class TextLabel implements StyleKeys {
      * @return the label, or null, if {@code osm} is null or if no label can be
      * derived for {@code osm}
      */
-    public String getString(OsmPrimitive osm) {
+    public String getString(IPrimitive osm) {
         if (labelCompositionStrategy == null) return null;
         return labelCompositionStrategy.compose(osm);
     }

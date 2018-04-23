@@ -9,8 +9,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
@@ -266,7 +266,7 @@ public class NodeElement extends StyleElement {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter,
+    public void paintPrimitive(IPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
         if (primitive instanceof Node) {
             Node n = (Node) primitive;
