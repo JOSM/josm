@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
  *
  * @author imi
  */
-public abstract class OsmPrimitive extends AbstractPrimitive implements Comparable<OsmPrimitive>, TemplateEngineDataProvider {
+public abstract class OsmPrimitive extends AbstractPrimitive implements TemplateEngineDataProvider {
     private static final String SPECIAL_VALUE_ID = "id";
     private static final String SPECIAL_VALUE_LOCAL_NAME = "localname";
 

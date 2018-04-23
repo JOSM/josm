@@ -334,13 +334,6 @@ public final class Way extends OsmPrimitive implements IWay {
         return true;
     }
 
-    @Override
-    public int compareTo(OsmPrimitive o) {
-        if (o instanceof Relation)
-            return 1;
-        return o instanceof Way ? Long.compare(getUniqueId(), o.getUniqueId()) : -1;
-    }
-
     /**
      * Removes the given {@link Node} from this way. Ignored, if n is null.
      * @param n The node to remove. Ignored, if null

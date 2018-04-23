@@ -10,7 +10,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  * IPrimitive captures the common functions of {@link OsmPrimitive} and {@link PrimitiveData}.
  * @since 4098
  */
-public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
+public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IPrimitive> {
 
     /**
      * Replies <code>true</code> if the object has been modified since it was loaded from
@@ -146,7 +146,7 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
      * <li>for relations: all members are known and complete
      * </ul>
      * @return {@code true} if this object is drawable
-     * @since xxx
+     * @since 13664
      */
     default boolean isDrawable() {
         return true;
@@ -155,7 +155,7 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
     /**
      * Determines whether the primitive is selected
      * @return whether the primitive is selected
-     * @since xxx
+     * @since 13664
      */
     default boolean isSelected() {
         return false;
@@ -164,7 +164,7 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
     /**
      * Determines if this primitive is a member of a selected relation.
      * @return {@code true} if this primitive is a member of a selected relation, {@code false} otherwise
-     * @since xxx
+     * @since 13664
      */
     default boolean isMemberOfSelected() {
         return false;
@@ -173,7 +173,7 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
     /**
      * Determines if this primitive is an outer member of a selected multipolygon relation.
      * @return {@code true} if this primitive is an outer member of a selected multipolygon relation, {@code false} otherwise
-     * @since xxx
+     * @since 13664
      */
     default boolean isOuterMemberOfSelected() {
         return false;

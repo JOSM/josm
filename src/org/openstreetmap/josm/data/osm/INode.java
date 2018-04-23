@@ -30,6 +30,11 @@ public interface INode extends IPrimitive, ILatLon {
     void setEastNorth(EastNorth eastNorth);
 
     @Override
+    default int compareTo(IPrimitive o) {
+        return o instanceof INode ? Long.compare(getUniqueId(), o.getUniqueId()) : 1;
+    }
+
+    @Override
     default String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }

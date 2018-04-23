@@ -311,11 +311,6 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     @Override
-    public int compareTo(OsmPrimitive o) {
-        return o instanceof Node ? Long.compare(getUniqueId(), o.getUniqueId()) : 1;
-    }
-
-    @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.NODE;
     }

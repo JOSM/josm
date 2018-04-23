@@ -43,6 +43,13 @@ public interface IWay extends IPrimitive {
     boolean isClosed();
 
     @Override
+    default int compareTo(IPrimitive o) {
+        if (o instanceof IRelation)
+            return 1;
+        return o instanceof IWay ? Long.compare(getUniqueId(), o.getUniqueId()) : -1;
+    }
+
+    @Override
     default String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }

@@ -317,11 +317,6 @@ public final class Relation extends OsmPrimitive implements IRelation {
                 && super.hasEqualSemanticAttributes(other, testInterestingTagsOnly);
     }
 
-    @Override
-    public int compareTo(OsmPrimitive o) {
-        return o instanceof Relation ? Long.compare(getUniqueId(), o.getUniqueId()) : -1;
-    }
-
     /**
      * Returns the first member.
      * @return first member, or {@code null}
