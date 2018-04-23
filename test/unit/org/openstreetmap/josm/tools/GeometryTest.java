@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.FileInputStream;
 import java.util.List;
 
@@ -9,7 +11,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
@@ -107,5 +111,37 @@ public class GeometryTest {
             Assert.assertEquals(12495000., areaAndPerimeter.getArea(), 1e-3);
             Assert.assertEquals(15093.201209424187, areaAndPerimeter.getPerimeter(), 1e-3);
         }
+    }
+
+    /**
+     * Test of {@link Geometry#getNormalizedAngleInDegrees(double)} method.
+     */
+    @Test
+    public void testRightAngle() {
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        n1.setCoor(new LatLon(10.22873540462851, 6.169719398316592));
+        n2.setCoor(new LatLon(10.229332494162811, 6.16978130985785));
+        n3.setCoor(new LatLon(10.22924937004949, 6.17060908367496));
+
+        double angle = Geometry.getNormalizedAngleInDegrees(Geometry.getCornerAngle(n1.getEastNorth(),
+                n2.getEastNorth(), n3.getEastNorth()));
+        assertEquals(90, angle, 1e-8);
+        angle = Geometry.getNormalizedAngleInDegrees(Geometry.getCornerAngle(n1.getEastNorth(),
+                n2.getEastNorth(), n1.getEastNorth()));
+        assertEquals(0, angle, 1e-8);
+
+        n1.setCoor(new LatLon(10.2295011, 6.1693106));
+        n2.setCoor(new LatLon(10.2294958, 6.16930635));
+        n3.setCoor(new LatLon(10.2294895, 6.1693039));
+
+        angle = Geometry.getNormalizedAngleInDegrees(Geometry.getCornerAngle(n1.getEastNorth(),
+                n2.getEastNorth(), n3.getEastNorth()));
+        assertEquals(162.66381817961337, angle, 1e-5);
+
+        angle = Geometry.getNormalizedAngleInDegrees(Geometry.getCornerAngle(n3.getEastNorth(),
+                n2.getEastNorth(), n1.getEastNorth()));
+        assertEquals(162.66381817961337, angle, 1e-5);
     }
 }
