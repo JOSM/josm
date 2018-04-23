@@ -160,9 +160,9 @@ public class Archiver {
         if (!prefersSeekableByteChannel(format)) {
             create(format, Channels.newOutputStream(target), directory, filter);
         } else if (ArchiveStreamFactory.ZIP.equalsIgnoreCase(format)) {
-            create(format, new ZipArchiveOutputStream(target), directory, filter);
+            create(new ZipArchiveOutputStream(target), directory, filter);
         } else if (ArchiveStreamFactory.SEVEN_Z.equalsIgnoreCase(format)) {
-            create7z(target, directory, filter);
+            create(new SevenZOutputFile(target), directory, filter);
         } else {
             throw new ArchiveException("don't know how to handle format " + format);
         }
@@ -211,32 +211,50 @@ public class Archiver {
         });
     }
 
-    private void create7z(SeekableByteChannel target, File directory, FileFilter filter)
-        throws IOException, ArchiveException {
-        final SevenZOutputFile out = new SevenZOutputFile(target);
+    /**
+     * Creates an archive {@code target} by recursively including all
+     * files and directories in {@code directory}.
+     *
+     * @param target the file to write the new archive to.
+     * @param the directory that contains the files to archive.
+     */
+    public void create(final SevenZOutputFile target, File directory) throws IOException {
+        create(target, directory, ACCEPT_ALL);
+    }
+
+    /**
+     * Creates an archive {@code target} by recursively including all
+     * files and directories in {@code directory} that are accepted by
+     * {@code filter}.
+     *
+     * @param target the file to write the new archive to.
+     * @param the directory that contains the files to archive.
+     * @param filter selects the files and directories to include inside the archive.
+     */
+    public void create(final SevenZOutputFile target, File directory, FileFilter filter) throws IOException {
         create(directory, filter, new ArchiveEntryCreator() {
             public ArchiveEntry create(File f, String entryName) throws IOException {
-                return out.createArchiveEntry(f, entryName);
+                return target.createArchiveEntry(f, entryName);
             }
         }, new ArchiveEntryConsumer() {
             public void accept(File source, ArchiveEntry e) throws IOException {
-                out.putArchiveEntry(e);
+                target.putArchiveEntry(e);
                 if (!e.isDirectory()) {
                     final byte[] buffer = new byte[8024];
                     int n = 0;
                     long count = 0;
                     try (InputStream in = new BufferedInputStream(new FileInputStream(source))) {
                         while (-1 != (n = in.read(buffer))) {
-                            out.write(buffer, 0, n);
+                            target.write(buffer, 0, n);
                             count += n;
                         }
                     }
                 }
-                out.closeArchiveEntry();
+                target.closeArchiveEntry();
             }
         }, new Finisher() {
             public void finish() throws IOException {
-                out.finish();
+                target.finish();
             }
         });
     }
