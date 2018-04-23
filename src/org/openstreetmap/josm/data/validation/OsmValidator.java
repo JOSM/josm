@@ -404,9 +404,9 @@ public final class OsmValidator {
                 String message = tr("Error initializing test {0}:\n {1}", test.getClass().getSimpleName(), e);
                 Logging.error(message);
                 if (!GraphicsEnvironment.isHeadless()) {
-                    GuiHelper.runInEDT(() -> {
-                        JOptionPane.showMessageDialog(Main.parent, message, tr("Error"), JOptionPane.ERROR_MESSAGE);
-                    });
+                    GuiHelper.runInEDT(() ->
+                        JOptionPane.showMessageDialog(Main.parent, message, tr("Error"), JOptionPane.ERROR_MESSAGE)
+                    );
                 }
             }
         }

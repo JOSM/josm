@@ -121,7 +121,7 @@ public final class JCSCacheManager {
                     if (cacheDirLock == null)
                         Logging.warn("Cannot lock cache directory. Will not use disk cache");
                 } catch (IOException e) {
-                    Logging.warn("Cannot create cache dir \"" + cacheDirLockPath.toString() + "\" lock file: " + e.toString());
+                    Logging.log(Logging.LEVEL_WARN, "Cannot create cache dir \"" + cacheDirLockPath + "\" lock file:", e);
                     Logging.warn("Will not use disk cache");
                 }
             }
@@ -199,6 +199,7 @@ public final class JCSCacheManager {
             } catch (Exception e) { // NOPMD
                 // in case any error in setting auxiliary cache, do not use disk cache at all - only memory
                 cc.setAuxCaches(new AuxiliaryCache[0]);
+                Logging.debug(e);
             }
         }
         return new CacheAccess<>(cc);
