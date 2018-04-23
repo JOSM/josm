@@ -45,6 +45,11 @@ public interface IRelation extends IPrimitive {
     }
 
     @Override
+    default int compareTo(IPrimitive o) {
+        return o instanceof IRelation ? Long.compare(getUniqueId(), o.getUniqueId()) : -1;
+    }
+
+    @Override
     default String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }

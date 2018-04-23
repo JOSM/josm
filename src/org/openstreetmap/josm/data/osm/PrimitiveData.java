@@ -153,6 +153,16 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     }
 
     @Override
+    public void setHighlighted(boolean highlighted) {
+        // Override if needed
+    }
+
+    @Override
+    public boolean isHighlighted() {
+        return false;
+    }
+
+    @Override
     public StyleCache getCachedStyle() {
         return null;
     }

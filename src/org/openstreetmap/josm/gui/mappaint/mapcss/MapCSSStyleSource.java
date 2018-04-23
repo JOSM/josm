@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
@@ -640,7 +641,7 @@ public class MapCSSStyleSource extends StyleSource {
         if (osm instanceof Node) {
             matchingRuleIndex = nodeRules;
         } else if (osm instanceof Way) {
-            if (osm.isKeyFalse("area")) {
+            if (OsmUtils.isFalse(osm.get("area"))) {
                 matchingRuleIndex = wayNoAreaRules;
             } else {
                 matchingRuleIndex = wayRules;

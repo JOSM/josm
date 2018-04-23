@@ -5832,6 +5832,7 @@
             <space />
             <key key="amenity" value="telephone" />
             <text key="operator" text="Operator" />
+            <combo key="covered" text="Covered" values="yes,no,booth" />
             <space />
             <check key="payment:coins" text="Coins" />
             <check key="payment:notes" text="Notes" text_context="payment" />

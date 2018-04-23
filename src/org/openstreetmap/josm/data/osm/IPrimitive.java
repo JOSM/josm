@@ -10,7 +10,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  * IPrimitive captures the common functions of {@link OsmPrimitive} and {@link PrimitiveData}.
  * @since 4098
  */
-public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
+public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IPrimitive> {
 
     /**
      * Replies <code>true</code> if the object has been modified since it was loaded from
@@ -114,6 +114,68 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
      * @since 13662
      */
     default boolean isDisabledAndHidden() {
+        return false;
+    }
+
+    /**
+     * Determines if this object is selectable.
+     * <p>
+     * A primitive can be selected if all conditions are met:
+     * <ul>
+     * <li>it is drawable
+     * <li>it is not disabled (greyed out) by a filter.
+     * </ul>
+     * @return {@code true} if this object is selectable
+     * @since 13664
+     */
+    default boolean isSelectable() {
+        return true;
+    }
+
+    /**
+     * Determines if this object is drawable.
+     * <p>
+     * A primitive is complete if all conditions are met:
+     * <ul>
+     * <li>type and id is known
+     * <li>tags are known
+     * <li>it is not deleted
+     * <li>it is not hidden by a filter
+     * <li>for nodes: lat/lon are known
+     * <li>for ways: all nodes are known and complete
+     * <li>for relations: all members are known and complete
+     * </ul>
+     * @return {@code true} if this object is drawable
+     * @since 13664
+     */
+    default boolean isDrawable() {
+        return true;
+    }
+
+    /**
+     * Determines whether the primitive is selected
+     * @return whether the primitive is selected
+     * @since 13664
+     */
+    default boolean isSelected() {
+        return false;
+    }
+
+    /**
+     * Determines if this primitive is a member of a selected relation.
+     * @return {@code true} if this primitive is a member of a selected relation, {@code false} otherwise
+     * @since 13664
+     */
+    default boolean isMemberOfSelected() {
+        return false;
+    }
+
+    /**
+     * Determines if this primitive is an outer member of a selected multipolygon relation.
+     * @return {@code true} if this primitive is an outer member of a selected multipolygon relation, {@code false} otherwise
+     * @since 13664
+     */
+    default boolean isOuterMemberOfSelected() {
         return false;
     }
 
@@ -268,6 +330,20 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable {
     default OsmPrimitiveType getDisplayType() {
         return getType();
     }
+
+    /**
+     * Updates the highlight flag for this primitive.
+     * @param highlighted The new highlight flag.
+     * @since 13664
+     */
+    void setHighlighted(boolean highlighted);
+
+    /**
+     * Checks if the highlight flag for this primitive was set
+     * @return The highlight flag.
+     * @since 13664
+     */
+    boolean isHighlighted();
 
     /**
      * Determines if this object is considered "tagged". To be "tagged", an object
