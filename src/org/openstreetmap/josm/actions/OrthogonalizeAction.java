@@ -187,8 +187,9 @@ public final class OrthogonalizeAction extends JosmAction {
      * @param selection the selection which should be rectified
      * @return a rectifying command
      * @throws InvalidUserInputException if the selection is invalid
+     * @since 13670
      */
-    static SequenceCommand orthogonalize(Iterable<OsmPrimitive> selection) throws InvalidUserInputException {
+    public static SequenceCommand orthogonalize(Iterable<OsmPrimitive> selection) throws InvalidUserInputException {
         final List<Node> nodeList = new ArrayList<>();
         final List<WayData> wayDataList = new ArrayList<>();
         // collect nodes and ways from the selection
@@ -618,8 +619,9 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Exception: unsuited user input
+     * @since 13670
      */
-    protected static class InvalidUserInputException extends Exception {
+    public static final class InvalidUserInputException extends Exception {
         InvalidUserInputException(String message) {
             super(message);
         }

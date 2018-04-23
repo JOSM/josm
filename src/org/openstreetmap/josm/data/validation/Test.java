@@ -346,6 +346,15 @@ public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
         return p.hasTagDifferent("building", "no", "entrance");
     }
 
+    /**
+     * Determines if the specified primitive denotes a residential area.
+     * @param p The primitive to be tested
+     * @return True if landuse key is equal to residential
+     */
+    protected static final boolean isResidentialArea(OsmPrimitive p) {
+        return p.hasTag("landuse", "residential");
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, description);

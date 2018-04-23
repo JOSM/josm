@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,14 @@ public abstract class CrossingWays extends Test {
     static final String HIGHWAY = "highway";
     static final String RAILWAY = "railway";
     static final String WATERWAY = "waterway";
+    static final String LANDUSE = "landuse";
+
+    /**
+     * Type of way. Entries have to be declared in alphabetical order, see sort below.
+     */
+    private enum WayType {
+        BUILDING, HIGHWAY, RESIDENTIAL_AREA, WATERWAY, WAY
+    }
 
     /** All way segments, grouped by cells */
     private final Map<Point2D, List<WaySegment>> cellSegments = new HashMap<>(1000);
@@ -64,7 +73,8 @@ public abstract class CrossingWays extends Test {
                     || w.hasKey(WATERWAY)
                     || isRailway(w)
                     || isCoastline(w)
-                    || isBuilding(w));
+                    || isBuilding(w)
+                    || isResidentialArea(w));
         }
 
         @Override
@@ -77,6 +87,9 @@ public abstract class CrossingWays extends Test {
             if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
                 return true;
             }
+            if ((w1.hasKey(HIGHWAY) && isResidentialArea(w2))
+             || (w2.hasKey(HIGHWAY) && isResidentialArea(w1)))
+                return true;
             if (isSubwayOrTramOrRazed(w2)) {
                 return true;
             }
@@ -90,17 +103,74 @@ public abstract class CrossingWays extends Test {
             return isProposedOrAbandoned(w2);
         }
 
+        private static WayType getWayType(Way w) {
+            if (isBuilding(w))
+                return WayType.BUILDING;
+            else if (w.hasKey(HIGHWAY))
+                return WayType.HIGHWAY;
+            else if (isResidentialArea(w))
+                return WayType.RESIDENTIAL_AREA;
+            else if (w.hasKey(WATERWAY))
+                return WayType.WATERWAY;
+            else
+                return WayType.WAY;
+        }
+
         @Override
         String createMessage(Way w1, Way w2) {
-            if (isBuilding(w1)) {
-                return tr("Crossing buildings");
-            } else if (w1.hasKey(WATERWAY) && w2.hasKey(WATERWAY)) {
-                return tr("Crossing waterways");
-            } else if ((w1.hasKey(HIGHWAY) && w2.hasKey(WATERWAY))
-                    || (w2.hasKey(HIGHWAY) && w1.hasKey(WATERWAY))) {
-                return tr("Crossing waterway/highway");
+            WayType[] types = {getWayType(w1), getWayType(w2)};
+            Arrays.sort(types);
+
+            if (types[0] == types[1]) {
+                switch(types[0]) {
+                    case BUILDING:
+                        return tr("Crossing buildings");
+                    case HIGHWAY:
+                        return tr("Crossing highways");
+                    case RESIDENTIAL_AREA:
+                        return tr("Crossing residential areas");
+                    case WATERWAY:
+                        return tr("Crossing waterways");
+                    case WAY:
+                    default:
+                        return tr("Crossing ways");
+                }
             } else {
-                return tr("Crossing ways");
+                switch (types[0]) {
+                    case BUILDING:
+                        switch (types[1]) {
+                            case HIGHWAY:
+                                return tr("Crossing building/highway");
+                            case RESIDENTIAL_AREA:
+                                return tr("Crossing building/residential area");
+                            case WATERWAY:
+                                return tr("Crossing building/waterway");
+                            case WAY:
+                            default:
+                                return tr("Crossing building/way");
+                        }
+                    case HIGHWAY:
+                        switch (types[1]) {
+                            case RESIDENTIAL_AREA:
+                                return tr("Crossing highway/residential area");
+                            case WATERWAY:
+                                return tr("Crossing highway/waterway");
+                            case WAY:
+                            default:
+                                return tr("Crossing highway/way");
+                        }
+                    case RESIDENTIAL_AREA:
+                        switch (types[1]) {
+                            case WATERWAY:
+                                return tr("Crossing residential area/waterway");
+                            case WAY:
+                            default:
+                                return tr("Crossing residential area/way");
+                        }
+                    case WATERWAY:
+                    default:
+                        return tr("Crossing waterway/way");
+                }
             }
         }
     }
@@ -235,7 +305,7 @@ public abstract class CrossingWays extends Test {
     }
 
     static boolean isCoastline(OsmPrimitive w) {
-        return w.hasTag("natural", "water", "coastline") || w.hasTag("landuse", "reservoir");
+        return w.hasTag("natural", "water", "coastline") || w.hasTag(LANDUSE, "reservoir");
     }
 
     static boolean isHighway(OsmPrimitive w) {
