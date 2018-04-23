@@ -324,14 +324,9 @@ public final class Node extends OsmPrimitive implements INode {
         return super.isDrawable() && isLatLonKnown();
     }
 
-    /**
-     * Check whether this node connects 2 ways.
-     *
-     * @return true if isReferredByWays(2) returns true
-     * @see #isReferredByWays(int)
-     */
-    public boolean isConnectionNode() {
-        return isReferredByWays(2);
+    @Override
+    public boolean isReferredByWays(int n) {
+        return isNodeReferredByWays(n);
     }
 
     /**

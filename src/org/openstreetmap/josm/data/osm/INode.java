@@ -42,6 +42,25 @@ public interface INode extends IPrimitive, ILatLon {
      */
     void setEastNorth(EastNorth eastNorth);
 
+    /**
+     * Check whether this node connects 2 ways.
+     *
+     * @return true if isReferredByWays(2) returns true
+     * @see #isReferredByWays(int)
+     * @since 13669
+     */
+    default boolean isConnectionNode() {
+        return isReferredByWays(2);
+    }
+
+    /**
+     * Return true, if this primitive is referred by at least n ways
+     * @param n Minimal number of ways to return true. Must be positive
+     * @return {@code true} if this primitive is referred by at least n ways
+     * @since 13669
+     */
+    boolean isReferredByWays(int n);
+
     @Override
     default int compareTo(IPrimitive o) {
         return o instanceof INode ? Long.compare(getUniqueId(), o.getUniqueId()) : 1;

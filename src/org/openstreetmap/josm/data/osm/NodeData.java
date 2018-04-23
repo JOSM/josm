@@ -98,4 +98,9 @@ public class NodeData extends PrimitiveData implements INode {
     public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public boolean isReferredByWays(int n) {
+        return false;
+    }
 }
