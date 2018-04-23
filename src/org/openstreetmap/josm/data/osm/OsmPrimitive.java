@@ -479,36 +479,13 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return (flags & FLAG_PRESERVED) != 0;
     }
 
-    /**
-     * Determines if this object is selectable.
-     * <p>
-     * A primitive can be selected if all conditions are met:
-     * <ul>
-     * <li>it is drawable
-     * <li>it is not disabled (greyed out) by a filter.
-     * </ul>
-     * @return {@code true} if this object is selectable
-     */
+    @Override
     public boolean isSelectable() {
         // not synchronized -> check disabled twice just to be sure we did not have a race condition.
         return !isDisabled() && isDrawable() && !isDisabled();
     }
 
-    /**
-     * Determines if this object is drawable.
-     * <p>
-     * A primitive is complete if all conditions are met:
-     * <ul>
-     * <li>type and id is known
-     * <li>tags are known
-     * <li>it is not deleted
-     * <li>it is not hidden by a filter
-     * <li>for nodes: lat/lon are known
-     * <li>for ways: all nodes are known and complete
-     * <li>for relations: all members are known and complete
-     * </ul>
-     * @return {@code true} if this object is drawable
-     */
+    @Override
     public boolean isDrawable() {
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_HIDE_IF_DISABLED)) == 0;
     }
@@ -577,19 +554,12 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
     }
 
-    /**
-     * Determines whether the primitive is selected
-     * @return whether the primitive is selected
-     * @see DataSet#isSelected(OsmPrimitive)
-     */
+    @Override
     public boolean isSelected() {
         return dataSet != null && dataSet.isSelected(this);
     }
 
-    /**
-     * Determines if this primitive is a member of a selected relation.
-     * @return {@code true} if this primitive is a member of a selected relation, {@code false} otherwise
-     */
+    @Override
     public boolean isMemberOfSelected() {
         if (referrers == null)
             return false;
@@ -602,11 +572,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return false;
     }
 
-    /**
-     * Determines if this primitive is an outer member of a selected multipolygon relation.
-     * @return {@code true} if this primitive is an outer member of a selected multipolygon relation, {@code false} otherwise
-     * @since 7621
-     */
+    @Override
     public boolean isOuterMemberOfSelected() {
         if (referrers == null)
             return false;
@@ -631,10 +597,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return false;
     }
 
-    /**
-     * Updates the highlight flag for this primitive.
-     * @param highlighted The new highlight flag.
-     */
+    @Override
     public void setHighlighted(boolean highlighted) {
         if (isHighlighted() != highlighted) {
             updateFlags(FLAG_HIGHLIGHTED, highlighted);
@@ -644,10 +607,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
     }
 
-    /**
-     * Checks if the highlight flag for this primitive was set
-     * @return The highlight flag.
-     */
+    @Override
     public boolean isHighlighted() {
         return (flags & FLAG_HIGHLIGHTED) != 0;
     }
