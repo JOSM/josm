@@ -6,7 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +19,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 
@@ -52,10 +56,21 @@ public class UploadedObjectsSummaryPanel extends JPanel {
     protected void build() {
         setLayout(new GridBagLayout());
         PrimitiveRenderer renderer = new PrimitiveRenderer();
+        MouseAdapter mouseListener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+                    PrimitiveList list = (PrimitiveList) evt.getSource();
+                    int index = list.locationToIndex(evt.getPoint());
+                    AutoScaleAction.zoomTo(Collections.singleton(list.getModel().getElementAt(index)));
+                }
+            }
+        };
         // initialize the three lists for uploaded primitives, but don't add them to the dialog yet, see setUploadedPrimitives()
         //
         lstAdd = new PrimitiveList();
         lstAdd.setCellRenderer(renderer);
+        lstAdd.addMouseListener(mouseListener);
         lstAdd.setVisibleRowCount(Math.min(lstAdd.getModel().getSize(), 10));
         spAdd = new JScrollPane(lstAdd);
         lblAdd = new JLabel(tr("Objects to add:"));
@@ -63,6 +78,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
 
         lstUpdate = new PrimitiveList();
         lstUpdate.setCellRenderer(renderer);
+        lstUpdate.addMouseListener(mouseListener);
         lstUpdate.setVisibleRowCount(Math.min(lstUpdate.getModel().getSize(), 10));
         spUpdate = new JScrollPane(lstUpdate);
         lblUpdate = new JLabel(tr("Objects to modify:"));
@@ -70,6 +86,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
 
         lstDelete = new PrimitiveList();
         lstDelete.setCellRenderer(renderer);
+        lstDelete.addMouseListener(mouseListener);
         lstDelete.setVisibleRowCount(Math.min(lstDelete.getModel().getSize(), 10));
         spDelete = new JScrollPane(lstDelete);
         lblDelete = new JLabel(tr("Objects to delete:"));
