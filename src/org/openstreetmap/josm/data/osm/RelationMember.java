@@ -1,19 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * A linkage class that can be used by an relation to keep a list of
- * members. Since membership may be qualified by a "role", a simple
- * list is not sufficient.
- *
+ * A linkage class that can be used by an relation to keep a list of members.
+ * Since membership may be qualified by a "role", a simple list is not sufficient.
+ * @since 343
  */
-public class RelationMember implements PrimitiveId {
+public class RelationMember implements IRelationMember {
 
     /**
      *
@@ -25,54 +23,23 @@ public class RelationMember implements PrimitiveId {
      */
     private final OsmPrimitive member;
 
-    /**
-     * Returns the role of this relation member.
-     * @return Role name or "". Never returns null
-     * @since 1930
-     */
+    @Override
     public String getRole() {
         return role;
     }
 
-    /**
-     * Determines if this relation member has a role.
-     * @return True if role is set
-     * @since 1930
-     */
-    public boolean hasRole() {
-        return !"".equals(role);
-    }
-
-    /**
-     * Determines if this relation member's role is in the given list.
-     * @param roles The roles to look after
-     * @return True if role is in the given list
-     * @since 6305
-     */
-    public boolean hasRole(String... roles) {
-        return Arrays.asList(roles).contains(role);
-    }
-
-    /**
-     * Determines if this relation member is a relation.
-     * @return True if member is relation
-     * @since 1937
-     */
+    @Override
     public boolean isRelation() {
         return member instanceof Relation;
     }
 
-    /**
-     * Determines if this relation member is a way.
-     * @return True if member is way
-     * @since 1937
-     */
+    @Override
     public boolean isWay() {
         return member instanceof Way;
     }
 
     /**
-     *
+     * Returns type of member for icon display.
      * @return type of member for icon display
      * @since 3844
      */
@@ -80,11 +47,7 @@ public class RelationMember implements PrimitiveId {
         return member.getDisplayType();
     }
 
-    /**
-     * Determines if this relation member is a node.
-     * @return True if member is node
-     * @since 1937
-     */
+    @Override
     public boolean isNode() {
         return member instanceof Node;
     }
@@ -185,13 +148,16 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     * PrimitiveId implementation. Returns the same value as getMemberType().getUniqueId()
+     * PrimitiveId implementation. Returns the same value as getMember().getUniqueId()
      */
     @Override
     public long getUniqueId() {
         return member.getUniqueId();
     }
 
+    /**
+     * PrimitiveId implementation. Returns the same value as getMember().isNew()
+     */
     @Override
     public boolean isNew() {
         return member.isNew();
