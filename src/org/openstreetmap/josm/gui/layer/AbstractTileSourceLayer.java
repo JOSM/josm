@@ -1207,18 +1207,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         protected void sanitize() {
-            if (minX < tileSource.getTileXMin(zoom)) {
-                minX = tileSource.getTileXMin(zoom);
-            }
-            if (minY < tileSource.getTileYMin(zoom)) {
-                minY = tileSource.getTileYMin(zoom);
-            }
-            if (maxX > tileSource.getTileXMax(zoom)) {
-                maxX = tileSource.getTileXMax(zoom);
-            }
-            if (maxY > tileSource.getTileYMax(zoom)) {
-                maxY = tileSource.getTileYMax(zoom);
-            }
+            minX = Utils.clamp(minX, tileSource.getTileXMin(zoom), tileSource.getTileXMax(zoom));
+            maxX = Utils.clamp(maxX, tileSource.getTileXMin(zoom), tileSource.getTileXMax(zoom));
+            minY = Utils.clamp(minY, tileSource.getTileYMin(zoom), tileSource.getTileYMax(zoom));
+            maxY = Utils.clamp(maxY, tileSource.getTileYMin(zoom), tileSource.getTileYMax(zoom));
         }
 
         private boolean tooSmall() {
