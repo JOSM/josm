@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 
 /**
  * This is the column model for the {@link MemberTable}
@@ -16,10 +16,11 @@ public class MemberTableColumnModel extends DefaultTableColumnModel {
 
     /**
      * Constructs a new {@code MemberTableColumnModel}.
-     * @param ds the data set. Must not be null
+     * @param autoCompletionManager the auto completion manager. Must not be null
      * @param relation the relation. Can be null
+     * @since 13675
      */
-    public MemberTableColumnModel(DataSet ds, Relation relation) {
+    public MemberTableColumnModel(AutoCompletionManager autoCompletionManager, Relation relation) {
         TableColumn col = null;
 
         // column 0 - the member role
@@ -28,7 +29,7 @@ public class MemberTableColumnModel extends DefaultTableColumnModel {
         col.setResizable(true);
         col.setPreferredWidth(100);
         col.setCellRenderer(new MemberTableRoleCellRenderer());
-        col.setCellEditor(new MemberRoleCellEditor(ds, relation));
+        col.setCellEditor(new MemberRoleCellEditor(autoCompletionManager, relation));
         addColumn(col);
 
         // column 1 - the member
