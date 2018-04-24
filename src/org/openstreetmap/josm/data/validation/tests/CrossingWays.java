@@ -41,7 +41,20 @@ public abstract class CrossingWays extends Test {
      * Type of way. Entries have to be declared in alphabetical order, see sort below.
      */
     private enum WayType {
-        BUILDING, HIGHWAY, RESIDENTIAL_AREA, WATERWAY, WAY
+        BUILDING, HIGHWAY, RESIDENTIAL_AREA, WATERWAY, WAY;
+
+        static WayType of(Way w) {
+            if (isBuilding(w))
+                return BUILDING;
+            else if (w.hasKey(CrossingWays.HIGHWAY))
+                return HIGHWAY;
+            else if (isResidentialArea(w))
+                return RESIDENTIAL_AREA;
+            else if (w.hasKey(CrossingWays.WATERWAY))
+                return WATERWAY;
+            else
+                return WAY;
+        }
     }
 
     /** All way segments, grouped by cells */
@@ -103,22 +116,9 @@ public abstract class CrossingWays extends Test {
             return isProposedOrAbandoned(w2);
         }
 
-        private static WayType getWayType(Way w) {
-            if (isBuilding(w))
-                return WayType.BUILDING;
-            else if (w.hasKey(HIGHWAY))
-                return WayType.HIGHWAY;
-            else if (isResidentialArea(w))
-                return WayType.RESIDENTIAL_AREA;
-            else if (w.hasKey(WATERWAY))
-                return WayType.WATERWAY;
-            else
-                return WayType.WAY;
-        }
-
         @Override
         String createMessage(Way w1, Way w2) {
-            WayType[] types = {getWayType(w1), getWayType(w2)};
+            WayType[] types = {WayType.of(w1), WayType.of(w2)};
             Arrays.sort(types);
 
             if (types[0] == types[1]) {
