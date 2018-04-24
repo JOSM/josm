@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -88,7 +89,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param size size in pixels
      * @param fill determines if the square mmust be filled
      */
-    public abstract void drawNode(Node n, Color color, int size, boolean fill);
+    public abstract void drawNode(INode n, Color color, int size, boolean fill);
 
     /**
      * Draw an number of the order of the two consecutive nodes within the

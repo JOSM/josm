@@ -46,6 +46,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -690,7 +691,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void drawNode(Node n, Color color, int size, boolean fill) {
+    public void drawNode(INode n, Color color, int size, boolean fill) {
         if (size <= 0 && !n.isHighlighted())
             return;
 
