@@ -17,6 +17,7 @@ import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.AbstractWMSTileSource;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -129,18 +131,37 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
         if (serverProjections.contains(requested.toCode())) {
             return requested;
         } else {
+            LatLon center = MainApplication.isDisplayingMapView() ?
+                    requested.eastNorth2latlon(MainApplication.getMap().mapView.getCenter()) : null;
+            Projection firstNonNullproj = null;
+            Projection firstProjInBounds = null;
             for (String code : serverProjections) {
                 Projection proj = Projections.getProjectionByCode(code);
                 if (proj != null) {
-                    Logging.info(tr("Reprojecting layer {0} from {1} to {2}. For best image quality and performance,"
-                            + " switch to one of the supported projections: {3}",
-                            getName(), proj.toCode(), Main.getProjection().toCode(), Utils.join(", ", getNativeProjections())));
-                    return proj;
+                    if (firstNonNullproj == null) {
+                        firstNonNullproj = proj;
+                    }
+                    if (center != null && proj.getWorldBoundsLatLon().contains(center)) {
+                        firstProjInBounds = proj;
+                        break;
+                    }
                 }
+            }
+            if (firstProjInBounds != null) {
+                return selectProjection(firstProjInBounds);
+            } else if (firstNonNullproj != null) {
+                return selectProjection(firstNonNullproj);
             }
             Logging.warn(tr("Unable to find supported projection for layer {0}. Using {1}.", getName(), requested.toCode()));
             return requested;
         }
+    }
+
+    private Projection selectProjection(Projection proj) {
+        Logging.info(tr("Reprojecting layer {0} from {1} to {2}. For best image quality and performance,"
+                + " switch to one of the supported projections: {3}",
+                getName(), proj.toCode(), Main.getProjection().toCode(), Utils.join(", ", getNativeProjections())));
+        return proj;
     }
 
     @Override
