@@ -898,15 +898,25 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    public void drawRestriction(Image img, Point pVia, double vx, double vx2, double vy, double vy2, double angle, boolean selected) {
+    /**
+     * Draws a restriction.
+     * @param img symbol image
+     * @param pVia "via" node
+     * @param vx X offset
+     * @param vy Y offset
+     * @param angle the rotated angle, in degree, clockwise
+     * @param selected if true, draws a selection rectangle
+     * @since 13676
+     */
+    public void drawRestriction(Image img, Point pVia, double vx, double vy, double angle, boolean selected) {
         // rotate image with direction last node in from to, and scale down image to 16*16 pixels
         Image smallImg = ImageProvider.createRotatedImage(img, angle, new Dimension(16, 16));
         int w = smallImg.getWidth(null), h = smallImg.getHeight(null);
-        g.drawImage(smallImg, (int) (pVia.x+vx+vx2)-w/2, (int) (pVia.y+vy+vy2)-h/2, nc);
+        g.drawImage(smallImg, (int) (pVia.x+vx)-w/2, (int) (pVia.y+vy)-h/2, nc);
 
         if (selected) {
             g.setColor(isInactiveMode ? inactiveColor : relationSelectedColor);
-            g.drawRect((int) (pVia.x+vx+vx2)-w/2-2, (int) (pVia.y+vy+vy2)-h/2-2, w+4, h+4);
+            g.drawRect((int) (pVia.x+vx)-w/2-2, (int) (pVia.y+vy)-h/2-2, w+4, h+4);
         }
     }
 
@@ -1081,7 +1091,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         drawRestriction(icon.getImage(disabled),
-                pVia, vx, vx2, vy, vy2, iconAngle, r.isSelected());
+                pVia, vx+vx2, vy+vy2, iconAngle, r.isSelected());
     }
 
     /**
@@ -1550,8 +1560,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param primitive The primititve to compute the flags for.
      * @param checkOuterMember <code>true</code> if we should also add {@link #FLAG_OUTERMEMBER_OF_SELECTED}
      * @return The flag.
+     * @since 13676 (signature)
      */
-    public static int computeFlags(OsmPrimitive primitive, boolean checkOuterMember) {
+    public static int computeFlags(IPrimitive primitive, boolean checkOuterMember) {
         if (primitive.isDisabled()) {
             return FLAG_DISABLED;
         } else if (primitive.isSelected()) {

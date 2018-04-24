@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -59,7 +60,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
      * @param model the table model
      */
     public MemberTable(OsmDataLayer layer, Relation relation, MemberTableModel model) {
-        super(model, new MemberTableColumnModel(layer.data, relation), model.getSelectionModel());
+        super(model, new MemberTableColumnModel(AutoCompletionManager.of(layer.data), relation), model.getSelectionModel());
         setLayer(layer);
         model.addMemberModelListener(this);
 
@@ -132,10 +133,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         highlightEnabled = Config.getPref().getBoolean("draw.target-highlight", true);
         if (!highlightEnabled) return;
         getMemberTableModel().getSelectionModel().addListSelectionListener(highlighterListener);
-        if (MainApplication.isDisplayingMapView()) {
-            HighlightHelper.clearAllHighlighted();
-            MainApplication.getMap().mapView.repaint();
-        }
+        clearAllHighlighted();
     }
 
     @Override
@@ -152,11 +150,18 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         MainApplication.getLayerManager().removeActiveLayerChangeListener(zoomToGap);
     }
 
+    /**
+     * Stops highlighting of selected objects.
+     */
     public void stopHighlighting() {
         if (highlighterListener == null) return;
         if (!highlightEnabled) return;
         getMemberTableModel().getSelectionModel().removeListSelectionListener(highlighterListener);
         highlighterListener = null;
+        clearAllHighlighted();
+    }
+
+    private static void clearAllHighlighted() {
         if (MainApplication.isDisplayingMapView()) {
             HighlightHelper.clearAllHighlighted();
             MainApplication.getMap().mapView.repaint();
