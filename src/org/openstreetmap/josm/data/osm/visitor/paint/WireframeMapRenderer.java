@@ -18,6 +18,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -387,7 +388,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements OsmPrim
     }
 
     @Override
-    public void drawNode(Node n, Color color, int size, boolean fill) {
+    public void drawNode(INode n, Color color, int size, boolean fill) {
         if (size > 1) {
             MapViewPoint p = mapState.getPointFor(n);
             if (!p.isInView())
