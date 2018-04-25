@@ -2209,6 +2209,7 @@
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:waterway=river"
                   fi.href="https://wiki.openstreetmap.org/wiki/Fi:Tag:waterway=river"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:waterway=river"
+                  it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:waterway=river"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:waterway=river"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=river"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:waterway=river"
@@ -3454,6 +3455,7 @@
             <link href="https://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_repair_station"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=bicycle_repair_station"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bicycle_repair_station"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:amenity=bicycle_repair_station"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bicycle_repair_station"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=bicycle_repair_station"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=bicycle_repair_station" />
@@ -3926,6 +3928,7 @@
             <link href="https://wiki.openstreetmap.org/wiki/Tag:aeroway=gate"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:aeroway=gate"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:aeroway=gate"
+                  it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:aeroway=gate"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:aeroway=gate"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:aeroway=gate"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:aeroway=gate" />
@@ -4756,6 +4759,7 @@
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bbq"
                   el.href="https://wiki.openstreetmap.org/wiki/El:Tag:amenity=bbq"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:amenity=bbq"
+                  it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:amenity=bbq"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bbq"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=bbq"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=bbq"
@@ -6132,6 +6136,7 @@
             <link href="https://wiki.openstreetmap.org/wiki/Tag:amenity=compressed_air"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=compressed_air"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:amenity=compressed_air"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:amenity=compressed_air"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:amenity=compressed_air"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=compressed_air"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=compressed_air"
@@ -8574,6 +8579,7 @@
             <link href="https://wiki.openstreetmap.org/wiki/Tag:shop=electronics"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:shop=electronics"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:shop=electronics"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:shop=electronics"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:shop=electronics"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:shop=electronics"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:shop=electronics"
@@ -8637,6 +8643,7 @@
         <item name="Video Games" icon="presets/shop/video_games.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:shop=video_games"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:shop=video_games"
+                  de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:shop=video_games"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:shop=video_games"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:shop=video_games" />
             <space />
@@ -8664,6 +8671,7 @@
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:amenity=bank"
                   fi.href="https://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=bank"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:amenity=bank"
+                  it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:amenity=bank"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bank"
                   nl.href="https://wiki.openstreetmap.org/wiki/NL:Tag:amenity=bank"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=bank"
@@ -9491,6 +9499,7 @@
         <link href="https://wiki.openstreetmap.org/wiki/Tag:office=company"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:office=company"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:office=company"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:office=company"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:office=company"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:office=company"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:office=company"
@@ -9627,6 +9636,7 @@
     <item name="Non-governmental organisation (NGO)" icon="presets/office/ong.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="https://wiki.openstreetmap.org/wiki/Tag:office=ngo"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:office=ngo"
+                  de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:office=ngo"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:office=ngo"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:office=ngo"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:office=ngo"
@@ -9651,6 +9661,7 @@
         <link href="https://wiki.openstreetmap.org/wiki/Tag:office=political_party"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:office=political_party"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:office=political_party"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:office=political_party"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:office=political_party"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:office=political_party" />
         <space />
@@ -10842,6 +10853,7 @@
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:landuse=salt_pond"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:landuse=salt_pond"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:landuse=salt_pond"
+                  it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:landuse=salt_pond"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:landuse=salt_pond"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=salt_pond"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:landuse=salt_pond"
@@ -11173,6 +11185,7 @@
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Key:name"
                   fi.href="https://wiki.openstreetmap.org/wiki/Fi:Key:name"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Key:name"
+                  gl.href="https://wiki.openstreetmap.org/wiki/Gl:Key:name"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Key:name"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:name"
                   nl.href="https://wiki.openstreetmap.org/wiki/NL:Key:name"
