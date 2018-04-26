@@ -222,4 +222,55 @@ public class PluginHandlerJOSMTooOldTest {
         assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 999);
         assertEquals(Config.getPref().get("pluginmanager.lastupdate", "999"), "999");
     }
+
+    /**
+     * When the plugin list suggests that the jar file at the provided URL *doesn't* require a newer JOSM
+     * but in fact the plugin served *does*, it is installed anyway.
+     *
+     * This is probably NOT desirable and should be fixed, however this test documents the behaviour.
+     */
+    @Test
+    public void testUpdatePluginsUnexpectedlyJOSMTooOld() throws Exception {
+        final PluginServer pluginServer = new PluginServer(
+            new PluginServer.RemotePlugin(this.referenceDummyJarNew),
+            new PluginServer.RemotePlugin(this.referenceBazJarNew, ImmutableMap.of(
+                "Plugin-Mainversion", "5500"
+            ))
+        );
+        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        Config.getPref().putList("plugins", ImmutableList.of("baz_plugin"));
+
+        // setting up blank ExtendedDialogMocker which would raise an exception if any attempt to show
+        // and ExtendedDialog were made
+        new ExtendedDialogMocker();
+
+        Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
+
+        final List<PluginInformation> updatedPlugins = ImmutableList.copyOf(PluginHandler.updatePlugins(
+            Main.parent,
+            null,
+            null,
+            false
+        ));
+
+        // questionably correct
+        assertEquals(1, updatedPlugins.size());
+
+        // questionably correct
+        assertEquals(updatedPlugins.get(0).name, "baz_plugin");
+        assertEquals("7", updatedPlugins.get(0).localversion);
+
+        assertFalse(targetBazJarNew.exists());
+
+        // questionably correct
+        TestUtils.assertFileContentsEqual(this.referenceBazJarNew, this.targetBazJar);
+
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        // questionably correct
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/baz_plugin.v7.jar")));
+
+        // should have been updated
+        assertEquals(Config.getPref().getInt("pluginmanager.version", 111), 6000);
+        assertNotEquals(Config.getPref().get("pluginmanager.lastupdate", "999"), "999");
+    }
 }
