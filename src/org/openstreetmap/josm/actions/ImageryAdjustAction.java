@@ -332,6 +332,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
 
         @Override
         protected void buttonAction(int buttonIndex, ActionEvent evt) {
+            restoreOldMode = true;
             if (buttonIndex == 0 && tBookmarkName.getText() != null && !tBookmarkName.getText().isEmpty() &&
                     OffsetBookmark.getBookmarkByName(layer, tBookmarkName.getText()) != null &&
                     !confirmOverwriteBookmark()) {
