@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import static org.junit.Assert.assertTrue;
+
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collection;
@@ -147,7 +149,7 @@ public class ProjectionTest {
             System.err.println(text2);
             Assert.fail();
         }
-        Assert.assertTrue("missing test: "+projIds, projIds.isEmpty());
+        assertTrue("missing test: "+projIds, projIds.isEmpty());
     }
 
     private void testProj(String id, double eps, String prefAdd) {
@@ -167,7 +169,7 @@ public class ProjectionTest {
             LatLon ll1 = random(b);
             EastNorth en = p.latlon2eastNorth(ll1);
             LatLon ll2 = p.eastNorth2latlon(en);
-            Assert.assertTrue(p.toCode() + " at " + ll1 + " is " + ll2, ll2.isValid());
+            assertTrue(p.toCode() + " at " + ll1 + " is " + ll2, ll2.isValid());
             double dist = ll1.greatCircleDistance(ll2);
             if (dist > eps) {
                 error2 = true;
@@ -179,6 +181,16 @@ public class ProjectionTest {
         }
         if (maxDist > 0) {
             text2 += id + ": dist " + maxDist + " at " + maxLatLon + "\n";
+        }
+    }
+
+    /**
+     * Checks that Swedish projections have their axis defined correctly.
+     */
+    @Test
+    public void testSwedishProjections() {
+        for (int code = 3006; code <= 3018; code++) {
+            assertTrue(Projections.getProjectionByCode("EPSG:"+code).switchXY());
         }
     }
 }
