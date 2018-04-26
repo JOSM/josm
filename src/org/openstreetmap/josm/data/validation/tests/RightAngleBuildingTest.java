@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.openstreetmap.josm.actions.OrthogonalizeAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction.InvalidUserInputException;
@@ -43,9 +44,26 @@ public class RightAngleBuildingTest extends Test {
     public void visit(Way w) {
         if (!w.isUsable() || !w.isClosed() || !isBuilding(w)) return;
 
-        for (Pair<Double, Node> pair: w.getAngles()) {
-            if (!checkAngle(w, pair.a, pair.b))
+        List<Pair<Double, Node>> angles = w.getAngles();
+        for (Pair<Double, Node> pair: angles) {
+            if (checkAngle(w, pair.a, pair.b)) {
+                TestError.Builder builder = TestError.builder(this, Severity.WARNING, 3701)
+                                                     .message(tr("Building with an almost square angle"))
+                                                     .primitives(w)
+                                                     .highlight(pair.b);
+                if (angles.stream().noneMatch(p -> Math.abs(p.a - 90) >= maxAngleDelta)) {
+                    builder.fix(() -> {
+                        try {
+                            return OrthogonalizeAction.orthogonalize(Collections.singleton(w));
+                        } catch (InvalidUserInputException e) {
+                            Logging.warn(e);
+                            return null;
+                        }
+                    });
+                }
+                errors.add(builder.build());
                 return;
+            }
         }
     }
 
@@ -58,24 +76,6 @@ public class RightAngleBuildingTest extends Test {
 
     private boolean checkAngle(Way w, double angle, Node n) {
         double difference = Math.abs(angle - 90);
-
-        if (difference > minAngleDelta && difference < maxAngleDelta) {
-            errors.add(TestError.builder(this, Severity.WARNING, 3701)
-                    .message(tr("Building with an almost square angle"))
-                    .primitives(w)
-                    .highlight(n)
-                    .fix(() -> {
-                        try {
-                            return OrthogonalizeAction.orthogonalize(Collections.singleton(w));
-                        } catch (InvalidUserInputException e) {
-                            Logging.warn(e);
-                            return null;
-                        }
-                    })
-                    .build());
-            return false;
-        }
-
-        return true;
+        return difference > minAngleDelta && difference < maxAngleDelta;
     }
 }
