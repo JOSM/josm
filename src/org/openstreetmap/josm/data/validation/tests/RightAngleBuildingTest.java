@@ -51,7 +51,8 @@ public class RightAngleBuildingTest extends Test {
                                                      .message(tr("Building with an almost square angle"))
                                                      .primitives(w)
                                                      .highlight(pair.b);
-                if (angles.stream().noneMatch(p -> Math.abs(p.a - 90) >= maxAngleDelta)) {
+                if (angles.stream().noneMatch(
+                        p -> Math.abs(p.a - 90) >= maxAngleDelta && Math.abs(p.a - 180) >= minAngleDelta)) {
                     builder.fix(() -> {
                         try {
                             return OrthogonalizeAction.orthogonalize(Collections.singleton(w));
@@ -71,7 +72,7 @@ public class RightAngleBuildingTest extends Test {
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         maxAngleDelta = Config.getPref().getDouble("validator.RightAngleBuilding.maximumDelta", 10.0);
-        minAngleDelta = Config.getPref().getDouble("validator.RightAngleBuilding.minimumDelta", 0.1);
+        minAngleDelta = Config.getPref().getDouble("validator.RightAngleBuilding.minimumDelta", 0.25);
     }
 
     private boolean checkAngle(Way w, double angle, Node n) {
