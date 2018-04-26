@@ -59,7 +59,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
      * @since 12816
      */
     public static final ListProperty OVERPASS_SERVER_HISTORY = new ListProperty("download.overpass.servers",
-            Arrays.asList("https://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
+            Arrays.asList("https://overpass-api.de/api/", "http://overpass.openstreetmap.ru/cgi/"));
     /**
      * Property to determine if Overpass API should be used for multi-fetch download.
      * @since 12816
