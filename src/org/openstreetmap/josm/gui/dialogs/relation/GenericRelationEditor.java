@@ -852,20 +852,26 @@ public class GenericRelationEditor extends RelationEditor {
 
     private void registerCopyPasteAction(AbstractAction action, Object actionName, KeyStroke shortcut,
             JRootPane rootPane, JTable... tables) {
-        int mods = shortcut.getModifiers();
-        int code = shortcut.getKeyCode();
-        if (code != KeyEvent.VK_INSERT && (mods == 0 || mods == InputEvent.SHIFT_DOWN_MASK)) {
-            Logging.info(tr("Sorry, shortcut \"{0}\" can not be enabled in Relation editor dialog"), shortcut);
-            return;
+        if (shortcut == null) {
+            Logging.warn("No shortcut provided for the Paste action in Relation editor dialog");
+        } else {
+            int mods = shortcut.getModifiers();
+            int code = shortcut.getKeyCode();
+            if (code != KeyEvent.VK_INSERT && (mods == 0 || mods == InputEvent.SHIFT_DOWN_MASK)) {
+                Logging.info(tr("Sorry, shortcut \"{0}\" can not be enabled in Relation editor dialog"), shortcut);
+                return;
+            }
         }
         rootPane.getActionMap().put(actionName, action);
-        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
-        // Assign also to JTables because they have their own Copy&Paste implementation
-        // (which is disabled in this case but eats key shortcuts anyway)
-        for (JTable table : tables) {
-            table.getInputMap(JComponent.WHEN_FOCUSED).put(shortcut, actionName);
-            table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(shortcut, actionName);
-            table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
+        if (shortcut != null) {
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
+            // Assign also to JTables because they have their own Copy&Paste implementation
+            // (which is disabled in this case but eats key shortcuts anyway)
+            for (JTable table : tables) {
+                table.getInputMap(JComponent.WHEN_FOCUSED).put(shortcut, actionName);
+                table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(shortcut, actionName);
+                table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
+            }
         }
         if (action instanceof FlavorListener) {
             clipboardListeners.add((FlavorListener) action);
