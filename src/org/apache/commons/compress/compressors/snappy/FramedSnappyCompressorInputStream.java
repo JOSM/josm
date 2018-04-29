@@ -26,7 +26,9 @@ import java.util.Arrays;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.utils.BoundedInputStream;
 import org.apache.commons.compress.utils.ByteUtils;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * CompressorInputStream for the framing Snappy format.
@@ -36,7 +38,8 @@ import org.apache.commons.compress.utils.IOUtils;
  * @see <a href="https://github.com/google/snappy/blob/master/framing_format.txt">Snappy framing format description</a>
  * @since 1.7
  */
-public class FramedSnappyCompressorInputStream extends CompressorInputStream {
+public class FramedSnappyCompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
 
     /**
      * package private for tests only.
@@ -57,6 +60,9 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         6, 0, 0, // length
         's', 'N', 'a', 'P', 'p', 'Y'
     };
+
+    private long unreadBytes;
+    private final CountingInputStream countingStream;
 
     /** The underlying stream to read compressed data from */
     private final PushbackInputStream in;
@@ -120,7 +126,8 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
                                              final int blockSize,
                                              final FramedSnappyDialect dialect)
         throws IOException {
-        this.in = new PushbackInputStream(in, 1);
+        countingStream = new CountingInputStream(in);
+        this.in = new PushbackInputStream(countingStream, 1);
         this.blockSize = blockSize;
         this.dialect = dialect;
         if (dialect.hasStreamIdentifier()) {
@@ -171,6 +178,14 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
     }
 
     /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return countingStream.getBytesRead() - unreadBytes;
+    }
+
+    /**
      * Read from the current chunk into the given array.
      *
      * @return -1 if there is no current chunk or the number of bytes
@@ -213,6 +228,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
             endReached = true;
         } else if (type == STREAM_IDENTIFIER_TYPE) {
             in.unread(type);
+            unreadBytes++;
             pushedBackBytes(1);
             readStreamIdentifier();
             readNextBlock();

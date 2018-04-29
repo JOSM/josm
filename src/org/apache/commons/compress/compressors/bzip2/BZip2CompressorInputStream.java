@@ -190,14 +190,6 @@ public class BZip2CompressorInputStream extends CompressorInputStream
         return bin.getBytesRead();
     }
 
-    /**
-     * @since 1.17
-     */
-    @Override
-    public long getUncompressedCount() {
-        return getBytesRead();
-    }
-
     private void makeMaps() {
         final boolean[] inUse = this.data.inUse;
         final byte[] seqToUnseq = this.data.seqToUnseq;

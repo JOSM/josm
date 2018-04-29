@@ -32,7 +32,7 @@ public interface InputStreamStatistics {
     long getCompressedCount();
 
     /**
-    * @return the amount of decompressed bytes returned by the stream
+     * @return the amount of decompressed bytes returned by the stream
      */
     long getUncompressedCount();
 }

@@ -26,7 +26,9 @@ import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.utils.BoundedInputStream;
 import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.commons.compress.utils.ChecksumCalculatingInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * CompressorInputStream for the LZ4 frame format.
@@ -37,7 +39,8 @@ import org.apache.commons.compress.utils.IOUtils;
  * @since 1.14
  * @NotThreadSafe
  */
-public class FramedLZ4CompressorInputStream extends CompressorInputStream {
+public class FramedLZ4CompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
 
     // used by FramedLZ4CompressorOutputStream as well
     static final byte[] LZ4_SIGNATURE = new byte[] { //NOSONAR
@@ -67,7 +70,7 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
         }
     };
 
-    private final InputStream in;
+    private final CountingInputStream in;
     private final boolean decompressConcatenated;
 
     private boolean expectBlockChecksum;
@@ -109,7 +112,7 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
      * @throws IOException if reading fails
      */
     public FramedLZ4CompressorInputStream(InputStream in, boolean decompressConcatenated) throws IOException {
-        this.in = in;
+        this.in = new CountingInputStream(in);
         this.decompressConcatenated = decompressConcatenated;
         init(true);
     }
@@ -152,6 +155,14 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
             }
         }
         return r;
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return in.getBytesRead();
     }
 
     private void init(boolean firstFrame) throws IOException {

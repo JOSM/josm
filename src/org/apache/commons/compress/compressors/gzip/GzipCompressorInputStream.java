@@ -33,7 +33,9 @@ import java.util.zip.CRC32;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.commons.compress.utils.CharsetNames;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * Input stream that decompresses .gz files.
@@ -71,7 +73,9 @@ import org.apache.commons.compress.utils.IOUtils;
  *
  * @see "https://tools.ietf.org/html/rfc1952"
  */
-public class GzipCompressorInputStream extends CompressorInputStream {
+public class GzipCompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
+
     // Header flags
     // private static final int FTEXT = 0x01; // Uninteresting for us
     private static final int FHCRC = 0x02;
@@ -80,7 +84,10 @@ public class GzipCompressorInputStream extends CompressorInputStream {
     private static final int FCOMMENT = 0x10;
     private static final int FRESERVED = 0xE0;
 
-    // Compressed input stream, possibly wrapped in a BufferedInputStream
+    private final CountingInputStream countingStream;
+
+    // Compressed input stream, possibly wrapped in a
+    // BufferedInputStream, always wrapped in countingStream above
     private final InputStream in;
 
     // True if decompressing multi member streams.
@@ -147,12 +154,13 @@ public class GzipCompressorInputStream extends CompressorInputStream {
     public GzipCompressorInputStream(final InputStream inputStream,
                                      final boolean decompressConcatenated)
             throws IOException {
+        countingStream = new CountingInputStream(inputStream);
         // Mark support is strictly needed for concatenated files only,
         // but it's simpler if it is always available.
-        if (inputStream.markSupported()) {
-            in = inputStream;
+        if (countingStream.markSupported()) {
+            in = countingStream;
         } else {
-            in = new BufferedInputStream(inputStream);
+            in = new BufferedInputStream(countingStream);
         }
 
         this.decompressConcatenated = decompressConcatenated;
@@ -385,5 +393,13 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         if (this.in != System.in) {
             this.in.close();
         }
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return countingStream.getBytesRead();
     }
 }

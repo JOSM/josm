@@ -23,7 +23,9 @@ import java.io.InputStream;
 
 import com.github.luben.zstd.ZstdInputStream;
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * {@link CompressorInputStream} implementation to decode Zstandard encoded stream.
@@ -31,12 +33,14 @@ import org.apache.commons.compress.utils.IOUtils;
  *
  * @since 1.16
  */
-public class ZstdCompressorInputStream extends CompressorInputStream {
+public class ZstdCompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
 
+    private final CountingInputStream countingStream;
     private final ZstdInputStream decIS;
 
     public ZstdCompressorInputStream(final InputStream in) throws IOException {
-        this.decIS = new ZstdInputStream(in);
+        this.decIS = new ZstdInputStream(countingStream = new CountingInputStream(in));
     }
 
     @Override
@@ -93,4 +97,11 @@ public class ZstdCompressorInputStream extends CompressorInputStream {
         decIS.reset();
     }
 
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return countingStream.getBytesRead();
+    }
 }

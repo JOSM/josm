@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
+import org.brotli.dec.BrotliInputStream;
 
 /**
  * {@link CompressorInputStream} implementation to decode Brotli encoded stream.
@@ -29,12 +32,14 @@ import org.apache.commons.compress.utils.IOUtils;
  *
  * @since 1.14
  */
-public class BrotliCompressorInputStream extends CompressorInputStream {
+public class BrotliCompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
 
-    private final org.brotli.dec.BrotliInputStream decIS;
+    private final CountingInputStream countingStream;
+    private final BrotliInputStream decIS;
 
     public BrotliCompressorInputStream(final InputStream in) throws IOException {
-        this.decIS = new org.brotli.dec.BrotliInputStream(in);
+        decIS = new BrotliInputStream(countingStream = new CountingInputStream(in));
     }
 
     @Override
@@ -91,4 +96,11 @@ public class BrotliCompressorInputStream extends CompressorInputStream {
         decIS.reset();
     }
 
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return countingStream.getBytesRead();
+    }
 }

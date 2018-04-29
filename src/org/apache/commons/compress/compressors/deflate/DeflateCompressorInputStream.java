@@ -24,19 +24,24 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * Deflate decompressor.
  * @since 1.9
  */
-public class DeflateCompressorInputStream extends CompressorInputStream {
+public class DeflateCompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
+
     private static final int MAGIC_1 = 0x78;
     private static final int MAGIC_2a = 0x01;
     private static final int MAGIC_2b = 0x5e;
     private static final int MAGIC_2c = 0x9c;
     private static final int MAGIC_2d = 0xda;
 
+    private final CountingInputStream countingStream;
     private final InputStream in;
     private final Inflater inflater;
 
@@ -61,7 +66,7 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
     public DeflateCompressorInputStream(final InputStream inputStream,
                                         final DeflateParameters parameters) {
         inflater = new Inflater(!parameters.withZlibHeader());
-        in = new InflaterInputStream(inputStream, inflater);
+        in = new InflaterInputStream(countingStream = new CountingInputStream(inputStream), inflater);
     }
 
     /** {@inheritDoc} */
@@ -100,6 +105,14 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
         } finally {
             inflater.end();
         }
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return countingStream.getBytesRead();
     }
 
     /**

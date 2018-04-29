@@ -77,4 +77,20 @@ public abstract class CompressorInputStream extends InputStream {
     public long getBytesRead() {
         return bytesRead;
     }
+
+    /**
+     * Returns the amount of raw or compressed bytes read by the stream.
+     *
+     * <p>This implementation invokes {@link #getBytesRead}.</p>
+     *
+     * <p>Provides half of {@link
+     * org.apache.commons.compress.utils.InputStreamStatistics}
+     * without forcing subclasses to implement the other half.</p>
+     *
+     * @return the amount of decompressed bytes returned by the stream
+     * @since 1.17
+     */
+    public long getUncompressedCount() {
+        return getBytesRead();
+    }
 }

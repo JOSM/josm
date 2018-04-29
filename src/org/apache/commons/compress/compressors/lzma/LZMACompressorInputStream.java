@@ -25,13 +25,18 @@ import org.apache.commons.compress.MemoryLimitException;
 import org.tukaani.xz.LZMAInputStream;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * LZMA decompressor.
  * @since 1.6
  */
-public class LZMACompressorInputStream extends CompressorInputStream {
+public class LZMACompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
+
+    private final CountingInputStream countingStream;
     private final InputStream in;
 
     /**
@@ -48,7 +53,7 @@ public class LZMACompressorInputStream extends CompressorInputStream {
      */
     public LZMACompressorInputStream(final InputStream inputStream)
             throws IOException {
-        in = new LZMAInputStream(inputStream, -1);
+        in = new LZMAInputStream(countingStream = new CountingInputStream(inputStream), -1);
     }
 
     /**
@@ -71,7 +76,7 @@ public class LZMACompressorInputStream extends CompressorInputStream {
     public LZMACompressorInputStream(final InputStream inputStream, int memoryLimitInKb)
             throws IOException {
         try {
-            in = new LZMAInputStream(inputStream, memoryLimitInKb);
+            in = new LZMAInputStream(countingStream = new CountingInputStream(inputStream), memoryLimitInKb);
         } catch (org.tukaani.xz.MemoryLimitException e) {
             //convert to commons-compress exception
             throw new MemoryLimitException(e.getMemoryNeeded(), e.getMemoryLimit(), e);
@@ -110,6 +115,14 @@ public class LZMACompressorInputStream extends CompressorInputStream {
     @Override
     public void close() throws IOException {
         in.close();
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return countingStream.getBytesRead();
     }
 
     /**

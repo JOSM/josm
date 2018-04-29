@@ -21,19 +21,24 @@ package org.apache.commons.compress.compressors.xz;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.compress.MemoryLimitException;
 import org.tukaani.xz.XZ;
 import org.tukaani.xz.SingleXZInputStream;
 import org.tukaani.xz.XZInputStream;
 
+import org.apache.commons.compress.MemoryLimitException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * XZ decompressor.
  * @since 1.4
  */
-public class XZCompressorInputStream extends CompressorInputStream {
+public class XZCompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
+
+    private final CountingInputStream countingStream;
     private final InputStream in;
 
     /**
@@ -123,10 +128,11 @@ public class XZCompressorInputStream extends CompressorInputStream {
     public XZCompressorInputStream(InputStream inputStream,
                                    boolean decompressConcatenated, final int memoryLimitInKb)
             throws IOException {
+        countingStream = new CountingInputStream(inputStream);
         if (decompressConcatenated) {
-            in = new XZInputStream(inputStream, memoryLimitInKb);
+            in = new XZInputStream(countingStream, memoryLimitInKb);
         } else {
-            in = new SingleXZInputStream(inputStream, memoryLimitInKb);
+            in = new SingleXZInputStream(countingStream, memoryLimitInKb);
         }
     }
 
@@ -171,5 +177,13 @@ public class XZCompressorInputStream extends CompressorInputStream {
     @Override
     public void close() throws IOException {
         in.close();
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return countingStream.getBytesRead();
     }
 }

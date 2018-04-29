@@ -110,14 +110,6 @@ public class Deflate64CompressorInputStream extends CompressorInputStream implem
         return compressedBytesRead;
     }
 
-    /**
-     * @since 1.17
-     */
-    @Override
-    public long getUncompressedCount() {
-        return getBytesRead();
-    }
-
     private void closeDecoder() {
         closeQuietly(decoder);
         decoder = null;

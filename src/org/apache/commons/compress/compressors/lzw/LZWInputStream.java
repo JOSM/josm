@@ -97,14 +97,6 @@ public abstract class LZWInputStream extends CompressorInputStream implements In
     }
 
     /**
-     * @since 1.17
-     */
-    @Override
-    public long getUncompressedCount() {
-        return getBytesRead();
-    }
-
-    /**
      * Read the next code and expand it.
      * @return the expanded next code
      * @throws IOException on error

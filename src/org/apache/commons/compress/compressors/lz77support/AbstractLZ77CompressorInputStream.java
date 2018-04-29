@@ -24,7 +24,9 @@ import java.util.Arrays;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.utils.ByteUtils;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * Encapsulates code common to LZ77 decompressors.
@@ -72,7 +74,8 @@ import org.apache.commons.compress.utils.IOUtils;
  *
  * @since 1.14
  */
-public abstract class AbstractLZ77CompressorInputStream extends CompressorInputStream {
+public abstract class AbstractLZ77CompressorInputStream extends CompressorInputStream
+    implements InputStreamStatistics {
 
     /** Size of the window - must be bigger than the biggest offset expected. */
     private final int windowSize;
@@ -94,7 +97,7 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
     private int readIndex;
 
     /** The underlying stream to read compressed data from */
-    private final InputStream in;
+    private final CountingInputStream in;
 
     /** Number of bytes still to be read from the current literal or back-reference. */
     private long bytesRemaining;
@@ -129,7 +132,7 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
      * @throws IOException if reading fails
      */
     public AbstractLZ77CompressorInputStream(final InputStream is, int windowSize) throws IOException {
-        this.in = is;
+        this.in = new CountingInputStream(is);
         this.windowSize = windowSize;
         buf = new byte[3 * windowSize];
         writeIndex = readIndex = 0;
@@ -184,6 +187,14 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
         System.arraycopy(data, data.length - len, buf, 0, len);
         writeIndex += len;
         readIndex += len;
+    }
+
+    /**
+     * @since 1.17
+     */
+    @Override
+    public long getCompressedCount() {
+        return in.getBytesRead();
     }
 
     /**
