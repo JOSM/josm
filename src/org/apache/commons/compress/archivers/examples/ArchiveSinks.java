@@ -27,7 +27,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.StandardOpenOption;
 import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
@@ -36,13 +35,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
  * @since 1.17
  */
 public class ArchiveSinks {
-    /**
-     * Wraps an ArchiveOutputStream.
-     */
-    public static Sink<File> forStream(ArchiveOutputStream os) {
-        return new FileToArchiveSink(os);
-    }
-
     /**
      * Uses {@link ArchiveFactory#createArchiveOutputStream}.
      *
@@ -73,7 +65,7 @@ public class ArchiveSinks {
         if (!prefersSeekableByteChannel(format)) {
             return forStream(format, Channels.newOutputStream(c));
         } else if (ArchiveStreamFactory.ZIP.equalsIgnoreCase(format)) {
-            return forStream(new ZipArchiveOutputStream(c));
+            return new FileToArchiveSink(new ZipArchiveOutputStream(c));
         } else if (ArchiveStreamFactory.SEVEN_Z.equalsIgnoreCase(format)) {
             return new SevenZOutputFileSink(c);
         } else {
