@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -50,29 +51,14 @@ public class DirectoryBasedSupplier
         return new DirectoryIterator("", dir);
     }
 
-    private class DirectoryIterator implements ThrowingIterator<ChainPayload<File>> {
+    private static class DirectoryIterator implements ThrowingIterator<ChainPayload<File>> {
         private final Iterator<File> files;
         private final String namePrefix;
         private DirectoryIterator nestedIterator;
         DirectoryIterator(String namePrefix, File dir) throws IOException {
             this.namePrefix = namePrefix;
             File[] fs = dir.listFiles();
-            files = fs == null
-                ? new Iterator<File>() {
-                    @Override
-                    public boolean hasNext() {
-                        return false;
-                    }
-                    @Override
-                    public File next() {
-                        throw new NoSuchElementException();
-                    }
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                }
-            : Arrays.asList(fs).iterator();
+            files = fs == null ? Collections.<File>emptyIterator() : Arrays.asList(fs).iterator();
         }
 
         @Override

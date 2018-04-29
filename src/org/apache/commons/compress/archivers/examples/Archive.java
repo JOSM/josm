@@ -104,7 +104,7 @@ public class Archive {
                 }
             });
         }
-        public ChainBuilder map(Transformer transformer) {
+        public ChainBuilder map(Transformer<File> transformer) {
             chainDef.add(transformer);
             return this;
         }

@@ -35,7 +35,7 @@ public class ArchiveCli {
             System.err.println("Usage: ArchiveCli dir format target");
             System.exit(1);
         }
-        try (Sink<File> sink = FileToArchiveSink.forFile(args[1], new File(args[2]))) {
+        try (Sink<File> sink = ArchiveSinks.forFile(args[1], new File(args[2]))) {
             Archive.directory(new File(args[0]))
                 .to(sink);
         }
