@@ -29,6 +29,8 @@ public interface ArchiveEntrySource extends Source<ArchiveEntry> {
     /**
      * Provides a filter that can be used to skip entries the
      * underlying source is unable to read the content of.
+     * @return filter that can be used to skip entries the underlying
+     * source is unable to read the content of
      */
     Filter<ArchiveEntry> skipUnreadable();
 }

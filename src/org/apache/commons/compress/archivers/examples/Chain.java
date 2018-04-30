@@ -30,10 +30,22 @@ public class Chain<T> {
 
     private final Iterator<ChainStep<T>> chain;
 
+    /**
+     * Instantiates a new chain.
+     *
+     * @param chain the steps to take in order.
+     */
     public Chain(Iterator<ChainStep<T>> chain) {
         this.chain = chain;
     }
 
+    /**
+     * Invokes the next step of the chain.
+     *
+     * @param payload the payload to pass to the next step
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if an archive format related error occurs
+     */
     public void next(ChainPayload<T> payload) throws IOException, ArchiveException {
         if (chain.hasNext()) {
             chain.next().process(payload, this);

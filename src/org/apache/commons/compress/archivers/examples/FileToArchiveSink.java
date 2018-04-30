@@ -36,6 +36,8 @@ public class FileToArchiveSink extends Sink<File> {
 
     /**
      * Wraps an ArchiveOutputStream.
+     *
+     * @param os the stream to write to
      */
     public FileToArchiveSink(ArchiveOutputStream os) {
         this.os = os;

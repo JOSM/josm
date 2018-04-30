@@ -36,17 +36,31 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
  */
 public class ArchiveSinks {
     /**
-     * Uses {@link ArchiveFactory#createArchiveOutputStream}.
+     * Uses {@link ArchiveStreamFactory#createArchiveOutputStream}.
      *
      * <p>Will not support 7z.</p>
+     *
+     * @param format the archive format. This uses the same format as
+     * accepted by {@link ArchiveStreamFactory}.
+     * @param os the stream to write to.
+     * @return a sink that consumes the files
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public static Sink<File> forStream(String format, OutputStream os) throws IOException, ArchiveException {
         return new FileToArchiveSink(new ArchiveStreamFactory().createArchiveOutputStream(format, os));
     }
 
     /**
-     * Uses {@link ArchiveFactory#createArchiveOutputStream} unless
+     * Uses {@link ArchiveStreamFactory#createArchiveOutputStream} unless
      * special handling for ZIP or 7z is required.
+     *
+     * @param format the archive format. This uses the same format as
+     * accepted by {@link ArchiveStreamFactory}.
+     * @param target the file to write to.
+     * @return a sink that consumes the files
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public static Sink<File> forFile(String format, File target) throws IOException, ArchiveException {
         if (prefersSeekableByteChannel(format)) {
@@ -58,8 +72,15 @@ public class ArchiveSinks {
     }
 
     /**
-     * Uses {@link ArchiveFactory#createArchiveOutputStream} unless
+     * Uses {@link ArchiveStreamFactory#createArchiveOutputStream} unless
      * special handling for ZIP or 7z is required.
+     *
+     * @param format the archive format. This uses the same format as
+     * accepted by {@link ArchiveStreamFactory}.
+     * @param c the channel to write to.
+     * @return a sink that consumes the files
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public static Sink<File> forChannel(String format, SeekableByteChannel c) throws IOException, ArchiveException {
         if (!prefersSeekableByteChannel(format)) {

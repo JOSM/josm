@@ -35,6 +35,8 @@ public interface ChainStep<T> {
      *
      * @param payload the payload.
      * @param chain chain to return control to once processing is done.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if an archive format related error occurs
      */
     void process(ChainPayload<T> payload, Chain<T> chain) throws IOException, ArchiveException;
 }

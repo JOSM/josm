@@ -30,7 +30,7 @@ public class ChainPayload<T> {
     private final Supplier<InputStream> input;
     /**
      * Constructs the payload.
-     * @param T entry the actual payload
+     * @param entry entry the actual payload
      * @param entryName the local name of the entry. This may - for
      * example - be the file name relative to a directory.
      * @param input supplies an input stream to the entry's
@@ -43,6 +43,8 @@ public class ChainPayload<T> {
     }
     /**
      * Provides the real payload.
+     * @return the real playoad
+     *
      */
     public T getEntry() {
         return entry;
@@ -52,6 +54,8 @@ public class ChainPayload<T> {
      *
      * <p>This may - for example - be the file name relative to a
      * directory.</p>
+     *
+     * @return local name of the entry
      */
     public String getEntryName() {
         return entryName;
@@ -61,6 +65,8 @@ public class ChainPayload<T> {
      *
      * <p>The supplier is not required to be callable more than
      * once.</p>
+     *
+     * @return supplier of input
      */
     public Supplier<InputStream> getInput() {
         return input;

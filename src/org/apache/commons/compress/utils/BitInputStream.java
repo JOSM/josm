@@ -130,6 +130,7 @@ public class BitInputStream implements Closeable {
      *
      * <p>This includes the bytes read to fill the current cache and
      * not read as bits so far.</p>
+     * @return the number of bytes read from the underlying stream
      * @since 1.17
      */
     public long getBytesRead() {

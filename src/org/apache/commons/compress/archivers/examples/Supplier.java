@@ -26,5 +26,12 @@ import org.apache.commons.compress.archivers.ArchiveException;
  * @since 1.12
  */
 public interface Supplier<T> {
+    /**
+     * Supplies the object.
+     *
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if an archive format related error occurs
+     * @return the asked for object
+     */
     T get() throws IOException, ArchiveException;
 }

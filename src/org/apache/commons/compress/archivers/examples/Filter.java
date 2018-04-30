@@ -29,7 +29,7 @@ public abstract class Filter<T> implements ChainStep<T> {
     /**
      * Decides whether to process an entry or not.
      *
-     * @param name of the entry
+     * @param entryName name of the entry
      * @param entry the entry
      * @return true if the entry shall be processed.
      */

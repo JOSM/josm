@@ -43,12 +43,29 @@ public class ArchiveSources {
      * @since 1.17
      */
     public interface PendingFormat {
+        /**
+         * Signals the format shall be detcted automatically.
+         * @return the configured source
+         * @throws IOException if an I/O error occurs
+         * @throws ArchiveException if the archive cannot be read for other reasons
+         */
         ArchiveEntrySource detectFormat() throws IOException, ArchiveException;
+        /**
+         * Explicitly provides the expected format of the archive.
+         * @param format the archive format. This uses the same format as
+         * accepted by {@link ArchiveStreamFactory}.
+         * @return the configured source
+         * @throws IOException if an I/O error occurs
+         * @throws ArchiveException if the archive cannot be read for other reasons
+         */
         ArchiveEntrySource withFormat(String format) throws IOException, ArchiveException;
     }
 
     /**
-     * Uses {@link ArchiveFactory#createArchiveInputStream} unless special handling for ZIP or /z is required.
+     * Uses {@link ArchiveStreamFactory#createArchiveInputStream} unless special handling for ZIP or /z is required.
+     *
+     * @param f the file to read from
+     * @return a builder that needs to know the format
      */
     public static PendingFormat forFile(final File f) {
         return new PendingFormat() {
@@ -72,7 +89,14 @@ public class ArchiveSources {
     }
 
     /**
-     * Uses {@link ArchiveFactory#createArchiveInputStream} unless special handling for ZIP or /z is required.
+     * Uses {@link ArchiveStreamFactory#createArchiveInputStream} unless special handling for ZIP or /z is required.
+     *
+     * @param format the archive format. This uses the same format as
+     * accepted by {@link ArchiveStreamFactory}.
+     * @param c the channel to read from
+     * @return the configured source
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public static ArchiveEntrySource forChannel(String format, SeekableByteChannel c)
         throws IOException, ArchiveException {
@@ -88,9 +112,12 @@ public class ArchiveSources {
     }
 
     /**
-     * Uses {@link ArchiveFactory#createArchiveInputStream}.
+     * Uses {@link ArchiveStreamFactory#createArchiveInputStream}.
      *
      * <p>Will not support 7z.</p>
+     *
+     * @param in the stream to read from
+     * @return a builder that needs to know the format
      */
     public static PendingFormat forStream(final InputStream in) {
         return new PendingFormat() {

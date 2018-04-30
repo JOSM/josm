@@ -29,6 +29,10 @@ import org.apache.commons.compress.archivers.ArchiveException;
 public abstract class Sink<T> implements ChainStep<T>, Closeable {
     /**
      * Consume a single entry.
+     *
+     * @param payload the entry to consume
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if an archive format related error occurs
      */
     public abstract void consume(ChainPayload<T> payload) throws IOException, ArchiveException;
 
@@ -36,6 +40,9 @@ public abstract class Sink<T> implements ChainStep<T>, Closeable {
      * Is invoked once all entries have been processed.
      *
      * <p>This implementation is empty.
+     *
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if an archive format related error occurs
      */
     public void finish() throws IOException, ArchiveException {
     }

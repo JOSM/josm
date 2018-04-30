@@ -36,7 +36,10 @@ public class DirectoryBasedSource implements Source<File> {
     private final File dir;
 
     /**
+     * Sets up a directory as source.
+     *
      * @param dir the directory to provide entries from.
+     * @throws IllegalArgumentException if dir doesn't exist or is not a directory 
      */
     public DirectoryBasedSource(File dir) {
         if (!dir.isDirectory()) {

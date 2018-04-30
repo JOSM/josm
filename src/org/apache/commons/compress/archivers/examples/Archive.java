@@ -35,36 +35,51 @@ public class Archive {
     public interface ChainBuilder {
         /**
          * Adds a filter to the chain.
+         * @param filter the filter to apply
+         * @return an updated builder
          */
         ChainBuilder filter(Filter<File> filter);
         /**
          * Adds a filter to the chain.
+         * @param filter the filter to apply
+         * @return an updated builder
          */
         ChainBuilder filter(FileFilter filter);
         /**
          * Adds a filter to the chain that filters out entries that cannot be read.
+         * @return an updated builder
          */
         ChainBuilder skipUnreadable();
         /**
          * Adds a filter to the chain that filters out everything that is not a file.
+         * @return an updated builder
          */
         ChainBuilder skipNonFiles();
         /**
          * Adds a transformer to the chain.
+         * @param transformer transformer to apply
+         * @return an updated builder
          */
         ChainBuilder map(Transformer<File> transformer);
         /**
          * Adds a generic step to the chain.
+         * @param step step to perform
+         * @return an updated builder
          */
         ChainBuilder withStep(ChainStep<File> step);
         /**
          * Actually consumes all the files supplied.
+         * @param sink sink that the entries will be sent to
+         * @throws IOException if an I/O error occurs
+         * @throws ArchiveException if the archive cannot be written for other reasons
          */
         void to(Sink<File> sink) throws IOException, ArchiveException;
     }
 
     /**
      * Sets the source of files to be a directory.
+     * @param f the source directory
+     * @return a builder for the chain to be created and run
      */
     public static ChainBuilder directory(File f) {
         return source(new DirectoryBasedSource(f));
@@ -72,6 +87,8 @@ public class Archive {
 
     /**
      * Sets the source of files to process.
+     * @param source the source directory
+     * @return a builder for the chain to be created and run
      */
     public static ChainBuilder source(Source<File> source) {
         return new Builder(source);

@@ -47,6 +47,7 @@ public class Expander {
     public interface ArchiveEntryFilter {
         /**
          * @return true if the entry shall be expanded
+         * @param entry the entry to test
          */
         boolean accept(ArchiveEntry entry);
     }
@@ -73,6 +74,8 @@ public class Expander {
      *
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(File archive, File targetDirectory) throws IOException, ArchiveException {
         expand(archive, targetDirectory, ACCEPT_ALL);
@@ -85,6 +88,8 @@ public class Expander {
      * @param targetDirectory the directory to write to
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(String format, File archive, File targetDirectory) throws IOException, ArchiveException {
         expand(format, archive, targetDirectory, ACCEPT_ALL);
@@ -99,6 +104,8 @@ public class Expander {
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
      * @param filter selects the entries to expand
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(File archive, File targetDirectory, ArchiveEntryFilter filter)
         throws IOException, ArchiveException {
@@ -118,6 +125,8 @@ public class Expander {
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param filter selects the entries to expand
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(String format, File archive, File targetDirectory, ArchiveEntryFilter filter)
         throws IOException, ArchiveException {
@@ -139,6 +148,8 @@ public class Expander {
      *
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(InputStream archive, File targetDirectory) throws IOException, ArchiveException {
         expand(archive, targetDirectory, ACCEPT_ALL);
@@ -151,6 +162,8 @@ public class Expander {
      * @param targetDirectory the directory to write to
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(String format, InputStream archive, File targetDirectory)
         throws IOException, ArchiveException {
@@ -166,6 +179,8 @@ public class Expander {
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
      * @param filter selects the entries to expand
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(InputStream archive, File targetDirectory, ArchiveEntryFilter filter)
         throws IOException, ArchiveException {
@@ -181,6 +196,8 @@ public class Expander {
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param filter selects the entries to expand
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(String format, InputStream archive, File targetDirectory, ArchiveEntryFilter filter)
         throws IOException, ArchiveException {
@@ -194,6 +211,8 @@ public class Expander {
      * @param targetDirectory the directory to write to
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(String format, SeekableByteChannel archive, File targetDirectory)
         throws IOException, ArchiveException {
@@ -206,10 +225,11 @@ public class Expander {
      *
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
-     * @param the format of the archive
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param filter selects the entries to expand
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(String format, SeekableByteChannel archive, File targetDirectory, ArchiveEntryFilter filter)
         throws IOException, ArchiveException {
@@ -229,6 +249,8 @@ public class Expander {
      *
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(ArchiveInputStream archive, File targetDirectory)
         throws IOException, ArchiveException {
@@ -242,6 +264,8 @@ public class Expander {
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
      * @param filter selects the entries to expand
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(final ArchiveInputStream archive, File targetDirectory, ArchiveEntryFilter filter)
         throws IOException, ArchiveException {
@@ -267,6 +291,8 @@ public class Expander {
      *
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(ZipFile archive, File targetDirectory)
         throws IOException, ArchiveException {
@@ -280,6 +306,8 @@ public class Expander {
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
      * @param filter selects the entries to expand
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(final ZipFile archive, File targetDirectory, ArchiveEntryFilter filter)
         throws IOException, ArchiveException {
@@ -308,6 +336,8 @@ public class Expander {
      *
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(SevenZFile archive, File targetDirectory)
         throws IOException, ArchiveException {
@@ -321,6 +351,8 @@ public class Expander {
      * @param archive the file to expand
      * @param targetDirectory the directory to write to
      * @param filter selects the entries to expand
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be read for other reasons
      */
     public void expand(final SevenZFile archive, File targetDirectory, ArchiveEntryFilter filter)
         throws IOException, ArchiveException {

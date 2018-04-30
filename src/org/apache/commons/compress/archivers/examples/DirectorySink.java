@@ -36,7 +36,11 @@ public class DirectorySink extends Sink<ArchiveEntry> {
     private final String dirPath;
 
     /**
+     * Sets up a directory as sink.
+     *
      * @param dir the directory to provide entries from.
+     * @throws IOException if the canonical path of the directory cannot be determined
+     * @throws IllegalArgumentException if dir doesn't exist or is not a directory 
      */
     public DirectorySink(File dir) throws IOException {
         if (!dir.isDirectory()) {

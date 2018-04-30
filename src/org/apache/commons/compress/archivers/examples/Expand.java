@@ -35,32 +35,45 @@ public class Expand {
     public interface ChainBuilder {
         /**
          * Adds a filter to the chain.
+         * @param filter the filter to apply
+         * @return an updated builder
          */
         ChainBuilder filter(Filter<ArchiveEntry> filter);
         /**
          * Adds a filter to the chain that filters out entries that cannot be read.
+         * @return an updated builder
          */
         ChainBuilder skipUnreadable();
         /**
          * Adds a filter to the chain that suppresses all directory entries.
+         * @return an updated builder
          */
         ChainBuilder skipDirectories();
         /**
          * Adds a transformer to the chain.
+         * @param transformer transformer to apply
+         * @return an updated builder
          */
         ChainBuilder map(Transformer<ArchiveEntry> transformer);
         /**
          * Adds a generic step to the chain.
+         * @return an updated builder
+         * @param step step to perform
          */
         ChainBuilder withStep(ChainStep<ArchiveEntry> step);
         /**
          * Actually consumes all the entries supplied.
+         * @param sink sink that the entries will be sent to
+         * @throws IOException if an I/O error occurs
+         * @throws ArchiveException if the source archive cannot be read for other reasons
          */
         void to(Sink<ArchiveEntry> sink) throws IOException, ArchiveException;
     }
 
     /**
      * Sets the source of entries to process.
+     * @param source the source
+     * @return a builder for the chain to be created and run
      */
     public static ChainBuilder source(ArchiveEntrySource source) {
         return new Builder(source);

@@ -68,7 +68,9 @@ public class Archiver {
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param target the file to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public void create(String format, File target, File directory) throws IOException, ArchiveException {
         create(format, target, directory, ACCEPT_ALL);
@@ -82,8 +84,10 @@ public class Archiver {
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param target the file to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
      * @param filter selects the files and directories to include inside the archive.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public void create(String format, File target, File directory, FileFilter filter)
         throws IOException, ArchiveException {
@@ -107,7 +111,9 @@ public class Archiver {
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param target the stream to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public void create(String format, OutputStream target, File directory) throws IOException, ArchiveException {
         create(format, target, directory, ACCEPT_ALL);
@@ -121,8 +127,10 @@ public class Archiver {
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param target the stream to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
      * @param filter selects the files and directories to include inside the archive.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public void create(String format, OutputStream target, File directory, FileFilter filter)
         throws IOException, ArchiveException {
@@ -137,7 +145,9 @@ public class Archiver {
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param target the channel to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public void create(String format, SeekableByteChannel target, File directory)
         throws IOException, ArchiveException {
@@ -152,8 +162,10 @@ public class Archiver {
      * @param format the archive format. This uses the same format as
      * accepted by {@link ArchiveStreamFactory}.
      * @param target the channel to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
      * @param filter selects the files and directories to include inside the archive.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public void create(String format, SeekableByteChannel target, File directory, FileFilter filter)
         throws IOException, ArchiveException {
@@ -173,7 +185,9 @@ public class Archiver {
      * files and directories in {@code directory}.
      *
      * @param target the stream to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public void create(ArchiveOutputStream target, File directory) throws IOException, ArchiveException {
         create(target, directory, ACCEPT_ALL);
@@ -185,8 +199,10 @@ public class Archiver {
      * {@code filter}.
      *
      * @param target the stream to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
      * @param filter selects the files and directories to include inside the archive.
+     * @throws IOException if an I/O error occurs
+     * @throws ArchiveException if the archive cannot be created for other reasons
      */
     public void create(final ArchiveOutputStream target, File directory, FileFilter filter)
         throws IOException, ArchiveException {
@@ -216,7 +232,8 @@ public class Archiver {
      * files and directories in {@code directory}.
      *
      * @param target the file to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
+     * @throws IOException if an I/O error occurs
      */
     public void create(final SevenZOutputFile target, File directory) throws IOException {
         create(target, directory, ACCEPT_ALL);
@@ -228,8 +245,9 @@ public class Archiver {
      * {@code filter}.
      *
      * @param target the file to write the new archive to.
-     * @param the directory that contains the files to archive.
+     * @param directory the directory that contains the files to archive.
      * @param filter selects the files and directories to include inside the archive.
+     * @throws IOException if an I/O error occurs
      */
     public void create(final SevenZOutputFile target, File directory, FileFilter filter) throws IOException {
         create(directory, filter, new ArchiveEntryCreator() {
