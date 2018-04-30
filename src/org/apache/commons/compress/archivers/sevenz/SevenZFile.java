@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -40,6 +41,7 @@ import org.apache.commons.compress.utils.BoundedInputStream;
 import org.apache.commons.compress.utils.CRC32VerifyingInputStream;
 import org.apache.commons.compress.utils.CharsetNames;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.InputStreamStatistics;
 
 /**
  * Reads a 7z file, using SeekableByteChannel under
@@ -80,6 +82,9 @@ public class SevenZFile implements Closeable {
     private int currentFolderIndex = -1;
     private InputStream currentFolderInputStream = null;
     private byte[] password;
+
+    private long compressedBytesReadFromCurrentEntry;
+    private long uncompressedBytesReadFromCurrentEntry;
 
     private final ArrayList<InputStream> deferredBlockStreams = new ArrayList<>();
 
@@ -220,6 +225,7 @@ public class SevenZFile implements Closeable {
         ++currentEntryIndex;
         final SevenZArchiveEntry entry = archive.files[currentEntryIndex];
         buildDecodingStream();
+        uncompressedBytesReadFromCurrentEntry = compressedBytesReadFromCurrentEntry = 0;
         return entry;
     }
 
@@ -920,10 +926,33 @@ public class SevenZFile implements Closeable {
     private InputStream buildDecoderStack(final Folder folder, final long folderOffset,
                 final int firstPackStreamIndex, final SevenZArchiveEntry entry) throws IOException {
         channel.position(folderOffset);
-        InputStream inputStreamStack =
-            new BufferedInputStream(
+        InputStream inputStreamStack = new FilterInputStream(new BufferedInputStream(
               new BoundedSeekableByteChannelInputStream(channel,
-                  archive.packSizes[firstPackStreamIndex]));
+                  archive.packSizes[firstPackStreamIndex]))) {
+            @Override
+            public int read() throws IOException {
+                final int r = in.read();
+                if (r >= 0) {
+                    count(1);
+                }
+                return r;
+            }
+            @Override
+            public int read(final byte[] b) throws IOException {
+                return read(b, 0, b.length);
+            }
+            @Override
+            public int read(final byte[] b, final int off, final int len) throws IOException {
+                final int r = in.read(b, off, len);
+                if (r >= 0) {
+                    count(r);
+                }
+                return r;
+            }
+            private void count(int c) {
+                compressedBytesReadFromCurrentEntry += c;
+            }
+        };
         final LinkedList<SevenZMethodConfiguration> methods = new LinkedList<>();
         for (final Coder coder : folder.getOrderedCoders()) {
             if (coder.numInStreams != 1 || coder.numOutStreams != 1) {
@@ -951,7 +980,11 @@ public class SevenZFile implements Closeable {
      *             if an I/O error has occurred
      */
     public int read() throws IOException {
-        return getCurrentStream().read();
+        int b = getCurrentStream().read();
+        if (b >= 0) {
+            uncompressedBytesReadFromCurrentEntry++;
+        }
+        return b;
     }
 
     private InputStream getCurrentStream() throws IOException {
@@ -969,6 +1002,7 @@ public class SevenZFile implements Closeable {
             try (final InputStream stream = deferredBlockStreams.remove(0)) {
                 IOUtils.skip(stream, Long.MAX_VALUE);
             }
+            compressedBytesReadFromCurrentEntry = 0;
         }
 
         return deferredBlockStreams.get(0);
@@ -997,7 +1031,30 @@ public class SevenZFile implements Closeable {
      *             if an I/O error has occurred
      */
     public int read(final byte[] b, final int off, final int len) throws IOException {
-        return getCurrentStream().read(b, off, len);
+        int cnt = getCurrentStream().read(b, off, len);
+        if (cnt > 0) {
+            uncompressedBytesReadFromCurrentEntry += cnt;
+        }
+        return cnt;
+    }
+
+    /**
+     * Provides statistics for bytes read from the current entry.
+     *
+     * @return statistics for bytes read from the current entry
+     * @since 1.17
+     */
+    public InputStreamStatistics getStatisticsForCurrentEntry() {
+        return new InputStreamStatistics() {
+            @Override
+            public long getCompressedCount() {
+                return compressedBytesReadFromCurrentEntry;
+            }
+            @Override
+            public long getUncompressedCount() {
+                return uncompressedBytesReadFromCurrentEntry;
+            }
+        };
     }
 
     private static long readUint64(final ByteBuffer in) throws IOException {
