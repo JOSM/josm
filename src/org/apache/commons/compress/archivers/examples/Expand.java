@@ -18,114 +18,93 @@
  */
 package org.apache.commons.compress.archivers.examples;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
- * Consumes files and passes them to a sink, usually used to create an archive of them.
+ * Consumes archive entries and passes them to a sink, usually used to
+ * expand an archive.
  * @since 1.17
  */
-public class Archive {
+public class Expand {
     /**
-     * Sets up a chain of operations and consumes the files from a source of files.
+     * Sets up a chain of operations and consumes the entries from a source of archive entries.
      * @since 1.17
      */
     public interface ChainBuilder {
         /**
          * Adds a filter to the chain.
          */
-        ChainBuilder filter(Filter<File> filter);
-        /**
-         * Adds a filter to the chain.
-         */
-        ChainBuilder filter(FileFilter filter);
+        ChainBuilder filter(Filter<ArchiveEntry> filter);
         /**
          * Adds a filter to the chain that filters out entries that cannot be read.
          */
         ChainBuilder skipUnreadable();
         /**
-         * Adds a filter to the chain that filters out everything that is not a file.
+         * Adds a filter to the chain that suppresses all directory entries.
          */
-        ChainBuilder skipNonFiles();
+        ChainBuilder skipDirectories();
         /**
          * Adds a transformer to the chain.
          */
-        ChainBuilder map(Transformer<File> transformer);
+        ChainBuilder map(Transformer<ArchiveEntry> transformer);
         /**
          * Adds a generic step to the chain.
          */
-        ChainBuilder withStep(ChainStep<File> step);
+        ChainBuilder withStep(ChainStep<ArchiveEntry> step);
         /**
-         * Actually consumes all the files supplied.
+         * Actually consumes all the entries supplied.
          */
-        void to(Sink<File> sink) throws IOException, ArchiveException;
+        void to(Sink<ArchiveEntry> sink) throws IOException, ArchiveException;
     }
 
     /**
-     * Sets the source of files to be a directory.
+     * Sets the source of entries to process.
      */
-    public static ChainBuilder directory(File f) {
-        return source(new DirectoryBasedSource(f));
-    }
-
-    /**
-     * Sets the source of files to process.
-     */
-    public static ChainBuilder source(Source<File> source) {
+    public static ChainBuilder source(ArchiveEntrySource source) {
         return new Builder(source);
     }
 
     private static class Builder implements ChainBuilder {
-        private final Source<File> source;
-        private ChainDefinition<File> chainDef = new ChainDefinition<>();
+        private final ArchiveEntrySource source;
+        private ChainDefinition<ArchiveEntry> chainDef = new ChainDefinition<>();
 
-        Builder(Source<File> source) {
+        Builder(ArchiveEntrySource source) {
             this.source = source;
         }
 
         @Override
-        public ChainBuilder filter(Filter<File> filter) {
+        public ChainBuilder filter(Filter<ArchiveEntry> filter) {
             return withStep(filter);
         }
         @Override
-        public ChainBuilder filter(FileFilter filter) {
-            return filter(new FileFilterAdapter(filter));
-        }
-        @Override
         public ChainBuilder skipUnreadable() {
-            return filter(new FileFilter() {
+            return filter(source.skipUnreadable());
+        }
+        @Override
+        public ChainBuilder skipDirectories() {
+            return filter(new Filter<ArchiveEntry>() {
                 @Override
-                public boolean accept(File f) {
-                    return f.canRead();
+                public boolean accept(String entryName, ArchiveEntry e) {
+                    return !e.isDirectory();
                 }
             });
         }
         @Override
-        public ChainBuilder skipNonFiles() {
-            return filter(new FileFilter() {
-                @Override
-                public boolean accept(File f) {
-                    return f.isFile();
-                }
-            });
-        }
-        @Override
-        public ChainBuilder map(Transformer<File> transformer) {
+        public ChainBuilder map(Transformer<ArchiveEntry> transformer) {
             return withStep(transformer);
         }
         @Override
-        public ChainBuilder withStep(ChainStep<File> step) {
+        public ChainBuilder withStep(ChainStep<ArchiveEntry> step) {
             chainDef.add(step);
             return this;
         }
         @Override
-        public void to(Sink<File> sink) throws IOException, ArchiveException {
+        public void to(Sink<ArchiveEntry> sink) throws IOException, ArchiveException {
             chainDef.add(sink);
             chainDef.freeze();
-            new ChainRunner<File>(source, chainDef, sink).run();
+            new ChainRunner<ArchiveEntry>(source, chainDef, sink).run();
         }
     }
-
 }

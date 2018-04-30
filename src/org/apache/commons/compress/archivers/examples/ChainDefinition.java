@@ -25,7 +25,7 @@ import java.util.LinkedList;
  * The recipe for building a {@link Chain}.
  * @since 1.17
  */
-public class ChainDefinition<T> {
+class ChainDefinition<T> {
     private final Deque<ChainStep<T>> steps = new LinkedList<>();
     private volatile boolean frozen = false;
 
@@ -33,7 +33,7 @@ public class ChainDefinition<T> {
      * Adds a step.
      * @throws IllegalStateException if the definition is already frozen.
      */
-    public void add(ChainStep<T> step) {
+    void add(ChainStep<T> step) {
         if (frozen) {
             throw new IllegalStateException("the definition is already frozen");
         }
@@ -47,7 +47,7 @@ public class ChainDefinition<T> {
      *
      * @throws IllegalStateException if the last step of the definition is not a sink.
      */
-    public void freeze() {
+    void freeze() {
         if (!frozen) {
             frozen = true;
             if (!(steps.getLast() instanceof Sink)) {
@@ -61,7 +61,7 @@ public class ChainDefinition<T> {
      *
      * @throws IllegalStateException if the definition is not frozen.
      */
-    public Chain<T> chain() {
+    Chain<T> chain() {
         if (!frozen) {
             throw new IllegalStateException("the definition hasn't been frozen, yet");
         }
