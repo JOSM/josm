@@ -357,4 +357,15 @@ public interface PlatformHook {
     default void setNativeOsCallback(NativeOsCallback callback) {
         // To be implemented if needed
     }
+
+    /**
+     * Resolves a file link to its destination file.
+     * @param file file (link or regular file)
+     * @return destination file in case of a file link, file if regular
+     * @since 13691
+     */
+    default File resolveFileLink(File file) {
+        // Override if needed
+        return file;
+    }
 }
