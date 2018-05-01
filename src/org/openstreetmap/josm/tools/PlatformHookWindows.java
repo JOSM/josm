@@ -33,7 +33,6 @@ import static org.openstreetmap.josm.tools.WinRegistry.HKEY_LOCAL_MACHINE;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,6 +59,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,8 +80,6 @@ import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 import org.openstreetmap.josm.spi.preferences.Config;
-
-import sun.awt.shell.Win32ShellFolderManager2;
 
 /**
  * {@code PlatformHook} implementation for Microsoft Windows systems.
@@ -774,8 +772,8 @@ public class PlatformHookWindows implements PlatformHook {
     public File resolveFileLink(File file) {
         if (file.getName().endsWith(".lnk")) {
             try {
-                return new Win32ShellFolderManager2().createShellFolder(file).getLinkLocation();
-            } catch (FileNotFoundException e) {
+                return new File(new WindowsShortcut(file).getRealFilename());
+            } catch (IOException | ParseException e) {
                 Logging.error(e);
             }
         }

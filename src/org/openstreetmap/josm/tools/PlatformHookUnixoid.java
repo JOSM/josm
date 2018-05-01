@@ -401,11 +401,13 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public X509Certificate getX509Certificate(NativeCertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        File f = new File("/usr/share/ca-certificates/mozilla", certAmend.getFilename());
-        if (f.exists()) {
-            CertificateFactory fact = CertificateFactory.getInstance("X.509");
-            try (InputStream is = Files.newInputStream(f.toPath())) {
-                return (X509Certificate) fact.generateCertificate(is);
+        for (String dir : new String[] {"/etc/ssl/certs", "/usr/share/ca-certificates/mozilla"}) {
+            File f = new File(dir, certAmend.getFilename());
+            if (f.exists()) {
+                CertificateFactory fact = CertificateFactory.getInstance("X.509");
+                try (InputStream is = Files.newInputStream(f.toPath())) {
+                    return (X509Certificate) fact.generateCertificate(is);
+                }
             }
         }
         return null;
