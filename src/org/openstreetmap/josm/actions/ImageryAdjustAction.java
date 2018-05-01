@@ -168,6 +168,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         case KeyEvent.VK_RIGHT : dx = +1; break;
         case KeyEvent.VK_ESCAPE:
             if (offsetDialog != null) {
+                restoreOldMode = true;
                 offsetDialog.setVisible(false);
                 return;
             }
@@ -364,7 +365,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             if (map == null)
                 return;
             if (oldMapMode != null) {
-                if (restoreOldMode) {
+                if (restoreOldMode || getValue() == ExtendedDialog.DialogClosedOtherwise) {
                     map.selectMapMode(oldMapMode);
                 }
                 oldMapMode = null;
