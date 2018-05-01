@@ -67,6 +67,9 @@ public class PluginListParser {
             for (String line = r.readLine(); line != null; line = r.readLine()) {
                 if (line.startsWith("\t")) {
                     line = line.substring(1);
+                    /* NOTE: Although manifest specification says line should not be longer than 72 bytes it
+                       supports more than 500 bytes and thus even the longest possible 72 character UTF-8, so
+                       this code correctly splits the text at 70 characters, not bytes. */
                     while (line.length() > 70) {
                         manifest.append(line.substring(0, 70)).append('\n');
                         line = ' ' + line.substring(70);
