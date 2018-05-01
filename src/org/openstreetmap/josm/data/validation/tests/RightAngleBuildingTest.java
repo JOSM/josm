@@ -46,7 +46,7 @@ public class RightAngleBuildingTest extends Test {
 
         List<Pair<Double, Node>> angles = w.getAngles();
         for (Pair<Double, Node> pair: angles) {
-            if (checkAngle(w, pair.a, pair.b)) {
+            if (checkAngle(pair.a)) {
                 TestError.Builder builder = TestError.builder(this, Severity.WARNING, 3701)
                                                      .message(tr("Building with an almost square angle"))
                                                      .primitives(w)
@@ -75,7 +75,7 @@ public class RightAngleBuildingTest extends Test {
         minAngleDelta = Config.getPref().getDouble("validator.RightAngleBuilding.minimumDelta", 0.25);
     }
 
-    private boolean checkAngle(Way w, double angle, Node n) {
+    private boolean checkAngle(double angle) {
         double difference = Math.abs(angle - 90);
         return difference > minAngleDelta && difference < maxAngleDelta;
     }

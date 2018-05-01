@@ -3,10 +3,10 @@ package org.openstreetmap.josm.tools;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.Locale;
 
@@ -45,7 +45,7 @@ public class WindowsShortcut {
     public static boolean isPotentialValidLink(File file) throws IOException {
         final int minimum_length = 0x64;
         boolean isPotentiallyValid = false;
-        try (InputStream fis = new FileInputStream(file)) {
+        try (InputStream fis = Files.newInputStream(file.toPath())) {
             isPotentiallyValid = file.isFile()
                 && file.getName().toLowerCase(Locale.ENGLISH).endsWith(".lnk")
                 && fis.available() >= minimum_length
@@ -61,7 +61,7 @@ public class WindowsShortcut {
      * @throws ParseException if a parsing error occurs
      */
     public WindowsShortcut(File file) throws IOException, ParseException {
-        try (InputStream in = new FileInputStream(file)) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             parseLink(getBytes(in));
         }
     }
