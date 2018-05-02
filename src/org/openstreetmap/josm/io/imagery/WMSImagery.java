@@ -346,7 +346,7 @@ public class WMSImagery {
             child = getChild(child, "Get");
             child = getChild(child, "OnlineResource");
             if (child != null) {
-                String baseURL = child.getAttribute("xlink:href");
+                String baseURL = child.getAttributeNS("http://www.w3.org/1999/xlink", "href");
                 if (!baseURL.equals(serviceUrlStr)) {
                     URL newURL = new URL(baseURL);
                     if (newURL.getAuthority() != null) {
