@@ -13,11 +13,15 @@ ARCH="`dpkg --print-architecture 2> /dev/null || true`"
 if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null ; then
 	JAVA_CMDS="$JAVA_HOME/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java /usr/lib/jvm/java-8-oracle/bin/java"
+	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-10-openjdk/bin/java /usr/lib/jvm/java-10-openjdk-$ARCH/bin/java /usr/lib/jvm/java-10-oracle/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-9-openjdk/bin/java /usr/lib/jvm/java-9-openjdk-$ARCH/bin/java /usr/lib/jvm/java-9-oracle/bin/java"
+	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java /usr/lib/jvm/java-11-oracle/bin/java"
 else
 	JAVA_CMDS="$JAVA_HOME/bin/java /usr/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-8-oracle/bin/java"
+	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-10-oracle/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-9-oracle/bin/java"
+	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-oracle/bin/java"
 fi
 
 if [ -f /etc/default/josm ]; then
@@ -46,7 +50,7 @@ fi
 
 if [ "$JAVACMD" ]; then
     echo "Using $JAVACMD to execute josm." || true
-    if [ "`expr match \"${JAVACMD}\" 'java-9'`" != "0" ]; then
+    if [ "`expr match \"${JAVACMD}\" 'java-9'`" != "0" ] || [ "`expr match \"${JAVACMD}\" 'java-10'`" != "0" ]; then
         JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
     fi
     set +e
