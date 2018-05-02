@@ -33,6 +33,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -346,7 +347,7 @@ public class WMSImagery {
             child = getChild(child, "Get");
             child = getChild(child, "OnlineResource");
             if (child != null) {
-                String baseURL = child.getAttribute("xlink:href");
+                String baseURL = child.getAttributeNS(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
                 if (!baseURL.equals(serviceUrlStr)) {
                     URL newURL = new URL(baseURL);
                     if (newURL.getAuthority() != null) {

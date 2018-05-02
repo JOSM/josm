@@ -55,4 +55,18 @@ public class WMSImageryTest {
             assertTrue(wms.getLayers().get(0).abstr.startsWith("South Carolina  NAIP Imagery 2017    Resolution: 100CM "));
         }
     }
+
+    /**
+     * Non-regression test for bug #16248.
+     * @throws IOException if any I/O error occurs
+     * @throws WMSGetCapabilitiesException never
+     */
+    @Test
+    public void testTicket16248() throws IOException, WMSGetCapabilitiesException {
+        try (InputStream is = TestUtils.getRegressionDataStream(16248, "capabilities.xml")) {
+            WMSImagery wms = new WMSImagery();
+            wms.parseCapabilities(null, is);
+            assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k", wms.getServiceUrl().toExternalForm());
+        }
+    }
 }
