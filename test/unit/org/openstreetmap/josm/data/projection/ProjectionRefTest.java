@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -81,6 +82,7 @@ public class ProjectionRefTest {
     static Random rand = new SecureRandom();
 
     static boolean debug;
+    static List<String> forcedCodes;
 
     /**
      * Setup test.
@@ -91,11 +93,17 @@ public class ProjectionRefTest {
 
     /**
      * Program entry point.
-     * @param args no argument is expected
+     * @param args optional comma-separated list of projections to update. If set, only these projections will be updated
      * @throws IOException in case of I/O error
      */
     public static void main(String[] args) throws IOException {
-        debug = args.length > 0 && "debug".equals(args[0]);
+        if (args.length > 0) {
+            debug = "debug".equals(args[0]);
+            if (args[args.length - 1].startsWith("EPSG:")) {
+                forcedCodes = Arrays.asList(args[args.length - 1].split(","));
+            }
+        }
+        Main.determinePlatformHook();
         Collection<RefEntry> refs = readData();
         refs = updateData(refs);
         writeData(refs);
@@ -175,18 +183,23 @@ public class ProjectionRefTest {
                     ref.data.add(oldRef.data.get(i));
                 }
             }
-            if (ref.data.size() < N_POINTS) {
+            boolean forced = forcedCodes != null && forcedCodes.contains(code);
+            if (forced || ref.data.size() < N_POINTS) {
                 System.out.print(code);
                 System.out.flush();
                 Projection proj = Projections.getProjectionByCode(code);
                 Bounds b = proj.getWorldBoundsLatLon();
-                for (int i = ref.data.size(); i < N_POINTS; i++) {
+                for (int i = forced ? 0 : ref.data.size(); i < N_POINTS; i++) {
                     System.out.print(".");
                     System.out.flush();
-                    LatLon ll = getRandom(b);
+                    LatLon ll = forced ? ref.data.get(i).a : getRandom(b);
                     EastNorth en = latlon2eastNorthProj4(def, ll);
                     if (en != null) {
-                        ref.data.add(Pair.create(ll, en));
+                        if (forced) {
+                            ref.data.get(i).b = en;
+                        } else {
+                            ref.data.add(Pair.create(ll, en));
+                        }
                     } else {
                         System.err.println("Warning: cannot convert "+code+" at "+ll);
                         failed.add(code);
@@ -236,6 +249,9 @@ public class ProjectionRefTest {
         // little endian file shipped with proj.4.
         // see http://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NT111_V1_HARMEL_TransfoNTF-RGF93_FormatGrilleNTV2.pdf
         def = def.replace("ntf_r93_b.gsb", "ntf_r93.gsb");
+        if (Main.isPlatformWindows()) {
+            def = def.replace("'", "\\'").replace("\"", "\\\"");
+        }
         args.addAll(Arrays.asList(def.split(" ")));
         ProcessBuilder pb = new ProcessBuilder(args);
         pb.environment().put("PROJ_LIB", new File(PROJ_LIB_DIR).getAbsolutePath());
