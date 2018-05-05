@@ -112,10 +112,6 @@ public class ProjectionRegressionTest {
         System.out.println("Update successful.");
     }
 
-    private static EastNorth getRoundedToOsmPrecision(double east, double north) {
-        return new EastNorth(LatLon.roundToOsmPrecision(east), LatLon.roundToOsmPrecision(north));
-    }
-
     private static List<TestData> readData() throws IOException, FileNotFoundException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE),
                 StandardCharsets.UTF_8))) {
