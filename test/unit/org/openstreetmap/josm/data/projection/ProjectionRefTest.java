@@ -261,6 +261,7 @@ public class ProjectionRefTest {
             return new EastNorth(coordinates[0], coordinates[1]);
         } catch (ReflectiveOperationException | LinkageError | SecurityException e) {
             if (debug) {
+                System.err.println("Error for " + def);
                 e.printStackTrace();
             }
             // PROJ JNI bindings not available, fallback to cs2cs
