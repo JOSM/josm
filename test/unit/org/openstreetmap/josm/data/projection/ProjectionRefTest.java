@@ -183,7 +183,7 @@ public class ProjectionRefTest {
                     ref.data.add(oldRef.data.get(i));
                 }
             }
-            boolean forced = forcedCodes != null && forcedCodes.contains(code);
+            boolean forced = forcedCodes != null && forcedCodes.contains(code) && !ref.data.isEmpty();
             if (forced || ref.data.size() < N_POINTS) {
                 System.out.print(code);
                 System.out.flush();

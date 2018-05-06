@@ -2380,23 +2380,23 @@
 <102223> +proj=tmerc +datum=WGS84 +x_0=500000.0 +y_0=0.0 +lon_0=84dW +lat_0=0dN +k_0=0.9996 +no_defs <>
 
 # MONREF_1997_UTM_Zone_46N [MONREF 1997 UTM Zone 46 N]
-# area: (lat: 41.58, 52.15) - (lon: 87.76, 119.94) [Mongolia]
+# area: (lat: 41.58, 52.15) - (lon: 87.76, 96) [Mongolia 46N]
 <102224> +proj=utm +ellps=GRS80 +zone=46 +no_defs <>
 
 # MONREF_1997_UTM_Zone_47N [MONREF 1997 UTM Zone 47 N]
-# area: (lat: 41.58, 52.15) - (lon: 87.76, 119.94) [Mongolia]
+# area: (lat: 41.58, 52.15) - (lon: 96, 102) [Mongolia 47N]
 <102225> +proj=utm +ellps=GRS80 +zone=47 +no_defs <>
 
 # MONREF_1997_UTM_Zone_48N [MONREF 1997 UTM Zone 48 N]
-# area: (lat: 41.58, 52.15) - (lon: 87.76, 119.94) [Mongolia]
+# area: (lat: 41.58, 52.15) - (lon: 102, 108) [Mongolia 48N]
 <102226> +proj=utm +ellps=GRS80 +zone=48 +no_defs <>
 
 # MONREF_1997_UTM_Zone_49N [MONREF 1997 UTM Zone 49 N]
-# area: (lat: 41.58, 52.15) - (lon: 87.76, 119.94) [Mongolia]
+# area: (lat: 41.58, 52.15) - (lon: 108, 114) [Mongolia 49N]
 <102227> +proj=utm +ellps=GRS80 +zone=49 +no_defs <>
 
 # MONREF_1997_UTM_Zone_50N [MONREF 1997 UTM Zone 50 N]
-# area: (lat: 41.58, 52.15) - (lon: 87.76, 119.94) [Mongolia]
+# area: (lat: 41.58, 52.15) - (lon: 114, 119.94) [Mongolia 50N]
 <102228> +proj=utm +ellps=GRS80 +zone=50 +no_defs <>
 
 # Colombia_West_West_Zone [Colombia West West Zone]
