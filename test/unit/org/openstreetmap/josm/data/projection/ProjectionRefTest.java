@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -64,8 +66,6 @@ public class ProjectionRefTest {
 
     private static final String REFERENCE_DATA_FILE = "data_nodist/projection/projection-reference-data";
     private static final String PROJ_LIB_DIR = "data_nodist/projection";
-
-    private static final int MAX_LENGTH = 524288;
 
     private static class RefEntry {
         String code;
@@ -192,6 +192,9 @@ public class ProjectionRefTest {
                 for (int i = forced ? 0 : ref.data.size(); i < N_POINTS; i++) {
                     System.out.print(".");
                     System.out.flush();
+                    if (debug) {
+                        System.out.println();
+                    }
                     LatLon ll = forced ? ref.data.get(i).a : getRandom(b);
                     EastNorth en = latlon2eastNorthProj4(def, ll);
                     if (en != null) {
@@ -234,13 +237,45 @@ public class ProjectionRefTest {
     }
 
     /**
+     * Run external PROJ.4 library to convert lat/lon to east/north value.
+     * @param def the proj.4 projection definition string
+     * @param ll the LatLon
+     * @return projected EastNorth or null in case of error
+     */
+    private static EastNorth latlon2eastNorthProj4(String def, LatLon ll) {
+        try {
+            Class<?> projClass = Class.forName("org.proj4.PJ");
+            Constructor<?> constructor = projClass.getConstructor(String.class);
+            Method transform = projClass.getMethod("transform", projClass, int.class, double[].class, int.class, int.class);
+            Object sourcePJ = constructor.newInstance("+proj=longlat +datum=WGS84");
+            Object targetPJ = constructor.newInstance(def);
+            double[] coordinates = {ll.lon(), ll.lat()};
+            if (debug) {
+                System.out.println(def);
+                System.out.print(Arrays.toString(coordinates));
+            }
+            transform.invoke(sourcePJ, targetPJ, 2, coordinates, 0, 1);
+            if (debug) {
+                System.out.println(" -> " + Arrays.toString(coordinates));
+            }
+            return new EastNorth(coordinates[0], coordinates[1]);
+        } catch (ReflectiveOperationException | LinkageError | SecurityException e) {
+            if (debug) {
+                e.printStackTrace();
+            }
+            // PROJ JNI bindings not available, fallback to cs2cs
+            return latlon2eastNorthProj4cs2cs(def, ll);
+        }
+    }
+
+    /**
      * Run external cs2cs command from the PROJ.4 library to convert lat/lon to east/north value.
      * @param def the proj.4 projection definition string
      * @param ll the LatLon
      * @return projected EastNorth or null in case of error
      */
     @SuppressFBWarnings(value = "COMMAND_INJECTION")
-    private static EastNorth latlon2eastNorthProj4(String def, LatLon ll) {
+    private static EastNorth latlon2eastNorthProj4cs2cs(String def, LatLon ll) {
         List<String> args = new ArrayList<>();
         args.add(CS2CS_EXE);
         args.addAll(Arrays.asList("-f %.9f +proj=longlat +datum=WGS84 +to".split(" ")));
@@ -341,6 +376,7 @@ public class ProjectionRefTest {
     @Test
     public void testProjections() throws IOException {
         StringBuilder fail = new StringBuilder();
+        Map<String, Set<String>> failingProjs = new HashMap<>();
         Set<String> allCodes = new HashSet<>(Projections.getAllProjectionCodes());
         Collection<RefEntry> refs = readData();
 
@@ -352,8 +388,8 @@ public class ProjectionRefTest {
             if (!ref.def.equals(def0)) {
                 fail.append("definitions for ").append(ref.code).append(" do not match\n");
             } else {
-                Projection proj = Projections.getProjectionByCode(ref.code);
-                double scale = ((CustomProjection) proj).getToMeter();
+                CustomProjection proj = (CustomProjection) Projections.getProjectionByCode(ref.code);
+                double scale = proj.getToMeter();
                 for (Pair<LatLon, EastNorth> p : ref.data) {
                     LatLon ll = p.a;
                     EastNorth enRef = p.b;
@@ -371,6 +407,7 @@ public class ProjectionRefTest {
                                 "        but got:  eastnorth(%s,%s)!%n",
                                 proj.toString(), proj.toCode(), ll.lat(), ll.lon(), enRef.east(), enRef.north(), en.east(), en.north());
                         fail.append(errorEN);
+                        failingProjs.computeIfAbsent(proj.proj.getProj4Id(), x -> new TreeSet<>()).add(ref.code);
                     }
                 }
             }
@@ -380,13 +417,10 @@ public class ProjectionRefTest {
             Assert.fail("no reference data for following projections: "+allCodes);
         }
         if (fail.length() > 0) {
-            String s = fail.toString();
-            if (s.length() > MAX_LENGTH) {
-                // SonarQube/Surefire can't parse XML attributes longer than 524288 characters
-                s = s.substring(0, MAX_LENGTH - 4) + "...";
-            }
-            System.err.println(s);
-            throw new AssertionError(s);
+            System.err.println(fail.toString());
+            throw new AssertionError("Failing:\n" +
+                    failingProjs.keySet().size() + " projections: " + failingProjs.keySet() + "\n" +
+                    failingProjs.values().stream().mapToInt(Set::size).sum() + " definitions: " + failingProjs);
         }
     }
 
