@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Handler;
 
@@ -40,6 +41,7 @@ import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -439,6 +441,10 @@ public class JOSMTestRules implements TestRule {
 
         // Add preferences
         if (usePreferences) {
+            @SuppressWarnings("unchecked")
+            final Map<String, Setting<?>> defaultsMap = (Map<String, Setting<?>>) TestUtils.getPrivateField(Main.pref, "defaultsMap");
+            defaultsMap.clear();
+
             Main.pref.resetToInitialState();
             Main.pref.enableSaveOnPut(false);
             // No pref init -> that would only create the preferences file.

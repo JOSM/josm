@@ -621,8 +621,10 @@ public class Preferences extends AbstractPreferences {
                 settingOld = settingsMap.get(key);
                 if (setting.equals(settingOld))
                     return false;
-                if (settingOld == null && setting.equals(defaultsMap.get(key)))
+                if (settingOld == null && setting.equals(defaultsMap.get(key))) {
+                    Logging.debug(tr("Not setting ''{0}'' to value ''{1}'': it appears to be the default", key, setting));
                     return false;
+                }
                 settingCopy = setting.copy();
                 settingsMap.put(key, settingCopy);
             }
