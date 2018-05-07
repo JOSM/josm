@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -165,8 +166,7 @@ public final class OrthogonalizeAction extends JosmAction {
         final Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
 
         try {
-            final SequenceCommand command = orthogonalize(sel);
-            MainApplication.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), command));
+            MainApplication.undoRedo.add(orthogonalize(sel));
         } catch (InvalidUserInputException ex) {
             Logging.debug(ex);
             String msg;
@@ -204,26 +204,26 @@ public final class OrthogonalizeAction extends JosmAction {
                 throw new InvalidUserInputException(tr("Selection must consist only of ways and nodes."));
             }
         }
-        if (wayDataList.isEmpty() && nodeList.size() > 2) {
+        final int nodesCount = nodeList.size();
+        if (wayDataList.isEmpty() && nodesCount > 2) {
             final WayData data = new WayData(nodeList);
             final Collection<Command> commands = orthogonalize(Collections.singletonList(data), Collections.<Node>emptyList());
             return new SequenceCommand(tr("Orthogonalize"), commands);
         } else if (wayDataList.isEmpty()) {
             throw new InvalidUserInputException("usage");
         } else {
-            if (nodeList.size() == 2 || nodeList.isEmpty()) {
+            if (nodesCount <= 2) {
                 OrthogonalizeAction.rememberMovements.clear();
                 final Collection<Command> commands = new LinkedList<>();
 
-                if (nodeList.size() == 2) {  // fixed direction
+                if (nodesCount == 2) {  // fixed direction, or single node to move
                     commands.addAll(orthogonalize(wayDataList, nodeList));
-                } else if (nodeList.isEmpty()) {
-                    List<List<WayData>> groups = buildGroups(wayDataList);
-                    for (List<WayData> g: groups) {
+                } else if (nodesCount == 1) {
+                    commands.add(orthogonalize(wayDataList, nodeList.get(0)));
+                } else if (nodesCount == 0) {
+                    for (List<WayData> g : buildGroups(wayDataList)) {
                         commands.addAll(orthogonalize(g, nodeList));
                     }
-                } else {
-                    throw new IllegalStateException();
                 }
 
                 return new SequenceCommand(tr("Orthogonalize"), commands);
@@ -267,6 +267,49 @@ public final class OrthogonalizeAction extends JosmAction {
     }
 
     /**
+     * Try to orthogonalize the given ways by moving only a single given node
+     * @param wayDataList list of ways
+     * @param singleNode common node to ways to orthogonalize. Only this one will be moved
+     * @return the command to move the node
+     * @throws InvalidUserInputException if the command cannot be computed
+     */
+    private static Command orthogonalize(List<WayData> wayDataList, Node singleNode) throws InvalidUserInputException {
+        List<EastNorth> rightAnglePositions = new ArrayList<>();
+        int wayCount = wayDataList.size();
+        for (WayData wd : wayDataList) {
+            int n = wd.wayNodes.size();
+            int i = wd.wayNodes.indexOf(singleNode);
+            Node n0, n2;
+            if (i == 0 && n >= 3 && singleNode.equals(wd.wayNodes.get(n-1))) {
+                n0 = wd.wayNodes.get(n-2);
+                n2 = wd.wayNodes.get(1);
+            } else if (i > 0 && i < n-1) {
+                n0 = wd.wayNodes.get(i-1);
+                n2 = wd.wayNodes.get(i+1);
+            } else {
+                continue;
+            }
+            EastNorth n0en = n0.getEastNorth();
+            EastNorth n1en = singleNode.getEastNorth();
+            EastNorth n2en = n2.getEastNorth();
+            double angle = Geometry.getNormalizedAngleInDegrees(Geometry.getCornerAngle(n0en, n1en, n2en));
+            if (wayCount == 1 || (80 <= angle && angle <= 100)) {
+                EastNorth c = n0en.getCenter(n2en);
+                double r = n0en.distance(n2en) / 2d;
+                double vX = n1en.east() - c.east();
+                double vY = n1en.north() - c.north();
+                double magV = Math.sqrt(vX*vX + vY*vY);
+                rightAnglePositions.add(new EastNorth(c.east() + vX / magV * r,
+                                                     c.north() + vY / magV * r));
+            }
+        }
+        if (rightAnglePositions.isEmpty()) {
+            throw new InvalidUserInputException("Unable to orthogonalize " + singleNode);
+        }
+        return new MoveCommand(singleNode, Main.getProjection().eastNorth2latlon(Geometry.getCentroidEN(rightAnglePositions)));
+    }
+
+    /**
      *
      *  Outline:
      *  1. Find direction of all segments
@@ -306,7 +349,7 @@ public final class OrthogonalizeAction extends JosmAction {
                         throw new JosmRuntimeException("orthogonalize error");
                     totSum = EN.sum(totSum, w.segSum);
                 }
-                headingAll = EN.polar(new EastNorth(0., 0.), totSum);
+                headingAll = EN.polar(EastNorth.ZERO, totSum);
             } else {
                 headingAll = EN.polar(headingNodes.get(0).getEastNorth(), headingNodes.get(1).getEastNorth());
                 for (WayData w : wayDataList) {
@@ -333,7 +376,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
         // calculate the centroid of all nodes
         // it is used as rotation center
-        EastNorth pivot = new EastNorth(0., 0.);
+        EastNorth pivot = EastNorth.ZERO;
         for (Node n : allNodes) {
             pivot = EN.sum(pivot, n.getEastNorth());
         }

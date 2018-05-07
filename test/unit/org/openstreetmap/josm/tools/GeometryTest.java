@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -143,5 +144,18 @@ public class GeometryTest {
         angle = Geometry.getNormalizedAngleInDegrees(Geometry.getCornerAngle(n3.getEastNorth(),
                 n2.getEastNorth(), n1.getEastNorth()));
         assertEquals(162.66381817961337, angle, 1e-5);
+    }
+
+    /**
+     * Test of {@link Geometry#getCentroidEN} method.
+     */
+    @Test
+    public void testCentroidEN() {
+        EastNorth en1 = new EastNorth(100, 200);
+        EastNorth en2 = new EastNorth(150, 400);
+        EastNorth en3 = new EastNorth(200, 200);
+        assertEquals(en1, Geometry.getCentroidEN(Arrays.asList(en1)));
+        assertEquals(new EastNorth(125, 300), Geometry.getCentroidEN(Arrays.asList(en1, en2)));
+        assertEquals(new EastNorth(150, 266d + 2d/3d), Geometry.getCentroidEN(Arrays.asList(en1, en2, en3)));
     }
 }
