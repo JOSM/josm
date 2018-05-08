@@ -25,7 +25,7 @@ public interface NameFormatter {
      * @return the name
      * @since 13564 (signature)
      */
-    String format(IWay way);
+    String format(IWay<?> way);
 
     /**
      * Formats a name for a {@link IRelation}.
@@ -56,7 +56,7 @@ public interface NameFormatter {
      * @return That comparator
      * @since 13564 (signature)
      */
-    Comparator<IWay> getWayComparator();
+    Comparator<IWay<?>> getWayComparator();
 
     /**
      * Gets a comparator that sorts the relations by the string that this formatter would create for them

@@ -85,7 +85,7 @@ public enum OsmPrimitiveType {
      */
     public static OsmPrimitiveType from(IPrimitive obj) {
         if (obj instanceof INode) return NODE;
-        if (obj instanceof IWay) return WAY;
+        if (obj instanceof IWay<?>) return WAY;
         if (obj instanceof IRelation) return RELATION;
         throw new IllegalArgumentException("Unknown type: "+obj);
     }

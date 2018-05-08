@@ -9,7 +9,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 /**
  * The data (tags and node ids) that is stored for a way in the database
  */
-public class WayData extends PrimitiveData implements IWay {
+public class WayData extends PrimitiveData implements IWay<NodeData> {
 
     private static final long serialVersionUID = 106944939313286415L;
     private List<Long> nodes = new ArrayList<>();
@@ -36,14 +36,21 @@ public class WayData extends PrimitiveData implements IWay {
      */
     public WayData(WayData data) {
         super(data);
-        nodes.addAll(data.getNodes());
+        nodes.addAll(data.getNodeIds());
     }
 
-    /**
-     * Gets a list of nodes the way consists of
-     * @return The ids of the nodes
-     */
-    public List<Long> getNodes() {
+    @Override
+    public List<NodeData> getNodes() {
+        throw new UnsupportedOperationException("Use getNodeIds() instead");
+    }
+
+    @Override
+    public NodeData getNode(int index) {
+        throw new UnsupportedOperationException("Use getNodeId(int) instead");
+    }
+
+    @Override
+    public List<Long> getNodeIds() {
         return nodes;
     }
 

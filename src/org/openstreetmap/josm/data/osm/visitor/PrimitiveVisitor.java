@@ -21,7 +21,7 @@ public interface PrimitiveVisitor {
      * Visiting call for ways.
      * @param w The way to inspect.
      */
-    void visit(IWay w);
+    void visit(IWay<?> w);
 
     /**
      * Visiting call for relations.
