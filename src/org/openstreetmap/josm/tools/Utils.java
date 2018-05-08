@@ -47,7 +47,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.ServiceConfigurationError;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
@@ -72,6 +71,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.SchemaFactoryConfigurationError;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.w3c.dom.Document;
@@ -1338,7 +1338,7 @@ public final class Utils {
     public static SchemaFactory newXmlSchemaFactory() {
         try {
             return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        } catch (ServiceConfigurationError e) {
+        } catch (SchemaFactoryConfigurationError e) {
             Logging.debug(e);
             // Can happen with icedtea-web. Use workaround from https://issues.apache.org/jira/browse/GERONIMO-6185
             Thread currentThread = Thread.currentThread();
