@@ -395,17 +395,17 @@ class SyncEditorLayerIndex {
                 String urlhttps = urle.replace("http:","https:")
                 if(lj.contains(urlhttps))
                 {
-                    myprintln l += "+ Missing https: ${getDescription(e)}"
+                    myprintln "+ Missing https: ${getDescription(e)}"
                     eliUrls.put(urlhttps, eliUrls.get(urle))
                     eliUrls.remove(urle)
                     le.remove(urle)
-                    lj.remove(urlj)
+                    lj.remove(urlhttps)
                 } else if(ide) {
                     def kj = new LinkedList<String>(lj)
                     for (def urlj : kj) {
                         def j = josmUrls.get(urlj)
                         def idj = getId(j)
-                    
+
                         if (ide.equals(idj) && getType(j) == getType(e)) {
                             myprintln "* URL for id ${idj} differs ($urle): ${getDescription(j)}"
                             le.remove(urle)
@@ -419,7 +419,7 @@ class SyncEditorLayerIndex {
                 }
             }
         }
-        
+
         myprintln "*** URLs found in ELI but not in JOSM (${le.size()}): ***"
         le.sort()
         if (!le.isEmpty()) {
