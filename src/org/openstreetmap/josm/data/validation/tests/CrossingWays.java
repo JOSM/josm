@@ -41,13 +41,15 @@ public abstract class CrossingWays extends Test {
      * Type of way. Entries have to be declared in alphabetical order, see sort below.
      */
     private enum WayType {
-        BUILDING, HIGHWAY, RESIDENTIAL_AREA, WATERWAY, WAY;
+        BUILDING, HIGHWAY, RAILWAY, RESIDENTIAL_AREA, WATERWAY, WAY;
 
         static WayType of(Way w) {
             if (isBuilding(w))
                 return BUILDING;
             else if (w.hasKey(CrossingWays.HIGHWAY))
                 return HIGHWAY;
+            else if (isRailway(w))
+                return RAILWAY;
             else if (isResidentialArea(w))
                 return RESIDENTIAL_AREA;
             else if (w.hasKey(CrossingWays.WATERWAY))
@@ -100,8 +102,8 @@ public abstract class CrossingWays extends Test {
             if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
                 return true;
             }
-            if ((w1.hasKey(HIGHWAY) && isResidentialArea(w2))
-             || (w2.hasKey(HIGHWAY) && isResidentialArea(w1)))
+            if ((w1.hasKey(HIGHWAY, RAILWAY, WATERWAY) && isResidentialArea(w2))
+             || (w2.hasKey(HIGHWAY, RAILWAY, WATERWAY) && isResidentialArea(w1)))
                 return true;
             if (isSubwayOrTramOrRazed(w2)) {
                 return true;
@@ -127,6 +129,8 @@ public abstract class CrossingWays extends Test {
                         return tr("Crossing buildings");
                     case HIGHWAY:
                         return tr("Crossing highways");
+                    case RAILWAY:
+                        return tr("Crossing railways");
                     case RESIDENTIAL_AREA:
                         return tr("Crossing residential areas");
                     case WATERWAY:
@@ -141,6 +145,8 @@ public abstract class CrossingWays extends Test {
                         switch (types[1]) {
                             case HIGHWAY:
                                 return tr("Crossing building/highway");
+                            case RAILWAY:
+                                return tr("Crossing building/railway");
                             case RESIDENTIAL_AREA:
                                 return tr("Crossing building/residential area");
                             case WATERWAY:
@@ -151,18 +157,24 @@ public abstract class CrossingWays extends Test {
                         }
                     case HIGHWAY:
                         switch (types[1]) {
-                            case RESIDENTIAL_AREA:
-                                return tr("Crossing highway/residential area");
+                            case RAILWAY:
+                                return tr("Crossing highway/railway");
                             case WATERWAY:
                                 return tr("Crossing highway/waterway");
                             case WAY:
                             default:
                                 return tr("Crossing highway/way");
                         }
-                    case RESIDENTIAL_AREA:
+                    case RAILWAY:
                         switch (types[1]) {
                             case WATERWAY:
-                                return tr("Crossing residential area/waterway");
+                                return tr("Crossing railway/waterway");
+                            case WAY:
+                            default:
+                                return tr("Crossing railway/way");
+                        }
+                    case RESIDENTIAL_AREA:
+                        switch (types[1]) {
                             case WAY:
                             default:
                                 return tr("Crossing residential area/way");

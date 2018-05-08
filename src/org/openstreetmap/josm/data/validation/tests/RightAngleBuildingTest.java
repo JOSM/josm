@@ -69,7 +69,7 @@ public class RightAngleBuildingTest extends Test {
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         maxAngleDelta = Config.getPref().getDouble("validator.RightAngleBuilding.maximumDelta", 10.0);
-        minAngleDelta = Config.getPref().getDouble("validator.RightAngleBuilding.minimumDelta", 0.25);
+        minAngleDelta = Config.getPref().getDouble("validator.RightAngleBuilding.minimumDelta", 1.0);
     }
 
     private boolean checkAngle(double angle) {
