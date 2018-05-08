@@ -9,13 +9,10 @@ use XML::LibXML;
 my %urls;
 
 my %known = map {$_ => 1} qw(
-  a.tile.osm-tools.org
-  b.tile.osm-tools.org
-  c.tile.osm-tools.org
-  d.tile.osm-tools.org
   e-mapa.net
   ge.ch
   gis.mapa.lodz.pl
+  hikebikemap.org
   osmdata.asitvd.ch
   siglon.londrina.pr.gov.br
   tiles.itoworld.com

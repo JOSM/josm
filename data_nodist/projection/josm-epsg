@@ -386,6 +386,16 @@
 <32759> +proj=utm +zone=59 +south +datum=WGS84 +units=m +bounds=166,-85,176,5  <>
 # UTM zone 60S
 <32760> +proj=utm +zone=60 +south +datum=WGS84 +units=m +bounds=172,-85,182,5  <>
+# MONREF_1997_UTM_Zone_46N [MONREF 1997 UTM Zone 46 N]
+<102224> +proj=utm +ellps=GRS80 +zone=46 +no_defs +bounds=87.76,41.58,96,52.15 <>
+# MONREF_1997_UTM_Zone_47N [MONREF 1997 UTM Zone 47 N]
+<102225> +proj=utm +ellps=GRS80 +zone=47 +no_defs +bounds=96,41.58,102,52.15 <>
+# MONREF_1997_UTM_Zone_48N [MONREF 1997 UTM Zone 48 N]
+<102226> +proj=utm +ellps=GRS80 +zone=48 +no_defs +bounds=102,41.58,108,52.15 <>
+# MONREF_1997_UTM_Zone_49N [MONREF 1997 UTM Zone 49 N]
+<102227> +proj=utm +ellps=GRS80 +zone=49 +no_defs +bounds=108,41.58,114,52.15 <>
+# MONREF_1997_UTM_Zone_50N [MONREF 1997 UTM Zone 50 N]
+<102228> +proj=utm +ellps=GRS80 +zone=50 +no_defs +bounds=114,41.58,119.94,52.15 <>
 ##
 ## Following entries use Oblique Mercator projection.
 ## There is no easy way to automatically generate reasonable bounds for this projection

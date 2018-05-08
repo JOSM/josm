@@ -74,6 +74,10 @@ The XZ code (https://tukaani.org/xz/java.html)
 is from Lasse Collin and Igor Pavlov
 and license free Public Domain.
 
+The Windows shortcut parsing code is from StackOverflow:
+- https://stackoverflow.com/a/9403438/2257172
+- https://github.com/codebling/WindowsShortcuts
+
 ------------------------------- PROJECTION DATA -------------------------------
 
 Australian A66_National NTV2 grid: Source: Intergovernmental Committee on

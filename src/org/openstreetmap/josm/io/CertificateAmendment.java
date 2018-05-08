@@ -162,6 +162,11 @@ public final class CertificateAmendment {
      * Identifiers must match Windows/macOS keystore aliases and Unix filenames for efficient search.
      */
     private static final NativeCertAmend[] PLATFORM_CERT_AMEND = {
+        // Let's Encrypt - should be included in JDK, but problems with Ubuntu 18.04, see #15851
+        new NativeCertAmend("DST Root CA X3", "DST Root CA X3",
+                "DST_Root_CA_X3.pem",
+                "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739",
+                "https://acme-v02.api.letsencrypt.org"),
         // Government of Netherlands
         new NativeCertAmend("Staat der Nederlanden Root CA - G2", "Staat der Nederlanden Root CA - G2",
                 "Staat_der_Nederlanden_Root_CA_-_G2.crt",

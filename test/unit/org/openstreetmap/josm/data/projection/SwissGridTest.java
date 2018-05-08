@@ -14,6 +14,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+/**
+ * Unit tests for the Swiss projection grid.
+ */
 public class SwissGridTest {
     private static final String SWISS_EPSG_CODE = "EPSG:21781";
     private boolean debug = false;
@@ -79,11 +82,17 @@ public class SwissGridTest {
         assertSame(errs.toString(), errs.length(), 0);
     }
 
+    /**
+     * Test projection accuracy.
+     */
     @Test
     public void testProjReferenceTestAccurate() {
         projReferenceTest(EPSILON_ACCURATE);
     }
 
+    /**
+     * Unit test A: lat/lon => east/north
+     */
     @Test
     public void testAlatlon2eastNorth() {
         LatLon ll = new LatLon(46.518, 6.567);
@@ -128,6 +137,9 @@ public class SwissGridTest {
         assertTrue("Ref", Math.abs(en.north() - 100000.0) < 0.1);
     }
 
+    /**
+     * Unit test B: east/north => lat/lon
+     */
     @Test
     public void testBeastNorth2latlon() {
         EastNorth en = new EastNorth(533112.13, 152227.35);

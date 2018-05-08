@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
@@ -795,7 +796,7 @@ public final class Geometry {
         return result;
     }
 
-    /** 
+    /**
      * Get angles in radians and return it's value in range [0, 180].
      *
      * @param angle the angle in radians
@@ -813,15 +814,32 @@ public final class Geometry {
      * @see Geometry#getCenter
      */
     public static EastNorth getCentroid(List<Node> nodes) {
+        return getCentroidEN(nodes.stream().map(Node::getEastNorth).collect(Collectors.toList()));
+    }
+
+    /**
+     * Compute the centroid/barycenter of nodes
+     * @param nodes Coordinates for which the centroid is wanted
+     * @return the centroid of nodes
+     * @since 13712
+     */
+    public static EastNorth getCentroidEN(List<EastNorth> nodes) {
+
+        final int size = nodes.size();
+        if (size == 1) {
+            return nodes.get(0);
+        } else if (size == 2) {
+            return nodes.get(0).getCenter(nodes.get(1));
+        }
 
         BigDecimal area = BigDecimal.ZERO;
         BigDecimal north = BigDecimal.ZERO;
         BigDecimal east = BigDecimal.ZERO;
 
-        // See https://en.wikipedia.org/wiki/Centroid#Centroid_of_polygon for the equation used here
-        for (int i = 0; i < nodes.size(); i++) {
-            EastNorth n0 = nodes.get(i).getEastNorth();
-            EastNorth n1 = nodes.get((i+1) % nodes.size()).getEastNorth();
+        // See https://en.wikipedia.org/wiki/Centroid#Centroid_of_a_polygon for the equation used here
+        for (int i = 0; i < size; i++) {
+            EastNorth n0 = nodes.get(i);
+            EastNorth n1 = nodes.get((i+1) % size);
 
             if (n0 != null && n1 != null && n0.isValid() && n1.isValid()) {
                 BigDecimal x0 = BigDecimal.valueOf(n0.east());

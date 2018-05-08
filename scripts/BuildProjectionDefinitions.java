@@ -206,13 +206,30 @@ public class BuildProjectionDefinitions {
         }
 
         // exclude projections failing
-        if (Arrays.asList("EPSG:53025", "EPSG:54025", "EPSG:65062",
-                "EPSG:102061", "EPSG:102062", "EPSG:102121", "EPSG:102212", "EPSG:102366", "EPSG:102445",
-                "EPSG:102491", "EPSG:102591", "EPSG:102631", "EPSG:103232", "EPSG:103235", "EPSG:103238",
-                "EPSG:103241", "EPSG:103371", "EPSG:103471", "EPSG:103474", "EPSG:103475"
+        if (Arrays.asList(
+                // Unsuitable parameters 'lat_1' and 'lat_2' for two point method
+                "EPSG:53025", "EPSG:54025", "EPSG:65062",
+                // ESRI projection defined as UTM 55N but covering a much bigger area
+                "EPSG:102449",
+                // Others: errors to investigate
+                "EPSG:102061", // omerc/evrst69 - Everest_Modified_1969_RSO_Malaya_Meters [Everest Modified 1969 RSO Malaya Meters]
+                "EPSG:102062", // omerc/evrst48 - Kertau_RSO_Malaya_Meters [Kertau RSO Malaya Meters]
+                "EPSG:102121", // omerc/NAD83   - NAD_1983_Michigan_GeoRef_Feet_US [NAD 1983 Michigan GeoRef (US Survey Feet)]
+                "EPSG:102212", // lcc/NAD83     - NAD_1983_WyLAM [NAD 1983 WyLAM]
+                "EPSG:102366", // omerc/GRS80   - NAD_1983_CORS96_StatePlane_Alaska_1_FIPS_5001 [NAD 1983 (CORS96) SPCS Alaska Zone 1]
+                "EPSG:102445", // omerc/GRS80   - NAD_1983_2011_StatePlane_Alaska_1_FIPS_5001_Feet [NAD 1983 2011 SPCS Alaska Zone 1 (US Feet)]
+                "EPSG:102491", // lcc/clrk80ign - Nord_Algerie_Ancienne_Degree [Voirol 1875 (degrees) Nord Algerie Ancienne]
+                "EPSG:102591", // lcc           - Nord_Algerie_Degree [Voirol Unifie (degrees) Nord Algerie]
+                "EPSG:102631", // omerc/NAD83   - NAD_1983_StatePlane_Alaska_1_FIPS_5001_Feet [NAD 1983 SPCS Alaska 1 (Feet)]
+                "EPSG:103232", // lcc/GRS80     - NAD_1983_CORS96_StatePlane_California_I_FIPS_0401 [NAD 1983 (CORS96) SPCS California I]
+                "EPSG:103235", // lcc/GRS80     - NAD_1983_CORS96_StatePlane_California_IV_FIPS_0404 [NAD 1983 (CORS96) SPCS California IV]
+                "EPSG:103238", // lcc/GRS80     - NAD_1983_CORS96_StatePlane_California_I_FIPS_0401_Ft_US [NAD 1983 (CORS96) SPCS California I (US Feet)]
+                "EPSG:103241", // lcc/GRS80     - NAD_1983_CORS96_StatePlane_California_IV_FIPS_0404_Ft_US [NAD 1983 (CORS96) SPCS California IV (US Feet)]
+                "EPSG:103371", // lcc/GRS80     - NAD_1983_HARN_WISCRS_Wood_County_Meters [NAD 1983 HARN Wisconsin CRS Wood (meters)]
+                "EPSG:103471", // lcc/GRS80     - NAD_1983_HARN_WISCRS_Wood_County_Feet [NAD 1983 HARN Wisconsin CRS Wood (US feet)]
+                "EPSG:103474", // lcc/GRS80     - NAD_1983_CORS96_StatePlane_Nebraska_FIPS_2600 [NAD 1983 (CORS96) SPCS Nebraska]
+                "EPSG:103475"  // lcc/GRS80     - NAD_1983_CORS96_StatePlane_Nebraska_FIPS_2600_Ft_US [NAD 1983 (CORS96) SPCS Nebraska (US Feet)]
                 ).contains(pd.code)) {
-            // 53025/54025: Unsuitable parameters 'lat_1' and 'lat_2' for two point method
-            // Others: cs2cs errors to investigate
             result = false;
         }
 
