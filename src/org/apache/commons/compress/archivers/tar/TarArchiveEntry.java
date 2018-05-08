@@ -455,6 +455,8 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     /**
      * Get this entry's name.
      *
+     * <p>This method returns the raw name as it is stored inside of the archive.</p>
+     *
      * @return This entry's name.
      */
     @Override

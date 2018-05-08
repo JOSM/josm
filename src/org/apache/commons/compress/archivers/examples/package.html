@@ -18,75 +18,8 @@
 
 -->
   <body>
-    <p>Contains examples code that is not guaranteed to provide a
+    <p>Contains example code that is not guaranteed to provide a
       stable API across releases of Commons Compress.</p>
 
-    <p>The majority of this package is concerned with the archival of
-    the contents of a directory into a single archive or the expansion
-    of an archive's content into a local directory. Example CLI
-    programs exist with {@link
-    org.apache.commons.compress.archivers.examples.ArchiveCli}, {@link
-    org.apache.commons.compress.archivers.examples.ExpandCli} and
-    {@link
-    org.apache.commons.compress.archivers.examples.ListerCli}. As of
-    Commons Compress 1.17 this is the main class of the Commons
-    Compress jar, i.e. the class that is run when you start <code>java
-    -jar commons-compress.jar</code>.</p>
-
-    <h2>Chains</h2>
-
-    <p>The basic abstraction of the package is the {@link
-    org.apache.commons.compress.archivers.examples.Chain}, a chain of
-    {@link org.apache.commons.compress.archivers.examples.ChainStep}s
-    that are executed in order for each entry. Entries are supplied by
-    a {@link org.apache.commons.compress.archivers.examples.Source}
-    and finally consumed by a {@link
-    org.apache.commons.compress.archivers.examples.Sink}. While {@code
-    Sink}s are {@code ChainStep}s and must be the final step in a
-    {@code Chain}, {@code Source}s are not considered part of the
-    {@code Chain}.</p>
-
-    <p>Special {@code ChainStep}s exist for filtering entries with
-    {@link org.apache.commons.compress.archivers.examples.Filter} or
-    transforming entries {@link
-    org.apache.commons.compress.archivers.examples.Transformer} as
-    they pass through the chain.</p>
-
-    <h3>Archival and Expansion</h3>
-
-    <p>A chain that takes files from the local file system and creates
-    an archive from that can be set up and run with the help of the
-    {@link org.apache.commons.compress.archivers.examples.Archive}
-    class. The most common source is {@link
-    org.apache.commons.compress.archivers.examples.DirectoryBasedSource}
-    which simply supplies all files contained within the directory
-    recursively. The {@link
-    org.apache.commons.compress.archivers.examples.ArchiveSinks} class
-    provides factory methods for the many ways that can bes used to
-    create archives to write to - all those factory methods end up
-    with creating instances of {@link
-    org.apache.commons.compress.archivers.examples.FileToArchiveSink}
-    or {@link
-    org.apache.commons.compress.archivers.examples.SevenZOutputFileSink}
-    under the covers.</p>
-
-    <p>A chain that takes {@link
-    org.apache.commons.compress.archivers.ArchiveEntry}s from a source
-    and passes them to a sink can be set up and run with the help of
-    the {@link org.apache.commons.compress.archivers.examples.Expand}
-    class. The most common sink will be a {@link
-    org.apache.commons.compress.archivers.examples.DirectorySink}
-    which writes the entries to a local directory, but different sinks
-    are easy to imagine - and in fact {@code ListerCli} uses {@code
-    Expand} and simply provides a sink that just prints out the names
-    of the entries. Sources that read from archives can be created via
-    the factory methods in {@link
-    org.apache.commons.compress.archivers.examples.ArchiveSources}
-    which under the covers will create instances of {@link
-    org.apache.commons.compress.archivers.examples.StreamBasedArchiveEntrySource},
-    {@link
-    org.apache.commons.compress.archivers.examples.SevenZArchiveEntrySource}
-    or {@link
-    org.apache.commons.compress.archivers.examples.ZipArchiveEntrySource}.</p>
   </body>
 </html>

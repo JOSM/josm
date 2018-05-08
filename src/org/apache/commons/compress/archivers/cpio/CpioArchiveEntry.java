@@ -517,6 +517,8 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
     /**
      * Get the name.
      *
+     * <p>This method returns the raw name as it is stored inside of the archive.</p>
+     *
      * @return Returns the name.
      */
     @Override

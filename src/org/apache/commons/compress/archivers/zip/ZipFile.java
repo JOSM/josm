@@ -502,7 +502,7 @@ public class ZipFile implements Closeable {
                 // and has been fixed a long time ago, but the contract persists so
                 // we comply.
                 // https://docs.oracle.com/javase/7/docs/api/java/util/zip/Inflater.html#Inflater(boolean)
-                return new InflaterInputStream(new SequenceInputStream(is, new ByteArrayInputStream(ONE_ZERO_BYTE)),
+                return new InflaterInputStreamWithStatistics(new SequenceInputStream(is, new ByteArrayInputStream(ONE_ZERO_BYTE)),
                     inflater) {
                     @Override
                     public void close() throws IOException {

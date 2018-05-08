@@ -68,12 +68,17 @@ public final class IOUtils {
      * @param output
      *            the target Stream
      * @param buffersize
-     *            the buffer size to use
+     *            the buffer size to use, must be bigger than 0
      * @return the number of bytes copied
      * @throws IOException
      *             if an error occurs
+     * @throws IllegalArgumentException
+     *             if buffersize is smaller than or equal to 0
      */
     public static long copy(final InputStream input, final OutputStream output, final int buffersize) throws IOException {
+        if (buffersize < 1) {
+            throw new IllegalArgumentException("buffersize must be bigger than 0");
+        }
         final byte[] buffer = new byte[buffersize];
         int n = 0;
         long count=0;

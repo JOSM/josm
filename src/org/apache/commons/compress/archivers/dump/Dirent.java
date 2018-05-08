@@ -68,6 +68,9 @@ class Dirent {
 
     /**
      * Get name of directory entry.
+     *
+     * <p>This method returns the raw name as it is stored inside of the archive.</p>
+     *
      * @return the directory name
      */
     String getName() {

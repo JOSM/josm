@@ -671,6 +671,9 @@ public class ZipArchiveEntry extends java.util.zip.ZipEntry
 
     /**
      * Get the name of the entry.
+     *
+     * <p>This method returns the raw name as it is stored inside of the archive.</p>
+     *
      * @return the entry name
      */
     @Override

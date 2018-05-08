@@ -562,6 +562,9 @@ public class DumpArchiveEntry implements ArchiveEntry {
 
     /**
      * Returns the name of the entry.
+     *
+     * <p>This method returns the raw name as it is stored inside of the archive.</p>
+     *
      * @return the name of the entry.
      */
     @Override

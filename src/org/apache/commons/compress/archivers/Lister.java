@@ -20,8 +20,10 @@ package org.apache.commons.compress.archivers;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 
 /**
  * Simple command line application that lists the contents of an archive.
@@ -44,6 +46,15 @@ public final class Lister {
         if (!f.isFile()) {
             System.err.println(f + " doesn't exist or is a directory");
         }
+        String format = args.length > 1 ? args[1] : detectFormat(f);
+        if (ArchiveStreamFactory.SEVEN_Z.equalsIgnoreCase(format)) {
+            list7z(f);
+        } else {
+            listStream(f, args);
+        }
+    }
+
+    private static void listStream(File f, String[] args) throws ArchiveException, IOException {
         try (final InputStream fis = new BufferedInputStream(Files.newInputStream(f.toPath()));
                 final ArchiveInputStream ais = createArchiveInputStream(args, fis)) {
             System.out.println("Created " + ais.toString());
@@ -60,6 +71,22 @@ public final class Lister {
             return factory.createArchiveInputStream(args[1], fis);
         }
         return factory.createArchiveInputStream(fis);
+    }
+
+    private static String detectFormat(File f) throws ArchiveException, IOException {
+        try (final InputStream fis = new BufferedInputStream(Files.newInputStream(f.toPath()))) {
+            return factory.detect(fis);
+        }
+    }
+
+    private static void list7z(File f) throws ArchiveException, IOException {
+        try (SevenZFile z = new SevenZFile(f)) {
+            System.out.println("Created " + z.toString());
+            ArchiveEntry ae;
+            while ((ae = z.getNextEntry()) != null) {
+                System.out.println(ae.getName());
+            }
+        }
     }
 
     private static void usage() {

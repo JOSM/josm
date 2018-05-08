@@ -1,4 +1,6 @@
-// License: GPL. For details, see Readme.txt file.
+// License: BSD or GPL. For details, see Readme.txt file.
+// Authors of this file, namely Gleb Smirnoff and Andrey Boltenkov, allow
+// to reuse the code under BSD license.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Point;
