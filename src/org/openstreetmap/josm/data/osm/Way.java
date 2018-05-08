@@ -260,14 +260,14 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         try {
             super.load(data);
 
-            WayData wayData = (WayData) data;
+            List<Long> nodeIds = ((WayData) data).getNodeIds();
 
-            if (!wayData.getNodes().isEmpty() && getDataSet() == null) {
+            if (!nodeIds.isEmpty() && getDataSet() == null) {
                 throw new AssertionError("Data consistency problem - way without dataset detected");
             }
 
-            List<Node> newNodes = new ArrayList<>(wayData.getNodes().size());
-            for (Long nodeId : wayData.getNodeIds()) {
+            List<Node> newNodes = new ArrayList<>(nodeIds.size());
+            for (Long nodeId : nodeIds) {
                 Node node = (Node) getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
                 if (node != null) {
                     newNodes.add(node);
