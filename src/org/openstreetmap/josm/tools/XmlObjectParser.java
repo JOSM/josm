@@ -17,7 +17,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -285,7 +284,7 @@ public class XmlObjectParser implements Iterable<Object> {
      * @throws SAXException if any XML or I/O error occurs
      */
     public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory factory = Utils.newXmlSchemaFactory();
         try (CachedFile cf = new CachedFile(schemaSource); InputStream mis = cf.getInputStream()) {
             Schema schema = factory.newSchema(new StreamSource(mis));
             ValidatorHandler validator = schema.newValidatorHandler();

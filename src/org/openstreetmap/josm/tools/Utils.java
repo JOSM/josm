@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.ServiceConfigurationError;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
@@ -70,6 +71,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.validation.SchemaFactory;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.w3c.dom.Document;
@@ -1326,6 +1328,28 @@ public final class Utils {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the W3C XML Schema factory implementation. Robust method dealing with ContextClassLoader problems.
+     * @return the W3C XML Schema factory implementation
+     * @since 13715
+     */
+    public static SchemaFactory newXmlSchemaFactory() {
+        try {
+            return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        } catch (ServiceConfigurationError e) {
+            Logging.debug(e);
+            // Can happen with icedtea-web. Use workaround from https://issues.apache.org/jira/browse/GERONIMO-6185
+            Thread currentThread = Thread.currentThread();
+            ClassLoader old = currentThread.getContextClassLoader();
+            currentThread.setContextClassLoader(null);
+            try {
+                return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            } finally {
+                currentThread.setContextClassLoader(old);
+            }
+        }
     }
 
     /**
