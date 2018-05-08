@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
@@ -25,22 +26,15 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  * @since 64
  */
-public final class Way extends OsmPrimitive implements IWay {
+public final class Way extends OsmPrimitive implements IWay<Node> {
 
     /**
      * All way nodes in this way
-     *
      */
     private Node[] nodes = new Node[0];
     private BBox bbox;
 
-    /**
-     *
-     * You can modify returned list but changes will not be propagated back
-     * to the Way. Use {@link #setNodes(List)} to update this way
-     * @return Nodes composing the way
-     * @since 1862
-     */
+    @Override
     public List<Node> getNodes() {
         return new CopyList<>(nodes);
     }
@@ -104,15 +98,7 @@ public final class Way extends OsmPrimitive implements IWay {
         return nodes.length;
     }
 
-    /**
-     * Replies the node at position <code>index</code>.
-     *
-     * @param index the position
-     * @return  the node at position <code>index</code>
-     * @throws ArrayIndexOutOfBoundsException if <code>index</code> &lt; 0
-     * or <code>index</code> &gt;= {@link #getNodesCount()}
-     * @since 1862
-     */
+    @Override
     public Node getNode(int index) {
         return nodes[index];
     }
@@ -120,6 +106,11 @@ public final class Way extends OsmPrimitive implements IWay {
     @Override
     public long getNodeId(int idx) {
         return nodes[idx].getUniqueId();
+    }
+
+    @Override
+    public List<Long> getNodeIds() {
+        return Arrays.stream(nodes).map(Node::getId).collect(Collectors.toList());
     }
 
     /**
@@ -276,7 +267,7 @@ public final class Way extends OsmPrimitive implements IWay {
             }
 
             List<Node> newNodes = new ArrayList<>(wayData.getNodes().size());
-            for (Long nodeId : wayData.getNodes()) {
+            for (Long nodeId : wayData.getNodeIds()) {
                 Node node = (Node) getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
                 if (node != null) {
                     newNodes.add(node);
@@ -295,7 +286,7 @@ public final class Way extends OsmPrimitive implements IWay {
         WayData data = new WayData();
         saveCommonAttributes(data);
         for (Node node:nodes) {
-            data.getNodes().add(node.getUniqueId());
+            data.getNodeIds().add(node.getUniqueId());
         }
         return data;
     }

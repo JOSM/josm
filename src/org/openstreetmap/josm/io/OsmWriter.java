@@ -18,7 +18,6 @@ import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
-import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -27,6 +26,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -228,6 +228,10 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         return !osm.isNewOrUndeleted() || !osm.isDeleted();
     }
 
+    /**
+     * Writes data sources with their respective bounds.
+     * @param ds data set
+     */
     public void writeDataSources(DataSet ds) {
         for (DataSource s : ds.getDataSources()) {
             out.println("  <bounds minlat='"
@@ -262,7 +266,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     @Override
-    public void visit(IWay w) {
+    public void visit(IWay<?> w) {
         if (w.isIncomplete()) return;
         addCommon(w, "way");
         if (!withBody) {
@@ -294,6 +298,10 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         }
     }
 
+    /**
+     * Visiting call for changesets.
+     * @param cs changeset
+     */
     public void visit(Changeset cs) {
         out.print("  <changeset id='"+cs.getId()+'\'');
         if (cs.getUser() != null) {

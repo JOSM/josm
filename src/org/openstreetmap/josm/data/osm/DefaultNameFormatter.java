@@ -139,8 +139,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public String format(IPrimitive osm) {
         if (osm instanceof INode) {
             return format((INode) osm);
-        } else if (osm instanceof IWay) {
-            return format((IWay) osm);
+        } else if (osm instanceof IWay<?>) {
+            return format((IWay<?>) osm);
         } else if (osm instanceof IRelation) {
             return format((IRelation) osm);
         }
@@ -213,7 +213,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     @Override
-    public String format(IWay way) {
+    public String format(IWay<?> way) {
         StringBuilder name = new StringBuilder();
 
         char mark;
@@ -297,10 +297,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return result;
     }
 
-    private final Comparator<IWay> wayComparator = (w1, w2) -> format(w1).compareTo(format(w2));
+    private final Comparator<IWay<?>> wayComparator = (w1, w2) -> format(w1).compareTo(format(w2));
 
     @Override
-    public Comparator<IWay> getWayComparator() {
+    public Comparator<IWay<?>> getWayComparator() {
         return wayComparator;
     }
 

@@ -125,7 +125,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
 
     private static void updateNodes(Map<Long, Long> newNodeIds, PrimitiveData data) {
         List<Long> newNodes = new ArrayList<>();
-        for (Long oldNodeId : ((WayData) data).getNodes()) {
+        for (Long oldNodeId : ((WayData) data).getNodeIds()) {
             Long newNodeId = newNodeIds.get(oldNodeId);
             if (newNodeId != null) {
                 newNodes.add(newNodeId);
