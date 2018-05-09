@@ -129,7 +129,7 @@ function build_exe {
 	/bin/mv ${TARGET}.exe ${TARGET}-intermediate.exe 2>/dev/null >/dev/null
 }
 
-build_exe "josm" "64\/32" 128 1024
+build_exe "josm" "64\/32" 256 2048
 # 64-bit binary generation commented until possible with launch4j / nsis
 # build_exe "josm64"  "64" 256 2048
 
