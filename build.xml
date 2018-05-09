@@ -206,7 +206,7 @@ Build-Date: ${build.tstamp}
 
             <classpath file="${bundle.jar}"/>
 
-            <option value="-Xmx1024m"/>
+            <option value="-Xmx2048m"/>
 
             <option value="-Xdock:icon=Contents/Resources/JOSM.icns"/>
             <option value="-Xdock:name=JOSM"/>
