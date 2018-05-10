@@ -166,12 +166,12 @@ public class ImageProvider {
          * Splash dialog logo size
          * @since 10358
          */
-        SPLASH_LOGO(128, 129),
+        SPLASH_LOGO(128, 128),
         /**
          * About dialog logo size
          * @since 10358
          */
-        ABOUT_LOGO(256, 258),
+        ABOUT_LOGO(256, 256),
         /**
          * Status line logo size
          * @since 13369
@@ -1565,28 +1565,26 @@ public class ImageProvider {
         if (Logging.isTraceEnabled()) {
             Logging.trace("createImageFromSvg: {0} {1}", svg.getXMLBase(), dim);
         }
-        float sourceWidth = svg.getWidth();
-        float sourceHeight = svg.getHeight();
-        int realWidth = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceWidth));
-        int realHeight = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceHeight));
-        Double scaleX, scaleY;
-        if (dim.width != -1) {
+        final float sourceWidth = svg.getWidth();
+        final float sourceHeight = svg.getHeight();
+        final int realWidth;
+        final int realHeight;
+        if (dim.width >= 0) {
             realWidth = dim.width;
-            scaleX = (double) realWidth / sourceWidth;
-            if (dim.height == -1) {
-                scaleY = scaleX;
-                realHeight = (int) Math.round(sourceHeight * scaleY);
-            } else {
+            if (dim.height >= 0) {
                 realHeight = dim.height;
-                scaleY = (double) realHeight / sourceHeight;
+            } else {
+                realHeight = Math.round(sourceHeight * realWidth / sourceWidth);
             }
-        } else if (dim.height != -1) {
+        } else if (dim.height >= 0) {
             realHeight = dim.height;
-            scaleX = scaleY = (double) realHeight / sourceHeight;
-            realWidth = (int) Math.round(sourceWidth * scaleX);
+            realWidth = Math.round(sourceWidth * realHeight / sourceHeight);
         } else {
-            scaleX = scaleY = (double) realHeight / sourceHeight;
+            realWidth = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceWidth));
+            realHeight = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceHeight));
         }
+        final Double scaleX = (double) realWidth / sourceWidth;
+        final Double scaleY = (double) realHeight / sourceHeight;
 
         if (realWidth == 0 || realHeight == 0) {
             return null;
