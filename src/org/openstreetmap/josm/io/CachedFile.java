@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -489,7 +488,7 @@ public class CachedFile implements Closeable {
             if (parameter.isEmpty()) {
                 uc = u.replaceAll("%<(.*)>", "");
             } else {
-                uc = u.replaceAll("%<(.*)>", "$1"+URLEncoder.encode(parameter, "UTF-8"));
+                uc = u.replaceAll("%<(.*)>", "$1" + Utils.encodeUrl(parameter));
             }
             if (!uc.equals(u))
                 url = new URL(uc);
