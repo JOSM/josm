@@ -478,7 +478,9 @@ public class TagTable extends JosmTable implements EndEditListener {
         editCellAt(row, col);
         Component c = getEditorComponent();
         if (c != null) {
-            c.requestFocusInWindow();
+            if (!c.requestFocusInWindow()) {
+                Logging.warn("Unable to request focus for " + c);
+            }
             if (c instanceof JTextComponent) {
                  ((JTextComponent) c).selectAll();
             }
