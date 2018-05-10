@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.importexport.AllFormatsImporter;
 import org.openstreetmap.josm.gui.io.importexport.FileImporter;
@@ -145,6 +146,10 @@ public class OpenFileAction extends DiskAccessAction {
                         // add original filename for error reporting later on
                         this.files.add(file);
                     }
+                } else {
+                    String message = tr("Unable to locate file  ''{0}''.", file.getPath());
+                    Logging.warn(message);
+                    new Notification(message).show();
                 }
             }
         }
