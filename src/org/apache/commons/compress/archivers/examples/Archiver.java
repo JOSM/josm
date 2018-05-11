@@ -117,7 +117,7 @@ public class Archiver {
         } else if (ArchiveStreamFactory.SEVEN_Z.equalsIgnoreCase(format)) {
             create(new SevenZOutputFile(target), directory);
         } else {
-            // never reached as prefersSeekableByteChannel only returns true fpr ZIP and 7z
+            // never reached as prefersSeekableByteChannel only returns true for ZIP and 7z
             throw new ArchiveException("don't know how to handle format " + format);
         }
     }

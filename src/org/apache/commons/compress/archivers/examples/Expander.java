@@ -141,6 +141,7 @@ public class Expander {
         } else if (ArchiveStreamFactory.SEVEN_Z.equalsIgnoreCase(format)) {
             expand(new SevenZFile(archive), targetDirectory);
         } else {
+            // never reached as prefersSeekableByteChannel only returns true for ZIP and 7z
             throw new ArchiveException("don't know how to handle format " + format);
         }
     }
@@ -243,7 +244,7 @@ public class Expander {
             File f = new File(targetDirectory, nextEntry.getName());
             if (!f.getCanonicalPath().startsWith(targetDirPath)) {
                 throw new IOException("expanding " + nextEntry.getName()
-                    + " would craete file outside of " + targetDirectory);
+                    + " would create file outside of " + targetDirectory);
             }
             if (nextEntry.isDirectory()) {
                 if (!f.isDirectory() && !f.mkdirs()) {
