@@ -646,7 +646,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(() -> {
-                    MainApplication.undoRedo.afterAdd();
+                    MainApplication.undoRedo.afterAdd(null);
                     invalidateValidatorLayers();
                     tree.resetErrors();
                 });

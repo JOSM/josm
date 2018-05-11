@@ -455,14 +455,14 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * Constructs a new {@code JoinAreasAction} with optional shortcut.
-     * @param addShortcut controls whether the shortcut should be registered or not, as for toolbar registration
+     * Constructs a new {@code JoinAreasAction} with optional shortcut and adapters.
+     * @param addShortcutToolbarAdapters controls whether the shortcut should be registered or not, as for toolbar registration and adapters
      * @since 11611
      */
-    public JoinAreasAction(boolean addShortcut) {
-        super(tr("Join overlapping Areas"), "joinareas", tr("Joins areas that overlap each other"), addShortcut ?
+    public JoinAreasAction(boolean addShortcutToolbarAdapters) {
+        super(tr("Join overlapping Areas"), "joinareas", tr("Joins areas that overlap each other"), addShortcutToolbarAdapters ?
         Shortcut.registerShortcut("tools:joinareas", tr("Tool: {0}", tr("Join overlapping Areas")), KeyEvent.VK_J, Shortcut.SHIFT)
-        : null, addShortcut);
+        : null, addShortcutToolbarAdapters, null, addShortcutToolbarAdapters);
     }
 
     /**
