@@ -1,8 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
+import java.util.EventObject;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
@@ -29,6 +31,7 @@ public class UndoRedoHandler {
     public final LinkedList<Command> redoCommands = new LinkedList<>();
 
     private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<>();
+    private final LinkedList<CommandQueuePreciseListener> preciseListenerCommands = new LinkedList<>();
 
     /**
      * Constructs a new {@code UndoRedoHandler}.
@@ -38,7 +41,8 @@ public class UndoRedoHandler {
     }
 
     /**
-     * A listener that gets notified of command queue (undo/redo) size changes.
+     * A simple listener that gets notified of command queue (undo/redo) size changes.
+     * @see CommandQueuePreciseListener
      * @since 12718 (moved from {@code OsmDataLayer}
      */
     @FunctionalInterface
@@ -49,6 +53,163 @@ public class UndoRedoHandler {
          * @param redoSize Redo stack size
          */
         void commandChanged(int queueSize, int redoSize);
+    }
+
+    /**
+     * A listener that gets notified of command queue (undo/redo) operations individually.
+     * @see CommandQueueListener
+     * @since 13729
+     */
+    public interface CommandQueuePreciseListener {
+
+        /**
+         * Notifies the listener about a new command added to the queue.
+         * @param e event
+         */
+        void commandAdded(CommandAddedEvent e);
+
+        /**
+         * Notifies the listener about commands being cleaned.
+         * @param e event
+         */
+        void cleaned(CommandQueueCleanedEvent e);
+
+        /**
+         * Notifies the listener about a command that has been undone.
+         * @param e event
+         */
+        void commandUndone(CommandUndoneEvent e);
+
+        /**
+         * Notifies the listener about a command that has been redone.
+         * @param e event
+         */
+        void commandRedone(CommandRedoneEvent e);
+    }
+
+    abstract static class CommandQueueEvent extends EventObject {
+        protected CommandQueueEvent(UndoRedoHandler source) {
+            super(Objects.requireNonNull(source));
+        }
+
+        /**
+         * Calls the appropriate method of the listener for this event.
+         * @param listener dataset listener to notify about this event
+         */
+        abstract void fire(CommandQueuePreciseListener listener);
+
+        @Override
+        public final UndoRedoHandler getSource() {
+            return (UndoRedoHandler) super.getSource();
+        }
+    }
+
+    /**
+     * Event fired after a command has been added to the command queue.
+     * @since xxx
+     */
+    public static final class CommandAddedEvent extends CommandQueueEvent {
+
+        private final Command cmd;
+
+        private CommandAddedEvent(UndoRedoHandler source, Command cmd) {
+            super(source);
+            this.cmd = Objects.requireNonNull(cmd);
+        }
+
+        /**
+         * Returns the added command.
+         * @return the added command
+         */
+        public Command getCommand() {
+            return cmd;
+        }
+
+        @Override
+        void fire(CommandQueuePreciseListener listener) {
+            listener.commandAdded(this);
+        }
+    }
+
+    /**
+     * Event fired after the command queue has been cleaned.
+     * @since xxx
+     */
+    public static final class CommandQueueCleanedEvent extends CommandQueueEvent {
+
+        private final DataSet ds;
+
+        private CommandQueueCleanedEvent(UndoRedoHandler source, DataSet ds) {
+            super(source);
+            this.ds = ds;
+        }
+
+        /**
+         * Returns the affected dataset.
+         * @return the affected dataset, or null if the queue has been globally emptied
+         */
+        public DataSet getDataSet() {
+            return ds;
+        }
+
+        @Override
+        void fire(CommandQueuePreciseListener listener) {
+            listener.cleaned(this);
+        }
+    }
+
+    /**
+     * Event fired after a command has been undone.
+     * @since xxx
+     */
+    public static final class CommandUndoneEvent extends CommandQueueEvent {
+
+        private final Command cmd;
+
+        private CommandUndoneEvent(UndoRedoHandler source, Command cmd) {
+            super(source);
+            this.cmd = Objects.requireNonNull(cmd);
+        }
+
+        /**
+         * Returns the undone command.
+         * @return the undone command
+         */
+        public Command getCommand() {
+            return cmd;
+        }
+
+        @Override
+        void fire(CommandQueuePreciseListener listener) {
+            listener.commandUndone(this);
+        }
+    }
+
+    /**
+     * Event fired after a command has been redone.
+     * @since xxx
+     */
+    public static final class CommandRedoneEvent extends CommandQueueEvent {
+
+        private final Command cmd;
+
+        private CommandRedoneEvent(UndoRedoHandler source, Command cmd) {
+            super(source);
+            this.cmd = Objects.requireNonNull(cmd);
+        }
+
+        /**
+         * Returns the redone command.
+         * @return the redone command
+         */
+        public Command getCommand() {
+            return cmd;
+        }
+
+        @Override
+        void fire(CommandQueuePreciseListener listener) {
+            listener.commandRedone(this);
+        }
     }
 
     /**
@@ -79,8 +240,12 @@ public class UndoRedoHandler {
 
     /**
      * Fires a commands change event after adding a command.
+     * @param cmd command added
      */
-    public void afterAdd() {
+    public void afterAdd(Command cmd) {
+        if (cmd != null) {
+            fireEvent(new CommandAddedEvent(this, cmd));
+        }
         fireCommandsChanged();
     }
 
@@ -90,7 +255,7 @@ public class UndoRedoHandler {
      */
     public synchronized void add(final Command c) {
         addNoRedraw(c);
-        afterAdd();
+        afterAdd(c);
     }
 
     /**
@@ -116,6 +281,7 @@ public class UndoRedoHandler {
                 final Command c = commands.removeLast();
                 c.undoCommand();
                 redoCommands.addFirst(c);
+                fireEvent(new CommandUndoneEvent(this, c));
                 if (commands.isEmpty()) {
                     break;
                 }
@@ -146,6 +312,7 @@ public class UndoRedoHandler {
             final Command c = redoCommands.removeFirst();
             c.executeCommand();
             commands.add(c);
+            fireEvent(new CommandRedoneEvent(this, c));
             if (redoCommands.isEmpty()) {
                 break;
             }
@@ -162,12 +329,17 @@ public class UndoRedoHandler {
         }
     }
 
+    private void fireEvent(CommandQueueEvent e) {
+        preciseListenerCommands.forEach(e::fire);
+    }
+
     /**
      * Resets the undo/redo list.
      */
     public void clean() {
         redoCommands.clear();
         commands.clear();
+        fireEvent(new CommandQueueCleanedEvent(this, null));
         fireCommandsChanged();
     }
 
@@ -193,6 +365,7 @@ public class UndoRedoHandler {
             }
         }
         if (changed) {
+            fireEvent(new CommandQueueCleanedEvent(this, dataSet));
             fireCommandsChanged();
         }
     }
@@ -207,10 +380,29 @@ public class UndoRedoHandler {
 
     /**
      * Adds a command queue listener.
-     * @param l The commands queue listener to add
+     * @param l The command queue listener to add
      * @return {@code true} if the listener has been added, {@code false} otherwise
      */
     public boolean addCommandQueueListener(CommandQueueListener l) {
         return listenerCommands.add(l);
+    }
+
+    /**
+     * Removes a precise command queue listener.
+     * @param l The precise command queue listener to remove
+     * @since 13729
+     */
+    public void removeCommandQueuePreciseListener(CommandQueuePreciseListener l) {
+        preciseListenerCommands.remove(l);
+    }
+
+    /**
+     * Adds a precise command queue listener.
+     * @param l The precise command queue listener to add
+     * @return {@code true} if the listener has been added, {@code false} otherwise
+     * @since 13729
+     */
+    public boolean addCommandQueuePreciseListener(CommandQueuePreciseListener l) {
+        return preciseListenerCommands.add(l);
     }
 }

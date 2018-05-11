@@ -32,13 +32,18 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
-import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
+import org.openstreetmap.josm.data.UndoRedoHandler.CommandAddedEvent;
+import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueCleanedEvent;
+import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueuePreciseListener;
+import org.openstreetmap.josm.data.UndoRedoHandler.CommandRedoneEvent;
+import org.openstreetmap.josm.data.UndoRedoHandler.CommandUndoneEvent;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -55,13 +60,16 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  * Dialog displaying list of all executed commands (undo/redo buffer).
  * @since 94
  */
-public class CommandStackDialog extends ToggleDialog implements CommandQueueListener {
+public class CommandStackDialog extends ToggleDialog implements CommandQueuePreciseListener {
 
     private final DefaultTreeModel undoTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
     private final DefaultTreeModel redoTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
 
     private final JTree undoTree = new JTree(undoTreeModel);
     private final JTree redoTree = new JTree(redoTreeModel);
+
+    private DefaultMutableTreeNode undoRoot;
+    private DefaultMutableTreeNode redoRoot;
 
     private final transient UndoRedoSelectionListener undoSelectionListener;
     private final transient UndoRedoSelectionListener redoSelectionListener;
@@ -228,7 +236,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         for (IEnabledStateUpdating listener : showNotifyListener) {
             listener.updateEnabledState();
         }
-        MainApplication.undoRedo.addCommandQueueListener(this);
+        MainApplication.undoRedo.addCommandQueuePreciseListener(this);
     }
 
     /**
@@ -242,9 +250,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
     @Override
     public void hideNotify() {
-        undoTreeModel.setRoot(new DefaultMutableTreeNode());
-        redoTreeModel.setRoot(new DefaultMutableTreeNode());
-        MainApplication.undoRedo.removeCommandQueueListener(this);
+        undoTreeModel.setRoot(undoRoot = new DefaultMutableTreeNode());
+        redoTreeModel.setRoot(redoRoot = new DefaultMutableTreeNode());
+        MainApplication.undoRedo.removeCommandQueuePreciseListener(this);
     }
 
     /**
@@ -253,22 +261,32 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      */
     private void buildTrees() {
         setTitle(tr("Command Stack"));
-        if (MainApplication.getLayerManager().getEditLayer() == null)
-            return;
+        buildUndoTree();
+        buildRedoTree();
+        ensureTreesConsistency();
+    }
 
+    private void buildUndoTree() {
         List<Command> undoCommands = MainApplication.undoRedo.commands;
-        DefaultMutableTreeNode undoRoot = new DefaultMutableTreeNode();
+        undoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < undoCommands.size(); ++i) {
             undoRoot.add(getNodeForCommand(undoCommands.get(i), i));
         }
         undoTreeModel.setRoot(undoRoot);
+    }
 
+    private void buildRedoTree() {
         List<Command> redoCommands = MainApplication.undoRedo.redoCommands;
-        DefaultMutableTreeNode redoRoot = new DefaultMutableTreeNode();
+        redoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < redoCommands.size(); ++i) {
             redoRoot.add(getNodeForCommand(redoCommands.get(i), i));
         }
         redoTreeModel.setRoot(redoRoot);
+    }
+
+    private void ensureTreesConsistency() {
+        List<Command> undoCommands = MainApplication.undoRedo.commands;
+        List<Command> redoCommands = MainApplication.undoRedo.redoCommands;
         if (redoTreeModel.getChildCount(redoRoot) > 0) {
             redoTree.scrollRowToVisible(0);
             scrollPane.getHorizontalScrollBar().setValue(0);
@@ -341,10 +359,43 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     }
 
     @Override
-    public void commandChanged(int queueSize, int redoSize) {
-        if (!isVisible())
-            return;
-        buildTrees();
+    public void cleaned(CommandQueueCleanedEvent e) {
+        if (isVisible()) {
+            buildTrees();
+        }
+    }
+
+    @Override
+    public void commandAdded(CommandAddedEvent e) {
+        if (isVisible()) {
+            undoRoot.add(getNodeForCommand(e.getCommand(), undoRoot.getChildCount()));
+            undoTreeModel.nodeStructureChanged(undoRoot);
+            ensureTreesConsistency();
+        }
+    }
+
+    @Override
+    public void commandUndone(CommandUndoneEvent e) {
+        if (isVisible()) {
+            swapNode(undoTreeModel, undoRoot, undoRoot.getChildCount() - 1, redoTreeModel, redoRoot, 0);
+        }
+    }
+
+    @Override
+    public void commandRedone(CommandRedoneEvent e) {
+        if (isVisible()) {
+            swapNode(redoTreeModel, redoRoot, 0, undoTreeModel, undoRoot, undoRoot.getChildCount());
+        }
+    }
+
+    private void swapNode(DefaultTreeModel srcModel, DefaultMutableTreeNode srcRoot, int srcIndex,
+                          DefaultTreeModel dstModel, DefaultMutableTreeNode dstRoot, int dstIndex) {
+        MutableTreeNode node = (MutableTreeNode) srcRoot.getChildAt(srcIndex);
+        srcRoot.remove(node);
+        srcModel.nodeStructureChanged(srcRoot);
+        dstRoot.insert(node, dstIndex);
+        dstModel.nodeStructureChanged(dstRoot);
+        ensureTreesConsistency();
     }
 
     /**
