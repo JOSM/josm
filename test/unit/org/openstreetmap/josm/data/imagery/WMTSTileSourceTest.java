@@ -12,9 +12,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.ClassRule;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.Main;
@@ -27,8 +29,9 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -42,7 +45,11 @@ public class WMTSTileSourceTest {
      */
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().preferences().platform();
+    public static JOSMTestRules test = new JOSMTestRules().preferences().platform().projection().timeout((int)TimeUnit.MINUTES.toMillis(5));
+
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public WireMockRule tileServer = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
     private ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
     private ImageryInfo testImageryPSEUDO_MERCATOR = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-pseudo-mercator.xml");
@@ -338,30 +345,37 @@ public class WMTSTileSourceTest {
     @Test
     public void testDefaultLayer() throws Exception {
         // https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml
-        WireMockServer getCapabilitiesMock = TestUtils.getWireMockServer();
-        String getCapabilitiesBody = new String(Files.readAllBytes(Paths.get(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml")), "UTF-8");
         // do not use withFileBody as it needs different directory layout :(
-        getCapabilitiesMock.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(getCapabilitiesBody)));
-        getCapabilitiesMock.start();
 
-        WireMockServer mapsMock = TestUtils.getWireMockServer();
-        mapsMock.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
+        tileServer.stubFor(
+                WireMock.get("/getcapabilities.xml")
+                .willReturn(
+                        WireMock.aResponse()
+                        .withBody(Files.readAllBytes(
+                                Paths.get(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml"))
+                                )
+                        )
+                );
+
+        tileServer.stubFor(
+                WireMock.get("//maps")
+                .willReturn(
+                        WireMock.aResponse().withBody(
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n" +
                 "<entry>\n" +
                 "<name>Landsat</name>\n" +
                 "<id>landsat</id>\n" +
                 "<type>wmts</type>\n" +
-                "<url><![CDATA[" + getCapabilitiesMock.url("/getcapabilities.xml") + "]]></url>\n" +
+                "<url><![CDATA[" + tileServer.url("/getcapabilities.xml") + "]]></url>\n" +
                 "<defaultLayers>" +
                 "<layer name=\"GEOGRAPHICALGRIDSYSTEMS.MAPS\" />" +
                 "</defaultLayers>" +
                 "</entry>\n" +
                 "</imagery>"
                 )));
-        mapsMock.start();
-        Config.getPref().put("josm.url", mapsMock.url("/"));
 
+        Config.getPref().putList("imagery.layers.sites", Arrays.asList(tileServer.url("//maps")));
         ImageryLayerInfo.instance.loadDefaults(true, null, false);
 
         assertEquals(1, ImageryLayerInfo.instance.getDefaultLayers().size());
