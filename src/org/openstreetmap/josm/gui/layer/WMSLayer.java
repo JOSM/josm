@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
 import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
+import org.openstreetmap.josm.data.imagery.WMSEndpointTileSource;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -56,7 +57,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
 
     private static final String CACHE_REGION_NAME = "WMS";
 
-    private final List<String> serverProjections;
+    private List<String> serverProjections;
 
     /**
      * Constructs a new {@code WMSLayer}.
@@ -64,9 +65,12 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
      */
     public WMSLayer(ImageryInfo info) {
         super(info);
-        CheckParameterUtil.ensureThat(info.getImageryType() == ImageryType.WMS, "ImageryType is WMS");
+        CheckParameterUtil.ensureThat(info.getImageryType() == ImageryType.WMS || info.getImageryType() == ImageryType.WMS_ENDPOINT, "ImageryType is WMS");
         CheckParameterUtil.ensureParameterNotNull(info.getUrl(), "info.url");
-        TemplatedWMSTileSource.checkUrl(info.getUrl());
+        if (info.getImageryType() == ImageryType.WMS) {
+            TemplatedWMSTileSource.checkUrl(info.getUrl());
+
+        }
         this.serverProjections = new ArrayList<>(info.getServerProjections());
     }
 
@@ -88,8 +92,24 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
 
     @Override
     protected AbstractWMSTileSource getTileSource() {
-        AbstractWMSTileSource tileSource = new TemplatedWMSTileSource(
-                info, chooseProjection(Main.getProjection()));
+        AbstractWMSTileSource tileSource;
+        if (info.getImageryType() == ImageryType.WMS) {
+            tileSource = new TemplatedWMSTileSource(info, chooseProjection(Main.getProjection()));
+        } else {
+            /*
+             *  Chicken-and-egg problem. We want to create tile source, but supported projections we can get only
+             *  from this tile source. So create tilesource first with dummy Main.getProjection(), and then update
+             *  once we update server projections.
+             *
+             *  Thus:
+             *  * it is not required to provide projections for wms_endpoint imagery types
+             *  * we always use current definitions returned by server
+             */
+            WMSEndpointTileSource endpointTileSource = new WMSEndpointTileSource(info, Main.getProjection());
+            this.serverProjections = endpointTileSource.getServerProjections();
+            endpointTileSource.setTileProjection(chooseProjection(Main.getProjection()));
+            tileSource = endpointTileSource;
+        }
         info.setAttribution(tileSource);
         return tileSource;
     }

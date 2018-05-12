@@ -195,6 +195,7 @@ public abstract class ImageryLayer extends Layer {
     public static ImageryLayer create(ImageryInfo info) {
         switch(info.getImageryType()) {
         case WMS:
+        case WMS_ENDPOINT:
             return new WMSLayer(info);
         case WMTS:
             return new WMTSLayer(info);

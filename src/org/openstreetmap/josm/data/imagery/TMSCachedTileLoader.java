@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -26,9 +25,6 @@ import org.openstreetmap.josm.tools.Utils;
 public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
 
     protected final ICacheAccess<String, BufferedImageCacheEntry> cache;
-    protected final int connectTimeout;
-    protected final int readTimeout;
-    protected final Map<String, String> headers;
     protected final TileLoaderListener listener;
 
     /**
@@ -49,22 +45,19 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
     private static final ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = getNewThreadPoolExecutor("TMS-downloader-%d");
 
     private ThreadPoolExecutor downloadExecutor = DEFAULT_DOWNLOAD_JOB_DISPATCHER;
+    protected final TileJobOptions options;
 
     /**
      * Constructor
      * @param listener          called when tile loading has finished
-     * @param cache              of the cache
-     * @param connectTimeout    to remote resource
-     * @param readTimeout       to remote resource
-     * @param headers           HTTP headers to be sent along with request
+     * @param cache             of the cache
+     * @param options           tile job options
      */
     public TMSCachedTileLoader(TileLoaderListener listener, ICacheAccess<String, BufferedImageCacheEntry> cache,
-            int connectTimeout, int readTimeout, Map<String, String> headers) {
+           TileJobOptions options) {
         CheckParameterUtil.ensureParameterNotNull(cache, "cache");
         this.cache = cache;
-        this.connectTimeout = connectTimeout;
-        this.readTimeout = readTimeout;
-        this.headers = headers;
+        this.options = options;
         this.listener = listener;
     }
 
@@ -97,8 +90,12 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
 
     @Override
     public TileJob createTileLoaderJob(Tile tile) {
-        return new TMSCachedTileLoaderJob(listener, tile, cache,
-                connectTimeout, readTimeout, headers, getDownloadExecutor());
+        return new TMSCachedTileLoaderJob(
+                listener,
+                tile,
+                cache,
+                options,
+                getDownloadExecutor());
     }
 
     @Override

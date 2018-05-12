@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ButtonModel;
 import javax.swing.JOptionPane;
@@ -157,7 +158,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
 
         TileLoaderFactory cachedLoaderFactory = AbstractCachedTileSourceLayer.getTileLoaderFactory("TMS", TMSCachedTileLoader.class);
         if (cachedLoaderFactory != null) {
-            cachedLoader = cachedLoaderFactory.makeTileLoader(this, headers);
+            cachedLoader = cachedLoaderFactory.makeTileLoader(this, headers, TimeUnit.HOURS.toSeconds(1));
         } else {
             cachedLoader = null;
         }

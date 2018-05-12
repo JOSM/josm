@@ -6,14 +6,15 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -56,7 +57,10 @@ public class ImageryReader implements Closeable {
         NO_TILE,
         NO_TILESUM,
         METADATA,
-        UNKNOWN,            // element is not recognized in the current context
+        DEFAULT_LAYERS,
+        CUSTOM_HTTP_HEADERS,
+        NOOP,
+        UNKNOWN,             // element is not recognized in the current context
     }
 
     /**
@@ -131,6 +135,8 @@ public class ImageryReader implements Closeable {
         private MultiMap<String, String> noTileHeaders;
         private MultiMap<String, String> noTileChecksums;
         private Map<String, String> metadataHeaders;
+        private List<DefaultLayer> defaultLayers;
+        private Map<String, String> customHttpHeaders;
 
         @Override
         public void startDocument() {
@@ -144,6 +150,7 @@ public class ImageryReader implements Closeable {
             projections = null;
             noTileHeaders = null;
             noTileChecksums = null;
+            customHttpHeaders = null;
         }
 
         @Override
@@ -163,7 +170,9 @@ public class ImageryReader implements Closeable {
                     newState = State.ENTRY;
                     noTileHeaders = new MultiMap<>();
                     noTileChecksums = new MultiMap<>();
-                    metadataHeaders = new HashMap<>();
+                    metadataHeaders = new ConcurrentHashMap<>();
+                    defaultLayers = new ArrayList<>();
+                    customHttpHeaders = new ConcurrentHashMap<>();
                     String best = atts.getValue("eli-best");
                     if (TRUE.equals(best)) {
                         entry.setBestMarked(true);
@@ -214,7 +223,9 @@ public class ImageryReader implements Closeable {
                         "date",
                         TILE_SIZE,
                         "valid-georeference",
-                        "mod-tile-features"
+                        "mod-tile-features",
+                        "transparent",
+                        "minimum-tile-expire"
                 ).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
                     lang = atts.getValue("lang");
@@ -246,6 +257,11 @@ public class ImageryReader implements Closeable {
                 } else if ("metadata-header".equals(qName)) {
                     metadataHeaders.put(atts.getValue("header-name"), atts.getValue("metadata-key"));
                     newState = State.METADATA;
+                } else if ("defaultLayers".equals(qName)) {
+                    newState = State.DEFAULT_LAYERS;
+                } else if ("custom-http-header".equals(qName)) {
+                   customHttpHeaders.put(atts.getValue("header-name"), atts.getValue("header-value"));
+                   newState = State.CUSTOM_HTTP_HEADERS;
                 }
                 break;
             case BOUNDS:
@@ -268,6 +284,12 @@ public class ImageryReader implements Closeable {
             case MIRROR_PROJECTIONS:
                 if ("code".equals(qName)) {
                     newState = State.CODE;
+                }
+                break;
+            case DEFAULT_LAYERS:
+                if ("layer".equals(qName)) {
+                    newState = State.NOOP;
+                    defaultLayers.add(new DefaultLayer(entry.getImageryType(), atts.getValue("name"),atts.getValue("style"), atts.getValue("tileMatrixSet")));
                 }
                 break;
             default: // Do nothing
@@ -305,6 +327,10 @@ public class ImageryReader implements Closeable {
                     noTileChecksums = null;
                     entry.setMetadataHeaders(metadataHeaders);
                     metadataHeaders = null;
+                    entry.setDefaultLayers(defaultLayers);
+                    defaultLayers = null;
+                    entry.setCustomHttpHeaders(customHttpHeaders);
+                    customHttpHeaders = null;
 
                     if (!skipEntry) {
                         entries.add(entry);
@@ -322,6 +348,7 @@ public class ImageryReader implements Closeable {
                 if (mirrorEntry != null) {
                     switch(qName) {
                     case "type":
+                        ImageryType.values();
                         boolean found = false;
                         for (ImageryType type : ImageryType.values()) {
                             if (Objects.equals(accumulator.toString(), type.getTypeString())) {
@@ -486,6 +513,12 @@ public class ImageryReader implements Closeable {
                     break;
                 case "mod-tile-features":
                     entry.setModTileFeatures(Boolean.parseBoolean(accumulator.toString()));
+                    break;
+                case "transparent":
+                    entry.setTransparent(Boolean.parseBoolean(accumulator.toString()));
+                    break;
+                case "minimum-tile-expire":
+                    entry.setMinimumTileExpire(Integer.valueOf(accumulator.toString()));
                     break;
                 default: // Do nothing
                 }

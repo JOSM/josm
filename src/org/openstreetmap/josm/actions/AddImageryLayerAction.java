@@ -12,9 +12,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
+import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -33,7 +33,6 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.imagery.WMSLayerTree;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
-import org.openstreetmap.josm.io.imagery.WMSImagery.LayerDetails;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
@@ -95,19 +94,26 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             switch(info.getImageryType()) {
             case WMS_ENDPOINT:
                 // convert to WMS type
-                return getWMSLayerInfo(info);
+                if (info.getDefaultLayers() == null || info.getDefaultLayers().isEmpty()) {
+                    return getWMSLayerInfo(info);
+                } else {
+                    return info;
+                }
             case WMTS:
                 // specify which layer to use
-                DefaultLayer layerId = new WMTSTileSource(info).userSelectLayer();
-                if (layerId != null) {
-                    ImageryInfo copy = new ImageryInfo(info);
-                    Collection<DefaultLayer> defaultLayers = new ArrayList<>(1);
-                    defaultLayers.add(layerId);
-                    copy.setDefaultLayers(defaultLayers);
-                    return copy;
+                if (info.getDefaultLayers() == null || info.getDefaultLayers().isEmpty()) {
+                    DefaultLayer layerId = new WMTSTileSource(info).userSelectLayer();
+                    if (layerId != null) {
+                        ImageryInfo copy = new ImageryInfo(info);
+                        List<DefaultLayer> defaultLayers = new ArrayList<>(1);
+                        defaultLayers.add(layerId);
+                        copy.setDefaultLayers(defaultLayers);
+                        return copy;
+                    }
+                    return null;
+                } else {
+                    return info;
                 }
-                // layer not selected - refuse to add
-                return null;
             default:
                 return info;
             }
@@ -129,6 +135,12 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             }
             Logging.log(Logging.LEVEL_ERROR, "Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData(), ex);
+        } catch (WMTSGetCapabilitiesException e) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMTS layer list."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            }
+            Logging.log(Logging.LEVEL_ERROR, "Could not parse WMTS layer list.", e);
         }
         return null;
     }
@@ -165,47 +177,70 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      * @throws WMSGetCapabilitiesException if the WMS getCapabilities request fails
      */
     protected static ImageryInfo getWMSLayerInfo(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
-        CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT.equals(info.getImageryType()), "wms_endpoint imagery type expected");
+        try {
+            CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT.equals(info.getImageryType()), "wms_endpoint imagery type expected");
+            final WMSImagery wms = new WMSImagery(info.getUrl());
 
-        final WMSImagery wms = new WMSImagery();
-        wms.attemptGetCapabilities(info.getUrl());
+            final WMSLayerTree tree = new WMSLayerTree();
+            tree.updateTree(wms);
 
-        final WMSLayerTree tree = new WMSLayerTree();
-        tree.updateTree(wms);
-        List<String> wmsFormats = wms.getFormats();
-        final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[0]));
-        formats.setSelectedItem(wms.getPreferredFormats());
-        formats.setToolTipText(tr("Select image format for WMS layer"));
+            Collection<String> wmsFormats = wms.getFormats();
+            final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[wmsFormats.size()]));
+            formats.setSelectedItem(wms.getPreferredFormat());
+            formats.setToolTipText(tr("Select image format for WMS layer"));
 
-        if (!GraphicsEnvironment.isHeadless() && 1 != new SelectWmsLayersDialog(tree, formats).showDialog().getValue()) {
-            return null;
-        }
-
-        final String url = wms.buildGetMapUrl(
-                tree.getSelectedLayers(), (String) formats.getSelectedItem());
-        Set<String> supportedCrs = new HashSet<>();
-        boolean first = true;
-        StringBuilder layersString = new StringBuilder();
-        for (LayerDetails layer: tree.getSelectedLayers()) {
-            if (first) {
-                supportedCrs.addAll(layer.getProjections());
-                first = false;
+            if (!GraphicsEnvironment.isHeadless()) {
+                if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) { {
+                    final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
+                    scrollPane.setPreferredSize(new Dimension(400, 400));
+                    final JPanel panel = new JPanel(new GridBagLayout());
+                    panel.add(scrollPane, GBC.eol().fill());
+                    panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+                    setContent(panel);
+                } }.showDialog().getValue()) {
+                    return null;
+                }
             }
-            layersString.append(layer.name);
-            layersString.append(", ");
-            supportedCrs.retainAll(layer.getProjections());
-        }
 
-        // copy all information from WMS
-        ImageryInfo ret = new ImageryInfo(info);
-        // and update according to user choice
-        ret.setUrl(url);
-        ret.setImageryType(ImageryType.WMS);
-        if (layersString.length() > 2) {
-            ret.setName(ret.getName() + ' ' + layersString.substring(0, layersString.length() - 2));
+            final String url = wms.buildGetMapUrl(
+                    tree.getSelectedLayers().stream().map(x -> x.getName()).collect(Collectors.toList()),
+                    (List<String>) null,
+                    (String) formats.getSelectedItem(),
+                    true // TODO: ask the user if (s)he wants transparent layer
+                    );
+
+            String selectedLayers = tree.getSelectedLayers().stream()
+                    .map(x -> x.getName())
+                    .collect(Collectors.joining(", "));
+            ImageryInfo ret = new ImageryInfo(info.getName() + selectedLayers,
+                    url,
+                    "wms",
+                    info.getEulaAcceptanceRequired(),
+                    info.getCookies());
+
+            ret.setServerProjections(wms.getServerProjections(tree.getSelectedLayers()));
+
+            return ret;
+        } catch (MalformedURLException ex) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Invalid service URL."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            }
+            Logging.log(Logging.LEVEL_ERROR, ex);
+        } catch (IOException ex) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Could not retrieve WMS layer list."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            }
+            Logging.log(Logging.LEVEL_ERROR, ex);
+        } catch (WMSGetCapabilitiesException ex) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMS layer list."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            }
+            Logging.log(Logging.LEVEL_ERROR, "Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData(), ex);
         }
-        ret.setServerProjections(supportedCrs);
-        return ret;
+        return null;
     }
 
     @Override

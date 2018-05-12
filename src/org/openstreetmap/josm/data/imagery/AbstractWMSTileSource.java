@@ -2,6 +2,10 @@
 package org.openstreetmap.josm.data.imagery;
 
 import java.awt.Point;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import org.openstreetmap.gui.jmapviewer.Projected;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -22,6 +26,8 @@ import org.openstreetmap.josm.data.projection.Projection;
  * @since 10990
  */
 public abstract class AbstractWMSTileSource extends TMSTileSource {
+
+    static final NumberFormat LATLON_FORMAT = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
 
     private EastNorth anchorPosition;
     private int[] tileXMin;
@@ -207,5 +213,26 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     @Override
     public String getServerCRS() {
         return this.tileProjection.toCode();
+    }
+
+    protected String getBbox(int zoom, int tilex, int tiley, boolean switchLatLon) {
+        EastNorth nw = getTileEastNorth(tilex, tiley, zoom);
+        EastNorth se = getTileEastNorth(tilex + 1, tiley + 1, zoom);
+
+        double w = nw.getX();
+        double n = nw.getY();
+
+        double s = se.getY();
+        double e = se.getX();
+
+        return (
+                switchLatLon ?
+                        String.format("%s,%s,%s,%s",
+                                LATLON_FORMAT.format(s), LATLON_FORMAT.format(w), LATLON_FORMAT.format(n), LATLON_FORMAT.format(e))
+                        :
+                        String.format("%s,%s,%s,%s",
+                                LATLON_FORMAT.format(w), LATLON_FORMAT.format(s), LATLON_FORMAT.format(e), LATLON_FORMAT.format(n))
+
+                );
     }
 }

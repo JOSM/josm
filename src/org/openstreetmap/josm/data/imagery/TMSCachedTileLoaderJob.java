@@ -43,11 +43,14 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8168
  */
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener {
-    private static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires", TimeUnit.DAYS.toMillis(30));
-    private static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires", TimeUnit.HOURS.toMillis(1));
+    /** General maximum expires for tiles. Might be overridden by imagery settings */
+    public static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires", TimeUnit.DAYS.toMillis(30));
+    /** General minimum expires for tiles. Might be overridden by imagery settings */
+    public static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires", TimeUnit.HOURS.toMillis(1));
     static final Pattern SERVICE_EXCEPTION_PATTERN = Pattern.compile("(?s).+<ServiceException[^>]*>(.+)</ServiceException>.+");
     protected final Tile tile;
     private volatile URL url;
+    private final TileJobOptions options;
 
     // we need another deduplication of Tile Loader listeners, as for each submit, new TMSCachedTileLoaderJob was created
     // that way, we reduce calls to tileLoadingFinished, and general CPU load due to surplus Map repaints
@@ -58,17 +61,16 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      * @param listener Tile loader listener
      * @param tile to be fetched from cache
      * @param cache object
-     * @param connectTimeout when connecting to remote resource
-     * @param readTimeout when connecting to remote resource
-     * @param headers HTTP headers to be sent together with request
+     * @param options for job (such as http headers, timeouts etc.)
      * @param downloadExecutor that will be executing the jobs
      */
     public TMSCachedTileLoaderJob(TileLoaderListener listener, Tile tile,
             ICacheAccess<String, BufferedImageCacheEntry> cache,
-            int connectTimeout, int readTimeout, Map<String, String> headers,
+            TileJobOptions options,
             ThreadPoolExecutor downloadExecutor) {
-        super(cache, connectTimeout, readTimeout, headers, downloadExecutor);
+        super(cache, options, downloadExecutor);
         this.tile = tile;
+        this.options = options;
         if (listener != null) {
             String deduplicationKey = getCacheKey();
             synchronized (inProgress) {
@@ -244,10 +246,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         CacheEntryAttributes ret = super.parseHeaders(urlConn);
         // keep the expiration time between MINIMUM_EXPIRES and MAXIMUM_EXPIRES, so we will cache the tiles
         // at least for some short period of time, but not too long
-        if (ret.getExpirationTime() < now + MINIMUM_EXPIRES.get()) {
+        if (ret.getExpirationTime() < now + Math.max(MINIMUM_EXPIRES.get(), options.getMinimumExpiryTime())) {
             ret.setExpirationTime(now + MINIMUM_EXPIRES.get());
         }
-        if (ret.getExpirationTime() > now + MAXIMUM_EXPIRES.get()) {
+        if (ret.getExpirationTime() > now + Math.max(MAXIMUM_EXPIRES.get(), options.getMinimumExpiryTime())) {
             ret.setExpirationTime(now + MAXIMUM_EXPIRES.get());
         }
         return ret;

@@ -1,0 +1,5105 @@
+
+
+  <!DOCTYPE WMT_MS_Capabilities SYSTEM
+ "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd"
+  [
+   <!ELEMENT VendorSpecificCapabilities EMPTY>
+  ]>
+  <WMT_MS_Capabilities version="1.1.1">
+   <!--
+
+   SERVICE METADATA
+
+   -->
+   <Service>
+    <Name>OGC:WMS</Name>
+    <Title>Server WMS m.st. Warszawy</Title>
+    
+    <Abstract>Server WMS m.st. Warszawy</Abstract>
+    
+    
+    <KeywordList>
+     <Keyword>GIS</Keyword>
+ <Keyword>WMS</Keyword>
+ <Keyword>Server</Keyword>
+ 
+    </KeywordList>
+    
+    <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://wms.um.warszawa.pl/"></OnlineResource>
+
+    <ContactInformation>
+     <ContactPersonPrimary>
+      <ContactPerson>Urząd m.st. Warszawy</ContactPerson>
+      <ContactOrganization>Urząd m.st. Warszawy</ContactOrganization>
+     </ContactPersonPrimary>
+     
+     
+     <ContactAddress>
+      <AddressType>postal</AddressType>
+      <Address>Sandomierska 12</Address>
+      <City>Warszawa</City>
+      <StateOrProvince>mazowieckie</StateOrProvince>
+      <PostCode></PostCode>
+      <Country>Polska</Country>
+     </ContactAddress>
+     
+     
+     
+     
+     <ContactElectronicMailAddress>ortofoto@um.warszawa.pl</ContactElectronicMailAddress>
+     
+    </ContactInformation>
+
+    <Fees>opłaty zgodnie z prawem</Fees>
+    <AccessConstraints>none</AccessConstraints>
+   </Service>
+
+   <!--
+
+   SERVICE CAPABILITIES
+
+   -->
+   <Capability>
+
+    <Request>
+     <GetCapabilities>
+      
+  <Format>text/xml</Format>
+ 
+  <Format>text/html</Format>
+ 
+  <Format>application/vnd.ogc.wms_xml</Format>
+ 
+      <DCPType>
+       <HTTP>
+        <Get>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://wms.um.warszawa.pl/serwis?"/>
+        </Get>
+       </HTTP>
+      </DCPType>
+     </GetCapabilities>
+
+     <GetMap>
+      
+  <Format>image/png</Format>
+ 
+  <Format>image/jpeg</Format>
+ 
+  <Format>image/gif</Format>
+ 
+      <DCPType>
+       <HTTP>
+        <Get>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://wms.um.warszawa.pl/serwis?"/>
+        </Get>
+       </HTTP>
+      </DCPType>
+     </GetMap>
+
+     <GetFeatureInfo>
+      
+  <Format>text/xml</Format>
+ 
+  <Format>text/html</Format>
+ 
+  <Format>text/plain</Format>
+ 
+      <DCPType>
+       <HTTP>
+        <Get>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://wms.um.warszawa.pl/serwis?"/>
+        </Get>
+       </HTTP>
+      </DCPType>
+     </GetFeatureInfo>
+
+    </Request>
+
+    <Exception>
+     
+  <Format>application/vnd.ogc.se_xml</Format>
+ 
+    </Exception>
+
+    <!-- No VendorSpecificCapabilities -->
+    <!-- No UserDefinedSymbolization -->
+
+    <!--
+
+    PUBLISHED LAYERS
+
+    -->
+    <Layer>
+     <Title>Server WMS m.st. Warszawy</Title>
+     <SRS>EPSG:4326</SRS>
+     <LatLonBoundingBox minx="-180" miny="-90" maxx="180" maxy="90"/>
+     
+  <!-- Published Layer #1 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2012_8m</Name>
+   <Title>Raster - Fotoplan 2012 - piksel 8m</Title>
+   <Abstract>Fotoplan z 2012 roku z pikselem 8m dla zakresu skal od 1:60000 do 1:30000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #2 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2012_10cm</Name>
+   <Title>Raster - Fotoplan 2012 - piksel 10cm</Title>
+   <Abstract>Fotoplan z 2012 roku z pikselem 10cm dla zakresu skal od 0 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #3 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Cmentarze_kwatery</Name>
+   <Title>Religia - Cmentarze - Kwatery</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #4 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_granica_1992</Name>
+   <Title>Historia - Granica Warszawy 1992</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #5 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_granica1939_1945</Name>
+   <Title>Historia - Granica Warszawy 1945 (dekretowa)</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #6 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Inne_Obszary_ogr_uzytk</Name>
+   <Title>Inne - Obszar ograniczonego użytkowania</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #7 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Inne_Strefa_Z1</Name>
+   <Title>Inne - Strefa ograniczeń zabudowy</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #8 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_koleje_glowne</Name>
+   <Title>Komunikacja - Linie kolejowe</Title>
+   <Abstract>Główne linie kolejowe</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #9 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_Metro_wejscia</Name>
+   <Title>Komunikacje - Wejścia do Metra</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #10 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_PrzystankiSKM</Name>
+   <Title>Komunikacja - Przystanki SKM</Title>
+   <Abstract>Przystanki Szybkiej Kolei Miejskiej</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #11 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_PrzystankiWKD</Name>
+   <Title>Komunikacja - Przystanki WKD</Title>
+   <Abstract>Przystanki Warszawskiej Kolei Dojazdowej</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #12 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_PrzystankiZTM</Name>
+   <Title>Komunikacja - Przystanki ZTM</Title>
+   <Abstract>Przystanki autobusowe i tramwajowe</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #13 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_StacjeMetro</Name>
+   <Title>Komunikacja - Stacje Metra</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #14 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_Strefa_płatnego_parkowania</Name>
+   <Title>Komunikacja - Strefa płatnego parkowania</Title>
+   <Abstract>Strefa płatnego parkowania</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #15 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_Tramwaje</Name>
+   <Title>Komunikacja - Linie tramwajowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #16 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Kultura_Biblioteki</Name>
+   <Title>Kultura - Biblioteki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #17 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Kultura_Domy_kultury</Name>
+   <Title>Kultura - Domy Kultury</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #18 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Kultura_Kina</Name>
+   <Title>Kultura - Kina</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #19 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Kultura_Muzea</Name>
+   <Title>Kultura - Muzea</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #20 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Kultura_Teatry</Name>
+   <Title>Kultura - Teatry</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #21 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Nieruchomosci_na_sprzedaz_ogloszone</Name>
+   <Title>Nieruchomości na sprzedaż - przetargi ogłoszone</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #22 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Nieruchomosci_na_sprzedaz_planowane</Name>
+   <Title>Nieruchomości na sprzedaż - planowane do zbycia</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #23 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Nieruchomosci_na_sprzedaz_przygotowywane</Name>
+   <Title>Nieruchomości na sprzedaż - przeznaczone do zbycia</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #24 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/OpiekaSpoleczna_osrodki_pomocy_spolecznej</Name>
+   <Title>Opieka Społeczna - Ośrodki Pomocy Społecznej</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #25 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/OpiekaZdrowotna_placowki_terapii_uzaleznien</Name>
+   <Title>Opieka Zdrowotna - Placówki Terapii Uzależnień</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #26 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2011_10cm</Name>
+   <Title>Raster - Fotoplan 2011 - piksel 10cm</Title>
+   <Abstract>Fotoplan z 2011 roku z pikselem 10cm dla zakresu skal od 0 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #27 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2011_16m</Name>
+   <Title>Raster - Fotoplan 2011 - piksel 16m</Title>
+   <Abstract>Fotoplan z 2011 roku z pikselem 16m dla zakresu skal od 1:120000 do 1:60000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #28 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2011_32m</Name>
+   <Title>Raster - Fotoplan 2011 - piksel 32m</Title>
+   <Abstract>Fotoplan z 2011 roku z pikselem 32m dla zakresu skal od nieskończoności do 1:120000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #29 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2011_4m</Name>
+   <Title>Raster - Fotoplan 2011 - piksel 4m</Title>
+   <Abstract>Fotoplan z 2011 roku z pikselem 4m dla zakresu skal od 1:30000 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #30 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2011_8m</Name>
+   <Title>Raster - Fotoplan 2011 - piksel 8m</Title>
+   <Abstract>Fotoplan z 2011 roku z pikselem 8m dla zakresu skal od 1:60000 do 1:30000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #31 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/OpiekaZdrowotna_poradnie_zdrowia_psychicznego</Name>
+   <Title>Opieka Zdrowotna - Poradnie Zdrowia Psychicznego</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #32 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/OpiekaZdrowotna_poradnie_psych_pedagogiczne</Name>
+   <Title>Opieka Zdrowotna - Poradnie Psychologiczno-Pedagogiczne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #33 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/OpiekaSpoleczna_zlobki</Name>
+   <Title>Opieka Społeczna - złobki i kluby dziecięce</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #34 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/OpiekaZdrowotna_Szpitale</Name>
+   <Title>Opieka zdrowotna - Szpitale</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #35 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_budynki do zachowania</Name>
+   <Title>Plany zagospodarowania - budynki do zachowania</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #36 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_budynki_wpisane_do_rejestru_zabytkow</Name>
+   <Title>Plany zagospodarowania - budynki wpisane do rejestru zabytków</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #37 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_ciagi_piesze</Name>
+   <Title>Plany zagospodarowania - ciągi piesze</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #38 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_dominanta_wysokosciowa</Name>
+   <Title>Plany zagospodarowania - dominanty wysokościowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #39 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_dominanty_przestrzenne</Name>
+   <Title>Plany zagospodarowania - dominanty przestrzenne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #40 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_granice_obszarow_objetych_ochrona_konserwatorska</Name>
+   <Title>Plany zagospodarowania - granice obszarów objętych ochroną konserwatorską</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #41 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_granice_obszarow_objetych_ochrona_srodowiska</Name>
+   <Title>Plany zagospodarowania - granice obszarów objętych ochroną środowiska</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #42 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_granice_obszaru_objetego_planem</Name>
+   <Title>Plany zagospodarowania - granice obszaru objętego planem</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #43 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_metro</Name>
+   <Title>Plany zagospodarowania - metro</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #44 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_napowietrzne_linie_EE</Name>
+   <Title>Plany zagospodarowania - napowietrzne linie EE</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #45 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_nieprzekraczalna_granica_pochowkow</Name>
+   <Title>Plany zagospodarowania - nieprzekraczalne granice pochówków</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #46 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_nieprzekraczalna_linia_zabudowy_podziemii</Name>
+   <Title>Plany zagospodarowania - nieprzekraczalne linie zabudowy podziemii</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #47 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_nieprzekraczalna_linia_zabudowy_przewieszen</Name>
+   <Title>Plany zagospodarowania - nieprzekraczalne linie zabudowy przewieszeń</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #48 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_nieprzekraczalna_linia_zabudowy_zwyzki</Name>
+   <Title>Plany zagospodarowania - nieprzekraczalne linie zabudowy zwyżki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #49 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_nieprzekraczalne_linie_zabudowy</Name>
+   <Title>Plany zagospodarowania - nieprzekraczalne linie zabudowy</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #50 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_obiekty_wpisane_do_rejestru_zabytkow</Name>
+   <Title>Plany zagospodarowania - obiekty wpisane do rejestru zabytków</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #51 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_obowiazujace_linie_zabudowy</Name>
+   <Title>Plany zagospodarowania - obowiązujące linie zabudowy</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #52 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_osie_kompozycyjne</Name>
+   <Title>Plany zagospodarowania - osie kompozycyjne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #53 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_osie_widokowe</Name>
+   <Title>Plany zagospodarowania - osie widokowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #54 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_parkingi_na_poziomie_terenu</Name>
+   <Title>Plany zagospodarowania - parkingi na poziomie terenu</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #55 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_parkingi_podziemne</Name>
+   <Title>Plany zagospodarowania - parkingi podziemne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #56 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_parkingi_zatokowe</Name>
+   <Title>Plany zagospodarowania - parkingi zatokowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #57 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_place_miejskie</Name>
+   <Title>Plany zagospodarowania - place miejskie</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #58 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_pomnik_przyrody_nieozywionej</Name>
+   <Title>Plany zagospodarowania - pomniki przyrody nieożywionej</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #59 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_pomniki</Name>
+   <Title>Plany zagospodarowania - pomniki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #60 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_pomniki_przyrody</Name>
+   <Title>Plany zagospodarowania - pomniki przyrody</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #61 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_sciezki_rowerowe</Name>
+   <Title>Plany zagospodarowania - ścieżki rowerowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #62 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_strefy_archeologiczne</Name>
+   <Title>Plany zagospodarowania - strefy archeologiczne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #63 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_strefy_ograniczen</Name>
+   <Title>Plany zagospodarowania - strefy ograniczeń</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #64 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_tereny_o_roznych-zasadach_zagospodarowania</Name>
+   <Title>Plany zagospodarowania - tereny o różnych zasadach zagospodarowania</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #65 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_tereny_zamkniete</Name>
+   <Title>Plany zagospodarowania - tereny zamknięte</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #66 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Ramka_Zasadnicza_0250</Name>
+   <Title>Geodezja - Sekcje ZMM 1:250</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #67 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Ramka_Zasadnicza_0500</Name>
+   <Title>Geodezja - Sekcje ZMM 1:500</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #68 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Ramka_Zasadnicza_1000</Name>
+   <Title>Geodezja - Sekcje ZMM 1:1000</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #69 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Ramka_Zasadnicza_2000</Name>
+   <Title>Geodezja - Sekcje ZMM 1:2000</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #70 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_orto2010_8m</Name>
+   <Title>Raster - Ortofotomapa 2010 - piksel 8m</Title>
+   <Abstract>Ortofotomapa z 2010 roku z pikselem 8m dla zakresu skal od 1:60000 do 1:30000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #71 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_orto2010_4m</Name>
+   <Title>Raster - Ortofotomapa 2010 - piksel 4m</Title>
+   <Abstract>Ortofotomapa z 2010 roku z pikselem 4m dla zakresu skal od 1:30000 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #72 -->
+  <Layer queryable="1" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_orto2010_32m</Name>
+   <Title>Raster - Ortofotomapa 2010 - piksel 32m</Title>
+   <Abstract>Ortofotomapa z 2010 roku z pikselem 32m dla zakresu skal od nieskończoności do 1:120000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #73 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_orto2010_16m</Name>
+   <Title>Raster - Ortofotomapa 2010 - piksel 16m</Title>
+   <Abstract>Ortofotomapa z 2010 roku z pikselem 16m dla zakresu skal od 1:120000 do 1:60000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #74 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_orto2010_10cm</Name>
+   <Title>Raster - Ortofotomapa 2010 - piksel 10 cm</Title>
+   <Abstract>Ortofotomapa z 2010 roku z pikselem 10cm dla zakresu skal od 0 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #75 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_orto1945</Name>
+   <Title>Raster - Ortofoto 1945</Title>
+   <Abstract>Ortofotomapa zniszczonej Warszawy z roku 1945</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #76 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2012_32m</Name>
+   <Title>Raster - Fotoplan 2012 - piksel 32m</Title>
+   <Abstract>Fotoplan z 2012 roku z pikselem 32m dla zakresu skal od nieskończoności do 1:120000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #77 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2012_4m</Name>
+   <Title>Raster - Fotoplan 2012 - piksel 4m</Title>
+   <Abstract>Fotoplan z 2012 roku z pikselem 4m dla zakresu skal od 1:30000 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #78 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/studium_uwarunkowan</Name>
+   <Title>Raster - Studium uwarunkowań</Title>
+   <Abstract>Studium uwarunkowań i kierunków zagospodarowania przestrzennego, dostępne w skalach od 1:256 000 do 1:8 000.</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #79 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zagrozenia_waly_ppow</Name>
+   <Title>Zagrożenia - Wały przeciwpowodziowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #80 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="1">
+   <Name>WMS/serwisy_ibombo_samoobs</Name>
+   <Title>Rowery-Serwisy_ibombo_samooblugowe</Title>
+   <Abstract>Rowerowe serwisy samoobsługowe Ibombo</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #81 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="1">
+   <Name>WMS/serwisy_rowerowe</Name>
+   <Title>Rowery-srwisy_rowerowe</Title>
+   <Abstract>Serwisy rowerowe</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #82 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_msi_granica_1_strefy_taxi</Name>
+   <Title>Komunikacja - Granica 1. Strefy TAXI</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #83 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2015_16m</Name>
+   <Title>Raster - Fotoplan 2015 - piksel 16m</Title>
+   <Abstract>Fotoplan z 2015 roku z pikselem 16m dla zakresu skal od 1:120000 do 1:60000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #84 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2015_32m</Name>
+   <Title>Raster - Fotoplan 2015 - piksel 32m</Title>
+   <Abstract>Fotoplan z 2015 roku z pikselem 32m dla zakresu skal od nieskończoności do 1:120000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #85 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2015_4m</Name>
+   <Title>Raster - Fotoplan 2015 - piksel 4m</Title>
+   <Abstract>Fotoplan z 2015 roku z pikselem 4m dla zakresu skal od 1:30000 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #86 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2015_8m</Name>
+   <Title>Raster - Fotoplan 2015 - piksel 8m</Title>
+   <Abstract>Fotoplan z 2015 roku z pikselem 8m dla zakresu skal od 1:60000 do 1:30000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #87 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2014_10cm</Name>
+   <Title>Raster - Fotoplan 2014 - piksel 10cm</Title>
+   <Abstract>Fotoplan z 2014 roku z pikselem 10cm dla zakresu skal od 0 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #88 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2014_16m</Name>
+   <Title>Raster - Fotoplan 2014 - piksel 16m</Title>
+   <Abstract>Fotoplan z 2014 roku z pikselem 16m dla zakresu skal od 1:120000 do 1:60000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #89 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2014_32m</Name>
+   <Title>Raster - Fotoplan 2014 - piksel 32m</Title>
+   <Abstract>Fotoplan z 2014 roku z pikselem 32m dla zakresu skal od nieskończoności do 1:120000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #90 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2014_4m</Name>
+   <Title>Raster - Fotoplan 2014 - piksel 4m</Title>
+   <Abstract>Fotoplan z 2014 roku z pikselem 4m dla zakresu skal od 1:30000 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #91 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2014_8m</Name>
+   <Title>Raster - Fotoplan 2014 - piksel 8m</Title>
+   <Abstract>Fotoplan z 2014 roku z pikselem 8m dla zakresu skal od 1:60000 do 1:30000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #92 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2015_10cm</Name>
+   <Title>Raster - Fotoplan 2015 - piksel 10cm</Title>
+   <Abstract>Fotoplan z 2015 roku z pikselem 10cm dla zakresu skal od 0 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #93 -->
+  <Layer queryable="1" cascaded="0" noSubsets="0" opaque="1">
+   <Name>WMS/ENOM_Place_Skwery</Name>
+   <Title>ENOM_Place_Skwery</Title>
+   <Abstract>Obiekty liniowe nazewnictwa m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #94 -->
+  <Layer queryable="1" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/ENOM_Punkty_Adresowe</Name>
+   <Title>ENOM_Punkty_Adresowe</Title>
+   <Abstract>Punkty Adresowe m.st Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #95 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2016_32m</Name>
+   <Title>Raster - Fotoplan 2016 - piksel 32m</Title>
+   <Abstract>Fotoplan z 2016 roku z pikselem 32m dla zakresu skal od nieskończoności do 1:120000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #96 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2016_4m</Name>
+   <Title>Raster - Fotoplan 2016 - piksel 4m</Title>
+   <Abstract>Fotoplan z 2016 roku z pikselem 4m dla zakresu skal od 1:30000 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #97 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2016_8m</Name>
+   <Title>Raster - Fotoplan 2016 - piksel 8m</Title>
+   <Abstract>Fotoplan z 2016 roku z pikselem 8m dla zakresu skal od 1:60000 do 1:30000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #98 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Baza_noclegowa_Akademiki</Name>
+   <Title>Baza noclegowa - Akademiki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #99 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Baza_noclegowa_Apartamenty</Name>
+   <Title>Baza noclegowa - Apartamenty</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #100 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Grupy_krzewow</Name>
+   <Title>Zieleń - Grupy krzewów</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #101 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Zywoploty</Name>
+   <Title>Zieleń - Żywopłoty</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #102 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Pomniki_przyrody</Name>
+   <Title>Zieleń - Pomniki przyrody</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #103 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Kwietniki</Name>
+   <Title>Zieleń - Kwietniki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #104 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Pnacza</Name>
+   <Title>Zieleń - Pnącza</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #105 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Trawniki</Name>
+   <Title>Zieleń - Trawniki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #106 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Administracja_Ambasady</Name>
+   <Title>Administracja - Ambasady</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #107 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Koryto_wisly</Name>
+   <Title>Raster - Koryto Wisły</Title>
+   <Abstract>Ortofotomapa z pikselem 5 cm dla koryta Wisły wykonana w roku 2015.</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #108 -->
+  <Layer queryable="1" cascaded="0" noSubsets="0" opaque="1">
+   <Name>WMS/Arch_Decyzje_warunki_zabudowy</Name>
+   <Title>Decyzje o warunkach zabudowy</Title>
+   <Abstract>Warstwa wydanych decyzji o warunkach zabudowy od sakli 1:40000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #109 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="1">
+   <Name>WMS/Raster_plan_39</Name>
+   <Title>Raster - Plan 1939</Title>
+   <Abstract>Plan Warszawy z 1939 r. widoczny w zakresie skal 1:250 - 1:50000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.000" miny="51.00" maxx="22.000" maxy="53.00"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.000" miny="51.00" maxx="22.000" maxy="53.00"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #110 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Administracja_Biura_Urzedu</Name>
+   <Title>Administracja - Biura Urzędu Miasta</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #111 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Administracja_Konsulaty</Name>
+   <Title>Administracja - Konsulaty</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #112 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Administracja_Sady</Name>
+   <Title>Administracja - Sądy</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #113 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Administracja_Urzedy_Dzielnic</Name>
+   <Title>Administracja - Urzędy dzielnic</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #114 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Administracja_Urzedy_Skarbowe</Name>
+   <Title>Administracja - Urzędy Skarbowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #115 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Administracja_USC</Name>
+   <Title>Administracja - USC</Title>
+   <Abstract>Urzędy Stanu Cywilnego</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #116 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Administracja_ZUS</Name>
+   <Title>Administracja - Placówki ZUS</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #117 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Baza_noclegowa_Campingi</Name>
+   <Title>Baza noclegowa - Campingi</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #118 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Baza_noclegowa_Hotele</Name>
+   <Title>Baza noclegowa - Hotele</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #119 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Baza_noclegowa_Schroniska</Name>
+   <Title>Baza noclegowa - Schroniska</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #120 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Bezpieczenstwo_Policja</Name>
+   <Title>Bezpieczeństwo - Posterunki Policji</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #121 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Bezpieczenstwo_PSP</Name>
+   <Title>Bezpieczeństwo - Jednostki Straży Pożarnej</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #122 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Cmentarze_groby</Name>
+   <Title>Religia - Cmentarze - Groby</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #123 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Cmentarze_POI</Name>
+   <Title>Religia - Cmentarzei - Ważne miejsca</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #124 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Cmentarze_zasiegi</Name>
+   <Title>Religia - Cmentarze</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #125 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_Gimnazja</Name>
+   <Title>Edukacja - Gimnazja</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #126 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_Licea</Name>
+   <Title>Edukacja - Licea</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #127 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_Przedszkola</Name>
+   <Title>Edukacja - Przedszkola</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #128 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_SzkolyPodstawowe</Name>
+   <Title>Edukacja - Szkoły Podstawowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #129 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_SzkolyPodstawoweObwody</Name>
+   <Title>Edukacja - Obwody Szkół Podstawowych</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #130 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_SzkolyPolicealne</Name>
+   <Title>Edukacja - Szkoły Policealne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #131 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_Technika</Name>
+   <Title>Edukacja - Technika</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #132 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_WyzszeUczelnie</Name>
+   <Title>Edukacja - Uczelnie Wyższe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #133 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Geodezja_Obszary_msi</Name>
+   <Title>Geodezja - Obszary MSI</Title>
+   <Abstract>Obszary Miejskiejgo Systemu Informacji</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #134 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_granica_1916</Name>
+   <Title>Historia - Granica Warszawy 1916</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #135 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_granica_1938</Name>
+   <Title>Historia - Granica Warszawy 1938</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #136 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_granica_1930</Name>
+   <Title>Historia - Granica Warszawy 1930</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #137 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_granica_1951</Name>
+   <Title>Historia - Granica Warszawy 1951</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #138 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_granica_1957</Name>
+   <Title>Historia - Granica Warszawy 1957</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #139 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_granica_1978</Name>
+   <Title>Historia - Granica Warszawy 1978</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #140 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="1">
+   <Name>WMS/Historia_ulice_1939_liniowe</Name>
+   <Title>Historia - Ulice istniejące w 1939 roku</Title>
+   <Abstract>Ulice istniejące w 1939 roku widoczne w skalach 1:250 - 1:32000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.000" miny="51.00" maxx="22.000" maxy="53.00"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.000" miny="51.00" maxx="22.000" maxy="53.00"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #141 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Historia_ulice_1939_glowne</Name>
+   <Title>Historia - Ulice główne istniejące w 1939 roku</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #142 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="1">
+   <Name>WMS/Historia_ulice_1939_powierzchniowe</Name>
+   <Title>Historia - Place istniejące w 1939 roku</Title>
+   <Abstract>Nazwy placów w 1939 roku widoczny w skalach 1:250 - 1:8000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.000" miny="51.00" maxx="22.000" maxy="53.00"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.000" miny="51.00" maxx="22.000" maxy="53.00"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #143 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Inne_Strefa_Z2</Name>
+   <Title>Inne - Strefa ograniczeń przeznaczenia</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #144 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_DworceKolejowe</Name>
+   <Title>Komunikacja - Dworce kolejowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #145 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_Parkingi_P_R</Name>
+   <Title>Komunikacja - Parkingi P+R</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #146 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Komunikacja_PrzystankiKM(PKP)</Name>
+   <Title>Komunikacja - Przystanki KM (PKP)</Title>
+   <Abstract>Przystanki Kolei Mazowieckich (PKP)</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #147 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Ramka_Sekcje_2000</Name>
+   <Title>Geodezja - Ramka Ortofoto Sekcje 1:2000</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #148 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto1935</Name>
+   <Title>Raster - Fotoplan z 1935 roku</Title>
+   <Abstract>Fotoplan z 1935 roku</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #149 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2012_16m</Name>
+   <Title>Raster - Fotoplan 2012 - piksel 16m</Title>
+   <Abstract>Fotoplan z 2012 roku z pikselem 16m dla zakresu skal od 1:120000 do 1:60000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #150 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Religia_koscioly_kaplice</Name>
+   <Title>Religia - Kościoły i kaplice</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #151 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Bieżnia</Name>
+   <Title>Sport - Bieżnie</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #152 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Fitness</Name>
+   <Title>Sport - Kluby Fitness</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #153 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Hala_sportowa</Name>
+   <Title>Sport - Hale Sportowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #154 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Inne</Name>
+   <Title>Sport - Inne obiekty</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #155 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Korty_tenisowe</Name>
+   <Title>Sport - Korty Tenisowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #156 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Koszykowka</Name>
+   <Title>Sport - Boiska do koszykówki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #157 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Kregielnie</Name>
+   <Title>Sport - Kręgielnie</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #158 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Lodowiska</Name>
+   <Title>Sport - Lodowiska</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #159 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Pchnięcie_kulą</Name>
+   <Title>Sport - Boiska do pchnięcia kulą</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #160 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Pilka_nozna_1</Name>
+   <Title>Sport - Boiska do piłki nożnej</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #161 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Pilka_reczna</Name>
+   <Title>Sport - Boiska do piłki ręcznej</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #162 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Plywalnie</Name>
+   <Title>Sport - Pływalnie kryte</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #163 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Plywalnie_odkryte</Name>
+   <Title>Sport - Pływalnie odkryte</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #164 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Sale_gimnastyczne</Name>
+   <Title>Sport - Sale gimnastyczne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #165 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Sale_i_pawilony_spec</Name>
+   <Title>Sport - Sale i pawilony specjalistyczne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #166 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Scianka_wspinaczkowa</Name>
+   <Title>Sport - Ścianki wspinaczkowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #167 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Siatkowka</Name>
+   <Title>Sport - Boiska do siatkówki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #168 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Silownie</Name>
+   <Title>Sport - Siłownie</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #169 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Skatepark</Name>
+   <Title>Sport - Skateparki</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #170 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Skok_w_dal</Name>
+   <Title>Sport - Boiska do skoku w dal</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #171 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Skok_wzwyż</Name>
+   <Title>Sport - Boiska do skoku wzwyż</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #172 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Sporty_lodziowe</Name>
+   <Title>Sport - Sporty łodziowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #173 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Squash</Name>
+   <Title>Sport - Boiska do squasha</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #174 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Stadiony_LA</Name>
+   <Title>Sport - Stadiony lekkoatletyczne</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #175 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Strzelnice</Name>
+   <Title>Sport - Strzelnice</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #176 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Sport_Tory</Name>
+   <Title>Sport - Tory</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #177 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Turystyka_punkty_informacyjne_msi</Name>
+   <Title>Turystyka - Punkty Informacyjne Miejskiego Systemu Informacji</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #178 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Turystyka_Punkty_IT</Name>
+   <Title>Turystyka - Punkty Informacji Turystycznej</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #179 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Krzewy</Name>
+   <Title>Zieleń - Krzewy</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #180 -->
+  <Layer queryable="1" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Geodezja_Dzialki</Name>
+   <Title>Geodezja_Dzialki</Title>
+   <Abstract>Warstwa z granicami działek ewidencyjnych z pzgik prowadzonego przez m.st. Warszawa. Wykorzystanie danych zgodnie z Ustawą Prawo Geodezyjne i Kartograficzne. Dane są widoczne w kalach większych niz 1:4000</Abstract>
+   
+   <KeywordList>
+     <Keyword>EGIB</Keyword>
+ <Keyword> działki</Keyword>
+ <Keyword> ewidencja</Keyword>
+ 
+   </KeywordList>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.852" miny="52.098" maxx="21.272" maxy="52.368"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7489860.710" miny="5773789.510" maxx="7518549.170" maxy="5803861.960"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="626822.239" miny="471799.425" maxx="654659.339" maxy="502640.357"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.852" miny="52.098" maxx="21.272" maxy="52.368"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #181 -->
+  <Layer queryable="1" cascaded="0" noSubsets="0" opaque="1">
+   <Name>WMS/Arch_Dcyzje_pozwolenia_na_budowe</Name>
+   <Title>Decyzje o pozwoleniu na budowę</Title>
+   <Abstract>Warstwa wydanych decyzji o pozwoleniu na budowę od skali 1:40000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #182 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Drzewa</Name>
+   <Title>Zieleń - Drzewa</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #183 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Zielen_Grupy_drzew</Name>
+   <Title>Zieleń - Grupy drzew</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.851603" miny="52.097603" maxx="21.267225" maxy="52.366737"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #184 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_cieplownicza</Name>
+   <Title>UP-ciepłownicza</Title>
+   <Abstract>Sieć ciepłownicza - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #185 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_elektroenergetyczna</Name>
+   <Title>UP-elektroenergetyczna</Title>
+   <Abstract>Sieć elektroenergetyczna - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #186 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_elem_naziemne</Name>
+   <Title>UP-elementy naziemne</Title>
+   <Abstract>Elementy naziemne urządzen poedziemnych - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #187 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_gazowa</Name>
+   <Title>UP-gazowa</Title>
+   <Abstract>Sieć gazowa - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #188 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_kanalizacyjna</Name>
+   <Title>UP-kanalizacyjna</Title>
+   <Abstract>Sieć kanalizacyjna - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #189 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_projekty_ZUD</Name>
+   <Title>UP-projekty-ZUD</Title>
+   <Abstract>Projekty ZUD - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #190 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_specjalna</Name>
+   <Title>UP-specjalna</Title>
+   <Abstract>Sieć specjalna - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #191 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_telekomunikacyjna</Name>
+   <Title>UP-telekomunikacyjna</Title>
+   <Abstract>Sieć telekomunikacyjna - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #192 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/UP_wodociagowa</Name>
+   <Title>UP-wodociągowa</Title>
+   <Abstract>Sieć wodociągowa - od skali 1:2000. Dane z ODGiK m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #193 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Edukacja_SzkolyBranzowe</Name>
+   <Title>Edukacja - Szkoły branżowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.000" miny="51.00" maxx="22.000" maxy="53.00"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7400000.00" miny="5700000.00" maxx="7600000.00" maxy="5900000.00"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.000" miny="51.00" maxx="22.000" maxy="53.00"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #194 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Religia_parafie_rzymsko_katolickie</Name>
+   <Title>Religia - Parafie rzymskokatolickie</Title>
+   <Abstract>Parafie rzymskokatolickie</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #195 -->
+  <Layer queryable="1" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Geodezja_Granice_Dzielnic</Name>
+   <Title>Geodezja - Granice dzielnic</Title>
+   <Abstract>Granice dzielnic</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #196 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2016_10cm</Name>
+   <Title>Raster - Fotoplan 2016 - piksel 10cm</Title>
+   <Abstract>Fotoplan z 2016 roku z pikselem 10cm dla zakresu skal od 0 do 1:15000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #197 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2016_16m</Name>
+   <Title>Raster - Fotoplan 2016 - piksel 16m</Title>
+   <Abstract>Fotoplan z 2016 roku z pikselem 16m dla zakresu skal od 1:120000 do 1:60000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #198 -->
+  <Layer queryable="1" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/ENOM_Ulice</Name>
+   <Title>ENOM_Ulice</Title>
+   <Abstract>Obiekty liniowe nazewnictwa m.st. Warszawy</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.82" miny="52.05" maxx="21.32" maxy="52.40"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #199 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_linie rozgraniczajace</Name>
+   <Title>Plany zagospodarowania - linie rozgraniczające</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #200 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Plany_plany_zasiegi</Name>
+   <Title>Plany zagospodarowania - zasięgi planów</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #201 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Raster_foto2017_8cm</Name>
+   <Title>Raster - Fotoplan 2017 - piksel 8cm</Title>
+   <Abstract>Fotoplan z 2017 roku z pikselem 8cm dla zakresu skal od 0 do 1:30000</Abstract>
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+    <LatLonBoundingBox minx="20.837" miny="52.091" maxx="21.282" maxy="52.378"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488800.000" miny="5773000.000" maxx="7519200.000" maxy="5805000.000"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="625784.121" miny="470981.352" maxx="655278.249" maxy="503795.573"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.837" miny="52.091" maxx="21.282" maxy="52.378"/>
+ 
+   
+  </Layer>
+ 
+  <!-- Published Layer #202 -->
+  <Layer queryable="0" cascaded="0" noSubsets="0" opaque="0">
+   <Name>WMS/Rowery_trasy_rowerowe</Name>
+   <Title>Rowery-Trasy rowerowe</Title>
+   
+   
+   
+    
+  <SRS>EPSG:2178</SRS>
+ 
+  <SRS>EPSG:4326</SRS>
+ 
+  <SRS>EPSG:2180</SRS>
+ 
+    <LatLonBoundingBox minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+    
+  <BoundingBox SRS="EPSG:2178" minx="7488477.25192" miny="5772296.739585" maxx="7519616.26268" maxy="5805199.299715"/>
+ 
+  <BoundingBox SRS="EPSG:4326" minx="20.8721" miny="52.0838" maxx="21.2475" maxy="52.3803"/>
+ 
+  <BoundingBox SRS="EPSG:2180" minx="619971.000" miny="469226.00" maxx="661090.00" maxy="505550.00"/>
+ 
+   
+  </Layer>
+ 
+    </Layer>
+   </Capability>
+  </WMT_MS_Capabilities>
+ 

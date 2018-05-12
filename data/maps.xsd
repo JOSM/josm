@@ -110,6 +110,18 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="defaultLayers">
+        <xs:sequence>
+            <xs:element name="layer" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="optional" />
+                    <xs:attribute name="style" type="xs:string" use="optional" />
+                    <xs:attribute name="tileMatrixSet" type="xs:string" use="optional" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
     <!-- ISO3166-1, taken from http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm + "EU" for Europe -->
     <xs:simpleType name="iso3166">
         <xs:restriction base="xs:string">
@@ -712,8 +724,19 @@
                             <xs:element name="valid-georeference" minOccurs="0" maxOccurs="1" type="xs:boolean" />
                             <!-- old unused feature, ignored -->
                             <xs:element name="epsg4326to3857Supported" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+                            <xs:element name="defaultLayers" type="tns:defaultLayers" minOccurs="0" maxOccurs="1" />
+                            <xs:element name="custom-http-header" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="header-name" type="xs:string" />
+                                    <xs:attribute name="header-value" type="xs:string" />
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="transparent" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="format" type="xs:string" minOccurs="0" maxOccurs="1"/>
                             <!-- does imagery server supports "/status" and tile re-rendering using "/dirty". Defaults to false. -->
                             <xs:element name="mod-tile-features" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+                            <!--  minimum time in seconds for which tile will be considered valid -->
+                            <xs:element name="minimum-tile-expire" minOccurs="0" maxOccurs="1" type="xs:positiveInteger" />
                         </xs:choice>
                     </xs:sequence>
                     <xs:attribute name="last-check" type="xs:date" use="optional" />

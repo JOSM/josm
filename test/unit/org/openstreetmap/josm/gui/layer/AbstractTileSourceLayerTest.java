@@ -119,7 +119,8 @@ public class AbstractTileSourceLayerTest {
         protected TileLoaderFactory getTileLoaderFactory() {
             return new TileLoaderFactory() {
                 @Override
-                public TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> headers) {
+                public TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> headers,
+                        long minimumExpiryTime) {
                     return null;
                 }
             };

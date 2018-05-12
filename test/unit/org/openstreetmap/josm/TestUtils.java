@@ -14,6 +14,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -37,6 +41,9 @@ import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.testutils.FakeGraphics;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -379,4 +386,47 @@ public final class TestUtils {
             Assume.assumeNoException(e);
         }
     }
+
+    /**
+     * Return WireMock server serving files under ticker directory
+     * @param ticketId Ticket numeric identifier
+     * @return WireMock HTTP server on dynamic port
+     */
+    public static WireMockServer getWireMockServer(int ticketId) {
+            return new WireMockServer(
+                    WireMockConfiguration.options()
+                        .dynamicPort()
+                        .usingFilesUnderDirectory(getRegressionDataDir(ticketId))
+                    );
+    }
+
+    /**
+     * Return WireMock server serving files under ticker directory
+     * @return WireMock HTTP server on dynamic port
+     */
+    public static WireMockServer getWireMockServer() {
+            return new WireMockServer(
+                    WireMockConfiguration.options()
+                        .dynamicPort()
+                    );
+    }
+    /**
+     * Renders Temporal to RFC 1123 Date Time
+     * @param time
+     * @return string representation according to RFC1123 of time
+     */
+    public static String getHTTPDate(Temporal time) {
+        return DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC).format(time);
+    }
+
+    /**
+     * Renders java time stamp to RFC 1123 Date Time
+     * @param time
+     * @return string representation according to RFC1123 of time
+     */
+    public static String getHTTPDate(long time) {
+        return getHTTPDate(Instant.ofEpochMilli(time));
+    }
+
+
 }

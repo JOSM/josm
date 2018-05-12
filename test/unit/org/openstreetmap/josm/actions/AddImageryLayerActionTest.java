@@ -69,11 +69,18 @@ public final class AddImageryLayerActionTest {
      */
     @Test
     public void testActionPerformedEnabledWms() {
-        wireMockRule.stubFor(get(urlEqualTo("/wms?VERSION=1.1.1&SERVICE=WMS&REQUEST=GetCapabilities"))
+        wireMockRule.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1"))
                 .willReturn(aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "text/xml")
-                    .withBodyFile("imagery/wms-capabilities.xml")));
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBodyFile("imagery/wms-capabilities.xml")));
+        wireMockRule.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities"))
+                .willReturn(aResponse()
+                        .withStatus(404)));
+        wireMockRule.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"))
+                .willReturn(aResponse()
+                        .withStatus(404)));
+
         new AddImageryLayerAction(new ImageryInfo("localhost", "http://localhost:" + wireMockRule.port() + "/wms?",
                 "wms_endpoint", null, null)).actionPerformed(null);
         List<WMSLayer> wmsLayers = MainApplication.getLayerManager().getLayersOfType(WMSLayer.class);

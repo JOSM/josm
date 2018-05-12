@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
+import org.openstreetmap.josm.data.imagery.TileJobOptions;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -92,38 +93,33 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private final ThreadPoolExecutor downloadJobExecutor;
     private Runnable finishTask;
     private boolean force;
+    private long minimumExpiryTime;
 
     /**
      * @param cache cache instance that we will work on
-     * @param headers HTTP headers to be sent together with request
-     * @param readTimeout when connecting to remote resource
-     * @param connectTimeout when connecting to remote resource
+     * @param options options of the request
      * @param downloadJobExecutor that will be executing the jobs
      */
     public JCSCachedTileLoaderJob(ICacheAccess<K, V> cache,
-            int connectTimeout, int readTimeout,
-            Map<String, String> headers,
+            TileJobOptions options,
             ThreadPoolExecutor downloadJobExecutor) {
         CheckParameterUtil.ensureParameterNotNull(cache, "cache");
         this.cache = cache;
         this.now = System.currentTimeMillis();
-        this.connectTimeout = connectTimeout;
-        this.readTimeout = readTimeout;
-        this.headers = headers;
+        this.connectTimeout = options.getConnectionTimeout();
+        this.readTimeout = options.getReadTimeout();
+        this.headers = options.getHeaders();
         this.downloadJobExecutor = downloadJobExecutor;
+        this.minimumExpiryTime = TimeUnit.SECONDS.toMillis(options.getMinimumExpiryTime());
     }
 
     /**
      * @param cache cache instance that we will work on
-     * @param headers HTTP headers to be sent together with request
-     * @param readTimeout when connecting to remote resource
-     * @param connectTimeout when connecting to remote resource
+     * @param options of the request
      */
     public JCSCachedTileLoaderJob(ICacheAccess<K, V> cache,
-            int connectTimeout, int readTimeout,
-            Map<String, String> headers) {
-        this(cache, connectTimeout, readTimeout,
-                headers, DEFAULT_DOWNLOAD_JOB_DISPATCHER);
+            TileJobOptions options) {
+        this(cache, options, DEFAULT_DOWNLOAD_JOB_DISPATCHER);
     }
 
     private void ensureCacheElement() {
@@ -277,18 +273,18 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         if (expires != 0L) {
             // put a limit to the expire time (some servers send a value
             // that is too large)
-            expires = Math.min(expires, attributes.getCreateTime() + EXPIRE_TIME_SERVER_LIMIT);
+            expires = Math.min(expires, attributes.getCreateTime() + Math.max(EXPIRE_TIME_SERVER_LIMIT, minimumExpiryTime));
             if (now > expires) {
                 Logging.debug("JCS - Object {0} has expired -> valid to {1}, now is: {2}",
                         new Object[]{getUrlNoException(), Long.toString(expires), Long.toString(now)});
                 return false;
             }
         } else if (attributes.getLastModification() > 0 &&
-                now - attributes.getLastModification() > DEFAULT_EXPIRE_TIME) {
+                now - attributes.getLastModification() > Math.max(DEFAULT_EXPIRE_TIME, minimumExpiryTime)) {
             // check by file modification date
             Logging.debug("JCS - Object has expired, maximum file age reached {0}", getUrlNoException());
             return false;
-        } else if (now - attributes.getCreateTime() > DEFAULT_EXPIRE_TIME) {
+        } else if (now - attributes.getCreateTime() > Math.max(DEFAULT_EXPIRE_TIME, minimumExpiryTime)) {
             Logging.debug("JCS - Object has expired, maximum time since object creation reached {0}", getUrlNoException());
             return false;
         }
@@ -329,6 +325,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 // If isModifiedSince or If-None-Match has been set
                 // and the server answers with a HTTP 304 = "Not Modified"
                 Logging.debug("JCS - If-Modified-Since/ETag test: local version is up to date: {0}", getUrl());
+                // update cache attributes
+                attributes = parseHeaders(urlConn);
+                cache.put(getCacheKey(), cacheData, attributes);
                 return true;
             } else if (isObjectLoadable() // we have an object in cache, but we haven't received 304 response code
                     && (
@@ -452,9 +451,12 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 // ignore malformed Cache-Control headers
                 Logging.trace(e);
             }
+            if (lng.equals(0L)) {
+                lng = System.currentTimeMillis() + DEFAULT_EXPIRE_TIME;
+            }
         }
 
-        ret.setExpirationTime(lng);
+        ret.setExpirationTime(Math.max(minimumExpiryTime + System.currentTimeMillis(), lng));
         ret.setLastModification(now);
         ret.setEtag(urlConn.getHeaderField("ETag"));
 
@@ -479,8 +481,14 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private boolean isCacheValidUsingHead() throws IOException {
         final HttpClient.Response urlConn = getRequest("HEAD", false).connect();
         long lastModified = urlConn.getLastModified();
-        return (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getHeaderField("ETag"))) ||
+        boolean ret = (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getHeaderField("ETag"))) ||
                 (lastModified != 0 && lastModified <= attributes.getLastModification());
+        if (ret) {
+            // update attributes
+            attributes = parseHeaders(urlConn);
+            cache.put(getCacheKey(), cacheData, attributes);
+        }
+        return ret;
     }
 
     /**

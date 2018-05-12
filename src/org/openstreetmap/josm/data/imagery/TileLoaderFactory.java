@@ -18,7 +18,8 @@ public interface TileLoaderFactory {
     /**
      * @param listener that will be notified, when tile has finished loading
      * @param headers that will be sent with requests to TileSource. <code>null</code> indicates none
+     * @param minimumExpiryTime minimum expiry time
      * @return TileLoader that uses both of above
      */
-    TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> headers);
+    TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> headers, long minimumExpiryTime);
 }

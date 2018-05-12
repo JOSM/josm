@@ -43,9 +43,8 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
             tileLoaderConstructor = tileLoaderClass.getConstructor(
                     TileLoaderListener.class,
                     ICacheAccess.class,
-                    int.class,
-                    int.class,
-                    Map.class);
+                    TileJobOptions.class
+                    );
         } catch (NoSuchMethodException | SecurityException e) {
             Logging.log(Logging.LEVEL_WARN, "Unable to initialize cache tile loader factory", e);
             throw new IllegalArgumentException(e);
@@ -63,7 +62,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
     }
 
     @Override
-    public TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> inputHeaders) {
+    public TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> inputHeaders, long minimumExpiryTime) {
         Map<String, String> headers = new ConcurrentHashMap<>();
         headers.put("User-Agent", Version.getInstance().getFullAgentString());
         headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
@@ -71,20 +70,23 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
             headers.putAll(inputHeaders);
 
         return getLoader(listener, cache,
-                (int) TimeUnit.SECONDS.toMillis(Config.getPref().getInt("socket.timeout.connect", 15)),
-                (int) TimeUnit.SECONDS.toMillis(Config.getPref().getInt("socket.timeout.read", 30)),
-                headers);
+                new TileJobOptions(
+                        (int) TimeUnit.SECONDS.toMillis(Config.getPref().getInt("socket.timeout.connect", 15)),
+                        (int) TimeUnit.SECONDS.toMillis(Config.getPref().getInt("socket.timeout.read", 30)),
+                        headers,
+                        minimumExpiryTime
+                        )
+                );
     }
 
     protected TileLoader getLoader(TileLoaderListener listener, ICacheAccess<String, BufferedImageCacheEntry> cache,
-            int connectTimeout, int readTimeout, Map<String, String> headers) {
+            TileJobOptions options) {
         try {
             return tileLoaderConstructor.newInstance(
                     listener,
                     cache,
-                    connectTimeout,
-                    readTimeout,
-                    headers);
+                    options
+                    );
         } catch (IllegalArgumentException e) {
             Logging.warn(e);
             throw e;

@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
@@ -22,15 +21,15 @@ public class WMSCachedTileLoaderJob extends TMSCachedTileLoaderJob {
      * @param listener will be notified, when tile has loaded
      * @param tile to load
      * @param cache to use (get/put)
-     * @param connectTimeout to tile source
-     * @param readTimeout to tile source
-     * @param headers to be sent with request
+     * @param options options for tile job
      * @param downloadExecutor that will execute the download task (if needed)
      */
-    public WMSCachedTileLoaderJob(TileLoaderListener listener, Tile tile,
-            ICacheAccess<String, BufferedImageCacheEntry> cache, int connectTimeout, int readTimeout,
-            Map<String, String> headers, ThreadPoolExecutor downloadExecutor) {
-        super(listener, tile, cache, connectTimeout, readTimeout, headers, downloadExecutor);
+    public WMSCachedTileLoaderJob(TileLoaderListener listener,
+            Tile tile,
+            ICacheAccess<String, BufferedImageCacheEntry> cache,
+            TileJobOptions options,
+            ThreadPoolExecutor downloadExecutor) {
+        super(listener, tile, cache, options, downloadExecutor);
     }
 
     @Override
