@@ -289,7 +289,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                         }
                         return false;
                     }
-                } catch (UnsatisfiedLinkError e) {
+                } catch (UnsatisfiedLinkError | SecurityException e) {
                     throw new IOException(e);
                 }
             }
