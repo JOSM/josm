@@ -50,6 +50,8 @@ import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+import org.awaitility.Awaitility;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -573,11 +575,11 @@ public class JOSMTestRules implements TestRule {
     @SuppressFBWarnings("DM_GC")
     protected void after() throws ReflectiveOperationException {
         // Sync AWT Thread
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-            }
-        });
+        GuiHelper.runInEDTAndWait(() -> { });
+        // Sync worker thread
+        final boolean[] queueEmpty = {false};
+        MainApplication.worker.submit(() -> queueEmpty[0] = true);
+        Awaitility.await().forever().until(() -> queueEmpty[0]);
         // Remove all layers
         cleanLayerEnvironment();
         MemoryManagerTest.resetState(allowMemoryManagerLeaks);
@@ -658,6 +660,7 @@ public class JOSMTestRules implements TestRule {
                 if (exception != null) {
                     throw exception;
                 } else {
+                    Logging.debug("Thread state at timeout: {0}", Thread.getAllStackTraces());
                     throw new Exception(MessageFormat.format("Test timed out after {0}ms", timeout));
                 }
             }
