@@ -1,13 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.imagery;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Component;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -17,6 +15,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.openstreetmap.josm.data.imagery.LayerDetails;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 
 /**
@@ -26,8 +25,7 @@ public class WMSLayerTree {
     private final MutableTreeNode treeRootNode = new DefaultMutableTreeNode();
     private final DefaultTreeModel treeData = new DefaultTreeModel(treeRootNode);
     private final JTree layerTree = new JTree(treeData);
-    private final List<WMSImagery.LayerDetails> selectedLayers = new LinkedList<>();
-    private boolean previouslyShownUnsupportedCrsError;
+    private final List<LayerDetails> selectedLayers = new LinkedList<>();
 
     /**
      * Returns the root node.
@@ -49,7 +47,7 @@ public class WMSLayerTree {
      * Returns the list of selected layers.
      * @return the list of selected layers
      */
-    public List<WMSImagery.LayerDetails> getSelectedLayers() {
+    public List<LayerDetails> getSelectedLayers() {
         return selectedLayers;
     }
 
@@ -61,20 +59,27 @@ public class WMSLayerTree {
         layerTree.addTreeSelectionListener(new WMSTreeSelectionListener());
     }
 
-    void addLayersToTreeData(MutableTreeNode parent, List<WMSImagery.LayerDetails> layers) {
-        for (WMSImagery.LayerDetails layerDetails : layers) {
+    void addLayersToTreeData(MutableTreeNode parent, Collection<LayerDetails> layers) {
+        for (LayerDetails layerDetails : layers.stream()
+                .sorted((l1, l2) -> -1 * l1.toString().compareTo(l2.toString()))
+                .toArray(LayerDetails[]::new)
+                ) {
             DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(layerDetails);
-            addLayersToTreeData(treeNode, layerDetails.children);
+            addLayersToTreeData(treeNode, layerDetails.getChildren());
             treeData.insertNodeInto(treeNode, parent, 0);
         }
     }
 
     /**
-     * Updates the whole tree with the given WMS imagery info.
+     * Updates the whole tree with the given WMS imagery info. All previous content is removed
      * @param wms The imagery info for a given WMS server
      */
     public void updateTree(WMSImagery wms) {
-        treeRootNode.setUserObject(wms.getServiceUrl().getHost());
+        // treeRootNode = new DefaultMutableTreeNode();
+        while (treeRootNode.getChildCount() > 0) {
+            treeRootNode.remove(0);
+        }
+        treeRootNode.setUserObject(wms.buildRootUrl());
         updateTreeList(wms.getLayers());
     }
 
@@ -82,7 +87,7 @@ public class WMSLayerTree {
      * Updates the list of WMS layers.
      * @param layers The list of layers to add to the root node
      */
-    public void updateTreeList(List<WMSImagery.LayerDetails> layers) {
+    public void updateTreeList(Collection<LayerDetails> layers) {
         addLayersToTreeData(getTreeRootNode(), layers);
         getLayerTree().expandRow(0);
         getLayerTree().expandRow(1);
@@ -97,9 +102,9 @@ public class WMSLayerTree {
                     row, hasFocus);
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
             Object userObject = treeNode.getUserObject();
-            if (userObject instanceof WMSImagery.LayerDetails) {
-                WMSImagery.LayerDetails layer = (WMSImagery.LayerDetails) userObject;
-                setEnabled(layer.isSupported());
+            if (userObject instanceof LayerDetails) {
+                LayerDetails ld = (LayerDetails) userObject;
+                setEnabled(ld.isSelectable());
             }
             return this;
         }
@@ -117,17 +122,9 @@ public class WMSLayerTree {
             selectedLayers.clear();
             for (TreePath i : selectionRows) {
                 Object userObject = ((DefaultMutableTreeNode) i.getLastPathComponent()).getUserObject();
-                if (userObject instanceof WMSImagery.LayerDetails) {
-                    WMSImagery.LayerDetails detail = (WMSImagery.LayerDetails) userObject;
-                    if (!detail.isSupported()) {
-                        layerTree.removeSelectionPath(i);
-                        if (!previouslyShownUnsupportedCrsError) {
-                            JOptionPane.showMessageDialog(null, tr("That layer does not support any of JOSM''s projections,\n" +
-                                    "so you can not use it. This message will not show again."),
-                                    tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-                            previouslyShownUnsupportedCrsError = true;
-                        }
-                    } else if (detail.ident != null) {
+                if (userObject instanceof LayerDetails) {
+                    LayerDetails detail = (LayerDetails) userObject;
+                    if (detail.isSelectable()) {
                         selectedLayers.add(detail);
                     }
                 }
