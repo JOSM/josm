@@ -9,12 +9,15 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -438,7 +441,7 @@ public class CachedFile implements Closeable {
         if (parameter != null)
             urlStr = urlStr.replaceAll("%<(.*)>", "");
         long age = 0L;
-        long maxAgeMillis = maxAge;
+        long maxAgeMillis = TimeUnit.SECONDS.toMillis(maxAge);
         Long ifModifiedSince = null;
         File localFile = null;
         List<String> localPathEntry = new ArrayList<>(Config.getPref().getList(prefKey));
@@ -496,6 +499,7 @@ public class CachedFile implements Closeable {
 
         String a = urlStr.replaceAll("[^A-Za-z0-9_.-]", "_");
         String localPath = "mirror_" + a;
+        localPath = truncatePath(destDir, localPath);
         destDirFile = new File(destDir, localPath + ".tmp");
         try {
             activeConnection = HttpClient.create(url)
@@ -543,6 +547,33 @@ public class CachedFile implements Closeable {
     private static void checkOfflineAccess(String urlString) {
         OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlString, Main.getJOSMWebsite());
         OnlineResource.OSM_API.checkOfflineAccess(urlString, OsmApi.getOsmApi().getServerUrl());
+    }
+
+    private static String truncatePath(String directory, String fileName) {
+        String ret = fileName;
+        if (directory.length() + fileName.length() > 255) {
+            // Windows doesn't support paths longer than 260, leave 5 chars as safe buffer, 4 will be used by ".tmp"
+            // TODO: what about filename size on other systems? 255?
+            if (directory.length() > 191 && Main.isPlatformWindows()) {
+                // digest length + name prefix == 64
+                // 255 - 64 = 191
+                // TODO: use this check only on Windows?
+                throw new IllegalArgumentException("Path " + directory + " too long to cached files");
+            }
+
+            MessageDigest md;
+            try {
+                md = MessageDigest.getInstance("SHA-256");
+                md.update(fileName.getBytes(StandardCharsets.UTF_8));
+                String digest = String.format("%064x", new BigInteger(1, md.digest()));
+                return fileName.substring(0, Math.min(fileName.length(), 32)) + digest.substring(0, 32);
+            } catch (NoSuchAlgorithmException e) {
+                Logging.error(e);
+                // TODO: what better can we do here?
+                throw new IllegalArgumentException("Missing digest algorithm SHA-256", e);
+            }
+        }
+        return fileName;
     }
 
     /**
