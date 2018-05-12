@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -16,8 +15,9 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -33,6 +33,9 @@ public class WMSImageryTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().platform().projection();
 
+    @Rule
+    public WireMockRule tileServer = new WireMockRule(WireMockConfiguration.options()
+            .dynamicPort());
     /**
      * Unit test of {@code WMSImagery.WMSGetCapabilitiesException} class
      */
@@ -54,22 +57,20 @@ public class WMSImageryTest {
      */
     @Test
     public void testTicket15730() throws IOException, WMSGetCapabilitiesException {
-       WireMockServer wm = TestUtils.getWireMockServer(15730);
-       wm.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBodyFile("capabilities.xml")));
-       wm.start();
-       WMSImagery wms = new WMSImagery(wm.url("capabilities.xml"));
-       assertEquals(1, wms.getLayers().size());
-       assertTrue(wms.getLayers().get(0).getAbstract().startsWith("South Carolina  NAIP Imagery 2017    Resolution: 100CM "));
-       wm.shutdown();
+        tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
+                Files.readAllBytes(Paths.get(TestUtils.getRegressionDataDir(15730), "capabilities.xml"))
+                )));
+
+        WMSImagery wms = new WMSImagery(tileServer.url("capabilities.xml"));
+        assertEquals(1, wms.getLayers().size());
+        assertTrue(wms.getLayers().get(0).getAbstract().startsWith("South Carolina  NAIP Imagery 2017    Resolution: 100CM "));
     }
 
     @Test
     public void testNestedLayers() throws Exception {
-        WireMockServer getCapabilitiesMock = TestUtils.getWireMockServer();
-        String getCapabilitiesBody = new String(Files.readAllBytes(Paths.get(TestUtils.getTestDataRoot() + "wms/mapa-um-warszawa-pl.xml")), "UTF-8");
-        getCapabilitiesMock.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(getCapabilitiesBody)));
-        getCapabilitiesMock.start();
-        WMSImagery wmsi = new WMSImagery(getCapabilitiesMock.url("/serwis"));
+        tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
+                Files.readAllBytes(Paths.get(TestUtils.getTestDataRoot() + "wms/mapa-um-warszawa-pl.xml")))));
+        WMSImagery wmsi = new WMSImagery(tileServer.url("/serwis"));
         assertEquals(1, wmsi.getLayers().size());
         assertEquals("Server WMS m.st. Warszawy", wmsi.getLayers().get(0).toString());
         assertEquals(202, wmsi.getLayers().get(0).getChildren().size());
@@ -82,13 +83,10 @@ public class WMSImageryTest {
      */
     @Test
     public void testTicket16248() throws IOException, WMSGetCapabilitiesException {
-        Path capabilitiesPath = Paths.get(TestUtils.getRegressionDataFile(16248, "capabilities.xml"));
-        WireMockServer getCapabilitiesMock = TestUtils.getWireMockServer();
-        getCapabilitiesMock.stubFor(
+        tileServer.stubFor(
                 WireMock.get(WireMock.anyUrl())
-                .willReturn(WireMock.aResponse().withBody(Files.readAllBytes(capabilitiesPath))));
-        getCapabilitiesMock.start();
-        WMSImagery wms = new WMSImagery(getCapabilitiesMock.url("any"));
+                .willReturn(WireMock.aResponse().withBody(Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16248, "capabilities.xml"))))));
+        WMSImagery wms = new WMSImagery(tileServer.url("any"));
         assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k", wms.buildRootUrl());
         assertEquals("wms.hgis.cartomatic.pl", wms.getLayers().get(0).getName());
         assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25kFORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&"
