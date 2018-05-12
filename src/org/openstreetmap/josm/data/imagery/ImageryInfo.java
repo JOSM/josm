@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.imagery;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Image;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,10 +15,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.stream.JsonCollectors;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
@@ -217,9 +223,19 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     /** is the geo reference correct - don't offer offset handling */
     private boolean isGeoreferenceValid;
     /** which layers should be activated by default on layer addition. **/
-    private Collection<DefaultLayer> defaultLayers = Collections.emptyList();
-    // when adding a field, also adapt the ImageryInfo(ImageryInfo)
-    // and ImageryInfo(ImageryPreferenceEntry) constructor, equals method, and ImageryPreferenceEntry
+    private List<DefaultLayer> defaultLayers = new ArrayList<>();
+    /** HTTP headers **/
+    private Map<String, String> customHttpHeaders = new ConcurrentHashMap<>();
+    /** Should this map be transparent **/
+    private boolean transparent = true;
+    private int minimumTileExpire = (int) TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get());
+    /** when adding a field, also adapt the:
+     * {@link #ImageryPreferenceEntry ImageryPreferenceEntry object}
+     * {@link #ImageryPreferenceEntry#ImageryPreferenceEntry(ImageryInfo) ImageryPreferenceEntry constructor}
+     * {@link #ImageryInfo(ImageryPreferenceEntry) ImageryInfo constructor}
+     * {@link #ImageryInfo(ImageryInfo) ImageryInfo constructor}
+     * {@link #equalsPref(ImageryPreferenceEntry) equalsPref method}
+     **/
 
     /**
      * Auxiliary class to save an {@link ImageryInfo} object in the preferences.
@@ -257,8 +273,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @StructEntry boolean bestMarked;
         @StructEntry boolean modTileFeatures;
         @StructEntry boolean overlay;
-        // TODO: disabled until change of layers is implemented
-        // @StructEntry String default_layers;
+        @StructEntry String default_layers;
+        @StructEntry Map<String, String> customHttpHeaders;
+        @StructEntry boolean transparent;
+        @StructEntry int minimumTileExpire;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
@@ -307,7 +325,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                     shapes = shapesString.toString();
                 }
             }
-            projections = i.serverProjections.stream().collect(Collectors.joining(","));
+            if (!i.serverProjections.isEmpty()) {
+                projections = i.serverProjections.stream().collect(Collectors.joining(","));
+            }
             if (i.noTileHeaders != null && !i.noTileHeaders.isEmpty()) {
                 noTileHeaders = new MultiMap<>(i.noTileHeaders);
             }
@@ -324,8 +344,12 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
             valid_georeference = i.isGeoreferenceValid();
             modTileFeatures = i.isModTileFeatures();
-            // TODO disabled until change of layers is implemented
-            // default_layers = i.defaultLayers.stream().collect(Collectors.joining(","));
+            if (!i.defaultLayers.isEmpty()) {
+                default_layers = i.defaultLayers.stream().map(x -> x.toJson()).collect(JsonCollectors.toJsonArray()).toString();
+            }
+            customHttpHeaders = i.customHttpHeaders;
+            transparent = i.isTransparent();
+            minimumTileExpire = i.minimumTileExpire;
         }
 
         @Override
@@ -467,8 +491,16 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         metadataHeaders = e.metadataHeaders;
         isGeoreferenceValid = e.valid_georeference;
         modTileFeatures = e.modTileFeatures;
-        // TODO disabled until change of layers is implemented
-        // defaultLayers = Arrays.asList(e.default_layers.split(","));
+        if (e.default_layers != null) {
+            defaultLayers = Json.createReader(new StringReader(e.default_layers)).
+                    readArray().
+                    stream().
+                    map(x -> DefaultLayer.fromJson((JsonObject) x, imageryType)).
+                    collect(Collectors.toList());
+        }
+        customHttpHeaders = e.customHttpHeaders;
+        transparent = e.transparent;
+        minimumTileExpire = e.minimumTileExpire;
     }
 
     /**
@@ -513,6 +545,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.icon = i.icon;
         this.isGeoreferenceValid = i.isGeoreferenceValid;
         this.defaultLayers = i.defaultLayers;
+        this.customHttpHeaders = i.customHttpHeaders;
+        this.transparent = i.transparent;
+        this.minimumTileExpire = i.minimumTileExpire;
     }
 
     @Override
@@ -564,7 +599,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.noTileHeaders, other.noTileHeaders) &&
                 Objects.equals(this.noTileChecksums, other.noTileChecksums) &&
                 Objects.equals(this.metadataHeaders, other.metadataHeaders) &&
-                Objects.equals(this.defaultLayers, other.defaultLayers);
+                Objects.equals(this.defaultLayers, other.defaultLayers) &&
+                Objects.equals(this.customHttpHeaders, other.customHttpHeaders) &&
+                Objects.equals(this.transparent, other.transparent) &&
+                Objects.equals(this.minimumTileExpire, other.minimumTileExpire);
         // CHECKSTYLE.ON: BooleanExpressionComplexity
     }
 
@@ -1371,7 +1409,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * to work on
      * @return Collection of the layer names
      */
-    public Collection<DefaultLayer> getDefaultLayers() {
+    public List<DefaultLayer> getDefaultLayers() {
         return defaultLayers;
     }
 
@@ -1379,12 +1417,54 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * Sets the default layers that user will work with
      * @param layers set the list of default layers
      */
-    public void setDefaultLayers(Collection<DefaultLayer> layers) {
-        if (ImageryType.WMTS.equals(this.imageryType)) {
-            CheckParameterUtil.ensureThat(layers == null ||
-                    layers.isEmpty() ||
-                    layers.iterator().next() instanceof WMTSDefaultLayer, "Incorrect default layer");
-        }
+    public void setDefaultLayers(List<DefaultLayer> layers) {
         this.defaultLayers = layers;
+    }
+
+    /**
+     * Returns custom HTTP headers that should be sent with request towards imagery provider
+     * @return headers
+     */
+    public Map<String, String> getCustomHttpHeaders() {
+        return customHttpHeaders;
+    }
+
+    /**
+     * Sets custom HTTP headers that should be sent with request towards imagery provider
+     * @param customHttpHeaders
+     */
+    public void setCustomHttpHeaders(Map<String, String> customHttpHeaders) {
+        this.customHttpHeaders = customHttpHeaders;
+    }
+
+    /**
+     * @return should this imagery be transparent
+     */
+    public boolean isTransparent() {
+        return transparent;
+    }
+
+    /**
+     *
+     * @param transparent set to true if imagery should be transparent
+     */
+    public void setTransparent(boolean transparent) {
+        this.transparent = transparent;
+    }
+
+    /**
+     * @return minimum tile expiration in seconds
+     */
+    public int getMinimumTileExpire() {
+        return minimumTileExpire;
+    }
+
+    /**
+     * Sets minimum tile expiration in seconds
+     * @param minimumTileExpire
+     */
+    public void setMinimumTileExpire(int minimumTileExpire) {
+        this.minimumTileExpire = minimumTileExpire;
+
     }
 }

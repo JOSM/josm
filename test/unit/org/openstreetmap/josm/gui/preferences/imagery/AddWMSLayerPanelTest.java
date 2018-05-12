@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.imagery;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import org.junit.Rule;
@@ -20,7 +19,7 @@ public class AddWMSLayerPanelTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
+    public JOSMTestRules test = new JOSMTestRules().platform().preferences();
 
     /**
      * Unit test of {@link AddWMSLayerPanel}.
@@ -28,7 +27,6 @@ public class AddWMSLayerPanelTest {
     @Test
     public void testAddWMSLayerPanel() {
         AddWMSLayerPanel panel = new AddWMSLayerPanel();
-        assertEquals("", panel.getImageryInfo().getUrl());
         assertFalse(panel.isImageryValid());
     }
 }

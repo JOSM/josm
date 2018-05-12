@@ -58,6 +58,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
     public TemplatedWMSTileSource(ImageryInfo info, Projection tileProjection) {
         super(info, tileProjection);
         this.serverProjections = new TreeSet<>(info.getServerProjections());
+        this.headers.putAll(info.getCustomHttpHeaders());
         handleTemplate();
         initProjection();
     }
@@ -108,14 +109,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
             // assume WMS 1.3.0
             switchLatLon = Main.getProjection().switchXY();
         }
-        String bbox;
-        if (switchLatLon) {
-            bbox = String.format("%s,%s,%s,%s",
-                    LATLON_FORMAT.format(s), LATLON_FORMAT.format(w), LATLON_FORMAT.format(n), LATLON_FORMAT.format(e));
-        } else {
-            bbox = String.format("%s,%s,%s,%s",
-                    LATLON_FORMAT.format(w), LATLON_FORMAT.format(s), LATLON_FORMAT.format(e), LATLON_FORMAT.format(n));
-        }
+        String bbox = getBbox(zoom, tilex, tiley, switchLatLon);
 
         // Using StringBuffer and generic PATTERN_PARAM matcher gives 2x performance improvement over replaceAll
         StringBuffer url = new StringBuffer(baseUrl.length());

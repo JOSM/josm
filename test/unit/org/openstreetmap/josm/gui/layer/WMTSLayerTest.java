@@ -21,7 +21,7 @@ public class WMTSLayerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20000);
 
     /**
      * Unit test of {@link WMTSLayer#WMTSLayer}.

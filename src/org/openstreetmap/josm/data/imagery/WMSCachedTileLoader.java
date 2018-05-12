@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import java.util.Map;
-
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
@@ -34,14 +32,14 @@ public class WMSCachedTileLoader extends TMSCachedTileLoader {
      * @param headers to be sent with requests
      */
     public WMSCachedTileLoader(TileLoaderListener listener, ICacheAccess<String, BufferedImageCacheEntry> cache,
-            int connectTimeout, int readTimeout, Map<String, String> headers) {
+            TileJobOptions options) {
 
-        super(listener, cache, connectTimeout, readTimeout, headers);
+        super(listener, cache, options);
         setDownloadExecutor(TMSCachedTileLoader.getNewThreadPoolExecutor("WMS-downloader-%d", THREAD_LIMIT.get()));
     }
 
     @Override
     public TileJob createTileLoaderJob(Tile tile) {
-        return new WMSCachedTileLoaderJob(listener, tile, cache, connectTimeout, readTimeout, headers, getDownloadExecutor());
+        return new WMSCachedTileLoaderJob(listener, tile, cache, options, getDownloadExecutor());
     }
 }

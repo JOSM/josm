@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
+import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
@@ -63,7 +64,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
                 return tileSource;
             }
             return null;
-        } catch (IOException e) {
+        } catch (IOException | WMTSGetCapabilitiesException e) {
             Logging.warn(e);
             throw new IllegalArgumentException(e);
         }

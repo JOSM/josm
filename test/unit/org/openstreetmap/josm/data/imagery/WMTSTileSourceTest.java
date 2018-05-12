@@ -7,19 +7,28 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 
+import org.junit.ClassRule;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -27,6 +36,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests for class {@link WMTSTileSource}.
  */
 public class WMTSTileSourceTest {
+
+    /**
+     * Setup test.
+     */
+    @ClassRule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public static JOSMTestRules test = new JOSMTestRules().preferences().platform();
 
     private ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
     private ImageryInfo testImageryPSEUDO_MERCATOR = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-pseudo-mercator.xml");
@@ -43,19 +59,15 @@ public class WMTSTileSourceTest {
     private ImageryInfo testMultipleTileMatrixForLayer = getImagery(TestUtils.getTestDataRoot() +
             "wmts/bug13975-multiple-tile-matrices-for-one-layer-projection.xml");
 
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
 
     private static ImageryInfo getImagery(String path) {
         try {
-            return new ImageryInfo(
+            ImageryInfo ret = new ImageryInfo(
                     "test",
                     new File(path).toURI().toURL().toString()
                     );
+            ret.setImageryType(ImageryType.WMTS);
+            return ret;
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -63,7 +75,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testPseudoMercator() throws IOException {
+    public void testPseudoMercator() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryPSEUDO_MERCATOR);
         testSource.initProjection(Main.getProjection());
@@ -93,7 +105,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testWALLONIE() throws IOException {
+    public void testWALLONIE() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWALLONIE);
         testSource.initProjection(Main.getProjection());
@@ -113,7 +125,7 @@ public class WMTSTileSourceTest {
 
     @Test
     @Ignore("disable this test, needs further working") // XXX
-    public void testWALLONIENoMatrixDimension() throws IOException {
+    public void testWALLONIENoMatrixDimension() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(getImagery("test/data/wmts/WMTSCapabilities-Wallonie-nomatrixdimension.xml"));
         testSource.initProjection(Main.getProjection());
@@ -137,7 +149,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testWIEN() throws IOException {
+    public void testWIEN() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
         testSource.initProjection(Main.getProjection());
@@ -179,7 +191,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testGeoportalTOPOPL() throws IOException {
+    public void testGeoportalTOPOPL() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryTOPO_PL);
         testSource.initProjection(Main.getProjection());
@@ -201,7 +213,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testGeoportalORTOPL4326() throws IOException {
+    public void testGeoportalORTOPL4326() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
         testSource.initProjection(Main.getProjection());
@@ -210,7 +222,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testGeoportalORTOPL2180() throws IOException {
+    public void testGeoportalORTOPL2180() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:2180"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
         testSource.initProjection(Main.getProjection());
@@ -220,7 +232,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testTicket12168() throws IOException {
+    public void testTicket12168() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImagery12168);
         testSource.initProjection(Main.getProjection());
@@ -230,17 +242,38 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    @Ignore("disabled as this needs user action") // XXX
     public void testTwoTileSetsForOneProjection() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
-        WMTSTileSource testSource = new WMTSTileSource(testImageryOntario);
+        ImageryInfo ontario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
+        ontario.setDefaultLayers(Arrays.asList(new DefaultLayer[] {
+                new DefaultLayer(ImageryType.WMTS, "Basemap_Imagery_2014", null, "default028mm")
+        }));
+        WMTSTileSource testSource = new WMTSTileSource(ontario);
         testSource.initProjection(Main.getProjection());
-        verifyTile(new LatLon(45.4105023, -75.7153702), testSource, 303751, 375502, 12);
-        verifyTile(new LatLon(45.4601306, -75.7617187), testSource, 1186, 1466, 4);
+        assertEquals(
+                "http://maps.ottawa.ca/arcgis/rest/services/Basemap_Imagery_2014/MapServer/WMTS/tile/1.0.0/Basemap_Imagery_2014/default/default028mm/4/2932/2371.jpg",
+                testSource.getTileUrl(4, 2371, 2932));
+        verifyTile(new LatLon(45.4601306, -75.7617187), testSource, 2372, 2932, 4);
+        verifyTile(new LatLon(45.4602510, -75.7617187), testSource, 607232, 750591, 12);
     }
 
     @Test
-    @Ignore("disabled as this needs user action") // XXX
+    public void testTwoTileSetsForOneProjectionSecondLayer() throws Exception {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ImageryInfo ontario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
+        ontario.setDefaultLayers(Arrays.asList(new DefaultLayer[] {
+                new DefaultLayer(ImageryType.WMTS, "Basemap_Imagery_2014", null, "GoogleMapsCompatible")
+        }));
+        WMTSTileSource testSource = new WMTSTileSource(ontario);
+        testSource.initProjection(Main.getProjection());
+        assertEquals(
+                "http://maps.ottawa.ca/arcgis/rest/services/Basemap_Imagery_2014/MapServer/WMTS/tile/1.0.0/Basemap_Imagery_2014/default/GoogleMapsCompatible/4/2932/2371.jpg",
+                testSource.getTileUrl(4, 2371, 2932));
+        verifyMercatorTile(testSource, 74, 91, 8);
+        verifyMercatorTile(testSource, 37952, 46912, 17);
+    }
+
+    @Test
     public void testManyLayersScrollbars() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testLotsOfLayers);
@@ -270,8 +303,8 @@ public class WMTSTileSourceTest {
     public void testForMultipleTileMatricesForOneLayerProjection() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo copy = new ImageryInfo(testMultipleTileMatrixForLayer);
-        Collection<DefaultLayer> defaultLayers = new ArrayList<>(1);
-        defaultLayers.add(new WMTSDefaultLayer("Mashhad_BaseMap_1", "default028mm"));
+        List<DefaultLayer> defaultLayers = new ArrayList<>(1);
+        defaultLayers.add(new DefaultLayer(ImageryType.WMTS, "Mashhad_BaseMap_1", null, "default028mm"));
         copy.setDefaultLayers(defaultLayers);
         WMTSTileSource testSource = new WMTSTileSource(copy);
         testSource.initProjection(Main.getProjection());
@@ -285,13 +318,14 @@ public class WMTSTileSourceTest {
     /**
      * Test WMTS dimension.
      * @throws IOException if any I/O error occurs
+     * @throws WMTSGetCapabilitiesException
      */
     @Test
-    public void testDimension() throws IOException {
+    public void testDimension() throws IOException, WMTSGetCapabilitiesException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:21781"));
         ImageryInfo info = new ImageryInfo(testImageryGeoAdminCh);
-        Collection<DefaultLayer> defaultLayers = new ArrayList<>(1);
-        defaultLayers.add(new WMTSDefaultLayer("ch.are.agglomerationen_isolierte_staedte", "21781_26"));
+        List<DefaultLayer> defaultLayers = new ArrayList<>(1);
+        defaultLayers.add(new DefaultLayer(ImageryType.WMTS, "ch.are.agglomerationen_isolierte_staedte", null, "21781_26"));
         info.setDefaultLayers(defaultLayers);
         WMTSTileSource testSource = new WMTSTileSource(info);
         testSource.initProjection(Main.getProjection());
@@ -299,6 +333,47 @@ public class WMTSTileSourceTest {
                 "http://wmts.geo.admin.ch/1.0.0/ch.are.agglomerationen_isolierte_staedte/default/20140101/21781/1/3/2.png",
                 testSource.getTileUrl(1, 2, 3)
                 );
+    }
+
+    @Test
+    public void testDefaultLayer() throws Exception {
+        // https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml
+        WireMockServer getCapabilitiesMock = TestUtils.getWireMockServer();
+        String getCapabilitiesBody = new String(Files.readAllBytes(Paths.get(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml")), "UTF-8");
+        // do not use withFileBody as it needs different directory layout :(
+        getCapabilitiesMock.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(getCapabilitiesBody)));
+        getCapabilitiesMock.start();
+
+        WireMockServer mapsMock = TestUtils.getWireMockServer();
+        mapsMock.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
+                "<?xml version='1.0' encoding='UTF-8'?>\n" +
+                "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n" +
+                "<entry>\n" +
+                "<name>Landsat</name>\n" +
+                "<id>landsat</id>\n" +
+                "<type>wmts</type>\n" +
+                "<url><![CDATA[" + getCapabilitiesMock.url("/getcapabilities.xml") + "]]></url>\n" +
+                "<defaultLayers>" +
+                "<layer name=\"GEOGRAPHICALGRIDSYSTEMS.MAPS\" />" +
+                "</defaultLayers>" +
+                "</entry>\n" +
+                "</imagery>"
+                )));
+        mapsMock.start();
+        Config.getPref().put("josm.url", mapsMock.url("/"));
+
+        ImageryLayerInfo.instance.loadDefaults(true, null, false);
+
+        assertEquals(1, ImageryLayerInfo.instance.getDefaultLayers().size());
+        ImageryInfo wmtsImageryInfo = ImageryLayerInfo.instance.getDefaultLayers().get(0);
+        assertEquals(1, wmtsImageryInfo.getDefaultLayers().size());
+        assertEquals("GEOGRAPHICALGRIDSYSTEMS.MAPS", wmtsImageryInfo.getDefaultLayers().get(0).getLayerName());
+        WMTSTileSource tileSource = new WMTSTileSource(wmtsImageryInfo);
+        tileSource.initProjection(Projections.getProjectionByCode("EPSG:3857"));
+        assertEquals("http://wxs.ign.fr/61fs25ymczag0c67naqvvmap/geoportail/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&"
+                + "LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS"
+                + "&STYLE=normal&FORMAT=image/jpeg&tileMatrixSet=PM&tileMatrix=1&tileRow=1&tileCol=1", tileSource.getTileUrl(1, 1, 1));
+
     }
 
     private void verifyTile(LatLon expected, WMTSTileSource source, int x, int y, int z) {

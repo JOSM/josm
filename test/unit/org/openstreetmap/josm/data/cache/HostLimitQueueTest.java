@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.imagery.TileJobOptions;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -53,7 +54,7 @@ public class HostLimitQueueTest {
         private AtomicInteger counter;
 
         Task(ICacheAccess<String, CacheEntry> cache, URL url, AtomicInteger counter) {
-            super(cache, 1, 1, null);
+            super(cache, new TileJobOptions(1, 1, null, 10));
             this.url = url;
             this.counter = counter;
         }

@@ -202,6 +202,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private final ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
     // prepared to be moved to the painter
     protected TileCoordinateConverter coordinateConverter;
+    private final long minimumTileExpire;
 
     /**
      * Creates Tile Source based Imagery Layer based on Imagery Info
@@ -213,6 +214,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         this.setVisible(true);
         getFilterSettings().addFilterChangeListener(this);
         getDisplaySettings().addSettingsChangeListener(this);
+        this.minimumTileExpire = info.getMinimumTileExpire();
     }
 
     /**
@@ -273,7 +275,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         Map<String, String> headers = getHeaders(tileSource);
 
-        tileLoader = getTileLoaderFactory().makeTileLoader(this, headers);
+        tileLoader = getTileLoaderFactory().makeTileLoader(this, headers, minimumTileExpire);
 
         try {
             if ("file".equalsIgnoreCase(new URL(tileSource.getBaseUrl()).getProtocol())) {
@@ -1758,7 +1760,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          */
         public PrecacheTask(ProgressMonitor progressMonitor) {
             this.progressMonitor = progressMonitor;
-            this.tileLoader = getTileLoaderFactory().makeTileLoader(this, getHeaders(tileSource));
+            this.tileLoader = getTileLoaderFactory().makeTileLoader(this, getHeaders(tileSource), minimumTileExpire);
             if (this.tileLoader instanceof TMSCachedTileLoader) {
                 ((TMSCachedTileLoader) this.tileLoader).setDownloadExecutor(
                         TMSCachedTileLoader.getNewThreadPoolExecutor("Precache downloader"));
