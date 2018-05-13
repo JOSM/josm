@@ -32,6 +32,58 @@ import org.openstreetmap.josm.tools.GBC;
  *
  */
 public class WMTSLayerSelection extends JPanel {
+    private final static class AbstractTableModelExtension extends AbstractTableModel {
+        private final List<Entry<String, List<Layer>>> layers;
+
+        private AbstractTableModelExtension(List<Entry<String, List<Layer>>> layers) {
+            this.layers = layers;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            switch (columnIndex) {
+            case 0:
+                return layers.get(rowIndex).getValue()
+                        .stream()
+                        .map(Layer::getUserTitle)
+                        .collect(Collectors.joining(", ")); //this should be only one
+            case 1:
+                return layers.get(rowIndex).getValue()
+                        .stream()
+                        .map(x -> x.getTileMatrixSet().getCrs())
+                        .collect(Collectors.joining(", "));
+            case 2:
+                return layers.get(rowIndex).getValue()
+                        .stream()
+                        .map(x -> x.getTileMatrixSet().getIdentifier())
+                        .collect(Collectors.joining(", ")); //this should be only one
+            default:
+                throw new IllegalArgumentException();
+            }
+        }
+
+        @Override
+        public int getRowCount() {
+            return layers.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+            case 0: return tr("Layer name");
+            case 1: return tr("Projection");
+            case 2: return tr("Matrix set identifier");
+            default:
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
     private List<Entry<String, List<Layer>>> layers;
     private JTable list;
 
@@ -43,51 +95,7 @@ public class WMTSLayerSelection extends JPanel {
         super(new GridBagLayout());
         this.layers = layers;
         list = new JTable(
-                new AbstractTableModel() {
-                    @Override
-                    public Object getValueAt(int rowIndex, int columnIndex) {
-                        switch (columnIndex) {
-                        case 0:
-                            return layers.get(rowIndex).getValue()
-                                    .stream()
-                                    .map(Layer::getUserTitle)
-                                    .collect(Collectors.joining(", ")); //this should be only one
-                        case 1:
-                            return layers.get(rowIndex).getValue()
-                                    .stream()
-                                    .map(x -> x.getTileMatrixSet().getCrs())
-                                    .collect(Collectors.joining(", "));
-                        case 2:
-                            return layers.get(rowIndex).getValue()
-                                    .stream()
-                                    .map(x -> x.getTileMatrixSet().getIdentifier())
-                                    .collect(Collectors.joining(", ")); //this should be only one
-                        default:
-                            throw new IllegalArgumentException();
-                        }
-                    }
-
-                    @Override
-                    public int getRowCount() {
-                        return layers.size();
-                    }
-
-                    @Override
-                    public int getColumnCount() {
-                        return 3;
-                    }
-
-                    @Override
-                    public String getColumnName(int column) {
-                        switch (column) {
-                        case 0: return tr("Layer name");
-                        case 1: return tr("Projection");
-                        case 2: return tr("Matrix set identifier");
-                        default:
-                            throw new IllegalArgumentException();
-                        }
-                    }
-                });
+                new AbstractTableModelExtension(layers));
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setAutoCreateRowSorter(true);
         list.setRowSelectionAllowed(true);
@@ -146,8 +154,12 @@ public class WMTSLayerSelection extends JPanel {
         for (int row = 0; row < list.getRowCount(); row++) {
             renderer = list.getCellRenderer(row, column.getModelIndex());
             comp = list.prepareRenderer(renderer, row, column.getModelIndex());
-            ret = Math.max (comp.getPreferredSize().width, ret);
+            ret = Math.max(comp.getPreferredSize().width, ret);
         }
         column.setPreferredWidth(ret + 10);
+    }
+
+    public JTable getTable() {
+        return list;
     }
 }
