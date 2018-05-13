@@ -36,8 +36,6 @@ import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Class bridging TMS requests to JCS cache requests
  *
@@ -66,7 +64,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      * @param options for job (such as http headers, timeouts etc.)
      * @param downloadExecutor that will be executing the jobs
      */
-    @SuppressFBWarnings(value = "JLM_JSR166_UTILCONCURRENT_MONITORENTER")
+
     public TMSCachedTileLoaderJob(TileLoaderListener listener, Tile tile,
             ICacheAccess<String, BufferedImageCacheEntry> cache,
             TileJobOptions options,
