@@ -35,7 +35,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class AddWMTSLayerPanel extends AddImageryPanel {
     private final transient JPanel layerPanel = new JPanel(new GridBagLayout());
-    private transient JTable layerTable = null;
+    private transient JTable layerTable;
     private final JCheckBox setDefaultLayer = new JCheckBox(tr("Set default layer?"));
     private List<Entry<String, List<Layer>>> layers;
 
@@ -91,11 +91,11 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         if (setDefaultLayer.isSelected()) {
             if (layerTable == null) {
                 // did not call get capabilities
-                throw new RuntimeException("TODO");
+                throw new IllegalArgumentException(tr("You need to get fetch layers"));
             }
             int index = layerTable.getSelectedRow();
             if (index < 0) {
-                throw new RuntimeException("TODO");
+                throw new IllegalArgumentException(tr("Invalid layer selected. Index: {1}", index));
             }
             Layer selectedLayer = layers.get(layerTable.convertRowIndexToModel(index)).getValue().get(0);
             ret.setDefaultLayers(

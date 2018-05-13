@@ -85,7 +85,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 wms = new WMSImagery(rawUrl.getText(), getCommonHeaders());
                 tree.updateTree(wms);
                 Collection<String> wmsFormats = wms.getFormats();
-                formats.setModel(new DefaultComboBoxModel<>(wmsFormats.toArray(new String[wmsFormats.size()])));
+                formats.setModel(new DefaultComboBoxModel<>(wmsFormats.toArray(new String[0])));
                 formats.setSelectedItem(wms.getPreferredFormat());
             } catch (MalformedURLException ex1) {
                 Logging.log(Logging.LEVEL_ERROR, ex1);
