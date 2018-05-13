@@ -116,7 +116,7 @@ public abstract class AddImageryPanel extends JPanel {
             add(minimumCacheExpiryUnit, GBC.eol());
             add(new JLabel(tr("Set custom HTTP headers (if needed):")), GBC.eop());
             add(headersTable, GBC.eol().fill());
-            add(validGeoreference, GBC.eop().fill());
+            add(validGeoreference, GBC.eop().fill(GBC.HORIZONTAL));
         }
     }
 
