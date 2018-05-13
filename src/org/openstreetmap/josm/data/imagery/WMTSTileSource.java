@@ -428,7 +428,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             } catch (XMLStreamException e) {
                 cf.clear();
                 Logging.warn(new String(data, StandardCharsets.UTF_8));
-                throw new IllegalArgumentException(e);
+                throw new WMTSGetCapabilitiesException(tr("Error during parsing of WMTS Capabilities document: {1}", e.getMessage()));
             }
         }
     }
