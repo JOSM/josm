@@ -1567,32 +1567,30 @@ public class ImageProvider {
         }
         final float sourceWidth = svg.getWidth();
         final float sourceHeight = svg.getHeight();
-        final int realWidth;
-        final int realHeight;
+        final float realWidth;
+        final float realHeight;
         if (dim.width >= 0) {
             realWidth = dim.width;
             if (dim.height >= 0) {
                 realHeight = dim.height;
             } else {
-                realHeight = Math.round(sourceHeight * realWidth / sourceWidth);
+                realHeight = sourceHeight * realWidth / sourceWidth;
             }
         } else if (dim.height >= 0) {
             realHeight = dim.height;
-            realWidth = Math.round(sourceWidth * realHeight / sourceHeight);
+            realWidth = sourceWidth * realHeight / sourceHeight;
         } else {
-            realWidth = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceWidth));
-            realHeight = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceHeight));
+            realWidth = GuiSizesHelper.getSizeDpiAdjusted(sourceWidth);
+            realHeight = GuiSizesHelper.getSizeDpiAdjusted(sourceHeight);
         }
-        final Double scaleX = (double) realWidth / sourceWidth;
-        final Double scaleY = (double) realHeight / sourceHeight;
 
         if (realWidth == 0 || realHeight == 0) {
             return null;
         }
-        BufferedImage img = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage img = new BufferedImage(Math.round(realWidth), Math.round(realHeight), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
-        g.setClip(0, 0, realWidth, realHeight);
-        g.scale(scaleX, scaleY);
+        g.setClip(0, 0, img.getWidth(), img.getHeight());
+        g.scale(realWidth / sourceWidth, realHeight / sourceHeight);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
             synchronized (getSvgUniverse()) {

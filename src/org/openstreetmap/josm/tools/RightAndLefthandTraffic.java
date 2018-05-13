@@ -29,7 +29,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.OsmWriter;
@@ -135,8 +134,6 @@ public final class RightAndLefthandTraffic {
             Logging.warn("Unable to join left-driving countries polygons");
             optimizedWays.addAll(ways);
         }
-        // Clean command stack
-        MainApplication.undoRedo.clean(data);
         return optimizedWays;
     }
 

@@ -62,6 +62,7 @@ public class JoinAreasAction extends JosmAction {
     private int cmdsCount;
     private DataSet ds;
     private final transient List<Relation> addedRelations = new LinkedList<>();
+    private final boolean addUndoRedo;
 
     /**
      * This helper class describes join areas action result.
@@ -456,13 +457,15 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Constructs a new {@code JoinAreasAction} with optional shortcut and adapters.
-     * @param addShortcutToolbarAdapters controls whether the shortcut should be registered or not, as for toolbar registration and adapters
+     * @param addShortcutToolbarAdapters controls whether the shortcut should be registered or not,
+     * as for toolbar registration, adapters creation and undo/redo integration
      * @since 11611
      */
     public JoinAreasAction(boolean addShortcutToolbarAdapters) {
         super(tr("Join overlapping Areas"), "joinareas", tr("Joins areas that overlap each other"), addShortcutToolbarAdapters ?
         Shortcut.registerShortcut("tools:joinareas", tr("Tool: {0}", tr("Join overlapping Areas")), KeyEvent.VK_J, Shortcut.SHIFT)
         : null, addShortcutToolbarAdapters, null, addShortcutToolbarAdapters);
+        addUndoRedo = addShortcutToolbarAdapters;
     }
 
     /**
@@ -565,8 +568,10 @@ public class JoinAreasAction extends JosmAction {
             //revert changes
             //FIXME: this is dirty hack
             makeCommitsOneAction(tr("Reverting changes"));
-            MainApplication.undoRedo.undo();
-            MainApplication.undoRedo.redoCommands.clear();
+            if (addUndoRedo) {
+                MainApplication.undoRedo.undo();
+                MainApplication.undoRedo.redoCommands.clear();
+            }
         }
     }
 
@@ -827,8 +832,8 @@ public class JoinAreasAction extends JosmAction {
         cmdsCount++;
     }
 
-    private static void commitCommand(Command c) {
-        if (Main.main != null) {
+    private void commitCommand(Command c) {
+        if (Main.main != null && addUndoRedo) {
             MainApplication.undoRedo.add(c);
         } else {
             c.executeCommand();
@@ -1595,7 +1600,7 @@ public class JoinAreasAction extends JosmAction {
      */
     private void makeCommitsOneAction(String message) {
         cmds.clear();
-        if (Main.main != null) {
+        if (Main.main != null && addUndoRedo) {
             UndoRedoHandler ur = MainApplication.undoRedo;
             int i = Math.max(ur.commands.size() - cmdsCount, 0);
             for (; i < ur.commands.size(); i++) {
