@@ -26,10 +26,19 @@ import org.openstreetmap.josm.data.imagery.WMTSTileSource.Layer;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ *
+ * Class for displaying WMTS layer selection panel
+ *
+ */
 public class WMTSLayerSelection extends JPanel {
     private List<Entry<String, List<Layer>>> layers;
     private JTable list;
 
+    /**
+     *
+     * @param layers list of grouped layers (by tileMatrixSet and name)
+     */
     public WMTSLayerSelection(List<Entry<String, List<Layer>>> layers) {
         super(new GridBagLayout());
         this.layers = layers;
@@ -80,7 +89,6 @@ public class WMTSLayerSelection extends JPanel {
                     }
                 });
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//        list.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         list.setAutoCreateRowSorter(true);
         list.setRowSelectionAllowed(true);
         list.setColumnSelectionAllowed(false);
