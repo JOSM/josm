@@ -117,9 +117,9 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         AbstractFileChooser fc;
 
         if (zipRequired) {
-            fc = createAndOpenFileChooser(false, false, tr("Save session"), joz, JFileChooser.FILES_ONLY, "lastDirectory");
+            fc = createAndOpenFileChooser(false, false, tr("Save Session"), joz, JFileChooser.FILES_ONLY, "lastDirectory");
         } else {
-            fc = createAndOpenFileChooser(false, false, tr("Save session"), Arrays.asList(jos, joz), jos,
+            fc = createAndOpenFileChooser(false, false, tr("Save Session"), Arrays.asList(jos, joz), jos,
                     JFileChooser.FILES_ONLY, "lastDirectory");
         }
 

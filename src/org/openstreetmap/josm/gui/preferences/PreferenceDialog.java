@@ -60,7 +60,7 @@ public class PreferenceDialog extends JDialog {
     protected JPanel buildActionPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
 
-        JCheckBox expert = new JCheckBox(tr("Expert mode"));
+        JCheckBox expert = new JCheckBox(tr("Expert Mode"));
         expert.setSelected(ExpertToggleAction.isExpert());
         expert.addActionListener(e -> ExpertToggleAction.getInstance().actionPerformed(null));
 

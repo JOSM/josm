@@ -118,7 +118,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
         protected List<Note> notesData;
 
         DownloadTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
-            super(tr("Downloading Notes"), progressMonitor, false);
+            super(tr("Downloading notes"), progressMonitor, false);
             this.reader = reader;
         }
 

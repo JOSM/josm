@@ -799,7 +799,7 @@ public class GenericRelationEditor extends RelationEditor {
      */
     protected static JMenuItem addToWindowMenu(IRelationEditor re, String layerName) {
         Relation r = re.getRelation();
-        String name = r == null ? tr("New Relation") : r.getLocalName();
+        String name = r == null ? tr("New relation") : r.getLocalName();
         JosmAction focusAction = new JosmAction(
                 tr("Relation Editor: {0}", name == null && r != null ? r.getId() : name),
                 "dialogs/relationlist",

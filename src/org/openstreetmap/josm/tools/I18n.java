@@ -85,8 +85,9 @@ public final class I18n {
     private static volatile PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
     private static volatile String loadedCode = "en";
 
-
+    /** Map (english/locale) of singular strings **/
     private static volatile Map<String, String> strings;
+    /** Map (english/locale) of plural strings **/
     private static volatile Map<String, String[]> pstrings;
     private static Map<String, PluralMode> languages = new HashMap<>();
     static {
@@ -613,5 +614,23 @@ public final class I18n {
         //            || ((n % 100) == 4)) ? 3 : 0)));
         }
         return 0;
+    }
+
+    /**
+     * Returns the map of singular translations.
+     * @return the map of singular translations.
+     * @since 13761
+     */
+    public static Map<String, String> getSingularTranslations() {
+        return new HashMap<>(strings);
+    }
+
+    /**
+     * Returns the map of plural translations.
+     * @return the map of plural translations.
+     * @since 13761
+     */
+    public static Map<String, String[]> getPluralTranslations() {
+        return new HashMap<>(pstrings);
     }
 }

@@ -675,7 +675,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                     tagData.getRowCount(), membershipData.getRowCount()));
             }
         } else {
-            setTitle(tr("Tags / Memberships"));
+            setTitle(tr("Tags/Memberships"));
         }
     }
 

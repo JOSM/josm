@@ -80,7 +80,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
 
         JPanel panel = new JPanel(new GridBagLayout());
 
-        JLabel searchLabel = new JLabel(tr("Search :"));
+        JLabel searchLabel = new JLabel(tr("Search:"));
         JTextComponent descPane = buildDescriptionSection();
         JScrollPane scroll = GuiHelper.embedInVerticalScrollPane(descPane);
         scroll.getVerticalScrollBar().setUnitIncrement(10); // make scrolling smooth

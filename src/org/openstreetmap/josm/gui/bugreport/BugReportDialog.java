@@ -174,7 +174,7 @@ public class BugReportDialog extends JDialog {
         }
         panel.add(settings);
 
-        JButton sendBugReportButton = new JButton(tr("Report Bug"), ImageProvider.getIfAvailable("bug"));
+        JButton sendBugReportButton = new JButton(tr("Report bug"), ImageProvider.getIfAvailable("bug"));
         sendBugReportButton.addActionListener(e -> sendBug());
         panel.add(sendBugReportButton, GBC.eol().insets(0, 0, 0, 0).anchor(GBC.SOUTHEAST));
         content.add(panel, GBC.eop().fill(GBC.HORIZONTAL));
