@@ -116,7 +116,7 @@
                 <xs:complexType>
                     <xs:attribute name="name" type="xs:string" use="optional" />
                     <xs:attribute name="style" type="xs:string" use="optional" />
-                    <xs:attribute name="tileMatrixSet" type="xs:string" use="optional" />
+                    <xs:attribute name="tile-matrix-set" type="xs:string" use="optional" />
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -724,7 +724,7 @@
                             <xs:element name="valid-georeference" minOccurs="0" maxOccurs="1" type="xs:boolean" />
                             <!-- old unused feature, ignored -->
                             <xs:element name="epsg4326to3857Supported" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-                            <xs:element name="defaultLayers" type="tns:defaultLayers" minOccurs="0" maxOccurs="1" />
+                            <xs:element name="default-layers" type="tns:defaultLayers" minOccurs="0" maxOccurs="1" />
                             <xs:element name="custom-http-header" minOccurs="0" maxOccurs="unbounded">
                                 <xs:complexType>
                                     <xs:attribute name="header-name" type="xs:string" />

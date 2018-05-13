@@ -63,9 +63,9 @@ public class WMSEndpointTileSourceTest {
                 "<attribution-url>http://tools.geofabrik.de/osmi/</attribution-url>\n" +
                 "<max-zoom>18</max-zoom>\n" +
                 "<valid-georeference>true</valid-georeference>\n" +
-                "<defaultLayers>" +
+                "<default-layers>" +
                 "<layer name=\"single_node_in_way\" style=\"default\" />" +
-                "</defaultLayers>" +
+                "</default-layers>" +
                 "</entry>\n" +
                 "</imagery>"
                 )));

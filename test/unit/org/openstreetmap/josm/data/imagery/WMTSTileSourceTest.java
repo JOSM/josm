@@ -369,9 +369,9 @@ public class WMTSTileSourceTest {
                 "<id>landsat</id>\n" +
                 "<type>wmts</type>\n" +
                 "<url><![CDATA[" + tileServer.url("/getcapabilities.xml") + "]]></url>\n" +
-                "<defaultLayers>" +
+                "<default-layers>" +
                 "<layer name=\"GEOGRAPHICALGRIDSYSTEMS.MAPS\" />" +
-                "</defaultLayers>" +
+                "</default-layers>" +
                 "</entry>\n" +
                 "</imagery>"
                 )));
