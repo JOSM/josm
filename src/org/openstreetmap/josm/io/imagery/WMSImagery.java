@@ -573,7 +573,7 @@ public class WMSImagery {
             return null;
         }
         if (conv != null) {
-            new Bounds(
+            return new Bounds(
                     conv.eastNorth2latlon(new EastNorth(getDecimalDegree(minx), getDecimalDegree(miny))),
                     conv.eastNorth2latlon(new EastNorth(getDecimalDegree(maxx), getDecimalDegree(maxy)))
                     );

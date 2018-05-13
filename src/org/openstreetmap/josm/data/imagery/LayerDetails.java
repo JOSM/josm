@@ -52,7 +52,7 @@ public class LayerDetails {
             ret.addAll(parentLayer.getCrs());
         }
         ret.addAll(crs);
-        return crs;
+        return ret;
     }
 
     /**

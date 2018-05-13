@@ -75,7 +75,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
                 scrollPane.setPreferredSize(new Dimension(100, 100));
                 layerPanel.add(scrollPane, GBC.eol().fill());
                 layerPanel.revalidate();
-            } catch (Exception ex) {
+            } catch (IOException | WMTSGetCapabilitiesException ex) {
                 JOptionPane.showMessageDialog(
                         getParent(),
                         tr("Error getting layers: {0}", ex.getMessage()),

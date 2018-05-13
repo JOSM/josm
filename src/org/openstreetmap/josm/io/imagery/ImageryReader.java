@@ -353,7 +353,6 @@ public class ImageryReader implements Closeable {
                 if (mirrorEntry != null) {
                     switch(qName) {
                     case "type":
-                        ImageryType.values();
                         boolean found = false;
                         for (ImageryType type : ImageryType.values()) {
                             if (Objects.equals(accumulator.toString(), type.getTypeString())) {
@@ -523,7 +522,7 @@ public class ImageryReader implements Closeable {
                     entry.setTransparent(Boolean.parseBoolean(accumulator.toString()));
                     break;
                 case "minimum-tile-expire":
-                    entry.setMinimumTileExpire(Integer.valueOf(accumulator.toString()));
+                    entry.setMinimumTileExpire(Integer.parseInt(accumulator.toString()));
                     break;
                 default: // Do nothing
                 }
