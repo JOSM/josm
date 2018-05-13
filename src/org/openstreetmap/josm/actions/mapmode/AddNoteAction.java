@@ -71,7 +71,7 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
         MapFrame map = MainApplication.getMap();
         map.selectMapMode(map.mapModeSelect);
 
-        NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Create new note"), tr("Create note"));
+        NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Create a new note"), tr("Create note"));
         dialog.showNoteDialog(tr("Enter a detailed comment to create a note"), ImageProvider.get("dialogs/notes", "note_new"));
 
         if (dialog.getValue() != 1) {

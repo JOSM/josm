@@ -18,12 +18,12 @@ import javax.swing.AbstractAction;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -145,10 +145,10 @@ public class MapMover extends MouseAdapter implements Destroyable {
         // see #10592 - Disable these alternate shortcuts on OS X because of conflict with system shortcut
         if (!Main.isPlatformOsx()) {
             registerActionShortcut(new ZoomerAction(",", "MapMover.Zoomer.in"),
-                    Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.CTRL));
+                    Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom In")), KeyEvent.VK_COMMA, Shortcut.CTRL));
 
             registerActionShortcut(new ZoomerAction(".", "MapMover.Zoomer.out"),
-                    Shortcut.registerShortcut("view:zoomoutalternate", tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.CTRL));
+                    Shortcut.registerShortcut("view:zoomoutalternate", tr("Map: {0}", tr("Zoom Out")), KeyEvent.VK_PERIOD, Shortcut.CTRL));
         }
     }
 

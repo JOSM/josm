@@ -253,7 +253,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                     "You can also enter east and north offset in the {0} coordinates.\n" +
                     "If you want to save the offset as bookmark, enter the bookmark name below",
                     Main.getProjection().toString())), GBC.eop());
-            pnl.add(new JLabel(tr("Offset: ")), GBC.std());
+            pnl.add(new JLabel(tr("Offset:")), GBC.std());
             pnl.add(tOffset, GBC.eol().fill(GBC.HORIZONTAL).insets(0, 0, 0, 5));
             pnl.add(new JLabel(tr("Bookmark name: ")), GBC.std());
             pnl.add(tBookmarkName, GBC.eol().fill(GBC.HORIZONTAL));

@@ -104,7 +104,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         JPanel p = gui.createPreferenceTab(this);
 
         txtFilter = new JosmTextField();
-        JLabel lbFilter = new JLabel(tr("Search: "));
+        JLabel lbFilter = new JLabel(tr("Search:"));
         lbFilter.setLabelFor(txtFilter);
         p.add(lbFilter);
         p.add(txtFilter, GBC.eol().fill(GBC.HORIZONTAL));

@@ -106,7 +106,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
         if (pi.mainversion > Version.getInstance().getVersion()) {
             ExtendedDialog dialog = new ExtendedDialog(
                     progressMonitor.getWindowParent(),
-                    tr("Skip download"),
+                    tr("Skip Download"),
                     tr("Download Plugin"), tr("Skip Download")
             );
             dialog.setContent(tr("JOSM version {0} required for plugin {1}.", pi.mainversion, pi.name));

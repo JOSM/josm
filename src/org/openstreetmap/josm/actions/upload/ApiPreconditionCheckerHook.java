@@ -77,7 +77,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                             tr("Length of value for tag ''{0}'' on object {1} exceeds the max. allowed length {2}. Values length is {3}.",
                                     key, Long.toString(osmPrimitive.getId()), Tagged.MAX_TAG_LENGTH, value.length()
                             ),
-                            tr("Precondition Violation"),
+                            tr("Precondition violation"),
                             JOptionPane.ERROR_MESSAGE
                     );
                     MainApplication.getLayerManager().getEditDataSet().setSelected(Collections.singleton(osmPrimitive));

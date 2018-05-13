@@ -81,7 +81,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             TaggingPresetReader.readAll(source.url, true);
                         } catch (IOException e) {
                             // Should not happen, but at least show message
-                            String msg = tr("Could not read tagging preset source {0}", source);
+                            String msg = tr("Could not read tagging preset source: {0}", source);
                             Logging.log(Logging.LEVEL_ERROR, msg, e);
                             JOptionPane.showMessageDialog(Main.parent, msg);
                             return false;

@@ -137,7 +137,7 @@ public final class ReverseWayAction extends JosmAction {
             }
             c.addAll(revResult.getCommands());
         }
-        MainApplication.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
+        MainApplication.undoRedo.add(new SequenceCommand(tr("Reverse Ways"), c));
     }
 
     /**

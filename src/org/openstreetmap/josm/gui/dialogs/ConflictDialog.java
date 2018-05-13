@@ -56,8 +56,8 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
@@ -98,7 +98,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * Constructs a new {@code ConflictDialog}.
      */
     public ConflictDialog() {
-        super(tr("Conflict"), "conflict", tr("Resolve conflicts."),
+        super(tr("Conflict"), "conflict", tr("Resolve conflicts"),
                 Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")),
                 KeyEvent.VK_C, Shortcut.ALT_SHIFT), 100);
 

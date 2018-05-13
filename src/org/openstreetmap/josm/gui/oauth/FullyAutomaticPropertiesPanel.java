@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 /**
  * Panel to enter username and password for the "fully automatic" authorization
  * procedure.
- * 
+ *
  * @see AuthorizationProcedure#FULLY_AUTOMATIC
  */
 public class FullyAutomaticPropertiesPanel extends JPanel {
@@ -68,7 +68,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
         gc.gridy = 1;
         gc.gridx = 0;
         gc.weightx = 0.0;
-        pnl.add(new JLabel(tr("Password: ")), gc);
+        pnl.add(new JLabel(tr("Password:")), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;

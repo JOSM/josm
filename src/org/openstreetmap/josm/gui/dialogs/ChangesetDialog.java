@@ -381,7 +381,7 @@ public class ChangesetDialog extends ToggleDialog {
     class CloseOpenChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener {
         CloseOpenChangesetsAction() {
             putValue(NAME, tr("Close open changesets"));
-            putValue(SHORT_DESCRIPTION, tr("Closes the selected open changesets"));
+            putValue(SHORT_DESCRIPTION, tr("Close the selected open changesets"));
             new ImageProvider("closechangeset").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }

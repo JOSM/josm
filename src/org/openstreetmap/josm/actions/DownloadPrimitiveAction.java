@@ -32,7 +32,7 @@ public class DownloadPrimitiveAction extends JosmAction {
      * Constructs a new {@code DownloadPrimitiveAction}.
      */
     public DownloadPrimitiveAction() {
-        super(tr("Download object..."), "downloadprimitive", tr("Download OSM object by ID."),
+        super(tr("Download object..."), "downloadprimitive", tr("Download OSM object by ID"),
                 SHORTCUT, true);
         putValue("help", ht("/Action/DownloadObject"));
     }

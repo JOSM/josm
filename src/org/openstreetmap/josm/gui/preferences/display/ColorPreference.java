@@ -289,7 +289,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
                 colors.setValueAt(chooser.getColor(), sel, 1);
             }
         });
-        defaultSet = new JButton(tr("Set to default"));
+        defaultSet = new JButton(tr("Reset to default"));
         defaultSet.addActionListener(e -> {
             int sel = colors.getSelectedRow();
             ColorEntry ce = tableModel.getEntry(sel);

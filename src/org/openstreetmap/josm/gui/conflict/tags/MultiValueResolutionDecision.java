@@ -142,7 +142,7 @@ public class MultiValueResolutionDecision {
      */
     public String getChosenValue() {
         switch(type) {
-        case UNDECIDED: throw new IllegalStateException(tr("Not decided yet."));
+        case UNDECIDED: throw new IllegalStateException(tr("Not decided yet"));
         case KEEP_ONE: return value;
         case SUM_ALL_NUMERIC: return tags.getSummedValues(getKey());
         case KEEP_ALL: return tags.getJoinedValues(getKey());
@@ -237,7 +237,7 @@ public class MultiValueResolutionDecision {
     public void applyTo(OsmPrimitive primitive) {
         if (primitive == null) return;
         if (!isDecided())
-            throw new IllegalStateException(tr("Not decided yet."));
+            throw new IllegalStateException(tr("Not decided yet"));
         String key = tags.getKeys().iterator().next();
         if (type.equals(MultiValueDecisionType.KEEP_NONE)) {
             primitive.remove(key);
@@ -273,7 +273,7 @@ public class MultiValueResolutionDecision {
     public Command buildChangeCommand(OsmPrimitive primitive) {
         CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
         if (!isDecided())
-            throw new IllegalStateException(tr("Not decided yet."));
+            throw new IllegalStateException(tr("Not decided yet"));
         String key = tags.getKeys().iterator().next();
         return new ChangePropertyCommand(primitive, key, getChosenValue());
     }
@@ -289,7 +289,7 @@ public class MultiValueResolutionDecision {
     public Command buildChangeCommand(Collection<? extends OsmPrimitive> primitives) {
         CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
         if (!isDecided())
-            throw new IllegalStateException(tr("Not decided yet."));
+            throw new IllegalStateException(tr("Not decided yet"));
         String key = tags.getKeys().iterator().next();
         return new ChangePropertyCommand(primitives, key, getChosenValue());
     }

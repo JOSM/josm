@@ -146,7 +146,7 @@ public class InspectPrimitiveDataText {
                 : DateUtils.fromTimestamp(o.getRawTimestamp()));
         add(tr("Edited by: "), o.getUser() == null ? tr("<new object>")
                 : getNameAndId(o.getUser().getName(), o.getUser().getId()));
-        add(tr("Version: "), Integer.toString(o.getVersion()));
+        add(tr("Version:"), " ", Integer.toString(o.getVersion()));
         add(tr("In changeset: "), Integer.toString(o.getChangesetId()));
     }
 
@@ -211,7 +211,7 @@ public class InspectPrimitiveDataText {
 
     void addCoordinates(Node n) {
         if (n.isLatLonKnown()) {
-            add(tr("Coordinates: "),
+            add(tr("Coordinates:"), " ",
                     Double.toString(n.lat()), ", ",
                     Double.toString(n.lon()));
             EastNorth en = n.getEastNorth();

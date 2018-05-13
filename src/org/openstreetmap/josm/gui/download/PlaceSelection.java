@@ -178,7 +178,7 @@ public class PlaceSelection implements DownloadSelection {
     class SearchAction extends AbstractAction implements DocumentListener {
 
         SearchAction() {
-            putValue(NAME, tr("Search ..."));
+            putValue(NAME, tr("Search..."));
             new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Click to start searching for places"));
             updateEnabledState();

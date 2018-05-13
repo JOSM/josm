@@ -74,7 +74,7 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
             setText(sb.toString());
             setToolTipText(buildToolTipText(cs));
         } else {
-            setText(tr("No open changeset"));
+            setText(tr("No open changesets"));
         }
         return this;
     }

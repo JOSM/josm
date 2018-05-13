@@ -196,7 +196,7 @@ public class ChildRelationBrowser extends JPanel {
      */
     class EditAction extends AbstractAction implements TreeSelectionListener {
         EditAction() {
-            putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to."));
+            putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
             new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
             putValue(NAME, tr("Edit"));
             refreshEnabled();

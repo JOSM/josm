@@ -280,7 +280,7 @@ public final class ExceptionDialogUtil {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 msg,
-                tr("Authentication Failed"),
+                tr("Authentication failed"),
                 JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#AuthenticationFailed")
         );
