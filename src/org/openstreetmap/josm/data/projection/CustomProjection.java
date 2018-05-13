@@ -631,7 +631,7 @@ public class CustomProjection extends AbstractProjection {
 
     public static double parseDouble(Map<String, String> parameters, String parameterName) throws ProjectionConfigurationException {
         if (!parameters.containsKey(parameterName))
-            throw new ProjectionConfigurationException(tr("Unknown parameter: ''{0}''", parameterName));
+            throw new ProjectionConfigurationException(tr("Unknown parameter: ''{0}''.", parameterName));
         return parseDouble(Optional.ofNullable(parameters.get(parameterName)).orElseThrow(
                 () -> new ProjectionConfigurationException(tr("Expected number argument for parameter ''{0}''", parameterName))),
                 parameterName);

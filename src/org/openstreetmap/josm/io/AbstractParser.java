@@ -107,7 +107,8 @@ public abstract class AbstractParser extends DefaultHandler {
     protected final HistoryOsmPrimitive createPrimitive(Attributes atts, OsmPrimitiveType type) throws SAXException {
         long id = getMandatoryAttributeLong(atts, "id");
         long version = getMandatoryAttributeLong(atts, "version");
-        long changesetId = getMandatoryAttributeLong(atts, "changeset");
+        Long changeset = getAttributeLong(atts, "changeset");
+        long changesetId = changeset != null ? changeset : 0L;
         boolean visible = getMandatoryAttributeBoolean(atts, "visible");
 
         Long uid = getAttributeLong(atts, "uid");
@@ -131,12 +132,12 @@ public abstract class AbstractParser extends DefaultHandler {
             Double lat = getAttributeDouble(atts, "lat");
             Double lon = getAttributeDouble(atts, "lon");
             LatLon coor = (lat != null && lon != null) ? new LatLon(lat, lon) : null;
-            primitive = new HistoryNode(id, version, visible, user, changesetId, timestamp, coor);
+            primitive = new HistoryNode(id, version, visible, user, changesetId, timestamp, coor, changeset != null);
 
         } else if (type.equals(OsmPrimitiveType.WAY)) {
-            primitive = new HistoryWay(id, version, visible, user, changesetId, timestamp);
+            primitive = new HistoryWay(id, version, visible, user, changesetId, timestamp, changeset != null);
         } else if (type.equals(OsmPrimitiveType.RELATION)) {
-            primitive = new HistoryRelation(id, version, visible, user, changesetId, timestamp);
+            primitive = new HistoryRelation(id, version, visible, user, changesetId, timestamp, changeset != null);
         }
         return primitive;
     }
