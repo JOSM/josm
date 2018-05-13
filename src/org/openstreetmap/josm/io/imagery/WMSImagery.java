@@ -315,7 +315,7 @@ public class WMSImagery {
             boolean transparent) {
 
         Utils.ensure(selectedStyles == null || selectedLayers.size() == selectedStyles.size(),
-                tr("Styles size {0} doesn't match layers size {1}"),
+                tr("Styles size {0} does not match layers size {1}"),
                 selectedStyles == null ? 0 : selectedStyles.size(),
                         selectedLayers.size());
 
