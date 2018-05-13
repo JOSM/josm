@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet.APIOperation;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -103,7 +102,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  *
  * @author imi
  */
-public final class DataSet extends QuadBucketPrimitiveStore implements Data, ProjectionChangeListener, Lockable {
+public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>, ProjectionChangeListener, Lockable {
 
     /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
@@ -114,6 +113,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * Maximum number of events to kept between beginUpdate/endUpdate. When more events are created, that simple DatasetChangedEvent is sent)
      */
     private static final int MAX_EVENTS = 1000;
+
+    private final QuadBucketPrimitiveStore<Node, Way, Relation> store = new QuadBucketPrimitiveStore<>();
 
     private final Storage<OsmPrimitive> allPrimitives = new Storage<>(new Storage.PrimitiveIdHash(), true);
     private final Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives
@@ -272,10 +273,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         return changed;
     }
 
-    /**
-     * Returns the lock used for reading.
-     * @return the lock used for reading
-     */
+    @Override
     public Lock getReadLock() {
         return lock.readLock();
     }
@@ -306,11 +304,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      */
     private String version;
 
-    /**
-     * Replies the API version this dataset was created from. May be null.
-     *
-     * @return the API version this dataset was created from. May be null.
-     */
+    @Override
     public String getVersion() {
         return version;
     }
@@ -326,40 +320,22 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         this.version = version;
     }
 
-    /**
-     * Get the download policy.
-     * @return the download policy
-     * @see #setDownloadPolicy(DownloadPolicy)
-     * @since 13453
-     */
+    @Override
     public DownloadPolicy getDownloadPolicy() {
         return this.downloadPolicy;
     }
 
-    /**
-     * Sets the download policy.
-     * @param downloadPolicy the download policy
-     * @see #getUploadPolicy()
-     * @since 13453
-     */
+    @Override
     public void setDownloadPolicy(DownloadPolicy downloadPolicy) {
         this.downloadPolicy = downloadPolicy;
     }
 
-    /**
-     * Get the upload policy.
-     * @return the upload policy
-     * @see #setUploadPolicy(UploadPolicy)
-     */
+    @Override
     public UploadPolicy getUploadPolicy() {
         return this.uploadPolicy;
     }
 
-    /**
-     * Sets the upload policy.
-     * @param uploadPolicy the upload policy
-     * @see #getUploadPolicy()
-     */
+    @Override
     public void setUploadPolicy(UploadPolicy uploadPolicy) {
         this.uploadPolicy = uploadPolicy;
     }
@@ -388,22 +364,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         this.changeSetTags.put(k, v);
     }
 
-    /**
-     * Gets a filtered collection of primitives matching the given predicate.
-     * @param <T> The primitive type.
-     * @param predicate The predicate to match
-     * @return The list of primtives.
-     * @since 10590
-     */
+    @Override
     public <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<? super OsmPrimitive> predicate) {
         return new SubclassFilteredCollection<>(allPrimitives, predicate);
     }
 
-    /**
-     * Replies an unmodifiable collection of nodes in this dataset
-     *
-     * @return an unmodifiable collection of nodes in this dataset
-     */
+    @Override
     public Collection<Node> getNodes() {
         return getPrimitives(Node.class::isInstance);
     }
@@ -412,17 +378,13 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     public List<Node> searchNodes(BBox bbox) {
         lock.readLock().lock();
         try {
-            return super.searchNodes(bbox);
+            return store.searchNodes(bbox);
         } finally {
             lock.readLock().unlock();
         }
     }
 
-    /**
-     * Replies an unmodifiable collection of ways in this dataset
-     *
-     * @return an unmodifiable collection of ways in this dataset
-     */
+    @Override
     public Collection<Way> getWays() {
         return getPrimitives(Way.class::isInstance);
     }
@@ -431,91 +393,64 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     public List<Way> searchWays(BBox bbox) {
         lock.readLock().lock();
         try {
-            return super.searchWays(bbox);
+            return store.searchWays(bbox);
         } finally {
             lock.readLock().unlock();
         }
     }
 
-    /**
-     * Searches for relations in the given bounding box.
-     * @param bbox the bounding box
-     * @return List of relations in the given bbox. Can be empty but not null
-     */
     @Override
     public List<Relation> searchRelations(BBox bbox) {
         lock.readLock().lock();
         try {
-            return super.searchRelations(bbox);
+            return store.searchRelations(bbox);
         } finally {
             lock.readLock().unlock();
         }
     }
 
-    /**
-     * Replies an unmodifiable collection of relations in this dataset
-     *
-     * @return an unmodifiable collection of relations in this dataset
-     */
+    @Override
     public Collection<Relation> getRelations() {
         return getPrimitives(Relation.class::isInstance);
     }
 
     /**
-     * Returns a collection containing all primitives of the dataset.
-     * @return A collection containing all primitives of the dataset. Data is not ordered
+     * Determines if the given node can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param n The node to search
+     * @return {@code true} if {@code n} can be retrieved in this data set, {@code false} otherwise
+     * @since 7501
      */
-    public Collection<OsmPrimitive> allPrimitives() {
-        return getPrimitives(o -> true);
+    @Override
+    public boolean containsNode(Node n) {
+        return store.containsNode(n);
     }
 
     /**
-     * Returns a collection containing all not-deleted primitives.
-     * @return A collection containing all not-deleted primitives.
-     * @see OsmPrimitive#isDeleted
+     * Determines if the given way can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param w The way to search
+     * @return {@code true} if {@code w} can be retrieved in this data set, {@code false} otherwise
+     * @since 7501
      */
-    public Collection<OsmPrimitive> allNonDeletedPrimitives() {
-        return getPrimitives(p -> !p.isDeleted());
+    @Override
+    public boolean containsWay(Way w) {
+        return store.containsWay(w);
     }
 
     /**
-     * Returns a collection containing all not-deleted complete primitives.
-     * @return A collection containing all not-deleted complete primitives.
-     * @see OsmPrimitive#isDeleted
-     * @see OsmPrimitive#isIncomplete
+     * Determines if the given relation can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param r The relation to search
+     * @return {@code true} if {@code r} can be retrieved in this data set, {@code false} otherwise
+     * @since 7501
      */
-    public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
-        return getPrimitives(primitive -> !primitive.isDeleted() && !primitive.isIncomplete());
-    }
-
-    /**
-     * Returns a collection containing all not-deleted complete physical primitives.
-     * @return A collection containing all not-deleted complete physical primitives (nodes and ways).
-     * @see OsmPrimitive#isDeleted
-     * @see OsmPrimitive#isIncomplete
-     */
-    public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
-        return getPrimitives(
-                primitive -> !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation));
-    }
-
-    /**
-     * Returns a collection containing all modified primitives.
-     * @return A collection containing all modified primitives.
-     * @see OsmPrimitive#isModified
-     */
-    public Collection<OsmPrimitive> allModifiedPrimitives() {
-        return getPrimitives(OsmPrimitive::isModified);
-    }
-
-    /**
-     * Returns a collection containing all primitives preserved from filtering.
-     * @return A collection containing all primitives preserved from filtering.
-     * @see OsmPrimitive#isPreserved
-     * @since 13309
-     */
-    public Collection<OsmPrimitive> allPreservedPrimitives() {
-        return getPrimitives(OsmPrimitive::isPreserved);
+    @Override
+    public boolean containsRelation(Relation r) {
+        return store.containsRelation(r);
     }
 
     /**
@@ -538,7 +473,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             allPrimitives.add(primitive);
             primitive.setDataset(this);
             primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reindexRelation to work properly)
-            super.addPrimitive(primitive);
+            store.addPrimitive(primitive);
             firePrimitivesAdded(Collections.singletonList(primitive), false);
         } finally {
             endUpdate();
@@ -548,8 +483,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     /**
      * Removes a primitive from the dataset. This method only removes the
      * primitive form the respective collection of primitives managed
-     * by this dataset, i.e. from {@link #nodes}, {@link #ways}, or
-     * {@link #relations}. References from other primitives to this
+     * by this dataset, i.e. from {@code store.nodes}, {@code store.ways}, or
+     * {@code store.relations}. References from other primitives to this
      * primitive are left unchanged.
      *
      * @param primitiveId the id of the primitive
@@ -574,12 +509,11 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         if (primitive.isSelected()) {
             throw new DataIntegrityProblemException("Primitive was re-selected by a selection listener: " + primitive);
         }
-        super.removePrimitive(primitive);
+        store.removePrimitive(primitive);
         allPrimitives.remove(primitive);
         primitive.setDataset(null);
     }
 
-    @Override
     protected void removePrimitive(OsmPrimitive primitive) {
         checkModifiable();
         beginUpdate();
@@ -595,23 +529,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      *   SELECTION HANDLING
      *---------------------------------------------------*/
 
-    /**
-     * Add a listener that listens to selection changes in this specific data set.
-     * @param listener The listener.
-     * @see #removeSelectionListener(DataSelectionListener)
-     * @see SelectionEventManager#addSelectionListener(SelectionChangedListener,
-     *      org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode)
-     *      To add a global listener.
-     */
+    @Override
     public void addSelectionListener(DataSelectionListener listener) {
         selectionListeners.addListener(listener);
     }
 
-    /**
-     * Remove a listener that listens to selection changes in this specific data set.
-     * @param listener The listener.
-     * @see #addSelectionListener(DataSelectionListener)
-     */
+    @Override
     public void removeSelectionListener(DataSelectionListener listener) {
         selectionListeners.removeListener(listener);
     }
@@ -662,115 +585,62 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
                 primitive -> primitive instanceof Node || primitive instanceof Way);
     }
 
-    /**
-     * Returns an unmodifiable collection of *WaySegments* whose virtual
-     * nodes should be highlighted. WaySegments are used to avoid having
-     * to create a VirtualNode class that wouldn't have much purpose otherwise.
-     *
-     * @return unmodifiable collection of WaySegments
-     */
+    @Override
     public Collection<WaySegment> getHighlightedVirtualNodes() {
         return Collections.unmodifiableCollection(highlightedVirtualNodes);
     }
 
-    /**
-     * Returns an unmodifiable collection of WaySegments that should be highlighted.
-     *
-     * @return unmodifiable collection of WaySegments
-     */
+    @Override
     public Collection<WaySegment> getHighlightedWaySegments() {
         return Collections.unmodifiableCollection(highlightedWaySegments);
     }
 
-    /**
-     * Adds a listener that gets notified whenever way segment / virtual nodes highlights change.
-     * @param listener The Listener
-     * @since 12014
-     */
+    @Override
     public void addHighlightUpdateListener(HighlightUpdateListener listener) {
         highlightUpdateListeners.addListener(listener);
     }
 
-    /**
-     * Removes a listener that was added with {@link #addHighlightUpdateListener(HighlightUpdateListener)}
-     * @param listener The Listener
-     * @since 12014
-     */
+    @Override
     public void removeHighlightUpdateListener(HighlightUpdateListener listener) {
         highlightUpdateListeners.removeListener(listener);
     }
 
-    /**
-     * Replies an unmodifiable collection of primitives currently selected
-     * in this dataset, except deleted ones. May be empty, but not null.
-     *
-     * When iterating through the set it is ordered by the order in which the primitives were added to the selection.
-     *
-     * @return unmodifiable collection of primitives
-     */
+    @Override
     public Collection<OsmPrimitive> getSelected() {
         return new SubclassFilteredCollection<>(getAllSelected(), p -> !p.isDeleted());
     }
 
-    /**
-     * Replies an unmodifiable collection of primitives currently selected
-     * in this dataset, including deleted ones. May be empty, but not null.
-     *
-     * When iterating through the set it is ordered by the order in which the primitives were added to the selection.
-     *
-     * @return unmodifiable collection of primitives
-     */
+    @Override
     public Collection<OsmPrimitive> getAllSelected() {
         return currentSelectedPrimitives;
     }
 
-    /**
-     * Returns selected nodes.
-     * @return selected nodes
-     */
+    @Override
     public Collection<Node> getSelectedNodes() {
         return new SubclassFilteredCollection<>(getSelected(), Node.class::isInstance);
     }
 
-    /**
-     * Returns selected ways.
-     * @return selected ways
-     */
+    @Override
     public Collection<Way> getSelectedWays() {
         return new SubclassFilteredCollection<>(getSelected(), Way.class::isInstance);
     }
 
-    /**
-     * Returns selected relations.
-     * @return selected relations
-     */
+    @Override
     public Collection<Relation> getSelectedRelations() {
         return new SubclassFilteredCollection<>(getSelected(), Relation.class::isInstance);
     }
 
-    /**
-     * Determines whether the selection is empty or not
-     * @return whether the selection is empty or not
-     */
+    @Override
     public boolean selectionEmpty() {
         return currentSelectedPrimitives.isEmpty();
     }
 
-    /**
-     * Determines whether the given primitive is selected or not
-     * @param osm the primitive
-     * @return whether {@code osm} is selected or not
-     */
+    @Override
     public boolean isSelected(OsmPrimitive osm) {
         return currentSelectedPrimitives.contains(osm);
     }
 
-    /**
-     * set what virtual nodes should be highlighted. Requires a Collection of
-     * *WaySegments* to avoid a VirtualNode class that wouldn't have much use
-     * otherwise.
-     * @param waySegments Collection of way segments
-     */
+    @Override
     public void setHighlightedVirtualNodes(Collection<WaySegment> waySegments) {
         if (highlightedVirtualNodes.isEmpty() && waySegments.isEmpty())
             return;
@@ -779,10 +649,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         fireHighlightingChanged();
     }
 
-    /**
-     * set what virtual ways should be highlighted.
-     * @param waySegments Collection of way segments
-     */
+    @Override
     public void setHighlightedWaySegments(Collection<WaySegment> waySegments) {
         if (highlightedWaySegments.isEmpty() && waySegments.isEmpty())
             return;
@@ -791,22 +658,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         fireHighlightingChanged();
     }
 
-    /**
-     * Sets the current selection to the primitives in <code>selection</code>
-     * and notifies all {@link SelectionChangedListener}.
-     *
-     * @param selection the selection
-     */
+    @Override
     public void setSelected(Collection<? extends PrimitiveId> selection) {
         setSelected(selection.stream());
     }
 
-    /**
-     * Sets the current selection to the primitives in <code>osm</code>
-     * and notifies all {@link SelectionChangedListener}.
-     *
-     * @param osm the primitives to set. <code>null</code> values are ignored for now, but this may be removed in the future.
-     */
+    @Override
     public void setSelected(PrimitiveId... osm) {
         setSelected(Stream.of(osm).filter(Objects::nonNull));
     }
@@ -816,22 +673,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
                 stream.map(this::getPrimitiveByIdChecked).filter(Objects::nonNull)));
     }
 
-    /**
-     * Adds the primitives in <code>selection</code> to the current selection
-     * and notifies all {@link SelectionChangedListener}.
-     *
-     * @param selection the selection
-     */
+    @Override
     public void addSelected(Collection<? extends PrimitiveId> selection) {
         addSelected(selection.stream());
     }
 
-    /**
-     * Adds the primitives in <code>osm</code> to the current selection
-     * and notifies all {@link SelectionChangedListener}.
-     *
-     * @param osm the primitives to add
-     */
+    @Override
     public void addSelected(PrimitiveId... osm) {
         addSelected(Stream.of(osm));
     }
@@ -841,25 +688,17 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
                 stream.map(this::getPrimitiveByIdChecked).filter(Objects::nonNull)));
     }
 
-    /**
-     * Removes the selection from every value in the collection.
-     * @param osm The collection of ids to remove the selection from.
-     */
+    @Override
     public void clearSelection(PrimitiveId... osm) {
         clearSelection(Stream.of(osm));
     }
 
-    /**
-     * Removes the selection from every value in the collection.
-     * @param list The collection of ids to remove the selection from.
-     */
+    @Override
     public void clearSelection(Collection<? extends PrimitiveId> list) {
         clearSelection(list.stream());
     }
 
-    /**
-     * Clears the current selection.
-     */
+    @Override
     public void clearSelection() {
         setSelected(Stream.empty());
     }
@@ -869,18 +708,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
                 stream.map(this::getPrimitiveByIdChecked).filter(Objects::nonNull)));
     }
 
-    /**
-     * Toggles the selected state of the given collection of primitives.
-     * @param osm The primitives to toggle
-     */
+    @Override
     public void toggleSelected(Collection<? extends PrimitiveId> osm) {
         toggleSelected(osm.stream());
     }
 
-    /**
-     * Toggles the selected state of the given collection of primitives.
-     * @param osm The primitives to toggle
-     */
+    @Override
     public void toggleSelected(PrimitiveId... osm) {
         toggleSelected(Stream.of(osm));
     }
@@ -910,16 +743,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         }
     }
 
-    /**
-     * clear all highlights of virtual nodes
-     */
+    @Override
     public void clearHighlightedVirtualNodes() {
         setHighlightedVirtualNodes(new ArrayList<WaySegment>());
     }
 
-    /**
-     * clear all highlights of way segments
-     */
+    @Override
     public void clearHighlightedWaySegments() {
         setHighlightedWaySegments(new ArrayList<WaySegment>());
     }
@@ -927,7 +756,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     @Override
     public synchronized Area getDataSourceArea() {
         if (cachedDataSourceArea == null) {
-            cachedDataSourceArea = Data.super.getDataSourceArea();
+            cachedDataSourceArea = OsmData.super.getDataSourceArea();
         }
         return cachedDataSourceArea;
     }
@@ -935,7 +764,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     @Override
     public synchronized List<Bounds> getDataSourceBounds() {
         if (cachedDataSourceBounds == null) {
-            cachedDataSourceBounds = Data.super.getDataSourceBounds();
+            cachedDataSourceBounds = OsmData.super.getDataSourceBounds();
         }
         return Collections.unmodifiableList(cachedDataSourceBounds);
     }
@@ -945,24 +774,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         return Collections.unmodifiableCollection(dataSources);
     }
 
-    /**
-     * Returns a primitive with a given id from the data set. null, if no such primitive exists
-     *
-     * @param id  uniqueId of the primitive. Might be &lt; 0 for newly created primitives
-     * @param type the type of  the primitive. Must not be null.
-     * @return the primitive
-     * @throws NullPointerException if type is null
-     */
+    @Override
     public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
         return getPrimitiveById(new SimplePrimitiveId(id, type));
     }
 
-    /**
-     * Returns a primitive with a given id from the data set. null, if no such primitive exists
-     *
-     * @param primitiveId type and uniqueId of the primitive. Might be &lt; 0 for newly created primitives
-     * @return the primitive
-     */
+    @Override
     public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId) {
         return primitiveId != null ? primitivesMap.get(primitiveId) : null;
     }
@@ -1077,13 +894,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         return result;
     }
 
-    /**
-     * Replies true if there is at least one primitive in this dataset with
-     * {@link OsmPrimitive#isModified()} == <code>true</code>.
-     *
-     * @return true if there is at least one primitive in this dataset with
-     * {@link OsmPrimitive#isModified()} == <code>true</code>.
-     */
+    @Override
     public boolean isModified() {
         for (OsmPrimitive p : allPrimitives) {
             if (p.isModified())
@@ -1215,17 +1026,17 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     void fireRelationMembersChanged(Relation r) {
-        reindexRelation(r);
+        store.reindexRelation(r, Relation::updatePosition);
         fireEvent(new RelationMembersChangedEvent(this, r));
     }
 
     void fireNodeMoved(Node node, LatLon newCoor, EastNorth eastNorth) {
-        reindexNode(node, newCoor, eastNorth);
+        store.reindexNode(node, n -> n.setCoorInternal(newCoor, eastNorth), Way::updatePosition, Relation::updatePosition);
         fireEvent(new NodeMovedEvent(this, node));
     }
 
     void fireWayNodesChanged(Way way) {
-        reindexWay(way);
+        store.reindexWay(way, Way::updatePosition, Relation::updatePosition);
         fireEvent(new WayNodesChangedEvent(this, way));
     }
 
@@ -1301,7 +1112,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             for (OsmPrimitive primitive : allPrimitives) {
                 primitive.setDataset(null);
             }
-            super.clear();
+            store.clear();
             allPrimitives.clear();
         } finally {
             endUpdate();
@@ -1364,20 +1175,12 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         return conflicts;
     }
 
-    /**
-     * Returns the name of this data set (optional).
-     * @return the name of this data set. Can be {@code null}
-     * @since 12718
-     */
+    @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the name of this data set.
-     * @param name the new name of this data set. Can be {@code null} to reset it
-     * @since 12718
-     */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -1390,10 +1193,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         invalidateEastNorthCache();
     }
 
-    /**
-     * Returns the data sources bounding box.
-     * @return the data sources bounding box
-     */
+    @Override
     public synchronized ProjectionBounds getDataSourceBoundingBox() {
         BoundingXYVisitor bbox = new BoundingXYVisitor();
         for (DataSource source : dataSources) {
@@ -1417,10 +1217,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         return mappaintCacheIdx;
     }
 
-    /**
-     * Clear the mappaint cache for this DataSet.
-     * @since 13420
-     */
+    @Override
     public void clearMappaintCache() {
         mappaintCacheIdx++;
     }

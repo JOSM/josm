@@ -470,11 +470,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         return (flags & FLAG_DISABLED_TYPE) != 0;
     }
 
-    /**
-     * Replies true, if this primitive is preserved from filtering.
-     * @return {@code true} if this object has the "preserved" flag enabled
-     * @since 13309
-     */
+    @Override
     public boolean isPreserved() {
         return (flags & FLAG_PRESERVED) != 0;
     }
@@ -989,10 +985,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         return result;
     }
 
-    /**
-     * Gets a list of all primitives in the current dataset that reference this primitive.
-     * @return The referrers
-     */
+    @Override
     public final List<OsmPrimitive> getReferrers() {
         return getReferrers(false);
     }
@@ -1210,12 +1203,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         data.setChangesetId(changesetId);
         data.setVersion(version);
     }
-
-    /**
-     * Fetch the bounding box of the primitive
-     * @return Bounding box of the object
-     */
-    public abstract BBox getBBox();
 
     /**
      * Called by Dataset to update cached position information of primitive (bbox, cached EarthNorth, ...)

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -160,6 +161,11 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     @Override
     public boolean isHighlighted() {
         return false;
+    }
+
+    @Override
+    public final List<PrimitiveData> getReferrers() {
+        return Collections.emptyList();
     }
 
     @Override

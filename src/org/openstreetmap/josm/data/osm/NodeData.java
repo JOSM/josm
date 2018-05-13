@@ -100,6 +100,11 @@ public class NodeData extends PrimitiveData implements INode {
     }
 
     @Override
+    public BBox getBBox() {
+        return new BBox(lon, lat);
+    }
+
+    @Override
     public boolean isReferredByWays(int n) {
         return false;
     }
