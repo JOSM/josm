@@ -69,7 +69,11 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
                 layers = WMTSTileSource.groupLayersByNameAndTileMatrixSet(capabilities.getLayers());
                 layerTable = new WMTSLayerSelection(layers);
                 layerTable.getTable().getSelectionModel().addListSelectionListener(lsl -> {
-                    name.setText(capabilities.getBaseUrl() + ": " + layerTable.getSelectedLayer().getUserTitle());
+                    if (layerTable.getSelectedLayer() != null) {
+                        name.setText(capabilities.getBaseUrl() + ": " + layerTable.getSelectedLayer().getUserTitle());
+                    } else {
+                        name.setText(capabilities.getBaseUrl() + ": ");
+                    }
                 });
                 layerPanel.removeAll();
                 layerPanel.add(layerTable, GBC.eol().fill());
