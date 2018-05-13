@@ -110,6 +110,7 @@ public class UndoRedoHandler {
      */
     public static final class CommandAddedEvent extends CommandQueueEvent {
 
+        private static final long serialVersionUID = 1L;
         private final Command cmd;
 
         private CommandAddedEvent(UndoRedoHandler source, Command cmd) {
@@ -137,6 +138,7 @@ public class UndoRedoHandler {
      */
     public static final class CommandQueueCleanedEvent extends CommandQueueEvent {
 
+        private static final long serialVersionUID = 1L;
         private final DataSet ds;
 
         private CommandQueueCleanedEvent(UndoRedoHandler source, DataSet ds) {
@@ -164,6 +166,7 @@ public class UndoRedoHandler {
      */
     public static final class CommandUndoneEvent extends CommandQueueEvent {
 
+        private static final long serialVersionUID = 1L;
         private final Command cmd;
 
         private CommandUndoneEvent(UndoRedoHandler source, Command cmd) {
@@ -191,6 +194,7 @@ public class UndoRedoHandler {
      */
     public static final class CommandRedoneEvent extends CommandQueueEvent {
 
+        private static final long serialVersionUID = 1L;
         private final Command cmd;
 
         private CommandRedoneEvent(UndoRedoHandler source, Command cmd) {
