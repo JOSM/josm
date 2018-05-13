@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.util.Collections;
@@ -15,8 +14,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -25,6 +22,7 @@ import org.openstreetmap.josm.data.imagery.WMTSCapabilities;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.Layer;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
+import org.openstreetmap.josm.gui.layer.imagery.WMTSLayerSelection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -35,7 +33,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class AddWMTSLayerPanel extends AddImageryPanel {
     private final transient JPanel layerPanel = new JPanel(new GridBagLayout());
-    private transient JTable layerTable;
+    private transient WMTSLayerSelection layerTable;
     private final JCheckBox setDefaultLayer = new JCheckBox(tr("Set default layer?"));
     private List<Entry<String, List<Layer>>> layers;
 
@@ -68,11 +66,9 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
             try {
                 WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(rawUrl.getText(), getCommonHeaders());
                 layers = WMTSTileSource.groupLayersByNameAndTileMatrixSet(capabilities.getLayers());
-                layerTable = WMTSTileSource.getLayerSelectionPanel(layers);
+                layerTable = new WMTSLayerSelection(layers);
                 layerPanel.removeAll();
-                JScrollPane scrollPane = new JScrollPane(layerTable);
-                scrollPane.setPreferredSize(new Dimension(100, 100));
-                layerPanel.add(scrollPane, GBC.eol().fill());
+                layerPanel.add(layerTable, GBC.eol().fill());
                 layerPanel.revalidate();
             } catch (IOException | WMTSGetCapabilitiesException ex) {
                 JOptionPane.showMessageDialog(
@@ -92,11 +88,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
                 // did not call get capabilities
                 throw new IllegalArgumentException(tr("You need to get fetch layers"));
             }
-            int index = layerTable.getSelectedRow();
-            if (index < 0) {
-                throw new IllegalArgumentException(tr("Invalid layer selected. Index: {1}", index));
-            }
-            Layer selectedLayer = layers.get(layerTable.convertRowIndexToModel(index)).getValue().get(0);
+            Layer selectedLayer = layerTable.getSelectedLayer();
             ret.setDefaultLayers(
                     Collections.<DefaultLayer>singletonList(
                             new DefaultLayer(

@@ -3,8 +3,9 @@ package org.openstreetmap.josm.data.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,11 +29,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -56,6 +59,8 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
+import org.openstreetmap.josm.gui.layer.imagery.WMTSLayerSelection;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -169,6 +174,14 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         public String getIdentifier() {
             return identifier;
         }
+
+        /**
+         *
+         * @return projection of this tileMatrix
+         */
+        public String getCrs() {
+            return crs;
+        }
     }
 
     private static class Dimension {
@@ -263,23 +276,17 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     private static final class SelectLayerDialog extends ExtendedDialog {
         private final transient List<Entry<String, List<Layer>>> layers;
-        private final JTable list;
+        private final WMTSLayerSelection list;
 
         SelectLayerDialog(Collection<Layer> layers) {
             super(Main.parent, tr("Select WMTS layer"), tr("Add layers"), tr("Cancel"));
             this.layers = groupLayersByNameAndTileMatrixSet(layers);
-            this.list = getLayerSelectionPanel(this.layers);
-            JPanel panel = new JPanel(new GridBagLayout());
-            panel.add(new JScrollPane(this.list), GBC.eol().fill());
-            setContent(panel);
+            this.list = new WMTSLayerSelection(this.layers);
+            setContent(list);
         }
 
         public DefaultLayer getSelectedLayer() {
-            int index = list.getSelectedRow();
-            if (index < 0) {
-                return null; //nothing selected
-            }
-            Layer selectedLayer = layers.get(list.convertRowIndexToModel(index)).getValue().get(0);
+            Layer selectedLayer = list.getSelectedLayer();
             return new DefaultLayer(ImageryType.WMTS, selectedLayer.identifier, selectedLayer.style, selectedLayer.tileMatrixSet.identifier);
         }
 
@@ -950,7 +957,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
     }
 
-    public static JTable getLayerSelectionPanel(List<Entry<String, List<Layer>>> layers) {
+    public static JPanel getLayerSelectionPanel(List<Entry<String, List<Layer>>> layers) {
         JTable list = new JTable(
                 new AbstractTableModel() {
                     @Override
@@ -1001,7 +1008,23 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         list.setAutoCreateRowSorter(true);
         list.setRowSelectionAllowed(true);
         list.setColumnSelectionAllowed(false);
-        return list;
+        JPanel ret = new JPanel();
+        ret.add(new JLabel(tr("Filter layers:")), GBC.eol().fill(GBC.HORIZONTAL));
+        final JosmTextArea filter = new JosmTextArea();
+        filter.addInputMethodListener(new InputMethodListener() {
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            @Override
+            public void inputMethodTextChanged(InputMethodEvent event) {
+                ((TableRowSorter) list.getRowSorter()).setRowFilter(RowFilter.regexFilter(filter.getText()));
+            }
+
+            @Override
+            public void caretPositionChanged(InputMethodEvent event) {
+                return;
+            }
+        });
+        ret.add(list, GBC.eol().fill());
+        return ret;
     }
 
     public static List<Entry<String, List<Layer>>> groupLayersByNameAndTileMatrixSet(Collection<Layer> layers) {
