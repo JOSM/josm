@@ -410,9 +410,10 @@ public final class TestUtils {
                         .dynamicPort()
                     );
     }
+
     /**
      * Renders Temporal to RFC 1123 Date Time
-     * @param time
+     * @param time to convert
      * @return string representation according to RFC1123 of time
      */
     public static String getHTTPDate(Temporal time) {
@@ -421,12 +422,10 @@ public final class TestUtils {
 
     /**
      * Renders java time stamp to RFC 1123 Date Time
-     * @param time
+     * @param time java timestamp (milliseconds from Epoch)
      * @return string representation according to RFC1123 of time
      */
     public static String getHTTPDate(long time) {
         return getHTTPDate(Instant.ofEpochMilli(time));
     }
-
-
 }

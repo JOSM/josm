@@ -52,7 +52,13 @@ public class WMSEndpointTileSourceTest {
                 "<id>OSM_Inspector-Geometry</id>\n" +
                 "<type>wms_endpoint</type>\n" +
                 "<url><![CDATA[" + tileServer.url("/capabilities") + "]]></url>\n" +
-                "<icon>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAAB5UlEQVQ4y4WTwWsTURDGfy8W1yYmXZOqtGJJFyGw6KF7CEigwYuS0kthrYUi4i0iORS9BU9hQdA/ILcixVBrwENKLz1FUBB0wWOwYFAqxUNYTZq6BfM8yC5d05iBObz3vfnmm3kz4sqDh/zP7szdlG5I+Of1zQ1xFA8xxI4GH2cjg4Cl+UUJcC4SJq6c7FPkKRlIoPQk0+NnuDwxHrhvuYd83+8OVuBlHouE/eDXzW8+/qO9DyHB0vyiVHoy2INSNiPdeg23XuPs3icmIoofPKXGmFJjjEUjgf4EFNi2TT6fJ5FI0Gg0ePrkMRfnbvn41QsJgEAJAQUdbYZyuQxAcvoSpmnydesFAF+cn8f2KUCw/fGt6GgzWJbF706bVCoFwGxyktnk5N8kB79QepL1zQ3xbOulCJWyGbkQHZWlbEZ6JIZhBDI1nQ5Np8P2zi4t9zAwGyNe3QALti11XSedTvsPYrEY73f3Bk+irusAnI6qrNy7z43sNUbFCQC6LYdCoYBbr/k1/2sh690HUalUaH7eIRxXA+6RFItF3HqN6+dP9REIb5lK2Yy0bdsHDMMgl8vRbTkAhOMqlmVhmibLq2ui7xsf1d+IV+0D3zVNw7KsPiXVapXnd2/Lodu4vLomTNMcSvIHY6bDkqJtEqIAAAAASUVORK5CYII=</icon>\n" +
+                "<icon>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAAB5UlEQVQ4y4WTwWsTURDG" +
+                "fy8W1yYmXZOqtGJJFyGw6KF7CEigwYuS0kthrYUi4i0iORS9BU9hQdA/ILcixVBrwENKLz1FUBB0wWOwYFAqxUNYTZq6BfM8yC5d05iBObz3vfnmm3kz4sqDh/zP" +
+                "7szdlG5I+Of1zQ1xFA8xxI4GH2cjg4Cl+UUJcC4SJq6c7FPkKRlIoPQk0+NnuDwxHrhvuYd83+8OVuBlHouE/eDXzW8+/qO9DyHB0vyiVHoy2INSNiPdeg23XuPs" +
+                "3icmIoofPKXGmFJjjEUjgf4EFNi2TT6fJ5FI0Gg0ePrkMRfnbvn41QsJgEAJAQUdbYZyuQxAcvoSpmnydesFAF+cn8f2KUCw/fGt6GgzWJbF706bVCoFwGxyktnk" +
+                "5N8kB79QepL1zQ3xbOulCJWyGbkQHZWlbEZ6JIZhBDI1nQ5Np8P2zi4t9zAwGyNe3QALti11XSedTvsPYrEY73f3Bk+irusAnI6qrNy7z43sNUbFCQC6LYdCoYBb" +
+                "r/k1/2sh690HUalUaH7eIRxXA+6RFItF3HqN6+dP9REIb5lK2Yy0bdsHDMMgl8vRbTkAhOMqlmVhmibLq2ui7xsf1d+IV+0D3zVNw7KsPiXVapXnd2/Lodu4vLom" +
+                "TNMcSvIHY6bDkqJtEqIAAAAASUVORK5CYII=</icon>\n" +
                 "<attribution-text mandatory=\"true\">© Geofabrik GmbH, OpenStreetMap contributors, CC-BY-SA</attribution-text>\n" +
                 "<attribution-url>http://tools.geofabrik.de/osmi/</attribution-url>\n" +
                 "<max-zoom>18</max-zoom>\n" +
@@ -71,8 +77,8 @@ public class WMSEndpointTileSourceTest {
         assertEquals("single_node_in_way", wmsImageryInfo.getDefaultLayers().get(0).getLayerName());
         WMSEndpointTileSource tileSource = new WMSEndpointTileSource(wmsImageryInfo, Main.getProjection());
         tileSource.initProjection(Projections.getProjectionByCode("EPSG:3857"));
-        assertEquals("https://tools.geofabrik.de/osmi/views/geometry/wxs?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&"
-                + "LAYERS=single_node_in_way&STYLES=default&"
+        assertEquals("https://tools.geofabrik.de/osmi/views/geometry/wxs?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&"
+                + "REQUEST=GetMap&LAYERS=single_node_in_way&STYLES=default&"
                 + "SRS=EPSG:3857&WIDTH=512&HEIGHT=512&"
                 + "BBOX=20037506.6204108,-60112521.5836107,60112521.5836107,-20037506.6204108", tileSource.getTileUrl(1, 1, 1));
     }

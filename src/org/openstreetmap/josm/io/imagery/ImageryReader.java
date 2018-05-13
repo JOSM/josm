@@ -289,7 +289,12 @@ public class ImageryReader implements Closeable {
             case DEFAULT_LAYERS:
                 if ("layer".equals(qName)) {
                     newState = State.NOOP;
-                    defaultLayers.add(new DefaultLayer(entry.getImageryType(), atts.getValue("name"),atts.getValue("style"), atts.getValue("tileMatrixSet")));
+                    defaultLayers.add(new DefaultLayer(
+                            entry.getImageryType(),
+                            atts.getValue("name"),
+                            atts.getValue("style"),
+                            atts.getValue("tileMatrixSet")
+                            ));
                 }
                 break;
             default: // Do nothing
@@ -348,7 +353,6 @@ public class ImageryReader implements Closeable {
                 if (mirrorEntry != null) {
                     switch(qName) {
                     case "type":
-                        ImageryType.values();
                         boolean found = false;
                         for (ImageryType type : ImageryType.values()) {
                             if (Objects.equals(accumulator.toString(), type.getTypeString())) {
@@ -518,7 +522,7 @@ public class ImageryReader implements Closeable {
                     entry.setTransparent(Boolean.parseBoolean(accumulator.toString()));
                     break;
                 case "minimum-tile-expire":
-                    entry.setMinimumTileExpire(Integer.valueOf(accumulator.toString()));
+                    entry.setMinimumTileExpire(Integer.parseInt(accumulator.toString()));
                     break;
                 default: // Do nothing
                 }

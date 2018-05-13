@@ -116,7 +116,7 @@ public final class GetCapabilitiesParseHelper {
      *
      * @param reader XMLStreamReader that should point to start of element
      * @return content of current tag
-     * @throws XMLStreamException
+     * @throws XMLStreamException if any XML stream error occurs
      */
     public static String getElementTextWithSubtags(XMLStreamReader reader) throws XMLStreamException {
         StringBuilder ret = new StringBuilder();

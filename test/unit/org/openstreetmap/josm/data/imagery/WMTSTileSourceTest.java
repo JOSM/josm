@@ -45,7 +45,7 @@ public class WMTSTileSourceTest {
      */
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().preferences().platform().projection().timeout((int)TimeUnit.MINUTES.toMillis(5));
+    public static JOSMTestRules test = new JOSMTestRules().preferences().platform().projection().timeout((int) TimeUnit.MINUTES.toMillis(5));
 
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
@@ -65,7 +65,6 @@ public class WMTSTileSourceTest {
     private ImageryInfo testMissingStyleIdentifer = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-missing-style-identifier.xml");
     private ImageryInfo testMultipleTileMatrixForLayer = getImagery(TestUtils.getTestDataRoot() +
             "wmts/bug13975-multiple-tile-matrices-for-one-layer-projection.xml");
-
 
     private static ImageryInfo getImagery(String path) {
         try {
@@ -258,7 +257,8 @@ public class WMTSTileSourceTest {
         WMTSTileSource testSource = new WMTSTileSource(ontario);
         testSource.initProjection(Main.getProjection());
         assertEquals(
-                "http://maps.ottawa.ca/arcgis/rest/services/Basemap_Imagery_2014/MapServer/WMTS/tile/1.0.0/Basemap_Imagery_2014/default/default028mm/4/2932/2371.jpg",
+                "http://maps.ottawa.ca/arcgis/rest/services/Basemap_Imagery_2014/MapServer/WMTS/tile/1.0.0/Basemap_Imagery_2014/default/"
+                + "default028mm/4/2932/2371.jpg",
                 testSource.getTileUrl(4, 2371, 2932));
         verifyTile(new LatLon(45.4601306, -75.7617187), testSource, 2372, 2932, 4);
         verifyTile(new LatLon(45.4602510, -75.7617187), testSource, 607232, 750591, 12);
@@ -274,7 +274,8 @@ public class WMTSTileSourceTest {
         WMTSTileSource testSource = new WMTSTileSource(ontario);
         testSource.initProjection(Main.getProjection());
         assertEquals(
-                "http://maps.ottawa.ca/arcgis/rest/services/Basemap_Imagery_2014/MapServer/WMTS/tile/1.0.0/Basemap_Imagery_2014/default/GoogleMapsCompatible/4/2932/2371.jpg",
+                "http://maps.ottawa.ca/arcgis/rest/services/Basemap_Imagery_2014/MapServer/WMTS/tile/1.0.0/Basemap_Imagery_2014/default/"
+                + "GoogleMapsCompatible/4/2932/2371.jpg",
                 testSource.getTileUrl(4, 2371, 2932));
         verifyMercatorTile(testSource, 74, 91, 8);
         verifyMercatorTile(testSource, 37952, 46912, 17);
@@ -325,7 +326,7 @@ public class WMTSTileSourceTest {
     /**
      * Test WMTS dimension.
      * @throws IOException if any I/O error occurs
-     * @throws WMTSGetCapabilitiesException
+     * @throws WMTSGetCapabilitiesException if any error occurs
      */
     @Test
     public void testDimension() throws IOException, WMTSGetCapabilitiesException {

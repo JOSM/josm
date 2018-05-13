@@ -22,7 +22,7 @@ public class TileJobOptions {
      *
      * @param connectTimeout in milliseconds
      * @param readTimeout in milliseconds
-     * @param headers
+     * @param headers http headers
      * @param minimumExpiryTime in seconds
      */
     public TileJobOptions(int connectTimeout, int readTimeout, Map<String, String> headers, long minimumExpiryTime) {

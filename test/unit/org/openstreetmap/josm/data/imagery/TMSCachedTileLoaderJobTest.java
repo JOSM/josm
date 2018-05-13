@@ -67,11 +67,11 @@ public class TMSCachedTileLoaderJobTest {
         private String url;
         private String key;
 
-        TestCachedTileLoaderJob(TileLoaderListener listener, Tile tile, String key) throws IOException  {
-            this(listener, tile, key,  (int) TimeUnit.DAYS.toSeconds(1));
+        TestCachedTileLoaderJob(TileLoaderListener listener, Tile tile, String key) throws IOException {
+            this(listener, tile, key, (int) TimeUnit.DAYS.toSeconds(1));
         }
 
-        TestCachedTileLoaderJob(TileLoaderListener listener, Tile tile, String key, int minimumExpiry) throws IOException  {
+        TestCachedTileLoaderJob(TileLoaderListener listener, Tile tile, String key, int minimumExpiry) throws IOException {
             super(listener, tile, getCache(), new TileJobOptions(30000, 30000, null, minimumExpiry),
                     (ThreadPoolExecutor) Executors.newFixedThreadPool(1));
 
@@ -103,14 +103,14 @@ public class TMSCachedTileLoaderJobTest {
             if (cacheData == null) {
                 return false;
             }
-            return cacheData.getContent().length > 0;        }
+            return cacheData.getContent().length > 0;
+        }
     }
 
     private static class Listener implements TileLoaderListener {
         private CacheEntryAttributes attributes;
         private boolean ready;
         private byte[] data;
-
 
         @Override
         public synchronized void tileLoadingFinished(Tile tile, boolean success) {
@@ -128,7 +128,7 @@ public class TMSCachedTileLoaderJobTest {
     private static class MockTileSource extends TMSTileSource {
         private final String url;
 
-        public MockTileSource(String url) {
+        MockTileSource(String url) {
             super(new ImageryInfo("mock"));
             this.url = url;
         }
@@ -190,7 +190,7 @@ public class TMSCachedTileLoaderJobTest {
 
     /**
      * When tile server doesn't return any Expires/Cache-Control headers, expire should be at least MINIMUM_EXPIRES
-     * @throws IOException
+     * @throws IOException exception
      */
     @Test
     public void testNoCacheHeaders() throws IOException {
@@ -213,7 +213,7 @@ public class TMSCachedTileLoaderJobTest {
 
     /**
      * When tile server doesn't return any Expires/Cache-Control headers, expire should be at least minimumExpires parameter
-     * @throws IOException
+     * @throws IOException exception
      */
     @Test
     public void testNoCacheHeadersMinimumExpires() throws IOException {
@@ -223,7 +223,7 @@ public class TMSCachedTileLoaderJobTest {
     /**
      * When tile server doesn't return any Expires/Cache-Control headers, expire should be at least minimumExpires parameter,
      * which is larger than MAXIMUM_EXPIRES
-     * @throws IOException
+     * @throws IOException exception
      */
 
     @Test
@@ -250,7 +250,7 @@ public class TMSCachedTileLoaderJobTest {
 
     /**
      * When tile server returns Expires header shorter than MINIMUM_EXPIRES, we should cache if for at least MINIMUM_EXPIRES
-     * @throws IOException
+     * @throws IOException exception
      */
     @Test
     public void testShortExpire() throws IOException {
@@ -287,7 +287,6 @@ public class TMSCachedTileLoaderJobTest {
                         " than expected",
                 job.getAttributes().getExpirationTime() <= duration);
     }
-
 
     @Test
     public void testLongExpire() throws IOException {

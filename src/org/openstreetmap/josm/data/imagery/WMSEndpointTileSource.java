@@ -30,7 +30,7 @@ public class WMSEndpointTileSource extends AbstractWMSTileSource implements Temp
     private final WMSImagery wmsi;
     private List<DefaultLayer> layers;
     private String urlPattern;
-    private static final Pattern PATTERN_PARAM  = Pattern.compile("\\{([^}]+)\\}");
+    private static final Pattern PATTERN_PARAM = Pattern.compile("\\{([^}]+)\\}");
     private final Map<String, String> headers = new ConcurrentHashMap<>();
 
     /**

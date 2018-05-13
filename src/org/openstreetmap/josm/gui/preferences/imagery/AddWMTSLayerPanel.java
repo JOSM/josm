@@ -35,7 +35,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class AddWMTSLayerPanel extends AddImageryPanel {
     private final transient JPanel layerPanel = new JPanel(new GridBagLayout());
-    private transient JTable layerTable = null;
+    private transient JTable layerTable;
     private final JCheckBox setDefaultLayer = new JCheckBox(tr("Set default layer?"));
     private List<Entry<String, List<Layer>>> layers;
 
@@ -45,7 +45,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
     public AddWMTSLayerPanel() {
         add(new JLabel(tr("{0} Make sure OSM has the permission to use this service", "1.")), GBC.eol());
         add(new JLabel(tr("{0} Enter GetCapabilities URL", "2.")), GBC.eol());
-        add(rawUrl, GBC.eop().fill());
+        add(rawUrl, GBC.eop().fill(GBC.HORIZONTAL));
         rawUrl.setLineWrap(true);
         rawUrl.setAlignmentY(TOP_ALIGNMENT);
         JButton getLayers = new JButton(tr("Get layers"));
@@ -53,10 +53,9 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         setDefaultLayer.addActionListener(e -> {
                 getLayers.setEnabled(setDefaultLayer.isSelected());
         });
-        add(setDefaultLayer, GBC.eop().fill());
-        add(getLayers, GBC.eop().fill());
-        add(new JLabel(tr("Choose default layer")), GBC.eol().fill());
-        layerPanel.setPreferredSize(new Dimension(250, 100));
+        add(setDefaultLayer, GBC.eop());
+        add(getLayers, GBC.eop().fill(GBC.HORIZONTAL));
+        add(new JLabel(tr("Choose default layer")), GBC.eol());
         add(layerPanel, GBC.eol().fill());
 
         addCommonSettings();
@@ -75,7 +74,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
                 scrollPane.setPreferredSize(new Dimension(100, 100));
                 layerPanel.add(scrollPane, GBC.eol().fill());
                 layerPanel.revalidate();
-            } catch (Exception ex) {
+            } catch (IOException | WMTSGetCapabilitiesException ex) {
                 JOptionPane.showMessageDialog(
                         getParent(),
                         tr("Error getting layers: {0}", ex.getMessage()),
@@ -91,15 +90,15 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         if (setDefaultLayer.isSelected()) {
             if (layerTable == null) {
                 // did not call get capabilities
-                throw new RuntimeException("TODO");
+                throw new IllegalArgumentException(tr("You need to get fetch layers"));
             }
             int index = layerTable.getSelectedRow();
             if (index < 0) {
-                throw new RuntimeException("TODO");
+                throw new IllegalArgumentException(tr("Invalid layer selected. Index: {1}", index));
             }
             Layer selectedLayer = layers.get(layerTable.convertRowIndexToModel(index)).getValue().get(0);
             ret.setDefaultLayers(
-                    Collections.<DefaultLayer> singletonList(
+                    Collections.<DefaultLayer>singletonList(
                             new DefaultLayer(
                                     ImageryType.WMTS,
                                     selectedLayer.getIdentifier(),
