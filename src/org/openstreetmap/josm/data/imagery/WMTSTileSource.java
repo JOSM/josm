@@ -4,12 +4,11 @@ package org.openstreetmap.josm.data.imagery;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,13 +28,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableRowSorter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -60,11 +52,9 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.gui.layer.imagery.WMTSLayerSelection;
-import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -272,6 +262,14 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         public WMTSGetCapabilitiesException(String cause) {
             super(cause);
         }
+
+        /**
+         * @param cause description of cause
+         * @param t nested exception
+         */
+        public WMTSGetCapabilitiesException(String cause, Throwable t) {
+            super(cause, t);
+        }
     }
 
     private static final class SelectLayerDialog extends ExtendedDialog {
@@ -428,8 +426,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             } catch (XMLStreamException e) {
                 cf.clear();
                 Logging.warn(new String(data, StandardCharsets.UTF_8));
-                throw new WMTSGetCapabilitiesException(tr("Error during parsing of WMTS Capabilities document: {1}", e.getMessage()));
+                throw new WMTSGetCapabilitiesException(tr("Error during parsing of WMTS Capabilities document: {0}", e.getMessage()), e);
             }
+        } catch (InvalidPathException e) {
+            throw new WMTSGetCapabilitiesException(tr("Invalid path for GetCapabilities document: {0}", e.getMessage()), e);
         }
     }
 
@@ -957,76 +957,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
     }
 
-    public static JPanel getLayerSelectionPanel(List<Entry<String, List<Layer>>> layers) {
-        JTable list = new JTable(
-                new AbstractTableModel() {
-                    @Override
-                    public Object getValueAt(int rowIndex, int columnIndex) {
-                        switch (columnIndex) {
-                        case 0:
-                            return layers.get(rowIndex).getValue()
-                                    .stream()
-                                    .map(Layer::getUserTitle)
-                                    .collect(Collectors.joining(", ")); //this should be only one
-                        case 1:
-                            return layers.get(rowIndex).getValue()
-                                    .stream()
-                                    .map(x -> x.tileMatrixSet.crs)
-                                    .collect(Collectors.joining(", "));
-                        case 2:
-                            return layers.get(rowIndex).getValue()
-                                    .stream()
-                                    .map(x -> x.tileMatrixSet.identifier)
-                                    .collect(Collectors.joining(", ")); //this should be only one
-                        default:
-                            throw new IllegalArgumentException();
-                        }
-                    }
-
-                    @Override
-                    public int getRowCount() {
-                        return layers.size();
-                    }
-
-                    @Override
-                    public int getColumnCount() {
-                        return 3;
-                    }
-
-                    @Override
-                    public String getColumnName(int column) {
-                        switch (column) {
-                        case 0: return tr("Layer name");
-                        case 1: return tr("Projection");
-                        case 2: return tr("Matrix set identifier");
-                        default:
-                            throw new IllegalArgumentException();
-                        }
-                    }
-                });
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setAutoCreateRowSorter(true);
-        list.setRowSelectionAllowed(true);
-        list.setColumnSelectionAllowed(false);
-        JPanel ret = new JPanel();
-        ret.add(new JLabel(tr("Filter layers:")), GBC.eol().fill(GBC.HORIZONTAL));
-        final JosmTextArea filter = new JosmTextArea();
-        filter.addInputMethodListener(new InputMethodListener() {
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            @Override
-            public void inputMethodTextChanged(InputMethodEvent event) {
-                ((TableRowSorter) list.getRowSorter()).setRowFilter(RowFilter.regexFilter(filter.getText()));
-            }
-
-            @Override
-            public void caretPositionChanged(InputMethodEvent event) {
-                return;
-            }
-        });
-        ret.add(list, GBC.eol().fill());
-        return ret;
-    }
-
+    /**
+     * @param layers to be grouped
+     * @return list with entries - grouping identifier + list of layers
+     */
     public static List<Entry<String, List<Layer>>> groupLayersByNameAndTileMatrixSet(Collection<Layer> layers) {
         Map<String, List<Layer>> layerByName = layers.stream().collect(
                 Collectors.groupingBy(x -> x.identifier + '\u001c' + x.tileMatrixSet.identifier));
