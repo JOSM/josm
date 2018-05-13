@@ -1426,6 +1426,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @return headers
      */
     public Map<String, String> getCustomHttpHeaders() {
+        if (customHttpHeaders == null) {
+            return Collections.emptyMap();
+        }
         return customHttpHeaders;
     }
 
