@@ -419,7 +419,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                     ret = new WMTSCapabilities(url, TransferMode.REST);
                 }
                 if (layers == null) {
-                    throw new WMTSGetCapabilitiesException(tr("WMTS Capabilties document did not contain layers in url:  {0}", url));
+                    throw new WMTSGetCapabilitiesException(tr("WMTS Capabilities document did not contain layers in url: {0}", url));
                 }
                 ret.addLayers(layers);
                 return ret;
