@@ -85,13 +85,16 @@ public class WMSImageryTest {
     public void testTicket16248() throws IOException, WMSGetCapabilitiesException {
         tileServer.stubFor(
                 WireMock.get(WireMock.anyUrl())
-                .willReturn(WireMock.aResponse().withBody(Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16248, "capabilities.xml"))))));
+                .willReturn(WireMock.aResponse().withBody(
+                        Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16248, "capabilities.xml")))
+                        ))
+                );
         WMSImagery wms = new WMSImagery(tileServer.url("any"));
         assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k", wms.buildRootUrl());
         assertEquals("wms.hgis.cartomatic.pl", wms.getLayers().get(0).getName());
         assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25kFORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&"
                 + "LAYERS=wms.hgis.cartomatic.pl&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}",
-                wms.buildGetMapUrl(wms.getLayers(), (List<String>)null, true));
+                wms.buildGetMapUrl(wms.getLayers(), (List<String>) null, true));
     }
 }
 

@@ -47,7 +47,7 @@ public abstract class AddImageryPanel extends JPanel {
 
     protected final transient Collection<ContentValidationListener> listeners = new ArrayList<>();
 
-    private final JCheckBox validGeoreference= new JCheckBox(tr("Is layer properly georeferenced?"));
+    private final JCheckBox validGeoreference = new JCheckBox(tr("Is layer properly georeferenced?"));
     private HeadersTable headersTable;
     private JSpinner minimumCacheExpiry;
     private JComboBox<String> minimumCacheExpiryUnit;
@@ -71,7 +71,7 @@ public abstract class AddImageryPanel extends JPanel {
         this(new GridBagLayout());
         headersTable = new HeadersTable();
         minimumCacheExpiry = new JSpinner(new SpinnerNumberModel(
-                (Number)TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get()),
+                (Number) TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get()),
                 0L,
                 Long.valueOf(Integer.MAX_VALUE),
                 1
@@ -100,7 +100,7 @@ public abstract class AddImageryPanel extends JPanel {
                     currentUnit = TimeUnit.DAYS;
                     break;
                 default:
-                    Logging.warn("Dupa: " + units.indexOf(e.getItem()));
+                    Logging.warn("Unkown unit: " + units.indexOf(e.getItem()));
                 }
                 minimumCacheExpiry.setValue(newValue);
             }

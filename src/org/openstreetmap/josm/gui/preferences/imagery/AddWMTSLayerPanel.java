@@ -99,7 +99,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
             }
             Layer selectedLayer = layers.get(layerTable.convertRowIndexToModel(index)).getValue().get(0);
             ret.setDefaultLayers(
-                    Collections.<DefaultLayer> singletonList(
+                    Collections.<DefaultLayer>singletonList(
                             new DefaultLayer(
                                     ImageryType.WMTS,
                                     selectedLayer.getIdentifier(),

@@ -302,7 +302,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * Creates a tile source based on imagery info
      * @param info imagery info
      * @throws IOException if any I/O error occurs
-     * @throws WMTSGetCapabilitiesException
+     * @throws WMTSGetCapabilitiesException when document didn't contain any layers
      * @throws IllegalArgumentException if any other error happens for the given imagery info
      */
     public WMTSTileSource(ImageryInfo info) throws IOException, WMTSGetCapabilitiesException {
@@ -311,7 +311,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         this.headers.putAll(info.getCustomHttpHeaders());
         this.baseUrl = GetCapabilitiesParseHelper.normalizeCapabilitiesUrl(handleTemplate(info.getUrl()));
         WMTSCapabilities capabilities = getCapabilities(baseUrl, headers);
-        this.layers =  capabilities.getLayers();
+        this.layers = capabilities.getLayers();
         this.baseUrl = capabilities.getBaseUrl();
         this.transferMode = capabilities.getTransferMode();
         if (info.getDefaultLayers().isEmpty()) {
@@ -373,7 +373,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @param headers HTTP headers to set when calling getCapabilities url
      * @return capabilities
      * @throws IOException in case of any I/O error
-     * @throws WMTSGetCapabilitiesException
+     * @throws WMTSGetCapabilitiesException when document didn't contain any layers
      * @throws IllegalArgumentException in case of any other error
      */
     public static WMTSCapabilities getCapabilities(String url, Map<String, String> headers) throws IOException, WMTSGetCapabilitiesException {

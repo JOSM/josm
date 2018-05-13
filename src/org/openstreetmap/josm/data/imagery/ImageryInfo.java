@@ -1431,7 +1431,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
     /**
      * Sets custom HTTP headers that should be sent with request towards imagery provider
-     * @param customHttpHeaders
+     * @param customHttpHeaders http headers
      */
     public void setCustomHttpHeaders(Map<String, String> customHttpHeaders) {
         this.customHttpHeaders = customHttpHeaders;
@@ -1461,7 +1461,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
     /**
      * Sets minimum tile expiration in seconds
-     * @param minimumTileExpire
+     * @param minimumTileExpire minimum tile expiration in seconds
      */
     public void setMinimumTileExpire(int minimumTileExpire) {
         this.minimumTileExpire = minimumTileExpire;

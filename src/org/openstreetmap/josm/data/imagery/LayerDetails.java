@@ -37,7 +37,7 @@ public class LayerDetails {
      * Constructor pointing to parent layer. Set to null if this is topmost layer.
      * This is needed to properly handle layer attributes inheritance.
      *
-     * @param parentLayer
+     * @param parentLayer parent layer
      */
     public LayerDetails(LayerDetails parentLayer) {
         this.parentLayer = parentLayer;
@@ -69,16 +69,16 @@ public class LayerDetails {
     }
 
     /**
-     * @see LayerDetails#getName()
      * @return title "Human readable" title of this layer
+     * @see LayerDetails#getName()
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * @see LayerDetails#getName()
      * @param title set title of this layer
+     * @see LayerDetails#getName()
      */
     public void setTitle(String title) {
         this.title = title;
@@ -87,13 +87,13 @@ public class LayerDetails {
     /**
      *
      * Citation from OGC WMS specification (WMS 1.3.0):
-     * > A number of elements have both a <Name> and a <Title>. The Name is a text string used for machine-to-machine
+     * > A number of elements have both a {@literal <Name>} and a {@literal <Title>}. The Name is a text string used for machine-to-machine
      * > communication while the Title is for the benefit of humans. For example, a dataset might have the descriptive Title
      * > “Maximum Atmospheric Temperature” and be requested using the abbreviated Name “ATMAX”.
      *
      * And second citation:
-     * > If, and only if, a layer has a <Name>, then it is a map layer that can be requested by using that Name in the
-     * > LAYERS parameter of a GetMap request. A Layer that contains a <Name> element is referred to as a “named
+     * > If, and only if, a layer has a {@literal <Name>}, then it is a map layer that can be requested by using that Name in the
+     * > LAYERS parameter of a GetMap request. A Layer that contains a {@literal <Name>} element is referred to as a “named
      * > layer” in this International Standard. If the layer has a Title but no Name, then that layer is only a category title for
      * > all the layers nested within.
      * @return name of this layer
@@ -103,8 +103,8 @@ public class LayerDetails {
     }
 
     /**
-     * @see LayerDetails#getName()
      * @param name sets the name of this Layer
+     * @see LayerDetails#getName()
      */
     public void setName(String name) {
         this.name = name;
@@ -137,7 +137,7 @@ public class LayerDetails {
 
     /**
      * sets bounds of this layer
-     * @param bounds
+     * @param bounds of this layer
      */
     public void setBounds(Bounds bounds) {
         this.bounds = bounds;
@@ -159,7 +159,7 @@ public class LayerDetails {
 
     /**
      * sets children layers for this layer
-     * @param children
+     * @param children children of this layer
      */
     public void setChildren(List<LayerDetails> children) {
         this.children = children;
@@ -191,7 +191,7 @@ public class LayerDetails {
 
     /**
      * Sets abstract of this layer
-     * @param abstr
+     * @param abstr abstract of this layer
      */
     public void setAbstract(String abstr) {
         this.abstr = abstr;

@@ -289,7 +289,12 @@ public class ImageryReader implements Closeable {
             case DEFAULT_LAYERS:
                 if ("layer".equals(qName)) {
                     newState = State.NOOP;
-                    defaultLayers.add(new DefaultLayer(entry.getImageryType(), atts.getValue("name"),atts.getValue("style"), atts.getValue("tileMatrixSet")));
+                    defaultLayers.add(new DefaultLayer(
+                            entry.getImageryType(),
+                            atts.getValue("name"),
+                            atts.getValue("style"),
+                            atts.getValue("tileMatrixSet")
+                            ));
                 }
                 break;
             default: // Do nothing

@@ -65,7 +65,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
      */
     public WMSLayer(ImageryInfo info) {
         super(info);
-        CheckParameterUtil.ensureThat(info.getImageryType() == ImageryType.WMS || info.getImageryType() == ImageryType.WMS_ENDPOINT, "ImageryType is WMS");
+        CheckParameterUtil.ensureThat(
+                info.getImageryType() == ImageryType.WMS || info.getImageryType() == ImageryType.WMS_ENDPOINT, "ImageryType is WMS");
         CheckParameterUtil.ensureParameterNotNull(info.getUrl(), "info.url");
         if (info.getImageryType() == ImageryType.WMS) {
             TemplatedWMSTileSource.checkUrl(info.getUrl());

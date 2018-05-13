@@ -131,8 +131,8 @@ public class WMSImagery {
     /**
      * Make getCapabilities request towards given URL
      * @param url service url
-     * @throws IOException
-     * @throws WMSGetCapabilitiesException
+     * @throws IOException when connection error when fetching get capabilities document
+     * @throws WMSGetCapabilitiesException when there are errors when parsing get capabilities document
      */
     public WMSImagery(String url) throws IOException, WMSGetCapabilitiesException {
         this(url, null);
@@ -142,8 +142,8 @@ public class WMSImagery {
      * Make getCapabilities request towards given URL using headers
      * @param url service url
      * @param headers HTTP headers to be sent with request
-     * @throws IOException
-     * @throws WMSGetCapabilitiesException
+     * @throws IOException when connection error when fetching get capabilities document
+     * @throws WMSGetCapabilitiesException when there are errors when parsing get capabilities document
      */
     public WMSImagery(String url, Map<String, String> headers) throws IOException, WMSGetCapabilitiesException {
         if (headers != null) {
@@ -184,6 +184,7 @@ public class WMSImagery {
                     capabilitiesUrl = new File(workingAddress).toURI().toURL();
                 } catch (MalformedURLException e1) { // NOPMD
                     // do nothing, raise original exception
+                    Logging.trace(e1);
                 }
             }
         }
@@ -286,12 +287,11 @@ public class WMSImagery {
     }
 
     /**
-     * @see #buildGetMapUrl(List, boolean)
-     *
      * @param selectedLayers selected layers as subset of the tree returned by {@link #getLayers()}
      * @param selectedStyles selected styles for all selectedLayers
      * @param transparent whether returned images should contain transparent pixels (if supported by format)
      * @return URL template for GetMap service
+     * @see #buildGetMapUrl(List, boolean)
      */
     public String buildGetMapUrl(List<LayerDetails> selectedLayers, List<String> selectedStyles, boolean transparent) {
         return buildGetMapUrl(
@@ -302,13 +302,12 @@ public class WMSImagery {
     }
 
     /**
-     * @see #buildGetMapUrl(List, boolean)
-     *
      * @param selectedLayers selected layers as list of strings
      * @param selectedStyles selected styles of layers as list of strings
      * @param format format of the response - one of {@link #getFormats()}
      * @param transparent whether returned images should contain transparent pixels (if supported by format)
      * @return URL template for GetMap service
+     * @see #buildGetMapUrl(List, boolean)
      */
     public String buildGetMapUrl(List<String> selectedLayers,
             Collection<String> selectedStyles,
@@ -384,11 +383,13 @@ public class WMSImagery {
     private void parseService(XMLStreamReader reader) throws XMLStreamException {
         if (GetCapabilitiesParseHelper.moveReaderToTag(reader, this::tagEquals, QN_TITLE)) {
             this.title = reader.getElementText();
+            // CHECKSTYLE.OFF: EmptyBlock
             for (int event = reader.getEventType();
                     reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && tagEquals(QN_SERVICE, reader.getName()));
                     event = reader.next()) {
                 // empty loop, just move reader to the end of Service tag, if moveReaderToTag return false, it's already done
             }
+            // CHECKSTYLE.ON: EmptyBlock
         }
     }
 
@@ -590,7 +591,6 @@ public class WMSImagery {
         return Double.parseDouble(value.replace(',', '.'));
     }
 
-
     private String normalizeUrl(String serviceUrlStr) throws MalformedURLException {
         URL getCapabilitiesUrl = null;
         String ret = null;
@@ -640,7 +640,6 @@ public class WMSImagery {
         return false;
     }
 
-
     static boolean imageFormatHasTransparency(final String format) {
         return format != null && (format.startsWith("image/png") || format.startsWith("image/gif")
                 || format.startsWith("image/svg") || format.startsWith("image/tiff"));
@@ -685,7 +684,7 @@ public class WMSImagery {
 
 
     /**
-     * @param defaultLayers
+     * @param defaultLayers default layers that should select layer object
      * @return collection of LayerDetails specified by DefaultLayers
      */
     public List<LayerDetails> getLayers(List<DefaultLayer> defaultLayers) {

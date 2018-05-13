@@ -71,7 +71,7 @@ public class HeadersTable extends JPanel {
                 }
 
             } else if (row == headers.size()) {
-                String[] entry = new String[] { "", "" };
+                String[] entry = new String[] {"", ""};
                 entry[col] = (String) value;
                 headers.add(entry);
                 fireTableRowsInserted(row + 1, row + 1);
@@ -92,7 +92,7 @@ public class HeadersTable extends JPanel {
 
     /**
      * Create table prefilled with headers
-     * @param headers
+     * @param headers contents of table
      */
     public HeadersTable(Map<String, String> headers) {
         super(new GridBagLayout());
@@ -107,7 +107,7 @@ public class HeadersTable extends JPanel {
 
     private static List<String[]> getHeadersAsVector(Map<String, String> headers) {
         return headers.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
-                .map(e -> new String[] { e.getKey(), e.getValue() }).collect(Collectors.toList());
+                .map(e -> new String[] {e.getKey(), e.getValue()}).collect(Collectors.toList());
     }
 
     /**
