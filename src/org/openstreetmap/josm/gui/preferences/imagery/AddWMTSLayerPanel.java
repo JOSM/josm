@@ -45,7 +45,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
     public AddWMTSLayerPanel() {
         add(new JLabel(tr("{0} Make sure OSM has the permission to use this service", "1.")), GBC.eol());
         add(new JLabel(tr("{0} Enter GetCapabilities URL", "2.")), GBC.eol());
-        add(rawUrl, GBC.eop().fill());
+        add(rawUrl, GBC.eop().fill(GBC.HORIZONTAL));
         rawUrl.setLineWrap(true);
         rawUrl.setAlignmentY(TOP_ALIGNMENT);
         JButton getLayers = new JButton(tr("Get layers"));
@@ -53,10 +53,9 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         setDefaultLayer.addActionListener(e -> {
                 getLayers.setEnabled(setDefaultLayer.isSelected());
         });
-        add(setDefaultLayer, GBC.eop().fill());
-        add(getLayers, GBC.eop().fill());
-        add(new JLabel(tr("Choose default layer")), GBC.eol().fill());
-        layerPanel.setPreferredSize(new Dimension(250, 100));
+        add(setDefaultLayer, GBC.eop());
+        add(getLayers, GBC.eop().fill(GBC.HORIZONTAL));
+        add(new JLabel(tr("Choose default layer")), GBC.eol());
         add(layerPanel, GBC.eol().fill());
 
         addCommonSettings();
