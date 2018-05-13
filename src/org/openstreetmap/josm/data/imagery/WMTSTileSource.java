@@ -240,7 +240,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
         /**
          *
-         * @return
+         * @return tileMatrixSet of this layer
          */
         public TileMatrixSet getTileMatrixSet() {
             return tileMatrixSet;

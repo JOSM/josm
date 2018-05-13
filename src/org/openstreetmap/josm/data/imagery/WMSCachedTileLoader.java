@@ -27,9 +27,7 @@ public class WMSCachedTileLoader extends TMSCachedTileLoader {
      *
      * @param listener that will be notified when tile is loaded
      * @param cache reference
-     * @param connectTimeout to tile source
-     * @param readTimeout from tile source
-     * @param headers to be sent with requests
+     * @param options tile job options
      */
     public WMSCachedTileLoader(TileLoaderListener listener, ICacheAccess<String, BufferedImageCacheEntry> cache,
             TileJobOptions options) {
