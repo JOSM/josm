@@ -12,6 +12,12 @@ public class TilePosition {
     private final int y;
     private final int zoom;
 
+    /**
+     * Constructs a new {@code TilePosition}.
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param zoom zoom level
+     */
     public TilePosition(int x, int y, int zoom) {
         this.x = x;
         this.y = y;

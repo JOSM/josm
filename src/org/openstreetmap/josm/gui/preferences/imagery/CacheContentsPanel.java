@@ -84,6 +84,11 @@ public class CacheContentsPanel extends JPanel {
         return Long.valueOf(-1);
     }
 
+    /**
+     * Returns the cache stats.
+     * @param cache imagery cache
+     * @return the cache stats
+     */
     public static String[][] getCacheStats(CacheAccess<String, BufferedImageCacheEntry> cache) {
         Set<String> keySet = cache.getCacheControl().getKeySet();
         Map<String, int[]> temp = new ConcurrentHashMap<>(); // use int[] as a Object reference to int, gives better performance
