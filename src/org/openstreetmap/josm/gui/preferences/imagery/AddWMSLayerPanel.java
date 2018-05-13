@@ -147,6 +147,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         registerValidableComponent(endpoint);
         registerValidableComponent(rawUrl);
         registerValidableComponent(wmsUrl);
+        registerValidableComponent(setDefaultLayers);
     }
 
     protected final void onLayerSelectionChanged() {
@@ -196,6 +197,9 @@ public class AddWMSLayerPanel extends AddImageryPanel {
     @Override
     protected boolean isImageryValid() {
         if (getImageryName().isEmpty()) {
+            return false;
+        }
+        if (setDefaultLayers.isSelected() && (tree == null || tree.getSelectedLayers().isEmpty())) {
             return false;
         }
         if (endpoint.isSelected()) {

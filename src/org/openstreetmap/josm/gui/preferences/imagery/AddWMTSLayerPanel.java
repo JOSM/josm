@@ -61,6 +61,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         add(new JLabel(tr("{0} Enter name for this layer", "3.")), GBC.eol());
         add(name, GBC.eol().fill(GBC.HORIZONTAL));
         registerValidableComponent(rawUrl);
+        registerValidableComponent(setDefaultLayer);
 
         getLayers.addActionListener(e -> {
             try {
@@ -115,7 +116,9 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
 
     @Override
     protected boolean isImageryValid() {
-        return !getImageryName().isEmpty() && !getImageryRawUrl().isEmpty();
+        return ((setDefaultLayer.isSelected() && layerTable !=null && layerTable.getSelectedLayer() != null)
+                || !setDefaultLayer.isSelected()
+                ) &&  !getImageryName().isEmpty() && !getImageryRawUrl().isEmpty();
     }
 
 }
