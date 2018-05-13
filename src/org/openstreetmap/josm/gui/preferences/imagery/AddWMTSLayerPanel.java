@@ -118,14 +118,12 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
             throw new IllegalArgumentException(e); // if so, wrap exception, so proper message will be shown to the user
         }
         return ret;
-
     }
 
     @Override
     protected boolean isImageryValid() {
-        return ((setDefaultLayer.isSelected() && layerTable !=null && layerTable.getSelectedLayer() != null)
+        return ((setDefaultLayer.isSelected() && layerTable != null && layerTable.getSelectedLayer() != null)
                 || !setDefaultLayer.isSelected()
-                ) &&  !getImageryName().isEmpty() && !getImageryRawUrl().isEmpty();
+                ) && !getImageryName().isEmpty() && !getImageryRawUrl().isEmpty();
     }
-
 }

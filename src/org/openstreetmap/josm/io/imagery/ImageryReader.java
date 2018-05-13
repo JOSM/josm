@@ -257,7 +257,7 @@ public class ImageryReader implements Closeable {
                 } else if ("metadata-header".equals(qName)) {
                     metadataHeaders.put(atts.getValue("header-name"), atts.getValue("metadata-key"));
                     newState = State.METADATA;
-                } else if ("defaultLayers".equals(qName)) {
+                } else if ("default-layers".equals(qName)) {
                     newState = State.DEFAULT_LAYERS;
                 } else if ("custom-http-header".equals(qName)) {
                    customHttpHeaders.put(atts.getValue("header-name"), atts.getValue("header-value"));
@@ -293,7 +293,7 @@ public class ImageryReader implements Closeable {
                             entry.getImageryType(),
                             atts.getValue("name"),
                             atts.getValue("style"),
-                            atts.getValue("tileMatrixSet")
+                            atts.getValue("tile-matrix-set")
                             ));
                 }
                 break;

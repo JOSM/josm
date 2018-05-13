@@ -27,12 +27,11 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
- *
- * Class for displaying WMTS layer selection panel
- *
+ * Class for displaying WMTS layer selection panel.
+ * @since 13748
  */
 public class WMTSLayerSelection extends JPanel {
-    private final static class AbstractTableModelExtension extends AbstractTableModel {
+    private static final class AbstractTableModelExtension extends AbstractTableModel {
         private final List<Entry<String, List<Layer>>> layers;
 
         private AbstractTableModelExtension(List<Entry<String, List<Layer>>> layers) {
@@ -159,6 +158,10 @@ public class WMTSLayerSelection extends JPanel {
         column.setPreferredWidth(ret + 10);
     }
 
+    /**
+     * Returns the list of layers.
+     * @return the list of layers
+     */
     public JTable getTable() {
         return list;
     }

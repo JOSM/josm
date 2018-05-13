@@ -39,15 +39,30 @@ public class TileAnchor {
         this.nextTileOrigin = nextTileOrigin;
     }
 
+    /**
+     * Constructs a new {@code TileAnchor}.
+     * @param tileOrigin position of the tile origin
+     * @param nextTileOrigin position of the opposite tile corner, i.e. the
+     * origin of the tile with index (x+1,y+1), when current tile has index (x,y)
+     */
     public TileAnchor(IProjected tileOrigin, IProjected nextTileOrigin) {
         this.tileOrigin = new Point2D.Double(tileOrigin.getEast(), tileOrigin.getNorth());
         this.nextTileOrigin = new Point2D.Double(nextTileOrigin.getEast(), nextTileOrigin.getNorth());
     }
 
+    /**
+     * Returns the position of the tile origin.
+     * @return the position of the tile origin
+     */
     public Point2D getTileOrigin() {
         return tileOrigin;
     }
 
+    /**
+     * Returns the position of the opposite tile corner.
+     * @return the position of the opposite tile corner, i.e. the
+     * origin of the tile with index (x+1,y+1), when current tile has index (x,y)
+     */
     public Point2D getNextTileOrigin() {
         return nextTileOrigin;
     }
