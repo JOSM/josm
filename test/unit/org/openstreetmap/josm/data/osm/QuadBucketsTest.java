@@ -42,9 +42,11 @@ public class QuadBucketsTest {
         List<Way> allWays = new ArrayList<>(ds.getWays());
         List<Relation> allRelations = new ArrayList<>(ds.getRelations());
 
-        QuadBuckets<Node> nodes = Reflection.field("nodes").ofType(new TypeRef<QuadBuckets<Node>>() {}).in(ds).get();
-        QuadBuckets<Way> ways = Reflection.field("ways").ofType(new TypeRef<QuadBuckets<Way>>() {}).in(ds).get();
-        Collection<Relation> relations = Reflection.field("relations").ofType(new TypeRef<Collection<Relation>>() {}).in(ds).get();
+        QuadBucketPrimitiveStore<Node, Way, Relation> s = Reflection.field("store").ofType(
+                new TypeRef<QuadBucketPrimitiveStore<Node, Way, Relation>>() {}).in(ds).get();
+        QuadBuckets<Node> nodes = Reflection.field("nodes").ofType(new TypeRef<QuadBuckets<Node>>() {}).in(s).get();
+        QuadBuckets<Way> ways = Reflection.field("ways").ofType(new TypeRef<QuadBuckets<Way>>() {}).in(s).get();
+        Collection<Relation> relations = Reflection.field("relations").ofType(new TypeRef<Collection<Relation>>() {}).in(s).get();
 
         int expectedCount = allNodes.size();
         for (OsmPrimitive o: allNodes) {
