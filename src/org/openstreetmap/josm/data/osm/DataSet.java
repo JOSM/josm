@@ -514,7 +514,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
         primitive.setDataset(null);
     }
 
-    protected void removePrimitive(OsmPrimitive primitive) {
+    void removePrimitive(OsmPrimitive primitive) {
         checkModifiable();
         beginUpdate();
         try {
