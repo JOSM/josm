@@ -23,18 +23,15 @@ import org.openstreetmap.josm.tools.Utils;
  * A relation, having a set of tags and any number (0...n) of members.
  *
  * @author Frederik Ramm
+ * @since 343
  */
-public final class Relation extends OsmPrimitive implements IRelation {
+public final class Relation extends OsmPrimitive implements IRelation<RelationMember> {
 
     private RelationMember[] members = new RelationMember[0];
 
     private BBox bbox;
 
-    /**
-     * @return Members of the relation. Changes made in returned list are not mapped
-     * back to the primitive, use setMembers() to modify the members
-     * @since 1925
-     */
+    @Override
     public List<RelationMember> getMembers() {
         return new CopyList<>(members);
     }
@@ -74,11 +71,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         return members.length;
     }
 
-    /**
-     * Returns the relation member at the specified index.
-     * @param index the index of the relation member
-     * @return relation member at the specified index
-     */
+    @Override
     public RelationMember getMember(int index) {
         return members[index];
     }

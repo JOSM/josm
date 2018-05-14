@@ -139,10 +139,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public String format(IPrimitive osm) {
         if (osm instanceof INode) {
             return format((INode) osm);
-        } else if (osm instanceof IWay<?>) {
+        } else if (osm instanceof IWay) {
             return format((IWay<?>) osm);
         } else if (osm instanceof IRelation) {
-            return format((IRelation) osm);
+            return format((IRelation<?>) osm);
         }
         return null;
     }
@@ -305,7 +305,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     @Override
-    public String format(IRelation relation) {
+    public String format(IRelation<?> relation) {
         StringBuilder name = new StringBuilder();
         if (relation.isIncomplete()) {
             name.append(tr("incomplete"));
@@ -335,7 +335,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return result;
     }
 
-    private static StringBuilder formatRelationNameAndType(IRelation relation, StringBuilder result, TaggingPreset preset) {
+    private static StringBuilder formatRelationNameAndType(IRelation<?> relation, StringBuilder result, TaggingPreset preset) {
         if (preset == null || !(relation instanceof TemplateEngineDataProvider)) {
             result.append(getRelationTypeName(relation));
             String relationName = getRelationName(relation);
@@ -352,7 +352,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return result;
     }
 
-    private final Comparator<IRelation> relationComparator = (r1, r2) -> {
+    private final Comparator<IRelation<?>> relationComparator = (r1, r2) -> {
         //TODO This doesn't work correctly with formatHooks
 
         TaggingPreset preset1 = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(r1);
@@ -395,11 +395,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     };
 
     @Override
-    public Comparator<IRelation> getRelationComparator() {
+    public Comparator<IRelation<?>> getRelationComparator() {
         return relationComparator;
     }
 
-    private static String getRelationTypeName(IRelation relation) {
+    private static String getRelationTypeName(IRelation<?> relation) {
         String name = trc("Relation type", relation.get("type"));
         if (name == null) {
             name = relation.hasKey("public_transport") ? tr("public transport") : null;
@@ -432,7 +432,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return name;
     }
 
-    private static String getNameTagValue(IRelation relation, String nameTag) {
+    private static String getNameTagValue(IRelation<?> relation, String nameTag) {
         if ("name".equals(nameTag)) {
             if (Config.getPref().getBoolean("osm-primitives.localize-name", true))
                 return relation.getLocalName();
@@ -455,7 +455,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     }
 
-    private static String getRelationName(IRelation relation) {
+    private static String getRelationName(IRelation<?> relation) {
         String nameTag;
         for (String n : getNamingtagsForRelations()) {
             nameTag = getNameTagValue(relation, n);

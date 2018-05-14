@@ -34,7 +34,7 @@ public interface NameFormatter {
      * @return the name
      * @since 13564 (signature)
      */
-    String format(IRelation relation);
+    String format(IRelation<?> relation);
 
     /**
      * Formats a name for a {@link Changeset}.
@@ -63,5 +63,5 @@ public interface NameFormatter {
      * @return That comparator
      * @since 13564 (signature)
      */
-    Comparator<IRelation> getRelationComparator();
+    Comparator<IRelation<?>> getRelationComparator();
 }

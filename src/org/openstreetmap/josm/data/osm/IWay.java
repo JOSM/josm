@@ -76,7 +76,7 @@ public interface IWay<N extends INode> extends IPrimitive {
     default int compareTo(IPrimitive o) {
         if (o instanceof IRelation)
             return 1;
-        return o instanceof IWay<?> ? Long.compare(getUniqueId(), o.getUniqueId()) : -1;
+        return o instanceof IWay ? Long.compare(getUniqueId(), o.getUniqueId()) : -1;
     }
 
     @Override

@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
  * @param <R> type representing OSM relations
  * @since 12048
  */
-public class QuadBucketPrimitiveStore<N extends INode, W extends IWay<N>, R extends IRelation> {
+public class QuadBucketPrimitiveStore<N extends INode, W extends IWay<N>, R extends IRelation<?>> {
     /**
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.

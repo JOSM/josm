@@ -10,7 +10,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
  * Relation data.
  * @since 2284
  */
-public class RelationData extends PrimitiveData implements IRelation {
+public class RelationData extends PrimitiveData implements IRelation<RelationMemberData> {
 
     private static final long serialVersionUID = 1163664954890478565L;
     private List<RelationMemberData> members = new ArrayList<>();
@@ -40,10 +40,7 @@ public class RelationData extends PrimitiveData implements IRelation {
         members.addAll(data.members);
     }
 
-    /**
-     * Returns relation members.
-     * @return relation members
-     */
+    @Override
     public List<RelationMemberData> getMembers() {
         return members;
     }
@@ -62,18 +59,23 @@ public class RelationData extends PrimitiveData implements IRelation {
     }
 
     @Override
+    public RelationMemberData getMember(int index) {
+        return members.get(index);
+    }
+
+    @Override
     public long getMemberId(int idx) {
-        return members.get(idx).getMemberId();
+        return getMember(idx).getMemberId();
     }
 
     @Override
     public String getRole(int idx) {
-        return members.get(idx).getRole();
+        return getMember(idx).getRole();
     }
 
     @Override
     public OsmPrimitiveType getMemberType(int idx) {
-        return members.get(idx).getMemberType();
+        return getMember(idx).getMemberType();
     }
 
     @Override
