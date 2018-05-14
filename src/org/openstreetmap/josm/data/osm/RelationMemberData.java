@@ -10,7 +10,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * This is the data (role, type and id) that is stored in the database for a given relation member.
  * @since 2284
  */
-public class RelationMemberData implements IRelationMember, Serializable {
+public class RelationMemberData implements IRelationMember<PrimitiveData>, Serializable {
 
     private static final long serialVersionUID = 381392198209333319L;
     private final String role;
@@ -63,6 +63,11 @@ public class RelationMemberData implements IRelationMember, Serializable {
     }
 
     @Override
+    public OsmPrimitiveType getDisplayType() {
+        return memberType;
+    }
+
+    @Override
     public boolean isNode() {
         return OsmPrimitiveType.NODE == memberType;
     }
@@ -75,6 +80,11 @@ public class RelationMemberData implements IRelationMember, Serializable {
     @Override
     public boolean isRelation() {
         return OsmPrimitiveType.RELATION == memberType;
+    }
+
+    @Override
+    public PrimitiveData getMember() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

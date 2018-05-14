@@ -27,5 +27,5 @@ public interface PrimitiveVisitor {
      * Visiting call for relations.
      * @param r The relation to inspect.
      */
-    void visit(IRelation r);
+    void visit(IRelation<?> r);
 }

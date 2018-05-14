@@ -11,7 +11,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * Since membership may be qualified by a "role", a simple list is not sufficient.
  * @since 343
  */
-public class RelationMember implements IRelationMember {
+public class RelationMember implements IRelationMember<OsmPrimitive> {
 
     /**
      *
@@ -36,15 +36,6 @@ public class RelationMember implements IRelationMember {
     @Override
     public boolean isWay() {
         return member instanceof Way;
-    }
-
-    /**
-     * Returns type of member for icon display.
-     * @return type of member for icon display
-     * @since 3844
-     */
-    public OsmPrimitiveType getDisplayType() {
-        return member.getDisplayType();
     }
 
     @Override
@@ -79,11 +70,7 @@ public class RelationMember implements IRelationMember {
         return (Node) member;
     }
 
-    /**
-     * Returns the relation member.
-     * @return Member. Returned value is never null.
-     * @since 1937
-     */
+    @Override
     public OsmPrimitive getMember() {
         return member;
     }

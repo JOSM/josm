@@ -281,7 +281,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     @Override
-    public void visit(IRelation e) {
+    public void visit(IRelation<?> e) {
         if (e.isIncomplete()) return;
         addCommon(e, "relation");
         if (!withBody) {

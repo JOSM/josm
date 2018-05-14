@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
  * @param <R> type representing OSM relations
  * @since 13764
  */
-public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation> extends Data, Lockable {
+public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>> extends Data, Lockable {
 
     // --------------
     //    Metadata

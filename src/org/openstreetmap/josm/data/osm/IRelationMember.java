@@ -5,9 +5,10 @@ import java.util.Arrays;
 
 /**
  * IRelationMember captures the common functions of {@link RelationMember} and {@link RelationMemberData}.
+ * @param <P> the base type of OSM primitives
  * @since 13677
  */
-public interface IRelationMember extends PrimitiveId {
+public interface IRelationMember<P extends IPrimitive> extends PrimitiveId {
 
     /**
      * Returns the role of this relation member.
@@ -49,4 +50,20 @@ public interface IRelationMember extends PrimitiveId {
      * @return True if member is relation
      */
     boolean isRelation();
+
+    /**
+     * Returns type of member for icon display.
+     * @return type of member for icon display
+     * @since 13766 (IRelationMember)
+     */
+    default OsmPrimitiveType getDisplayType() {
+        return getMember().getDisplayType();
+    }
+
+    /**
+     * Returns the relation member.
+     * @return Member. Returned value is never null.
+     * @since 13766 (IRelationMember)
+     */
+    P getMember();
 }

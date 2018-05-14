@@ -1,17 +1,37 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.List;
+
 /**
  * IRelation captures the common functions of {@link Relation} and {@link RelationData}.
+ * @param <M> Type of OSM relation member
  * @since 4098
  */
-public interface IRelation extends IPrimitive {
+public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
 
     /**
      * Returns the number of members.
      * @return number of members
      */
     int getMembersCount();
+
+    /**
+     * Returns the relation member at the specified index.
+     * @param index the index of the relation member
+     * @return relation member at the specified index
+     * @since 13766 (IRelation)
+     */
+    M getMember(int index);
+
+    /**
+     * Returns members of the relation.
+     * @return Members of the relation. Changes made in returned list are not mapped
+     * back to the primitive, use setMembers() to modify the members
+     * @since 1925
+     * @since 13766 (IRelation)
+     */
+    List<M> getMembers();
 
     /**
      * Returns id of the member at given index.

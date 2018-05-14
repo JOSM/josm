@@ -729,9 +729,9 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
      * Returns the selected relation membership.
      * @return The current selected relation membership
      */
-    public IRelation getSelectedMembershipRelation() {
+    public IRelation<?> getSelectedMembershipRelation() {
         int row = membershipTable.getSelectedRow();
-        return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
+        return row > -1 ? (IRelation<?>) membershipData.getValueAt(row, 0) : null;
     }
 
     /**
