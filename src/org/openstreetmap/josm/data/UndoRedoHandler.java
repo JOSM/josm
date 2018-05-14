@@ -245,6 +245,7 @@ public class UndoRedoHandler {
     /**
      * Fires a commands change event after adding a command.
      * @param cmd command added
+     * @since 13729
      */
     public void afterAdd(Command cmd) {
         if (cmd != null) {

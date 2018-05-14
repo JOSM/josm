@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.Date;
+import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -114,6 +115,15 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      * @since 13662
      */
     default boolean isDisabledAndHidden() {
+        return false;
+    }
+
+    /**
+     * Replies true, if this primitive is preserved from filtering.
+     * @return {@code true} if this object has the "preserved" flag enabled
+     * @since 13764
+     */
+    default boolean isPreserved() {
         return false;
     }
 
@@ -384,4 +394,18 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      * @since 13662
      */
     boolean reversedDirection();
+
+    /**
+     * Fetches the bounding box of the primitive.
+     * @return Bounding box of the object
+     * @since 13764
+     */
+    BBox getBBox();
+
+    /**
+     * Gets a list of all primitives in the current dataset that reference this primitive.
+     * @return The referrers
+     * @since 13764
+     */
+    List<? extends IPrimitive> getReferrers();
 }

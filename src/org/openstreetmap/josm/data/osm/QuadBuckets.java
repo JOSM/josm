@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @param <T> type of primitives
  * @since 2165
  */
-public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
+public class QuadBuckets<T extends IPrimitive> implements Collection<T> {
     private static final boolean CONSISTENCY_TESTING = false;
     private static final byte NW_INDEX = 1;
     private static final byte NE_INDEX = 3;
@@ -34,7 +34,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
     private static final int MAX_OBJECTS_PER_NODE = 48;
 
-    static class QBLevel<T extends OsmPrimitive> extends BBox {
+    static class QBLevel<T extends IPrimitive> extends BBox {
         private final byte level;
         private final byte index;
         private final long quad;

@@ -98,4 +98,8 @@ public class WayData extends PrimitiveData implements IWay<NodeData> {
         visitor.visit(this);
     }
 
+    @Override
+    public BBox getBBox() {
+        throw new UnsupportedOperationException();
+    }
 }

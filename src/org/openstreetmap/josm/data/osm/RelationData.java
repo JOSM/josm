@@ -96,4 +96,8 @@ public class RelationData extends PrimitiveData implements IRelation {
         visitor.visit(this);
     }
 
+    @Override
+    public BBox getBBox() {
+        throw new UnsupportedOperationException();
+    }
 }
