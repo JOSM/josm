@@ -22,6 +22,7 @@ import javax.json.JsonArray
 import javax.json.JsonObject
 import javax.json.JsonReader
 
+import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Preferences
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.data.imagery.Shape
@@ -57,6 +58,7 @@ class SyncEditorLayerIndex {
     static main(def args) {
         Locale.setDefault(Locale.ROOT);
         parse_command_line_arguments(args)
+        Main.determinePlatformHook()
         def pref = new Preferences(JosmBaseDirectories.getInstance())
         pref.init(false)
         Config.setPreferencesInstance(pref)
