@@ -36,6 +36,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
     private transient WMTSLayerSelection layerTable;
     private final JCheckBox setDefaultLayer = new JCheckBox(tr("Set default layer?"));
     private List<Entry<String, List<Layer>>> layers;
+    
 
     /**
      * default constructor
@@ -46,7 +47,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         add(rawUrl, GBC.eop().fill(GBC.HORIZONTAL));
         rawUrl.setLineWrap(true);
         rawUrl.setAlignmentY(TOP_ALIGNMENT);
-        JButton getLayers = new JButton(tr("Get layers"));
+        JButton getLayers = new JButton(tr("{0} Get layers", "3."));
         getLayers.setEnabled(setDefaultLayer.isSelected());
         setDefaultLayer.addActionListener(e -> {
                 getLayers.setEnabled(setDefaultLayer.isSelected());
@@ -58,7 +59,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
 
         addCommonSettings();
 
-        add(new JLabel(tr("{0} Enter name for this layer", "3.")), GBC.eol());
+        add(new JLabel(tr("{0} Enter name for this layer", "4.")), GBC.eol());
         add(name, GBC.eol().fill(GBC.HORIZONTAL));
         registerValidableComponent(rawUrl);
         registerValidableComponent(setDefaultLayer);

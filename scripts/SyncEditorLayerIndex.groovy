@@ -327,22 +327,25 @@ class SyncEditorLayerIndex {
             def maxlon = -1000
             def shapes = ""
             def sep = "\n            "
-            for(def s: getShapes(e)) {
-                shapes += "            <shape>"
-                def i = 0
-                for(def p: s.getPoints()) {
-                    def lat = p.getLat()
-                    def lon = p.getLon()
-                    if(lat > maxlat) maxlat = lat
-                    if(lon > maxlon) maxlon = lon
-                    if(lat < minlat) minlat = lat
-                    if(lon < minlon) minlon = lon
-                    if(!(i++%3)) {
-                        shapes += sep + "    "
+            try {
+                for(def s: getShapes(e)) {
+                    shapes += "            <shape>"
+                    def i = 0
+                    for(def p: s.getPoints()) {
+                        def lat = p.getLat()
+                        def lon = p.getLon()
+                        if(lat > maxlat) maxlat = lat
+                        if(lon > maxlon) maxlon = lon
+                        if(lat < minlat) minlat = lat
+                        if(lon < minlon) minlon = lon
+                        if(!(i++%3)) {
+                            shapes += sep + "    "
+                        }
+                        shapes += "<point lat='${df.format(lat)}' lon='${df.format(lon)}'/>"
                     }
-                    shapes += "<point lat='${df.format(lat)}' lon='${df.format(lon)}'/>"
+                    shapes += sep + "</shape>\n"
                 }
-                shapes += sep + "</shape>\n"
+            } catch(IllegalArgumentException) {
             }
             if(shapes) {
                 stream.write "        <bounds min-lat='${df.format(minlat)}' min-lon='${df.format(minlon)}' max-lat='${df.format(maxlat)}' max-lon='${df.format(maxlon)}'>\n"
@@ -695,18 +698,24 @@ class SyncEditorLayerIndex {
         for (def url : eliUrls.keySet()) {
             def e = eliUrls.get(url)
             def num = 1
-            def s = getShapes(e)
-            for (def shape : s) {
-                def p = shape.getPoints()
-                if(!p[0].equals(p[p.size()-1]) && !options.nomissingeli) {
-                    myprintln "+++ ELI shape $num unclosed: ${getDescription(e)}"
-                }
-                for (def nump = 1; nump < p.size(); ++nump) {
-                    if (p[nump-1] == p[nump]) {
-                        myprintln "+++ ELI shape $num double point at ${nump-1}: ${getDescription(e)}"
+            def s
+            try {
+                s = getShapes(e)
+                for (def shape : s) {
+                    def p = shape.getPoints()
+                    if(!p[0].equals(p[p.size()-1]) && !options.nomissingeli) {
+                        myprintln "+++ ELI shape $num unclosed: ${getDescription(e)}"
                     }
+                    for (def nump = 1; nump < p.size(); ++nump) {
+                        if (p[nump-1] == p[nump]) {
+                            myprintln "+++ ELI shape $num double point at ${nump-1}: ${getDescription(e)}"
+                        }
+                    }
+                    ++num
                 }
-                ++num
+            } catch(IllegalArgumentException err) {
+                def desc = getDescription(e)
+                myprintln("* Invalid data in ELI geometry for $desc: ${err.getMessage()}") 
             }
             if (!josmUrls.containsKey(url)) {
                 continue
@@ -734,7 +743,7 @@ class SyncEditorLayerIndex {
                         for(def nump = 0; nump < ep.size(); ++nump) {
                             def ept = ep[nump]
                             def jpt = jp[nump]
-                            if(Math.abs(ept.getLat()-jpt.getLat()) > 0.000001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.000001) {
+                            if(Math.abs(ept.getLat()-jpt.getLat()) > 0.00001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.00001) {
                                 myprintln "* Different coordinate for point ${nump+1} of shape ${nums+1}: ${getDescription(j)}"
                                 nump = ep.size()
                                 num = s.size()
