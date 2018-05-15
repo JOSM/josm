@@ -22,11 +22,14 @@ import javax.json.JsonArray
 import javax.json.JsonObject
 import javax.json.JsonReader
 
+import org.openstreetmap.josm.data.Preferences
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.data.imagery.Shape
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories
 import org.openstreetmap.josm.data.projection.Projections
 import org.openstreetmap.josm.data.validation.routines.DomainValidator
 import org.openstreetmap.josm.io.imagery.ImageryReader
+import org.openstreetmap.josm.spi.preferences.Config
 
 class SyncEditorLayerIndex {
 
@@ -54,6 +57,9 @@ class SyncEditorLayerIndex {
     static main(def args) {
         Locale.setDefault(Locale.ROOT);
         parse_command_line_arguments(args)
+        def pref = new Preferences(JosmBaseDirectories.getInstance())
+        pref.init(false)
+        Config.setPreferencesInstance(pref)
         def script = new SyncEditorLayerIndex()
         script.setupProj()
         script.loadSkip()
