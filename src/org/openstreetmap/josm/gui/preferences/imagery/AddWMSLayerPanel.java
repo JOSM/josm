@@ -54,20 +54,20 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         add(rawUrl, GBC.eol().fill(GBC.HORIZONTAL));
         rawUrl.setLineWrap(true);
         JButton getLayers = new JButton(tr("{0} Get layers", "3."));
-        add(getLayers, GBC.eop().fill());
+        add(getLayers, GBC.eop().fill(GBC.HORIZONTAL));
 
         add(new JLabel(tr("{0} Select layers", "4.")), GBC.eol());
 
         add(endpoint, GBC.eol());
         setDefaultLayers.setEnabled(false);
         add(setDefaultLayers, GBC.eol());
-        add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill().weight(1, 100));
+        add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill());
 
         showBounds.setEnabled(false);
-        add(showBounds, GBC.eop().fill());
+        add(showBounds, GBC.eop().fill(GBC.HORIZONTAL));
 
         add(new JLabel(tr("{0} Select image format", "5.")), GBC.eol());
-        add(formats, GBC.eol().fill());
+        add(formats, GBC.eol().fill(GBC.HORIZONTAL));
 
         addCommonSettings();
 
