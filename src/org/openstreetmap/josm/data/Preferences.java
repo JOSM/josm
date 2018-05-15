@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -551,26 +552,30 @@ public class Preferences extends AbstractPreferences {
             if (!prefDir.isDirectory()) {
                 Logging.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.",
                         prefDir.getAbsoluteFile()));
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' is not a directory.</html>",
-                                prefDir.getAbsoluteFile()),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
+                if (!GraphicsEnvironment.isHeadless()) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' is not a directory.</html>",
+                                    prefDir.getAbsoluteFile()),
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
                 return;
             }
         } else {
             if (!prefDir.mkdirs()) {
                 Logging.warn(tr("Failed to initialize preferences. Failed to create missing preference directory: {0}",
                         prefDir.getAbsoluteFile()));
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("<html>Failed to initialize preferences.<br>Failed to create missing preference directory: {0}</html>",
-                                prefDir.getAbsoluteFile()),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
+                if (!GraphicsEnvironment.isHeadless()) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("<html>Failed to initialize preferences.<br>Failed to create missing preference directory: {0}</html>",
+                                    prefDir.getAbsoluteFile()),
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
                 return;
             }
         }
@@ -590,13 +595,15 @@ public class Preferences extends AbstractPreferences {
             }
         } catch (IOException e) {
             Logging.error(e);
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Failed to initialize preferences.<br>Failed to reset preference file to default: {0}</html>",
-                            getPreferenceFile().getAbsoluteFile()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Failed to initialize preferences.<br>Failed to reset preference file to default: {0}</html>",
+                                getPreferenceFile().getAbsoluteFile()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
             return;
         }
         try {
@@ -605,14 +612,16 @@ public class Preferences extends AbstractPreferences {
         } catch (IOException | SAXException | XMLStreamException e) {
             Logging.error(e);
             File backupFile = new File(prefDir, "preferences.xml.bak");
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> " +
-                            "and creating a new default preference file.</html>",
-                            backupFile.getAbsoluteFile()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> " +
+                                "and creating a new default preference file.</html>",
+                                backupFile.getAbsoluteFile()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
             Main.platform.rename(preferenceFile, backupFile);
             try {
                 resetToDefault();
