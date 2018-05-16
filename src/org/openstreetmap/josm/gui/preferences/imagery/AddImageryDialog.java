@@ -17,8 +17,6 @@ import org.openstreetmap.josm.gui.util.WindowGeometry;
  */
 public class AddImageryDialog extends ExtendedDialog implements ContentValidationListener {
 
-    private final String saveGeometryEntryName;
-
     /**
      * Constructs a new AddImageryDialog.
      * @param parent The parent element that will be used for position and maximum size
@@ -32,7 +30,10 @@ public class AddImageryDialog extends ExtendedDialog implements ContentValidatio
         setContent(panel, false);
         setMinimumSize(new Dimension(300, 400));
         panel.addContentValidationListener(this);
-        this.saveGeometryEntryName = panel.getClass().getName() + ".geometry";
+        setRememberWindowGeometry(
+                panel.getClass().getName() + ".geometry",
+                WindowGeometry.centerInWindow(Main.parent, new Dimension(400, 600))
+                );
     }
 
     @Override
@@ -44,16 +45,5 @@ public class AddImageryDialog extends ExtendedDialog implements ContentValidatio
     @Override
     public void contentChanged(boolean isValid) {
         buttons.get(0).setEnabled(isValid);
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            new WindowGeometry(saveGeometryEntryName, WindowGeometry.centerInWindow(Main.parent,
-                    new Dimension(800, 600))).applySafe(this);
-        } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
-            new WindowGeometry(this).remember(saveGeometryEntryName);
-        }
-        super.setVisible(visible);
     }
 }
