@@ -717,7 +717,7 @@ class SyncEditorLayerIndex {
                 def desc = getDescription(e)
                 myprintln("* Invalid data in ELI geometry for $desc: ${err.getMessage()}") 
             }
-            if (!josmUrls.containsKey(url)) {
+            if (s == null || !josmUrls.containsKey(url)) {
                 continue
             }
             def j = josmUrls.get(url)
