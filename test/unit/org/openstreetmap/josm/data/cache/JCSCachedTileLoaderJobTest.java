@@ -371,7 +371,8 @@ public class JCSCachedTileLoaderJobTest {
                 WireMock.get(WireMock.urlEqualTo("/test"))
                 .willReturn(WireMock.aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)))
-                        .withHeader("Cache-Control", "max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)))
+                        .withHeader("Cache-Control", "max-age=" +
+                                TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)))
                         .withBody("mock entry")
                         )
                 );
@@ -379,7 +380,8 @@ public class JCSCachedTileLoaderJobTest {
                 WireMock.head(WireMock.urlEqualTo("/test"))
                 .willReturn(WireMock.aResponse()
                         .withHeader("Expires", TestUtils.getHTTPDate(testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)))
-                        .withHeader("Cache-Control", "max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)))
+                        .withHeader("Cache-Control", "max-age=" +
+                                TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)))
                         )
                 );
         TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test", minimumExpiryTimeSeconds);
