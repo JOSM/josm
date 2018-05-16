@@ -352,6 +352,106 @@ public class JCSCachedTileLoaderJobTest {
     }
 
     /**
+     * Check if Cache-Control takes precedence over max-age
+     * Expires is lower - JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10
+     * Cache control : JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2
+     *
+     * Both are smaller than DEFAULT_EXPIRE_TIME, so we can test, that it's not DEFAULT_EXPIRE_TIME that extended
+     * expiration
+     *
+     * @throws IOException exception
+     */
+
+    @Test
+    public void testCacheControlVsExpires() throws IOException {
+        long testStart = System.currentTimeMillis();
+        int minimumExpiryTimeSeconds = 0;
+
+        tileServer.stubFor(
+                WireMock.get(WireMock.urlEqualTo("/test"))
+                .willReturn(WireMock.aResponse()
+                        .withHeader("Expires", TestUtils.getHTTPDate(testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)))
+                        .withHeader("Cache-Control", "max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)))
+                        .withBody("mock entry")
+                        )
+                );
+        tileServer.stubFor(
+                WireMock.head(WireMock.urlEqualTo("/test"))
+                .willReturn(WireMock.aResponse()
+                        .withHeader("Expires", TestUtils.getHTTPDate(testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)))
+                        .withHeader("Cache-Control", "max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)))
+                        )
+                );
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test", minimumExpiryTimeSeconds);
+        Listener listener = submitJob(job, false);
+        tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
+        assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
+
+
+        assertTrue("Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
+                (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10) + " (Expires header)",
+                listener.attributes.getExpirationTime() >= testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10));
+
+        assertTrue("Cache entry expiration is " +
+                (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
+                " which is not less than " +
+                (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2) + " (Cache-Control: max-age=)",
+                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)
+                );
+    }
+
+    /**
+     * Check if Cache-Control s-max-age is honored
+     * mock returns expiration: JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10
+     * minimum expire time: JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME * 2
+     *
+     * @throws IOException exception
+     */
+
+    @Test
+    public void testMaxAgeVsSMaxAge() throws IOException {
+        long testStart = System.currentTimeMillis();
+        int minimumExpiryTimeSeconds = 0;
+
+
+        tileServer.stubFor(
+                WireMock.get(WireMock.urlEqualTo("/test"))
+                .willReturn(WireMock.aResponse()
+                        .withHeader("Cache-Control", "" +
+                                "max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)) + "," +
+                                "s-max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2))
+                                )
+                        .withBody("mock entry")
+                        )
+                );
+        tileServer.stubFor(
+                WireMock.head(WireMock.urlEqualTo("/test"))
+                .willReturn(WireMock.aResponse()
+                        .withHeader("Cache-Control", "" +
+                                "max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10)) + "," +
+                                "s-max-age=" + TimeUnit.MILLISECONDS.toSeconds((JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2))
+                        )
+                ));
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(tileServer.url("/test"), "test", minimumExpiryTimeSeconds);
+        Listener listener = submitJob(job, false);
+        tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
+        assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
+
+
+        assertTrue("Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
+                (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10) + " (Cache-Control: max-age)",
+                listener.attributes.getExpirationTime() >= testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10));
+
+        assertTrue("Cache entry expiration is " +
+                (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
+                " which is not less than " +
+                (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2) + " (Cache-Control: s-max-age)",
+                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)
+                );
+    }
+
+
+    /**
      * Check if verifying cache entries using HEAD requests work properly
      * @throws IOException exception
      */
