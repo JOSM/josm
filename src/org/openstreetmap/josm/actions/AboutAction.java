@@ -120,6 +120,12 @@ public final class AboutAction extends JosmAction {
         about.addTab(tr("License"), createScrollPane(license));
         about.addTab(tr("Plugins"), new JScrollPane(PluginHandler.getInfoPanel()));
 
+        // Get the list of Launchpad contributors using customary msgid “translator-credits”
+        String translators = tr("translator-credits");
+        if (translators != null && !translators.isEmpty() && !translators.equals("translator-credits")) {
+            about.addTab(tr("Translators"), createScrollPane(new JosmTextArea(translators)));
+        }
+
         // Intermediate panel to allow proper optionPane resizing
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setPreferredSize(new Dimension(890, 300));
