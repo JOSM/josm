@@ -556,38 +556,97 @@ way[oneway=-1][!waterway] {
   group: tr("deprecated tagging");
 }
 
-/* see #10329 */
+/* see #10329, #15877 */
+  /* simple key change */
 *[color][!colour] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "colour";
   group: tr("deprecated tagging");
   fixChangeKey: "color => colour";
+  assertMatch: "way color=red";
+  assertNoMatch: "way color=red colour=red";
 }
-*[color][colour][tag(color)=tag(colour)] {
-  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+area[building:color][!building:colour] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "building:colour";
+  group: tr("deprecated tagging");
+  fixChangeKey: "building:color => building:colour";
+  assertMatch: "way building:color=red";
+  assertNoMatch: "way building:color=red building:colour=red";
+}
+area[roof:color][!roof:colour] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "roof:colour";
+  group: tr("deprecated tagging");
+  fixChangeKey: "roof:color => roof:colour";
+  assertMatch: "way roof:color=red";
+  assertNoMatch: "way roof:color=red roof:colour=red";
+}
+  /* both tags with same value, remove color */
+*[color][colour][color=*colour] {
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+  suggestAlternative: "colour";
   group: tr("deprecated tagging");
   set samecolor;
   fixRemove: "color";
   assertMatch: "way color=red colour=red";
   assertNoMatch: "way color=red colour=green";
 }
+area[building:color][building:colour]["building:color"=*"building:colour"] {
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+  suggestAlternative: "building:colour";
+  group: tr("deprecated tagging");
+  set samebuildingcolor;
+  fixRemove: "building:color";
+  assertMatch: "way building:color=red building:colour=red";
+  assertNoMatch: "way building:color=red building:colour=green";
+}
+area[roof:color][roof:colour]["roof:color"=*"roof:colour"] {
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+  suggestAlternative: "roof:colour";
+  group: tr("deprecated tagging");
+  set sameroofcolor;
+  fixRemove: "roof:color";
+  assertMatch: "way roof:color=red roof:colour=red";
+  assertNoMatch: "way roof:color=red roof:colour=green";
+}
+  /* both tags with different values, no autofix */
 *[color][colour]!.samecolor {
-  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  throwWarning: tr("{0} together with {1} and conflicting values", "{0.key}", "{1.key}");
+  suggestAlternative: "colour";
   group: tr("deprecated tagging");
   assertNoMatch: "way color=red colour=red";
   assertMatch: "way color=red colour=green";
 }
-*[/:color/]{
+*[building:color][building:colour]!.samebuildingcolor {
+  throwWarning: tr("{0} together with {1} and conflicting values", "{0.key}", "{1.key}");
+  suggestAlternative: "building:colour";
+  group: tr("deprecated tagging");
+  assertNoMatch: "way building:color=red building:colour=red";
+  assertMatch: "way building:color=red building:colour=green";
+}
+*[roof:color][roof:colour]!.sameroofcolor {
+  throwWarning: tr("{0} together with {1} and conflicting values", "{0.key}", "{1.key}");
+  suggestAlternative: "roof:colour";
+  group: tr("deprecated tagging");
+  assertNoMatch: "way roof:color=red roof:colour=red";
+  assertMatch: "way roof:color=red roof:colour=green";
+}
+  /* further more universal checks, no autofix */
+*[/:color/][!building:color][!roof:color] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: ":colour";
   group: tr("deprecated tagging");
   assertNoMatch: "way color=red";
-  assertMatch: "way roof:color=grey";
+  assertNoMatch: "way roof:color=grey";
+  assertMatch: "way cycleway:surface:color=grey";
 }
-*[/color:/] {
+*[/color:/]  {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "colour:";
   group: tr("deprecated tagging");
+  assertNoMatch: "way color=red";
+  assertMatch: "way color:back=grey";
 }
 
 /* see #11234 */
