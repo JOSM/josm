@@ -1660,6 +1660,7 @@ area[leisure=sports_centre],
 area[leisure=fitness_centre],
 area[leisure=stadium],
 area[leisure=horse_riding],
+area[leisure=resort],
 area[leisure=beach_resort],
 area[leisure=water_park] {
     fill-color: leisure#c7f1a3;
@@ -1682,6 +1683,10 @@ node[leisure=stadium] {
 }
 node[leisure=horse_riding] {
     icon-image: "presets/leisure/horse_riding.svg";
+    set icon_z17;
+}
+node[leisure=resort] {
+    icon-image: "presets/leisure/resort.svg";
     set icon_z17;
 }
 node[leisure=beach_resort] {

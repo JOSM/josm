@@ -4646,6 +4646,19 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Water Park -->
+        <item name="Resort" icon="presets/leisure/resort.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="https://wiki.openstreetmap.org/wiki/Tag:leisure=resort"
+                  cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:leisure=resort"
+                  de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:leisure=resort"
+                  pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:leisure=resort"
+                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:leisure=resort" />
+            <space />
+            <key key="leisure" value="resort" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="fee_interval" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Resort -->
         <item name="Beach Resort" icon="presets/leisure/beach_resort.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:leisure=beach_resort"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:leisure=beach_resort"
