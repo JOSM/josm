@@ -653,6 +653,16 @@ relation[/^..$/][!to] {
   suggestAlternative: "...";
 }
 
+/* defunct payment cards */
+*[payment:ep_quick],
+*[payment:ep_cash],
+*[payment:ep_proton],
+*[payment:ep_chipknip] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  group: tr("deprecated tagging");
+  fixRemove: "{0.key}";
+}
+
 /* see #8717 */
 *[kp][highway=milestone],
 *[kp][railway=milestone],

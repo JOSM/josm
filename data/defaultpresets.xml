@@ -262,13 +262,22 @@
         <text key="taxon" text="Taxon" />
     </chunk>
     <chunk id="leaf">
-        <combo key="leaf_type" text="Type" values="broadleaved,needleleaved,mixed,leafless" values_searchable="true" />
-        <combo key="leaf_cycle" text="Cycle" values_searchable="true" >
+        <combo key="leaf_type" text="Leaf type" values="broadleaved,needleleaved,mixed,leafless" values_searchable="true" />
+        <combo key="leaf_cycle" text="Leaf cycle" values_searchable="true" >
             <list_entry value="deciduous" short_description="Plants that are leafless for a certain period during the year." />
             <list_entry value="evergreen" short_description="Plants that are never entirely without green foliage." />
             <list_entry value="semi_deciduous" short_description="Plants that lose their foliage for a very short period, when old leaves fall off and new foliage growth is starting." />
             <list_entry value="semi_evergreen" short_description="Plants that lose most, but not all, of their foliage for a fraction of the year." />
             <list_entry value="mixed" short_description="Habitat with evergreen and deciduous vegetation." />
+        </combo>
+    </chunk>
+    <chunk id="leaf_without_mixed">
+        <combo key="leaf_type" text="Leaf type" values="broadleaved,needleleaved,leafless" values_searchable="true" />
+	    <combo key="leaf_cycle" text="Leaf cycle" values_searchable="true" >
+            <list_entry value="deciduous" short_description="Plants that are leafless for a certain period during the year." />
+            <list_entry value="evergreen" short_description="Plants that are never entirely without green foliage." />
+            <list_entry value="semi_deciduous" short_description="Plants that lose their foliage for a very short period, when old leaves fall off and new foliage growth is starting." />
+            <list_entry value="semi_evergreen" short_description="Plants that lose most, but not all, of their foliage for a fraction of the year." />
         </combo>
     </chunk>
     <chunk id="religious">
@@ -1808,11 +1817,12 @@
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=hedge"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:barrier=hedge"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:barrier=hedge" />
+            <space />
             <key key="barrier" value="hedge" />
+            <reference ref="leaf" />
             <optional>
-                <text key="height" text="Height (meters)" length="7" />
                 <reference ref="genus_species_taxon" />
-                <reference ref="leaf" />
+                <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Hedge -->
         <item name="Fence" icon="presets/barrier/fence.svg" type="way,closedway" preset_name_label="true">
@@ -7247,7 +7257,10 @@
                   zh_TW.href="https://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=fountain" />
             <space />
             <key key="amenity" value="fountain" />
-            <text key="name" text="Name" />
+            <optional>
+                <text key="name" text="Name" />
+                <check key="drinking_water" text="Drinking Water" />
+            </optional>
         </item> <!-- Fountain -->
         <item name="Water Well" icon="presets/landmark/water_well.svg" type="node,closedway" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:man_made=water_well"
@@ -9399,6 +9412,7 @@
             <check key="payment:girocard" text="Girocard" match="keyvalue" />
             <check key="payment:laser" text="Laser" match="keyvalue" />
             <check key="payment:maestro" text="Maestro" match="keyvalue" />
+            <check key="payment:postfinance_card" text="PostFinance Card (ch)" match="keyvalue" />
             <check key="payment:visa_debit" text="Visa Debit" match="keyvalue" />
             <check key="payment:visa_electron" text="Visa Electron" match="keyvalue" />
         </checkgroup>
@@ -9416,8 +9430,6 @@
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="no" match="keyvalue" />
         <checkgroup columns="4">
             <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" />
-            <check key="payment:ep_cash" text="Cash (ch)" match="keyvalue" />
-            <check key="payment:ep_chipknip" text="Chipknip (nl)" match="keyvalue" />
             <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" />
             <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" />
             <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" />
@@ -9425,8 +9437,6 @@
             <check key="payment:ep_monedero" text="Mondero (ar)" match="keyvalue" />
             <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" />
             <check key="payment:ep_moneo" text="Moneo (fr)" match="keyvalue" />
-            <check key="payment:ep_proton" text="Proton (be)" match="keyvalue" />
-            <check key="payment:ep_quick" text="Quick (au)" match="keyvalue" />
         </checkgroup>
         <space />
         <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="no" match="keyvalue" />
@@ -10501,11 +10511,7 @@
             <label text="A single tree." />
             <space />
             <key key="natural" value="tree" />
-            <text key="name" text="Name" />
-            <text key="height" text="Height (meters)" />
-            <text key="circumference" text="Circumference (meters)" />
-            <reference ref="genus_species_taxon" />
-            <reference ref="leaf" />
+            <reference ref="leaf_without_mixed" />
             <combo key="denotation" text="Denotation" values_searchable="true" values_context="tree denotation" >
                 <list_entry value="landmark" short_description="Trees remarkable due to its size or prominent location, usually visible from great distances and useful for navigation." />
                 <list_entry value="natural_monument" short_description="Especially old tree, often with a particular shape. Usually protected for its uniqueness." />
@@ -10513,6 +10519,16 @@
                 <list_entry value="urban" short_description="Trees found within settlements, e.g. in parks or spread through residential areas." />
                 <list_entry value="agricultural" short_description="Trees in agricultural use." />
             </combo>
+            <optional>
+                <reference ref="genus_species_taxon" />
+                <space />
+                <text key="height" text="Height (meters)" />
+                <text key="diameter_crown" text="Diameter crown (meters)" />
+                <text key="circumference" text="Circumference (meters)" />
+                <space />
+                <text key="name" text="Name" />
+                <text key="start_date" text="Start date" />
+            </optional>
         </item> <!-- Tree -->
         <item name="Tree Row" icon="presets/landmark/tree_row.svg" type="way" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:natural=tree_row"
@@ -10528,10 +10544,10 @@
             <label text="A line of trees." />
             <space />
             <key key="natural" value="tree_row" />
-            <text key="height" text="Height (meters)" />
+            <reference ref="leaf" />
             <optional>
                 <reference ref="genus_species_taxon" />
-                <reference ref="leaf" />
+                <text key="height" text="Height (meters)" />
             </optional>
         </item> <!-- Tree Row -->
         <item name="Wood" icon="presets/landmark/forest.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -10845,10 +10861,11 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:landuse=plant_nursery"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=plant_nursery"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:landuse=plant_nursery" />
-            <space />
             <key key="landuse" value="plant_nursery" />
-            <reference ref="genus_species_taxon" />
             <reference ref="optional_name_operator" />
+            <space />
+            <reference ref="leaf" />
+            <reference ref="genus_species_taxon" />
         </item> <!-- Plant Nursery -->
         <item name="Salt Pond" icon="presets/landuse/salt_pond.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:landuse=salt_pond"
