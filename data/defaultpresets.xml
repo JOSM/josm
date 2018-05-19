@@ -4517,6 +4517,7 @@
             <space />
             <label text="Audioguide via mobile phone?" />
             <text key="phone" text="Phone number" />
+            <label text="Use E.123 format, e.g. +49 11223 456 7890" />
         </item> <!-- Audio Guide -->
         <item name="Other Information Point" icon="presets/misc/information/information.svg" type="node,closedway" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:tourism=information"
@@ -5538,6 +5539,7 @@
             <text key="operator" text="Operator" />
             <text key="defibrillator:location" text="Location description" />
             <text key="phone" text="Phone number" />
+            <label text="Use E.123 format, e.g. +49 11223 456 7890" />
             <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
             <check key="indoor" text="Located inside a building?" />
             <!-- lastcheck is in use for aed devices, but not yet well discussed or documented
@@ -5644,7 +5646,7 @@
             <combo key="siren:type" text="Type" values="pneumatic,electronic,mechanical" />
             <combo key="siren:purpose" text="Purpose" values="tornado,fire,air_raid,civil_defense" />
             <text key="siren:range" text="Range (in meters)" />
-        </item> <!-- Emergency Phone -->
+        </item> <!-- Siren -->
     </group> <!-- Emergency -->
     <group name="Social Facility" icon="presets/social_facility/outreach.svg">
         <item name="Nursing Home" icon="presets/social_facility/nursing_home.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -11280,6 +11282,7 @@
             <space />
             <text key="phone" text="Phone number" match="key" />
             <text key="fax" text="Fax Number" match="key" />
+            <label text="Use E.123 format, e.g. +49 11223 456 7890" />
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
@@ -11300,6 +11303,7 @@
             <space />
             <text key="contact:phone" text="Phone number" match="key" />
             <text key="contact:fax" text="Fax Number" match="key" />
+            <label text="Use E.123 format, e.g. +49 11223 456 7890" />
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
