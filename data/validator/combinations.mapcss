@@ -246,9 +246,17 @@ way[waterway=weir][bridge=yes][highway] {
   group: tr("suspicious tag combination");
 }
 
+/* #16214 */
+relation[type=multipolygon] >[role="inner"] way[area][eval(number_of_tags()) = 1] {
+  throwWarning: tr("{0} on an inner multipolygon ring without further tags", "{0.tag}");
+  fixRemove: "area";
+  set area_yes_autofix;
+  group: tr("suspicious tag combination");
+}
+
 /* only {0.key}, see #11104 #12422 #14950 */
 *[access][eval(number_of_tags()) = 1],
-*[area][eval(number_of_tags()) = 1],
+*[area][eval(number_of_tags()) = 1]!.area_yes_autofix,
 *[name][eval(number_of_tags()) = 1],
 *[ref][eval(number_of_tags()) = 1],
 *[lit][eval(number_of_tags()) = 1] {
