@@ -28,6 +28,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
     // remember the initial list of active plugins
     private final Set<String> currentActivePlugins;
     private final List<PluginInformation> availablePlugins = new ArrayList<>();
+    private PluginInstallation filterStatus;
     private String filterExpression;
     private final List<PluginInformation> displayedPlugins = new ArrayList<>();
     private final Map<PluginInformation, Boolean> selectedPluginsMap = new HashMap<>();
@@ -43,7 +44,32 @@ public class PluginPreferencesModel extends ChangeNotifier {
     }
 
     /**
-     * Filters the list of displayed plugins.
+     * Filters the list of displayed plugins by installation status.
+     * @param status The filter used against installation status
+     * @since 13799
+     */
+    public void filterDisplayedPlugins(PluginInstallation status) {
+        if (status == null) {
+            displayedPlugins.clear();
+            displayedPlugins.addAll(availablePlugins);
+            this.filterStatus = null;
+            return;
+        }
+        displayedPlugins.clear();
+        for (PluginInformation pi: availablePlugins) {
+            boolean installed = currentActivePlugins.contains(pi.getName());
+            if (PluginInstallation.ALL == status
+            || (PluginInstallation.INSTALLED == status && installed)
+            || (PluginInstallation.AVAILABLE == status && !installed)) {
+                displayedPlugins.add(pi);
+            }
+        }
+        filterStatus = status;
+        fireStateChanged();
+    }
+
+    /**
+     * Filters the list of displayed plugins by text.
      * @param filter The filter used against plugin name, description or version
      */
     public void filterDisplayedPlugins(String filter) {
@@ -77,6 +103,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
 
     protected final void availablePluginsModified() {
         sort();
+        filterDisplayedPlugins(filterStatus);
         filterDisplayedPlugins(filterExpression);
         Set<String> activePlugins = new HashSet<>();
         activePlugins.addAll(Config.getPref().getList("plugins"));
