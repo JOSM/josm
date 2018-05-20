@@ -115,6 +115,7 @@ public final class I18n {
         //languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
+        languages.put("ko", PluralMode.MODE_NONE);
         // fully supported only with Java 8 and later (needs CLDR)
         languages.put("km", PluralMode.MODE_NONE);
         languages.put("lt", PluralMode.MODE_LT);
