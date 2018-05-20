@@ -427,7 +427,7 @@ public class ImageryReader implements Closeable {
                     break;
                 case "type":
                     ImageryType type = ImageryType.fromString(accumulator.toString());
-                    if(type != null)
+                    if (type != null)
                         entry.setImageryType(type);
                     else
                         skipEntry = true;
@@ -523,7 +523,7 @@ public class ImageryReader implements Closeable {
                 case "category":
                     String cat = accumulator.toString();
                     ImageryCategory category = ImageryCategory.fromString(cat);
-                    if(category != null)
+                    if (category != null)
                         entry.setImageryCategory(category);
                     entry.setImageryCategoryOriginalString(cat);
                     break;
