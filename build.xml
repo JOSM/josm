@@ -914,7 +914,7 @@ Build-Date: ${build.tstamp}
     <target name="epsg-compile" depends="init-properties">
         <property name="proj-classpath" location="${build.dir}"/>
         <mkdir dir="${proj-build.dir}"/>
-        <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true"
+        <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="BuildProjectionDefinitions.java"
             destdir="${proj-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
             includeantruntime="false" createMissingPackageInfoClass="false"
             encoding="UTF-8" classpath="${proj-classpath}">
