@@ -23,7 +23,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -852,7 +854,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             JButton add = new JButton(tr("Add"));
             buttonPanel.add(add, GBC.std().insets(0, 5, 0, 0));
-            add.addActionListener(e -> model.addRow(new OffsetBookmark(Main.getProjection().toCode(), "", "", 0, 0)));
+            add.addActionListener(e -> model.addRow(new OffsetBookmark(Main.getProjection().toCode(), "", "", "", 0, 0)));
 
             JButton delete = new JButton(tr("Delete"));
             buttonPanel.add(delete, GBC.std().insets(0, 5, 0, 0));
@@ -919,7 +921,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 case 4:
                     return info.getDisplacement().north();
                 default:
-                    throw new ArrayIndexOutOfBoundsException();
+                    throw new ArrayIndexOutOfBoundsException(column);
                 }
             }
 
@@ -928,7 +930,15 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 1:
-                    info.setImageryName(o.toString());
+                    String name = o.toString();
+                    info.setImageryName(name);
+                    List<ImageryInfo> layers = ImageryLayerInfo.instance.getLayers().stream()
+                            .filter(l -> Objects.equals(name, l.getName())).collect(Collectors.toList());
+                    if (layers.size() == 1) {
+                        info.setImageryId(layers.get(0).getId());
+                    } else {
+                        Logging.warn("Not a single layer for the name '" + info.getImageryName() + "': " + layers);
+                    }
                     break;
                 case 2:
                     info.setName(o.toString());
@@ -942,7 +952,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     info.setDisplacement(new EastNorth(info.getDisplacement().east(), dy));
                     break;
                 default:
-                    throw new ArrayIndexOutOfBoundsException();
+                    throw new ArrayIndexOutOfBoundsException(column);
                 }
             }
 
