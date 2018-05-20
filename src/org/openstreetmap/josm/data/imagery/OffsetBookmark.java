@@ -234,7 +234,7 @@ public class OffsetBookmark {
      * Sets the id of the imagery
      * @param imageryId The identifier
      * @see #getImageryId()
-     * @since xxx
+     * @since 13797
      */
     public void setImageryId(String imageryId) {
         this.imagery_id = imageryId;
@@ -255,9 +255,7 @@ public class OffsetBookmark {
     public static void loadBookmarks() {
         List<OffsetBookmark> bookmarks = StructUtils.getListOfStructs(
                 Config.getPref(), "imagery.offsetbookmarks", null, OffsetBookmark.class);
-        if (bookmarks == null) {
-            saveBookmarks();
-        } else {
+        if (bookmarks != null) {
             sanitizeBookmarks(bookmarks);
             allBookmarks.addAll(bookmarks);
         }
