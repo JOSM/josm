@@ -126,7 +126,11 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
 
     private void doExitMode() {
         exitingMode = true;
-        super.exitMode();
+        try {
+            super.exitMode();
+        } catch (IllegalArgumentException e) {
+            Logging.trace(e);
+        }
         if (offsetDialog != null) {
             if (layer != null) {
                 layer.getDisplaySettings().setOffsetBookmark(old);
