@@ -4125,7 +4125,7 @@
             <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
             <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
             <text key="ele" text="Elevation" />
-            <text key="description" text="Closer Description" />
+            <text key="description" text="Closer description" />
             <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
@@ -4439,7 +4439,7 @@
             <text key="name" text="Name" />
             <combo key="map_type" text="Detail Grade" values="topo,street,scheme,toposcope" />
             <combo key="map_size" text="Shown Area" values="site,city,region" />
-            <text key="description" text="Closer Description" />
+            <text key="description" text="Closer description" />
             <optional text="Routes shown for:">
                 <check key="hiking" text="Hiking" />
                 <check key="bicycle" text="Cycling" />
@@ -4463,7 +4463,7 @@
             <key key="information" value="board" />
             <text key="name" text="Name" />
             <combo key="board_type" text="Board Content" values="notice,history,nature,wildlife,plants,geology" />
-            <text key="description" text="Closer Description" />
+            <text key="description" text="Closer description" />
         </item> <!-- Information Board -->
         <item name="Guidepost" icon="presets/misc/information/guidepost.svg" type="node" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:information=guidepost"
@@ -4541,7 +4541,7 @@
             <space />
             <key key="tourism" value="information" />
             <text key="name" text="Name" />
-            <text key="description" text="Closer Description" />
+            <text key="description" text="Closer description" />
         </item> <!-- Other Information Point -->
     </group> <!-- Tourism -->
     <group name="Leisure" icon="presets/leisure/theme_park.svg">

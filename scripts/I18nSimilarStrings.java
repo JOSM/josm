@@ -2,7 +2,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.validation.tests.SimilarNamedWays;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainApplicationTest;
+import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
 
 // License: GPL. For details, see LICENSE file.
@@ -18,12 +26,22 @@ public final class I18nSimilarStrings {
      */
     public static void main(String[] args) {
         I18n.init();
+        Main.determinePlatformHook();
+        Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
+        Preferences pref = new Preferences();
+        Config.setPreferencesInstance(pref);
+        pref.init(false);
+        MainApplication.undoRedo = new UndoRedoHandler();
+        MainApplicationTest.initContentPane();
+        MainApplicationTest.initToolbar();
+        MainApplicationTest.initMainMenu();
+        PluginHandlerTestIT.loadAllPlugins();
         List<String> strings = new ArrayList<>();
         strings.addAll(I18n.getSingularTranslations().keySet());
         strings.addAll(I18n.getPluralTranslations().keySet());
-        System.out.println("Loaded " + strings.size() + " core strings");
+        System.out.println("Loaded " + strings.size() + " strings");
         strings.removeIf(s -> s.length() <= 5);
-        System.out.println("Kept " + strings.size() + " core strings longer than 5 characters");
+        System.out.println("Kept " + strings.size() + " strings longer than 5 characters");
         Collections.sort(strings);
         for (int i = 0; i < strings.size(); i++) {
             for (int j = i+1; j < strings.size(); j++) {

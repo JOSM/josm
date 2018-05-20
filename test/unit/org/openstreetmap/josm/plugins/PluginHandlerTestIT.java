@@ -49,6 +49,36 @@ public class PluginHandlerTestIT {
      */
     @Test
     public void testValidityOfAvailablePlugins() {
+        loadAllPlugins();
+
+        Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
+                .collect(Collectors.toMap(e -> e.getKey(), e -> ExceptionUtils.getRootCause(e.getValue())));
+
+        // Add/remove layers twice to test basic plugin good behaviour
+        Map<String, Throwable> layerExceptions = new HashMap<>();
+        List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
+        for (int i = 0; i < 2; i++) {
+            OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Layer "+i, null);
+            testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
+            testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
+        }
+        for (int i = 0; i < 2; i++) {
+            GpxLayer layer = new GpxLayer(new GpxData());
+            testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
+            testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
+        }
+
+        MapUtils.debugPrint(System.out, null, loadingExceptions);
+        MapUtils.debugPrint(System.out, null, layerExceptions);
+        String msg = Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
+                     Arrays.toString(layerExceptions.entrySet().toArray());
+        assertTrue(msg, loadingExceptions.isEmpty() && layerExceptions.isEmpty());
+    }
+
+    /**
+     * Downloads and loads all JOSM plugins.
+     */
+    public static void loadAllPlugins() {
         // Download complete list of plugins
         ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(
                 Main.pref.getOnlinePluginSites());
@@ -80,29 +110,6 @@ public class PluginHandlerTestIT {
 
         // Load late plugins
         PluginHandler.loadLatePlugins(null, plugins, null);
-
-        Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getKey(), e -> ExceptionUtils.getRootCause(e.getValue())));
-
-        // Add/remove layers twice to test basic plugin good behaviour
-        Map<String, Throwable> layerExceptions = new HashMap<>();
-        List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
-        for (int i = 0; i < 2; i++) {
-            OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Layer "+i, null);
-            testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
-            testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
-        }
-        for (int i = 0; i < 2; i++) {
-            GpxLayer layer = new GpxLayer(new GpxData());
-            testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
-            testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
-        }
-
-        MapUtils.debugPrint(System.out, null, loadingExceptions);
-        MapUtils.debugPrint(System.out, null, layerExceptions);
-        String msg = Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
-                     Arrays.toString(layerExceptions.entrySet().toArray());
-        assertTrue(msg, loadingExceptions.isEmpty() && layerExceptions.isEmpty());
     }
 
     void testPlugin(Consumer<Layer> consumer, Layer layer,
