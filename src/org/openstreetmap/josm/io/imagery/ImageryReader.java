@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryCategory;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.CachedFile;
@@ -219,6 +220,7 @@ public class ImageryReader implements Closeable {
                         "terms-of-use-url",
                         "permission-ref",
                         "country-code",
+                        "category",
                         "icon",
                         "date",
                         TILE_SIZE,
@@ -424,17 +426,11 @@ public class ImageryReader implements Closeable {
                     entry.addOldId(accumulator.toString());
                     break;
                 case "type":
-                    boolean found = false;
-                    for (ImageryType type : ImageryType.values()) {
-                        if (Objects.equals(accumulator.toString(), type.getTypeString())) {
-                            entry.setImageryType(type);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
+                    ImageryType type = ImageryType.fromString(accumulator.toString());
+                    if(type != null)
+                        entry.setImageryType(type);
+                    else
                         skipEntry = true;
-                    }
                     break;
                 case "default":
                     switch (accumulator.toString()) {
@@ -523,6 +519,13 @@ public class ImageryReader implements Closeable {
                     break;
                 case "minimum-tile-expire":
                     entry.setMinimumTileExpire(Integer.parseInt(accumulator.toString()));
+                    break;
+                case "category":
+                    String cat = accumulator.toString();
+                    ImageryCategory category = ImageryCategory.fromString(cat);
+                    if(category != null)
+                        entry.setImageryCategory(category);
+                    entry.setImageryCategoryOriginalString(cat);
                     break;
                 default: // Do nothing
                 }

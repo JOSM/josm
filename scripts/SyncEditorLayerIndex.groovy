@@ -34,8 +34,8 @@ import org.openstreetmap.josm.spi.preferences.Config
 
 class SyncEditorLayerIndex {
 
-    List<ImageryInfo> josmEntries;
-    JsonArray eliEntries;
+    List<ImageryInfo> josmEntries
+    JsonArray eliEntries
 
     def eliUrls = new HashMap<String, JsonObject>()
     def josmUrls = new HashMap<String, ImageryInfo>()
@@ -56,7 +56,7 @@ class SyncEditorLayerIndex {
      * Main method.
      */
     static main(def args) {
-        Locale.setDefault(Locale.ROOT);
+        Locale.setDefault(Locale.ROOT)
         parse_command_line_arguments(args)
         Main.determinePlatformHook()
         def pref = new Preferences(JosmBaseDirectories.getInstance())
@@ -71,25 +71,25 @@ class SyncEditorLayerIndex {
             def file = new FileOutputStream(options.josmxml)
             def stream = new OutputStreamWriter(file, "UTF-8")
             script.printentries(script.josmEntries, stream)
-            stream.close();
-            file.close();
+            stream.close()
+            file.close()
         }
         script.loadELIEntries()
         if(options.elixml) {
             def file = new FileOutputStream(options.elixml)
             def stream = new OutputStreamWriter(file, "UTF-8")
             script.printentries(script.eliEntries, stream)
-            stream.close();
-            file.close();
+            stream.close()
+            file.close()
         }
         script.checkInOneButNotTheOther()
         script.checkCommonEntries()
         script.end()
         if(outputStream != null) {
-            outputStream.close();
+            outputStream.close()
         }
         if(outputFile != null) {
-            outputFile.close();
+            outputFile.close()
         }
     }
 
@@ -424,7 +424,7 @@ class SyncEditorLayerIndex {
                             /* replace key for this entry with JOSM URL */
                             eliUrls.remove(e)
                             eliUrls.put(urlj,e)
-                            break;
+                            break
                         }
                     }
                 }
@@ -900,6 +900,10 @@ class SyncEditorLayerIndex {
                     myprintln "* Bounds do not match shape (is ${b.getMinLat()},${b.getMinLon()},${b.getMaxLat()},${b.getMaxLon()}, calculated <bounds min-lat='${minlat}' min-lon='${minlon}' max-lat='${maxlat}' max-lon='${maxlon}'>): ${getDescription(j)}"
                 }
             }
+            def cat = getCategory(j)
+            if(cat != null && cat != "photo" && cat != "map" && cat != "historicmap" && cat != "osmbasedmap" && cat != "historicphoto" && cat != "other") {
+                myprintln "* Strange category ${cat}: ${getDescription(j)}"
+            }
         }
     }
 
@@ -1010,7 +1014,7 @@ class SyncEditorLayerIndex {
     static Integer getMinZoom(Object e) {
         if (e instanceof ImageryInfo) {
             if("wms".equals(getType(e)) && e.getName() =~ / mirror/)
-                return null;
+                return null
             int mz = e.getMinZoom()
             return mz == 0 ? null : mz
         } else {
@@ -1022,7 +1026,7 @@ class SyncEditorLayerIndex {
     static Integer getMaxZoom(Object e) {
         if (e instanceof ImageryInfo) {
             if("wms".equals(getType(e)) && e.getName() =~ / mirror/)
-                return null;
+                return null
             int mz = e.getMaxZoom()
             return mz == 0 ? null : mz
         } else {
@@ -1063,6 +1067,12 @@ class SyncEditorLayerIndex {
     }
     static String getTermsOfUseUrl(Object e) {
         if (e instanceof ImageryInfo) return e.getTermsOfUseURL()
+        return null
+    }
+    static String getCategory(Object e) {
+        if (e instanceof ImageryInfo) {
+            return e.getImageryCategoryOriginalString()
+        }
         return null
     }
     static String getLogoImage(Object e) {

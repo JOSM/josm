@@ -678,6 +678,9 @@
                             <xs:element name="terms-of-use-text" minOccurs="0" maxOccurs="1" type="xs:string" />
                             <!-- A link that is opened, when the user clicks on the terms-of-use text -->
                             <xs:element name="terms-of-use-url" minOccurs="0" maxOccurs="1" type="xs:string" />
+                            <!-- The image category, don't use enumeration, so future extension is possible -->
+                            <!-- Currently defined values are: "photo", "map", "historicmap", "osmbasedmap", "historicphoto" and "other" -->
+                            <xs:element name="category" minOccurs="0" maxOccurs="1" type="xs:string" />
                             <!-- The ISO 3166 country code -->
                             <xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
                             <!-- A base64-encoded image that is displayed as menu/toolbar icon -->

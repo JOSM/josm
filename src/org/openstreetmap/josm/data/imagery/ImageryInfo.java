@@ -72,8 +72,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
         private final String typeString;
 
-        ImageryType(String urlString) {
-            this.typeString = urlString;
+        ImageryType(String typeString) {
+            this.typeString = typeString;
         }
 
         /**
@@ -94,6 +94,63 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             for (ImageryType type : ImageryType.values()) {
                 if (type.getTypeString().equals(s)) {
                     return type;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Category of imagery entry.
+     * @since 13792
+     */
+    public enum ImageryCategory {
+        /** A aerial or satellite photo. **/
+        PHOTO("photo", tr("Aerial or satellite photo")),
+        /** A map. **/
+        MAP("map", tr("Map")),
+        /** A historic or otherwise outdated map. */
+        HISTORICMAP("historicmap", tr("Historic or otherwise outdated map")),
+        /** A map based on OSM data. **/
+        OSMBASEDMAP("osmbasedmap", tr("Map based on OSM data")),
+        /** A historic or otherwise outdated aerial or satellite photo. **/
+        HISTORICPHOTO("historicphoto", tr("Historic or otherwise outdated aerial or satellite photo")),
+        /** Any other type of imagery **/
+        OTHER("other", tr("Imagery not matching any other category"));
+
+        private final String category;
+        private final String description;
+
+        ImageryCategory(String category, String description) {
+            this.category = category;
+            this.description = description;
+        }
+
+        /**
+         * Returns the unique string identifying this category.
+         * @return the unique string identifying this category
+         */
+        public final String getCategoryString() {
+            return category;
+        }
+
+        /**
+         * Returns the description of this category.
+         * @return the description of this category
+         */
+        public final String getDescription() {
+            return description;
+        }
+
+        /**
+         * Returns the imagery category from the given category string.
+         * @param s The category string
+         * @return the imagery category matching the given category string
+         */
+        public static ImageryCategory fromString(String s) {
+            for (ImageryCategory category : ImageryCategory.values()) {
+                if (category.getCategoryString().equals(s)) {
+                    return category;
                 }
             }
             return null;
@@ -229,6 +286,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     /** Should this map be transparent **/
     private boolean transparent = true;
     private int minimumTileExpire = (int) TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get());
+    /** category of the imagery */
+    private ImageryCategory category;
+    /** category of the imagery (input string, not saved, copied or used otherwise except for error checks) */
+    private String categoryOriginalString;
     /** when adding a field, also adapt the:
      * {@link #ImageryPreferenceEntry ImageryPreferenceEntry object}
      * {@link #ImageryPreferenceEntry#ImageryPreferenceEntry(ImageryInfo) ImageryPreferenceEntry constructor}
@@ -277,6 +338,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @StructEntry Map<String, String> customHttpHeaders;
         @StructEntry boolean transparent;
         @StructEntry int minimumTileExpire;
+        @StructEntry String category;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
@@ -312,6 +374,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             cookies = i.cookies;
             icon = i.icon;
             description = i.description;
+            category = i.category != null ? i.category.getCategoryString() : null;
             if (i.bounds != null) {
                 bounds = i.bounds.encodeAsString(",");
                 StringBuilder shapesString = new StringBuilder();
@@ -501,6 +564,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         customHttpHeaders = e.customHttpHeaders;
         transparent = e.transparent;
         minimumTileExpire = e.minimumTileExpire;
+        category = ImageryCategory.fromString(e.category);
     }
 
     /**
@@ -548,6 +612,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.customHttpHeaders = i.customHttpHeaders;
         this.transparent = i.transparent;
         this.minimumTileExpire = i.minimumTileExpire;
+        this.category = i.category;
     }
 
     @Override
@@ -602,7 +667,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.defaultLayers, other.defaultLayers) &&
                 Objects.equals(this.customHttpHeaders, other.customHttpHeaders) &&
                 Objects.equals(this.transparent, other.transparent) &&
-                Objects.equals(this.minimumTileExpire, other.minimumTileExpire);
+                Objects.equals(this.minimumTileExpire, other.minimumTileExpire) &&
+                Objects.equals(this.category, other.category);
         // CHECKSTYLE.ON: BooleanExpressionComplexity
     }
 
@@ -989,6 +1055,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             res.append("<br>").append(tr("Date of imagery: {0}", dateStr));
             html = true;
         }
+        if (category != null && category.getDescription() != null) {
+            res.append("<br>").append(tr("Imagery category: {0}", category.getDescription()));
+            html = true;
+        }
         if (bestMarked) {
             res.append("<br>").append(tr("This imagery is marked as best in this region in other editors."));
             html = true;
@@ -1202,6 +1272,42 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setImageryType(ImageryType imageryType) {
         this.imageryType = imageryType;
+    }
+
+    /**
+     * Returns the imagery category.
+     * @return The imagery category
+     * @since 13792
+     */
+    public ImageryCategory getImageryCategory() {
+        return category;
+    }
+
+    /**
+     * Sets the imagery category.
+     * @param category The imagery category
+     * @since 13792
+     */
+    public void setImageryCategory(ImageryCategory category) {
+        this.category = category;
+    }
+
+    /**
+     * Returns the imagery category original string (don't use except for error checks).
+     * @return The imagery category original string
+     * @since 13792
+     */
+    public String getImageryCategoryOriginalString() {
+        return categoryOriginalString;
+    }
+
+    /**
+     * Sets the imagery category original string (don't use except for error checks).
+     * @param categoryOriginalString The imagery category original string
+     * @since 13792
+     */
+    public void setImageryCategoryOriginalString(String categoryOriginalString) {
+        this.categoryOriginalString = categoryOriginalString;
     }
 
     /**
