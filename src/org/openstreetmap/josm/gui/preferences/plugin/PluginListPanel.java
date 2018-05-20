@@ -99,30 +99,25 @@ public class PluginListPanel extends VerticallyScrollablePanel {
         HtmlPanel hint = new HtmlPanel();
         hint.setText(
                 "<html>"
-                + tr("Please click on <strong>Download list</strong> to download and display a list of available plugins.")
+                + (model.getAvailablePlugins().isEmpty() ?
+                        tr("Please click on <strong>Download list</strong> to download and display a list of available plugins.") :
+                        tr("The filter returned no results."))
                 + "</html>"
         );
         add(hint, gbc);
     }
 
     /**
-     * Refreshes the list.
+     * Displays a list of plugins.
+     * @param displayedPlugins list of plugins
+     * @since 13799
      */
-    public void refreshView() {
-        final Rectangle visibleRect = getVisibleRect();
-        List<PluginInformation> displayedPlugins = model.getDisplayedPlugins();
-        removeAll();
-
+    public void displayPluginList(List<PluginInformation> displayedPlugins) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-
-        if (displayedPlugins.isEmpty()) {
-            displayEmptyPluginListInformation();
-            return;
-        }
 
         int row = -1;
         for (final PluginInformation pi : displayedPlugins) {
@@ -162,6 +157,21 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             gbc.insets = new Insets(3, 25, 5, 5);
             gbc.weighty = 1.0;
             add(description, gbc);
+        }
+    }
+
+    /**
+     * Refreshes the list.
+     */
+    public void refreshView() {
+        final Rectangle visibleRect = getVisibleRect();
+        List<PluginInformation> displayedPlugins = model.getDisplayedPlugins();
+        removeAll();
+
+        if (displayedPlugins.isEmpty()) {
+            displayEmptyPluginListInformation();
+        } else {
+            displayPluginList(displayedPlugins);
         }
         revalidate();
         repaint();

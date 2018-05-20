@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -33,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -176,6 +178,18 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
         gc.insets = new Insets(0, 0, 0, 3);
+        pnl.add(GBC.glue(0, 0));
+
+        gc.weightx = 1.0;
+        ButtonGroup bg = new ButtonGroup();
+        JPanel radios = new JPanel();
+        addRadioButton(bg, radios, new JRadioButton(tr("All"), true), gc, PluginInstallation.ALL);
+        addRadioButton(bg, radios, new JRadioButton(tr("Installed")), gc, PluginInstallation.INSTALLED);
+        addRadioButton(bg, radios, new JRadioButton(tr("Available")), gc, PluginInstallation.AVAILABLE);
+        pnl.add(radios, gc);
+
+        gc.gridx = 0;
+        gc.weightx = 0.0;
         pnl.add(new JLabel(tr("Search:")), gc);
 
         gc.gridx = 1;
@@ -186,6 +200,15 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         SelectAllOnFocusGainedDecorator.decorate(tfFilter);
         tfFilter.getDocument().addDocumentListener(new SearchFieldAdapter());
         return pnl;
+    }
+
+    private void addRadioButton(ButtonGroup bg, JPanel pnl, JRadioButton rb, GridBagConstraints gc, PluginInstallation value) {
+        bg.add(rb);
+        pnl.add(rb, gc);
+        rb.addActionListener(e -> {
+            model.filterDisplayedPlugins(value);
+            pnlPluginPreferences.refreshView();
+        });
     }
 
     private JPanel buildActionPanel() {
