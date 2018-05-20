@@ -429,4 +429,14 @@ public class ImageryLayerInfo {
         }
         return null;
     }
+
+    /**
+     * Returns imagery layer info for the given id.
+     * @param id imagery layer id.
+     * @return imagery layer info for the given id, or {@code null}
+     * @since 13797
+     */
+    public ImageryInfo getLayer(String id) {
+        return layerIds.get(id);
+    }
 }

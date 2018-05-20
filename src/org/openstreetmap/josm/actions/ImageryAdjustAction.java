@@ -82,6 +82,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         }
         tempOffset = new OffsetBookmark(
                 Main.getProjection().toCode(),
+                layer.getInfo().getId(),
                 layer.getInfo().getName(),
                 null,
                 curOff, center);

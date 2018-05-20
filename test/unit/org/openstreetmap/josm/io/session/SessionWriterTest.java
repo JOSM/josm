@@ -143,7 +143,7 @@ public class SessionWriterTest {
     private ImageryLayer createImageryLayer() {
         TMSLayer layer = new TMSLayer(new ImageryInfo("the name", "http://www.url.com/"));
         layer.getDisplaySettings().setOffsetBookmark(
-                new OffsetBookmark(Main.getProjection().toCode(), layer.getInfo().getName(), "", 12, 34));
+                new OffsetBookmark(Main.getProjection().toCode(), layer.getInfo().getId(), layer.getInfo().getName(), "", 12, 34));
         return layer;
     }
 
