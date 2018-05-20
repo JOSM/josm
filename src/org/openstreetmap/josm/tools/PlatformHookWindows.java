@@ -653,6 +653,7 @@ public class PlatformHookWindows implements PlatformHook {
         // Windows 8/8.1 and later
         def.add(new FontEntry("javanese", "Javanese Text", "JAVATEXT.TTF"));           // ISO 639: jv
         def.add(new FontEntry("leelawadee", "Leelawadee", "LEELAWAD.TTF"));            // ISO 639: bug
+        def.add(new FontEntry("malgun", "Malgun Gothic", "MALGUN.TTF"));               // ISO 639: ko
         def.add(new FontEntry("myanmar", "Myanmar Text", "MMRTEXT.TTF"));              // ISO 639: my
         def.add(new FontEntry("nirmala", "Nirmala UI", "NIRMALA.TTF"));                // ISO 639: sat,srb
         def.add(new FontEntry("segoeui", "Segoe UI", "SEGOEUI.TTF"));                  // ISO 639: lis
