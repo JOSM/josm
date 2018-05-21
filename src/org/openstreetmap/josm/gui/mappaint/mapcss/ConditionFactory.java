@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -680,7 +681,7 @@ public final class ConditionFactory {
          * {@code :area-style} tests whether the object has an area style. This is useful for validators.
          * @param e MapCSS environment
          * @return {@code true} if the object has an area style
-         * @see ElemStyles#hasAreaElemStyle(OsmPrimitive, boolean)
+         * @see ElemStyles#hasAreaElemStyle(IPrimitive, boolean)
          */
         static boolean areaStyle(Environment e) { // NO_UCD (unused code)
             // only for validator
@@ -748,7 +749,7 @@ public final class ConditionFactory {
          * @see InDataSourceArea
          */
         static boolean inDownloadedArea(Environment e) { // NO_UCD (unused code)
-            return IN_DOWNLOADED_AREA.test(e.osm);
+            return e.osm instanceof OsmPrimitive && IN_DOWNLOADED_AREA.test((OsmPrimitive) e.osm);
         }
 
         static boolean completely_downloaded(Environment e) { // NO_UCD (unused code)

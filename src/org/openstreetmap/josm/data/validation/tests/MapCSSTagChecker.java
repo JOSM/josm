@@ -581,8 +581,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final String description1 = group == null ? description : group;
                 final String description2 = group == null ? null : description;
                 final List<OsmPrimitive> primitives;
-                if (env.child != null) {
-                    primitives = Arrays.asList(p, env.child);
+                if (env.child instanceof OsmPrimitive) {
+                    primitives = Arrays.asList(p, (OsmPrimitive) env.child);
                 } else {
                     primitives = Collections.singletonList(p);
                 }

@@ -459,7 +459,7 @@ public final class ExpressionFactory {
             if (env.parent == null) {
                 if (env.osm != null) {
                     // we don't have a matched parent, so just search all referrers
-                    for (OsmPrimitive parent : env.osm.getReferrers()) {
+                    for (IPrimitive parent : env.osm.getReferrers()) {
                         String value = parent.get(key);
                         if (value != null) {
                             return value;
@@ -484,7 +484,7 @@ public final class ExpressionFactory {
                 if (env.osm != null) {
                     final Collection<String> tags = new TreeSet<>(AlphanumComparator.getInstance());
                     // we don't have a matched parent, so just search all referrers
-                    for (OsmPrimitive parent : env.osm.getReferrers()) {
+                    for (IPrimitive parent : env.osm.getReferrers()) {
                         String value = parent.get(key);
                         if (value != null) {
                             tags.add(value);

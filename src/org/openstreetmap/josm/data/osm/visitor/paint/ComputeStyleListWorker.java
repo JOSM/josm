@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -31,8 +31,8 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * Helper to compute style list.
  * @since 11914 (extracted from StyledMapRenderer)
  */
-public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements OsmPrimitiveVisitor {
-    private final transient List<? extends OsmPrimitive> input;
+public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements PrimitiveVisitor {
+    private final transient List<? extends IPrimitive> input;
     private final transient List<StyleRecord> output;
 
     private final transient ElemStyles styles;
@@ -51,9 +51,10 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
      * @param input the primitives to process
      * @param output the list of styles to which styles will be added
      * @param directExecutionTaskSize the threshold deciding whether to subdivide the tasks
+     * @since 13810 (signature)
      */
     ComputeStyleListWorker(double circum, NavigatableComponent nc,
-            final List<? extends OsmPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize) {
+            final List<? extends IPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize) {
         this(circum, nc, input, output, directExecutionTaskSize, MapPaintStyles.getStyles());
     }
 
@@ -66,9 +67,10 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
      * @param directExecutionTaskSize the threshold deciding whether to subdivide the tasks
      * @param styles the {@link ElemStyles} instance used to generate primitive {@link StyleElement}s.
      * @since 12964
+     * @since 13810 (signature)
      */
     ComputeStyleListWorker(double circum, NavigatableComponent nc,
-            final List<? extends OsmPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize,
+            final List<? extends IPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize,
             ElemStyles styles) {
         this.circum = circum;
         this.nc = nc;
@@ -107,7 +109,7 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
     public List<StyleRecord> computeDirectly() {
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
-            for (final OsmPrimitive osm : input) {
+            for (final IPrimitive osm : input) {
                 acceptDrawable(osm);
             }
             return output;
@@ -118,7 +120,7 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
         }
     }
 
-    private void acceptDrawable(final OsmPrimitive osm) {
+    private void acceptDrawable(final IPrimitive osm) {
         try {
             if (osm.isDrawable()) {
                 osm.accept(this);
@@ -129,17 +131,17 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
     }
 
     @Override
-    public void visit(Node n) {
+    public void visit(INode n) {
         add(n, StyledMapRenderer.computeFlags(n, false));
     }
 
     @Override
-    public void visit(Way w) {
+    public void visit(IWay<?> w) {
         add(w, StyledMapRenderer.computeFlags(w, true));
     }
 
     @Override
-    public void visit(Relation r) {
+    public void visit(IRelation<?> r) {
         add(r, StyledMapRenderer.computeFlags(r, true));
     }
 
@@ -147,8 +149,9 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
      * Add new style records for the given node.
      * @param osm node
      * @param flags flags
+     * @since 13810 (signature)
      */
-    public void add(Node osm, int flags) {
+    public void add(INode osm, int flags) {
         StyleElementList sl = styles.get(osm, circum, nc);
         for (StyleElement s : sl) {
             output.add(new StyleRecord(s, osm, flags));
@@ -159,8 +162,9 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
      * Add new style records for the given way.
      * @param osm way
      * @param flags flags
+     * @since 13810 (signature)
      */
-    public void add(Way osm, int flags) {
+    public void add(IWay<?> osm, int flags) {
         StyleElementList sl = styles.get(osm, circum, nc);
         for (StyleElement s : sl) {
             if ((drawArea && (flags & StyledMapRenderer.FLAG_DISABLED) == 0) || !(s instanceof AreaElement)) {
@@ -173,8 +177,9 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
      * Add new style records for the given relation.
      * @param osm relation
      * @param flags flags
+     * @since 13810 (signature)
      */
-    public void add(Relation osm, int flags) {
+    public void add(IRelation<?> osm, int flags) {
         StyleElementList sl = styles.get(osm, circum, nc);
         for (StyleElement s : sl) {
             if (drawAreaElement(flags, s) ||
