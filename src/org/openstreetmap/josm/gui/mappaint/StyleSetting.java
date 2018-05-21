@@ -35,7 +35,7 @@ public interface StyleSetting {
     /**
      * A style setting for boolean value (yes / no).
      */
-    class BooleanStyleSetting implements StyleSetting {
+    class BooleanStyleSetting implements StyleSetting, Comparable<BooleanStyleSetting> {
         public final StyleSource parentStyle;
         public final String prefKey;
         public final String label;
@@ -80,6 +80,11 @@ public interface StyleSetting {
             } else {
                 Config.getPref().putBoolean(prefKey, b);
             }
+        }
+
+        @Override
+        public int compareTo(BooleanStyleSetting o) {
+            return label.compareTo(o.label);
         }
     }
 }

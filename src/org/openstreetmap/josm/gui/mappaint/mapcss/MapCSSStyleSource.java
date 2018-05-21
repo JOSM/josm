@@ -605,6 +605,7 @@ public class MapCSSStyleSource extends StyleSource {
                 settingValues.put(e.getKey(), set.getValue());
             }
         }
+        settings.sort(null);
     }
 
     private Cascade constructSpecial(String type) {
