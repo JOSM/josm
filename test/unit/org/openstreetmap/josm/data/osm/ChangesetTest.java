@@ -149,29 +149,30 @@ public class ChangesetTest {
      */
     @Test
     public void testHasEqualSemanticAttributes() {
+        Date today = new Date();
         Changeset cs1 = new Changeset();
         Changeset cs2 = new Changeset();
         assertTrue(cs1.hasEqualSemanticAttributes(cs2));
         assertFalse(cs1.hasEqualSemanticAttributes(null));
         // Closed At
         cs1.setClosedAt(null);
-        cs2.setClosedAt(new Date());
+        cs2.setClosedAt(today);
         assertFalse(cs1.hasEqualSemanticAttributes(cs2));
         cs1.setClosedAt(yesterday());
-        cs2.setClosedAt(new Date());
+        cs2.setClosedAt(today);
         assertFalse(cs1.hasEqualSemanticAttributes(cs2));
-        cs1.setClosedAt(new Date());
-        cs2.setClosedAt(new Date());
+        cs1.setClosedAt(today);
+        cs2.setClosedAt(today);
         assertTrue(cs1.hasEqualSemanticAttributes(cs2));
         // Created At
         cs1.setCreatedAt(null);
-        cs2.setCreatedAt(new Date());
+        cs2.setCreatedAt(today);
         assertFalse(cs1.hasEqualSemanticAttributes(cs2));
         cs1.setCreatedAt(yesterday());
-        cs2.setCreatedAt(new Date());
+        cs2.setCreatedAt(today);
         assertFalse(cs1.hasEqualSemanticAttributes(cs2));
-        cs1.setCreatedAt(new Date());
-        cs2.setCreatedAt(new Date());
+        cs1.setCreatedAt(today);
+        cs2.setCreatedAt(today);
         assertTrue(cs1.hasEqualSemanticAttributes(cs2));
         // Id
         cs1.setId(1);
