@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
@@ -251,13 +252,14 @@ public final class Geometry {
      * lies in the part that is to the right when traveling in the direction
      * lineP1, lineP2, lineP3.)
      *
+     * @param <N> type of node
      * @param lineP1 first point in path
      * @param lineP2 second point in path
      * @param lineP3 third point in path
      * @param testPoint point to test
      * @return true if to the right side, false otherwise
      */
-    public static boolean isToTheRightSideOfLine(Node lineP1, Node lineP2, Node lineP3, Node testPoint) {
+    public static <N extends INode> boolean isToTheRightSideOfLine(N lineP1, N lineP2, N lineP3, N testPoint) {
         boolean pathBendToRight = angleIsClockwise(lineP1, lineP2, lineP3);
         boolean rightOfSeg1 = angleIsClockwise(lineP1, lineP2, testPoint);
         boolean rightOfSeg2 = angleIsClockwise(lineP2, lineP3, testPoint);
@@ -270,12 +272,13 @@ public final class Geometry {
 
     /**
      * This method tests if secondNode is clockwise to first node.
+     * @param <N> type of node
      * @param commonNode starting point for both vectors
      * @param firstNode first vector end node
      * @param secondNode second vector end node
      * @return true if first vector is clockwise before second vector.
      */
-    public static boolean angleIsClockwise(Node commonNode, Node firstNode, Node secondNode) {
+    public static <N extends INode> boolean angleIsClockwise(N commonNode, N firstNode, N secondNode) {
         return angleIsClockwise(commonNode.getEastNorth(), firstNode.getEastNorth(), secondNode.getEastNorth());
     }
 
@@ -501,11 +504,11 @@ public final class Geometry {
      * @return Area for the given list of nodes  (EastNorth coordinates)
      * @since 6841
      */
-    public static Area getArea(List<Node> polygon) {
+    public static Area getArea(List<? extends INode> polygon) {
         Path2D path = new Path2D.Double();
 
         boolean begin = true;
-        for (Node n : polygon) {
+        for (INode n : polygon) {
             EastNorth en = n.getEastNorth();
             if (en != null) {
                 if (begin) {
@@ -567,11 +570,12 @@ public final class Geometry {
 
     /**
      * Tests if two polygons intersect.
+     * @param <N> type of node
      * @param first List of nodes forming first polygon
      * @param second List of nodes forming second polygon
      * @return intersection kind
      */
-    public static PolygonIntersection polygonIntersection(List<Node> first, List<Node> second) {
+    public static <N extends INode> PolygonIntersection polygonIntersection(List<N> first, List<N> second) {
         Area a1 = getArea(first);
         Area a2 = getArea(second);
         return polygonIntersection(a1, a2);
@@ -615,25 +619,26 @@ public final class Geometry {
 
     /**
      * Tests if point is inside a polygon. The polygon can be self-intersecting. In such case the contains function works in xor-like manner.
+     * @param <N> type of node
      * @param polygonNodes list of nodes from polygon path.
      * @param point the point to test
      * @return true if the point is inside polygon.
      */
-    public static boolean nodeInsidePolygon(Node point, List<Node> polygonNodes) {
+    public static <N extends INode> boolean nodeInsidePolygon(N point, List<N> polygonNodes) {
         if (polygonNodes.size() < 2)
             return false;
 
         //iterate each side of the polygon, start with the last segment
-        Node oldPoint = polygonNodes.get(polygonNodes.size() - 1);
+        N oldPoint = polygonNodes.get(polygonNodes.size() - 1);
 
         if (!oldPoint.isLatLonKnown()) {
             return false;
         }
 
         boolean inside = false;
-        Node p1, p2;
+        N p1, p2;
 
-        for (Node newPoint : polygonNodes) {
+        for (N newPoint : polygonNodes) {
             //skip duplicate points
             if (newPoint.equals(oldPoint)) {
                 continue;
@@ -739,7 +744,7 @@ public final class Geometry {
      * @throws IllegalArgumentException if way is not closed (see {@link Way#isClosed}).
      * @see #isClockwise(Way)
      */
-    public static boolean isClockwise(List<Node> nodes) {
+    public static boolean isClockwise(List<? extends INode> nodes) {
         int nodesCount = nodes.size();
         if (nodesCount < 3 || nodes.get(0) != nodes.get(nodesCount - 1)) {
             throw new IllegalArgumentException("Way must be closed to check orientation.");
@@ -747,8 +752,8 @@ public final class Geometry {
         double area2 = 0.;
 
         for (int node = 1; node <= /*sic! consider last-first as well*/ nodesCount; node++) {
-            Node coorPrev = nodes.get(node - 1);
-            Node coorCurr = nodes.get(node % nodesCount);
+            INode coorPrev = nodes.get(node - 1);
+            INode coorCurr = nodes.get(node % nodesCount);
             area2 += coorPrev.lon() * coorCurr.lat();
             area2 -= coorCurr.lon() * coorPrev.lat();
         }
@@ -813,8 +818,8 @@ public final class Geometry {
      * @return the centroid of nodes
      * @see Geometry#getCenter
      */
-    public static EastNorth getCentroid(List<Node> nodes) {
-        return getCentroidEN(nodes.stream().map(Node::getEastNorth).collect(Collectors.toList()));
+    public static EastNorth getCentroid(List<? extends INode> nodes) {
+        return getCentroidEN(nodes.stream().map(INode::getEastNorth).collect(Collectors.toList()));
     }
 
     /**
@@ -883,7 +888,7 @@ public final class Geometry {
      * @see Geometry#getCentroid
      * @since 6934
      */
-    public static EastNorth getCenter(List<Node> nodes) {
+    public static EastNorth getCenter(List<? extends INode> nodes) {
         int nc = nodes.size();
         if (nc < 3) return null;
         /**
@@ -1033,7 +1038,7 @@ public final class Geometry {
      * @param nodes the list of nodes representing the polygon
      * @return area and perimeter
      */
-    public static AreaAndPerimeter getAreaAndPerimeter(List<Node> nodes) {
+    public static AreaAndPerimeter getAreaAndPerimeter(List<? extends ILatLon> nodes) {
         return getAreaAndPerimeter(nodes, null);
     }
 
