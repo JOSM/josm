@@ -246,7 +246,7 @@ public class ExceptionUtilTest {
      */
     @Test
     public void testExplainMissingOAuthAccessTokenException() {
-        assertEquals("<html>Failed to authenticate at the OSM server 'http://api06.dev.openstreetmap.org/api'.<br>"+
+        assertEquals("<html>Failed to authenticate at the OSM server 'https://api06.dev.openstreetmap.org/api'.<br>"+
                 "You are using OAuth to authenticate but currently there is no<br>OAuth Access Token configured.<br>"+
                 "Please open the Preferences Dialog and generate or enter an Access Token.</html>",
                 ExceptionUtil.explainMissingOAuthAccessTokenException(new MissingOAuthAccessTokenException()));

@@ -253,7 +253,7 @@ public class MainApplicationTest {
     @Test
     public void testPostConstructorProcessCmdLineHttpUrl() {
         doTestPostConstructorProcessCmdLine(
-                "http://api06.dev.openstreetmap.org/api/0.6/map?bbox=-126.75,-47.20,-126.65,-47.10",
+                "https://api06.dev.openstreetmap.org/api/0.6/map?bbox=-126.75,-47.20,-126.65,-47.10",
                 "https://master.apis.dev.openstreetmap.org/api/0.6/trackpoints?bbox=-0.4,51.35,0.2,51.6&page=0", true);
     }
 

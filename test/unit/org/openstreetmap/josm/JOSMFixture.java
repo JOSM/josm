@@ -111,7 +111,7 @@ public class JOSMFixture {
         Main.pref.init(false);
         String url = Config.getPref().get("osm-server.url");
         if (url == null || url.isEmpty() || isProductionApiUrl(url)) {
-            Config.getPref().put("osm-server.url", "http://api06.dev.openstreetmap.org/api");
+            Config.getPref().put("osm-server.url", "https://api06.dev.openstreetmap.org/api");
         }
         I18n.set(Config.getPref().get("language", "en"));
 
