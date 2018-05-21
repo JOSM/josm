@@ -631,7 +631,7 @@ public final class ConditionFactory {
          * {@code :modified} tests whether the object has been modified.
          * @param e MapCSS environment
          * @return {@code true} if the object has been modified
-         * @see OsmPrimitive#isModified()
+         * @see IPrimitive#isModified()
          */
         static boolean modified(Environment e) { // NO_UCD (unused code)
             return e.osm.isModified() || e.osm.isNewOrUndeleted();
@@ -641,7 +641,7 @@ public final class ConditionFactory {
          * {@code ;new} tests whether the object is new.
          * @param e MapCSS environment
          * @return {@code true} if the object is new
-         * @see OsmPrimitive#isNew()
+         * @see IPrimitive#isNew()
          */
         static boolean _new(Environment e) { // NO_UCD (unused code)
             return e.osm.isNew();
@@ -661,7 +661,7 @@ public final class ConditionFactory {
          * {@code :tagged} tests whether the object is tagged.
          * @param e MapCSS environment
          * @return {@code true} if the object is tagged
-         * @see OsmPrimitive#isTagged()
+         * @see IPrimitive#isTagged()
          */
         static boolean tagged(Environment e) { // NO_UCD (unused code)
             return e.osm.isTagged();
@@ -671,7 +671,7 @@ public final class ConditionFactory {
          * {@code :same-tags} tests whether the object has the same tags as its child/parent.
          * @param e MapCSS environment
          * @return {@code true} if the object has the same tags as its child/parent
-         * @see OsmPrimitive#hasSameInterestingTags(OsmPrimitive)
+         * @see IPrimitive#hasSameInterestingTags(IPrimitive)
          */
         static boolean sameTags(Environment e) { // NO_UCD (unused code)
             return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
