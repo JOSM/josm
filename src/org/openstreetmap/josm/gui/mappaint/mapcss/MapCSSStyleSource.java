@@ -506,6 +506,7 @@ public class MapCSSStyleSource extends StyleSource {
             relationRules.initIndex();
             multipolygonRules.initIndex();
             canvasRules.initIndex();
+            loaded = true;
         } finally {
             STYLE_SOURCE_LOCK.writeLock().unlock();
         }

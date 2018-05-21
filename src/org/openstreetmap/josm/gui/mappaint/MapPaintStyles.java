@@ -312,7 +312,9 @@ public final class MapPaintStyles {
             }
         }
         for (StyleSource source : styles.getStyleSources()) {
-            loadStyleForFirstTime(source);
+            if (source.active) {
+                loadStyleForFirstTime(source);
+            }
         }
         fireMapPaintSylesUpdated();
     }
@@ -405,6 +407,9 @@ public final class MapPaintStyles {
         for (int p : sel) {
             StyleSource s = data.get(p);
             s.active = !s.active;
+            if (s.active && !s.isLoaded()) {
+                loadStyleForFirstTime(s);
+            }
         }
         MapPaintPrefHelper.INSTANCE.put(data);
         if (sel.length == 1) {
