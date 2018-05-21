@@ -18,11 +18,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -997,19 +999,29 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * @since 12809
      */
     public void visitReferrers(OsmPrimitiveVisitor visitor) {
-        if (visitor == null) return;
+        if (visitor != null)
+            doVisitReferrers(o -> o.accept(visitor));
+    }
+
+    @Override
+    public void visitReferrers(PrimitiveVisitor visitor) {
+        if (visitor != null)
+            doVisitReferrers(o -> o.accept(visitor));
+    }
+
+    private void doVisitReferrers(Consumer<OsmPrimitive> visitor) {
         if (this.referrers == null)
             return;
         else if (this.referrers instanceof OsmPrimitive) {
             OsmPrimitive ref = (OsmPrimitive) this.referrers;
             if (ref.dataSet == dataSet) {
-                ref.accept(visitor);
+                visitor.accept(ref);
             }
         } else if (this.referrers instanceof OsmPrimitive[]) {
             OsmPrimitive[] refs = (OsmPrimitive[]) this.referrers;
             for (OsmPrimitive ref: refs) {
                 if (ref.dataSet == dataSet) {
-                    ref.accept(visitor);
+                    visitor.accept(ref);
                 }
             }
         }
