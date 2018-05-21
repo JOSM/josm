@@ -38,6 +38,8 @@ public abstract class StyleSource extends SourceEntry {
 
     private final List<Throwable> errors = new CopyOnWriteArrayList<>();
     private final Set<String> warnings = new CopyOnWriteArraySet<>();
+    protected boolean loaded;
+
     /**
      * The zip file containing the icons for this style
      */
@@ -255,5 +257,14 @@ public abstract class StyleSource extends SourceEntry {
      */
     public Color getBackgroundColorOverride() {
         return null;
+    }
+
+    /**
+     * Determines if the style has been loaded (initialized).
+     * @return {@code true} if the style has been loaded
+     * @since 13815
+     */
+    public final boolean isLoaded() {
+        return loaded;
     }
 }
