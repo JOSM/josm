@@ -273,7 +273,7 @@
     </chunk>
     <chunk id="leaf_without_mixed">
         <combo key="leaf_type" text="Leaf type" values="broadleaved,needleleaved,leafless" values_searchable="true" />
-	    <combo key="leaf_cycle" text="Leaf cycle" values_searchable="true" >
+        <combo key="leaf_cycle" text="Leaf cycle" values_searchable="true" >
             <list_entry value="deciduous" short_description="Plants that are leafless for a certain period during the year." />
             <list_entry value="evergreen" short_description="Plants that are never entirely without green foliage." />
             <list_entry value="semi_deciduous" short_description="Plants that lose their foliage for a very short period, when old leaves fall off and new foliage growth is starting." />
@@ -293,6 +293,12 @@
     </chunk>
     <chunk id="voltage_frequency">
         <reference ref="voltage" />
+        <reference ref="frequency" />
+    </chunk>
+    <chunk id="transformer_voltage_frequency">
+        <combo key="voltage:primary" text="Primary voltage in Volts (V)" values="765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000" />
+        <combo key="voltage:secondary" text="Secondary voltage in Volts (V)" values="765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000" />
+        <combo key="voltage:tertiary" text="Tertiary voltage in Volts (V)" values="765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000" />
         <reference ref="frequency" />
     </chunk>
     <chunk id="ref_operator_branch">
@@ -357,10 +363,21 @@
         <check key="location:transition" text="Location transition" disable_off="true" />
         <reference ref="ref_operator_branch" />
     </chunk>
+    <chunk id="rating_phases">
+        <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
+        <combo key="phases" text="Phases" values="1,3" length="1" />
+    </chunk>
     <chunk id="optional_rating_phases">
         <optional>
-            <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
-            <combo key="phases" text="Phases" values="1,3" length="1" />
+            <reference ref="rating_phases" />
+        </optional>
+    </chunk>
+    <chunk id="optional_transformer_rating_phases_devices_windings">
+        <optional>
+            <reference ref="rating_phases" />
+            <combo key="devices" text="Number of devices" values="1,2,3,4" />
+            <combo key="windings" text="Number of windings" values="1,2,3,4" />
+            <combo key="windings:configuration" text="Windings configuration" values="star,delta,open-delta,zigzag,open,scott,leblanc" values_context="power" />
         </optional>
     </chunk>
     <chunk id="optional_bridge">
@@ -7731,9 +7748,11 @@
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:power=transformer" />
             <space />
             <key key="power" value="transformer" />
-            <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,yes" match="key" values_context="power" />
-            <reference ref="power_extra" />
-            <reference ref="optional_rating_phases" />
+            <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,auxiliary,yes" match="key" values_context="power" />
+            <reference ref="power_loc" />
+            <reference ref="transformer_voltage_frequency" />
+            <reference ref="ref_operator_branch" />
+            <reference ref="optional_transformer_rating_phases_devices_windings" />
         </item> <!-- Power Transformer -->
         <item name="Power Switchgear" icon="presets/power/switchgear.svg" type="closedway" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:power=switchgear"
@@ -7921,8 +7940,8 @@
             <space />
             <label text="Transformer Attributes:" />
             <key key="transformer" value="distribution" match="key!" />
-            <reference ref="voltage_frequency" />
-            <reference ref="optional_rating_phases" />
+            <reference ref="transformer_voltage_frequency" />
+            <reference ref="optional_transformer_rating_phases_devices_windings" />
         </item> <!-- Pole with Transformer -->
         <item name="Insulator" icon="presets/power/insulator.svg" type="node,way" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:power=insulator"

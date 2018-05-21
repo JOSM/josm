@@ -136,7 +136,10 @@ relation[route=ski][!piste:type][type=route],
 /* {0.tag} without {1.key} (info level) */
 way[highway=track              ][!tracktype],
 way[power=cable                ][!location],
-node[power=transformer         ][!voltage],
+node[power=transformer         ][!voltage:primary],
+node[power=transformer         ][!voltage:secondary],
+node[transformer=distribution  ][!voltage:primary][power=pole],
+node[transformer=distribution  ][!voltage:secondary][power=pole],
 way[power=line                 ][!voltage],
 way[power=minor_line           ][!voltage],
 way[power=cable                ][!voltage],
@@ -203,6 +206,8 @@ way[incline                    ][!highway][!railway][aeroway!~/^(runway|taxiway)
 }
 
 /* {0.tag} together with {1.key}, see #10837, #14034, #9389, #11977, #13156 */
+node[power=transformer][voltage],
+node[transformer=distribution][voltage][power=pole],
 *[amenity=vending_machine][shop],
 *[noname?][name],
 way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath],
