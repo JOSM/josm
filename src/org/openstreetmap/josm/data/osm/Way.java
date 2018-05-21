@@ -614,6 +614,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     @Override
     public void updatePosition() {
         bbox = new BBox(this);
+        clearCachedStyle();
     }
 
     /**
