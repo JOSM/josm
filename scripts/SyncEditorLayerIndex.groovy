@@ -829,7 +829,7 @@ class SyncEditorLayerIndex {
               urls += jt
             for(def u : urls) {
                 def m = u =~ /^https?:\/\/([^\/]+?)(:\d+)?\//
-                if(!m)
+                if(!m || u =~ /[ \t]+$/)
                     myprintln "* Strange URL '${u}': ${getDescription(j)}"
                 else {
                     def domain = m[0][1].replaceAll("\\{switch:.*\\}","x")
