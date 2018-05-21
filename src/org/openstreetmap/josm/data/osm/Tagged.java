@@ -198,4 +198,24 @@ public interface Tagged {
      * Removes all tags
      */
     void removeAll();
+
+    /**
+     * Returns true if the {@code key} corresponds to an OSM true value.
+     * @param key OSM key
+     * @return {@code true} if the {@code key} corresponds to an OSM true value
+     * @see OsmUtils#isTrue(String)
+     */
+    default boolean isKeyTrue(String key) {
+        return OsmUtils.isTrue(get(key));
+    }
+
+    /**
+     * Returns true if the {@code key} corresponds to an OSM false value.
+     * @param key OSM key
+     * @return {@code true} if the {@code key} corresponds to an OSM false value
+     * @see OsmUtils#isFalse(String)
+     */
+    default boolean isKeyFalse(String key) {
+        return OsmUtils.isFalse(get(key));
+    }
 }
