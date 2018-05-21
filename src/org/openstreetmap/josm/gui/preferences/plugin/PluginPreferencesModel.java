@@ -49,23 +49,8 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * @since 13799
      */
     public void filterDisplayedPlugins(PluginInstallation status) {
-        if (status == null) {
-            displayedPlugins.clear();
-            displayedPlugins.addAll(availablePlugins);
-            this.filterStatus = null;
-            return;
-        }
-        displayedPlugins.clear();
-        for (PluginInformation pi: availablePlugins) {
-            boolean installed = currentActivePlugins.contains(pi.getName());
-            if (PluginInstallation.ALL == status
-            || (PluginInstallation.INSTALLED == status && installed)
-            || (PluginInstallation.AVAILABLE == status && !installed)) {
-                displayedPlugins.add(pi);
-            }
-        }
         filterStatus = status;
-        fireStateChanged();
+        doFilter();
     }
 
     /**
@@ -73,20 +58,26 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * @param filter The filter used against plugin name, description or version
      */
     public void filterDisplayedPlugins(String filter) {
-        if (filter == null) {
-            displayedPlugins.clear();
-            displayedPlugins.addAll(availablePlugins);
-            this.filterExpression = null;
-            return;
-        }
+        filterExpression = filter;
+        doFilter();
+    }
+
+    private void doFilter() {
         displayedPlugins.clear();
         for (PluginInformation pi: availablePlugins) {
-            if (pi.matches(filter)) {
+            if ((filterStatus == null || matchesInstallationStatus(pi))
+             && (filterExpression == null || pi.matches(filterExpression))) {
                 displayedPlugins.add(pi);
             }
         }
-        filterExpression = filter;
         fireStateChanged();
+    }
+
+    private boolean matchesInstallationStatus(PluginInformation pi) {
+        boolean installed = currentActivePlugins.contains(pi.getName());
+        return PluginInstallation.ALL == filterStatus
+           || (PluginInstallation.INSTALLED == filterStatus && installed)
+           || (PluginInstallation.AVAILABLE == filterStatus && !installed);
     }
 
     /**
