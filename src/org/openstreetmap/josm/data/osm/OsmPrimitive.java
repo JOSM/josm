@@ -943,20 +943,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
-    /**
-     * Find primitives that reference this primitive. Returns only primitives that are included in the same
-     * dataset as this primitive. <br>
-     *
-     * For example following code will add wnew as referer to all nodes of existingWay, but this method will
-     * not return wnew because it's not part of the dataset <br>
-     *
-     * <code>Way wnew = new Way(existingWay)</code>
-     *
-     * @param allowWithoutDataset If true, method will return empty list if primitive is not part of the dataset. If false,
-     * exception will be thrown in this case
-     *
-     * @return a collection of all primitives that reference this primitive.
-     */
+    @Override
     public final List<OsmPrimitive> getReferrers(boolean allowWithoutDataset) {
         // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned

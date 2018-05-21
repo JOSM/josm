@@ -415,7 +415,26 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      * @return The referrers
      * @since 13764
      */
-    List<? extends IPrimitive> getReferrers();
+    default List<? extends IPrimitive> getReferrers() {
+        return getReferrers(false);
+    }
+
+    /**
+     * Find primitives that reference this primitive. Returns only primitives that are included in the same
+     * dataset as this primitive. <br>
+     *
+     * For example following code will add wnew as referer to all nodes of existingWay, but this method will
+     * not return wnew because it's not part of the dataset <br>
+     *
+     * <code>Way wnew = new Way(existingWay)</code>
+     *
+     * @param allowWithoutDataset If true, method will return empty list if primitive is not part of the dataset. If false,
+     * exception will be thrown in this case
+     *
+     * @return a collection of all primitives that reference this primitive.
+     * @since 13808
+     */
+    List<? extends IPrimitive> getReferrers(boolean allowWithoutDataset);
 
     /**
      * Returns the parent data set of this primitive.
