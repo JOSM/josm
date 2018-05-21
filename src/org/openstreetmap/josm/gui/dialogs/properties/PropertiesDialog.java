@@ -59,6 +59,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -579,7 +580,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         for (OsmPrimitive osm : newSel) {
             types.add(TaggingPresetType.forPrimitive(osm));
             for (String key : osm.keySet()) {
-                if (displayDiscardableKeys || !OsmPrimitive.getDiscardableKeys().contains(key)) {
+                if (displayDiscardableKeys || !AbstractPrimitive.getDiscardableKeys().contains(key)) {
                     String value = osm.get(key);
                     keyCount.put(key, keyCount.containsKey(key) ? keyCount.get(key) + 1 : 1);
                     if (valueCount.containsKey(key)) {

@@ -18,6 +18,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -169,7 +170,7 @@ public class DuplicateWay extends Test {
      * @param wkeys The tags of the way, obtained by {@code Way#getKeys}
      */
     public void removeUninterestingKeys(Map<String, String> wkeys) {
-        for (String key : OsmPrimitive.getDiscardableKeys()) {
+        for (String key : AbstractPrimitive.getDiscardableKeys()) {
             wkeys.remove(key);
         }
     }

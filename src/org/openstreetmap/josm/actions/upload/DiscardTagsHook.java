@@ -12,6 +12,7 @@ import java.util.Map;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.APIDataSet;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 
@@ -23,7 +24,7 @@ public class DiscardTagsHook implements UploadHook {
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
         List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
-        Collection<String> discardableKeys = new HashSet<>(OsmPrimitive.getDiscardableKeys());
+        Collection<String> discardableKeys = new HashSet<>(AbstractPrimitive.getDiscardableKeys());
 
         boolean needsChange = false;
         OUTER: for (OsmPrimitive osm : objectsToUpload) {
