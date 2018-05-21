@@ -36,7 +36,7 @@ public class OAuthParametersTest {
         OAuthParameters def = OAuthParameters.createDefault();
         assertNotNull(def);
         assertEquals(def, OAuthParameters.createDefault(OsmApi.DEFAULT_API_URL));
-        OAuthParameters dev = OAuthParameters.createDefault("http://api06.dev.openstreetmap.org/api");
+        OAuthParameters dev = OAuthParameters.createDefault("https://api06.dev.openstreetmap.org/api");
         assertNotNull(dev);
         assertNotEquals(def, dev);
         Logging.setLogLevel(Logging.LEVEL_TRACE); // enable trace for line coverage

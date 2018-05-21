@@ -414,7 +414,7 @@ public class JOSMTestRules implements TestRule {
 
         // Set API
         if (useAPI == APIType.DEV) {
-            Config.getPref().put("osm-server.url", "http://api06.dev.openstreetmap.org/api");
+            Config.getPref().put("osm-server.url", "https://api06.dev.openstreetmap.org/api");
         } else if (useAPI == APIType.FAKE) {
             FakeOsmApi api = FakeOsmApi.getInstance();
             Config.getPref().put("osm-server.url", api.getServerUrl());

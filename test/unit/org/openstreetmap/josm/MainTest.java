@@ -45,7 +45,7 @@ public class MainTest {
      */
     @Test
     public void testGetBaseUserUrl() {
-        assertEquals("http://api06.dev.openstreetmap.org/user", Main.getBaseUserUrl());
+        assertEquals("https://api06.dev.openstreetmap.org/user", Main.getBaseUserUrl());
     }
 
     /**
