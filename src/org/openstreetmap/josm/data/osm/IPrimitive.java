@@ -307,6 +307,14 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
     void accept(PrimitiveVisitor visitor);
 
     /**
+     * <p>Visits {@code visitor} for all referrers.</p>
+     *
+     * @param visitor the visitor. Ignored, if null.
+     * @since 13806
+     */
+    void visitReferrers(PrimitiveVisitor visitor);
+
+    /**
      * Replies the name of this primitive. The default implementation replies the value
      * of the tag <code>name</code> or null, if this tag is not present.
      *

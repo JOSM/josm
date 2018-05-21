@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 
 /**
@@ -166,6 +167,11 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     @Override
     public final List<PrimitiveData> getReferrers() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public void visitReferrers(PrimitiveVisitor visitor) {
+        // Override if needed
     }
 
     @Override
