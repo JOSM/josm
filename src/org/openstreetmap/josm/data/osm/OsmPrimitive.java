@@ -236,10 +236,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         this.dataSet = dataSet;
     }
 
-    /**
-     *
-     * @return DataSet this primitive is part of.
-     */
+    @Override
     public DataSet getDataSet() {
         return dataSet;
     }

@@ -416,4 +416,10 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      * @since 13764
      */
     List<? extends IPrimitive> getReferrers();
+
+    /**
+     * Returns the parent data set of this primitive.
+     * @return OsmData this primitive is part of.
+     */
+    OsmData<?, ?, ?, ?> getDataSet();
 }

@@ -175,6 +175,11 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     }
 
     @Override
+    public OsmData<?, ?, ?, ?> getDataSet() {
+        return null;
+    }
+
+    @Override
     public StyleCache getCachedStyle() {
         return null;
     }
