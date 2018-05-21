@@ -29,6 +29,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -356,8 +357,9 @@ public class MapCSSStyleSource extends StyleSource {
          *
          * @param osm the primitive to match
          * @return An iterator over possible rules in the right order.
+         * @since 13810 (signature)
          */
-        public Iterator<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
+        public Iterator<MapCSSRule> getRuleCandidates(IPrimitive osm) {
             final BitSet ruleCandidates = new BitSet(rules.size());
             ruleCandidates.or(remaining);
 
@@ -637,7 +639,7 @@ public class MapCSSStyleSource extends StyleSource {
     }
 
     @Override
-    public void apply(MultiCascade mc, OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
+    public void apply(MultiCascade mc, IPrimitive osm, double scale, boolean pretendWayIsClosed) {
         MapCSSRuleIndex matchingRuleIndex;
         if (osm instanceof Node) {
             matchingRuleIndex = nodeRules;

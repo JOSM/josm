@@ -29,6 +29,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -288,7 +289,7 @@ public class TagChecker extends TagTest {
         Collection<TaggingPreset> presets = TaggingPresets.getTaggingPresets();
         if (!presets.isEmpty()) {
             additionalPresetsValueData = new MultiMap<>();
-            for (String a : OsmPrimitive.getUninterestingKeys()) {
+            for (String a : AbstractPrimitive.getUninterestingKeys()) {
                 additionalPresetsValueData.putVoid(a);
             }
             // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)

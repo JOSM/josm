@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.correction.RoleCorrection;
 import org.openstreetmap.josm.data.correction.TagCorrection;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -54,7 +55,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
     private static final Collection<Pattern> IGNORED_KEYS = new ArrayList<>();
     static {
-        for (String s : OsmPrimitive.getUninterestingKeys()) {
+        for (String s : AbstractPrimitive.getUninterestingKeys()) {
             IGNORED_KEYS.add(getPatternFor(s));
         }
         for (String s : new String[]{"name", "ref", "tiger:county"}) {

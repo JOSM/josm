@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagCollection;
 
@@ -40,7 +41,7 @@ public class CombinePrimitiveResolver {
         if (!allResolutions.isEmpty()) {
             cmds.addAll(buildTagChangeCommand(targetPrimitive, allResolutions));
         }
-        for (String p : OsmPrimitive.getDiscardableKeys()) {
+        for (String p : AbstractPrimitive.getDiscardableKeys()) {
             if (targetPrimitive.get(p) != null) {
                 cmds.add(new ChangePropertyCommand(targetPrimitive, p, null));
             }

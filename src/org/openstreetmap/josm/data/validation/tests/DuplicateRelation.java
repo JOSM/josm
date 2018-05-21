@@ -17,6 +17,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -180,7 +181,7 @@ public class DuplicateRelation extends Test {
     private MultiMap<List<RelationMember>, OsmPrimitive> relationsNoKeys;
 
     /** List of keys without useful information */
-    private final Set<String> ignoreKeys = new HashSet<>(OsmPrimitive.getUninterestingKeys());
+    private final Set<String> ignoreKeys = new HashSet<>(AbstractPrimitive.getUninterestingKeys());
 
     /**
      * Default constructor

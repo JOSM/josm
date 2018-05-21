@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
@@ -100,7 +101,7 @@ public final class TagConflictResolutionUtil {
     public static void normalizeTagCollectionBeforeEditing(TagCollection tc, Collection<? extends OsmPrimitive> merged) {
         // remove irrelevant tags
         //
-        for (String key : OsmPrimitive.getDiscardableKeys()) {
+        for (String key : AbstractPrimitive.getDiscardableKeys()) {
             tc.removeByKey(key);
         }
 

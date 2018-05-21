@@ -9,10 +9,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
 import org.openstreetmap.josm.data.osm.BBox;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.IWay;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
@@ -126,13 +125,14 @@ public abstract class AbstractMapRenderer implements Rendering {
      *
      * @param data The data set being rendered.
      * @param bbox The bounding box being displayed.
+     * @since 13810 (signature)
      */
-    public void drawVirtualNodes(DataSet data, BBox bbox) {
+    public void drawVirtualNodes(OsmData<?, ?, ?, ?> data, BBox bbox) {
         if (virtualNodeSize == 0 || data == null || bbox == null || data.isLocked())
             return;
         // print normal virtual nodes
         GeneralPath path = new GeneralPath();
-        for (Way osm : data.searchWays(bbox)) {
+        for (IWay<?> osm : data.searchWays(bbox)) {
             if (osm.isUsable() && !osm.isDisabledAndHidden() && !osm.isDisabled()) {
                 visitVirtual(path, osm);
             }
@@ -221,12 +221,13 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param path The path to append drawing to.
      * @param w The ways to draw node for.
      * @since 10827
+     * @since 13810 (signature)
      */
-    public void visitVirtual(Path2D path, Way w) {
-        Iterator<Node> it = w.getNodes().iterator();
+    public void visitVirtual(Path2D path, IWay<?> w) {
+        Iterator<? extends INode> it = w.getNodes().iterator();
         MapViewPoint lastP = null;
         while (it.hasNext()) {
-            Node n = it.next();
+            INode n = it.next();
             if (n.isLatLonKnown()) {
                 MapViewPoint p = mapState.getPointFor(n);
                 if (lastP != null && isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace)) {

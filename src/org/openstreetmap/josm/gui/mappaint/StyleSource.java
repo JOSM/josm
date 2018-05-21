@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
@@ -93,8 +93,9 @@ public abstract class StyleSource extends SourceEntry {
      * @param pretendWayIsClosed For styles that require the way to be closed,
      * we pretend it is. This is useful for generating area styles from the (segmented)
      * outer ways of a multipolygon.
+     * @since 13810 (signature)
      */
-    public abstract void apply(MultiCascade mc, OsmPrimitive osm, double scale, boolean pretendWayIsClosed);
+    public abstract void apply(MultiCascade mc, IPrimitive osm, double scale, boolean pretendWayIsClosed);
 
     /**
      * Loads the style source.

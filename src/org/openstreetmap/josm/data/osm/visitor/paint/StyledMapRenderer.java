@@ -45,10 +45,12 @@ import javax.swing.FocusManager;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -112,11 +114,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      */
     public static class StyleRecord implements Comparable<StyleRecord> {
         private final StyleElement style;
-        private final OsmPrimitive osm;
+        private final IPrimitive osm;
         private final int flags;
         private final long order;
 
-        StyleRecord(StyleElement style, OsmPrimitive osm, int flags) {
+        StyleRecord(StyleElement style, IPrimitive osm, int flags) {
             this.style = style;
             this.osm = osm;
             this.flags = flags;
@@ -1586,7 +1588,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void render(final DataSet data, boolean renderVirtualNodes, Bounds bounds) {
+    public void render(final OsmData<?, ?, ?, ?> data, boolean renderVirtualNodes, Bounds bounds) {
         RenderBenchmarkCollector benchmark = benchmarkFactory.get();
         BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
@@ -1606,16 +1608,16 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private void paintWithLock(final DataSet data, boolean renderVirtualNodes, RenderBenchmarkCollector benchmark,
+    private void paintWithLock(final OsmData<?, ?, ?, ?> data, boolean renderVirtualNodes, RenderBenchmarkCollector benchmark,
             BBox bbox) {
         try {
             highlightWaySegments = data.getHighlightedWaySegments();
 
             benchmark.renderStart(circum);
 
-            List<Node> nodes = data.searchNodes(bbox);
-            List<Way> ways = data.searchWays(bbox);
-            List<Relation> relations = data.searchRelations(bbox);
+            List<? extends INode> nodes = data.searchNodes(bbox);
+            List<? extends IWay<?>> ways = data.searchWays(bbox);
+            List<? extends IRelation<?>> relations = data.searchRelations(bbox);
 
             final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
 

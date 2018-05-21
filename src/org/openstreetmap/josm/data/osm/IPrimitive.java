@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -439,6 +440,23 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
     /**
      * Returns the parent data set of this primitive.
      * @return OsmData this primitive is part of.
+     * @since 13807
      */
     OsmData<?, ?, ?, ?> getDataSet();
+
+    /**
+     * Returns {@link #getKeys()} for which {@code key} does not fulfill uninteresting criteria.
+     * @return A map of interesting tags
+     * @since 13809
+     */
+    Map<String, String> getInterestingTags();
+
+    /**
+     * Replies true if other isn't null and has the same interesting tags (key/value-pairs) as this.
+     *
+     * @param other the other object primitive
+     * @return true if other isn't null and has the same interesting tags (key/value-pairs) as this.
+     * @since 13809
+     */
+    boolean hasSameInterestingTags(IPrimitive other);
 }

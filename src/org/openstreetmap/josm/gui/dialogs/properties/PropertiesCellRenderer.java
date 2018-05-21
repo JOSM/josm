@@ -20,7 +20,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
@@ -51,7 +51,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
 
     private static void setColors(Component c, String key, boolean isSelected) {
 
-        if (OsmPrimitive.getDiscardableKeys().contains(key)) {
+        if (AbstractPrimitive.getDiscardableKeys().contains(key)) {
             c.setForeground((isSelected ? SELECTED_FG : NORMAL_FG).get());
             c.setBackground((isSelected ? SELECTED_BG : NORMAL_BG).get());
         } else {
