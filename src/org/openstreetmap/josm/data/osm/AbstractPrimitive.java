@@ -649,26 +649,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     * Returns true if the {@code key} corresponds to an OSM true value.
-     * @param key OSM key
-     * @return {@code true} if the {@code key} corresponds to an OSM true value
-     * @see OsmUtils#isTrue(String)
-     */
-    public final boolean isKeyTrue(String key) {
-        return OsmUtils.isTrue(get(key));
-    }
-
-    /**
-     * Returns true if the {@code key} corresponds to an OSM false value.
-     * @param key OSM key
-     * @return {@code true} if the {@code key} corresponds to an OSM false value
-     * @see OsmUtils#isFalse(String)
-     */
-    public final boolean isKeyFalse(String key) {
-        return OsmUtils.isFalse(get(key));
-    }
-
-    /**
      * Gets a key ignoring the case of the key
      * @param key The key to get
      * @return The value for a key that matches the given key ignoring case.
