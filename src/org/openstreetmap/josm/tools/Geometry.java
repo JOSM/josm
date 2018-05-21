@@ -570,12 +570,11 @@ public final class Geometry {
 
     /**
      * Tests if two polygons intersect.
-     * @param <N> type of node
      * @param first List of nodes forming first polygon
      * @param second List of nodes forming second polygon
      * @return intersection kind
      */
-    public static <N extends INode> PolygonIntersection polygonIntersection(List<N> first, List<N> second) {
+    public static PolygonIntersection polygonIntersection(List<? extends INode> first, List<? extends INode> second) {
         Area a1 = getArea(first);
         Area a2 = getArea(second);
         return polygonIntersection(a1, a2);
@@ -619,26 +618,25 @@ public final class Geometry {
 
     /**
      * Tests if point is inside a polygon. The polygon can be self-intersecting. In such case the contains function works in xor-like manner.
-     * @param <N> type of node
      * @param polygonNodes list of nodes from polygon path.
      * @param point the point to test
      * @return true if the point is inside polygon.
      */
-    public static <N extends INode> boolean nodeInsidePolygon(N point, List<N> polygonNodes) {
+    public static boolean nodeInsidePolygon(INode point, List<? extends INode> polygonNodes) {
         if (polygonNodes.size() < 2)
             return false;
 
         //iterate each side of the polygon, start with the last segment
-        N oldPoint = polygonNodes.get(polygonNodes.size() - 1);
+        INode oldPoint = polygonNodes.get(polygonNodes.size() - 1);
 
         if (!oldPoint.isLatLonKnown()) {
             return false;
         }
 
         boolean inside = false;
-        N p1, p2;
+        INode p1, p2;
 
-        for (N newPoint : polygonNodes) {
+        for (INode newPoint : polygonNodes) {
             //skip duplicate points
             if (newPoint.equals(oldPoint)) {
                 continue;
@@ -942,7 +940,7 @@ public final class Geometry {
      * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
      * @return {@code true} if the node is inside the multipolygon
      */
-    public static boolean isNodeInsideMultiPolygon(Node node, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
+    public static boolean isNodeInsideMultiPolygon(INode node, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         return isPolygonInsideMultiPolygon(Collections.singletonList(node), multiPolygon, isOuterWayAMatch);
     }
 
@@ -956,7 +954,7 @@ public final class Geometry {
      * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
      * @return {@code true} if the polygon formed by nodes is inside the multipolygon
      */
-    public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
+    public static boolean isPolygonInsideMultiPolygon(List<? extends INode> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         // Extract outer/inner members from multipolygon
         final Pair<List<JoinedPolygon>, List<JoinedPolygon>> outerInner;
         try {

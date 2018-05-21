@@ -165,13 +165,18 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     }
 
     @Override
-    public final List<PrimitiveData> getReferrers() {
+    public final List<PrimitiveData> getReferrers(boolean allowWithoutDataset) {
         return Collections.emptyList();
     }
 
     @Override
     public void visitReferrers(PrimitiveVisitor visitor) {
         // Override if needed
+    }
+
+    @Override
+    public OsmData<?, ?, ?, ?> getDataSet() {
+        return null;
     }
 
     @Override
