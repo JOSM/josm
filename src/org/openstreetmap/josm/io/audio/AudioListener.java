@@ -7,7 +7,7 @@ import java.net.URL;
  * Listener receiving audio playing events.
  * @since 12328
  */
-interface AudioListener {
+public interface AudioListener {
 
     /**
      * Called when a new URL is being played.

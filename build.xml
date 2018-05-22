@@ -19,8 +19,13 @@
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="test.dir" location="${base.dir}/test"/>
         <property name="src.dir" location="${base.dir}/src"/>
-        <condition property="noJavaFX" value="${env.JOSM_NOJAVAFX}" else="0">
+        <condition property="noJavaFX">
+            <or>
                 <isset property="env.JOSM_NOJAVAFX"/>
+                <not>
+                    <available classname="javafx.scene.media.Media"/>
+                </not>
+            </or>
         </condition>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
@@ -369,7 +374,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xep:StringSplitter:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:JdkObsolete:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg line="-Xmaxwarns 1000"/>
-            <exclude name="org/openstreetmap/josm/io/audio/JavaFxMediaPlayer.java" if:set="noJavaFX"/>
+            <exclude name="org/openstreetmap/josm/io/audio/fx/*.java" if:set="noJavaFX"/>
         </javac>
 
         <copy todir="build" failonerror="no" includeemptydirs="no">
@@ -404,6 +409,7 @@ Build-Date: ${build.tstamp}
             <arg value="java.base/sun.security.x509=ALL-UNNAMED" if:set="isJava9" />
             <arg value="--add-exports" if:set="isJava9" />
             <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" />
+            <excludepackage name="org/openstreetmap/josm/io/audio/fx" if:set="noJavaFX" />
         </javadoc>
     </target>
     <target name="clean" depends="init-properties">

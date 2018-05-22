@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.io.audio;
+package org.openstreetmap.josm.io.audio.fx;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,8 +8,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
+import org.openstreetmap.josm.io.audio.AudioException;
+import org.openstreetmap.josm.io.audio.AudioListener;
 import org.openstreetmap.josm.io.audio.AudioPlayer.Execute;
 import org.openstreetmap.josm.io.audio.AudioPlayer.State;
+import org.openstreetmap.josm.io.audio.SoundPlayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.ListenerList;
 
@@ -31,7 +34,7 @@ import javafx.util.Duration;
  * </ul>
  * @since 12328
  */
-class JavaFxMediaPlayer implements SoundPlayer {
+public class JavaFxMediaPlayer implements SoundPlayer {
 
     private final ListenerList<AudioListener> listeners = ListenerList.create();
 
