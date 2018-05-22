@@ -19,11 +19,31 @@ public final class AudioPlayer extends Thread implements AudioListener {
 
     private static volatile AudioPlayer audioPlayer;
 
-    enum State { INITIALIZING, NOTPLAYING, PLAYING, PAUSED, INTERRUPTED }
+    /**
+     * Audio player state.
+     */
+    public enum State {
+        /** Initializing */
+        INITIALIZING,
+        /** Not playing */
+        NOTPLAYING,
+        /** Playing */
+        PLAYING,
+        /** Paused */
+        PAUSED,
+        /** Interrupted */
+        INTERRUPTED
+    }
 
-    enum Command { PLAY, PAUSE }
+    /**
+     * Audio player command.
+     */
+    public enum Command { /** Audio play */ PLAY, /** Audio pause */ PAUSE }
 
-    enum Result { WAITING, OK, FAILED }
+    /**
+     * Audio player result.
+     */
+    public enum Result { /** In progress */ WAITING, /** Success */ OK, /** Failure */ FAILED }
 
     private State state;
     private SoundPlayer soundPlayer;
@@ -32,7 +52,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
     /**
      * Passes information from the control thread to the playing thread
      */
-    class Execute {
+    public class Execute {
         private Command command;
         private Result result;
         private Exception exception;
@@ -83,19 +103,35 @@ public final class AudioPlayer extends Thread implements AudioListener {
             state = newState;
         }
 
-        protected double offset() {
+        /**
+         * Returns the offset.
+         * @return the offset, in seconds
+         */
+        public double offset() {
             return offset;
         }
 
-        protected double speed() {
+        /**
+         * Returns the speed.
+         * @return the speed (ratio)
+         */
+        public double speed() {
             return speed;
         }
 
-        protected URL url() {
+        /**
+         * Returns the URL.
+         * @return The resource to play, which must be a WAV file or stream
+         */
+        public URL url() {
             return url;
         }
 
-        protected Command command() {
+        /**
+         * Returns the command.
+         * @return the command
+         */
+        public Command command() {
             return command;
         }
     }
@@ -236,7 +272,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
         double leadIn = Config.getPref().getDouble("audio.leadin", 1.0 /* default, seconds */);
         double calibration = Config.getPref().getDouble("audio.calibration", 1.0 /* default, ratio */);
         try {
-            soundPlayer = (SoundPlayer) Class.forName("org.openstreetmap.josm.io.audio.JavaFxMediaPlayer")
+            soundPlayer = (SoundPlayer) Class.forName("org.openstreetmap.josm.io.audio.fx.JavaFxMediaPlayer")
                     .getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
             Logging.debug(e);

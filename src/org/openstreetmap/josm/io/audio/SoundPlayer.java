@@ -11,7 +11,7 @@ import org.openstreetmap.josm.io.audio.AudioPlayer.State;
  * Sound player interface. Implementations can be backed up by Java Sound API or Java FX Media API.
  * @since 12328
  */
-interface SoundPlayer {
+public interface SoundPlayer {
 
     /**
      * Ask player to play a new media.
