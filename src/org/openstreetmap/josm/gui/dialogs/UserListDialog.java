@@ -20,8 +20,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -37,11 +39,13 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -51,7 +55,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Displays a dialog with all users who have last edited something in the
  * selection area, along with the number of objects.
- *
+ * @since 237
  */
 public class UserListDialog extends ToggleDialog implements DataSelectionListener, ActiveLayerChangeListener {
 
@@ -61,6 +65,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
     private JTable userTable;
     private UserTableModel model;
     private SelectUsersPrimitivesAction selectionUsersPrimitivesAction;
+    private final JPopupMenu popupMenu = new JPopupMenu();
 
     /**
      * Constructs a new {@code UserListDialog}.
@@ -103,6 +108,15 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
             new SideButton(selectionUsersPrimitivesAction),
             new SideButton(showUserInfoAction)
         ));
+
+        // -- popup menu
+        popupMenu.add(new AbstractAction(tr("Copy")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ClipboardUtils.copyString(getSelectedUsers().stream().map(User::getName).collect(Collectors.joining(", ")));
+            }
+        });
+        userTable.addMouseListener(new PopupMenuLauncher(popupMenu));
     }
 
     @Override
@@ -143,6 +157,11 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
     public void showDialog() {
         super.showDialog();
         refreshForActiveLayer(MainApplication.getLayerManager().getActiveLayer());
+    }
+
+    private List<User> getSelectedUsers() {
+        int[] rows = userTable.getSelectedRows();
+        return rows.length == 0 ? Collections.emptyList() : model.getSelectedUsers(rows);
     }
 
     class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener {
@@ -194,10 +213,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int[] rows = userTable.getSelectedRows();
-            if (rows.length == 0)
-                return;
-            List<User> users = model.getSelectedUsers(rows);
+            List<User> users = getSelectedUsers();
             if (users.isEmpty())
                 return;
             if (users.size() > 10) {
