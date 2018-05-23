@@ -43,7 +43,6 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class WMSImagery {
 
-
     private static final String CAPABILITIES_QUERY_STRING = "SERVICE=WMS&REQUEST=GetCapabilities";
 
     /**
@@ -119,11 +118,11 @@ public class WMSImagery {
         }
     }
 
-    private Map<String, String> headers = new ConcurrentHashMap<>();
+    private final Map<String, String> headers = new ConcurrentHashMap<>();
     private String version = "1.1.1"; // default version
     private String getMapUrl;
     private URL capabilitiesUrl;
-    private List<String> formats = new ArrayList<>();
+    private final List<String> formats = new ArrayList<>();
     private List<LayerDetails> layers = new ArrayList<>();
 
     private String title;
@@ -282,7 +281,7 @@ public class WMSImagery {
     public String buildGetMapUrl(List<DefaultLayer> selectedLayers, boolean transparent) {
         return buildGetMapUrl(
                 getLayers(selectedLayers),
-                selectedLayers.stream().map(x -> x.getStyle()).collect(Collectors.toList()),
+                selectedLayers.stream().map(DefaultLayer::getStyle).collect(Collectors.toList()),
                 transparent);
     }
 
@@ -295,7 +294,7 @@ public class WMSImagery {
      */
     public String buildGetMapUrl(List<LayerDetails> selectedLayers, List<String> selectedStyles, boolean transparent) {
         return buildGetMapUrl(
-                selectedLayers.stream().map(x -> x.getName()).collect(Collectors.toList()),
+                selectedLayers.stream().map(LayerDetails::getName).collect(Collectors.toList()),
                 selectedStyles,
                 getPreferredFormat(),
                 transparent);
@@ -503,7 +502,7 @@ public class WMSImagery {
      * @return if this service operates at protocol level below 1.3.0
      */
     public boolean belowWMS130() {
-        return this.version.equals("1.1.1") || this.version.equals("1.1") || this.version.equals("1.0");
+        return "1.1.1".equals(version) || "1.1".equals(version) || "1.0".equals(version);
     }
 
     private void parseAndAddStyle(XMLStreamReader reader, LayerDetails ld) throws XMLStreamException {
@@ -568,7 +567,7 @@ public class WMSImagery {
                         );
     }
 
-    private Bounds parseBBox(Projection conv, String miny, String minx, String maxy, String maxx) {
+    private static Bounds parseBBox(Projection conv, String miny, String minx, String maxy, String maxx) {
         if (miny == null || minx == null || maxy == null || maxx == null) {
             return null;
         }
@@ -591,7 +590,7 @@ public class WMSImagery {
         return Double.parseDouble(value.replace(',', '.'));
     }
 
-    private String normalizeUrl(String serviceUrlStr) throws MalformedURLException {
+    private static String normalizeUrl(String serviceUrlStr) throws MalformedURLException {
         URL getCapabilitiesUrl = null;
         String ret = null;
 
@@ -682,13 +681,12 @@ public class WMSImagery {
         return proj;
     }
 
-
     /**
      * @param defaultLayers default layers that should select layer object
      * @return collection of LayerDetails specified by DefaultLayers
      */
     public List<LayerDetails> getLayers(List<DefaultLayer> defaultLayers) {
-        Collection<String> layerNames = defaultLayers.stream().map(x -> x.getLayerName()).collect(Collectors.toList());
+        Collection<String> layerNames = defaultLayers.stream().map(DefaultLayer::getLayerName).collect(Collectors.toList());
         return layers.stream()
                 .flatMap(LayerDetails::flattened)
                 .filter(x -> layerNames.contains(x.getName()))

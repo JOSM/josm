@@ -75,7 +75,6 @@ public class WMSLayerTree {
      * @param wms The imagery info for a given WMS server
      */
     public void updateTree(WMSImagery wms) {
-        // treeRootNode = new DefaultMutableTreeNode();
         while (treeRootNode.getChildCount() > 0) {
             treeRootNode.remove(0);
         }

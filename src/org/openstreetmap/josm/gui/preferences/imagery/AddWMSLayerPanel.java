@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.LayerDetails;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -153,7 +154,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
     protected final void onLayerSelectionChanged() {
         if (wms != null && wms.buildRootUrl() != null) {
             wmsUrl.setText(wms.buildGetMapUrl(
-                    tree.getSelectedLayers().stream().map(x -> x.getName()).collect(Collectors.toList()),
+                    tree.getSelectedLayers().stream().map(LayerDetails::getName).collect(Collectors.toList()),
                     (List<String>) null,
                     (String) formats.getSelectedItem(),
                     true // TODO: ask user about transparency

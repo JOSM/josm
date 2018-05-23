@@ -408,7 +408,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             valid_georeference = i.isGeoreferenceValid();
             modTileFeatures = i.isModTileFeatures();
             if (!i.defaultLayers.isEmpty()) {
-                default_layers = i.defaultLayers.stream().map(x -> x.toJson()).collect(JsonCollectors.toJsonArray()).toString();
+                default_layers = i.defaultLayers.stream().map(DefaultLayer::toJson).collect(JsonCollectors.toJsonArray()).toString();
             }
             customHttpHeaders = i.customHttpHeaders;
             transparent = i.isTransparent();

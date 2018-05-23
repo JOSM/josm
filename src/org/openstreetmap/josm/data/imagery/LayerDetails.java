@@ -14,8 +14,8 @@ import org.openstreetmap.josm.data.Bounds;
  * The details of a layer of this WMS server.
  */
 public class LayerDetails {
-    private Map<String, String> styles = new ConcurrentHashMap<>(); // name -> title
-    private Collection<String> crs = new ArrayList<>();
+    private final Map<String, String> styles = new ConcurrentHashMap<>(); // name -> title
+    private final Collection<String> crs = new ArrayList<>();
     /**
      * The layer name (WMS {@code Title})
      */
@@ -29,7 +29,7 @@ public class LayerDetails {
      * @since 13199
      */
     private String abstr;
-    private LayerDetails parentLayer;
+    private final LayerDetails parentLayer;
     private Bounds bounds;
     private List<LayerDetails> children = new ArrayList<>();
 
