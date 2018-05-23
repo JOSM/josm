@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -79,6 +80,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.gui.widgets.ScrollableTable;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -391,10 +393,15 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         instance = null;
     }
 
+    static ImageIcon createBlankIcon() {
+        return new ImageIcon(new BufferedImage(
+                ImageSizes.LAYER.getAdjustedWidth(), ImageSizes.LAYER.getAdjustedHeight(), BufferedImage.TYPE_INT_ARGB));
+    }
+
     private static class ActiveLayerCheckBox extends JCheckBox {
         ActiveLayerCheckBox() {
             setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-            ImageIcon blank = ImageProvider.get("dialogs/layerlist", "blank");
+            ImageIcon blank = createBlankIcon();
             ImageIcon active = ImageProvider.get("dialogs/layerlist", "active");
             setIcon(blank);
             setSelectedIcon(active);
@@ -445,7 +452,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
     private static class NativeScaleLayerCheckBox extends JCheckBox {
         NativeScaleLayerCheckBox() {
             setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-            ImageIcon blank = ImageProvider.get("dialogs/layerlist", "blank");
+            ImageIcon blank = createBlankIcon();
             ImageIcon active = ImageProvider.get("dialogs/layerlist", "scale");
             setIcon(blank);
             setSelectedIcon(active);
@@ -455,7 +462,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
     private static class OffsetLayerCheckBox extends JCheckBox {
         OffsetLayerCheckBox() {
             setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-            ImageIcon blank = ImageProvider.get("dialogs/layerlist", "blank");
+            ImageIcon blank = createBlankIcon();
             ImageIcon withOffset = ImageProvider.get("dialogs/layerlist", "offset");
             setIcon(blank);
             setSelectedIcon(withOffset);
