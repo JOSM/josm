@@ -407,8 +407,8 @@ Build-Date: ${build.tstamp}
             <arg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
             <arg value="--add-exports" if:set="isJava9" />
             <arg value="java.base/sun.security.x509=ALL-UNNAMED" if:set="isJava9" />
-            <arg value="--add-exports" if:set="isJava9" />
-            <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" />
+            <arg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
+            <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
             <excludepackage name="org/openstreetmap/josm/io/audio/fx" if:set="noJavaFX" />
         </javadoc>
     </target>
@@ -502,10 +502,10 @@ Build-Date: ${build.tstamp}
                     <jvmarg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-exports" if:set="isJava9" />
                     <jvmarg value="java.base/sun.security.x509=ALL-UNNAMED" if:set="isJava9" />
-                    <jvmarg value="--add-exports" if:set="isJava9" />
-                    <jvmarg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" />
-                    <jvmarg value="--add-exports" if:set="isJava9" />
-                    <jvmarg value="jdk.deploy/com.sun.deploy.config=ALL-UNNAMED" if:set="isJava9" />
+                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
+                    <jvmarg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
+                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="isJava11" />
+                    <jvmarg value="jdk.deploy/com.sun.deploy.config=ALL-UNNAMED" if:set="isJava9" unless:set="isJava11" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
                     <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
