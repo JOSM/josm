@@ -1777,7 +1777,7 @@ public class ImageProvider {
      * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
      * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
      * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
-     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color. For Java < 11 only.
      *
      * @return a <code>BufferedImage</code> containing the decoded
      * contents of the input, or <code>null</code>.
@@ -1800,7 +1800,7 @@ public class ImageProvider {
         BufferedImage bi = null;
         try {
             bi = reader.read(0, param);
-            if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency)) {
+            if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency) && Utils.getJavaVersion() < 11) {
                 Color color = getTransparentColor(bi.getColorModel(), reader);
                 if (color != null) {
                     Hashtable<String, Object> properties = new Hashtable<>(1);
