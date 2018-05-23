@@ -160,6 +160,7 @@ public final class CertificateAmendment {
     /**
      * Certificates looked into platform native keystore and not embedded in JOSM.
      * Identifiers must match Windows/macOS keystore aliases and Unix filenames for efficient search.
+     * To find correct values, see https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReport
      */
     private static final NativeCertAmend[] PLATFORM_CERT_AMEND = {
         // Let's Encrypt - should be included in JDK, but problems with Ubuntu 18.04, see #15851
@@ -181,6 +182,10 @@ public final class CertificateAmendment {
         new NativeCertAmend("Certigna", "Certigna", "Certigna.crt",
                 "e3b6a2db2ed7ce48842f7ac53241c7b71d54144bfb40c11f3f1d0b42f5eea12d",
                 "https://www.certigna.fr"),
+        // Trusted and used by Slovakian Government - https://eidas.disig.sk/en/cacert/
+        new NativeCertAmend("CA Disig Root R2", "CA Disig Root R2", "CA_Disig_Root_R2.pem",
+                "e23d4a036d7b70e9f595b1422079d2b91edfbb1fb651a0633eaa8a9dc5f80703",
+                "https://eidas.disig.sk"),
     };
 
     private CertificateAmendment() {
