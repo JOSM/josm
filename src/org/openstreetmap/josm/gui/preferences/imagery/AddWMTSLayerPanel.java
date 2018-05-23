@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -29,14 +27,12 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * Panel for adding WMTS imagery sources
  * @author Wiktor Niesiobędzki
- *
+ * @since 8568
  */
 public class AddWMTSLayerPanel extends AddImageryPanel {
     private final transient JPanel layerPanel = new JPanel(new GridBagLayout());
     private transient WMTSLayerSelection layerTable;
     private final JCheckBox setDefaultLayer = new JCheckBox(tr("Set default layer?"));
-    private List<Entry<String, List<Layer>>> layers;
-    
 
     /**
      * default constructor
@@ -67,8 +63,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         getLayers.addActionListener(e -> {
             try {
                 WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(rawUrl.getText(), getCommonHeaders());
-                layers = WMTSTileSource.groupLayersByNameAndTileMatrixSet(capabilities.getLayers());
-                layerTable = new WMTSLayerSelection(layers);
+                layerTable = new WMTSLayerSelection(WMTSTileSource.groupLayersByNameAndTileMatrixSet(capabilities.getLayers()));
                 layerTable.getTable().getSelectionModel().addListSelectionListener(lsl -> {
                     if (layerTable.getSelectedLayer() != null) {
                         name.setText(capabilities.getBaseUrl() + ": " + layerTable.getSelectedLayer().getUserTitle());

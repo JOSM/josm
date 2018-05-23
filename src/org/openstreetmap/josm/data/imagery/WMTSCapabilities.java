@@ -10,13 +10,12 @@ import org.openstreetmap.josm.data.imagery.WMTSTileSource.Layer;
  * Data object containing WMTS GetCapabilities document
  *
  * @author Wiktor Niesiobedzki
- *
+ * @since 13733
  */
 public class WMTSCapabilities {
-    private String baseUrl;
-    private TransferMode transferMode;
+    private final String baseUrl;
+    private final TransferMode transferMode;
     private Collection<Layer> layers;
-
 
     /**
      *
@@ -34,7 +33,6 @@ public class WMTSCapabilities {
      */
     public void addLayers(Collection<Layer> layers) {
         this.layers = layers;
-
     }
 
     /**

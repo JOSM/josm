@@ -250,8 +250,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
 
     @Override
     public void hideNotify() {
-        undoTreeModel.setRoot(undoRoot = new DefaultMutableTreeNode());
-        redoTreeModel.setRoot(redoRoot = new DefaultMutableTreeNode());
+        undoRoot = new DefaultMutableTreeNode();
+        redoRoot = new DefaultMutableTreeNode();
+        undoTreeModel.setRoot(undoRoot);
+        redoTreeModel.setRoot(redoRoot);
         MainApplication.undoRedo.removeCommandQueuePreciseListener(this);
     }
 

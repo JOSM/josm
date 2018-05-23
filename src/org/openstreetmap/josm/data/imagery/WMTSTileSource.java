@@ -273,13 +273,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     private static final class SelectLayerDialog extends ExtendedDialog {
-        private final transient List<Entry<String, List<Layer>>> layers;
         private final WMTSLayerSelection list;
 
         SelectLayerDialog(Collection<Layer> layers) {
             super(Main.parent, tr("Select WMTS layer"), tr("Add layers"), tr("Cancel"));
-            this.layers = groupLayersByNameAndTileMatrixSet(layers);
-            this.list = new WMTSLayerSelection(this.layers);
+            this.list = new WMTSLayerSelection(groupLayersByNameAndTileMatrixSet(layers));
             setContent(list);
         }
 
@@ -295,7 +293,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private Layer currentLayer;
     private TileMatrixSet currentTileMatrixSet;
     private double crsScale;
-    private GetCapabilitiesParseHelper.TransferMode transferMode;
+    private final GetCapabilitiesParseHelper.TransferMode transferMode;
 
     private ScaleList nativeScaleList;
 
@@ -328,7 +326,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 this.defaultLayer = null;
             }
         } else {
-            this.defaultLayer = info.getDefaultLayers().iterator().next();
+            this.defaultLayer = info.getDefaultLayers().get(0);
         }
         if (this.layers.isEmpty())
             throw new IllegalArgumentException(tr("No layers defined by getCapabilities document: {0}", info.getUrl()));

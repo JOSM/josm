@@ -122,7 +122,7 @@ public final class AboutAction extends JosmAction {
 
         // Get the list of Launchpad contributors using customary msgid “translator-credits”
         String translators = tr("translator-credits");
-        if (translators != null && !translators.isEmpty() && !translators.equals("translator-credits")) {
+        if (translators != null && !translators.isEmpty() && !"translator-credits".equals(translators)) {
             about.addTab(tr("Translators"), createScrollPane(new JosmTextArea(translators)));
         }
 

@@ -169,7 +169,7 @@ public final class TaggingPresetReader {
         TaggingPresetMenu lastmenuOriginal = null;
         Roles lastrole = null;
         final List<Check> checks = new LinkedList<>();
-        List<ComboMultiSelect.PresetListEntry> listEntries = new LinkedList<>();
+        final List<ComboMultiSelect.PresetListEntry> listEntries = new LinkedList<>();
         final Map<String, List<Object>> byId = new HashMap<>();
         final Deque<String> lastIds = new ArrayDeque<>();
         /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
@@ -296,7 +296,7 @@ public final class TaggingPresetReader {
                         } else if (o instanceof Key && ((Key) o).value == null) {
                             ((Key) o).value = ""; // Fix #8530
                         }
-                        listEntries = new LinkedList<>();
+                        listEntries.clear();
                         lastrole = null;
                     }
                 } else

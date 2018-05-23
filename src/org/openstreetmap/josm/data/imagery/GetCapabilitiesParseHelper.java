@@ -125,7 +125,7 @@ public final class GetCapabilitiesParseHelper {
         for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
             if (XMLStreamReader.START_ELEMENT == event) {
                 if (level > 0) {
-                    ret.append("<" + reader.getLocalName() +">");
+                    ret.append('<').append(reader.getLocalName()).append('>');
                 }
                 level += 1;
             } else if (XMLStreamReader.END_ELEMENT == event) {
@@ -133,7 +133,7 @@ public final class GetCapabilitiesParseHelper {
                 if (level == 0 && tag.equals(reader.getName())) {
                     return ret.toString();
                 }
-                ret.append("</" + reader.getLocalName() +">");
+                ret.append("</").append(reader.getLocalName()).append('>');
             } else if (XMLStreamReader.CHARACTERS == event) {
                 ret.append(reader.getText());
             }

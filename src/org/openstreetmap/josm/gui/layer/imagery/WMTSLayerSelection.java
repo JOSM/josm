@@ -83,11 +83,11 @@ public class WMTSLayerSelection extends JPanel {
         }
     }
 
-    private List<Entry<String, List<Layer>>> layers;
-    private JTable list;
+    private final List<Entry<String, List<Layer>>> layers;
+    private final JTable list;
 
     /**
-     *
+     * Constructs a new {@code WMTSLayerSelection}.
      * @param layers list of grouped layers (by tileMatrixSet and name)
      */
     public WMTSLayerSelection(List<Entry<String, List<Layer>>> layers) {

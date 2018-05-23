@@ -1174,7 +1174,7 @@ public class ImageProvider {
         }
     }
 
-    private URL getImageUrl(String path, String name) {
+    private static URL getImageUrl(String path, String name) {
         if (path != null && path.startsWith("resource://")) {
             String p = path.substring("resource://".length());
             for (ClassLoader source : classLoaders) {
@@ -1777,7 +1777,7 @@ public class ImageProvider {
      * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
      * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
      * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
-     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color. For Java < 11 only.
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color. For Java &lt; 11 only.
      *
      * @return a <code>BufferedImage</code> containing the decoded
      * contents of the input, or <code>null</code>.

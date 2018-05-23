@@ -23,13 +23,13 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * uses most of the parameters from there
  *
  * @author Wiktor Niesiobedzki
- *
+ * @since 13733
  */
 public class WMSEndpointTileSource extends AbstractWMSTileSource implements TemplatedTileSource {
 
     private final WMSImagery wmsi;
-    private List<DefaultLayer> layers;
-    private String urlPattern;
+    private final List<DefaultLayer> layers;
+    private final String urlPattern;
     private static final Pattern PATTERN_PARAM = Pattern.compile("\\{([^}]+)\\}");
     private final Map<String, String> headers = new ConcurrentHashMap<>();
 
