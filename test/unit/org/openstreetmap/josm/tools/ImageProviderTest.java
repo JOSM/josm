@@ -63,8 +63,9 @@ public class ImageProviderTest {
         File file = new File(TestUtils.getRegressionDataFile(9984, "tile.png"));
         assertEquals(Transparency.TRANSLUCENT, ImageProvider.read(file, true, true).getTransparency());
         assertEquals(Transparency.TRANSLUCENT, ImageProvider.read(file, false, true).getTransparency());
-        assertEquals(Transparency.OPAQUE, ImageProvider.read(file, false, false).getTransparency());
-        assertEquals(Transparency.OPAQUE, ImageProvider.read(file, true, false).getTransparency());
+        long expectedTransparency = Utils.getJavaVersion() < 11 ? Transparency.OPAQUE : Transparency.TRANSLUCENT;
+        assertEquals(expectedTransparency, ImageProvider.read(file, false, false).getTransparency());
+        assertEquals(expectedTransparency, ImageProvider.read(file, true, false).getTransparency());
     }
 
     /**
