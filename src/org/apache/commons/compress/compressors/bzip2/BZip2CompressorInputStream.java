@@ -661,11 +661,13 @@ public class BZip2CompressorInputStream extends CompressorInputStream
                 }
 
                 if (lastShadow >= limitLast) {
-                    throw new IOException("block overrun");
+                    throw new IOException("block overrun while expanding RLE in MTF, "
+                        + lastShadow + " exceeds " + limitLast);
                 }
             } else {
                 if (++lastShadow >= limitLast) {
-                    throw new IOException("block overrun");
+                    throw new IOException("block overrun in MTF, "
+                        + lastShadow + " exceeds " + limitLast);
                 }
                 checkBounds(nextSym, 256 + 1, "nextSym");
 
