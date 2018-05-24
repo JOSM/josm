@@ -191,7 +191,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             formats.setToolTipText(tr("Select image format for WMS layer"));
 
             if (!GraphicsEnvironment.isHeadless()) {
-                if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) { {
+                if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), tr("Add layers"), tr("Cancel")) { {
                     final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
                     scrollPane.setPreferredSize(new Dimension(400, 400));
                     final JPanel panel = new JPanel(new GridBagLayout());

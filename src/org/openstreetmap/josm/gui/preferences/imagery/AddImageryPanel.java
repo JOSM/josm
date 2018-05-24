@@ -76,7 +76,7 @@ public abstract class AddImageryPanel extends JPanel {
                 Long.valueOf(Integer.MAX_VALUE),
                 1
                 ));
-        List<String> units = Arrays.asList(new String[]{tr("seconds"), tr("minutes"), tr("hours"), tr("days")});
+        List<String> units = Arrays.asList(tr("seconds"), tr("minutes"), tr("hours"), tr("days"));
         minimumCacheExpiryUnit = new JComboBox<>(units.toArray(new String[]{}));
         currentUnit = TimeUnit.SECONDS;
         minimumCacheExpiryUnit.addItemListener(e -> {

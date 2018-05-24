@@ -276,7 +276,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             expires = Math.min(expires, attributes.getCreateTime() + Math.max(EXPIRE_TIME_SERVER_LIMIT, minimumExpiryTime));
             if (now > expires) {
                 Logging.debug("JCS - Object {0} has expired -> valid to {1}, now is: {2}",
-                        new Object[]{getUrlNoException(), Long.toString(expires), Long.toString(now)});
+                        getUrlNoException(), Long.toString(expires), Long.toString(now));
                 return false;
             }
         } else if (attributes.getLastModification() > 0 &&
@@ -375,7 +375,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     cacheData = createCacheEntry(raw);
                     cache.put(getCacheKey(), cacheData, attributes);
                     Logging.debug("JCS - downloaded key: {0}, length: {1}, url: {2}",
-                            new Object[] {getCacheKey(), raw.length, getUrl()});
+                            getCacheKey(), raw.length, getUrl());
                     return true;
                 } else if (cacheAsEmpty()) {
                     cacheData = createCacheEntry(new byte[]{});
