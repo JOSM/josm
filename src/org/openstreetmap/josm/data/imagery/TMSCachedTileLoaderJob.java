@@ -122,8 +122,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 return content.length > 0 || cacheData.getImage() != null || isNoTileAtZoom();
             } catch (IOException e) {
                 Logging.logWithStackTrace(Logging.LEVEL_WARN, e, "JCS TMS - error loading from cache for tile {0}: {1}",
-                        new Object[] {tile.getKey(), e.getMessage()}
-                        );
+                        tile.getKey(), e.getMessage());
             }
         }
         return false;
@@ -207,7 +206,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 }
             }
         } catch (IOException e) {
-            Logging.warn("JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
+            Logging.warn("JCS TMS - error loading object for tile {0}: {1}", tile.getKey(), e.getMessage());
             tile.setError(e);
             tile.setLoaded(false);
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
