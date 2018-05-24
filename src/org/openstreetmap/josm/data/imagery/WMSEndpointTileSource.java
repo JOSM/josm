@@ -59,7 +59,7 @@ public class WMSEndpointTileSource extends AbstractWMSTileSource implements Temp
 
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) {
-        String bbox = getBbox(zoom, tilex, tiley, wmsi.belowWMS130() ? false : getTileProjection().switchXY());
+        String bbox = getBbox(zoom, tilex, tiley, !wmsi.belowWMS130() && getTileProjection().switchXY());
 
         // Using StringBuffer and generic PATTERN_PARAM matcher gives 2x performance improvement over replaceAll
         StringBuffer url = new StringBuffer(urlPattern.length());

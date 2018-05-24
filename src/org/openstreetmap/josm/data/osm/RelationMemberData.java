@@ -64,7 +64,7 @@ public class RelationMemberData implements IRelationMember<PrimitiveData>, Seria
 
     @Override
     public OsmPrimitiveType getDisplayType() {
-        return memberType;
+        return getMemberType();
     }
 
     @Override

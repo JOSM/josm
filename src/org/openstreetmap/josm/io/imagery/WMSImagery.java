@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -545,7 +545,7 @@ public class WMSImagery {
     }
 
     private Bounds parseBoundingBox(XMLStreamReader reader, Projection conv) {
-        Function<String, String> attrGetter = tag -> belowWMS130() ?
+        UnaryOperator<String> attrGetter = tag -> belowWMS130() ?
                 reader.getAttributeValue(null, tag)
                 : reader.getAttributeValue(WMS_NS_URL, tag);
 
@@ -588,7 +588,6 @@ public class WMSImagery {
         if (!Pattern.compile(".*GetCapabilities.*", Pattern.CASE_INSENSITIVE).matcher(serviceUrlStr).matches()) {
             // If the url doesn't already have GetCapabilities, add it in
             getCapabilitiesUrl = new URL(serviceUrlStr);
-            ret = serviceUrlStr;
             if (getCapabilitiesUrl.getQuery() == null) {
                 ret = serviceUrlStr + '?' + CAPABILITIES_QUERY_STRING;
             } else if (!getCapabilitiesUrl.getQuery().isEmpty() && !getCapabilitiesUrl.getQuery().endsWith("&")) {

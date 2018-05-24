@@ -102,7 +102,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  *
  * @author imi
  */
-public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>, ProjectionChangeListener, Lockable {
+public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>, ProjectionChangeListener {
 
     /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)

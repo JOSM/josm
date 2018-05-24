@@ -53,7 +53,6 @@ public abstract class AddImageryPanel extends JPanel {
     private JComboBox<String> minimumCacheExpiryUnit;
     private TimeUnit currentUnit;
 
-
     /**
      * A listener notified when the validation status of this panel change.
      * @since 10600 (functional interface)
