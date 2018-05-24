@@ -465,15 +465,10 @@ public class WMSImagery {
                     parseAndAddStyle(reader, ret);
                 }
                 if (tagEquals(QN_LAYER, reader.getName())) {
-
                     parseLayer(reader, ret);
                 }
-                if (tagEquals(QN_EX_GEOGRAPHIC_BBOX, reader.getName())) {
-                    if (ret.getBounds() == null) {
-                        Bounds bbox = parseExGeographic(reader);
-                        ret.setBounds(bbox);
-                    }
-
+                if (tagEquals(QN_EX_GEOGRAPHIC_BBOX, reader.getName()) && ret.getBounds() == null) {
+                    ret.setBounds(parseExGeographic(reader));
                 }
                 if (tagEquals(QN_BOUNDINGBOX, reader.getName())) {
                     Projection conv;
@@ -483,15 +478,11 @@ public class WMSImagery {
                         conv = Projections.getProjectionByCode(reader.getAttributeValue(WMS_NS_URL, "CRS"));
                     }
                     if (ret.getBounds() == null && conv != null) {
-                        Bounds bbox = parseBoundingBox(reader, conv);
-                        ret.setBounds(bbox);
+                        ret.setBounds(parseBoundingBox(reader, conv));
                     }
                 }
-                if (tagEquals(QN_LATLONBOUNDINGBOX, reader.getName()) && belowWMS130()) {
-                    if (ret.getBounds() == null) {
-                        Bounds bbox = parseBoundingBox(reader, null);
-                        ret.setBounds(bbox);
-                    }
+                if (tagEquals(QN_LATLONBOUNDINGBOX, reader.getName()) && belowWMS130() && ret.getBounds() == null) {
+                    ret.setBounds(parseBoundingBox(reader, null));
                 }
             }
         }

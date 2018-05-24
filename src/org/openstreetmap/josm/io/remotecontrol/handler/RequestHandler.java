@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,6 +36,9 @@ public abstract class RequestHandler {
     public static final boolean globalConfirmationDefault = false;
     public static final String loadInNewLayerKey = "remotecontrol.new-layer";
     public static final boolean loadInNewLayerDefault = false;
+
+    protected static final Pattern SPLITTER_COMMA = Pattern.compile(",\\s*");
+    protected static final Pattern SPLITTER_SEMIC = Pattern.compile(";\\s*");
 
     /** past confirmations */
     protected static final PermissionCache PERMISSIONS = new PermissionCache();
@@ -214,6 +218,10 @@ public abstract class RequestHandler {
      */
     protected void parseArgs() throws URISyntaxException {
         this.args = getRequestParameter(new URI(this.request));
+    }
+
+    protected final String[] splitArg(String arg, Pattern splitter) {
+        return splitter.split(args != null ? args.get(arg) : "");
     }
 
     /**
