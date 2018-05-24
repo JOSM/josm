@@ -16,6 +16,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 public interface TileLoaderFactory {
 
     /**
+     * Creates TileLoaderFactory - factory that creates tile loaders with all options already set
+     *
      * @param listener that will be notified, when tile has finished loading
      * @param headers that will be sent with requests to TileSource. <code>null</code> indicates none
      * @param minimumExpiryTime minimum expiry time

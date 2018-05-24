@@ -13,14 +13,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedSet;
-import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -251,12 +252,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     /**
-     * Exception thrown when praser doesn't find expected information in GetCapabilities document
+     * Exception thrown when parser doesn't find expected information in GetCapabilities document
      *
      */
     public static class WMTSGetCapabilitiesException extends Exception {
 
         /**
+         * Create WMTS exception
          * @param cause description of cause
          */
         public WMTSGetCapabilitiesException(String cause) {
@@ -264,6 +266,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
 
         /**
+         * Create WMTS exception
          * @param cause description of cause
          * @param t nested exception
          */
@@ -372,6 +375,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
 
     /**
+     * Call remote server and parse response to WMTSCapabilities object
+     *
      * @param url of the getCapabilities document
      * @param headers HTTP headers to set when calling getCapabilities url
      * @return capabilities
@@ -478,7 +483,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      */
     private static Layer parseLayer(XMLStreamReader reader) throws XMLStreamException {
         Layer layer = new Layer();
-        Stack<QName> tagStack = new Stack<>();
+        Deque<QName> tagStack = new LinkedList<>();
         List<String> supportedMimeTypes = new ArrayList<>(Arrays.asList(ImageIO.getReaderMIMETypes()));
         supportedMimeTypes.add("image/jpgpng");         // used by ESRI
         supportedMimeTypes.add("image/png8");           // used by geoserver

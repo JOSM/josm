@@ -74,6 +74,8 @@ public final class GetCapabilitiesParseHelper {
     }
 
     /**
+     * Returns reader with properties set for parsing WM(T)S documents
+     *
      * @param in InputStream with pointing to GetCapabilities XML stream
      * @return safe XMLStreamReader, that is not validating external entities, nor loads DTD's
      * @throws XMLStreamException if any XML stream error occurs
@@ -234,6 +236,8 @@ public final class GetCapabilitiesParseHelper {
     }
 
     /**
+     * Normalize url
+     *
      * @param url URL
      * @return normalized URL
      * @throws MalformedURLException in case of malformed URL

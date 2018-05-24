@@ -176,7 +176,7 @@ public class WMSImagery {
             try {
                 capabilitiesUrl = new URL(workingAddress);
             } catch (MalformedURLException e) {
-                if (savedExc != null) {
+                if (savedExc == null) {
                     savedExc = e;
                 }
                 try {

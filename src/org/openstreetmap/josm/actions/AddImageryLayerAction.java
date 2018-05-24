@@ -139,7 +139,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         } catch (WMTSGetCapabilitiesException e) {
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMTS layer list."),
-                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+                        tr("WMTS Error"), JOptionPane.ERROR_MESSAGE);
             }
             Logging.log(Logging.LEVEL_ERROR, "Could not parse WMTS layer list.", e);
         }

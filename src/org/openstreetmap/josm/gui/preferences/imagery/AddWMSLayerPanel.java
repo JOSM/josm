@@ -41,7 +41,6 @@ public class AddWMSLayerPanel extends AddImageryPanel {
     private final JCheckBox setDefaultLayers = new JCheckBox(tr("Use selected layers as default"));
     private final transient WMSLayerTree tree = new WMSLayerTree();
     private final JComboBox<String> formats = new JComboBox<>();
-    private final JLabel wmsInstruction;
     private final JosmTextArea wmsUrl = new JosmTextArea(3, 40).transferFocusOnTab();
     private final JButton showBounds = new JButton(tr("Show bounds"));
 
@@ -72,7 +71,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
 
         addCommonSettings();
 
-        wmsInstruction = new JLabel(tr("{0} Edit generated {1} URL (optional)", "6.", "WMS"));
+        JLabel wmsInstruction = new JLabel(tr("{0} Edit generated {1} URL (optional)", "6.", "WMS"));
         add(wmsInstruction, GBC.eol());
         wmsInstruction.setLabelFor(wmsUrl);
         add(wmsUrl, GBC.eop().fill(GBC.HORIZONTAL));

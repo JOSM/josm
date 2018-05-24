@@ -45,9 +45,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         rawUrl.setAlignmentY(TOP_ALIGNMENT);
         JButton getLayers = new JButton(tr("{0} Get layers", "3."));
         getLayers.setEnabled(setDefaultLayer.isSelected());
-        setDefaultLayer.addActionListener(e -> {
-                getLayers.setEnabled(setDefaultLayer.isSelected());
-        });
+        setDefaultLayer.addActionListener(e -> getLayers.setEnabled(setDefaultLayer.isSelected()));
         add(setDefaultLayer, GBC.eop());
         add(getLayers, GBC.eop().fill(GBC.HORIZONTAL));
         add(new JLabel(tr("Choose default layer")), GBC.eol());
@@ -75,6 +73,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
                 layerPanel.add(layerTable, GBC.eol().fill());
                 layerPanel.revalidate();
             } catch (IOException | WMTSGetCapabilitiesException ex) {
+                Logging.trace(ex);
                 JOptionPane.showMessageDialog(
                         getParent(),
                         tr("Error getting layers: {0}", ex.getMessage()),

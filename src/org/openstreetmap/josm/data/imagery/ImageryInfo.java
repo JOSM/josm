@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.stream.JsonCollectors;
 import javax.swing.ImageIcon;
 
@@ -555,11 +556,13 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         isGeoreferenceValid = e.valid_georeference;
         modTileFeatures = e.modTileFeatures;
         if (e.default_layers != null) {
-            defaultLayers = Json.createReader(new StringReader(e.default_layers)).
-                    readArray().
-                    stream().
-                    map(x -> DefaultLayer.fromJson((JsonObject) x, imageryType)).
-                    collect(Collectors.toList());
+            try (JsonReader jsonReader = Json.createReader(new StringReader(e.default_layers))) {
+                defaultLayers = jsonReader.
+                        readArray().
+                        stream().
+                        map(x -> DefaultLayer.fromJson((JsonObject) x, imageryType)).
+                        collect(Collectors.toList());
+            }
         }
         customHttpHeaders = e.customHttpHeaders;
         transparent = e.transparent;

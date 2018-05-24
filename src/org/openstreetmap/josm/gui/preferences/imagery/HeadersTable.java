@@ -80,7 +80,6 @@ public class HeadersTable extends JPanel {
         }
     }
 
-    private final JTable table;
     private List<String[]> headers;
 
     /**
@@ -97,7 +96,7 @@ public class HeadersTable extends JPanel {
     public HeadersTable(Map<String, String> headers) {
         super(new GridBagLayout());
         this.headers = getHeadersAsVector(headers);
-        table = new JTable(new HeaderTableModel());
+        JTable table = new JTable(new HeaderTableModel());
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoCreateRowSorter(true);
         table.setRowSelectionAllowed(false);
