@@ -345,7 +345,7 @@ class SyncEditorLayerIndex {
                     }
                     shapes += sep + "</shape>\n"
                 }
-            } catch(IllegalArgumentException) {
+            } catch(IllegalArgumentException ignored) {
             }
             if(shapes) {
                 stream.write "        <bounds min-lat='${df.format(minlat)}' min-lon='${df.format(minlon)}' max-lat='${df.format(maxlat)}' max-lon='${df.format(maxlon)}'>\n"

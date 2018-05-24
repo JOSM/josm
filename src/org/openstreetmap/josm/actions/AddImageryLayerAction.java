@@ -139,7 +139,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         } catch (WMTSGetCapabilitiesException e) {
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMTS layer list."),
-                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+                        tr("WMTS Error"), JOptionPane.ERROR_MESSAGE);
             }
             Logging.log(Logging.LEVEL_ERROR, "Could not parse WMTS layer list.", e);
         }
@@ -190,17 +190,16 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             formats.setSelectedItem(wms.getPreferredFormat());
             formats.setToolTipText(tr("Select image format for WMS layer"));
 
-            if (!GraphicsEnvironment.isHeadless()) {
-                if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), tr("Add layers"), tr("Cancel")) { {
+            if (!GraphicsEnvironment.isHeadless() &&
+                1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), tr("Add layers"), tr("Cancel")) { {
                     final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
                     scrollPane.setPreferredSize(new Dimension(400, 400));
                     final JPanel panel = new JPanel(new GridBagLayout());
                     panel.add(scrollPane, GBC.eol().fill());
                     panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
                     setContent(panel);
-                } }.showDialog().getValue()) {
-                    return null;
-                }
+            } }.showDialog().getValue()) {
+                return null;
             }
 
             final String url = wms.buildGetMapUrl(
