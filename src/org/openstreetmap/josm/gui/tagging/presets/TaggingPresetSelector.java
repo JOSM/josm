@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -127,11 +128,14 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
         private static int isMatching(Collection<String> values, String... searchString) {
             int sum = 0;
+            List<String> deaccentedValues = values.stream().map(
+                    s -> Utils.deAccent(s).toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
             for (String word: searchString) {
                 boolean found = false;
                 boolean foundFirst = false;
-                for (String value: values) {
-                    int index = value.toLowerCase(Locale.ENGLISH).indexOf(word);
+                String deaccentedWord = Utils.deAccent(word);
+                for (String value: deaccentedValues) {
+                    int index = value.indexOf(deaccentedWord);
                     if (index == 0) {
                         foundFirst = true;
                         break;
