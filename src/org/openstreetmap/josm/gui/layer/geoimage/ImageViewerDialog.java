@@ -74,8 +74,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         return dialog;
     }
 
+    private JButton btnLast;
     private JButton btnNext;
     private JButton btnPrevious;
+    private JButton btnFirst;
     private JButton btnCollapse;
     private JToggleButton tbCentre;
 
@@ -87,6 +89,13 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         MainApplication.getLayerManager().addLayerChangeListener(this);
     }
 
+    private static JButton createNavigationButton(JosmAction action, Dimension buttonDim) {
+        JButton btn = new JButton(action);
+        btn.setPreferredSize(buttonDim);
+        btn.setEnabled(false);
+        return btn;
+    }
+
     private void build() {
         JPanel content = new JPanel(new BorderLayout());
 
@@ -94,9 +103,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         Dimension buttonDim = new Dimension(26, 26);
 
-        btnPrevious = new JButton(imagePreviousAction);
-        btnPrevious.setPreferredSize(buttonDim);
-        btnPrevious.setEnabled(false);
+        btnFirst = createNavigationButton(imageFirstAction, buttonDim);
+        btnPrevious = createNavigationButton(imagePreviousAction, buttonDim);
 
         JButton btnDelete = new JButton(imageRemoveAction);
         btnDelete.setPreferredSize(buttonDim);
@@ -107,9 +115,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         JButton btnCopyPath = new JButton(imageCopyPathAction);
         btnCopyPath.setPreferredSize(buttonDim);
 
-        btnNext = new JButton(imageNextAction);
-        btnNext.setPreferredSize(buttonDim);
-        btnNext.setEnabled(false);
+        btnNext = createNavigationButton(imageNextAction, buttonDim);
+        btnLast = createNavigationButton(imageLastAction, buttonDim);
 
         tbCentre = new JToggleButton(imageCenterViewAction);
         tbCentre.setPreferredSize(buttonDim);
@@ -122,8 +129,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnCollapse.setAlignmentY(Component.TOP_ALIGNMENT);
 
         JPanel buttons = new JPanel();
+        buttons.add(btnFirst);
         buttons.add(btnPrevious);
         buttons.add(btnNext);
+        buttons.add(btnLast);
         buttons.add(Box.createRigidArea(new Dimension(7, 0)));
         buttons.add(tbCentre);
         buttons.add(btnZoomBestFit);
@@ -203,7 +212,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageFirstAction extends JosmAction {
         ImageFirstAction() {
-            super(null, (ImageProvider) null, null, Shortcut.registerShortcut(
+            super(null, new ImageProvider("dialogs", "first"), tr("First"), Shortcut.registerShortcut(
                     "geoimage:first", tr("Geoimage: {0}", tr("Show first Image")), KeyEvent.VK_HOME, Shortcut.DIRECT),
                   false, null, false);
         }
@@ -218,7 +227,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageLastAction extends JosmAction {
         ImageLastAction() {
-            super(null, (ImageProvider) null, null, Shortcut.registerShortcut(
+            super(null, new ImageProvider("dialogs", "last"), tr("Last"), Shortcut.registerShortcut(
                     "geoimage:last", tr("Geoimage: {0}", tr("Show last Image")), KeyEvent.VK_END, Shortcut.DIRECT),
                   false, null, false);
         }
@@ -318,6 +327,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
     }
 
+    /**
+     * Displays image for the given layer.
+     * @param layer geo image layer
+     * @param entry image entry
+     */
     public static void showImage(GeoImageLayer layer, ImageEntry entry) {
         getInstance().displayImage(layer, entry);
         if (layer != null) {
@@ -333,6 +347,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      * @param value {@code true} to enable the button, {@code false} otherwise
      */
     public static void setPreviousEnabled(boolean value) {
+        getInstance().btnFirst.setEnabled(value);
         getInstance().btnPrevious.setEnabled(value);
     }
 
@@ -342,6 +357,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      */
     public static void setNextEnabled(boolean value) {
         getInstance().btnNext.setEnabled(value);
+        getInstance().btnLast.setEnabled(value);
     }
 
     /**
@@ -360,6 +376,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private transient GeoImageLayer currentLayer;
     private transient ImageEntry currentEntry;
 
+    /**
+     * Displays image for the given layer.
+     * @param layer geo image layer
+     * @param entry image entry
+     */
     public void displayImage(GeoImageLayer layer, ImageEntry entry) {
         boolean imageChanged;
 

@@ -26,6 +26,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -221,9 +222,12 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         splitPane.setBorder(null);
         splitPane.setUI(new NoBorderSplitPaneUI());
 
-        // JSplitPane supports F6 and F8 shortcuts by default, but we need them for Audio actions
-        splitPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), new Object());
-        splitPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0), new Object());
+        // JSplitPane supports F6, F8, Home and End shortcuts by default, but we need them for Audio and Image Mapping actions
+        InputMap splitInputMap = splitPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        splitInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), new Object());
+        splitInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0), new Object());
+        splitInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), new Object());
+        splitInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), new Object());
 
         add(splitPane, BorderLayout.CENTER);
 
