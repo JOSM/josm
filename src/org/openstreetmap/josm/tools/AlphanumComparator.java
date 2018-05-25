@@ -33,7 +33,6 @@ package org.openstreetmap.josm.tools;
 import java.io.Serializable;
 import java.text.Collator;
 import java.util.Comparator;
-import java.util.Locale;
 
 /**
  * The Alphanum Algorithm is an improved sorting algorithm for strings
@@ -140,7 +139,7 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
                 }
             } else {
                 // Instantiate the collator
-                Collator compareOperator = Collator.getInstance(Locale.getDefault());
+                Collator compareOperator = Collator.getInstance();
                 // Compare regardless of accented letters
                 compareOperator.setStrength(Collator.SECONDARY);
                 result = compareOperator.compare(thisChunk, thatChunk);
