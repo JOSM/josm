@@ -21,6 +21,7 @@ import javax.json.Json
 import javax.json.JsonArray
 import javax.json.JsonObject
 import javax.json.JsonReader
+import javax.json.JsonValue
 
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Preferences
@@ -988,22 +989,20 @@ class SyncEditorLayerIndex {
             }
             return []
         }
-        if(!e.isNull("geometry")) {
-            def ex = e.get("geometry")
-            if(ex != null && !ex.isNull("coordinates")) {
-                def poly = ex.get("coordinates")
-                List<Shape> l = []
-                for(def shapes: poly) {
-                    def s = new Shape()
-                    for(def point: shapes) {
-                        def lon = point[0].toString()
-                        def lat = point[1].toString()
-                        s.addPoint(lat, lon)
-                    }
-                    l.add(s)
+        def ex = e.get("geometry")
+        if (ex != null && !JsonValue.NULL.equals(ex) && !ex.isNull("coordinates")) {
+            def poly = ex.get("coordinates")
+            List<Shape> l = []
+            for(def shapes: poly) {
+                def s = new Shape()
+                for(def point: shapes) {
+                    def lon = point[0].toString()
+                    def lat = point[1].toString()
+                    s.addPoint(lat, lon)
                 }
-                return l
+                l.add(s)
             }
+            return l
         }
         return []
     }
