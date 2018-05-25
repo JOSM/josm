@@ -3013,7 +3013,7 @@ node[craft=pottery] {
     set icon_z17;
 }
 node[craft=key_cutter] {
-    icon-image: "presets/misc/key_cutter.svg";
+    icon-image: "presets/craft/key_cutter.svg";
     set icon_z17;
 }
 node[craft=caterer][!is_prop_set(icon-image)] {
@@ -3033,7 +3033,7 @@ node[craft=blacksmith][!is_prop_set(icon-image)] {
     set icon_z17;
 }
 node[craft=locksmith] {
-    icon-image: "presets/misc/locksmith.svg";
+    icon-image: "presets/craft/locksmith.svg";
     set icon_z17;
 }
 node[craft=window_construction] {
