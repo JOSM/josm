@@ -9831,7 +9831,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Upholsterer -->
-    <item name="Key cutter" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Key cutter" icon="presets/craft/key_cutter.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=key_cutter"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=key_cutter"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=key_cutter"
@@ -9842,7 +9842,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Key cutter -->
-    <item name="Locksmith" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Locksmith" icon="presets/craft/locksmith.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=locksmith"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=locksmith"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=locksmith"
