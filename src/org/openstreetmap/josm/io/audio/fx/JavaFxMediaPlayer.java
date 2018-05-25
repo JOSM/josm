@@ -40,7 +40,7 @@ public class JavaFxMediaPlayer implements SoundPlayer {
 
     private MediaPlayer mediaPlayer;
 
-    JavaFxMediaPlayer() throws JosmRuntimeException {
+    JavaFxMediaPlayer() {
         try {
             initFxPlatform();
         } catch (InterruptedException e) {
