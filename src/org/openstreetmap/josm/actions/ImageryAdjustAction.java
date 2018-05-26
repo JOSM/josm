@@ -370,7 +370,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             if (map == null)
                 return;
             if (oldMapMode != null) {
-                if (restoreOldMode || getValue() == ExtendedDialog.DialogClosedOtherwise) {
+                if (restoreOldMode || (!exitingMode && getValue() == ExtendedDialog.DialogClosedOtherwise)) {
                     map.selectMapMode(oldMapMode);
                 }
                 oldMapMode = null;
