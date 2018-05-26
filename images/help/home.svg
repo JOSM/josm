@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg1328" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="48px" width="48px" xmlns:cc="http://web.resource.org/cc/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs1330">
+  <linearGradient id="linearGradient2781">
+   <stop id="stop2783" offset="0"/>
+   <stop id="stop2785" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient2780" y2="15.677" gradientUnits="userSpaceOnUse" x2="8.1772" gradientTransform="matrix(3.1372 0 0 3.1841 -1.6067 -4.8611)" y1="5.8577" x1="8.1772">
+   <stop id="stop5108" stop-color="#729fcf" offset="0"/>
+   <stop id="stop5110" stop-color="#386ea6" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient2788" y2="55.266" gradientUnits="userSpaceOnUse" x2="29.031" y1="23.266" x1="26.062">
+   <stop id="stop2784" stop-color="#fff" offset="0"/>
+   <stop id="stop2786" stop-color="#fff" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient2827" xlink:href="#linearGradient2781" gradientUnits="userSpaceOnUse" cy="44" cx="1" gradientTransform="matrix(2 0 0 .8 -13 -79.2)" r="5"/>
+  <radialGradient id="radialGradient2829" xlink:href="#linearGradient2781" gradientUnits="userSpaceOnUse" cy="44" cx="1" gradientTransform="matrix(2 0 0 .8 36 8.8)" r="5"/>
+  <linearGradient id="linearGradient2831" y2="40" gradientUnits="userSpaceOnUse" x2="21.875" y1="48.001" x1="21.875">
+   <stop id="stop2806" stop-opacity="0" offset="0"/>
+   <stop id="stop2812" offset=".5"/>
+   <stop id="stop2808" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata1333">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Go Home</dc:title>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>go</rdf:li>
+      <rdf:li>seek</rdf:li>
+      <rdf:li>home</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Rodney Dawes</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:contributor>
+     <cc:Agent>
+      <dc:title>Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:contributor>
+    <cc:license rdf:resource="http://creativecommons.org/licenses/GPL/2.0/"/>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+    <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/Notice"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/ShareAlike"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/SourceCode"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1">
+  <g id="g2822" opacity=".3" transform="matrix(1 0 0 1.0374 0 -1.6486)">
+   <rect id="rect1892" opacity="1" style="color:black" transform="scale(-1)" height="8" width="10" y="-48" x="-11" fill="url(#radialGradient2827)"/>
+   <rect id="rect2789" opacity="1" style="color:black" height="8" width="10" y="40" x="38" fill="url(#radialGradient2829)"/>
+   <rect id="rect2793" opacity="1" style="color:black" height="8" width="27" y="40" x="11" fill="url(#linearGradient2831)"/>
+  </g>
+  <path id="rect5117" style="color:black" d="m24.046 1.5072l-22.828 24.069h5.2682l0.0625 18.979 35.998-0.062-0.148-19.024 4.476 0.044-9.334-9.829 0.009-12.151-7.044-0.0095 0.031 4.6635-6.491-6.6798z" stroke="#204a87" fill="url(#linearGradient2780)"/>
+  <path id="path2778" opacity=".41237" style="color:black" d="m24.031 3.0312l-20.344 21.469h2.813c0.282-0.001 0.5527 0.111 0.7522 0.31 0.1994 0.2 0.3111 0.47 0.3103 0.752l0.0625 17.938 33.844-0.062-0.125-17.969c-0.001-0.282 0.111-0.553 0.31-0.752 0.2-0.2 0.47-0.312 0.752-0.311h1.969l-7.625-8c-0.181-0.195-0.281-0.452-0.281-0.718l0.031-11.094-4.938-0.0002 0.032 3.5937c0.002 0.4303-0.257 0.8191-0.655 0.9836-0.397 0.1645-0.855 0.0722-1.158-0.2336l-5.75-5.9063z" stroke="url(#linearGradient2788)" fill="none"/>
+ </g>
+</svg>
