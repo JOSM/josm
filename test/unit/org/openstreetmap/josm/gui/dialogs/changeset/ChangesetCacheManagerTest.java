@@ -32,7 +32,7 @@ public class ChangesetCacheManagerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform();
 
     /**
      * Unit test of {@link ChangesetCacheManager#destroyInstance}.
