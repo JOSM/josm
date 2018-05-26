@@ -18,6 +18,7 @@ public class WMTSCapabilities {
     private Collection<Layer> layers;
 
     /**
+     * Constructor for the class
      *
      * @param baseUrl of this service
      * @param transferMode either KVP (key-value pairs in URL parameters) or RESTful (part of path)
@@ -28,7 +29,7 @@ public class WMTSCapabilities {
     }
 
     /**
-     *
+     * Adds layers to this WMTS service response
      * @param layers layers to add to this document
      */
     public void addLayers(Collection<Layer> layers) {
@@ -36,7 +37,7 @@ public class WMTSCapabilities {
     }
 
     /**
-     *
+     * Layers of this WMTS service
      * @return layers defined by this service
      */
     public Collection<Layer> getLayers() {
@@ -44,7 +45,7 @@ public class WMTSCapabilities {
     }
 
     /**
-     *
+     * base URL of this WMTS service
      * @return base url for this service
      */
     public String getBaseUrl() {
@@ -52,7 +53,7 @@ public class WMTSCapabilities {
     }
 
     /**
-     *
+     * TransferMode for this service
      * @return transfer mode (KVP or RESTful) for this service
      */
     public TransferMode getTransferMode() {

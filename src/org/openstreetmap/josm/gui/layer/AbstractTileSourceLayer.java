@@ -1357,24 +1357,25 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 synchronized (this) {
                     if (info == null) {
                         List<Tile> allTiles = this.allExistingTiles();
-                        info = new TileSetInfo();
-                        info.hasLoadingTiles = allTiles.size() < this.size();
-                        info.hasAllLoadedTiles = true;
+                        TileSetInfo newInfo = new TileSetInfo();
+                        newInfo.hasLoadingTiles = allTiles.size() < this.size();
+                        newInfo.hasAllLoadedTiles = true;
                         for (Tile t : allTiles) {
                             if ("no-tile".equals(t.getValue("tile-info"))) {
-                                info.hasOverzoomedTiles = true;
+                                newInfo.hasOverzoomedTiles = true;
                             }
                             if (t.isLoaded()) {
                                 if (!t.hasError()) {
-                                    info.hasVisibleTiles = true;
+                                    newInfo.hasVisibleTiles = true;
                                 }
                             } else {
-                                info.hasAllLoadedTiles = false;
+                                newInfo.hasAllLoadedTiles = false;
                                 if (t.isLoading()) {
-                                    info.hasLoadingTiles = true;
+                                    newInfo.hasLoadingTiles = true;
                                 }
                             }
                         }
+                        info = newInfo;
                     }
                 }
             }
