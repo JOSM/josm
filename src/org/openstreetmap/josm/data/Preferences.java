@@ -405,7 +405,7 @@ public class Preferences extends AbstractPreferences {
             if (!e.getKey().startsWith(NamedColorProperty.NAMED_COLOR_PREFIX))
                 continue;
             Utils.instanceOfAndCast(e.getValue(), ListSetting.class)
-                    .map(d -> d.getValue())
+                    .map(ListSetting::getValue)
                     .map(lst -> ColorInfo.fromPref(lst, false))
                     .ifPresent(info -> all.put(e.getKey(), info));
         }
@@ -413,7 +413,7 @@ public class Preferences extends AbstractPreferences {
             if (!e.getKey().startsWith(NamedColorProperty.NAMED_COLOR_PREFIX))
                 continue;
             Utils.instanceOfAndCast(e.getValue(), ListSetting.class)
-                    .map(d -> d.getValue())
+                    .map(ListSetting::getValue)
                     .map(lst -> ColorInfo.fromPref(lst, true))
                     .ifPresent(infoDef -> {
                         ColorInfo info = all.get(e.getKey());

@@ -51,7 +51,6 @@ abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
                 if (GenericRelationEditor.confirmAddingPrimitive(primitive)) {
                     ret.add(primitive);
                 }
-                continue;
             } else {
                 ret.add(primitive);
             }

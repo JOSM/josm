@@ -81,7 +81,6 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
             requestToken = client.getRequestToken(getProgressMonitor().createSubTaskMonitor(0, false));
         } catch (OsmTransferCanceledException e) {
             Logging.trace(e);
-            return;
         } catch (final OsmOAuthAuthorizationException e) {
             Logging.error(e);
             GuiHelper.runInEDT(this::alertRetrievingRequestTokenFailed);

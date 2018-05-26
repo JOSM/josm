@@ -119,7 +119,6 @@ public class OsmConnection {
         if (response != null) {
             if (response.isCanceled()) {
                 cancel = true;
-                return;
             } else {
                 String username = response.getUsername() == null ? "" : response.getUsername();
                 String password = response.getPassword() == null ? "" : String.valueOf(response.getPassword());

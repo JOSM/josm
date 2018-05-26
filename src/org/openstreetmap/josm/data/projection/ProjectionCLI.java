@@ -32,9 +32,9 @@ public class ProjectionCLI implements CLIModule {
 
     public static final ProjectionCLI INSTANCE = new ProjectionCLI();
 
-    private boolean argInverse = false;         // NOPMD
-    private boolean argSwitchInput = false;     // NOPMD
-    private boolean argSwitchOutput = false;    // NOPMD
+    private boolean argInverse;
+    private boolean argSwitchInput;
+    private boolean argSwitchOutput;
 
     @Override
     public String getActionKeyword() {
@@ -76,7 +76,7 @@ public class ProjectionCLI implements CLIModule {
             String arg = argArray[i];
             if (arg.isEmpty()) throw new IllegalArgumentException("non-empty argument expected");
             if (arg.startsWith("+")) {
-                if (arg.equals("+to")) {
+                if ("+to".equals(arg)) {
                     toTokenSeen = true;
                 } else {
                     (toTokenSeen ? projParamTo : projParamFrom).add(arg);
@@ -141,7 +141,7 @@ public class ProjectionCLI implements CLIModule {
             toProj = tmp;
         }
 
-        if (files.isEmpty() || files.get(0).equals("-")) {
+        if (files.isEmpty() || "-".equals(files.get(0))) {
             processInput(fromProj, toProj, new BufferedReader(new InputStreamReader(System.in, Charset.defaultCharset())));
         } else {
             for (String file : files) {
@@ -173,7 +173,7 @@ public class ProjectionCLI implements CLIModule {
         }
     }
 
-    private CustomProjection createProjection(String params) throws ProjectionConfigurationException {
+    private static CustomProjection createProjection(String params) throws ProjectionConfigurationException {
         CustomProjection proj = new CustomProjection();
         proj.update(params);
         return proj;

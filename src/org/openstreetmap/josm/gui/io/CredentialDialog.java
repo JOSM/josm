@@ -401,11 +401,9 @@ public class CredentialDialog extends JDialog {
             if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                 if (currentTF.getText().trim().isEmpty()) {
                     currentTF.selectAll();
-                    return;
                 } else if (nextTF.getText().trim().isEmpty()) {
                     nextTF.requestFocusInWindow();
                     nextTF.selectAll();
-                    return;
                 } else {
                     owner.new OKAction().actionPerformed(null);
                 }

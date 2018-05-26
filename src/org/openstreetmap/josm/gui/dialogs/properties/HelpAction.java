@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
@@ -35,11 +35,11 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class HelpAction extends AbstractAction {
     private final JTable tagTable;
-    private final Function<Integer, String> tagKeySupplier;
-    private final Function<Integer, Map<String, Integer>> tagValuesSupplier;
+    private final IntFunction<String> tagKeySupplier;
+    private final IntFunction<Map<String, Integer>> tagValuesSupplier;
 
     private final JTable membershipTable;
-    private final Function<Integer, Relation> memberValueSupplier;
+    private final IntFunction<Relation> memberValueSupplier;
 
     /**
      * Constructs a new {@code HelpAction}.
@@ -49,8 +49,8 @@ public class HelpAction extends AbstractAction {
      * @param membershipTable The membership table. Can be null
      * @param memberValueSupplier Finds the parent relation from given row of membership table. Can be null
      */
-    public HelpAction(JTable tagTable, Function<Integer, String> tagKeySupplier, Function<Integer, Map<String, Integer>> tagValuesSupplier,
-            JTable membershipTable, Function<Integer, Relation> memberValueSupplier) {
+    public HelpAction(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
+            JTable membershipTable, IntFunction<Relation> memberValueSupplier) {
         this.tagTable = Objects.requireNonNull(tagTable);
         this.tagKeySupplier = Objects.requireNonNull(tagKeySupplier);
         this.tagValuesSupplier = Objects.requireNonNull(tagValuesSupplier);

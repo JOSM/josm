@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import javax.swing.AbstractAction;
@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Utils;
 public abstract class AbstractCopyAction extends AbstractAction {
 
     private final JTable tagTable;
-    private final Function<Integer, String> keySupplier;
+    private final IntFunction<String> keySupplier;
     private final Supplier<Collection<? extends Tagged>> objectSupplier;
 
     /**
@@ -32,7 +32,7 @@ public abstract class AbstractCopyAction extends AbstractAction {
      * @param keySupplier a supplier which returns the selected key for a given row index
      * @param objectSupplier a supplier which returns the selected tagged object(s)
      */
-    public AbstractCopyAction(JTable tagTable, Function<Integer, String> keySupplier, Supplier<Collection<? extends Tagged>> objectSupplier) {
+    public AbstractCopyAction(JTable tagTable, IntFunction<String> keySupplier, Supplier<Collection<? extends Tagged>> objectSupplier) {
         this.tagTable = Objects.requireNonNull(tagTable);
         this.keySupplier = Objects.requireNonNull(keySupplier);
         this.objectSupplier = Objects.requireNonNull(objectSupplier);

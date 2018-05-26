@@ -46,7 +46,7 @@ public class PluginClassLoader extends URLClassLoader {
     public boolean addDependency(PluginClassLoader dependency) {
         // Add dependency only if not already present (directly or transitively through another one)
         boolean result = !dependencies.contains(Objects.requireNonNull(dependency, "dependency"))
-                && !dependencies.stream().anyMatch(pcl -> pcl.dependencies.contains(dependency))
+                && dependencies.stream().noneMatch(pcl -> pcl.dependencies.contains(dependency))
                 && dependencies.add(dependency);
         if (result) {
             // Now, remove top-level single dependencies, which would be children of the added one

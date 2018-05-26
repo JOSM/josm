@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.autofilter;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * An auto filter rule determines how auto filter can be built from visible map data.
@@ -18,7 +19,7 @@ public class AutoFilterRule {
 
     private final int minZoomLevel;
 
-    private Function<String, String> valueFormatter = s -> s;
+    private UnaryOperator<String> valueFormatter = s -> s;
 
     private Comparator<String> valueComparator = Comparator.comparingInt(s -> Integer.parseInt(valueFormatter.apply(s)));
 
@@ -62,7 +63,7 @@ public class AutoFilterRule {
      * @return {@code this}
      * @throws NullPointerException if {@code valueFormatter} is null
      */
-    public AutoFilterRule setValueFormatter(Function<String, String> valueFormatter) {
+    public AutoFilterRule setValueFormatter(UnaryOperator<String> valueFormatter) {
         this.valueFormatter = Objects.requireNonNull(valueFormatter);
         return this;
     }

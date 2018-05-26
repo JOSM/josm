@@ -77,11 +77,10 @@ public class ChangesetContentDownloadTask extends AbstractChangesetDownloadTask 
                 // the download was canceled by the user. This exception is caught if the user canceled the authentication dialog.
                 setCanceled(true);
                 Logging.trace(e);
-                return;
             } catch (OsmTransferException e) {
-                if (isCanceled())
-                    return;
-                rememberLastException(e);
+                if (!isCanceled()) {
+                    rememberLastException(e);
+                }
             }
         }
 

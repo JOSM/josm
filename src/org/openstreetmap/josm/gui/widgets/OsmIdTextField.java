@@ -103,9 +103,7 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
                 s = st.nextToken();
                 // convert tokens to int skipping v-words (version v2 etc)
                 c = s.charAt(0);
-                if (c == 'v') {
-                    continue;
-                } else {
+                if (c != 'v') {
                     try {
                         ids.addAll(SimplePrimitiveId.multipleFromString(s));
                     } catch (IllegalArgumentException ex) {

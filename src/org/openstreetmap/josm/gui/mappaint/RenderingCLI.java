@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
 import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
@@ -237,7 +237,7 @@ public class RenderingCLI implements CLIModule {
                             tr("Expected integer number >= 0 for option {0}, but got ''{1}''", "--zoom", getopt.getOptarg()));
                 break;
             case 'b':
-                if (!getopt.getOptarg().equals("auto")) {
+                if (!"auto".equals(getopt.getOptarg())) {
                     try {
                         argBounds = new Bounds(getopt.getOptarg(), ",", Bounds.ParseMethod.LEFT_BOTTOM_RIGHT_TOP, false);
                     } catch (IllegalArgumentException iae) { // NOPMD
@@ -458,8 +458,8 @@ public class RenderingCLI implements CLIModule {
             if (argAnchor != null) {
                 EastNorth projAnchor = proj.latlon2eastNorth(argAnchor);
 
-                Double enPerMeter = null;
-                Supplier<Double> getEnPerMeter = () -> {
+                double enPerMeter = Double.NaN;
+                DoubleSupplier getEnPerMeter = () -> {
                     double shiftMeter = 10;
                     EastNorth projAnchorShifted = projAnchor.add(
                             shiftMeter / proj.getMetersPerUnit(), shiftMeter / proj.getMetersPerUnit());
@@ -469,13 +469,13 @@ public class RenderingCLI implements CLIModule {
 
                 if (scale == null) {
                     if (argScale != null) {
-                        enPerMeter = getEnPerMeter.get();
+                        enPerMeter = getEnPerMeter.getAsDouble();
                         scale = argScale * enPerMeter / PIXEL_PER_METER;
                     } else if (argWidthM != null && argWidthPx != null) {
-                        enPerMeter = getEnPerMeter.get();
+                        enPerMeter = getEnPerMeter.getAsDouble();
                         scale = argWidthM / argWidthPx * enPerMeter;
                     } else if (argHeightM != null && argHeightPx != null) {
-                        enPerMeter = getEnPerMeter.get();
+                        enPerMeter = getEnPerMeter.getAsDouble();
                         scale = argHeightM / argHeightPx * enPerMeter;
                     } else {
                         throw new IllegalArgumentException(
@@ -485,7 +485,9 @@ public class RenderingCLI implements CLIModule {
 
                 double widthEn;
                 if (argWidthM != null) {
-                    enPerMeter = Optional.ofNullable(enPerMeter).orElseGet(getEnPerMeter);
+                    if (enPerMeter == Double.NaN) {
+                        enPerMeter = getEnPerMeter.getAsDouble();
+                    }
                     widthEn = argWidthM * enPerMeter;
                 } else if (argWidthPx != null) {
                     widthEn = argWidthPx * scale;
@@ -496,7 +498,9 @@ public class RenderingCLI implements CLIModule {
 
                 double heightEn;
                 if (argHeightM != null) {
-                    enPerMeter = Optional.ofNullable(enPerMeter).orElseGet(getEnPerMeter);
+                    if (enPerMeter == Double.NaN) {
+                        enPerMeter = getEnPerMeter.getAsDouble();
+                    }
                     heightEn = argHeightM * enPerMeter;
                 } else if (argHeightPx != null) {
                     heightEn = argHeightPx * scale;

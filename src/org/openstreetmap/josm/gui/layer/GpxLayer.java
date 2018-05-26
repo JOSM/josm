@@ -147,9 +147,7 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
     @Override
     public Object getInfoComponent() {
         StringBuilder info = new StringBuilder(128)
-                .append("<html><head><style>")
-                .append("td { padding: 4px 16px; }")
-                .append("</style></head><body>");
+                .append("<html><head><style>td { padding: 4px 16px; }</style></head><body>");
 
         if (data.attr.containsKey("name")) {
             info.append(tr("Name: {0}", data.get(GpxConstants.META_NAME))).append("<br>");

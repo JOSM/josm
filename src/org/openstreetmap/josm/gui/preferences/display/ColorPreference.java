@@ -210,11 +210,6 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         }
 
         @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false;
-        }
-
-        @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             if (columnIndex == 1 && aValue instanceof Color) {
                 data.get(rowIndex).info.setValue((Color) aValue);
@@ -385,8 +380,8 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
     }
 
-    private boolean isRemoveColor(ColorEntry ce) {
-        return ce.info.getCategory().equals(NamedColorProperty.COLOR_CATEGORY_LAYER);
+    private static boolean isRemoveColor(ColorEntry ce) {
+        return NamedColorProperty.COLOR_CATEGORY_LAYER.equals(ce.info.getCategory());
     }
 
     /**

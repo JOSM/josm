@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import javax.swing.JTable;
@@ -30,7 +30,7 @@ public class CopyAllKeyValueAction extends AbstractCopyAction {
      * @param keyFn a function which returns the selected key for a given row index
      * @param objectSp a supplier which returns the selected tagged object(s)
      */
-    public CopyAllKeyValueAction(JTable tagTable, Function<Integer, String> keyFn, Supplier<Collection<? extends Tagged>> objectSp) {
+    public CopyAllKeyValueAction(JTable tagTable, IntFunction<String> keyFn, Supplier<Collection<? extends Tagged>> objectSp) {
         super(tagTable, keyFn, objectSp);
         putValue(NAME, tr("Copy all Keys/Values"));
         putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
