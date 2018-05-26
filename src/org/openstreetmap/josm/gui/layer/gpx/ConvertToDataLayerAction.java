@@ -168,7 +168,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             osmLayer.setAssociatedFile(new File(layer.getAssociatedFile().getParentFile(), layer.getAssociatedFile().getName() + ".osm"));
         }
         osmLayer.setUploadDiscouraged(true);
-        MainApplication.getLayerManager().addLayer(osmLayer);
+        MainApplication.getLayerManager().addLayer(osmLayer, false);
         MainApplication.getLayerManager().removeLayer(layer);
     }
 }
