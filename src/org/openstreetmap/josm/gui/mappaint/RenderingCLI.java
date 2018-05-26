@@ -485,7 +485,7 @@ public class RenderingCLI implements CLIModule {
 
                 double widthEn;
                 if (argWidthM != null) {
-                    if (enPerMeter == Double.NaN) {
+                    if (Double.isNaN(enPerMeter)) {
                         enPerMeter = getEnPerMeter.getAsDouble();
                     }
                     widthEn = argWidthM * enPerMeter;
@@ -498,7 +498,7 @@ public class RenderingCLI implements CLIModule {
 
                 double heightEn;
                 if (argHeightM != null) {
-                    if (enPerMeter == Double.NaN) {
+                    if (Double.isNaN(enPerMeter)) {
                         enPerMeter = getEnPerMeter.getAsDouble();
                     }
                     heightEn = argHeightM * enPerMeter;
