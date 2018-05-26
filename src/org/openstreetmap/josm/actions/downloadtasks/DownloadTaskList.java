@@ -163,16 +163,14 @@ public class DownloadTaskList {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Check on the server"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         tr("Click to check whether objects in your local dataset are deleted on the server"),
-                        null  /* no specific help topic */
-                        ),
-                        new ButtonSpec(
-                                tr("Ignore"),
-                                ImageProvider.get("cancel"),
-                                tr("Click to abort and to resume editing"),
-                                null /* no specific help topic */
-                                ),
+                        null /* no specific help topic */),
+                new ButtonSpec(
+                        tr("Ignore"),
+                        new ImageProvider("cancel"),
+                        tr("Click to abort and to resume editing"),
+                        null /* no specific help topic */),
         };
 
         String message = "<html>" + trn(

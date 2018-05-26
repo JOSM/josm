@@ -487,13 +487,13 @@ public final class PluginHandler {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Update plugins"),
-                        ImageProvider.get("dialogs", "refresh"),
+                        new ImageProvider("dialogs", "refresh"),
                         tr("Click to update the activated plugins"),
                         null /* no specific help context */
                 ),
                 new ButtonSpec(
                         tr("Skip update"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to skip updating the activated plugins"),
                         null /* no specific help context */
                 )
@@ -564,7 +564,7 @@ public final class PluginHandler {
         ButtonSpec[] specs = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Download and restart"),
-                        ImageProvider.get("restart"),
+                        new ImageProvider("restart"),
                         trn("Click to download missing plugin and restart JOSM",
                             "Click to download missing plugins and restart JOSM",
                             missingRequiredPlugin.size()),
@@ -572,7 +572,7 @@ public final class PluginHandler {
                 ),
                 new ButtonSpec(
                         tr("Continue"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         trn("Click to continue without this plugin",
                             "Click to continue without these plugins",
                             missingRequiredPlugin.size()),
@@ -1168,13 +1168,13 @@ public final class PluginHandler {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Disable plugin"),
-                        ImageProvider.get("dialogs", "delete"),
+                        new ImageProvider("dialogs", "delete"),
                         tr("Click to delete the plugin ''{0}''", name),
                         null /* no specific help context */
                 ),
                 new ButtonSpec(
                         tr("Keep plugin"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to keep the plugin ''{0}''", name),
                         null /* no specific help context */
                 )
@@ -1360,19 +1360,19 @@ public final class PluginHandler {
         final ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Update plugin"),
-                        ImageProvider.get("dialogs", "refresh"),
+                        new ImageProvider("dialogs", "refresh"),
                         tr("Click to update the plugin ''{0}''", plugin.getPluginInformation().name),
                         null /* no specific help context */
                 ),
                 new ButtonSpec(
                         tr("Disable plugin"),
-                        ImageProvider.get("dialogs", "delete"),
+                        new ImageProvider("dialogs", "delete"),
                         tr("Click to disable the plugin ''{0}''", plugin.getPluginInformation().name),
                         null /* no specific help context */
                 ),
                 new ButtonSpec(
                         tr("Keep plugin"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to keep the plugin ''{0}''", plugin.getPluginInformation().name),
                         null /* no specific help context */
                 )

@@ -618,7 +618,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             final ButtonSpec[] options = new ButtonSpec[] {
                     new ButtonSpec(
                             tr("OK"),
-                            ImageProvider.get("ok"),
+                            new ImageProvider("ok"),
                             tr("Click to close this dialog and continue editing"),
                             null /* no specific help */
                     )

@@ -314,6 +314,8 @@ public final class MapPaintStyles {
         for (StyleSource source : styles.getStyleSources()) {
             if (source.active) {
                 loadStyleForFirstTime(source);
+            } else {
+                source.loadStyleSource(true);
             }
         }
         fireMapPaintSylesUpdated();

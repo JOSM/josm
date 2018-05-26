@@ -100,9 +100,18 @@ public abstract class StyleSource extends SourceEntry {
     public abstract void apply(MultiCascade mc, IPrimitive osm, double scale, boolean pretendWayIsClosed);
 
     /**
-     * Loads the style source.
+     * Loads the complete style source.
      */
-    public abstract void loadStyleSource();
+    public void loadStyleSource() {
+        loadStyleSource(false);
+    }
+
+    /**
+     * Loads the style source.
+     * @param metadataOnly if {@code true}, only metadata are loaded
+     * @since 13845
+     */
+    public abstract void loadStyleSource(boolean metadataOnly);
 
     /**
      * Returns a new {@code InputStream} to the style source. When finished, {@link #closeSourceInputStream(InputStream)} must be called.

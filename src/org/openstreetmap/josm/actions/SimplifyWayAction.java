@@ -71,29 +71,24 @@ public class SimplifyWayAction extends JosmAction {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Yes"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         tr("Simplify all selected ways"),
-                        null
-                        ),
-                        new ButtonSpec(
-                                tr("Cancel"),
-                                ImageProvider.get("cancel"),
-                                tr("Cancel operation"),
-                                null
-                                )
+                        null),
+                new ButtonSpec(
+                        tr("Cancel"),
+                        new ImageProvider("cancel"),
+                        tr("Cancel operation"),
+                        null)
         };
         return 0 == HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
-                tr(
-                        "The selection contains {0} ways. Are you sure you want to simplify them all?",
-                        numWays
-                        ),
-                        tr("Simplify ways?"),
-                        JOptionPane.WARNING_MESSAGE,
-                        null, // no special icon
-                        options,
-                        options[0],
-                        ht("/Action/SimplifyWay#ConfirmSimplifyAll")
+                tr("The selection contains {0} ways. Are you sure you want to simplify them all?", numWays),
+                tr("Simplify ways?"),
+                JOptionPane.WARNING_MESSAGE,
+                null, // no special icon
+                options,
+                options[0],
+                ht("/Action/SimplifyWay#ConfirmSimplifyAll")
                 );
     }
 

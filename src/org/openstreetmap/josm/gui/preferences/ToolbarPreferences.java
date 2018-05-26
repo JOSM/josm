@@ -74,6 +74,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -791,9 +792,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private JButton createButton(String name) {
             JButton b = new JButton();
             if ("up".equals(name)) {
-                b.setIcon(ImageProvider.get("dialogs", "up"));
+                b.setIcon(ImageProvider.get("dialogs", "up", ImageSizes.SMALLICON));
             } else if ("down".equals(name)) {
-                b.setIcon(ImageProvider.get("dialogs", "down"));
+                b.setIcon(ImageProvider.get("dialogs", "down", ImageSizes.SMALLICON));
             } else {
                 b.setText(name);
             }
