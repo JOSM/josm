@@ -39,12 +39,6 @@ public class QuadBucketPrimitiveStore<N extends INode, W extends IWay<N>, R exte
     private final Collection<R> relations = new ArrayList<>();
 
     /**
-     * Constructs a new {@code QuadBucketPrimitiveStore}.
-     */
-    public QuadBucketPrimitiveStore() {
-    }
-
-    /**
      * Searches for nodes in the given bounding box.
      * @param bbox the bounding box
      * @return List of nodes in the given bbox. Can be empty but not null

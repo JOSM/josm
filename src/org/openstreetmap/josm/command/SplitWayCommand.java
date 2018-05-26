@@ -275,9 +275,6 @@ public class SplitWayCommand extends SequenceCommand {
         Collection<String> nowarnroles = Config.getPref().getList("way.split.roles.nowarn",
                 Arrays.asList("outer", "inner", "forward", "backward", "north", "south", "east", "west"));
 
-        //final MapFrame map = MainApplication.getMap();
-        //final boolean isMapModeDraw = map != null && map.mapMode == map.mapModeDraw;
-
         // Change the original way
         final Way changedWay = new Way(way);
         changedWay.setNodes(wayToKeep.getNodes());

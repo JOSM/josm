@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
@@ -63,7 +64,7 @@ public interface NativeScaleLayer {
 
         @Override
         public String toString() {
-            return String.format("%f [%s]", scale, isNative);
+            return String.format(Locale.ENGLISH, "%f [%s]", scale, isNative);
         }
 
         /**
