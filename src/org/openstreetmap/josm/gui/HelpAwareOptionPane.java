@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -23,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -179,20 +179,25 @@ public final class HelpAwareOptionPane {
      * @param helpTopic the help topic
      * @return the help button
      */
-    private static JButton createHelpButton(final String helpTopic) {
-        JButton b = new JButton(tr("Help"));
-        b.setIcon(ImageProvider.get("help"));
-        b.setToolTipText(tr("Show help information"));
+    private static JButton createHelpButton(String helpTopic) {
+        JButton b = new JButton(new HelpAction(helpTopic));
         HelpUtil.setHelpContext(b, helpTopic);
-        Action a = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                HelpBrowser.setUrlForHelpTopic(helpTopic);
-            }
-        };
-        b.addActionListener(a);
         InputMapUtils.enableEnter(b);
         return b;
+    }
+
+    private static class HelpAction extends JosmAction {
+        private final String helpTopic;
+
+        HelpAction(String helpTopic) {
+            super(tr("Help"), "help", tr("Show help information"), null, false, false);
+            this.helpTopic = helpTopic;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            HelpBrowser.setUrlForHelpTopic(helpTopic);
+        }
     }
 
     /**
