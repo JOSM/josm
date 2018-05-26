@@ -205,7 +205,7 @@ public class RestartAction extends JosmAction {
     public static ButtonSpec getRestartButtonSpec() {
         return new ButtonSpec(
                 tr("Restart"),
-                new ImageProvider("restart").setSize(ImageSizes.LARGEICON).get(),
+                ImageProvider.get("restart", ImageSizes.LARGEICON),
                 tr("Restart the application."),
                 ht("/Action/Restart"),
                 isRestartSupported()

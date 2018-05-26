@@ -73,7 +73,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             List<String> array = new ArrayList<>(list);
             if (array.size() < 5)
                 throw new IllegalArgumentException(tr("Wrong number of arguments for bookmark"));
-            icon = ImageProvider.get("dialogs", "bookmark");
+            icon = getDefaultIcon();
             name = array.get(0);
             area = new Bounds(Double.parseDouble(array.get(1)), Double.parseDouble(array.get(2)),
                               Double.parseDouble(array.get(3)), Double.parseDouble(array.get(4)));
@@ -101,9 +101,13 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
          * @since 12495
          */
         protected Bookmark(String name, Bounds area) {
-            this.icon = ImageProvider.get("dialogs", "bookmark");
+            this.icon = getDefaultIcon();
             this.name = name;
             this.area = area;
+        }
+
+        static ImageIcon getDefaultIcon() {
+            return ImageProvider.get("dialogs", "bookmark", ImageSizes.SMALLICON);
         }
 
         @Override

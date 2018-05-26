@@ -318,7 +318,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     @Override
     public Icon getIcon() {
-        return new ImageProvider("dialogs/geoimage").setSize(ImageProvider.ImageSizes.LAYER).get();
+        return ImageProvider.get("dialogs/geoimage", ImageProvider.ImageSizes.LAYER);
     }
 
     public static void registerMenuAddition(Action addition) {
