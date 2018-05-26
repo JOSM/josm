@@ -1079,9 +1079,16 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            editHelper.addTag();
-            btnAdd.requestFocusInWindow();
+        public synchronized void actionPerformed(ActionEvent e) {
+            if (!isEnabled())
+                return;
+            setEnabled(false);
+            try {
+                editHelper.addTag();
+                btnAdd.requestFocusInWindow();
+            } finally {
+                setEnabled(true);
+            }
         }
     }
 
@@ -1097,15 +1104,20 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public synchronized void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
-            if (tagTable.getSelectedRowCount() == 1) {
-                int row = tagTable.getSelectedRow();
-                editHelper.editTag(row, false);
-            } else if (membershipTable.getSelectedRowCount() == 1) {
-                int row = membershipTable.getSelectedRow();
-                editMembership(row);
+            setEnabled(false);
+            try {
+                if (tagTable.getSelectedRowCount() == 1) {
+                    int row = tagTable.getSelectedRow();
+                    editHelper.editTag(row, false);
+                } else if (membershipTable.getSelectedRowCount() == 1) {
+                    int row = membershipTable.getSelectedRow();
+                    editMembership(row);
+                }
+            } finally {
+                setEnabled(true);
             }
         }
 
