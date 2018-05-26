@@ -114,7 +114,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
                 new ButtonSpec(
                         tr("Yes"),
                         new ImageProvider("ok"),
-                        tr("Click to closnew ImageProvidere window"),
+                        tr("Click to close window"),
                         null /* no specific help topic */
                 ),
                 new ButtonSpec(
