@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -212,6 +213,7 @@ public enum Compression {
      * @return compressing output stream
      *
      * @throws IOException if any I/O error occurs
+     * @throws InvalidPathException if a Path object cannot be constructed from the abstract path
      */
     public static OutputStream getCompressedFileOutputStream(File file) throws IOException {
         OutputStream out = Files.newOutputStream(file.toPath());

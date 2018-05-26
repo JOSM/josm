@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -593,7 +594,7 @@ public class Preferences extends AbstractPreferences {
                 resetToDefault();
                 save();
             }
-        } catch (IOException e) {
+        } catch (IOException | InvalidPathException e) {
             Logging.error(e);
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(
@@ -697,7 +698,7 @@ public class Preferences extends AbstractPreferences {
             if (saveOnPut) {
                 try {
                     save();
-                } catch (IOException e) {
+                } catch (IOException | InvalidPathException e) {
                     File file = getPreferenceFile();
                     try {
                         file = file.getAbsoluteFile();
