@@ -509,7 +509,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
             super(browser);
             browser.getHistory().addChangeListener(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the previous page"));
-            new ImageProvider("help", "previous").getResource().attachImageIcon(this, true);
+            new ImageProvider("dialogs", "previous").getResource().attachImageIcon(this, true);
             setEnabled(browser.getHistory().canGoBack());
         }
 
@@ -534,7 +534,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
             super(browser);
             browser.getHistory().addChangeListener(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the next page"));
-            new ImageProvider("help", "next").getResource().attachImageIcon(this, true);
+            new ImageProvider("dialogs", "next").getResource().attachImageIcon(this, true);
             setEnabled(browser.getHistory().canGoForward());
         }
 
