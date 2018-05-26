@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Label that contains a clickable link.
@@ -101,8 +102,21 @@ public class UrlLabel extends JLabel implements MouseListener {
      * @param description the description
      */
     public final void setDescription(String description) {
+        setDescription(description, true);
+    }
+
+    /**
+     * Sets the text part of the URL label. Defaults to the empty string if description is null.
+     *
+     * @param description the description
+     * @param escapeReservedCharacters if {@code true}, HTML reserved characters will be escaped
+     * @since 13853
+     */
+    public final void setDescription(String description, boolean escapeReservedCharacters) {
         this.description = description == null ? "" : description;
-        this.description = this.description.replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;");
+        if (escapeReservedCharacters) {
+            this.description = Utils.escapeReservedCharactersHTML(this.description);
+        }
         refresh();
     }
 
