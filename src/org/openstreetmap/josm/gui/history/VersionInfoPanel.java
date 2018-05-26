@@ -263,7 +263,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
             if (user != null) {
                 username = user.getName();
             }
-            lblUser.setDescription(username);
+            lblUser.setDescription(insertWbr(username), false);
             if (user != null && user != User.getAnonymous()) {
                 lblUser.setUrl(getUserUrl(username));
             } else {
@@ -275,7 +275,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
                 lblUser.setDescription(tr("anonymous"));
                 lblUser.setUrl(null);
             } else {
-                lblUser.setDescription(username);
+                lblUser.setDescription(insertWbr(username), false);
                 lblUser.setUrl(getUserUrl(username));
             }
             lblChangeset.setDescription(tr("none"));
@@ -290,6 +290,10 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         updateText(cs, "comment", texChangesetComment, null, oppCs, texChangesetComment);
         updateText(cs, "source", texChangesetSource, lblSource, oppCs, pnlChangesetSource);
         updateText(cs, "imagery_used", texChangesetImageryUsed, lblImageryUsed, oppCs, pnlChangesetImageryUsed);
+    }
+
+    private static String insertWbr(String s) {
+        return Utils.escapeReservedCharactersHTML(s).replace("_", "_<wbr>");
     }
 
     protected static void updateText(Changeset cs, String attr, JTextArea textArea, JLabel label, Changeset oppCs, JComponent container) {
