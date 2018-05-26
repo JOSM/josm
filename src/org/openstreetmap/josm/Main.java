@@ -8,6 +8,7 @@ import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -346,7 +347,7 @@ public abstract class Main {
         }
         try {
             pref.saveDefaults();
-        } catch (IOException ex) {
+        } catch (IOException | InvalidPathException ex) {
             Logging.log(Logging.LEVEL_WARN, tr("Failed to save default preferences."), ex);
         }
         if (!GraphicsEnvironment.isHeadless()) {

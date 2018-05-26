@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -340,8 +341,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                     Main.pref.resetToDefault();
                     try {
                         Main.pref.save();
-                    } catch (IOException e) {
-                        Logging.log(Logging.LEVEL_WARN, "IOException while saving preferences:", e);
+                    } catch (IOException | InvalidPathException e) {
+                        Logging.log(Logging.LEVEL_WARN, "Exception while saving preferences:", e);
                     }
                     readPreferences(Main.pref);
                     applyFilter();

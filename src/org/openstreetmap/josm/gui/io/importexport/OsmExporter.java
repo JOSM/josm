@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
@@ -94,7 +95,7 @@ public class OsmExporter extends FileExporter {
                 Utils.deleteFile(tmpFile);
             }
             layer.onPostSaveToFile();
-        } catch (IOException e) {
+        } catch (IOException | InvalidPathException e) {
             Logging.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -109,7 +110,7 @@ public class OsmExporter extends FileExporter {
                 if (tmpFile != null && tmpFile.exists()) {
                     Utils.copyFile(tmpFile, file);
                 }
-            } catch (IOException e2) {
+            } catch (IOException | InvalidPathException e2) {
                 Logging.error(e2);
                 JOptionPane.showMessageDialog(
                         Main.parent,

@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
 import java.time.Year;
 import java.util.Optional;
@@ -208,7 +209,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
             new GpxWriter(fo).write(gpxData);
             fo.flush();
-        } catch (IOException ex) {
+        } catch (IOException | InvalidPathException ex) {
             Logging.error(ex);
             JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, ex.getMessage()),
                     tr("Error"), JOptionPane.ERROR_MESSAGE);

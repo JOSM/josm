@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -391,6 +392,7 @@ public final class Utils {
      * @return the path to the target file
      * @throws IOException if any I/O error occurs
      * @throws IllegalArgumentException if {@code in} or {@code out} is {@code null}
+     * @throws InvalidPathException if a Path object cannot be constructed from the abstract path
      * @since 7003
      */
     public static Path copyFile(File in, File out) throws IOException {
