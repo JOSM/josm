@@ -665,10 +665,12 @@ public class RelationListDialog extends ToggleDialog
 
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                // Do nothing
             }
 
             @Override
             public void popupMenuCanceled(PopupMenuEvent e) {
+                // Do nothing
             }
         });
     }

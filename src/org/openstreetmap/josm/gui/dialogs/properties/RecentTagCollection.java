@@ -22,6 +22,7 @@ class RecentTagCollection {
      * LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
      */
     static final class LruCache extends LinkedHashMap<Tag, Void> {
+        private static final long serialVersionUID = 1L;
         private final int capacity;
 
         LruCache(int capacity) {

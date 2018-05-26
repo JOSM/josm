@@ -369,7 +369,7 @@ public class CoordinateInfoViewer extends JPanel {
                 addMapMarker(newMarker);
             }
 
-            setDisplayToFitMapMarkers();
+            super.setDisplayToFitMapMarkers();
         }
     }
 

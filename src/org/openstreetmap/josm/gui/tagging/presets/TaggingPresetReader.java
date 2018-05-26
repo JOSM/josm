@@ -91,6 +91,7 @@ public final class TaggingPresetReader {
     }
 
     static class HashSetWithLast<E> extends LinkedHashSet<E> {
+        private static final long serialVersionUID = 1L;
         protected transient E last;
 
         @Override

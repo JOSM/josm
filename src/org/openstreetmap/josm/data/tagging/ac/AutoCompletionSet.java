@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
  */
 public class AutoCompletionSet extends TreeSet<AutoCompletionItem> {
 
+    private static final long serialVersionUID = 1L;
+
     // Keep a separate tree set of values for determining fast if a value is present
     private final Set<String> values = new TreeSet<>();
 

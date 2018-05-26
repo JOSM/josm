@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -196,7 +197,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     protected File getNewLayerFile(AutosaveLayerInfo<?> layer, Date now, int startIndex) {
         int index = startIndex;
         while (true) {
-            String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
+            String filename = String.format(Locale.ENGLISH, "%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
                     layer.layerFileName, now, index == 0 ? "" : ('_' + Integer.toString(index)));
             File result = new File(autosaveDir, filename + '.' +
                     (layer.layer instanceof NoteLayer ?

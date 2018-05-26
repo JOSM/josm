@@ -7,5 +7,7 @@ package org.openstreetmap.josm.gui.tagging.presets;
  */
 public class TaggingPresetSeparator extends TaggingPreset {
     @Override
-    public void setDisplayName() {}
+    public void setDisplayName() {
+        // Do nothing
+    }
 }

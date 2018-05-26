@@ -32,6 +32,9 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * @since 11914 (extracted from StyledMapRenderer)
  */
 public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements PrimitiveVisitor {
+
+    private static final long serialVersionUID = 1L;
+
     private final transient List<? extends IPrimitive> input;
     private final transient List<StyleRecord> output;
 

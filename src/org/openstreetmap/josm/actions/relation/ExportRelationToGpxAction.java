@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.openstreetmap.josm.actions.GpxExportAction;
@@ -60,7 +61,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
     }
 
     /** Mode of this ExportToGpxAction */
-    protected final EnumSet<Mode> mode;
+    protected final Set<Mode> mode;
 
     /** Primitives this action works on */
     protected Collection<Relation> relations = Collections.<Relation>emptySet();
@@ -75,14 +76,14 @@ public class ExportRelationToGpxAction extends GpxExportAction
      *
      * @param mode which mode to use, see {@code ExportRelationToGpxAction.Mode}
      */
-    public ExportRelationToGpxAction(EnumSet<Mode> mode) {
+    public ExportRelationToGpxAction(Set<Mode> mode) {
         super(name(mode), mode.contains(TO_FILE) ? "exportgpx" : "dialogs/layerlist", tooltip(mode),
                 null, false, null, false);
         putValue("help", ht("/Action/ExportRelationToGpx"));
         this.mode = mode;
     }
 
-    private static String name(EnumSet<Mode> mode) {
+    private static String name(Set<Mode> mode) {
         if (mode.contains(TO_FILE)) {
             if (mode.contains(FROM_FIRST_MEMBER)) {
                 return tr("Export GPX file starting from first member");
@@ -98,7 +99,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
         }
     }
 
-    private static String tooltip(EnumSet<Mode> mode) {
+    private static String tooltip(Set<Mode> mode) {
         if (mode.contains(FROM_FIRST_MEMBER)) {
             return tr("Flatten this relation to a single gpx track recursively, " +
                     "starting with the first member, successively continuing to the last.");

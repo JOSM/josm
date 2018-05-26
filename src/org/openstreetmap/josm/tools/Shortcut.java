@@ -282,6 +282,7 @@ public final class Shortcut {
     private static ShortcutCollection shortcuts = new ShortcutCollection();
 
     private static class ShortcutCollection extends CopyOnWriteArrayList<Shortcut> {
+        private static final long serialVersionUID = 1L;
         @Override
         public boolean add(Shortcut shortcut) {
             // expensive consistency check only in debug mode

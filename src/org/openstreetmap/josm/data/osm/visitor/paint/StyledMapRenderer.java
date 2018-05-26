@@ -594,7 +594,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         } else {
             int textWidth = (int) bounds.getWidth();
             if (bs.hAlign == HorizontalTextAlignment.CENTER) {
-                x -= textWidth / 2;
+                x -= textWidth / 2d;
             } else if (bs.hAlign == HorizontalTextAlignment.LEFT) {
                 x -= -box.x + 4 + textWidth;
             } else throw new AssertionError();
@@ -1666,7 +1666,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private void paintRecord(StyleRecord record) {
         try {
             record.paintPrimitive(paintSettings, this);
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException | NullPointerException e) {
+        } catch (RuntimeException e) {
             throw BugReport.intercept(e).put("record", record);
         }
     }

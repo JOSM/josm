@@ -25,6 +25,8 @@ public final class SignpostAdapters {
      */
     public static class OAuthProvider extends AbstractOAuthProvider {
 
+        private static final long serialVersionUID = 1L;
+
         /**
          * Constructs a new {@code OAuthProvider}.
          * @param requestTokenEndpointUrl request token endpoint URL
@@ -59,6 +61,8 @@ public final class SignpostAdapters {
      * OAuth consumer.
      */
     public static class OAuthConsumer extends AbstractOAuthConsumer {
+
+        private static final long serialVersionUID = 1L;
 
         /**
          * Constructs a new {@code OAuthConsumer}.
