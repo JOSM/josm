@@ -412,7 +412,7 @@ public class MapCSSStyleSource extends StyleSource {
     }
 
     @Override
-    public void loadStyleSource() {
+    public void loadStyleSource(boolean metadataOnly) {
         STYLE_SOURCE_LOCK.writeLock().lock();
         try {
             init();
@@ -435,8 +435,10 @@ public class MapCSSStyleSource extends StyleSource {
                     parser.sheet(this);
 
                     loadMeta();
-                    loadCanvas();
-                    loadSettings();
+                    if (!metadataOnly) {
+                        loadCanvas();
+                        loadSettings();
+                    }
                     // remove "areaStyle" pseudo classes intended only for validator (causes StackOverflowError otherwise)
                     removeAreaStyleClasses();
                 } finally {
@@ -454,6 +456,9 @@ public class MapCSSStyleSource extends StyleSource {
                 Logging.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
                 Logging.error(e);
                 logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
+            }
+            if (metadataOnly) {
+                return;
             }
             // optimization: filter rules for different primitive types
             for (MapCSSRule r: rules) {
