@@ -10,6 +10,8 @@ import java.awt.event.MouseMotionListener;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.swing.Action;
+
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -20,6 +22,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -68,6 +71,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * Makes this map mode active.
      */
     public void enterMode() {
+        Logging.debug("Entering map mode: {0}", getValue(Action.NAME));
         putValue("active", Boolean.TRUE);
         Config.getPref().addPreferenceChangeListener(this);
         readPreferences();
@@ -79,6 +83,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * Makes this map mode inactive.
      */
     public void exitMode() {
+        Logging.debug("Exiting map mode: {0}", getValue(Action.NAME));
         putValue("active", Boolean.FALSE);
         Config.getPref().removePreferenceChangeListener(this);
         MainApplication.getMap().mapView.resetCursor(this);
