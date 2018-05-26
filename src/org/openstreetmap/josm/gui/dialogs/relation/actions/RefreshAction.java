@@ -84,13 +84,13 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Yes, discard changes and reload"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         tr("Click to discard the changes and reload data from layer"),
                         null /* no specific help topic */
                 ),
                 new ButtonSpec(
                         tr("Cancel, continue editing"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to return to the relation editor and to resume relation editing"),
                         null /* no specific help topic */
                 )
@@ -113,13 +113,13 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Yes"),
-                        ImageProvider.get("ok"),
-                        tr("Click to close window"),
+                        new ImageProvider("ok"),
+                        tr("Click to closnew ImageProvidere window"),
                         null /* no specific help topic */
                 ),
                 new ButtonSpec(
                         tr("No, continue editing"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to return to the relation editor and to resume relation editing"),
                         null /* no specific help topic */
                 )

@@ -166,13 +166,13 @@ public class DownloadAlongPanel extends JPanel {
         final ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Download"),
-                        ImageProvider.get("download"),
+                        new ImageProvider("download"),
                         tr("Click to download"),
                         null // no specific help text
                 ),
                 new ButtonSpec(
                         tr("Cancel"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to cancel"),
                         null // no specific help text
                 )

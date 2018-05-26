@@ -131,22 +131,16 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(
                         lbl,
-                        ImageProvider.get("updatedata"),
-                        null,
-                        null
-                ),
+                        new ImageProvider("updatedata"),
+                        null, null),
                 new ButtonSpec(
                         tr("Synchronize entire dataset"),
-                        ImageProvider.get("updatedata"),
-                        null,
-                        null
-                ),
+                        new ImageProvider("updatedata"),
+                        null, null),
                 new ButtonSpec(
                         tr("Cancel"),
-                        ImageProvider.get("cancel"),
-                        null,
-                        null
-                )
+                        new ImageProvider("cancel"),
+                        null, null)
         };
         String msg = tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
                 + "of your nodes, ways, or relations.<br>"
@@ -185,16 +179,12 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Synchronize entire dataset"),
-                        ImageProvider.get("updatedata"),
-                        null,
-                        null
-                ),
+                        new ImageProvider("updatedata"),
+                        null, null),
                 new ButtonSpec(
                         tr("Cancel"),
-                        ImageProvider.get("cancel"),
-                        null,
-                        null
-                )
+                        new ImageProvider("cancel"),
+                        null, null)
         };
         String msg = tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
                 + "of your nodes, ways, or relations.<br>"
@@ -248,13 +238,13 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Prepare conflict resolution"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         tr("Click to download all referring objects for {0}", conflict.a),
                         null /* no specific help context */
                 ),
                 new ButtonSpec(
                         tr("Cancel"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to cancel and to resume editing the map"),
                         null /* no specific help context */
                 )

@@ -115,13 +115,13 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Yes, create a conflict and close"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         tr("Click to create a conflict and close this relation editor"),
                         null /* no specific help topic */
                 ),
                 new ButtonSpec(
                         tr("No, continue editing"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to return to the relation editor and to resume relation editing"),
                         null /* no specific help topic */
                 )

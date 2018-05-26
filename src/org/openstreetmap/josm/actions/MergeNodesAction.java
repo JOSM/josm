@@ -221,7 +221,7 @@ public class MergeNodesAction extends JosmAction {
                     ButtonSpec[] options = new ButtonSpec[] {
                             new ButtonSpec(
                                     tr("Abort Merging"),
-                                    ImageProvider.get("cancel"),
+                                    new ImageProvider("cancel"),
                                     tr("Click to abort merging nodes"),
                                     null /* no special help topic */
                             )

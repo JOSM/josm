@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -64,6 +65,18 @@ public final class HelpAwareOptionPane {
         private boolean enabled;
 
         private final Collection<ChangeListener> listeners = new HashSet<>();
+
+        /**
+         * Constructs a new {@code ButtonSpec}.
+         * @param text the button text
+         * @param imageProvider provides the icon to display. Can be null
+         * @param tooltipText the tooltip text. Can be null.
+         * @param helpTopic the help topic. Can be null.
+         * @since 13842
+         */
+        public ButtonSpec(String text, ImageProvider imageProvider, String tooltipText, String helpTopic) {
+            this(text, imageProvider != null ? imageProvider.setSize(ImageSizes.LARGEICON).get() : null, tooltipText, helpTopic, true);
+        }
 
         /**
          * Constructs a new {@code ButtonSpec}.

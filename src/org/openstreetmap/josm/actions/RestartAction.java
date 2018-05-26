@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -204,7 +205,7 @@ public class RestartAction extends JosmAction {
     public static ButtonSpec getRestartButtonSpec() {
         return new ButtonSpec(
                 tr("Restart"),
-                ImageProvider.get("restart"),
+                new ImageProvider("restart").setSize(ImageSizes.LARGEICON).get(),
                 tr("Restart the application."),
                 ht("/Action/Restart"),
                 isRestartSupported()
@@ -218,7 +219,7 @@ public class RestartAction extends JosmAction {
     public static ButtonSpec getCancelButtonSpec() {
         return new ButtonSpec(
                 tr("Cancel"),
-                ImageProvider.get("cancel"),
+                new ImageProvider("cancel"),
                 tr("Click to restart later."),
                 null /* no specific help context */
         );

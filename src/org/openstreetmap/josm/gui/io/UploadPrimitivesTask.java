@@ -85,19 +85,19 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         ButtonSpec[] specs = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Continue uploading"),
-                        ImageProvider.get("upload"),
+                        new ImageProvider("upload"),
                         tr("Click to continue uploading to additional new changesets"),
                         null /* no specific help text */
                 ),
                 new ButtonSpec(
                         tr("Go back to Upload Dialog"),
-                        ImageProvider.get("dialogs", "uploadproperties"),
+                        new ImageProvider("dialogs", "uploadproperties"),
                         tr("Click to return to the Upload Dialog"),
                         null /* no specific help text */
                 ),
                 new ButtonSpec(
                         tr("Abort"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to abort uploading"),
                         null /* no specific help text */
                 )

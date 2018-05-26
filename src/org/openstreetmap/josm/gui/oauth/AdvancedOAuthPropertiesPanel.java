@@ -163,13 +163,13 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         ButtonSpec[] buttons = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Continue"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         tr("Click to reset the OAuth settings to default values"),
                         null /* no dedicated help topic */
                 ),
                 new ButtonSpec(
                         tr("Cancel"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to abort resetting to the OAuth default values"),
                         null /* no dedicated help topic */
                 )

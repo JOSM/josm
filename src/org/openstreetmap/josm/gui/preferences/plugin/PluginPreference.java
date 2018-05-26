@@ -271,13 +271,13 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("OK"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         tr("Accept the new plugin sites and close the dialog"),
                         null /* no special help topic */
                         ),
                         new ButtonSpec(
                                 tr("Cancel"),
-                                ImageProvider.get("cancel"),
+                                new ImageProvider("cancel"),
                                 tr("Close the dialog"),
                                 null /* no special help topic */
                                 )

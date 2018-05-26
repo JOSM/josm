@@ -74,14 +74,14 @@ public abstract class AbstractInfoAction extends JosmAction {
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Continue"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         trn("Click to continue and to open {0} browser", "Click to continue and to open {0} browsers",
                                 numBrowsers, numBrowsers),
                         null // no specific help topic
                 ),
                 new ButtonSpec(
                         tr("Cancel"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to abort launching external browsers"),
                         null // no specific help topic
                 )

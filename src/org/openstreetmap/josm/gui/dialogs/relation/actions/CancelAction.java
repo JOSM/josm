@@ -74,19 +74,19 @@ public class CancelAction extends SavingAction {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Yes, save the changes and close"),
-                        ImageProvider.get("ok"),
+                        new ImageProvider("ok"),
                         tr("Click to save the changes and close this relation editor"),
                         null /* no specific help topic */
                 ),
                 new ButtonSpec(
                         tr("No, discard the changes and close"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to discard the changes and close this relation editor"),
                         null /* no specific help topic */
                 ),
                 new ButtonSpec(
                         tr("Cancel, continue editing"),
-                        ImageProvider.get("cancel"),
+                        new ImageProvider("cancel"),
                         tr("Click to return to the relation editor and to resume relation editing"),
                         null /* no specific help topic */
                 )
