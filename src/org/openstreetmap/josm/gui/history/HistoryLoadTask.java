@@ -173,7 +173,6 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
             }
         } catch (OsmTransferException e) {
             lastException = e;
-            return;
         }
     }
 

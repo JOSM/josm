@@ -299,7 +299,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         public void updateLayers(List<Layer> layers, boolean allVisible, boolean allHidden) {
             Collection<? extends Layer> usedLayers = filterLayers(layers);
             setVisible(!usedLayers.isEmpty());
-            if (!usedLayers.stream().anyMatch(Layer::isVisible)) {
+            if (usedLayers.stream().noneMatch(Layer::isVisible)) {
                 slider.setEnabled(false);
             } else {
                 slider.setEnabled(true);

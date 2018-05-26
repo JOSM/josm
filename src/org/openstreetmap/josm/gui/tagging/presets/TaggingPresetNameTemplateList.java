@@ -59,9 +59,6 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
                     if (t.nameTemplateFilter != null) {
                         if (t.nameTemplateFilter.match(primitive))
                             return t;
-                        else {
-                            continue;
-                        }
                     } else if (t.matches(type, primitive.getKeys(), false)) {
                         return t;
                     }

@@ -79,7 +79,6 @@ public class TimeValidator extends AbstractTextComponentValidator {
         if (!isValid()) {
             String msg = "<html>The current value isn't a valid time.<br>" + getStandardTooltipText() + "</html>";
             feedbackInvalid(msg);
-            return;
         } else {
             String msg = "<html>" + getStandardTooltipText() + "</html>";
             feedbackValid(msg);

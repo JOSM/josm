@@ -119,7 +119,6 @@ public class PostDownloadHandler implements Runnable {
                         tr("Errors during download"),
                         JOptionPane.ERROR_MESSAGE));
             }
-            return;
         }
     }
 }

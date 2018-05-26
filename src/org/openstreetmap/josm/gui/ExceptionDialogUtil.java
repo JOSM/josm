@@ -193,9 +193,7 @@ public final class ExceptionDialogUtil {
         InvocationTargetException ex = ExceptionUtil.getNestedException(e, InvocationTargetException.class);
         if (ex != null) {
             // Users should be able to submit a bug report for an invocation target exception
-            //
             BugReportExceptionHandler.handleException(ex);
-            return;
         }
     }
 

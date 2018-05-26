@@ -955,7 +955,6 @@ public final class DomainValidator extends AbstractValidator {
         "memorial", // memorial Dog Beach, LLC
         "men", // men Exclusive Registry Limited
         "menu", // menu Wedding TLD2, LLC
-        "meo", // meo PT Comunicacoes S.A.
         "merckmsd", // merckmsd MSD Registry Holdings, Inc.
         "metlife", // metlife MetLife Services and Solutions, LLC
         "miami", // miami Top Level Domain Holdings Limited
@@ -1178,7 +1177,6 @@ public final class DomainValidator extends AbstractValidator {
         "sandvikcoromant", // sandvikcoromant Sandvik AB
         "sanofi", // sanofi Sanofi
         "sap", // sap SAP AG
-        "sapo", // sapo PT Comunicacoes S.A.
         "sarl", // sarl Delta Orchard, LLC
         "sas", // sas Research IP LLC
         "save", // save Amazon Registry Service, Inc.

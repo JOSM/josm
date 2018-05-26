@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import javax.swing.JTable;
 
@@ -25,11 +25,11 @@ public class TaginfoAction extends JosmAction {
     final transient StringProperty TAGINFO_URL_PROP = new StringProperty("taginfo.url", "https://taginfo.openstreetmap.org/");
 
     private final JTable tagTable;
-    private final Function<Integer, String> tagKeySupplier;
-    private final Function<Integer, Map<String, Integer>> tagValuesSupplier;
+    private final IntFunction<String> tagKeySupplier;
+    private final IntFunction<Map<String, Integer>> tagValuesSupplier;
 
     private final JTable membershipTable;
-    private final Function<Integer, Relation> memberValueSupplier;
+    private final IntFunction<Relation> memberValueSupplier;
 
     /**
      * Constructs a new {@code TaginfoAction}.
@@ -39,8 +39,8 @@ public class TaginfoAction extends JosmAction {
      * @param membershipTable The membership table. Can be null
      * @param memberValueSupplier Finds the parent relation from given row of membership table. Can be null
      */
-    public TaginfoAction(JTable tagTable, Function<Integer, String> tagKeySupplier, Function<Integer, Map<String, Integer>> tagValuesSupplier,
-            JTable membershipTable, Function<Integer, Relation> memberValueSupplier) {
+    public TaginfoAction(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
+            JTable membershipTable, IntFunction<Relation> memberValueSupplier) {
         super(tr("Go to Taginfo"), "dialogs/taginfo", tr("Launch browser with Taginfo statistics for selected object"), null, false);
         this.tagTable = Objects.requireNonNull(tagTable);
         this.tagKeySupplier = Objects.requireNonNull(tagKeySupplier);

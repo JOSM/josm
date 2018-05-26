@@ -274,7 +274,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             return repaintIfRequired(newHighlight);
         }
 
-        mv.setNewCursor(getCursor(c), this);
+        mv.setNewCursor(getCursor(c.orElse(null)), this);
 
         // return early if there can't be any highlights
         if (!drawTargetHighlight || (mode != Mode.MOVE && mode != Mode.SELECT) || !c.isPresent())
@@ -295,10 +295,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * works out which cursor should be displayed for most of SelectAction's
      * features. The only exception is the "move" cursor when actually dragging
      * primitives.
-     * @param nearbyStuff  primitives near the cursor
+     * @param nearbyStuff primitives near the cursor
      * @return the cursor that should be displayed
      */
-    private Cursor getCursor(Optional<OsmPrimitive> nearbyStuff) {
+    private Cursor getCursor(OsmPrimitive nearbyStuff) {
         String c = "rect";
         switch(mode) {
         case MOVE:
@@ -306,7 +306,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 c = "virtual_node";
                 break;
             }
-            final OsmPrimitive osm = nearbyStuff.orElse(null);
+            final OsmPrimitive osm = nearbyStuff;
 
             if (dragInProgress()) {
                 // only consider merge if ctrl is pressed and there are nodes in
@@ -515,7 +515,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 currentHighlight = Optional.of(p);
                 needsRepaint = true;
             }
-            mv.setNewCursor(getCursor(Optional.ofNullable(p)), this);
+            mv.setNewCursor(getCursor(p), this);
             // also update the stored mouse event, so we can display the correct cursor
             // when dragging a node onto another one and then press CTRL to merge
             oldEvent = e;

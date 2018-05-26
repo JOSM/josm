@@ -603,11 +603,11 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             if (Config.getPref().getBoolean("dialog.layer.colorname", true)) {
                 AbstractProperty<Color> prop = layer.getColorProperty();
                 Color c = prop == null ? null : prop.get();
-                if (c == null || !model.getLayers().stream()
+                if (c == null || model.getLayers().stream()
                         .map(Layer::getColorProperty)
                         .filter(Objects::nonNull)
                         .map(AbstractProperty::get)
-                        .anyMatch(oc -> oc != null && !oc.equals(c))) {
+                        .noneMatch(oc -> oc != null && !oc.equals(c))) {
                     /* not more than one color, don't use coloring */
                     label.setForeground(UIManager.getColor(isSelected ? "Table.selectionForeground" : "Table.foreground"));
                 } else {

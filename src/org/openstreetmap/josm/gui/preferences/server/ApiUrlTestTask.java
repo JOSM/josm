@@ -201,7 +201,6 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                 return;
             Logging.error(e);
             alertConnectionFailed();
-            return;
         }
     }
 

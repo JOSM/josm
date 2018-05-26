@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import javax.swing.JPopupMenu;
@@ -79,8 +79,8 @@ public class TagInfoViewer extends HistoryViewerPanel {
         table.addFocusListener(new RepaintOnFocusChange());
         JPopupMenu tagMenu = new JPopupMenu();
 
-        Function<Integer, String> tagKeyFn = x -> (String) table.getValueAt(x, 0);
-        Function<Integer, Map<String, Integer>> tagValuesFn = x -> {
+        IntFunction<String> tagKeyFn = x -> (String) table.getValueAt(x, 0);
+        IntFunction<Map<String, Integer>> tagValuesFn = x -> {
             Map<String, Integer> map = new HashMap<>();
             String key = tagTableModel.getValue((String) table.getValueAt(x, 0));
             if (key != null) {

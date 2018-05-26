@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import javax.swing.JTable;
@@ -24,7 +24,7 @@ public class CopyValueAction extends AbstractCopyAction {
      * @param keyFn a function which returns the selected key for a given row index
      * @param objectSp a supplier which returns the selected tagged object(s)
      */
-    public CopyValueAction(JTable tagTable, Function<Integer, String> keyFn, Supplier<Collection<? extends Tagged>> objectSp) {
+    public CopyValueAction(JTable tagTable, IntFunction<String> keyFn, Supplier<Collection<? extends Tagged>> objectSp) {
         super(tagTable, keyFn, objectSp);
         putValue(NAME, tr("Copy Value"));
         putValue(SHORT_DESCRIPTION, tr("Copy the value of the selected tag to clipboard"));

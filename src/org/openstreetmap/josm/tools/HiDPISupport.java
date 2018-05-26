@@ -191,7 +191,7 @@ public final class HiDPISupport {
             return processor.apply(imgs);
         }
         List<List<Image>> allVars = imgs.stream().map(HiDPISupport::getResolutionVariants).collect(Collectors.toList());
-        int maxVariants = allVars.stream().mapToInt(lst -> lst.size()).max().getAsInt();
+        int maxVariants = allVars.stream().mapToInt(List<Image>::size).max().getAsInt();
         if (maxVariants == 1)
             return processor.apply(imgs);
         List<Image> imgsProcessed = IntStream.range(0, maxVariants)
