@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="16px" height="16px">
+<!-- Tag -->
+<path d="m1,1h5l9,9l-5,5l-9,-9z
+  M3,2.25a.75,.75 0 1 0 .0001,0z" fill="#946d5b"/>
+<!-- Tag label -->
+<path d="m6.5,3.5l6.5,6.5l-3,3l-6.5,-6.5z" fill="#ede1c3"/>
+<!-- Letter i-->
+<path d="M12,7v-3h2v5z
+  M12,1h2v2h-2z" fill="#000"/>
+<!-- Bar chart base -->
+<path d="m1,14h7v1h-7z" fill="#333"/>
+<!-- Left bar -->
+<path d="m2,14v-5h1v5z" fill="#e22721"/>
+<!-- Center bar-->
+<path d="m4,14v-2h1v2z" fill="#3b7db6"/>
+<!-- Right bar -->
+<path d="m6,14v-4h1v4z" fill="#4ead4c"/>
+</svg>
