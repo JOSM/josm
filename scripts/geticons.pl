@@ -48,7 +48,7 @@ for my $arg (@ARGV ? @ARGV : @default)
         my $img = $2;
         ++$icons{$img};
       }
-      if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"(?:, ImageProvider.ImageSizes.[A-Z]+)?\)/)
+      if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"(?:, (?:ImageProvider\.)?ImageSizes\.[A-Z]+)?\)/)
       {
         my $i = $1;
         ++$icons{$i};
@@ -73,7 +73,7 @@ for my $arg (@ARGV ? @ARGV : @default)
         my $i = "statusline/$1";
         ++$icons{$i};
       }
-      if($l =~ /ImageProvider\.get(?:IfAvailable)?\(\"(.*?)\",\s*\"(.*?)\"\s*\)/)
+      if($l =~ /ImageProvider\.get(?:IfAvailable)?\(\"(.*?)\",\s*\"(.*?)\"(?:, (?:ImageProvider\.)?ImageSizes\.[A-Z]+)?\s*\)/)
       {
         my $i = "$1/$2";
         ++$icons{$i};
