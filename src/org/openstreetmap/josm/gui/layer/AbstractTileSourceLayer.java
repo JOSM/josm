@@ -1556,8 +1556,19 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 TileSet ts2 = new TileSet(tileSource.getCoveringTileRange(missed, newzoom));
                 // Instantiating large TileSets is expensive. If there are no loaded tiles, don't bother even trying.
                 if (ts2.allLoadedTiles().isEmpty()) {
-                    newlyMissedTiles.add(missed);
-                    continue;
+                    if (zoomOffset > 0) {
+                        newlyMissedTiles.add(missed);
+                        continue;
+                    } else {
+                        /*
+                         *  We have negative zoom offset. Try to load tiles from lower zoom levels, as they may be not present
+                         *  in tile cache (e.g. when user panned the map or opened layer above zoom level, for which tiles are present.
+                         *  This will ensure, that tileCache is populated with tiles from lower zoom levels so it will be possible to
+                         *  use them to paint overzoomed tiles.
+                         *  See: #14562
+                         */
+                        ts2.loadAllTiles(false);
+                    }
                 }
                 if (ts2.tooLarge()) {
                     continue;
