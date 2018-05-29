@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -24,7 +23,6 @@ import org.openstreetmap.josm.tools.ImageResource;
  */
 public class SideButton extends JButton implements Destroyable {
 
-    private transient PropertyChangeListener propertyChangeListener;
     private BasicArrowButton arrowButton;
     private boolean arrowEnabledWithButton;
 
@@ -126,9 +124,6 @@ public class SideButton extends JButton implements Destroyable {
             ((Destroyable) action).destroy();
         }
         if (action != null) {
-            if (propertyChangeListener != null) {
-                action.removePropertyChangeListener(propertyChangeListener);
-            }
             setAction(null);
         }
         arrowButton = null;
