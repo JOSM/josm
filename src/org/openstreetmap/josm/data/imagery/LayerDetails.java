@@ -116,7 +116,7 @@ public class LayerDetails {
      * @param title human readable title of this style
      */
     public void addStyle(String name, String title) {
-        this.styles.put(name, title);
+        this.styles.put(name, title == null ? "" : title);
     }
 
     /**
