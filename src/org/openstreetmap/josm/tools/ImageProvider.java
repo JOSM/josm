@@ -255,7 +255,7 @@ public class ImageProvider {
     public static final String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
 
     /** set of class loaders to take images from */
-    protected static final Set<ClassLoader> classLoaders = new HashSet<>();
+    private static final Set<ClassLoader> classLoaders = new HashSet<>();
     static {
         try {
             classLoaders.add(ClassLoader.getSystemClassLoader());
