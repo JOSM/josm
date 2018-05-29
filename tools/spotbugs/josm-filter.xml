@@ -82,6 +82,9 @@
         <Class name="~org.openstreetmap.josm.data.imagery.types.*" />
     </Match>
     <Match>
+        <Class name="~org.tukaani.*" />
+    </Match>
+    <Match>
         <Class name="~org.w3._2001.xmlschema.*" />
     </Match>
 
