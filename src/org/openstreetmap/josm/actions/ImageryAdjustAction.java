@@ -298,7 +298,9 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 }
             }
             updateOffsetIntl();
-            layer.invalidate();
+            if (layer != null) {
+                layer.invalidate();
+            }
         }
 
         private void updateOffset() {
