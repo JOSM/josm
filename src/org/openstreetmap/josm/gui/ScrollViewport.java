@@ -98,7 +98,7 @@ public class ScrollViewport extends JPanel {
 
     private final int allowedScrollDirections;
 
-    private final ComponentAdapter refreshButtonsOnResize = new ComponentAdapter() {
+    private final transient ComponentAdapter refreshButtonsOnResize = new ComponentAdapter() {
         @Override
         public void componentResized(ComponentEvent e) {
             showOrHideButtons();
