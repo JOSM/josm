@@ -74,6 +74,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class NavigatableComponent extends JComponent implements Helpful {
 
+    private static final double ALIGNMENT_EPSILON = 1e-3;
+
     /**
      * Interface to notify listeners of the change of the zoom area.
      * @since 10600 (functional interface)
@@ -671,10 +673,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         Point2D enOrigin = mvs.getPointFor(new EastNorth(0, 0)).getInView();
         // as a result of the alignment, it is common to round "half integer" values
         // like 1.49999, which is numerically unstable; add small epsilon to resolve this
-        final double epsilon = 1e-3;
         Point2D enOriginAligned = new Point2D.Double(
-                Math.round(enOrigin.getX()) + epsilon,
-                Math.round(enOrigin.getY()) + epsilon);
+                Math.round(enOrigin.getX()) + ALIGNMENT_EPSILON,
+                Math.round(enOrigin.getY()) + ALIGNMENT_EPSILON);
         EastNorth enShift = mvs.getForView(enOriginAligned.getX(), enOriginAligned.getY()).getEastNorth();
         newCenter = newCenter.subtract(enShift);
 
