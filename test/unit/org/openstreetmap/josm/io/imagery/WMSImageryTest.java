@@ -96,5 +96,28 @@ public class WMSImageryTest {
                 + "LAYERS=wms.hgis.cartomatic.pl&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}",
                 wms.buildGetMapUrl(wms.getLayers(), (List<String>) null, true));
     }
+
+    /**
+     * Regression test for bug #16333 (null style name)
+     * @throws IOException if any I/O error occurs
+     * @throws WMSGetCapabilitiesException  never
+     */
+    @Test
+    public void testTicket16333() throws IOException, WMSGetCapabilitiesException {
+        tileServer.stubFor(
+                WireMock.get(WireMock.anyUrl())
+                .willReturn(WireMock.aResponse().withBody(
+                        Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16333, "capabilities.xml")))
+                ))
+        );
+        WMSImagery wms = new WMSImagery(tileServer.url("any"));
+        assertEquals("https://duinoord.xs4all.nl/geoserver/ows?SERVICE=WMS&", wms.buildRootUrl());
+        assertEquals(null, wms.getLayers().get(0).getName());
+        assertEquals("", wms.getLayers().get(0).getTitle());
+
+        assertEquals("bag:Matching Street", wms.getLayers().get(0).getChildren().get(0).getName());
+        assertEquals("Dichtstbijzijnde straat", wms.getLayers().get(0).getChildren().get(0).getTitle());
+
+    }
 }
 
