@@ -166,7 +166,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     protected static ImageryInfo getWMSLayerInfo(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
         try {
             CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT.equals(info.getImageryType()), "wms_endpoint imagery type expected");
-            final WMSImagery wms = new WMSImagery(info.getUrl());
+            final WMSImagery wms = new WMSImagery(info.getUrl(), info.getCustomHttpHeaders());
 
             final WMSLayerTree tree = new WMSLayerTree();
             tree.updateTree(wms);
@@ -200,14 +200,12 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             String selectedLayers = tree.getSelectedLayers().stream()
                     .map(LayerDetails::getName)
                     .collect(Collectors.joining(", "));
-            ImageryInfo ret = new ImageryInfo(info.getName() + selectedLayers,
-                    url,
-                    "wms",
-                    info.getEulaAcceptanceRequired(),
-                    info.getCookies());
-
+            // Use full copy of original Imagery info to copy all attributes. Only overwrite what's different
+            ImageryInfo ret = new ImageryInfo(info);
+            ret.setUrl(url);
+            ret.setImageryType(ImageryType.WMS);
+            ret.setName(info.getName() + selectedLayers);
             ret.setServerProjections(wms.getServerProjections(tree.getSelectedLayers()));
-
             return ret;
         } catch (MalformedURLException ex) {
             handleException(ex, tr("Invalid service URL."), tr("WMS Error"), null);

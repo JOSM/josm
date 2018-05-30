@@ -7,10 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import org.fest.util.Collections;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -81,5 +83,65 @@ public class WMSEndpointTileSourceTest {
                 + "REQUEST=GetMap&LAYERS=single_node_in_way&STYLES=default&"
                 + "SRS=EPSG:3857&WIDTH=512&HEIGHT=512&"
                 + "BBOX=20037506.6204108,-60112521.5836107,60112521.5836107,-20037506.6204108", tileSource.getTileUrl(1, 1, 1));
+    }
+
+    @Test
+    public void testCustomHeaders() throws Exception {
+        tileServer.stubFor(
+                WireMock.get(WireMock.urlEqualTo("/capabilities?SERVICE=WMS&REQUEST=GetCapabilities"))
+                .willReturn(
+                        WireMock.aResponse()
+                        .withBody(Files.readAllBytes(Paths.get(TestUtils.getTestDataRoot() + "wms/webatlas.no.xml")))
+                        )
+                );
+
+        tileServer.stubFor(WireMock.get(WireMock.urlEqualTo("//maps")).willReturn(WireMock.aResponse().withBody(
+                "<?xml version='1.0' encoding='UTF-8'?>\n" +
+                "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n" +
+                "  <entry>\n" +
+                "        <name>Norway Orthophoto (historic)</name>\n" +
+                "        <name lang=\"nb\">Norge i Bilder (historisk)</name>\n" +
+                "        <id>geovekst-nib-historic</id>\n" +
+                "        <type>wms_endpoint</type>\n" +
+                "        <country-code>NO</country-code>\n" +
+                "        <description lang=\"en\">Historic Norwegian orthophotos and maps, courtesy of Geovekst and Norkart.</description>\n" +
+                "        <url><![CDATA[" + tileServer.url("/capabilities?SERVICE=WMS&REQUEST=GetCapabilities") + "]]></url>\n" +
+                "        <custom-http-header header-name=\"X-WAAPI-TOKEN\" header-value=\"b8e36d51-119a-423b-b156-d744d54123d5\" />\n" +
+                "        <attribution-text>© Geovekst</attribution-text>\n" +
+                "        <attribution-url>https://www.norgeibilder.no/</attribution-url>\n" +
+                "        <permission-ref>https://forum.openstreetmap.org/viewtopic.php?id=62083</permission-ref>\n" +
+                "        <icon>https://register.geonorge.no/data/organizations/_L_norgeibilder96x96.png</icon>\n" +
+                "        <max-zoom>21</max-zoom>\n" +
+                "        <valid-georeference>true</valid-georeference>\n" +
+                "</entry>\n" +
+                "</imagery>"
+                )));
+
+        Config.getPref().putList("imagery.layers.sites", Arrays.asList(tileServer.url("//maps")));
+        ImageryLayerInfo.instance.loadDefaults(true, null, false);
+        ImageryInfo wmsImageryInfo = ImageryLayerInfo.instance.getDefaultLayers().get(0);
+        wmsImageryInfo.setDefaultLayers(Collections.list(new DefaultLayer(ImageryType.WMS_ENDPOINT, "historiske-ortofoto", "", "")));
+        WMSEndpointTileSource tileSource = new WMSEndpointTileSource(wmsImageryInfo, Main.getProjection());
+        tileSource.initProjection(Projections.getProjectionByCode("EPSG:3857"));
+        assertEquals("b8e36d51-119a-423b-b156-d744d54123d5", wmsImageryInfo.getCustomHttpHeaders().get("X-WAAPI-TOKEN"));
+        assertEquals("b8e36d51-119a-423b-b156-d744d54123d5", tileSource.getHeaders().get("X-WAAPI-TOKEN"));
+        assertEquals(true, wmsImageryInfo.isGeoreferenceValid());
+        tileServer.verify(
+                WireMock.getRequestedFor(WireMock.urlEqualTo("/capabilities?SERVICE=WMS&REQUEST=GetCapabilities"))
+                .withHeader("X-WAAPI-TOKEN", WireMock.equalTo("b8e36d51-119a-423b-b156-d744d54123d5")));
+        assertEquals("http://waapi.webatlas.no/wms-orto-hist/?"
+                + "FORMAT=image/png&"
+                + "TRANSPARENT=TRUE&"
+                + "VERSION=1.1.1&"
+                + "SERVICE=WMS&"
+                + "REQUEST=GetMap&"
+                + "LAYERS=historiske-ortofoto&"
+                + "STYLES=&"
+                + "SRS=EPSG:3857&"
+                + "WIDTH=512&"
+                + "HEIGHT=512&"
+                + "BBOX=20037506.6204108,-60112521.5836107,60112521.5836107,-20037506.6204108",
+                tileSource.getTileUrl(1, 1, 1));
+
     }
 }
