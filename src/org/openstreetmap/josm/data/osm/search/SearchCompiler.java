@@ -275,7 +275,7 @@ public class SearchCompiler {
          * @return true if the tagged object matches this criterion
          */
         public boolean match(Tagged tagged) {
-            return false;
+            return tagged instanceof OsmPrimitive ? match((OsmPrimitive) tagged) : false;
         }
 
         @Override
