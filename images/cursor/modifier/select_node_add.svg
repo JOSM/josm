@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="16px" height="16px" viewBox="0 0 32 32">
   <g fill="none" stroke-width="2" stroke="#000">
-    <path d="m1,1h30v22h-30z" stroke-dasharray="0 1 4 4 4 4 4 4 4 2 4 4 4 4 4 1"/>
-    <path d="m1,1h30v22h-30z" stroke-dasharray="1 4 4 4 4 4 4 4 2 4 4 4 4 4 1 0" stroke="#fff"/>
+    <path d="m1,1h30v22h-30z" stroke-dasharray="0,1,4,4,4,4,4,4,4,2,4,4,4,4,4,1"/>
+    <path d="m1,1h30v22h-30z" stroke-dasharray="1,4,4,4,4,4,4,4,2,4,4,4,4,4,1,0" stroke="#fff"/>
     <path d="m3,11h4v-4h4v4h4v4h-4v4h-4v-4h-4z" fill="#fff"/>
-    <path d="m22,10h6v6h-6z" fill="#fff" stroke="#e53d2a"/>
+    <path d="m19,9h6v6h-6z" fill="#fff" stroke="#e53d2a"/>
   </g>
 </svg>
