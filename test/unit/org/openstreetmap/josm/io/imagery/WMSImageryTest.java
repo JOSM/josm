@@ -90,9 +90,9 @@ public class WMSImageryTest {
                         ))
                 );
         WMSImagery wms = new WMSImagery(tileServer.url("any"));
-        assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k", wms.buildRootUrl());
+        assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k?", wms.buildRootUrl());
         assertEquals("wms.hgis.cartomatic.pl", wms.getLayers().get(0).getName());
-        assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25kFORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&"
+        assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&"
                 + "LAYERS=wms.hgis.cartomatic.pl&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}",
                 wms.buildGetMapUrl(wms.getLayers(), (List<String>) null, true));
     }
