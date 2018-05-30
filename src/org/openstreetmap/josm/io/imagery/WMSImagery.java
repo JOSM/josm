@@ -431,7 +431,11 @@ public class WMSImagery {
                         }
                         // TODO should we handle also POST?
                         if ("GET".equalsIgnoreCase(mode) && getMapUrl != null && !"".equals(getMapUrl)) {
-                            this.getMapUrl = getMapUrl;
+                            if (getMapUrl.endsWith("?")) {
+                                this.getMapUrl = getMapUrl;
+                            } else {
+                                this.getMapUrl = getMapUrl + "?";
+                            }
                         }
                     }
                 }
