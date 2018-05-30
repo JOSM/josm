@@ -4791,104 +4791,101 @@ node.place, way.place, area.place { font-size: 11; }
 /* way text labels */
 /*******************/
 
-way|z17-[highway=motorway][setting("highway_labels")],
-way|z17-[highway=motorway_link][setting("highway_labels")],
-way|z17-[highway=trunk][setting("highway_labels")],
-way|z17-[highway=trunk_link][setting("highway_labels")],
-way|z17-[highway=primary][setting("highway_labels")],
-way|z17-[highway=primary_link][setting("highway_labels")],
-way|z17-[highway=secondary][setting("highway_labels")],
-way|z17-[highway=secondary_link][setting("highway_labels")],
-way|z17-[highway=tertiary][setting("highway_labels")],
-way|z17-[highway=tertiary_link][setting("highway_labels")],
-way|z17-[highway=unclassified][setting("highway_labels")],
-way|z17-[highway=residential][setting("highway_labels")],
-way|z17-[highway=living_street][setting("highway_labels")],
-way|z17-[highway=escape][setting("highway_labels")],
-way|z17-[highway=pedestrian][!area?][setting("highway_labels")],
-way|z17-[highway=steps][setting("highway_labels")],
-way|z17-[highway=footway][setting("highway_labels")],
-way|z17-[highway=path][setting("highway_labels")],
-way|z17-[highway=service][setting("highway_labels")],
-way|z17-[highway=track][setting("highway_labels")],
-way|z17-[highway=cycleway][setting("highway_labels")],
-way|z17-[highway=bridleway][setting("highway_labels")],
-way|z17-[highway=bus_guideway][setting("highway_labels")],
-way|z17-[highway=raceway][setting("highway_labels")],
-way|z17-[highway=construction][setting("highway_labels")],
-way|z17-[highway=road][setting("highway_labels")] {
+way|z18-[highway=motorway][setting("highway_labels")],
+way|z18-[highway=motorway_link][setting("highway_labels")],
+way|z18-[highway=trunk][setting("highway_labels")],
+way|z18-[highway=trunk_link][setting("highway_labels")],
+way|z18-[highway=primary][setting("highway_labels")],
+way|z18-[highway=primary_link][setting("highway_labels")],
+way|z18-[highway=secondary][setting("highway_labels")],
+way|z18-[highway=secondary_link][setting("highway_labels")],
+way|z18-[highway=tertiary][setting("highway_labels")],
+way|z18-[highway=tertiary_link][setting("highway_labels")],
+way|z18-[highway=unclassified][setting("highway_labels")],
+way|z18-[highway=residential][setting("highway_labels")],
+way|z18-[highway=living_street][setting("highway_labels")],
+way|z18-[highway=escape][setting("highway_labels")],
+way|z18-[highway=pedestrian][!area?][setting("highway_labels")],
+way|z18-[highway=steps][setting("highway_labels")],
+way|z18-[highway=footway][setting("highway_labels")],
+way|z18-[highway=path][setting("highway_labels")],
+way|z18-[highway=service][setting("highway_labels")],
+way|z18-[highway=track][setting("highway_labels")],
+way|z18-[highway=cycleway][setting("highway_labels")],
+way|z18-[highway=bridleway][setting("highway_labels")],
+way|z18-[highway=bus_guideway][setting("highway_labels")],
+way|z18-[highway=raceway][setting("highway_labels")],
+way|z18-[highway=construction][setting("highway_labels")],
+way|z18-[highway=road][setting("highway_labels")] {
     text: auto;
     text-color: black;
-    font-size: 9;
+    font-size: 10;
     text-position: line;
     text-halo-opacity: 1;
     text-halo-radius: 1.5;
 }
-way|z17-[highway=motorway][setting("highway_labels")],
-way|z17-[highway=motorway_link][setting("highway_labels")] {
+way|z18-[highway=motorway][setting("highway_labels")],
+way|z18-[highway=motorway_link][setting("highway_labels")] {
     text-halo-color: motorway#809bc0;
 }
-way|z17-[highway=trunk][setting("highway_labels")],
-way|z17-[highway=trunk_link][setting("highway_labels")] {
+way|z18-[highway=trunk][setting("highway_labels")],
+way|z18-[highway=trunk_link][setting("highway_labels")] {
     text-halo-color: trunk#7fc97f;
 }
-way|z17-[highway=primary][setting("highway_labels")],
-way|z17-[highway=primary_link][setting("highway_labels")] {
+way|z18-[highway=primary][setting("highway_labels")],
+way|z18-[highway=primary_link][setting("highway_labels")] {
     text-halo-color: primary#fb805f;
 }
-way|z17-[highway=secondary][setting("highway_labels")],
-way|z17-[highway=secondary_link][setting("highway_labels")] {
+way|z18-[highway=secondary][setting("highway_labels")],
+way|z18-[highway=secondary_link][setting("highway_labels")] {
     text-halo-color: secondary#fdbf6f;
 }
-way|z17-[highway=tertiary][setting("highway_labels")],
-way|z17-[highway=tertiary_link][setting("highway_labels")] {
+way|z18-[highway=tertiary][setting("highway_labels")],
+way|z18-[highway=tertiary_link][setting("highway_labels")] {
     text-halo-color: tertiary#f7f496;
 }
-way|z17-[highway=unclassified][setting("highway_labels")],
-way|z17-[highway=residential][setting("highway_labels")],
-way|z17-[highway=living_street][setting("highway_labels")],
-way|z17-[highway=escape][setting("highway_labels")] {
+way|z18-[highway=unclassified][setting("highway_labels")],
+way|z18-[highway=residential][setting("highway_labels")],
+way|z18-[highway=living_street][setting("highway_labels")],
+way|z18-[highway=escape][setting("highway_labels")] {
     text-halo-color: street#c0c0c0;
 }
-way|z17-[highway=pedestrian][!area?][setting("highway_labels")],
-way|z17-[highway=steps][setting("highway_labels")],
-way|z17-[highway=footway][setting("highway_labels")],
-way|z17-[highway=path][setting("highway_labels")] {
+way|z18-[highway=pedestrian][!area?][setting("highway_labels")],
+way|z18-[highway=steps][setting("highway_labels")],
+way|z18-[highway=footway][setting("highway_labels")],
+way|z18-[highway=path][setting("highway_labels")] {
     text-halo-color: foot#00ff00;
 }
-way|z17-[highway=service][setting("highway_labels")] {
+way|z18-[highway=service][setting("highway_labels")] {
     text-halo-color: service#809bc0;
 }
-way|z17-[highway=track][setting("highway_labels")] {
+way|z18-[highway=track][setting("highway_labels")] {
     text-halo-color: highway_track#6e541c;
 }
-way|z17-[highway=cycleway][setting("highway_labels")],
-way|z17-[highway=path][setting("highway_labels")].cyclecolor {
+way|z18-[highway=cycleway][setting("highway_labels")],
+way|z18-[highway=path][setting("highway_labels")].cyclecolor {
     text-halo-color: bicycle#b100ff;
 }
-way|z17-[highway=bridleway][setting("highway_labels")] {
+way|z18-[highway=bridleway][setting("highway_labels")] {
     text-halo-color: horse#a18559;
 }
-way|z17-[highway=bus_guideway][setting("highway_labels")] {
+way|z18-[highway=bus_guideway][setting("highway_labels")] {
     text-halo-color: rail#404040;
 }
-way|z17-[highway=raceway][setting("highway_labels")] {
+way|z18-[highway=raceway][setting("highway_labels")] {
     text-halo-color: raceway#ff80ff;
 }
-way|z17-[highway=construction][setting("highway_labels")] {
+way|z18-[highway=construction][setting("highway_labels")] {
     text-halo-color: construction#ffff00;
 }
-way|z17-[highway=road][setting("highway_labels")] {
+way|z18-[highway=road][setting("highway_labels")] {
     text-halo-color: highway_road#770000;
 }
-way|z17-[highway][railway=platform][setting("highway_labels")] {
+way|z18-[highway][railway=platform][setting("highway_labels")] {
     text-halo-color: rail#404040;
 }
-way|z17-[highway][public_transport=platform][setting("highway_labels")] {
+way|z18-[highway][public_transport=platform][setting("highway_labels")] {
     text-halo-color: service#809bc0;
-}
-way|z18[highway][setting("highway_labels")] {
-    font-size: 10;
 }
 way|z19[highway][setting("highway_labels")] {
     font-size: 11;
