@@ -10,8 +10,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,12 +103,17 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             case WMTS:
                 // specify which layer to use
                 if (info.getDefaultLayers() == null || info.getDefaultLayers().isEmpty()) {
-                    DefaultLayer layerId = new WMTSTileSource(info).userSelectLayer();
+                    WMTSTileSource tileSource = new WMTSTileSource(info);
+                    DefaultLayer layerId = tileSource.userSelectLayer();
                     if (layerId != null) {
                         ImageryInfo copy = new ImageryInfo(info);
-                        List<DefaultLayer> defaultLayers = new ArrayList<>(1);
-                        defaultLayers.add(layerId);
-                        copy.setDefaultLayers(defaultLayers);
+                        copy.setDefaultLayers(Collections.singletonList(layerId));
+                        String layerName = tileSource.getLayers().stream()
+                                .filter(x -> x.getIdentifier().equals(layerId.getLayerName()))
+                                .map(x -> x.getUserTitle())
+                                .findFirst()
+                                .orElse("");
+                        copy.setName(copy.getName() + ": " + layerName);
                         return copy;
                     }
                     return null;

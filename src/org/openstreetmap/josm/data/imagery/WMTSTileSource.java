@@ -1107,4 +1107,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     public String getServerCRS() {
         return tileProjection != null ? tileProjection.toCode() : null;
     }
+
+    /**
+     * Layers that can be used with this tile source
+     * @return unmodifiable collection of layers available in this tile source
+     * @since 13879
+     */
+    public Collection<Layer> getLayers() {
+        return Collections.unmodifiableCollection(layers);
+    }
 }
