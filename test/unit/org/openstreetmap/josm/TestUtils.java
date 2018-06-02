@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
 
 import org.junit.Assume;
@@ -36,10 +38,12 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.AbstractProgressMonitor;
 import org.openstreetmap.josm.gui.progress.CancelHandler;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.testutils.FakeGraphics;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -456,6 +460,34 @@ public final class TestUtils {
             }
         } catch (IOException e) {
             fail(e.toString());
+        }
+    }
+
+    /**
+     * Waits until any asynchronous operations launched by the test on the EDT or worker threads have
+     * (almost certainly) completed.
+     */
+    public static void syncEDTAndWorkerThreads() {
+        boolean workerQueueEmpty = false;
+        while (!workerQueueEmpty) {
+            try {
+                // once our own task(s) have made it to the front of their respective queue(s),
+                // they're both executing at the same time and we know there aren't any outstanding
+                // worker tasks, then presumably the only way there could be incomplete operations
+                // is if the EDT had launched a deferred task to run on itself or perhaps set up a
+                // swing timer - neither are particularly common patterns in JOSM (?)
+                //
+                // there shouldn't be a risk of creating a deadlock in doing this as there shouldn't
+                // (...couldn't?) be EDT operations waiting on the results of a worker task.
+                workerQueueEmpty = MainApplication.worker.submit(
+                    () -> GuiHelper.runInEDTAndWaitAndReturn(
+                        () -> ((ThreadPoolExecutor) MainApplication.worker).getQueue().isEmpty()
+                    )
+                ).get();
+            } catch (InterruptedException | ExecutionException e) {
+                // inconclusive - retry...
+                workerQueueEmpty = false;
+            }
         }
     }
 }
