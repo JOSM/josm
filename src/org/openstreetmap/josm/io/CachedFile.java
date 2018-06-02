@@ -398,7 +398,7 @@ public class CachedFile implements Closeable {
         try {
             url = new URL(name);
             if (!"file".equals(url.getProtocol())) {
-                String prefKey = getPrefKey(url, destDir, null);
+                String prefKey = getPrefKey(url, destDir);
                 List<String> localPath = new ArrayList<>(Config.getPref().getList(prefKey));
                 if (localPath.size() == 2) {
                     File lfile = new File(localPath.get(1));
@@ -419,24 +419,19 @@ public class CachedFile implements Closeable {
      * directories will not share a cache file.
      * @param url URL
      * @param destDir destination directory
-     * @param parameter additional URL parameter (used e.g. for maps)
      * @return Preference key
      */
-    private static String getPrefKey(URL url, String destDir, String parameter) {
+    private static String getPrefKey(URL url, String destDir) {
         StringBuilder prefKey = new StringBuilder("mirror.");
         if (destDir != null) {
             prefKey.append(destDir).append('.');
         }
-        if (parameter != null) {
-            prefKey.append(url.toString().replaceAll("%<(.*)>", ""));
-        } else {
-            prefKey.append(url.toString());
-        }
+        prefKey.append(url.toString().replaceAll("%<(.*)>", ""));
         return prefKey.toString().replaceAll("=", "_");
     }
 
     private File checkLocal(URL url) throws IOException {
-        String prefKey = getPrefKey(url, destDir, parameter);
+        String prefKey = getPrefKey(url, destDir);
         String urlStr = url.toExternalForm();
         if (parameter != null)
             urlStr = urlStr.replaceAll("%<(.*)>", "");
