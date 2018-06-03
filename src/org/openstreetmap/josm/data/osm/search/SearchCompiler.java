@@ -88,6 +88,12 @@ public class SearchCompiler {
         addMatchFactory(new CoreUnaryMatchFactory());
     }
 
+    /**
+     * Constructs a new {@code SearchCompiler}.
+     * @param caseSensitive {@code true} to perform a case-sensitive search
+     * @param regexSearch {@code true} to perform a regex-based search
+     * @param tokenizer to split the search string into tokens
+     */
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
         this.regexSearch = regexSearch;
@@ -275,7 +281,7 @@ public class SearchCompiler {
          * @return true if the tagged object matches this criterion
          */
         public boolean match(Tagged tagged) {
-            return tagged instanceof OsmPrimitive ? match((OsmPrimitive) tagged) : false;
+            return tagged instanceof OsmPrimitive && match((OsmPrimitive) tagged);
         }
 
         @Override
