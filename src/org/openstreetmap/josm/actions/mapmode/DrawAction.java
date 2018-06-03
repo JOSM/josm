@@ -1181,7 +1181,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         }
 
         // This happens when nothing is selected, but we still want to highlight the "target node"
-        if (mouseOnExistingNode == null && mousePos != null && getLayerManager().getEditDataSet().selectionEmpty()) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (mouseOnExistingNode == null && mousePos != null && ds != null && ds.selectionEmpty()) {
             mouseOnExistingNode = mapView.getNearestNode(mousePos, OsmPrimitive::isSelectable);
         }
 
