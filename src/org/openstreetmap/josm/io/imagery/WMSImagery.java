@@ -433,7 +433,7 @@ public class WMSImagery {
                         if ("GET".equalsIgnoreCase(mode) && getMapUrl != null && !"".equals(getMapUrl)) {
                             try {
                                 String query = (new URL(getMapUrl)).getQuery();
-                                if (query == null || query.isEmpty()) {
+                                if (query == null) {
                                     this.getMapUrl = getMapUrl + "?";
                                 } else {
                                     this.getMapUrl = getMapUrl;
