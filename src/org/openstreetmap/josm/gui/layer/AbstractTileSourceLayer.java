@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -459,6 +460,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 List<List<String>> content = new ArrayList<>();
                 content.add(Arrays.asList(tr("Tile name"), tile.getKey()));
                 content.add(Arrays.asList(tr("Tile URL"), url));
+                if (tile.getTileSource() instanceof TemplatedTileSource) {
+                    Map<String, String> headers = ((TemplatedTileSource) tile.getTileSource()).getHeaders();
+                    for(String key: new TreeSet<>(headers.keySet())) {
+                        // iterate over sorted keys
+                        content.add(Arrays.asList(tr("Custom header: {0}", key), headers.get(key)));
+                    }
+                }
                 content.add(Arrays.asList(tr("Tile size"),
                         getSizeString(tile.getTileSource().getTileSize())));
                 content.add(Arrays.asList(tr("Tile display size"),
