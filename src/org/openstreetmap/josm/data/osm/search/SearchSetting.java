@@ -13,11 +13,17 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 12659 (extracted from {@code SearchAction})
  */
 public class SearchSetting {
+    /** Search text */
     public String text;
+    /** Search mode */
     public SearchMode mode;
+    /** {@code true} to perform a case-sensitive search */
     public boolean caseSensitive;
+    /** {@code true} to perform a regex-based search */
     public boolean regexSearch;
+    /** {@code true} to execute a MapCSS selector */
     public boolean mapCSSSearch;
+    /** {@code true} to include all objects (even incomplete and deleted ones) */
     public boolean allElements;
 
     /**
