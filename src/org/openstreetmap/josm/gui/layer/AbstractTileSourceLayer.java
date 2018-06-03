@@ -49,6 +49,7 @@ import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -162,7 +163,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private int currentZoomLevel;
 
     private final AttributionSupport attribution = new AttributionSupport();
-    private final TileHolder clickedTileHolder = new TileHolder();
 
     /**
      * Offset between calculated zoom level and zoom level used to download and show tiles. Negative values will result in
@@ -189,8 +189,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         public void mouseClicked(MouseEvent e) {
             if (!isVisible()) return;
             if (e.getButton() == MouseEvent.BUTTON3) {
-                clickedTileHolder.setTile(getTileForPixelpos(e.getX(), e.getY()));
-                new TileSourceLayerPopup().show(e.getComponent(), e.getX(), e.getY());
+                new TileSourceLayerPopup(e.getX(), e.getY()).show(e.getComponent(), e.getX(), e.getY());
             } else if (e.getButton() == MouseEvent.BUTTON1) {
                 attribution.handleAttribution(e.getPoint(), true);
             }
@@ -418,11 +417,25 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return layers.size() == 1 && layers.get(0) instanceof TMSLayer;
     }
 
-    private final class ShowTileInfoAction extends AbstractAction {
+    private abstract static class AbstractTileAction extends AbstractAction {
 
-        private ShowTileInfoAction() {
-            super(tr("Show tile info"));
-            setEnabled(clickedTileHolder.getTile() != null);
+        protected final AbstractTileSourceLayer<?> layer;
+        protected final Tile tile;
+
+        private AbstractTileAction(String name, AbstractTileSourceLayer<?> layer, Tile tile) {
+            super(name);
+            this.layer = layer;
+            this.tile = tile;
+        }
+        @Override
+        public abstract void actionPerformed(ActionEvent arg0);
+
+    }
+    private final static class ShowTileInfoAction extends AbstractTileAction {
+
+        private ShowTileInfoAction(AbstractTileSourceLayer<?> layer, Tile tile) {
+            super(tr("Show tile info"), layer, tile);
+            setEnabled(tile != null);
         }
 
         private String getSizeString(int size) {
@@ -431,33 +444,32 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            Tile clickedTile = clickedTileHolder.getTile();
-            if (clickedTile != null) {
+            if (tile != null) {
                 ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), tr("OK"));
                 JPanel panel = new JPanel(new GridBagLayout());
-                Rectangle2D displaySize = coordinateConverter.getRectangleForTile(clickedTile);
+                Rectangle2D displaySize = layer.coordinateConverter.getRectangleForTile(tile);
                 String url = "";
                 try {
-                    url = clickedTile.getUrl();
+                    url = tile.getUrl();
                 } catch (IOException e) {
                     // silence exceptions
                     Logging.trace(e);
                 }
 
                 List<List<String>> content = new ArrayList<>();
-                content.add(Arrays.asList(tr("Tile name"), clickedTile.getKey()));
+                content.add(Arrays.asList(tr("Tile name"), tile.getKey()));
                 content.add(Arrays.asList(tr("Tile URL"), url));
                 content.add(Arrays.asList(tr("Tile size"),
-                        getSizeString(clickedTile.getTileSource().getTileSize())));
+                        getSizeString(tile.getTileSource().getTileSize())));
                 content.add(Arrays.asList(tr("Tile display size"),
                         new StringBuilder().append(displaySize.getWidth())
                                 .append('x')
                                 .append(displaySize.getHeight()).toString()));
-                if (coordinateConverter.requiresReprojection()) {
+                if (layer.coordinateConverter.requiresReprojection()) {
                     content.add(Arrays.asList(tr("Reprojection"),
-                            clickedTile.getTileSource().getServerCRS() +
+                            tile.getTileSource().getServerCRS() +
                             " -> " + Main.getProjection().toCode()));
-                    BufferedImage img = clickedTile.getImage();
+                    BufferedImage img = tile.getImage();
                     if (img != null) {
                         content.add(Arrays.asList(tr("Reprojected tile size"),
                             img.getWidth() + "x" + img.getHeight()));
@@ -467,17 +479,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 for (List<String> entry: content) {
                     panel.add(new JLabel(entry.get(0) + ':'), GBC.std());
                     panel.add(GBC.glue(5, 0), GBC.std());
-                    panel.add(createTextField(entry.get(1)), GBC.eol().fill(GBC.HORIZONTAL));
+                    panel.add(layer.createTextField(entry.get(1)), GBC.eol().fill(GBC.HORIZONTAL));
                 }
 
-                for (Entry<String, String> e: clickedTile.getMetadata().entrySet()) {
+                for (Entry<String, String> e: tile.getMetadata().entrySet()) {
                     panel.add(new JLabel(tr("Metadata ") + tr(e.getKey()) + ':'), GBC.std());
                     panel.add(GBC.glue(5, 0), GBC.std());
                     String value = e.getValue();
                     if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
                         value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(value)));
                     }
-                    panel.add(createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
+                    panel.add(layer.createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
 
                 }
                 ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
@@ -487,28 +499,26 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private final class LoadTileAction extends AbstractAction {
+    private final static class LoadTileAction extends AbstractTileAction {
 
-        private LoadTileAction() {
-            super(tr("Load tile"));
-            setEnabled(clickedTileHolder.getTile() != null);
+        private LoadTileAction(AbstractTileSourceLayer<?> layer, Tile tile) {
+            super(tr("Load tile"), layer, tile);
+            setEnabled(tile != null);
         }
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            Tile clickedTile = clickedTileHolder.getTile();
-            if (clickedTile != null) {
-                loadTile(clickedTile, true);
-                invalidate();
+            if (tile != null) {
+                layer.loadTile(tile, true);
+                layer.invalidate();
             }
         }
     }
 
-    private void sendOsmTileRequest(String request) {
-        Tile clickedTile = clickedTileHolder.getTile();
-        if (clickedTile != null) {
+    private void sendOsmTileRequest(Tile tile, String request) {
+        if (tile != null) {
             try {
-                new Notification(HttpClient.create(new URL(clickedTile.getUrl() + '/' + request))
+                new Notification(HttpClient.create(new URL(tile.getUrl() + '/' + request))
                         .connect().fetchContent()).show();
             } catch (IOException ex) {
                 Logging.error(ex);
@@ -516,42 +526,27 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private final class GetOsmTileStatusAction extends AbstractAction {
-        private GetOsmTileStatusAction() {
-            super(tr("Get tile status"));
-            setEnabled(clickedTileHolder.getTile() != null);
+    private final static class GetOsmTileStatusAction extends AbstractTileAction {
+        private GetOsmTileStatusAction(AbstractTileSourceLayer<?> layer, Tile tile) {
+            super(tr("Get tile status"), layer, tile);
+            setEnabled(tile != null);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            sendOsmTileRequest("status");
+            layer.sendOsmTileRequest(tile, "status");
         }
     }
 
-    private final class MarkOsmTileDirtyAction extends AbstractAction {
-        private MarkOsmTileDirtyAction() {
-            super(tr("Force tile rendering"));
-            setEnabled(clickedTileHolder.getTile() != null);
+    private final static class MarkOsmTileDirtyAction extends AbstractTileAction {
+        private MarkOsmTileDirtyAction(AbstractTileSourceLayer<?> layer, Tile tile) {
+            super(tr("Force tile rendering"), layer, tile);
+            setEnabled(tile != null);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            sendOsmTileRequest("dirty");
-        }
-    }
-
-    /**
-     * Simple class to keep clickedTile within hookUpMapView
-     */
-    private static final class TileHolder {
-        private Tile t;
-
-        public Tile getTile() {
-            return t;
-        }
-
-        public void setTile(Tile t) {
-            this.t = t;
+            layer.sendOsmTileRequest(tile, "dirty");
         }
     }
 
@@ -606,21 +601,39 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public class TileSourceLayerPopup extends JPopupMenu {
         /**
          * Constructs a new {@code TileSourceLayerPopup}.
+         * @param x horizontal dimension where user clicked
+         * @param y vertical dimension where user clicked
          */
-        public TileSourceLayerPopup() {
-            for (Action a : getCommonEntries()) {
-                if (a instanceof LayerAction) {
-                    add(((LayerAction) a).createMenuComponent());
-                } else {
-                    add(new JMenuItem(a));
+        public TileSourceLayerPopup(int x, int y) {
+            List<JMenu> submenus = new ArrayList<>();
+            MainApplication.getLayerManager().getVisibleLayersInZOrder().stream()
+            .filter(AbstractTileSourceLayer.class::isInstance)
+            .map(AbstractTileSourceLayer.class::cast)
+            .forEachOrdered(layer -> {
+                JMenu submenu = new JMenu(layer.getName());
+                for (Action a : layer.getCommonEntries()) {
+                    if (a instanceof LayerAction) {
+                        submenu.add(((LayerAction) a).createMenuComponent());
+                    } else {
+                        submenu.add(new JMenuItem(a));
+                    }
                 }
-            }
-            add(new JSeparator());
-            add(new JMenuItem(new LoadTileAction()));
-            add(new JMenuItem(new ShowTileInfoAction()));
-            if (ExpertToggleAction.isExpert() && tileSource != null && tileSource.isModTileFeatures()) {
-                add(new JMenuItem(new GetOsmTileStatusAction()));
-                add(new JMenuItem(new MarkOsmTileDirtyAction()));
+                submenu.add(new JSeparator());
+                Tile tile = layer.getTileForPixelpos(x, y);
+                submenu.add(new JMenuItem(new LoadTileAction(layer, tile)));
+                submenu.add(new JMenuItem(new ShowTileInfoAction(layer, tile)));
+                if (ExpertToggleAction.isExpert() && tileSource != null && tileSource.isModTileFeatures()) {
+                    submenu.add(new JMenuItem(new GetOsmTileStatusAction(layer, tile)));
+                    submenu.add(new JMenuItem(new MarkOsmTileDirtyAction(layer, tile)));
+                }
+                submenus.add(submenu);
+            });
+
+            if (submenus.size() == 1) {
+                JMenu menu = submenus.get(0);
+                Arrays.stream(menu.getMenuComponents()).forEachOrdered(this::add);
+            } else if (submenus.size() > 1) {
+                submenus.stream().forEachOrdered(this::add);
             }
         }
     }

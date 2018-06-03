@@ -202,6 +202,6 @@ public class AbstractTileSourceLayerTest {
      */
     @Test
     public void testTileSourceLayerPopup() {
-        assertNotNull(testLayer.new TileSourceLayerPopup());
+        assertNotNull(testLayer.new TileSourceLayerPopup(100, 100));
     }
 }
