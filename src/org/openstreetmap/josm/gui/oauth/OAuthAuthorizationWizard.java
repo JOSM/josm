@@ -205,7 +205,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         getContentPane().add(buildHeaderInfoPanel(), BorderLayout.NORTH);
 
         setTitle(tr("Get an Access Token for ''{0}''", apiUrl));
-        this.setMinimumSize(new Dimension(600, 420));
+        this.setMinimumSize(new Dimension(500, 400));
 
         pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl, executor);
         pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl, executor);
@@ -312,11 +312,12 @@ public class OAuthAuthorizationWizard extends JDialog {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
+            pack();
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             Main.parent,
-                            new Dimension(450, 540)
+                            getPreferredSize()
                     )
             ).applySafe(this);
             initFromPreferences();

@@ -103,7 +103,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         pnlMessage.setText("<html><body><p class=\"warning-body\">"
                 + tr("Please enter your OSM user name and password. The password will <strong>not</strong> be saved "
                         + "in clear text in the JOSM preferences and it will be submitted to the OSM server <strong>only once</strong>. "
-                        + "Subsequent data upload requests don''t use your password any more.")
+                        + "Subsequent data upload requests don''t use your password any more.").replaceAll("\\. ", ".<br>")
                         + "</p>"
                         + "</body></html>");
         pnl.add(pnlMessage, gc);
