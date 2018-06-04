@@ -73,17 +73,6 @@ public class ValidateUploadHook implements UploadHook {
                 }
             }
         }
-        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-        if (editLayer != null) {
-            editLayer.validationErrors.clear();
-            editLayer.validationErrors.addAll(errors);
-        }
-        MapFrame map = MainApplication.getMap();
-        if (map != null) {
-            map.validatorDialog.tree.setErrors(errors);
-        }
-        if (errors.isEmpty())
-            return true;
 
         if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
             int nume = 0;
@@ -104,6 +93,19 @@ public class ValidateUploadHook implements UploadHook {
             if (nume == 0)
                 return true;
         }
+
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
+        if (editLayer != null) {
+            editLayer.validationErrors.clear();
+            editLayer.validationErrors.addAll(errors);
+        }
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.validatorDialog.tree.setErrors(errors);
+        }
+        if (errors.isEmpty())
+            return true;
+
         return displayErrorScreen(errors);
     }
 
