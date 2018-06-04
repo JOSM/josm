@@ -79,6 +79,7 @@ import org.openstreetmap.josm.actions.PreferenceToggleAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.PurgeAction;
 import org.openstreetmap.josm.actions.RedoAction;
+import org.openstreetmap.josm.actions.ReorderImageryLayersAction;
 import org.openstreetmap.josm.actions.ReportBugAction;
 import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.actions.ReverseWayAction;
@@ -386,14 +387,25 @@ public class MainMenu extends JMenuBar {
 
     private static final int defaultMenuPos = 11;
 
+    /** Move the selection up */
     public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
+    /** Move the selection down */
     public final JosmAction moveDownAction = new MoveAction(MoveAction.Direction.DOWN);
+    /** Move the selection left */
     public final JosmAction moveLeftAction = new MoveAction(MoveAction.Direction.LEFT);
+    /** Move the selection right */
     public final JosmAction moveRightAction = new MoveAction(MoveAction.Direction.RIGHT);
 
+    /** Reorder imagery layers */
+    public final ReorderImageryLayersAction reorderImageryLayersAction = new ReorderImageryLayersAction();
+
+    /** Search tagging presets */
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
+    /** Search objects by their tagging preset */
     public final TaggingPresetSearchPrimitiveDialog.Action presetSearchPrimitiveAction = new TaggingPresetSearchPrimitiveDialog.Action();
+    /** Toggle visibility of dialogs panel */
     public final DialogsToggleAction dialogsToggleAction = new DialogsToggleAction();
+    /** Toggle the full-screen mode */
     public FullscreenToggleAction fullscreenToggleAction;
 
     /** this menu listener hides unnecessary JSeparators in a menu list but does not remove them.
@@ -760,6 +772,7 @@ public class MainMenu extends JMenuBar {
                 tr("Click to open the tagging presets tab in the preferences"), TaggingPresetPreference.class));
         presetsMenu.addSeparator();
 
+        add(imageryMenu, reorderImageryLayersAction);
         add(imageryMenu, PreferencesAction.forPreferenceTab(tr("Imagery preferences"),
                 tr("Click to open the imagery tab in the preferences"), ImageryPreference.class));
 

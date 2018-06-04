@@ -428,11 +428,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             this.layer = layer;
             this.tile = tile;
         }
+
         @Override
         public abstract void actionPerformed(ActionEvent arg0);
-
     }
-    private final static class ShowTileInfoAction extends AbstractTileAction {
+
+    private static final class ShowTileInfoAction extends AbstractTileAction {
 
         private ShowTileInfoAction(AbstractTileSourceLayer<?> layer, Tile tile) {
             super(tr("Show tile info"), layer, tile);
@@ -462,7 +463,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 content.add(Arrays.asList(tr("Tile URL"), url));
                 if (tile.getTileSource() instanceof TemplatedTileSource) {
                     Map<String, String> headers = ((TemplatedTileSource) tile.getTileSource()).getHeaders();
-                    for(String key: new TreeSet<>(headers.keySet())) {
+                    for (String key: new TreeSet<>(headers.keySet())) {
                         // iterate over sorted keys
                         content.add(Arrays.asList(tr("Custom header: {0}", key), headers.get(key)));
                     }
@@ -507,7 +508,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private final static class LoadTileAction extends AbstractTileAction {
+    private static final class LoadTileAction extends AbstractTileAction {
 
         private LoadTileAction(AbstractTileSourceLayer<?> layer, Tile tile) {
             super(tr("Load tile"), layer, tile);
@@ -534,7 +535,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private final static class GetOsmTileStatusAction extends AbstractTileAction {
+    private static final class GetOsmTileStatusAction extends AbstractTileAction {
         private GetOsmTileStatusAction(AbstractTileSourceLayer<?> layer, Tile tile) {
             super(tr("Get tile status"), layer, tile);
             setEnabled(tile != null);
@@ -546,7 +547,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private final static class MarkOsmTileDirtyAction extends AbstractTileAction {
+    private static final class MarkOsmTileDirtyAction extends AbstractTileAction {
         private MarkOsmTileDirtyAction(AbstractTileSourceLayer<?> layer, Tile tile) {
             super(tr("Force tile rendering"), layer, tile);
             setEnabled(tile != null);
