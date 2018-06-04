@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -183,7 +184,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
     public ExtendedDialog setButtonIcons(String... buttonIcons) {
         bIcons = new Icon[buttonIcons.length];
         for (int i = 0; i < buttonIcons.length; ++i) {
-            bIcons[i] = ImageProvider.get(buttonIcons[i]);
+            bIcons[i] = ImageProvider.get(buttonIcons[i], ImageSizes.LARGEICON);
         }
         return this;
     }
