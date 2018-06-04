@@ -42,7 +42,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
@@ -827,7 +826,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
         for (final ImageryLayer i : layerManager.getLayersOfType(ImageryLayer.class)) {
             if (i.isVisible()) {
-                layerInfo.add(ImageryInfo.ImageryType.BING.equals(i.getInfo().getImageryType()) ? "Bing" : i.getName());
+                layerInfo.add(i.getInfo().getSourceName());
             }
         }
         return Utils.join("; ", layerInfo);

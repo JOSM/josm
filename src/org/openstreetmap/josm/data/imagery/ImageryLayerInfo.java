@@ -42,11 +42,11 @@ public class ImageryLayerInfo {
     /** List of layer ids of all usable layers */
     private final Map<String, ImageryInfo> layerIds = new HashMap<>();
     /** List of all available default layers */
-    private static final List<ImageryInfo> defaultLayers = new ArrayList<>();
+    static final List<ImageryInfo> defaultLayers = new ArrayList<>();
     /** List of all available default layers (including mirrors) */
-    private static final List<ImageryInfo> allDefaultLayers = new ArrayList<>();
+    static final List<ImageryInfo> allDefaultLayers = new ArrayList<>();
     /** List of all layer ids of available default layers (including mirrors) */
-    private static final Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
+    static final Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
         Main.getJOSMWebsite()+"/maps%<?ids=>"

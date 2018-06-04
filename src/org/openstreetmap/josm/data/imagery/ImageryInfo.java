@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1550,6 +1551,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
+     * Determines if this imagery should be transparent.
      * @return should this imagery be transparent
      */
     public boolean isTransparent() {
@@ -1557,7 +1559,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     *
+     * Sets whether imagery should be transparent.
      * @param transparent set to true if imagery should be transparent
      */
     public void setTransparent(boolean transparent) {
@@ -1565,6 +1567,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
+     * Returns minimum tile expiration in seconds.
      * @return minimum tile expiration in seconds
      */
     public int getMinimumTileExpire() {
@@ -1572,11 +1575,30 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Sets minimum tile expiration in seconds
+     * Sets minimum tile expiration in seconds.
      * @param minimumTileExpire minimum tile expiration in seconds
      */
     public void setMinimumTileExpire(int minimumTileExpire) {
         this.minimumTileExpire = minimumTileExpire;
+    }
 
+    /**
+     * Get a string representation of this imagery info suitable for the {@code source} changeset tag.
+     * @return English name, if known
+     * @since 13890
+     */
+    public String getSourceName() {
+        if (ImageryType.BING.equals(getImageryType())) {
+            return "Bing";
+        } else {
+            if (id != null) {
+                // Retrieve english name, unfortunately not saved in preferences
+                Optional<ImageryInfo> infoEn = ImageryLayerInfo.allDefaultLayers.stream().filter(x -> id.equals(x.getId())).findAny();
+                if (infoEn.isPresent()) {
+                    return infoEn.get().getOriginalName();
+                }
+            }
+            return getOriginalName();
+        }
     }
 }
