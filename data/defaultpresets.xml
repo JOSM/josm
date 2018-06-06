@@ -2273,7 +2273,8 @@
             <text key="name" text="Name" />
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-                <combo key="tunnel" text="Tunnel" values="culvert,yes" />
+                <combo key="tunnel" text="Tunnel" values="culvert,flooded,yes" />
+                <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" />
                 <text key="width" text="Width (meters)" />
                 <text key="wikipedia" text="Wikipedia" />
                 <check key="lock" text="Lock" disable_off="true" />
@@ -2375,6 +2376,21 @@
                 <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Culvert -->
+        <item name="Penstock" icon="presets/nautical/penstock.svg" type="way" preset_name_label="true">
+            <link href="https://wiki.openstreetmap.org/wiki/Tag:usage=penstock"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:usage=penstock" />
+            <key key="waterway" value="pressurised" />
+            <key key="man_made" value="pipeline" />
+            <key key="substance" value="water" />
+            <key key="usage" value="penstock" />
+            <combo key="location" text="Location" values="underground,overground" values_context="pipeline" />
+            <optional>
+                <text key="name" text="Name" />
+                <text key="operator" text="Operator" />
+                <combo key="diameter" text="Diameter (in mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
+                <combo key="material" text="Material" values="metal,steel" />
+            </optional>
+        </item> <!-- Penstock -->
         <separator/>
         <item name="Basin" icon="presets/landuse/basin.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:landuse=basin"
