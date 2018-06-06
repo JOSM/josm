@@ -377,7 +377,8 @@
             <reference ref="rating_phases" />
             <combo key="devices" text="Number of devices" values="1,2,3,4" />
             <combo key="windings" text="Number of windings" values="1,2,3,4" />
-            <combo key="windings:configuration" text="Windings configuration" values="star,delta,open-delta,zigzag,open,scott,leblanc" values_context="power" />
+            <!-- #16364: don't use simple "power" context to avoid conflict with "delta" used for power towers -->
+            <combo key="windings:configuration" text="Windings configuration" values="star,delta,open-delta,zigzag,open,scott,leblanc" values_context="power_windings" />
         </optional>
     </chunk>
     <chunk id="optional_bridge">
