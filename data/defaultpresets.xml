@@ -2274,7 +2274,7 @@
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <combo key="tunnel" text="Tunnel" values="culvert,flooded,yes" />
-                <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" />
+                <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" values_context="usage" />
                 <text key="width" text="Width (meters)" />
                 <text key="wikipedia" text="Wikipedia" />
                 <check key="lock" text="Lock" disable_off="true" />
