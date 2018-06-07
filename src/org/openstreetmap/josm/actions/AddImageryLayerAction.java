@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.LayerDetails;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
+import org.openstreetmap.josm.data.imagery.WMTSTileSource.Layer;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.AlignImageryPanel;
@@ -110,7 +111,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                         copy.setDefaultLayers(Collections.singletonList(layerId));
                         String layerName = tileSource.getLayers().stream()
                                 .filter(x -> x.getIdentifier().equals(layerId.getLayerName()))
-                                .map(x -> x.getUserTitle())
+                                .map(Layer::getUserTitle)
                                 .findFirst()
                                 .orElse("");
                         copy.setName(copy.getName() + ": " + layerName);
