@@ -386,6 +386,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
+    /**
+     * Returns best zoom level.
+     * @return best zoom level
+     */
     public int getBestZoom() {
         double factor = getScaleFactor(1); // check the ratio between area of tilesize at zoom 1 to current view
         double result = Math.log(factor)/Math.log(2)/2;
@@ -423,14 +427,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         protected final AbstractTileSourceLayer<?> layer;
         protected final Tile tile;
 
-        private AbstractTileAction(String name, AbstractTileSourceLayer<?> layer, Tile tile) {
+        AbstractTileAction(String name, AbstractTileSourceLayer<?> layer, Tile tile) {
             super(name);
             this.layer = layer;
             this.tile = tile;
         }
-
-        @Override
-        public abstract void actionPerformed(ActionEvent arg0);
     }
 
     private static final class ShowTileInfoAction extends AbstractTileAction {
@@ -440,7 +441,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             setEnabled(tile != null);
         }
 
-        private String getSizeString(int size) {
+        private static String getSizeString(int size) {
             return new StringBuilder().append(size).append('x').append(size).toString();
         }
 
@@ -524,7 +525,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private void sendOsmTileRequest(Tile tile, String request) {
+    private static void sendOsmTileRequest(Tile tile, String request) {
         if (tile != null) {
             try {
                 new Notification(HttpClient.create(new URL(tile.getUrl() + '/' + request))
@@ -543,7 +544,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            layer.sendOsmTileRequest(tile, "status");
+            sendOsmTileRequest(tile, "status");
         }
     }
 
@@ -555,7 +556,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            layer.sendOsmTileRequest(tile, "dirty");
+            sendOsmTileRequest(tile, "dirty");
         }
     }
 

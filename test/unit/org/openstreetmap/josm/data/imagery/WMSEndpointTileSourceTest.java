@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.imagery;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -125,7 +126,7 @@ public class WMSEndpointTileSourceTest {
         tileSource.initProjection(Projections.getProjectionByCode("EPSG:3857"));
         assertEquals("b8e36d51-119a-423b-b156-d744d54123d5", wmsImageryInfo.getCustomHttpHeaders().get("X-WAAPI-TOKEN"));
         assertEquals("b8e36d51-119a-423b-b156-d744d54123d5", tileSource.getHeaders().get("X-WAAPI-TOKEN"));
-        assertEquals(true, wmsImageryInfo.isGeoreferenceValid());
+        assertTrue(wmsImageryInfo.isGeoreferenceValid());
         tileServer.verify(
                 WireMock.getRequestedFor(WireMock.urlEqualTo("/capabilities?SERVICE=WMS&REQUEST=GetCapabilities"))
                 .withHeader("X-WAAPI-TOKEN", WireMock.equalTo("b8e36d51-119a-423b-b156-d744d54123d5")));
@@ -142,6 +143,5 @@ public class WMSEndpointTileSourceTest {
                 + "HEIGHT=512&"
                 + "BBOX=20037506.6204108,-60112521.5836107,60112521.5836107,-20037506.6204108",
                 tileSource.getTileUrl(1, 1, 1));
-
     }
 }
