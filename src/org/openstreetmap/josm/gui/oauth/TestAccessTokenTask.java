@@ -26,6 +26,7 @@ import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -123,7 +124,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             if (connection.getResponse().getResponseCode() != HttpURLConnection.HTTP_OK)
                 throw new OsmApiException(connection.getResponse().getResponseCode(),
                         connection.getResponse().getHeaderField("Error"), null);
-            Document d = Utils.parseSafeDOM(connection.getResponse().getContent());
+            Document d = XmlUtils.parseSafeDOM(connection.getResponse().getContent());
             return OsmServerUserInfoReader.buildFromXML(d);
         } catch (SAXException | ParserConfigurationException e) {
             throw new XmlParsingException(e);

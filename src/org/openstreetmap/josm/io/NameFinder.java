@@ -23,6 +23,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -88,7 +89,7 @@ public final class NameFinder {
     public static List<SearchResult> parseSearchResults(Reader reader) throws IOException, ParserConfigurationException, SAXException {
         InputSource inputSource = new InputSource(reader);
         NameFinderResultParser parser = new NameFinderResultParser();
-        Utils.parseSafeSAX(inputSource, parser);
+        XmlUtils.parseSafeSAX(inputSource, parser);
         return parser.getResult();
     }
 

@@ -244,7 +244,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
     private Iterable<Object> start(final Reader in, final ContentHandler contentHandler) throws SAXException, IOException {
         try {
-            XMLReader reader = Utils.newSafeSAXParser().getXMLReader();
+            XMLReader reader = XmlUtils.newSafeSAXParser().getXMLReader();
             reader.setContentHandler(contentHandler);
             try {
                 // Do not load external DTDs (fix #8191)
@@ -284,7 +284,7 @@ public class XmlObjectParser implements Iterable<Object> {
      * @throws SAXException if any XML or I/O error occurs
      */
     public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
-        SchemaFactory factory = Utils.newXmlSchemaFactory();
+        SchemaFactory factory = XmlUtils.newXmlSchemaFactory();
         try (CachedFile cf = new CachedFile(schemaSource); InputStream mis = cf.getInputStream()) {
             Schema schema = factory.newSchema(new StreamSource(mis));
             ValidatorHandler validator = schema.newValidatorHandler();

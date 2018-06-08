@@ -27,6 +27,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -96,7 +97,7 @@ public class ImageryReader implements Closeable {
                     .setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince)
                     .getContentReader()) {
                 InputSource is = new InputSource(in);
-                Utils.parseSafeSAX(is, parser);
+                XmlUtils.parseSafeSAX(is, parser);
                 return parser.entries;
             }
         } catch (SAXException e) {

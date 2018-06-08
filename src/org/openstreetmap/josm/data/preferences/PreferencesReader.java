@@ -20,7 +20,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.xml.XMLConstants;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -36,7 +35,7 @@ import org.openstreetmap.josm.spi.preferences.MapListSetting;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -96,7 +95,7 @@ public class PreferencesReader {
      */
     public static void validateXML(Reader in) throws IOException, SAXException {
         try (CachedFile cf = new CachedFile("resource://data/preferences.xsd"); InputStream xsdStream = cf.getInputStream()) {
-            Schema schema = Utils.newXmlSchemaFactory().newSchema(new StreamSource(xsdStream));
+            Schema schema = XmlUtils.newXmlSchemaFactory().newSchema(new StreamSource(xsdStream));
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(in));
         }
@@ -126,11 +125,11 @@ public class PreferencesReader {
      */
     public void parse() throws XMLStreamException, IOException {
         if (reader != null) {
-            this.parser = XMLInputFactory.newInstance().createXMLStreamReader(reader);
+            this.parser = XmlUtils.newSafeXMLInputFactory().createXMLStreamReader(reader);
             doParse();
         } else {
             try (BufferedReader in = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
-                this.parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                this.parser = XmlUtils.newSafeXMLInputFactory().createXMLStreamReader(in);
                 doParse();
             }
         }

@@ -17,8 +17,8 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -152,7 +152,7 @@ public class OsmChangesetContentParser {
         try {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing changeset content ..."));
-            Utils.parseSafeSAX(source, new Parser());
+            XmlUtils.parseSafeSAX(source, new Parser());
         } catch (XmlParsingException e) {
             throw e;
         } catch (ParserConfigurationException | SAXException | IOException e) {

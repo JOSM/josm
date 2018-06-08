@@ -66,14 +66,10 @@ import java.util.zip.ZipFile;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.SchemaFactoryConfigurationError;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.w3c.dom.Document;
@@ -1338,37 +1334,24 @@ public final class Utils {
     /**
      * Returns the W3C XML Schema factory implementation. Robust method dealing with ContextClassLoader problems.
      * @return the W3C XML Schema factory implementation
+     * @deprecated Use {@link XmlUtils#newXmlSchemaFactory}
      * @since 13715
      */
+    @Deprecated
     public static SchemaFactory newXmlSchemaFactory() {
-        try {
-            return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        } catch (SchemaFactoryConfigurationError e) {
-            Logging.debug(e);
-            // Can happen with icedtea-web. Use workaround from https://issues.apache.org/jira/browse/GERONIMO-6185
-            Thread currentThread = Thread.currentThread();
-            ClassLoader old = currentThread.getContextClassLoader();
-            currentThread.setContextClassLoader(null);
-            try {
-                return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            } finally {
-                currentThread.setContextClassLoader(old);
-            }
-        }
+        return XmlUtils.newXmlSchemaFactory();
     }
 
     /**
      * Returns a new secure DOM builder, supporting XML namespaces.
      * @return a new secure DOM builder, supporting XML namespaces
      * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
+     * @deprecated Use {@link XmlUtils#newSafeDOMBuilder}
      * @since 10404
      */
+    @Deprecated
     public static DocumentBuilder newSafeDOMBuilder() throws ParserConfigurationException {
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-        builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        builderFactory.setNamespaceAware(true);
-        builderFactory.setValidating(false);
-        return builderFactory.newDocumentBuilder();
+        return XmlUtils.newSafeDOMBuilder();
     }
 
     /**
@@ -1380,16 +1363,12 @@ public final class Utils {
      * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
      * @throws IOException if any IO errors occur.
      * @throws SAXException for SAX errors.
+     * @deprecated Use {@link XmlUtils#parseSafeDOM}
      * @since 10404
      */
+    @Deprecated
     public static Document parseSafeDOM(InputStream is) throws ParserConfigurationException, IOException, SAXException {
-        long start = System.currentTimeMillis();
-        Logging.debug("Starting DOM parsing of {0}", is);
-        Document result = newSafeDOMBuilder().parse(is);
-        if (Logging.isDebugEnabled()) {
-            Logging.debug("DOM parsing done in {0}", getDurationString(System.currentTimeMillis() - start));
-        }
-        return result;
+        return XmlUtils.parseSafeDOM(is);
     }
 
     /**
@@ -1397,13 +1376,12 @@ public final class Utils {
      * @return a new secure SAX parser, supporting XML namespaces
      * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
      * @throws SAXException for SAX errors.
+     * @deprecated Use {@link XmlUtils#newSafeSAXParser}
      * @since 8287
      */
+    @Deprecated
     public static SAXParser newSafeSAXParser() throws ParserConfigurationException, SAXException {
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        parserFactory.setNamespaceAware(true);
-        return parserFactory.newSAXParser();
+        return XmlUtils.newSafeSAXParser();
     }
 
     /**
@@ -1415,15 +1393,12 @@ public final class Utils {
      * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
      * @throws SAXException for SAX errors.
      * @throws IOException if any IO errors occur.
+     * @deprecated Use {@link XmlUtils#parseSafeSAX}
      * @since 8347
      */
+    @Deprecated
     public static void parseSafeSAX(InputSource is, DefaultHandler dh) throws ParserConfigurationException, SAXException, IOException {
-        long start = System.currentTimeMillis();
-        Logging.debug("Starting SAX parsing of {0} using {1}", is, dh);
-        newSafeSAXParser().parse(is, dh);
-        if (Logging.isDebugEnabled()) {
-            Logging.debug("SAX parsing done in {0}", getDurationString(System.currentTimeMillis() - start));
-        }
+        XmlUtils.parseSafeSAX(is, dh);
     }
 
     /**

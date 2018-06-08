@@ -24,6 +24,7 @@ import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -502,7 +503,7 @@ public abstract class OsmServerReader extends OsmConnection {
             monitor.beginTask("");
             monitor.indeterminateSubTask(subtask);
             try (InputStream in = getInputStream(api, monitor.createSubTaskMonitor(1, true), reason)) {
-                return parser.parse(Utils.parseSafeDOM(in));
+                return parser.parse(XmlUtils.parseSafeDOM(in));
             }
         } catch (OsmTransferException e) {
             throw e;
