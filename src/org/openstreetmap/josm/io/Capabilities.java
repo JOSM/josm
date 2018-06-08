@@ -13,7 +13,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -273,7 +273,7 @@ public class Capabilities {
          */
         public static Capabilities parse(InputSource inputSource) throws SAXException, IOException, ParserConfigurationException {
             CapabilitiesParser parser = new CapabilitiesParser();
-            Utils.parseSafeSAX(inputSource, parser);
+            XmlUtils.parseSafeSAX(inputSource, parser);
             return parser.getCapabilities();
         }
     }

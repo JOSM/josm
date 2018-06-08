@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.notes.NoteComment.Action;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -215,7 +215,7 @@ public class NoteReader {
     public List<Note> parse() throws SAXException, IOException {
         DefaultHandler parser = new Parser();
         try {
-            Utils.parseSafeSAX(inputSource, parser);
+            XmlUtils.parseSafeSAX(inputSource, parser);
         } catch (ParserConfigurationException e) {
             Logging.error(e); // broken SAXException chaining
             throw new SAXException(e);

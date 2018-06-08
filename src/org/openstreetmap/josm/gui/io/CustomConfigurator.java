@@ -34,7 +34,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -52,6 +51,7 @@ import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -227,7 +227,7 @@ public final class CustomConfigurator {
 
         try {
             String toXML = Main.pref.toXML(true);
-            DocumentBuilder builder = Utils.newSafeDOMBuilder();
+            DocumentBuilder builder = XmlUtils.newSafeDOMBuilder();
             document = builder.parse(new ByteArrayInputStream(toXML.getBytes(StandardCharsets.UTF_8)));
             exportDocument = builder.newDocument();
             root = document.getDocumentElement();
@@ -257,7 +257,7 @@ public final class CustomConfigurator {
                 }
             }
             File f = new File(filename);
-            Transformer ts = TransformerFactory.newInstance().newTransformer();
+            Transformer ts = XmlUtils.newSafeTransformerFactory().newTransformer();
             ts.setOutputProperty(OutputKeys.INDENT, "yes");
             ts.transform(new DOMSource(exportDocument), new StreamResult(f.toURI().getPath()));
         } catch (DOMException | TransformerFactoryConfigurationError | TransformerException ex) {
@@ -405,7 +405,7 @@ public final class CustomConfigurator {
 
         public void openAndReadXML(InputStream is) {
             try {
-                Document document = Utils.parseSafeDOM(is);
+                Document document = XmlUtils.parseSafeDOM(is);
                 synchronized (CustomConfigurator.class) {
                     processXML(document);
                 }
@@ -680,7 +680,7 @@ public final class CustomConfigurator {
         private Preferences readPreferencesFromDOMElement(Element item) {
             Preferences tmpPref = new Preferences();
             try {
-                Transformer xformer = TransformerFactory.newInstance().newTransformer();
+                Transformer xformer = XmlUtils.newSafeTransformerFactory().newTransformer();
                 CharArrayWriter outputWriter = new CharArrayWriter(8192);
                 StreamResult out = new StreamResult(outputWriter);
 

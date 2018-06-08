@@ -1266,7 +1266,7 @@ public class ImageProvider {
      */
     private static String getImgUrlFromWikiInfoPage(final String base, final String fn) {
         try {
-            final XMLReader parser = Utils.newSafeSAXParser().getXMLReader();
+            final XMLReader parser = XmlUtils.newSafeSAXParser().getXMLReader();
             parser.setContentHandler(new DefaultHandler() {
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {

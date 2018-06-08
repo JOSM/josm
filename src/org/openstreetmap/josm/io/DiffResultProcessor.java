@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -91,7 +92,7 @@ public class DiffResultProcessor {
         try {
             progressMonitor.beginTask(tr("Parsing response from server..."));
             InputSource inputSource = new InputSource(new StringReader(diffUploadResponse));
-            Utils.parseSafeSAX(inputSource, new Parser());
+            XmlUtils.parseSafeSAX(inputSource, new Parser());
         } catch (XmlParsingException e) {
             throw e;
         } catch (IOException | ParserConfigurationException | SAXException e) {

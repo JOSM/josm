@@ -21,6 +21,7 @@ import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -126,7 +127,7 @@ public class BugReportSender extends Thread {
             }
 
             try (InputStream in = connection.getContent()) {
-                return retrieveDebugToken(Utils.parseSafeDOM(in));
+                return retrieveDebugToken(XmlUtils.parseSafeDOM(in));
             }
         } catch (IOException | SAXException | ParserConfigurationException | XPathExpressionException t) {
             throw new BugReportSenderException(t);

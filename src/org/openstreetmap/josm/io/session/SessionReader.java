@@ -47,6 +47,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -741,7 +742,7 @@ public class SessionReader {
         this.zip = zip;
 
         try {
-            parseJos(Utils.parseSafeDOM(josIS), progressMonitor);
+            parseJos(XmlUtils.parseSafeDOM(josIS), progressMonitor);
         } catch (SAXException e) {
             throw new IllegalDataException(e);
         } catch (ParserConfigurationException e) {

@@ -8,11 +8,11 @@ import java.util.Locale;
 import java.util.function.BiFunction;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
 
 /**
  * Helper class for handling OGC GetCapabilities documents
@@ -81,12 +81,7 @@ public final class GetCapabilitiesParseHelper {
      * @throws XMLStreamException if any XML stream error occurs
      */
     public static XMLStreamReader getReader(InputStream in) throws XMLStreamException {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        // do not try to load external entities, nor validate the XML
-        factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
-        factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
-        factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-        return factory.createXMLStreamReader(in);
+        return XmlUtils.newSafeXMLInputFactory().createXMLStreamReader(in);
     }
 
     /**
