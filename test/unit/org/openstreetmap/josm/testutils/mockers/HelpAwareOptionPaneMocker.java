@@ -40,7 +40,7 @@ import mockit.Mock;
  * of only the parts necessary for a particular case.
  *
  * The default {@link #getMockResultForMessage(Object)} will raise an
- * {@link junit.framework.AssertionFailedError} on an {@link #showOptionDialog(Component, Object, String,
+ * {@link AssertionError} on an {@link #showOptionDialog(Component, Object, String,
  * int, Icon, HelpAwareOptionPane.ButtonSpec[], HelpAwareOptionPane.ButtonSpec, String)}
  * activation without a matching mapping entry or if the named button doesn't exist.
  *
@@ -134,59 +134,67 @@ public class HelpAwareOptionPaneMocker extends BaseDialogMockUp<HelpAwareOptionP
         final HelpAwareOptionPane.ButtonSpec defaultOption,
         final String helpTopic
     ) {
-        final Object result = this.getMockResultForMessage(msg);
+        try {
+            final Object result = this.getMockResultForMessage(msg);
 
-        if (result == null) {
-            fail(
-                "Invalid result for HelpAwareOptionPane: null (HelpAwareOptionPane returns"
-                + "JOptionPane.OK_OPTION for closed windows if that was the intent)"
+            if (result == null) {
+                fail(
+                    "Invalid result for HelpAwareOptionPane: null (HelpAwareOptionPane returns"
+                    + "JOptionPane.OK_OPTION for closed windows if that was the intent)"
+                );
+            }
+
+            Integer retval = null;
+            if (result instanceof String) {
+                retval = this.getButtonPositionFromLabel(options, (String) result);
+            } else if (result instanceof Integer) {
+                retval = (Integer) result;
+            } else {
+                throw new IllegalArgumentException(
+                    "HelpAwareOptionPane message mapped to unsupported type of Object: " + result
+                );
+            }
+
+            // check the returned integer for validity
+            if (retval < 0) {
+                fail(String.format(
+                    "Invalid result for HelpAwareOptionPane: %s (HelpAwareOptionPane returns "
+                    + "JOptionPane.OK_OPTION for closed windows if that was the intent)",
+                    retval
+                ));
+            } else if (retval > (options == null ? 0 : options.length)) {  // NOTE 1-based indexing
+                fail(String.format(
+                    "Invalid result for HelpAwareOptionPane: %s (in call with options = %s)",
+                    retval,
+                    options
+                ));
+            }
+
+            Logging.info(
+                "{0} answering {1} to HelpAwareOptionPane with message {2}",
+                this.getClass().getName(),
+                retval,
+                this.getStringFromMessage(msg)
             );
-        }
 
-        Integer retval = null;
-        if (result instanceof String) {
-            retval = this.getButtonPositionFromLabel(options, (String) result);
-        } else if (result instanceof Integer) {
-            retval = (Integer) result;
-        } else {
-            throw new IllegalArgumentException(
-                "HelpAwareOptionPane message mapped to unsupported type of Object: " + result
-            );
-        }
-
-        // check the returned integer for validity
-        if (retval < 0) {
-            fail(String.format(
-                "Invalid result for HelpAwareOptionPane: %s (HelpAwareOptionPane returns "
-                + "JOptionPane.OK_OPTION for closed windows if that was the intent)",
+            this.getInvocationLogInternal().add(this.getInvocationLogEntry(
+                msg,
+                title,
+                messageType,
+                icon,
+                options,
+                defaultOption,
+                helpTopic,
                 retval
             ));
-        } else if (retval > (options == null ? 0 : options.length)) {  // NOTE 1-based indexing
-            fail(String.format(
-                "Invalid result for HelpAwareOptionPane: %s (in call with options = %s)",
-                retval,
-                options
-            ));
+
+            return retval;
+        } catch (AssertionError e) {
+            // in case this exception gets ignored by the calling thread we want to signify this failure
+            // in the invocation log. it's hard to know what to add to the log in these cases as it's
+            // probably unsafe to call getInvocationLogEntry, so add the exception on its own.
+            this.getInvocationLogInternal().add(new Object[] {e});
+            throw e;
         }
-
-        Logging.info(
-            "{0} answering {1} to HelpAwareOptionPane with message {2}",
-            this.getClass().getName(),
-            retval,
-            this.getStringFromMessage(msg)
-        );
-
-        this.getInvocationLogInternal().add(this.getInvocationLogEntry(
-            msg,
-            title,
-            messageType,
-            icon,
-            options,
-            defaultOption,
-            helpTopic,
-            retval
-        ));
-
-        return retval;
     }
 }

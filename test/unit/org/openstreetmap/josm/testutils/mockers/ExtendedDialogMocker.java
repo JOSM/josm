@@ -39,7 +39,7 @@ import mockit.Mock;
  * only the parts necessary for a particular case.
  *
  * The default {@link #getMockResult(ExtendedDialog)} will raise an
- * {@link junit.framework.AssertionFailedError} on an {@link ExtendedDialog} activation without a
+ * {@link AssertionError} on an {@link ExtendedDialog} activation without a
  * matching mapping entry or if the named button doesn't exist.
  *
  * The public {@link #getMockResultMap()} method returns the modifiable result map to allow for situations
@@ -127,17 +127,25 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
     @Mock
     private void setVisible(final Invocation invocation, final boolean value) {
         if (value == true) {
-            final ExtendedDialog instance = invocation.getInvokedInstance();
-            final int mockResult = this.getMockResult(instance);
-            // TODO check validity of mockResult?
-            Deencapsulation.setField(instance, "result", mockResult);
-            Logging.info(
-                "{0} answering {1} to ExtendedDialog with content {2}",
-                this.getClass().getName(),
-                mockResult,
-                this.getString(instance)
-            );
-            this.getInvocationLogInternal().add(this.getInvocationLogEntry(instance, mockResult));
+            try {
+                final ExtendedDialog instance = invocation.getInvokedInstance();
+                final int mockResult = this.getMockResult(instance);
+                // TODO check validity of mockResult?
+                Deencapsulation.setField(instance, "result", mockResult);
+                Logging.info(
+                    "{0} answering {1} to ExtendedDialog with content {2}",
+                    this.getClass().getName(),
+                    mockResult,
+                    this.getString(instance)
+                );
+                this.getInvocationLogInternal().add(this.getInvocationLogEntry(instance, mockResult));
+            } catch (AssertionError e) {
+                // in case this exception gets ignored by the calling thread we want to signify this failure
+                // in the invocation log. it's hard to know what to add to the log in these cases as it's
+                // probably unsafe to call getInvocationLogEntry, so add the exception on its own.
+                this.getInvocationLogInternal().add(new Object[] {e});
+                throw e;
+            }
         }
     }
 

@@ -46,7 +46,7 @@ import mockit.MockUp;
  * only the parts necessary for a particular case.
  *
  * The default {@link #getMockResultForMessage(Object)} will raise an
- * {@link junit.framework.AssertionFailedError} on an activation without a matching mapping entry or if
+ * {@link junit.framework.AssertionError} on an activation without a matching mapping entry or if
  * the mapped result value is invalid for the call.
  *
  * The public {@link #getMockResultMap()} method returns the modifiable result map to allow for situations
@@ -161,42 +161,50 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
         final Object[] selectionValues,
         final Object initialSelectionValue
     ) {
-        final Object result = this.getMockResultForMessage(message);
-        if (selectionValues == null) {
-            if (!(result instanceof String)) {
-                fail(String.format(
-                    "Only valid result type for showInputDialog with null selectionValues is String: received %s",
-                    result
-                ));
+        try {
+            final Object result = this.getMockResultForMessage(message);
+            if (selectionValues == null) {
+                if (!(result instanceof String)) {
+                    fail(String.format(
+                        "Only valid result type for showInputDialog with null selectionValues is String: received %s",
+                        result
+                    ));
+                }
+            } else {
+                if (!Arrays.asList(selectionValues).contains(result)) {
+                    fail(String.format(
+                        "Result for showInputDialog not present in selectionValues: %s",
+                        result
+                    ));
+                }
             }
-        } else {
-            if (!Arrays.asList(selectionValues).contains(result)) {
-                fail(String.format(
-                    "Result for showInputDialog not present in selectionValues: %s",
-                    result
-                ));
-            }
+
+            Logging.info(
+                "{0} answering {1} to showInputDialog with message {2}",
+                this.getClass().getName(),
+                result,
+                this.getStringFromMessage(message)
+            );
+
+            this.getInvocationLogInternal().add(this.getInvocationLogEntry(
+                message,
+                title,
+                null,
+                messageType,
+                icon,
+                selectionValues,
+                initialSelectionValue,
+                result
+            ));
+
+            return result;
+        } catch (AssertionError e) {
+            // in case this exception gets ignored by the calling thread we want to signify this failure
+            // in the invocation log. it's hard to know what to add to the log in these cases as it's
+            // probably unsafe to call getInvocationLogEntry, so add the exception on its own.
+            this.getInvocationLogInternal().add(new Object[] {e});
+            throw e;
         }
-
-        Logging.info(
-            "{0} answering {1} to showInputDialog with message {2}",
-            this.getClass().getName(),
-            result,
-            this.getStringFromMessage(message)
-        );
-
-        this.getInvocationLogInternal().add(this.getInvocationLogEntry(
-            message,
-            title,
-            null,
-            messageType,
-            icon,
-            selectionValues,
-            initialSelectionValue,
-            result
-        ));
-
-        return result;
     }
 
     @Mock
@@ -207,34 +215,42 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
         final int messageType,
         final Icon icon
     ) {
-        // why look up a "result" for a message dialog which can only have one possible result? it's
-        // a good opportunity to assert its contents
-        final Object result = this.getMockResultForMessage(message);
-        if (!(result instanceof Integer && (int) result == JOptionPane.OK_OPTION)) {
-            fail(String.format(
-                "Only valid result for showMessageDialog is %d: received %s",
-                JOptionPane.OK_OPTION,
-                result
+        try {
+            // why look up a "result" for a message dialog which can only have one possible result? it's
+            // a good opportunity to assert its contents
+            final Object result = this.getMockResultForMessage(message);
+            if (!(result instanceof Integer && (int) result == JOptionPane.OK_OPTION)) {
+                fail(String.format(
+                    "Only valid result for showMessageDialog is %d: received %s",
+                    JOptionPane.OK_OPTION,
+                    result
+                ));
+            }
+
+            Logging.info(
+                "{0} answering {1} to showMessageDialog with message {2}",
+                this.getClass().getName(),
+                result,
+                this.getStringFromMessage(message)
+            );
+
+            this.getInvocationLogInternal().add(this.getInvocationLogEntry(
+                message,
+                title,
+                null,
+                messageType,
+                icon,
+                null,
+                null,
+                JOptionPane.OK_OPTION
             ));
+        } catch (AssertionError e) {
+            // in case this exception gets ignored by the calling thread we want to signify this failure
+            // in the invocation log. it's hard to know what to add to the log in these cases as it's
+            // probably unsafe to call getInvocationLogEntry, so add the exception on its own.
+            this.getInvocationLogInternal().add(new Object[] {e});
+            throw e;
         }
-
-        Logging.info(
-            "{0} answering {1} to showMessageDialog with message {2}",
-            this.getClass().getName(),
-            result,
-            this.getStringFromMessage(message)
-        );
-
-        this.getInvocationLogInternal().add(this.getInvocationLogEntry(
-            message,
-            title,
-            null,
-            messageType,
-            icon,
-            null,
-            null,
-            JOptionPane.OK_OPTION
-        ));
     }
 
     @Mock
@@ -246,34 +262,42 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
         final int messageType,
         final Icon icon
     ) {
-        final Object result = this.getMockResultForMessage(message);
-        if (!(result instanceof Integer && Ints.contains(optionTypePermittedResults.get(optionType), (int) result))) {
-            fail(String.format(
-                "Invalid result for showConfirmDialog with optionType %d: %s",
+        try {
+            final Object result = this.getMockResultForMessage(message);
+            if (!(result instanceof Integer && Ints.contains(optionTypePermittedResults.get(optionType), (int) result))) {
+                fail(String.format(
+                    "Invalid result for showConfirmDialog with optionType %d: %s",
+                    optionType,
+                    result
+                ));
+            }
+
+            Logging.info(
+                "{0} answering {1} to showConfirmDialog with message {2}",
+                this.getClass().getName(),
+                result,
+                this.getStringFromMessage(message)
+            );
+
+            this.getInvocationLogInternal().add(this.getInvocationLogEntry(
+                message,
+                title,
                 optionType,
+                messageType,
+                icon,
+                null,
+                null,
                 result
             ));
+
+            return (int) result;
+        } catch (AssertionError e) {
+            // in case this exception gets ignored by the calling thread we want to signify this failure
+            // in the invocation log. it's hard to know what to add to the log in these cases as it's
+            // probably unsafe to call getInvocationLogEntry, so add the exception on its own.
+            this.getInvocationLogInternal().add(new Object[] {e});
+            throw e;
         }
-
-        Logging.info(
-            "{0} answering {1} to showConfirmDialog with message {2}",
-            this.getClass().getName(),
-            result,
-            this.getStringFromMessage(message)
-        );
-
-        this.getInvocationLogInternal().add(this.getInvocationLogEntry(
-            message,
-            title,
-            optionType,
-            messageType,
-            icon,
-            null,
-            null,
-            result
-        ));
-
-        return (int) result;
     }
 
     /**
