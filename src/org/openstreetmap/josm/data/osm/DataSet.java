@@ -775,11 +775,6 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     @Override
-    public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
-        return getPrimitiveById(new SimplePrimitiveId(id, type));
-    }
-
-    @Override
     public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId) {
         return primitiveId != null ? primitivesMap.get(primitiveId) : null;
     }

@@ -114,7 +114,9 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
      * @return the primitive
      * @throws NullPointerException if type is null
      */
-    O getPrimitiveById(long id, OsmPrimitiveType type);
+    default O getPrimitiveById(long id, OsmPrimitiveType type) {
+        return getPrimitiveById(new SimplePrimitiveId(id, type));
+    }
 
     /**
      * Returns a primitive with a given id from the data set. null, if no such primitive exists
