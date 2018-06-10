@@ -470,5 +470,8 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      * @return true if other isn't null and has the same interesting tags (key/value-pairs) as this.
      * @since 13809
      */
-    boolean hasSameInterestingTags(IPrimitive other);
+    default boolean hasSameInterestingTags(IPrimitive other) {
+        return (!hasKeys() && !other.hasKeys())
+                || getInterestingTags().equals(other.getInterestingTags());
+    }
 }

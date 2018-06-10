@@ -850,10 +850,4 @@ public abstract class AbstractPrimitive implements IPrimitive {
         }
         return result;
     }
-
-    @Override
-    public boolean hasSameInterestingTags(IPrimitive other) {
-        return (!hasKeys() && !other.hasKeys())
-                || getInterestingTags().equals(other.getInterestingTags());
-    }
 }
