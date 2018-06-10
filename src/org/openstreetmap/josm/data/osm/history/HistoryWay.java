@@ -152,7 +152,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      */
     public WayData fillPrimitiveData(WayData data) {
         super.fillPrimitiveCommonData(data);
-        data.setNodes(nodeIds);
+        data.setNodeIds(nodeIds);
         return data;
     }
 }

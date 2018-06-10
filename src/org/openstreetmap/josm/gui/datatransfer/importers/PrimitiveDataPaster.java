@@ -131,7 +131,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
                 newNodes.add(newNodeId);
             }
         }
-        ((WayData) data).setNodes(newNodes);
+        ((WayData) data).setNodeIds(newNodes);
     }
 
     private static boolean confirmDeleteIncomplete() {

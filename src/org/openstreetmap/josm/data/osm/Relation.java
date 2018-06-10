@@ -36,11 +36,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
         return new CopyList<>(members);
     }
 
-    /**
-     * Sets members of the relation.
-     * @param members Can be null, in that case all members are removed
-     * @since 1925
-     */
+    @Override
     public void setMembers(List<RelationMember> members) {
         checkDatasetNotReadOnly();
         boolean locked = writeLock();
