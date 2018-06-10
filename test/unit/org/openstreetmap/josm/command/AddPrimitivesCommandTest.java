@@ -267,7 +267,7 @@ public class AddPrimitivesCommandTest {
         NodeData node2 = createTestNode(6);
         WayData way = new WayData();
         way.put("test", "test");
-        way.setNodes(Arrays.asList(node1.getId(), node2.getId()));
+        way.setNodeIds(Arrays.asList(node1.getId(), node2.getId()));
         List<PrimitiveData> testData = Arrays.<PrimitiveData>asList(node1, node2, way);
         return testData;
     }

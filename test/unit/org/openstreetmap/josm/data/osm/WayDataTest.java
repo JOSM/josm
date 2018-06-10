@@ -18,7 +18,7 @@ public class WayDataTest {
     @SuppressFBWarnings(value = "OBJECT_DESERIALIZATION")
     public void testSerializationForDragAndDrop() throws Exception {
         final WayData data = new WayData();
-        data.setNodes(Arrays.asList(1415L, 9265L, 3589L, 7932L, 3846L));
+        data.setNodeIds(Arrays.asList(1415L, 9265L, 3589L, 7932L, 3846L));
         data.setId(314);
         data.setVersion(14);
         data.setChangesetId(314159);

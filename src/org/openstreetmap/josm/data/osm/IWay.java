@@ -67,6 +67,14 @@ public interface IWay<N extends INode> extends IPrimitive {
     long getNodeId(int idx);
 
     /**
+     * Set new list of nodes to way. This method is preferred to multiple calls to addNode/removeNode
+     * and similar methods because nodes are internally saved as array which means lower memory overhead
+     * but also slower modifying operations.
+     * @param nodes New way nodes. Can be null, in that case all way nodes are removed
+     */
+    void setNodes(List<N> nodes);
+
+    /**
      * Determines if this way is closed.
      * @return {@code true} if this way is closed, {@code false} otherwise
      */

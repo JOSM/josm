@@ -39,13 +39,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         return new CopyList<>(nodes);
     }
 
-    /**
-     * Set new list of nodes to way. This method is preferred to multiple calls to addNode/removeNode
-     * and similar methods because nodes are internally saved as array which means lower memory overhead
-     * but also slower modifying operations.
-     * @param nodes New way nodes. Can be null, in that case all way nodes are removed
-     * @since 1862
-     */
+    @Override
     public void setNodes(List<Node> nodes) {
         checkDatasetNotReadOnly();
         boolean locked = writeLock();

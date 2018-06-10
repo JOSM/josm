@@ -81,7 +81,7 @@ public class MergeSourceBuildingVisitor implements OsmPrimitiveVisitor {
         for (Node n: w.getNodes()) {
             newNodes.add(mappedPrimitives.get(n).getUniqueId());
         }
-        clone.setNodes(newNodes);
+        clone.setNodeIds(newNodes);
         mappedPrimitives.put(w, clone);
     }
 

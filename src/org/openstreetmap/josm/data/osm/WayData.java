@@ -70,11 +70,17 @@ public class WayData extends PrimitiveData implements IWay<NodeData> {
         return nodes.get(0).equals(nodes.get(nodes.size() - 1));
     }
 
+    @Override
+    public void setNodes(List<NodeData> nodes) {
+        throw new UnsupportedOperationException("Use setNodeIds(List) instead");
+    }
+
     /**
      * Sets the nodes array
      * @param nodes The nodes this way consists of
+     * @since 13907
      */
-    public void setNodes(List<Long> nodes) {
+    public void setNodeIds(List<Long> nodes) {
         this.nodes = new ArrayList<>(nodes);
     }
 
