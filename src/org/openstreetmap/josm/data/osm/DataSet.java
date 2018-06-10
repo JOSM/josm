@@ -744,16 +744,6 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     @Override
-    public void clearHighlightedVirtualNodes() {
-        setHighlightedVirtualNodes(new ArrayList<WaySegment>());
-    }
-
-    @Override
-    public void clearHighlightedWaySegments() {
-        setHighlightedWaySegments(new ArrayList<WaySegment>());
-    }
-
-    @Override
     public synchronized Area getDataSourceArea() {
         if (cachedDataSourceArea == null) {
             cachedDataSourceArea = OsmData.super.getDataSourceArea();

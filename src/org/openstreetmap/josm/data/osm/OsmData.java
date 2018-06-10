@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -280,12 +281,16 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
     /**
      * clear all highlights of virtual nodes
      */
-    void clearHighlightedVirtualNodes();
+    default void clearHighlightedVirtualNodes() {
+        setHighlightedVirtualNodes(new ArrayList<WaySegment>());
+    }
 
     /**
      * clear all highlights of way segments
      */
-    void clearHighlightedWaySegments();
+    default void clearHighlightedWaySegments() {
+        setHighlightedWaySegments(new ArrayList<WaySegment>());
+    }
 
     /**
      * set what virtual nodes should be highlighted. Requires a Collection of
