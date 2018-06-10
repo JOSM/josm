@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -542,7 +543,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         @Override
         public void visit(OsmPrimitive p) {
             if (p.isUsable()) {
-                p.accept(this);
+                p.accept((PrimitiveVisitor) this);
             }
         }
 

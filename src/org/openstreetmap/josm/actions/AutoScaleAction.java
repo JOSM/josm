@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -307,7 +308,7 @@ public class AutoScaleAction extends JosmAction {
             return null;
         }
         for (OsmPrimitive osm : sel) {
-            osm.accept(v);
+            osm.accept((PrimitiveVisitor) v);
         }
 
         // Increase the bounding box by up to 100% to give more context.
