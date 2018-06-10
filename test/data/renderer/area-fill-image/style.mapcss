@@ -4,31 +4,31 @@ canvas {
 }
 
 area[test=A] {
-	fill-image: "info.png";
+	fill-image: "info";
 	fill-opacity: 1;
 }
 
 area[test=B] {
-	fill-image: "apply.png";
+	fill-image: "apply";
 	fill-opacity: 1;
 }
 
 area[test=C] {
-	fill-image: "apply.png";
+	fill-image: "apply";
 	fill-opacity: .5;
 }
 
 area[test=D] {
-	fill-image: "apply.png";
+	fill-image: "apply";
 	fill-opacity: .5;
 }
 
 area[test=E] {
-	fill-image: "apply.png";
+	fill-image: "apply";
 	fill-opacity: 1;
 }
 
 area[test=F] {
-	fill-image: "info.png";
+	fill-image: "info";
 	fill-opacity: .8;
 }
