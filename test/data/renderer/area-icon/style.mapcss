@@ -4,7 +4,7 @@ canvas {
 }
 
 area[test] {
-	icon-image: "info.png";
+	icon-image: "info";
 	color: red;
 	width: 1;
 }
