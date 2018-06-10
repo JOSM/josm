@@ -323,7 +323,9 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      *
      * @return the name of this primitive
      */
-    String getName();
+    default String getName() {
+        return get("name");
+    }
 
     /**
      * Replies a localized name for this primitive given by the value of the name tags
@@ -332,7 +334,15 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      * @return the name of this primitive, <code>null</code> if no name exists
      * @see LanguageInfo#getLanguageCodes
      */
-    String getLocalName();
+    default String getLocalName() {
+        for (String s : LanguageInfo.getLanguageCodes(null)) {
+            String val = get("name:" + s);
+            if (val != null)
+                return val;
+        }
+
+        return getName();
+    }
 
     /**
      * Replies the display name of a primitive formatted by <code>formatter</code>
