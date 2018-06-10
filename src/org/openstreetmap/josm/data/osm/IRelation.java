@@ -27,11 +27,17 @@ public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
     /**
      * Returns members of the relation.
      * @return Members of the relation. Changes made in returned list are not mapped
-     * back to the primitive, use setMembers() to modify the members
+     * back to the primitive, use {@link #setMembers} to modify the members
      * @since 1925
      * @since 13766 (IRelation)
      */
     List<M> getMembers();
+
+    /**
+     * Sets members of the relation.
+     * @param members Can be null, in that case all members are removed
+     */
+    void setMembers(List<M> members);
 
     /**
      * Returns id of the member at given index.

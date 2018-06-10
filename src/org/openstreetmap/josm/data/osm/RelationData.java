@@ -45,10 +45,7 @@ public class RelationData extends PrimitiveData implements IRelation<RelationMem
         return members;
     }
 
-    /**
-     * Sets relation members.
-     * @param memberData relation members
-     */
+    @Override
     public void setMembers(List<RelationMemberData> memberData) {
         members = new ArrayList<>(memberData);
     }
