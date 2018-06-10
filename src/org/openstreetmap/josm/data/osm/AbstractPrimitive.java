@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -725,22 +724,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     protected abstract void keysChangedImpl(Map<String, String> originalKeys);
 
-    @Override
-    public String getName() {
-        return get("name");
-    }
-
-    @Override
-    public String getLocalName() {
-        for (String s : LanguageInfo.getLanguageCodes(null)) {
-            String val = get("name:" + s);
-            if (val != null)
-                return val;
-        }
-
-        return getName();
-    }
-
     /*-------------------------------------
      * WORK IN PROGRESS, UNINTERESTING KEYS
      *-------------------------------------*/
@@ -866,11 +849,5 @@ public abstract class AbstractPrimitive implements IPrimitive {
             }
         }
         return result;
-    }
-
-    @Override
-    public boolean hasSameInterestingTags(IPrimitive other) {
-        return (!hasKeys() && !other.hasKeys())
-                || getInterestingTags().equals(other.getInterestingTags());
     }
 }
