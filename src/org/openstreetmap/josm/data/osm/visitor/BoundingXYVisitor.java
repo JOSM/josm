@@ -9,10 +9,13 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IRelationMember;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -23,7 +26,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
  * EastNorth values as reference.
  * @author imi
  */
-public class BoundingXYVisitor implements OsmPrimitiveVisitor {
+public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor {
 
     private ProjectionBounds bounds;
 
@@ -34,16 +37,31 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor {
 
     @Override
     public void visit(Way w) {
+        visit((IWay<?>) w);
+    }
+
+    @Override
+    public void visit(Relation r) {
+        visit((IRelation<?>) r);
+    }
+
+    @Override
+    public void visit(INode n) {
+        visit((ILatLon) n);
+    }
+
+    @Override
+    public void visit(IWay<?> w) {
         if (w.isIncomplete()) return;
-        for (Node n : w.getNodes()) {
+        for (INode n : w.getNodes()) {
             visit(n);
         }
     }
 
     @Override
-    public void visit(Relation e) {
+    public void visit(IRelation<?> r) {
         // only use direct members
-        for (RelationMember m : e.getMembers()) {
+        for (IRelationMember<?> m : r.getMembers()) {
             if (!m.isRelation()) {
                 m.getMember().accept(this);
             }
@@ -225,7 +243,7 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor {
             if (p == null) {
                 continue;
             }
-            p.accept(this);
+            p.accept((PrimitiveVisitor) this);
         }
     }
 }
