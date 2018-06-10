@@ -97,7 +97,7 @@ public class BBox {
      * If no node has a known coordinate, an invalid BBox is returned.
      * @param w the way
      */
-    public BBox(Way w) {
+    public BBox(IWay<?> w) {
         w.getNodes().forEach(this::add);
     }
 
@@ -105,7 +105,7 @@ public class BBox {
      * Create BBox for a node. An invalid BBox is returned if the coordinates are not known.
      * @param n the node
      */
-    public BBox(Node n) {
+    public BBox(INode n) {
         this((ILatLon) n);
     }
 
