@@ -316,11 +316,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     @Override
-    public PrimitiveId getPrimitiveId() {
-        return new SimplePrimitiveId(getUniqueId(), getType());
-    }
-
-    @Override
     public void setTimestamp(Date timestamp) {
         this.timestamp = (int) TimeUnit.MILLISECONDS.toSeconds(timestamp.getTime());
     }

@@ -202,7 +202,9 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      *
      * @return the unique primitive id for this primitive
      */
-    PrimitiveId getPrimitiveId();
+    default PrimitiveId getPrimitiveId() {
+        return new SimplePrimitiveId(getUniqueId(), getType());
+    }
 
     /**
      * Replies the version number as returned by the API. The version is 0 if the id is 0 or
