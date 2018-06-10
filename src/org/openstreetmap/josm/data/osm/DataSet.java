@@ -606,28 +606,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     @Override
-    public Collection<OsmPrimitive> getSelected() {
-        return new SubclassFilteredCollection<>(getAllSelected(), p -> !p.isDeleted());
-    }
-
-    @Override
     public Collection<OsmPrimitive> getAllSelected() {
         return currentSelectedPrimitives;
-    }
-
-    @Override
-    public Collection<Node> getSelectedNodes() {
-        return new SubclassFilteredCollection<>(getSelected(), Node.class::isInstance);
-    }
-
-    @Override
-    public Collection<Way> getSelectedWays() {
-        return new SubclassFilteredCollection<>(getSelected(), Way.class::isInstance);
-    }
-
-    @Override
-    public Collection<Relation> getSelectedRelations() {
-        return new SubclassFilteredCollection<>(getSelected(), Relation.class::isInstance);
     }
 
     @Override
