@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
@@ -237,13 +238,13 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
      * Compute the bounding box of a collection of primitives.
      * @param primitives the collection of primitives
      */
-    public void computeBoundingBox(Collection<? extends OsmPrimitive> primitives) {
+    public void computeBoundingBox(Collection<? extends IPrimitive> primitives) {
         if (primitives == null) return;
-        for (OsmPrimitive p: primitives) {
+        for (IPrimitive p: primitives) {
             if (p == null) {
                 continue;
             }
-            p.accept((PrimitiveVisitor) this);
+            p.accept(this);
         }
     }
 }
