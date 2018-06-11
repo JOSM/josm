@@ -606,28 +606,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     @Override
-    public Collection<OsmPrimitive> getSelected() {
-        return new SubclassFilteredCollection<>(getAllSelected(), p -> !p.isDeleted());
-    }
-
-    @Override
     public Collection<OsmPrimitive> getAllSelected() {
         return currentSelectedPrimitives;
-    }
-
-    @Override
-    public Collection<Node> getSelectedNodes() {
-        return new SubclassFilteredCollection<>(getSelected(), Node.class::isInstance);
-    }
-
-    @Override
-    public Collection<Way> getSelectedWays() {
-        return new SubclassFilteredCollection<>(getSelected(), Way.class::isInstance);
-    }
-
-    @Override
-    public Collection<Relation> getSelectedRelations() {
-        return new SubclassFilteredCollection<>(getSelected(), Relation.class::isInstance);
     }
 
     @Override
@@ -744,16 +724,6 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     @Override
-    public void clearHighlightedVirtualNodes() {
-        setHighlightedVirtualNodes(new ArrayList<WaySegment>());
-    }
-
-    @Override
-    public void clearHighlightedWaySegments() {
-        setHighlightedWaySegments(new ArrayList<WaySegment>());
-    }
-
-    @Override
     public synchronized Area getDataSourceArea() {
         if (cachedDataSourceArea == null) {
             cachedDataSourceArea = OsmData.super.getDataSourceArea();
@@ -772,11 +742,6 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     @Override
     public synchronized Collection<DataSource> getDataSources() {
         return Collections.unmodifiableCollection(dataSources);
-    }
-
-    @Override
-    public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
-        return getPrimitiveById(new SimplePrimitiveId(id, type));
     }
 
     @Override
