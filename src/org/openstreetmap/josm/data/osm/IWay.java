@@ -96,31 +96,31 @@ public interface IWay<N extends INode> extends IPrimitive {
      * Returns the first node of this way.
      * The result equals {@link #getNode getNode}{@code (0)}.
      * @return the first node of this way
-     * @since 13918
+     * @since 13922
      */
-    Node firstNode();
+    N firstNode();
 
     /**
      * Returns the last node of this way.
      * The result equals <code>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</code>.
      * @return the last node of this way
-     * @since 13918
+     * @since 13922
      */
-    Node lastNode();
+    N lastNode();
 
     /**
      * Replies true if the given node is the first or the last one of this way, false otherwise.
      * @param n The node to test
      * @return true if the {@code n} is the first or the last node, false otherwise.
-     * @since 13918
+     * @since 13922
      */
-    boolean isFirstLastNode(Node n);
+    boolean isFirstLastNode(INode n);
 
     /**
      * Replies true if the given node is an inner node of this way, false otherwise.
      * @param n The node to test
      * @return true if the {@code n} is an inner node, false otherwise.
-     * @since 13918
+     * @since 13922
      */
-    boolean isInnerNode(Node n);
+    boolean isInnerNode(INode n);
 }
