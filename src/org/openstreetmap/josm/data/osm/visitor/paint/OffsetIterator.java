@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.tools.Utils;
@@ -54,9 +54,9 @@ public class OffsetIterator implements Iterator<MapViewPoint> {
      * @param nodes The nodes of the original line
      * @param offset The offset of the line.
      */
-    public OffsetIterator(MapViewState mapState, List<Node> nodes, double offset) {
+    public OffsetIterator(MapViewState mapState, List<? extends INode> nodes, double offset) {
         this.mapState = mapState;
-        this.nodes = nodes.stream().filter(Node::isLatLonKnown).map(mapState::getPointFor).collect(Collectors.toList());
+        this.nodes = nodes.stream().filter(INode::isLatLonKnown).map(mapState::getPointFor).collect(Collectors.toList());
         this.offset = offset;
     }
 

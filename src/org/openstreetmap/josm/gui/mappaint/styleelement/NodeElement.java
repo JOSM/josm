@@ -9,9 +9,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
@@ -268,8 +268,8 @@ public class NodeElement extends StyleElement {
     @Override
     public void paintPrimitive(IPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
-        if (primitive instanceof Node) {
-            Node n = (Node) primitive;
+        if (primitive instanceof INode) {
+            INode n = (INode) primitive;
             if (mapImage != null && painter.isShowIcons()) {
                 painter.drawNodeIcon(n, mapImage, painter.isInactiveMode() || n.isDisabled(), selected, member,
                         mapImageAngle == null ? 0.0 : mapImageAngle.getRotationAngle(primitive));
@@ -313,13 +313,13 @@ public class NodeElement extends StyleElement {
                 painter.drawNode(n, color, size, fill);
 
             }
-        } else if (primitive instanceof Relation && mapImage != null) {
-            painter.drawRestriction((Relation) primitive, mapImage, painter.isInactiveMode() || primitive.isDisabled());
+        } else if (primitive instanceof IRelation && mapImage != null) {
+            painter.drawRestriction((IRelation<?>) primitive, mapImage, painter.isInactiveMode() || primitive.isDisabled());
         }
     }
 
     private void paintWithSymbol(MapPaintSettings settings, StyledMapRenderer painter, boolean selected, boolean member,
-            Node n) {
+            INode n) {
         Color fillColor = symbol.fillColor;
         if (fillColor != null) {
             if (painter.isInactiveMode() || n.isDisabled()) {

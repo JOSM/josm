@@ -7,8 +7,8 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -122,7 +122,7 @@ public class AreaElement extends StyleElement {
     public void paintPrimitive(IPrimitive osm, MapPaintSettings paintSettings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
         Color myColor = color;
-        if (osm instanceof Way) {
+        if (osm instanceof IWay) {
             if (color != null) {
                 if (selected) {
                     myColor = paintSettings.getSelectedColor(color.getAlpha());
@@ -130,7 +130,7 @@ public class AreaElement extends StyleElement {
                     myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
                 }
             }
-            painter.drawArea((Way) osm, myColor, fillImage, extent, extentThreshold, painter.isInactiveMode() || osm.isDisabled());
+            painter.drawArea((IWay<?>) osm, myColor, fillImage, extent, extentThreshold, painter.isInactiveMode() || osm.isDisabled());
         } else if (osm instanceof Relation) {
             if (color != null && (selected || outermember)) {
                 myColor = paintSettings.getRelationSelectedColor(color.getAlpha());

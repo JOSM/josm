@@ -7,8 +7,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
@@ -127,7 +128,7 @@ public class LineElement extends StyleElement {
         /* head only takes over control if the option is true,
         the direction should be shown at all and not only because it's selected */
         boolean showOnlyHeadArrowOnly = showOrientation && !selected && paintSettings.isShowHeadArrowOnly();
-        Node lastN;
+        INode lastN;
 
         Color myDashedColor = dashesBackground;
         BasicStroke myLine = line, myDashLine = dashesLine;
@@ -154,8 +155,8 @@ public class LineElement extends StyleElement {
             myDashedColor = paintSettings.getInactiveColor();
         }
 
-        if (primitive instanceof Way) {
-            Way w = (Way) primitive;
+        if (primitive instanceof IWay) {
+            IWay<?> w = (IWay<?>) primitive;
             painter.drawWay(w, myColor, myLine, myDashLine, myDashedColor, offset, showOrientation,
                     showOnlyHeadArrowOnly, showOneway, onewayReversed);
 
@@ -163,7 +164,7 @@ public class LineElement extends StyleElement {
                     && !painter.isInactiveMode()) {
                 int orderNumber = 0;
                 lastN = null;
-                for (Node n : w.getNodes()) {
+                for (INode n : w.getNodes()) {
                     if (lastN != null) {
                         orderNumber++;
                         painter.drawOrderNumber(lastN, n, orderNumber, myColor);
@@ -244,7 +245,7 @@ public class LineElement extends StyleElement {
     }
 
     /**
-     * Creates a simple line with default widt.
+     * Creates a simple line with default width.
      * @param color The color to use
      * @param isAreaEdge If this is an edge for an area. Edges are drawn at lower Z-Index.
      * @return The line style.
@@ -258,8 +259,7 @@ public class LineElement extends StyleElement {
         if (isAreaEdge) {
             c.put(Z_INDEX, -3f);
         }
-        Way w = new Way();
-        return createLine(new Environment(w, mc, "default", null));
+        return createLine(new Environment(new Way(), mc, "default", null));
     }
 
     /**

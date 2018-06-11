@@ -5,6 +5,7 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -75,8 +76,8 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
      * @see #filter(Collection, Predicate) for an alternative way to construct this.
      */
     public SubclassFilteredCollection(Collection<? extends S> collection, Predicate<? super S> predicate) {
-        this.collection = collection;
-        this.predicate = predicate;
+        this.collection = Objects.requireNonNull(collection);
+        this.predicate = Objects.requireNonNull(predicate);
     }
 
     @Override
