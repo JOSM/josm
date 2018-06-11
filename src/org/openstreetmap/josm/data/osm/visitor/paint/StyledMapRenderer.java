@@ -50,12 +50,10 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
@@ -974,22 +972,22 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (fromWay == null || toWay == null || via == null)
             return;
 
-        Node viaNode;
-        if (via instanceof Node) {
-            viaNode = (Node) via;
+        INode viaNode;
+        if (via instanceof INode) {
+            viaNode = (INode) via;
             if (!fromWay.isFirstLastNode(viaNode))
                 return;
         } else {
-            Way viaWay = (Way) via;
-            Node firstNode = viaWay.firstNode();
-            Node lastNode = viaWay.lastNode();
+            IWay<?> viaWay = (IWay<?>) via;
+            INode firstNode = viaWay.firstNode();
+            INode lastNode = viaWay.lastNode();
             Boolean onewayvia = Boolean.FALSE;
 
             String onewayviastr = viaWay.get("oneway");
             if (onewayviastr != null) {
                 if ("-1".equals(onewayviastr)) {
                     onewayvia = Boolean.TRUE;
-                    Node tmp = firstNode;
+                    INode tmp = firstNode;
                     firstNode = lastNode;
                     lastNode = tmp;
                 } else {
@@ -1196,8 +1194,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param consumer The consumer to call.
      */
     private void forEachPolygon(IPrimitive osm, Consumer<MapViewPath> consumer) {
-        if (osm instanceof Way) {
-            consumer.accept(getPath((Way) osm));
+        if (osm instanceof IWay) {
+            consumer.accept(getPath((IWay<?>) osm));
         } else if (osm instanceof Relation) {
             Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) osm);
             if (!multipolygon.getOuterWays().isEmpty()) {

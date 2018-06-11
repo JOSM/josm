@@ -111,22 +111,22 @@ public class WayData extends PrimitiveData implements IWay<NodeData> {
     }
 
     @Override
-    public Node firstNode() {
+    public NodeData firstNode() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Node lastNode() {
+    public NodeData lastNode() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean isFirstLastNode(Node n) {
+    public boolean isFirstLastNode(INode n) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean isInnerNode(Node n) {
+    public boolean isInnerNode(INode n) {
         throw new UnsupportedOperationException();
     }
 }

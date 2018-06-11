@@ -504,14 +504,14 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     @Override
-    public boolean isFirstLastNode(Node n) {
+    public boolean isFirstLastNode(INode n) {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return false;
         return n == nodes[0] || n == nodes[nodes.length -1];
     }
 
     @Override
-    public boolean isInnerNode(Node n) {
+    public boolean isInnerNode(INode n) {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length <= 2) return false;
         /* circular ways have only inner nodes, so return true for them! */
