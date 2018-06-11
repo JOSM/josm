@@ -720,6 +720,7 @@ Build-Date: ${build.tstamp}
         </as:build-signatures>
         <as:check-signature signature="${dir}/api.sig" failonerror="false">
             <ignore classname="afu.*"/>
+            <ignore classname="android.*"/>
             <ignore classname="au.*"/>
             <ignore classname="com.*"/>
             <ignore classname="de.*"/>
@@ -738,6 +739,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.bouncycastle.*"/>
             <ignore classname="org.checkerframework.*"/>
             <ignore classname="org.codehaus.*"/>
+            <ignore classname="org.conscrypt.*"/>
             <ignore classname="org.dom4j.*"/>
             <ignore classname="org.eclipse.*"/>
             <ignore classname="org.ejml.*"/>
