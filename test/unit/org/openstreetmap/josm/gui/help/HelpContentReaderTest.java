@@ -19,7 +19,7 @@ public class HelpContentReaderTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().timeout(30000);
 
     /**
      * Unit test of {@link HelpContentReader#fetchHelpTopicContent} - null case.

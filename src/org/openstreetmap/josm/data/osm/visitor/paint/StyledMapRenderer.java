@@ -48,13 +48,13 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
@@ -525,7 +525,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param disabled If this should be drawn with a special disabled style.
      * @since 12285
      */
-    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled) {
+    public void drawArea(IWay<?> w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled) {
         Path2D.Double pfClip = null;
         if (extent != null) {
             if (!usePartialFill(Geometry.getAreaAndPerimeter(w.getNodes()), extent, extentThreshold)) {
@@ -560,7 +560,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param n The node to draw the text on
      * @param bs The text and it's alignment.
      */
-    public void drawBoxText(Node n, BoxTextElement bs) {
+    public void drawBoxText(INode n, BoxTextElement bs) {
         if (!isShowNames() || bs == null)
             return;
 
@@ -630,7 +630,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param phase initial spacing
      * @param align alignment of the image. The top, center or bottom edge can be aligned with the way.
      */
-    public void drawRepeatImage(Way way, MapImage pattern, boolean disabled, double offset, double spacing, double phase,
+    public void drawRepeatImage(IWay<?> way, MapImage pattern, boolean disabled, double offset, double spacing, double phase,
             LineImageAlignment align) {
         final int imgWidth = pattern.getWidth();
         final double repeat = imgWidth + spacing;
@@ -729,7 +729,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param member {@code} true to render it as a relation member, {@code false} otherwise
      * @param theta the angle of rotation in radians
      */
-    public void drawNodeIcon(Node n, MapImage img, boolean disabled, boolean selected, boolean member, double theta) {
+    public void drawNodeIcon(INode n, MapImage img, boolean disabled, boolean selected, boolean member, double theta) {
         MapViewPoint p = mapState.getPointFor(n);
 
         int w = img.getWidth();
@@ -820,7 +820,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param fillColor The color to fill the symbol with
      * @param strokeColor The color to use for the outer corner of the symbol
      */
-    public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor) {
+    public void drawNodeSymbol(INode n, Symbol s, Color fillColor, Color strokeColor) {
         MapViewPoint p = mapState.getPointFor(n);
 
         if (n.isHighlighted()) {
@@ -852,7 +852,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param orderNumber The number of the segment in the way.
      * @param clr The color to use for drawing the text.
      */
-    public void drawOrderNumber(Node n1, Node n2, int orderNumber, Color clr) {
+    public void drawOrderNumber(INode n1, INode n2, int orderNumber, Color clr) {
         MapViewPoint p1 = mapState.getPointFor(n1);
         MapViewPoint p2 = mapState.getPointFor(n2);
         drawOrderNumber(p1, p2, orderNumber, clr);
@@ -928,18 +928,18 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param icon The icon to draw at the turn point
      * @param disabled draw using disabled style
      */
-    public void drawRestriction(Relation r, MapImage icon, boolean disabled) {
-        Way fromWay = null;
-        Way toWay = null;
-        OsmPrimitive via = null;
+    public void drawRestriction(IRelation<?> r, MapImage icon, boolean disabled) {
+        IWay<?> fromWay = null;
+        IWay<?> toWay = null;
+        IPrimitive via = null;
 
         /* find the "from", "via" and "to" elements */
-        for (RelationMember m : r.getMembers()) {
+        for (IRelationMember<?> m : r.getMembers()) {
             if (m.getMember().isIncomplete())
                 return;
             else {
                 if (m.isWay()) {
-                    Way w = m.getWay();
+                    IWay<?> w = (IWay<?>) m.getMember();
                     if (w.getNodesCount() < 2) {
                         continue;
                     }
@@ -963,7 +963,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     default: // Do nothing
                     }
                 } else if (m.isNode()) {
-                    Node n = m.getNode();
+                    INode n = (INode) m.getMember();
                     if (via == null && "via".equals(m.getRole())) {
                         via = n;
                     }
@@ -1006,7 +1006,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         /* find the "direct" nodes before the via node */
-        Node fromNode;
+        INode fromNode;
         if (fromWay.firstNode() == via) {
             fromNode = fromWay.getNode(1);
         } else {
@@ -1226,7 +1226,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      *              e.g. oneway street or waterway
      * @param onewayReversed for oneway=-1 and similar
      */
-    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, float offset,
+    public void drawWay(IWay<?> way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, float offset,
             boolean showOrientation, boolean showHeadArrowOnly,
             boolean showOneway, boolean onewayReversed) {
 
@@ -1240,7 +1240,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             bounds.grow(100, 100);
         }
 
-        List<Node> wayNodes = way.getNodes();
+        List<? extends INode> wayNodes = way.getNodes();
         if (wayNodes.size() < 2) return;
 
         // only highlight the segment if the way itself is not highlighted
@@ -1409,7 +1409,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialiasing);
     }
 
-    private MapViewPath getPath(Way w) {
+    private MapViewPath getPath(IWay<?> w) {
         MapViewPath path = new MapViewPath(mapState);
         if (w.isClosed()) {
             path.appendClosed(w.getNodes(), false);
@@ -1419,7 +1419,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return path;
     }
 
-    private static Path2D.Double getPFClip(Way w, double extent) {
+    private static Path2D.Double getPFClip(IWay<?> w, double extent) {
         Path2D.Double clip = new Path2D.Double();
         buildPFClip(clip, w.getNodes(), extent);
         return clip;
@@ -1450,9 +1450,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param nodes nodes of the polygon
      * @param extent the extent
      */
-    private static void buildPFClip(Path2D.Double clip, List<Node> nodes, double extent) {
+    private static void buildPFClip(Path2D.Double clip, List<? extends INode> nodes, double extent) {
         boolean initial = true;
-        for (Node n : nodes) {
+        for (INode n : nodes) {
             EastNorth p = n.getEastNorth();
             if (p != null) {
                 if (initial) {

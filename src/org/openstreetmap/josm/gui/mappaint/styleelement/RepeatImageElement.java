@@ -4,7 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.styleelement;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
@@ -121,8 +121,8 @@ public class RepeatImageElement extends StyleElement {
     @Override
     public void paintPrimitive(IPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
-        if (primitive instanceof Way) {
-            Way w = (Way) primitive;
+        if (primitive instanceof IWay) {
+            IWay<?> w = (IWay<?>) primitive;
             painter.drawRepeatImage(w, pattern, painter.isInactiveMode() || w.isDisabled(), offset, spacing, phase, align);
         }
     }

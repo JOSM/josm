@@ -91,4 +91,36 @@ public interface IWay<N extends INode> extends IPrimitive {
     default String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }
+
+    /**
+     * Returns the first node of this way.
+     * The result equals {@link #getNode getNode}{@code (0)}.
+     * @return the first node of this way
+     * @since 13918
+     */
+    Node firstNode();
+
+    /**
+     * Returns the last node of this way.
+     * The result equals <code>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</code>.
+     * @return the last node of this way
+     * @since 13918
+     */
+    Node lastNode();
+
+    /**
+     * Replies true if the given node is the first or the last one of this way, false otherwise.
+     * @param n The node to test
+     * @return true if the {@code n} is the first or the last node, false otherwise.
+     * @since 13918
+     */
+    boolean isFirstLastNode(Node n);
+
+    /**
+     * Replies true if the given node is an inner node of this way, false otherwise.
+     * @param n The node to test
+     * @return true if the {@code n} is an inner node, false otherwise.
+     * @since 13918
+     */
+    boolean isInnerNode(Node n);
 }
