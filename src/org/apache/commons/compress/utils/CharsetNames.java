@@ -50,7 +50,6 @@ package org.apache.commons.compress.utils;
  *
  * @see <a href="https://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * @since 1.4
- * @version $Id$
  */
 public class CharsetNames {
     /**
