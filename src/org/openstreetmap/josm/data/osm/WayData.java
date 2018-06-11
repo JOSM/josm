@@ -7,7 +7,8 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
 /**
- * The data (tags and node ids) that is stored for a way in the database
+ * The data (tags and node ids) that is stored for a way in the database.
+ * @since 2284
  */
 public class WayData extends PrimitiveData implements IWay<NodeData> {
 
@@ -106,6 +107,26 @@ public class WayData extends PrimitiveData implements IWay<NodeData> {
 
     @Override
     public BBox getBBox() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Node firstNode() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Node lastNode() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isFirstLastNode(Node n) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isInnerNode(Node n) {
         throw new UnsupportedOperationException();
     }
 }

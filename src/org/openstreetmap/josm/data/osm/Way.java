@@ -489,48 +489,28 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         return false;
     }
 
-    /**
-     * Returns the last node of this way.
-     * The result equals <code>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</code>.
-     * @return the last node of this way
-     * @since 1400
-     */
+    @Override
     public Node lastNode() {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return null;
         return nodes[nodes.length-1];
     }
 
-    /**
-     * Returns the first node of this way.
-     * The result equals {@link #getNode getNode}{@code (0)}.
-     * @return the first node of this way
-     * @since 1400
-     */
+    @Override
     public Node firstNode() {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return null;
         return nodes[0];
     }
 
-    /**
-     * Replies true if the given node is the first or the last one of this way, false otherwise.
-     * @param n The node to test
-     * @return true if the {@code n} is the first or the last node, false otherwise.
-     * @since 1400
-     */
+    @Override
     public boolean isFirstLastNode(Node n) {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return false;
         return n == nodes[0] || n == nodes[nodes.length -1];
     }
 
-    /**
-     * Replies true if the given node is an inner node of this way, false otherwise.
-     * @param n The node to test
-     * @return true if the {@code n} is an inner node, false otherwise.
-     * @since 3515
-     */
+    @Override
     public boolean isInnerNode(Node n) {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length <= 2) return false;
