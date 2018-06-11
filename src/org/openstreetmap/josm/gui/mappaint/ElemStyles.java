@@ -11,10 +11,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -156,7 +157,7 @@ public class ElemStyles implements PreferenceChangedListener {
                 return lst;
         }
         Pair<StyleElementList, Range> p = getImpl(osm, scale, nc);
-        if (osm instanceof Node && isDefaultNodes()) {
+        if (osm instanceof INode && isDefaultNodes()) {
             if (p.a.isEmpty()) {
                 if (TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
                     p.a = NodeElement.DEFAULT_NODE_STYLELIST_TEXT;
@@ -182,7 +183,7 @@ public class ElemStyles implements PreferenceChangedListener {
                     }
                 }
             }
-        } else if (osm instanceof Way && isDefaultLines()) {
+        } else if (osm instanceof IWay && isDefaultLines()) {
             boolean hasProperLineStyle = false;
             for (StyleElement s : p.a) {
                 if (s.isProperLineStyle()) {
@@ -234,9 +235,9 @@ public class ElemStyles implements PreferenceChangedListener {
      * @return pair containing style list and range
      */
     private Pair<StyleElementList, Range> getImpl(IPrimitive osm, double scale, NavigatableComponent nc) {
-        if (osm instanceof Node)
+        if (osm instanceof INode)
             return generateStyles(osm, scale, false);
-        else if (osm instanceof Way) {
+        else if (osm instanceof IWay) {
             Pair<StyleElementList, Range> p = generateStyles(osm, scale, false);
 
             boolean isOuterWayOfSomeMP = false;
@@ -244,11 +245,11 @@ public class ElemStyles implements PreferenceChangedListener {
 
             // FIXME: Maybe in the future outer way styles apply to outers ignoring the multipolygon?
             for (IPrimitive referrer : osm.getReferrers()) {
-                Relation r = (Relation) referrer;
-                if (!drawMultipolygon || !r.isMultipolygon() || !r.isUsable()) {
+                IRelation<?> r = (IRelation<?>) referrer;
+                if (!drawMultipolygon || !r.isMultipolygon() || !r.isUsable() || !(r instanceof Relation)) {
                     continue;
                 }
-                Multipolygon multipolygon = MultipolygonCache.getInstance().get(r);
+                Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) r);
 
                 if (multipolygon.getOuterWays().contains(osm)) {
                     boolean hasIndependentLineStyle = false;
@@ -312,11 +313,11 @@ public class ElemStyles implements PreferenceChangedListener {
             if (!isDefaultLines()) return p;
 
             for (IPrimitive referrer : osm.getReferrers()) {
-                Relation ref = (Relation) referrer;
-                if (!drawMultipolygon || !ref.isMultipolygon() || !ref.isUsable()) {
+                IRelation<?> ref = (IRelation<?>) referrer;
+                if (!drawMultipolygon || !ref.isMultipolygon() || !ref.isUsable() || !(ref instanceof Relation)) {
                     continue;
                 }
-                final Multipolygon multipolygon = MultipolygonCache.getInstance().get(ref);
+                final Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) ref);
 
                 if (multipolygon.getInnerWays().contains(osm)) {
                     p = generateStyles(osm, scale, false);
@@ -345,7 +346,7 @@ public class ElemStyles implements PreferenceChangedListener {
                 }
             }
             return p;
-        } else if (osm instanceof Relation) {
+        } else if (osm instanceof IRelation) {
             return generateStyles(osm, scale, true);
         }
         return null;
@@ -382,7 +383,7 @@ public class ElemStyles implements PreferenceChangedListener {
                 continue;
             }
             env.layer = e.getKey();
-            if (osm instanceof Way) {
+            if (osm instanceof IWay) {
                 AreaElement areaStyle = AreaElement.create(env);
                 addIfNotNull(sl, areaStyle);
                 addIfNotNull(sl, RepeatImageElement.create(env));
@@ -396,7 +397,7 @@ public class ElemStyles implements PreferenceChangedListener {
                     //TODO: Warn about this, or even remove it completely
                     addIfNotNull(sl, TextElement.createForContent(env));
                 }
-            } else if (osm instanceof Node) {
+            } else if (osm instanceof INode) {
                 NodeElement nodeStyle = NodeElement.create(env);
                 if (nodeStyle != null) {
                     sl.add(nodeStyle);
@@ -404,8 +405,8 @@ public class ElemStyles implements PreferenceChangedListener {
                 } else {
                     addIfNotNull(sl, BoxTextElement.create(env, NodeElement.SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER));
                 }
-            } else if (osm instanceof Relation) {
-                if (((Relation) osm).isMultipolygon()) {
+            } else if (osm instanceof IRelation) {
+                if (((IRelation<?>) osm).isMultipolygon()) {
                     AreaElement areaStyle = AreaElement.create(env);
                     addIfNotNull(sl, areaStyle);
                     addIfNotNull(sl, RepeatImageElement.create(env));

@@ -29,13 +29,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tagged;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -646,16 +647,16 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public void apply(MultiCascade mc, IPrimitive osm, double scale, boolean pretendWayIsClosed) {
         MapCSSRuleIndex matchingRuleIndex;
-        if (osm instanceof Node) {
+        if (osm instanceof INode) {
             matchingRuleIndex = nodeRules;
-        } else if (osm instanceof Way) {
+        } else if (osm instanceof IWay) {
             if (OsmUtils.isFalse(osm.get("area"))) {
                 matchingRuleIndex = wayNoAreaRules;
             } else {
                 matchingRuleIndex = wayRules;
             }
-        } else if (osm instanceof Relation) {
-            if (((Relation) osm).isMultipolygon()) {
+        } else if (osm instanceof IRelation) {
+            if (((IRelation<?>) osm).isMultipolygon()) {
                 matchingRuleIndex = multipolygonRules;
             } else if (osm.hasKey("#canvas")) {
                 matchingRuleIndex = canvasRules;
