@@ -29,6 +29,8 @@ public interface SelectionChangedListener {
     /**
      * Informs the listener that the selection in the dataset has changed.
      * @param newSelection The new selection.
+     * @deprecated use {@link DataSelectionListener} instead
      */
+    @Deprecated
     void selectionChanged(Collection<? extends OsmPrimitive> newSelection);
 }

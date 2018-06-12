@@ -34,7 +34,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -52,7 +52,7 @@ import org.openstreetmap.josm.tools.Utils;
  * GUI component to select tagging preset: the list with filter and two checkboxes
  * @since 6068
  */
-public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPreset> implements SelectionChangedListener {
+public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPreset> implements DataSelectionListener {
 
     private static final int CLASSIFICATION_IN_FAVORITES = 300;
     private static final int CLASSIFICATION_NAME_MATCH = 300;
@@ -369,7 +369,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     }
 
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public void selectionChanged(SelectionChangeEvent event) {
         typesInSelectionDirty = true;
     }
 

@@ -26,6 +26,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Michael Zangl
  * @since 12048
  */
+@SuppressWarnings("deprecation")
 public class SelectionEventManagerTest {
     private final class SelectionListener implements SelectionChangedListener, DataSelectionListener {
         private Collection<? extends OsmPrimitive> newSelection;

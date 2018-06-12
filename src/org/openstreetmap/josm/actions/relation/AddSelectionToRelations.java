@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Add all objects selected in the current dataset after the last member of relation(s).
  * @since 5799
  */
-public class AddSelectionToRelations extends AbstractRelationAction implements SelectionChangedListener {
+public class AddSelectionToRelations extends AbstractRelationAction implements DataSelectionListener {
     /**
     * Constructs a new <code>AddSelectionToRelation</code>.
     */
@@ -68,9 +68,13 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
         }
     }
 
-    @Override
-    public void selectionChanged(final Collection<? extends OsmPrimitive> newSelection) {
+    private void selectionChanged(final Collection<? extends OsmPrimitive> newSelection) {
         GuiHelper.runInEDT(() -> setEnabled(newSelection != null && !newSelection.isEmpty()
                 && OsmUtils.isOsmCollectionEditable(relations)));
+    }
+
+    @Override
+    public void selectionChanged(SelectionChangeEvent event) {
+        selectionChanged(event.getSelection());
     }
 }

@@ -33,11 +33,12 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
@@ -71,7 +72,7 @@ import org.xml.sax.SAXException;
  *
  * @author frsantos
  */
-public class ValidatorDialog extends ToggleDialog implements SelectionChangedListener, ActiveLayerChangeListener {
+public class ValidatorDialog extends ToggleDialog implements DataSelectionListener, ActiveLayerChangeListener {
 
     /** The display tree */
     public ValidatorTreePanel tree;
@@ -180,7 +181,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
     @Override
     public void showNotify() {
-        DataSet.addSelectionListener(this);
+        SelectionEventManager.getInstance().addSelectionListener(this);
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (ds != null) {
             updateSelection(ds.getAllSelected());
@@ -191,7 +192,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     @Override
     public void hideNotify() {
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
-        DataSet.removeSelectionListener(this);
+        SelectionEventManager.getInstance().removeSelectionListener(this);
     }
 
     @Override
@@ -584,8 +585,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     }
 
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        updateSelection(newSelection);
+    public void selectionChanged(SelectionChangeEvent event) {
+        updateSelection(event.getSelection());
     }
 
     /**

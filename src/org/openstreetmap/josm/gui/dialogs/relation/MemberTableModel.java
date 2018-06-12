@@ -20,8 +20,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
-import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -32,6 +31,7 @@ import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -52,7 +52,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * This is the base model used for the {@link MemberTable}. It holds the member data.
  */
 public class MemberTableModel extends AbstractTableModel
-implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPrimitivesTableModel {
+implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimitivesTableModel {
 
     /**
      * data of the table model: The list of members and the cached WayConnectionType of each member.
@@ -96,7 +96,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
      * Registers listeners (selection change and dataset change).
      */
     public void register() {
-        DataSet.addSelectionListener(this);
+        SelectionEventManager.getInstance().addSelectionListener(this);
         getLayer().data.addDataSetListener(this);
     }
 
@@ -104,15 +104,15 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
      * Unregisters listeners (selection change and dataset change).
      */
     public void unregister() {
-        DataSet.removeSelectionListener(this);
+        SelectionEventManager.getInstance().removeSelectionListener(this);
         getLayer().data.removeDataSetListener(this);
     }
 
     /* --------------------------------------------------------------------------- */
-    /* Interface SelectionChangedListener                                          */
+    /* Interface DataSelectionListener                                             */
     /* --------------------------------------------------------------------------- */
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public void selectionChanged(SelectionChangeEvent event) {
         if (MainApplication.getLayerManager().getActiveDataLayer() != this.layer) return;
         // just trigger a repaint
         Collection<RelationMember> sel = getSelectedMembers();
