@@ -112,14 +112,14 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     /**
      * Adds an object to be loaded, the object is specified by an OSM primitive.
      *
-     * @param primitive the OSM primitive. Must not be null. primitive.getId() &gt; 0 required.
+     * @param primitive the OSM primitive. Must not be null. primitive.getOsmId() &gt; 0 required.
      * @return this task
      * @throws IllegalArgumentException if the primitive is null
-     * @throws IllegalArgumentException if primitive.getId() &lt;= 0
+     * @throws IllegalArgumentException if primitive.getOsmId() &lt;= 0
      */
     public HistoryLoadTask add(OsmPrimitive primitive) {
-        CheckParameterUtil.ensure(primitive, "primitive", "id > 0", prim -> prim.getUniqueId() > 0);
-        return add(primitive.getPrimitiveId());
+        CheckParameterUtil.ensure(primitive, "primitive", "id > 0", prim -> prim.getOsmId() > 0);
+        return add(primitive.getOsmPrimitiveId());
     }
 
     /**

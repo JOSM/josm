@@ -198,9 +198,33 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
     long getId();
 
     /**
-     * Replies the unique primitive id for this primitive
+     * Replies the OSM id of this primitive.
+     * By default, returns the same value as {@link #getId}.
+     * Can be overidden by primitive implementations handling an internal id different from the OSM one.
+     *
+     * @return the OSM id of this primitive.
+     * @since 13924
+     */
+    default long getOsmId() {
+        return getId();
+    }
+
+    /**
+     * Replies the OSM primitive id for this primitive.
+     *
+     * @return the OSM primitive id for this primitive
+     * @see #getOsmId
+     * @since 13924
+     */
+    default PrimitiveId getOsmPrimitiveId() {
+        return new SimplePrimitiveId(getOsmId(), getType());
+    }
+
+    /**
+     * Replies the unique primitive id for this primitive.
      *
      * @return the unique primitive id for this primitive
+     * @see #getUniqueId
      */
     default PrimitiveId getPrimitiveId() {
         return new SimplePrimitiveId(getUniqueId(), getType());

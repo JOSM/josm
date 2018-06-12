@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 /**
-* interface to represent identifaction and type of the datatypes primitives.
+* interface to represent identification and type of the datatypes primitives.
 *
 * @since 2399
 */
