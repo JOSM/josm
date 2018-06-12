@@ -38,6 +38,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -494,7 +495,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
             boolean disableApply = false;
             if (!sel.isEmpty()) {
-                DataSet ds = sel.iterator().next().getDataSet();
+                OsmData<?, ?, ?, ?> ds = sel.iterator().next().getDataSet();
                 disableApply = ds != null && ds.isLocked();
             }
             answer = new PresetDialog(p, title, preset_name_label ? null : (ImageIcon) getValue(Action.SMALL_ICON),

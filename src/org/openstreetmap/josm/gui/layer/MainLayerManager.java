@@ -13,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.AsynchronousUploadPrimitivesTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -174,7 +175,12 @@ public class MainLayerManager extends LayerManager {
     /**
      * The current active data layer. It might be editable or not, based on its read-only status.
      */
-    private OsmDataLayer dataLayer;
+    private AbstractOsmDataLayer dataLayer;
+
+    /**
+     * The current active OSM data layer. It might be editable or not, based on its read-only status.
+     */
+    private OsmDataLayer osmDataLayer;
 
     private final List<ActiveLayerChangeListener> activeLayerChangeListeners = new CopyOnWriteArrayList<>();
     private final List<LayerAvailabilityListener> layerAvailabilityListeners = new CopyOnWriteArrayList<>();
@@ -261,19 +267,22 @@ public class MainLayerManager extends LayerManager {
     }
 
     private void setActiveLayer(Layer layer, boolean forceEditLayerUpdate) {
-        ActiveLayerChangeEvent event = new ActiveLayerChangeEvent(this, dataLayer, activeLayer);
+        ActiveLayerChangeEvent event = new ActiveLayerChangeEvent(this, osmDataLayer, activeLayer);
         activeLayer = layer;
+        if (activeLayer instanceof AbstractOsmDataLayer) {
+            dataLayer = (AbstractOsmDataLayer) layer;
+        }
         if (activeLayer instanceof OsmDataLayer) {
-            dataLayer = (OsmDataLayer) activeLayer;
+            osmDataLayer = (OsmDataLayer) activeLayer;
         } else if (forceEditLayerUpdate) {
-            dataLayer = null;
+            osmDataLayer = null;
         }
         fireActiveLayerChange(event);
     }
 
     private void fireActiveLayerChange(ActiveLayerChangeEvent event) {
         GuiHelper.assertCallFromEdt();
-        if (event.getPreviousActiveLayer() != activeLayer || event.getPreviousDataLayer() != dataLayer) {
+        if (event.getPreviousActiveLayer() != activeLayer || event.getPreviousDataLayer() != osmDataLayer) {
             for (ActiveLayerChangeListener l : activeLayerChangeListeners) {
                 l.activeOrEditLayerChanged(event);
             }
@@ -306,7 +315,7 @@ public class MainLayerManager extends LayerManager {
             return new ArrayList<>();
         }
 
-        if (layer == activeLayer || layer == dataLayer) {
+        if (layer == activeLayer || layer == osmDataLayer) {
             Layer nextActive = suggestNextActiveLayer(layer);
             setActiveLayer(nextActive, true);
         }
@@ -375,8 +384,8 @@ public class MainLayerManager extends LayerManager {
      * @see #getActiveDataLayer
      */
     public synchronized OsmDataLayer getEditLayer() {
-        if (dataLayer != null && !dataLayer.isLocked())
-            return dataLayer;
+        if (osmDataLayer != null && !osmDataLayer.isLocked())
+            return osmDataLayer;
         else
             return null;
     }
@@ -389,8 +398,8 @@ public class MainLayerManager extends LayerManager {
      * @since 13434
      */
     public synchronized OsmDataLayer getActiveDataLayer() {
-        if (dataLayer != null)
-            return dataLayer;
+        if (osmDataLayer != null)
+            return osmDataLayer;
         else
             return null;
     }
@@ -401,8 +410,8 @@ public class MainLayerManager extends LayerManager {
      * @see #getActiveDataSet
      */
     public synchronized DataSet getEditDataSet() {
-        if (dataLayer != null && !dataLayer.isLocked()) {
-            return dataLayer.getDataSet();
+        if (osmDataLayer != null && !osmDataLayer.isLocked()) {
+            return osmDataLayer.getDataSet();
         } else {
             return null;
         }
@@ -411,12 +420,25 @@ public class MainLayerManager extends LayerManager {
     /**
      * Gets the data set of the active data layer. The dataset can be read-only.
      * @return That data set, <code>null</code> if there is no active data layer.
+     * @since 13926
+     */
+    public synchronized OsmData<?, ?, ?, ?> getActiveData() {
+        if (dataLayer != null) {
+            return dataLayer.getDataSet();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the data set of the active {@link OsmDataLayer}. The dataset can be read-only.
+     * @return That data set, <code>null</code> if there is no active data layer.
      * @see #getEditDataSet
      * @since 13434
      */
     public synchronized DataSet getActiveDataSet() {
-        if (dataLayer != null) {
-            return dataLayer.getDataSet();
+        if (osmDataLayer != null) {
+            return osmDataLayer.getDataSet();
         } else {
             return null;
         }
@@ -474,8 +496,8 @@ public class MainLayerManager extends LayerManager {
      * @since 13150
      */
     public void invalidateEditLayer() {
-        if (dataLayer != null) {
-            dataLayer.invalidate();
+        if (osmDataLayer != null) {
+            osmDataLayer.invalidate();
         }
     }
 
@@ -511,9 +533,9 @@ public class MainLayerManager extends LayerManager {
         layer.lock();
 
         // Reset only the edit layer as empty
-        if (dataLayer == layer) {
-            ActiveLayerChangeEvent activeLayerChangeEvent = new ActiveLayerChangeEvent(this, dataLayer, activeLayer);
-            dataLayer = null;
+        if (osmDataLayer == layer) {
+            ActiveLayerChangeEvent activeLayerChangeEvent = new ActiveLayerChangeEvent(this, osmDataLayer, activeLayer);
+            osmDataLayer = null;
             fireActiveLayerChange(activeLayerChangeEvent);
         }
     }
@@ -531,9 +553,9 @@ public class MainLayerManager extends LayerManager {
         layer.unsetUploadInProgress();
 
         // Set the layer as edit layer if the edit layer is empty.
-        if (dataLayer == null) {
-            ActiveLayerChangeEvent layerChangeEvent = new ActiveLayerChangeEvent(this, dataLayer, activeLayer);
-            dataLayer = layer;
+        if (osmDataLayer == null) {
+            ActiveLayerChangeEvent layerChangeEvent = new ActiveLayerChangeEvent(this, osmDataLayer, activeLayer);
+            osmDataLayer = layer;
             fireActiveLayerChange(layerChangeEvent);
         }
     }

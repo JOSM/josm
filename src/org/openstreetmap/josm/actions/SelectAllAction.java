@@ -7,8 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -29,8 +29,8 @@ public class SelectAllAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        DataSet ds = getLayerManager().getActiveDataSet();
-        ds.setSelected(ds.getPrimitives(OsmPrimitive::isSelectable));
+        OsmData<?, ?, ?, ?> ds = getLayerManager().getActiveData();
+        ds.setSelected(ds.getPrimitives(IPrimitive::isSelectable));
     }
 
     /**
@@ -38,6 +38,6 @@ public class SelectAllAction extends JosmAction {
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getActiveDataSet() != null);
+        setEnabled(getLayerManager().getActiveData() != null);
     }
 }

@@ -14,10 +14,13 @@ import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IRelationMember;
+import org.openstreetmap.josm.data.osm.IWay;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator.Hemisphere;
@@ -35,9 +38,9 @@ public class InspectPrimitiveDataText {
     private static final char NL = '\n';
 
     private final StringBuilder s = new StringBuilder();
-    private final DataSet ds;
+    private final OsmData<?, ?, ?, ?> ds;
 
-    InspectPrimitiveDataText(DataSet ds) {
+    InspectPrimitiveDataText(OsmData<?, ?, ?, ?> ds) {
         this.ds = ds;
     }
 
@@ -62,7 +65,7 @@ public class InspectPrimitiveDataText {
      * Adds a new OSM primitive.
      * @param o primitive to add
      */
-    public void addPrimitive(OsmPrimitive o) {
+    public void addPrimitive(IPrimitive o) {
 
         addHeadline(o);
 
@@ -81,26 +84,28 @@ public class InspectPrimitiveDataText {
         addAttributes(o);
         addSpecial(o);
         addReferrers(s, o);
-        addConflicts(o);
+        if (o instanceof OsmPrimitive) {
+            addConflicts((OsmPrimitive) o);
+        }
         s.append(NL);
     }
 
-    void addHeadline(OsmPrimitive o) {
+    void addHeadline(IPrimitive o) {
         addType(o);
         addNameAndId(o);
     }
 
-    void addType(OsmPrimitive o) {
-        if (o instanceof Node) {
+    void addType(IPrimitive o) {
+        if (o instanceof INode) {
             s.append(tr("Node: "));
-        } else if (o instanceof Way) {
+        } else if (o instanceof IWay) {
             s.append(tr("Way: "));
-        } else if (o instanceof Relation) {
+        } else if (o instanceof IRelation) {
             s.append(tr("Relation: "));
         }
     }
 
-    void addNameAndId(OsmPrimitive o) {
+    void addNameAndId(IPrimitive o) {
         String name = o.get("name");
         if (name == null) {
             s.append(o.getUniqueId());
@@ -109,7 +114,7 @@ public class InspectPrimitiveDataText {
         }
     }
 
-    void addState(OsmPrimitive o) {
+    void addState(IPrimitive o) {
         StringBuilder sb = new StringBuilder(INDENT);
         /* selected state is left out: not interesting as it is always selected */
         if (o.isDeleted()) {
@@ -140,7 +145,7 @@ public class InspectPrimitiveDataText {
         }
     }
 
-    void addCommon(OsmPrimitive o) {
+    void addCommon(IPrimitive o) {
         add(tr("Data Set: "), Integer.toHexString(o.getDataSet().hashCode()));
         add(tr("Edited at: "), o.isTimestampEmpty() ? tr("<new object>")
                 : DateUtils.fromTimestamp(o.getRawTimestamp()));
@@ -150,7 +155,7 @@ public class InspectPrimitiveDataText {
         add(tr("In changeset: "), Integer.toString(o.getChangesetId()));
     }
 
-    void addAttributes(OsmPrimitive o) {
+    void addAttributes(IPrimitive o) {
         if (o.hasKeys()) {
             add(tr("Tags: "));
             for (String key : o.keySet()) {
@@ -160,24 +165,24 @@ public class InspectPrimitiveDataText {
         }
     }
 
-    void addSpecial(OsmPrimitive o) {
-        if (o instanceof Node) {
-            addCoordinates((Node) o);
-        } else if (o instanceof Way) {
+    void addSpecial(IPrimitive o) {
+        if (o instanceof INode) {
+            addCoordinates((INode) o);
+        } else if (o instanceof IWay) {
             addBbox(o);
             add(tr("Centroid: "),
                     toStringCSV(", ", Main.getProjection().eastNorth2latlon(
                             Geometry.getCentroid(((Way) o).getNodes()))));
-            addWayNodes((Way) o);
-        } else if (o instanceof Relation) {
+            addWayNodes((IWay<?>) o);
+        } else if (o instanceof IRelation) {
             addBbox(o);
-            addRelationMembers((Relation) o);
+            addRelationMembers((IRelation<?>) o);
         }
     }
 
-    void addRelationMembers(Relation r) {
+    void addRelationMembers(IRelation<?> r) {
         add(trn("{0} Member: ", "{0} Members: ", r.getMembersCount(), r.getMembersCount()));
-        for (RelationMember m : r.getMembers()) {
+        for (IRelationMember<?> m : r.getMembers()) {
             s.append(INDENT).append(INDENT);
             addHeadline(m.getMember());
             s.append(tr(" as \"{0}\"", m.getRole()));
@@ -185,16 +190,16 @@ public class InspectPrimitiveDataText {
         }
     }
 
-    void addWayNodes(Way w) {
+    void addWayNodes(IWay<?> w) {
         add(tr("{0} Nodes: ", w.getNodesCount()));
-        for (Node n : w.getNodes()) {
+        for (INode n : w.getNodes()) {
             s.append(INDENT).append(INDENT);
             addNameAndId(n);
             s.append(NL);
         }
     }
 
-    void addBbox(OsmPrimitive o) {
+    void addBbox(IPrimitive o) {
         BBox bbox = o.getBBox();
         if (bbox != null) {
             add(tr("Bounding box: "), bbox.toStringCSV(", "));
@@ -209,7 +214,7 @@ public class InspectPrimitiveDataText {
         }
     }
 
-    void addCoordinates(Node n) {
+    void addCoordinates(INode n) {
         if (n.isLatLonKnown()) {
             add(tr("Coordinates:"), " ",
                     Double.toString(n.lat()), ", ",
@@ -224,11 +229,11 @@ public class InspectPrimitiveDataText {
         }
     }
 
-    void addReferrers(StringBuilder s, OsmPrimitive o) {
-        List<OsmPrimitive> refs = o.getReferrers();
+    void addReferrers(StringBuilder s, IPrimitive o) {
+        List<? extends IPrimitive> refs = o.getReferrers();
         if (!refs.isEmpty()) {
             add(tr("Part of: "));
-            for (OsmPrimitive p : refs) {
+            for (IPrimitive p : refs) {
                 s.append(INDENT).append(INDENT);
                 addHeadline(p);
                 s.append(NL);
@@ -237,7 +242,7 @@ public class InspectPrimitiveDataText {
     }
 
     void addConflicts(OsmPrimitive o) {
-        Conflict<?> c = ds.getConflicts().getConflictForMy(o);
+        Conflict<?> c = ((DataSet) ds).getConflicts().getConflictForMy(o);
         if (c != null) {
             add(tr("In conflict with: "));
             addNameAndId(c.getTheir());

@@ -884,7 +884,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getActiveDataSet() != null);
+        setEnabled(getLayerManager().getActiveData() != null);
     }
 
     @Override

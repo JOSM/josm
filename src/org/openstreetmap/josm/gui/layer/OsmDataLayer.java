@@ -122,7 +122,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @author imi
  * @since 17
  */
-public class OsmDataLayer extends AbstractModifiableLayer implements Listener, DataSelectionListener, HighlightUpdateListener {
+public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, DataSelectionListener, HighlightUpdateListener {
     private static final int HATCHED_SIZE = 15;
     /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
@@ -419,6 +419,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
      * @return the {@link DataSet} behind this layer.
      * @since 13558
      */
+    @Override
     public DataSet getDataSet() {
         return data;
     }

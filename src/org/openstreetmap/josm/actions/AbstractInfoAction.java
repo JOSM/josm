@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -154,7 +155,7 @@ public abstract class AbstractInfoAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getActiveDataSet();
+        OsmData<?, ?, ?, ?> ds = getLayerManager().getActiveData();
         setEnabled(ds != null && !ds.selectionEmpty());
     }
 

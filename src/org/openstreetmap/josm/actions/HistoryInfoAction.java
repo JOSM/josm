@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.OsmIdSelectionDialog;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
@@ -37,7 +37,7 @@ public class HistoryInfoAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        DataSet set = getLayerManager().getActiveDataSet();
+        OsmData<?, ?, ?, ?> set = getLayerManager().getActiveData();
         if (set != null && !set.selectionEmpty()) {
             HistoryBrowserDialogManager.getInstance().showHistory(set.getAllSelected());
         } else {

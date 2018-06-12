@@ -31,6 +31,8 @@ import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -264,12 +266,22 @@ public abstract class Main {
     }
 
     /**
-     * Replies the current selected primitives, from a end-user point of view.
+     * Replies the current selected OSM primitives, from a end-user point of view.
      * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
-     * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
+     * @return The current selected OSM primitives, from a end-user point of view. Can be {@code null}.
      * @since 6546
      */
     public Collection<OsmPrimitive> getInProgressSelection() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Replies the current selected primitives, from a end-user point of view.
+     * It is not always technically the same collection of primitives than {@link OsmData#getSelected()}.
+     * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
+     * @since 13926
+     */
+    public Collection<? extends IPrimitive> getInProgressISelection() {
         return Collections.emptyList();
     }
 

@@ -30,7 +30,7 @@ public class TaggingPresetSearchAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if (MainApplication.getLayerManager().getActiveDataSet() == null)
+        if (MainApplication.getLayerManager().getActiveData() == null)
             return;
 
         TaggingPresetSearchDialog.getInstance().showDialog();

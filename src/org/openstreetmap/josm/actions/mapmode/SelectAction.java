@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -353,7 +354,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      */
     private boolean removeHighlighting() {
         boolean needsRepaint = false;
-        DataSet ds = getLayerManager().getActiveDataSet();
+        OsmData<?, ?, ?, ?> ds = getLayerManager().getActiveData();
         if (ds != null && !ds.getHighlightedVirtualNodes().isEmpty()) {
             needsRepaint = true;
             ds.clearHighlightedVirtualNodes();

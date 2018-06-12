@@ -45,6 +45,7 @@ import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -294,7 +295,7 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(MainApplication.getLayerManager().getActiveDataSet() != null);
+            setEnabled(MainApplication.getLayerManager().getActiveData() != null);
         }
 
         @Override
@@ -319,7 +320,7 @@ public class SelectionListDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty()) return;
-            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
             if (ds == null) return;
             ds.setSelected(sel);
             model.selectionModel.setSelectionInterval(0, sel.size()-1);
