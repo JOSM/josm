@@ -16,11 +16,10 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -45,7 +44,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * This action allows you to set up an icon, a tooltip text, a globally registered shortcut, register it in the main toolbar and set up
  * layer/selection listeners that call {@link #updateEnabledState()} whenever the global context is changed.
  *
- * A JosmAction can register a {@link LayerChangeListener} and a {@link SelectionChangedListener}. Upon
+ * A JosmAction can register a {@link LayerChangeListener} and a {@link DataSelectionListener}. Upon
  * a layer change event or a selection change event it invokes {@link #updateEnabledState()}.
  * Subclasses can override {@link #updateEnabledState()} in order to update the {@link #isEnabled()}-state
  * of a JosmAction depending on the {@link #getLayerManager()} state.
@@ -202,8 +201,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         }
         if (listenToSelectionChange()) {
             selectionChangeAdapter = new SelectionChangeAdapter();
-            SelectionEventManager.getInstance()
-                .addSelectionListener(selectionChangeAdapter, FireMode.IN_EDT_CONSOLIDATED);
+            SelectionEventManager.getInstance().addSelectionListenerForEdt(selectionChangeAdapter);
         }
         initEnabledState();
     }
@@ -219,7 +217,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
 
     /**
      * Overwrite this if {@link #updateEnabledState()} should be called when the selection changed. Default is true.
-     * @return <code>true</code> if a {@link SelectionChangedListener} should be registered.
+     * @return <code>true</code> if a {@link DataSelectionListener} should be registered.
      * @since 10353
      */
     protected boolean listenToSelectionChange() {
@@ -236,7 +234,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
             getLayerManager().removeActiveLayerChangeListener(activeLayerChangeAdapter);
         }
         if (selectionChangeAdapter != null) {
-            DataSet.removeSelectionListener(selectionChangeAdapter);
+            SelectionEventManager.getInstance().removeSelectionListener(selectionChangeAdapter);
         }
     }
 
@@ -416,10 +414,10 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Adapter for selection change events. Runs updateEnabledState() whenever the selection changed.
      */
-    protected class SelectionChangeAdapter implements SelectionChangedListener {
+    protected class SelectionChangeAdapter implements DataSelectionListener {
         @Override
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            updateEnabledState(newSelection);
+        public void selectionChanged(SelectionChangeEvent event) {
+            updateEnabledState(event.getSelection());
         }
 
         @Override

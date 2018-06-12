@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
@@ -397,7 +396,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
 
     /**
      * Sets the current selection to the primitives in <code>selection</code>
-     * and notifies all {@link SelectionChangedListener}.
+     * and notifies all {@link DataSelectionListener}.
      *
      * @param selection the selection
      */
@@ -405,7 +404,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
 
     /**
      * Sets the current selection to the primitives in <code>osm</code>
-     * and notifies all {@link SelectionChangedListener}.
+     * and notifies all {@link DataSelectionListener}.
      *
      * @param osm the primitives to set. <code>null</code> values are ignored for now, but this may be removed in the future.
      */
@@ -413,7 +412,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
 
     /**
      * Adds the primitives in <code>selection</code> to the current selection
-     * and notifies all {@link SelectionChangedListener}.
+     * and notifies all {@link DataSelectionListener}.
      *
      * @param selection the selection
      */
@@ -421,7 +420,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
 
     /**
      * Adds the primitives in <code>osm</code> to the current selection
-     * and notifies all {@link SelectionChangedListener}.
+     * and notifies all {@link DataSelectionListener}.
      *
      * @param osm the primitives to add
      */
@@ -448,8 +447,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
      * Add a listener that listens to selection changes in this specific data set.
      * @param listener The listener.
      * @see #removeSelectionListener(DataSelectionListener)
-     * @see SelectionEventManager#addSelectionListener(SelectionChangedListener,
-     *      org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode)
+     * @see SelectionEventManager#addSelectionListener(DataSelectionListener)
      *      To add a global listener.
      */
     void addSelectionListener(DataSelectionListener listener);

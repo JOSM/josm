@@ -59,7 +59,6 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -67,6 +66,7 @@ import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
 import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.coor.conversion.ProjectedCoordinateFormat;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
@@ -120,7 +120,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public final class MapStatus extends JPanel implements
-    Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener, SelectionChangedListener, DataSetListener, ZoomChangeListener {
+    Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener, DataSelectionListener, DataSetListener, ZoomChangeListener {
 
     private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Config.getPref().get("statusbar.decimal-format", "0.0"));
     private static final AbstractProperty<Double> DISTANCE_THRESHOLD = new DoubleProperty("statusbar.distance-threshold", 0.01).cached();
@@ -951,7 +951,7 @@ public final class MapStatus extends JPanel implements
 
         Config.getPref().addPreferenceChangeListener(this);
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
-        SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
+        SelectionEventManager.getInstance().addSelectionListenerForEdt(this);
 
         mvComponentAdapter = new ComponentAdapter() {
             @Override
@@ -1203,8 +1203,8 @@ public final class MapStatus extends JPanel implements
     }
 
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        refreshDistText(newSelection);
+    public void selectionChanged(SelectionChangeEvent event) {
+        refreshDistText(event.getSelection());
     }
 
     @Override

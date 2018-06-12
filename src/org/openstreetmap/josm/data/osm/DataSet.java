@@ -547,7 +547,9 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * A list of listeners to selection changed events. The list is static, as listeners register
      * themselves for any dataset selection changes that occur, regardless of the current active
      * dataset. (However, the selection does only change in the active layer)
+     * @deprecated to be removed
      */
+    @Deprecated
     private static final Collection<SelectionChangedListener> selListeners = new CopyOnWriteArrayList<>();
 
     /**
@@ -555,7 +557,9 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * @param listener The selection listener to add
      * @see #addSelectionListener(DataSelectionListener)
      * @see SelectionEventManager#removeSelectionListener(SelectionChangedListener)
+     * @deprecated Use {@link SelectionEventManager#addSelectionListener(DataSelectionListener)} instead
      */
+    @Deprecated
     public static void addSelectionListener(SelectionChangedListener listener) {
         ((CopyOnWriteArrayList<SelectionChangedListener>) selListeners).addIfAbsent(listener);
     }
@@ -565,11 +569,18 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * @param listener The selection listener to remove
      * @see #removeSelectionListener(DataSelectionListener)
      * @see SelectionEventManager#removeSelectionListener(SelectionChangedListener)
+     * @deprecated Use {@link SelectionEventManager#removeSelectionListener(DataSelectionListener)} instead
      */
+    @Deprecated
     public static void removeSelectionListener(SelectionChangedListener listener) {
         selListeners.remove(listener);
     }
 
+    /**
+     * @deprecated to be removed
+     * @param currentSelection current selection
+     */
+    @Deprecated
     private static void fireSelectionChange(Collection<? extends OsmPrimitive> currentSelection) {
         for (SelectionChangedListener l : selListeners) {
             l.selectionChanged(currentSelection);

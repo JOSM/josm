@@ -60,6 +60,7 @@ import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
@@ -238,7 +239,7 @@ public class RelationListDialog extends ToggleDialog
         MapView.addZoomChangeListener(this);
         newAction.updateEnabledState();
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
-        DataSet.addSelectionListener(addSelectionToRelations);
+        SelectionEventManager.getInstance().addSelectionListener(addSelectionToRelations);
         dataChanged(null);
         ExpertToggleAction.addExpertModeChangeListener(this);
         expertChanged(ExpertToggleAction.isExpert());
@@ -250,7 +251,7 @@ public class RelationListDialog extends ToggleDialog
         MainApplication.getLayerManager().removeLayerChangeListener(newAction);
         MapView.removeZoomChangeListener(this);
         DatasetEventManager.getInstance().removeDatasetListener(this);
-        DataSet.removeSelectionListener(addSelectionToRelations);
+        SelectionEventManager.getInstance().removeSelectionListener(addSelectionToRelations);
         ExpertToggleAction.removeExpertModeChangeListener(this);
     }
 

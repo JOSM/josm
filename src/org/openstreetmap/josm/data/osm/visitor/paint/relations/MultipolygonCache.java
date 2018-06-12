@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
@@ -38,7 +39,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * A memory cache for {@link Multipolygon} objects.
  * @since 4623
  */
-public final class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener, SelectionChangedListener {
+public final class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener, DataSelectionListener {
 
     private static final MultipolygonCache INSTANCE = new MultipolygonCache();
 
@@ -48,7 +49,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
 
     private MultipolygonCache() {
         Main.addProjectionChangeListener(this);
-        DataSet.addSelectionListener(this);
+        SelectionEventManager.getInstance().addSelectionListener(this);
         MainApplication.getLayerManager().addLayerChangeListener(this);
     }
 
@@ -293,7 +294,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
     }
 
     @Override
-    public synchronized void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public synchronized void selectionChanged(SelectionChangeEvent event) {
 
         for (Iterator<PolyData> it = selectedPolyData.iterator(); it.hasNext();) {
             it.next().setSelected(false);
@@ -302,7 +303,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
 
         DataSet ds = null;
         Collection<Map<Relation, Multipolygon>> maps = null;
-        for (OsmPrimitive p : newSelection) {
+        for (OsmPrimitive p : event.getSelection()) {
             if (p instanceof Way && p.getDataSet() != null) {
                 if (ds == null) {
                     ds = p.getDataSet();

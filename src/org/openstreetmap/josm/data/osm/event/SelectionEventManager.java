@@ -47,6 +47,10 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         void fire(SelectionChangeEvent event);
     }
 
+    /**
+     * @deprecated to be removed
+     */
+    @Deprecated
     private static class OldListenerInfo implements ListenerInfo {
         private final SelectionChangedListener listener;
 
@@ -129,7 +133,9 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      * @param listener listener to add
      * @param fireMode Set this to IN_EDT_CONSOLIDATED if you want the event to be fired in the EDT thread.
      *                 Set it to IMMEDIATELY if you want the event to fire in the thread that caused the selection update.
+     * @deprecated Use {@link #addSelectionListener(DataSelectionListener)} or {@link #addSelectionListenerForEdt(DataSelectionListener)}
      */
+    @Deprecated
     public void addSelectionListener(SelectionChangedListener listener, FireMode fireMode) {
         if (fireMode == FireMode.IN_EDT) {
             throw new UnsupportedOperationException("IN_EDT mode not supported, you probably want to use IN_EDT_CONSOLIDATED.");
@@ -162,7 +168,9 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
     /**
      * Unregisters a {@code SelectionChangedListener}.
      * @param listener listener to remove
+     * @deprecated use {@link #removeSelectionListener(DataSelectionListener)}
      */
+    @Deprecated
     public void removeSelectionListener(SelectionChangedListener listener) {
         remove(new OldListenerInfo(listener));
     }

@@ -41,7 +41,7 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
-import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
@@ -64,8 +64,8 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
+import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
@@ -164,8 +164,8 @@ public class SelectionListDialog extends ToggleDialog {
 
     @Override
     public void showNotify() {
-        SelectionEventManager.getInstance().addSelectionListener(actShowHistory, FireMode.IN_EDT_CONSOLIDATED);
-        SelectionEventManager.getInstance().addSelectionListener(model, FireMode.IN_EDT_CONSOLIDATED);
+        SelectionEventManager.getInstance().addSelectionListenerForEdt(actShowHistory);
+        SelectionEventManager.getInstance().addSelectionListenerForEdt(model);
         DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
         MainApplication.getLayerManager().addActiveLayerChangeListener(actSearch);
         // editLayerChanged also gets the selection history of the level. Listener calls setJOSMSelection when fired.
@@ -338,7 +338,7 @@ public class SelectionListDialog extends ToggleDialog {
     /**
      * The action for showing history information of the current history item.
      */
-    class ShowHistoryAction extends AbstractAction implements ListSelectionListener, SelectionChangedListener {
+    class ShowHistoryAction extends AbstractAction implements ListSelectionListener, DataSelectionListener {
         /**
          * Constructs a new {@code ShowHistoryAction}.
          */
@@ -371,8 +371,8 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         @Override
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            updateEnabledState(newSelection.size());
+        public void selectionChanged(SelectionChangeEvent event) {
+            updateEnabledState(event.getSelection().size());
         }
     }
 
@@ -460,7 +460,7 @@ public class SelectionListDialog extends ToggleDialog {
      *
      */
     static class SelectionListModel extends AbstractListModel<OsmPrimitive>
-    implements ActiveLayerChangeListener, SelectionChangedListener, DataSetListener {
+    implements ActiveLayerChangeListener, DataSelectionListener, DataSetListener {
 
         private static final int SELECTION_HISTORY_SIZE = 10;
 
@@ -672,11 +672,11 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         /* ------------------------------------------------------------------------ */
-        /* interface SelectionChangedListener                                       */
+        /* interface DataSelectionListener                                          */
         /* ------------------------------------------------------------------------ */
         @Override
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            setJOSMSelection(newSelection);
+        public void selectionChanged(SelectionChangeEvent event) {
+            setJOSMSelection(event.getSelection());
         }
 
         /* ------------------------------------------------------------------------ */
