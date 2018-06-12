@@ -525,13 +525,13 @@ public class TagChecker extends TagTest {
                     String fixedValue = harmonizeValue(prop.getValue());
                     Map<String, String> possibleValues = getPossibleValues(getPresetValues(key));
                     if (possibleValues.containsKey(fixedValue)) {
-                        final String newKey = possibleValues.get(fixedValue);
+                        final String newValue = possibleValues.get(fixedValue);
                         // misspelled preset value
                         errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
                                 .message(tr("Misspelled property value"),
-                                        marktr("Value ''{0}'' for key ''{1}'' looks like ''{2}''."), prop.getValue(), key, fixedValue)
+                                        marktr("Value ''{0}'' for key ''{1}'' looks like ''{2}''."), prop.getValue(), key, newValue)
                                 .primitives(p)
-                                .fix(() -> new ChangePropertyCommand(p, key, newKey))
+                                .fix(() -> new ChangePropertyCommand(p, key, newValue))
                                 .build());
                         withErrors.put(p, "WPV");
                     } else {
