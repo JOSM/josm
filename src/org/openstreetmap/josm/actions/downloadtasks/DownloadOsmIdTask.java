@@ -31,14 +31,14 @@ public class DownloadOsmIdTask extends DownloadOsmTask {
     }
 
     @Override
-    public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
+    public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         final Matcher matcher = Pattern.compile(URL_ID_PATTERN).matcher(url);
         if (matcher.matches()) {
             final OsmPrimitiveType type = OsmPrimitiveType.from(matcher.group(2));
             final long id = Long.parseLong(matcher.group(3));
             final PrimitiveId primitiveId = new SimplePrimitiveId(id, type);
             final DownloadPrimitivesWithReferrersTask downloadTask = new DownloadPrimitivesWithReferrersTask(
-                    newLayer, Collections.singletonList(primitiveId), true, true, null, null);
+                    settings.isNewLayer(), Collections.singletonList(primitiveId), true, true, null, null);
             return MainApplication.worker.submit(downloadTask);
         } else {
             throw new IllegalStateException("Failed to parse id from " + url);

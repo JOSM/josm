@@ -61,20 +61,19 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
     }
 
     @Override
-    public Future<?> download(boolean newLayer, Bounds downloadArea,
-            ProgressMonitor progressMonitor) {
+    public Future<?> download(DownloadParams settings, Bounds downloadArea, ProgressMonitor progressMonitor) {
         return null;
     }
 
     @Override
-    public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
+    public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         final Matcher matcher = Pattern.compile(OSM_WEBSITE_PATTERN).matcher(url);
         if (matcher.matches()) {
             url = OsmApi.getOsmApi().getBaseUrl() + "changeset/" + Long.parseLong(matcher.group(2)) + "/download";
         }
-        downloadTask = new DownloadTask(newLayer, new OsmServerLocationReader(url), progressMonitor);
+        downloadTask = new DownloadTask(settings, new OsmServerLocationReader(url), progressMonitor);
         // Extract .osc filename from URL to set the new layer name
-        extractOsmFilename("https?://.*/(.*\\.osc)", url);
+        extractOsmFilename(settings, "https?://.*/(.*\\.osc)", url);
         return MainApplication.worker.submit(downloadTask);
     }
 
@@ -85,12 +84,12 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
         /**
          * Constructs a new {@code DownloadTask}.
-         * @param newLayer if {@code true}, force download to a new layer
+         * @param settings download settings
          * @param reader OSM data reader
          * @param progressMonitor progress monitor
          */
-        public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
-            super(newLayer, reader, progressMonitor);
+        public DownloadTask(DownloadParams settings, OsmServerReader reader, ProgressMonitor progressMonitor) {
+            super(settings, reader, progressMonitor);
         }
 
         @Override

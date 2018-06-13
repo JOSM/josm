@@ -44,7 +44,7 @@ public class DownloadGpsTaskTest extends AbstractDownloadTaskTestParent {
     public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
         mockHttp();
         DownloadGpsTask task = new DownloadGpsTask();
-        task.loadUrl(false, getRemoteFileUrl(), null).get();
+        task.loadUrl(new DownloadParams(), getRemoteFileUrl(), null).get();
         GpxData data = task.getDownloadedData();
         assertNotNull(data);
         assertFalse(data.waypoints.isEmpty());

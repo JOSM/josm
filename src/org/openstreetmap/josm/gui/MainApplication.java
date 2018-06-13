@@ -79,6 +79,7 @@ import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
@@ -1369,7 +1370,7 @@ public class MainApplication extends Main {
     static List<Future<?>> downloadFromParamBounds(final boolean rawGps, Bounds b) {
         DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
         // asynchronously launch the download task ...
-        Future<?> future = task.download(true, b, null);
+        Future<?> future = task.download(new DownloadParams().withNewLayer(true), b, null);
         // ... and the continuation when the download is finished (this will wait for the download to finish)
         return Collections.singletonList(MainApplication.worker.submit(new PostDownloadHandler(task, future)));
     }

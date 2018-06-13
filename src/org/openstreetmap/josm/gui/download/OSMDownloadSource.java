@@ -22,6 +22,7 @@ import org.openstreetmap.josm.actions.downloadtasks.AbstractDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -63,7 +64,7 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
         if (data.isDownloadOSMData()) {
             DownloadOsmTask task = new DownloadOsmTask();
             task.setZoomAfterDownload(zoom && !data.isDownloadGPX() && !data.isDownloadNotes());
-            Future<?> future = task.download(newLayer, bbox, null);
+            Future<?> future = task.download(new DownloadParams().withNewLayer(newLayer), bbox, null);
             MainApplication.worker.submit(new PostDownloadHandler(task, future));
             if (zoom) {
                 tasks.add(new Pair<>(task, future));
@@ -73,7 +74,7 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
         if (data.isDownloadGPX()) {
             DownloadGpsTask task = new DownloadGpsTask();
             task.setZoomAfterDownload(zoom && !data.isDownloadOSMData() && !data.isDownloadNotes());
-            Future<?> future = task.download(newLayer, bbox, null);
+            Future<?> future = task.download(new DownloadParams().withNewLayer(newLayer), bbox, null);
             MainApplication.worker.submit(new PostDownloadHandler(task, future));
             if (zoom) {
                 tasks.add(new Pair<>(task, future));
@@ -83,7 +84,7 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
         if (data.isDownloadNotes()) {
             DownloadNotesTask task = new DownloadNotesTask();
             task.setZoomAfterDownload(zoom && !data.isDownloadOSMData() && !data.isDownloadGPX());
-            Future<?> future = task.download(false, bbox, null);
+            Future<?> future = task.download(new DownloadParams(), bbox, null);
             MainApplication.worker.submit(new PostDownloadHandler(task, future));
             if (zoom) {
                 tasks.add(new Pair<>(task, future));

@@ -62,7 +62,7 @@ public class LoadObjectHandler extends RequestHandler {
             Logging.info("RemoteControl: download forbidden by preferences");
         }
         if (!ps.isEmpty()) {
-            final boolean newLayer = isLoadInNewLayer();
+            final boolean newLayer = getDownloadParams().isNewLayer();
             final boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
             final boolean referrers = Boolean.parseBoolean(args.get("referrers"));
             final DownloadPrimitivesWithReferrersTask task = new DownloadPrimitivesWithReferrersTask(

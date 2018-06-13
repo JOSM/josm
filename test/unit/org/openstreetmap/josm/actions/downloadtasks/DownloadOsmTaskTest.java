@@ -41,7 +41,7 @@ public class DownloadOsmTaskTest extends AbstractDownloadTaskTestParent {
     public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
         mockHttp();
         DownloadOsmTask task = new DownloadOsmTask();
-        task.loadUrl(false, getRemoteFileUrl(), null).get();
+        task.loadUrl(new DownloadParams(), getRemoteFileUrl(), null).get();
         DataSet ds = task.getDownloadedData();
         assertNotNull(ds);
         assertFalse(ds.getNodes().isEmpty());

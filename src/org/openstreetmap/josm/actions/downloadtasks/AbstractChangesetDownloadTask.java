@@ -91,7 +91,7 @@ public abstract class AbstractChangesetDownloadTask extends AbstractDownloadTask
     }
 
     @Override
-    public final Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
+    public final Future<?> download(DownloadParams settings, Bounds downloadArea, ProgressMonitor progressMonitor) {
         return download();
     }
 
@@ -128,7 +128,7 @@ public abstract class AbstractChangesetDownloadTask extends AbstractDownloadTask
     }
 
     @Override
-    public final Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
+    public final Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         return downloadTaskRunnable != null ? MainApplication.worker.submit(downloadTaskRunnable) : null;
     }
 

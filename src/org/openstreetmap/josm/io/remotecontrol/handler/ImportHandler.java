@@ -39,14 +39,14 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                 // For compatibility reasons with older instances of JOSM, arbitrary choice of DownloadOsmTask
                 // As of 2015-04, Overpass Turbo requires this branch of code ...
                 Logging.debug("Remote control, /import: defaulting to DownloadOsmTask");
-                new DownloadOsmTask().loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
+                new DownloadOsmTask().loadUrl(getDownloadParams(), url.toExternalForm(), null);
             } else if (Config.getPref().getBoolean("remotecontrol.import.interactive", true)) {
                 // OpenLocationAction queries the user if more than one task is suitable
-                MainApplication.getMenu().openLocation.openUrl(isLoadInNewLayer(), url.toExternalForm());
+                MainApplication.getMenu().openLocation.openUrl(getDownloadParams(), url.toExternalForm());
             } else {
                 // Otherwise perform all tasks
                 for (DownloadTask task : suitableDownloadTasks) {
-                    task.loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
+                    task.loadUrl(getDownloadParams(), url.toExternalForm(), null);
                 }
             }
         } catch (RuntimeException ex) { // NOPMD
@@ -63,7 +63,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer"};
+        return new String[] {"new_layer", "layer_name"};
     }
 
     @Override
@@ -73,7 +73,8 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        return new String[] {"/import?url="+Main.getJOSMWebsite()+"/browser/josm/trunk/data_nodist/direction-arrows.osm"};
+        return new String[] {"/import?url=" + Utils.encodeUrl(
+                Main.getJOSMWebsite()+"/browser/josm/trunk/data_nodist/direction-arrows.osm?format=txt")};
     }
 
     @Override

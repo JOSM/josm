@@ -58,8 +58,8 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
     }
 
     @Override
-    public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
-        downloadTask = new DownloadTask(newLayer,
+    public Future<?> download(DownloadParams settings, Bounds downloadArea, ProgressMonitor progressMonitor) {
+        downloadTask = new DownloadTask(settings,
                 new BoundingBoxDownloader(downloadArea), progressMonitor);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
@@ -67,7 +67,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
     }
 
     @Override
-    public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
+    public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         final Optional<String> mappedUrl = Stream.of(GpxUrlPattern.USER_TRACE_ID, GpxUrlPattern.EDIT_TRACE_ID)
                 .map(p -> Pattern.compile(p.pattern()).matcher(url))
@@ -75,12 +75,12 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
                 .map(m -> "https://www.openstreetmap.org/trace/" + m.group(2) + "/data")
                 .findFirst();
         if (mappedUrl.isPresent()) {
-            return loadUrl(newLayer, mappedUrl.get(), progressMonitor);
+            return loadUrl(settings, mappedUrl.get(), progressMonitor);
         }
         if (Stream.of(GpxUrlPattern.TRACE_ID, GpxUrlPattern.EXTERNAL_GPX_SCRIPT,
                       GpxUrlPattern.EXTERNAL_GPX_FILE, GpxUrlPattern.TASKING_MANAGER)
                 .anyMatch(p -> url.matches(p.pattern()))) {
-            downloadTask = new DownloadTask(newLayer,
+            downloadTask = new DownloadTask(settings,
                     new OsmServerLocationReader(url), progressMonitor);
             // Extract .gpx filename from URL to set the new layer name
             Matcher matcher = Pattern.compile(GpxUrlPattern.EXTERNAL_GPX_FILE.pattern()).matcher(url);
@@ -93,7 +93,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             String[] table = url.split("\\?|=|&");
             for (int i = 0; i < table.length; i++) {
                 if ("bbox".equals(table[i]) && i < table.length-1)
-                    return download(newLayer, new Bounds(table[i+1], ",", ParseMethod.LEFT_BOTTOM_RIGHT_TOP), progressMonitor);
+                    return download(settings, new Bounds(table[i+1], ",", ParseMethod.LEFT_BOTTOM_RIGHT_TOP), progressMonitor);
             }
         }
         return null;
@@ -116,10 +116,10 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         private GpxData rawData;
         private final boolean newLayer;
 
-        DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
+        DownloadTask(DownloadParams settings, OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(tr("Downloading GPS data"), progressMonitor, false);
             this.reader = reader;
-            this.newLayer = newLayer;
+            this.newLayer = settings.isNewLayer();
         }
 
         @Override

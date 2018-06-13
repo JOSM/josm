@@ -37,12 +37,12 @@ public class DownloadSessionTask extends AbstractDownloadTask<Object> {
     }
 
     @Override
-    public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
+    public Future<?> download(DownloadParams settings, Bounds downloadArea, ProgressMonitor progressMonitor) {
         return null;
     }
 
     @Override
-    public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
+    public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         if (url != null && (url.matches(PATTERN_SESSION))) {
             try {
                 URL u = new URL(url);

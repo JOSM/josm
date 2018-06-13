@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -46,7 +47,7 @@ public final class DownloadNotesInViewAction extends JosmAction {
         final Bounds bounds = MainApplication.getMap().mapView.getRealBounds();
         DownloadNotesTask task = new DownloadNotesTask();
         task.setZoomAfterDownload(false);
-        Future<?> future = task.download(false, bounds, null);
+        Future<?> future = task.download(new DownloadParams(), bounds, null);
         MainApplication.worker.submit(new PostDownloadHandler(task, future));
     }
 

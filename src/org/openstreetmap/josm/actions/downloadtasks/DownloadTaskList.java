@@ -54,7 +54,7 @@ public class DownloadTaskList {
     private void addDownloadTask(ProgressMonitor progressMonitor, DownloadTask dt, Rectangle2D td, int i, int n) {
         ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
         childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, n, n - i));
-        Future<?> future = dt.download(false, new Bounds(td), childProgress);
+        Future<?> future = dt.download(new DownloadParams(), new Bounds(td), childProgress);
         taskFutures.add(future);
         tasks.add(dt);
     }
