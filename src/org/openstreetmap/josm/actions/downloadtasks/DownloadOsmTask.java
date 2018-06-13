@@ -266,6 +266,17 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             if (layerName == null || layerName.isEmpty()) {
                 layerName = OsmDataLayer.createNewName();
             }
+            if (settings.getDownloadPolicy() != null) {
+                dataSet.setDownloadPolicy(settings.getDownloadPolicy());
+            }
+            if (settings.getUploadPolicy() != null) {
+                dataSet.setUploadPolicy(settings.getUploadPolicy());
+            }
+            if (dataSet.isLocked() && !settings.isLocked()) {
+                dataSet.unlock();
+            } else if (!dataSet.isLocked() && settings.isLocked()) {
+                dataSet.lock();
+            }
             return new OsmDataLayer(dataSet, layerName, null);
         }
 

@@ -40,7 +40,8 @@ public class LoadObjectHandler extends RequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer", "layer_name", "addtags", "relation_members", "referrers"};
+        return new String[] {"new_layer", "layer_name", "layer_locked", "download_policy", "upload_policy",
+                "addtags", "relation_members", "referrers"};
     }
 
     @Override
@@ -96,6 +97,7 @@ public class LoadObjectHandler extends RequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
+        validateDownloadParams();
         ps.clear();
         for (String i : splitArg("objects", SPLITTER_COMMA)) {
             if (!i.isEmpty()) {
