@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
@@ -62,7 +63,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         task.setZoomAfterDownload(settings.zoomToData());
         Future<?> future = task.download(
                 new OverpassDownloadReader(area, OverpassDownloadReader.OVERPASS_SERVER.get(), data.getQuery()),
-                settings.asNewLayer(), area, null);
+                new DownloadParams().withNewLayer(settings.asNewLayer()), area, null);
         MainApplication.worker.submit(new PostDownloadHandler(task, future, data.getErrorReporter()));
     }
 

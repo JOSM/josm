@@ -45,14 +45,14 @@ public interface DownloadTask {
      *    MainApplication.worker.submit(runAfterTask);
      * </pre>
      *
-     * @param newLayer true, if the data is to be downloaded into a new layer. If false, the task
-     * selects one of the existing layers as download layer, preferably the active layer.
+     * @param settings download settings
      *
      * @param downloadArea the area to download
      * @param progressMonitor the progressMonitor
      * @return the future representing the asynchronous task
+     * @since 13927
      */
-    Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor);
+    Future<?> download(DownloadParams settings, Bounds downloadArea, ProgressMonitor progressMonitor);
 
     /**
      * Asynchronously launches the download task for a given bounding URL.
@@ -61,15 +61,15 @@ public interface DownloadTask {
      * Set progressMonitor to {@link NullProgressMonitor#INSTANCE} if progress information is to
      * be discarded.
 
-     * @param newLayer newLayer true, if the data is to be downloaded into a new layer. If false, the task
-     * selects one of the existing layers as download layer, preferably the active layer.
+     * @param settings download settings
      * @param url the url to download from
      * @param progressMonitor the progressMonitor
      * @return the future representing the asynchronous task
      *
-     * @see #download(boolean, Bounds, ProgressMonitor)
+     * @see #download(DownloadParams, Bounds, ProgressMonitor)
+     * @since 13927
      */
-    Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor);
+    Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor);
 
     /**
      * Returns true if the task is able to open the given URL, false otherwise.

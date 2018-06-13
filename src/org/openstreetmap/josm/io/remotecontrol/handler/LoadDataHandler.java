@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -39,7 +40,7 @@ public class LoadDataHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
-        MainApplication.worker.submit(new LoadDataTask(isLoadInNewLayer(), dataSet, args.get("layer_name")));
+        MainApplication.worker.submit(new LoadDataTask(getDownloadParams(), dataSet, args.get("layer_name")));
     }
 
     @Override
@@ -102,12 +103,13 @@ public class LoadDataHandler extends RequestHandler {
 
         /**
          * Constructs a new {@code LoadDataTask}.
-         * @param newLayer if {@code true}, force download to a new layer
+         * @param settings download settings
          * @param dataSet data set
          * @param layerName layer name
+         * @since 13927
          */
-        public LoadDataTask(boolean newLayer, DataSet dataSet, String layerName) {
-            super(newLayer, tr("Loading data"), false, true);
+        public LoadDataTask(DownloadParams settings, DataSet dataSet, String layerName) {
+            super(settings, tr("Loading data"), false, true);
             this.dataSet = dataSet;
             this.layerName = layerName;
         }

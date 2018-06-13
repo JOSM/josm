@@ -35,6 +35,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmIdTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmUrlTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadSessionTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -224,7 +225,18 @@ public class OpenLocationAction extends JosmAction {
      * @since 11986 (return type)
      */
     public List<Future<?>> openUrl(boolean newLayer, String url) {
-        return openUrl(newLayer, DOWNLOAD_ZOOMTODATA.get(), url);
+        return openUrl(new DownloadParams().withNewLayer(newLayer), url);
+    }
+
+    /**
+     * Open the given URL.
+     * @param settings download settings
+     * @param url The URL to open
+     * @return the list of tasks that have been started successfully (can be empty).
+     * @since 13927
+     */
+    public List<Future<?>> openUrl(DownloadParams settings, String url) {
+        return openUrl(settings, DOWNLOAD_ZOOMTODATA.get(), url);
     }
 
     /**
@@ -246,6 +258,18 @@ public class OpenLocationAction extends JosmAction {
      * @since 13261
      */
     public List<Future<?>> openUrl(boolean newLayer, boolean zoomToData, String url) {
+        return openUrl(new DownloadParams().withNewLayer(newLayer), zoomToData, url);
+    }
+
+    /**
+     * Open the given URL.
+     * @param settings download settings
+     * @param zoomToData true to zoom to entire newly downloaded data, false otherwise
+     * @param url The URL to open
+     * @return the list of tasks that have been started successfully (can be empty).
+     * @since 13927
+     */
+    public List<Future<?>> openUrl(DownloadParams settings, boolean zoomToData, String url) {
         Collection<DownloadTask> tasks = findDownloadTasks(url, false);
 
         if (tasks.size() > 1) {
@@ -261,7 +285,7 @@ public class OpenLocationAction extends JosmAction {
         for (final DownloadTask task : tasks) {
             try {
                 task.setZoomAfterDownload(zoomToData);
-                result.add(MainApplication.worker.submit(new PostDownloadHandler(task, task.loadUrl(newLayer, url, monitor))));
+                result.add(MainApplication.worker.submit(new PostDownloadHandler(task, task.loadUrl(settings, url, monitor))));
             } catch (IllegalArgumentException e) {
                 Logging.error(e);
             }

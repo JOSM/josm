@@ -17,8 +17,8 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
 public class DownloadNotesUrlBoundsTask extends DownloadNotesTask {
 
     @Override
-    public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
-        return download(newLayer, OsmUrlToBounds.parse(url), null);
+    public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
+        return download(settings, OsmUrlToBounds.parse(url), null);
     }
 
     @Override

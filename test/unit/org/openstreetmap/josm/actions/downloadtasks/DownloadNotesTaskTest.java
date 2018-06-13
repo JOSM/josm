@@ -39,7 +39,7 @@ public class DownloadNotesTaskTest extends AbstractDownloadTaskTestParent {
     public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
         mockHttp();
         DownloadNotesTask task = new DownloadNotesTask();
-        task.loadUrl(false, getRemoteFileUrl(), null).get();
+        task.loadUrl(new DownloadParams(), getRemoteFileUrl(), null).get();
         NoteData data = task.getDownloadedData();
         assertNotNull(data);
         assertFalse(data.getNotes().isEmpty());

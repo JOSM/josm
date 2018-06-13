@@ -20,7 +20,7 @@ public class DownloadNotesUrlIdTask extends DownloadNotesTask {
     private static final String URL_ID_PATTERN = "https?://www\\.(osm|openstreetmap)\\.org/note/(\\p{Digit}+).*";
 
     @Override
-    public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
+    public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         final Matcher matcher = Pattern.compile(URL_ID_PATTERN).matcher(url);
         if (matcher.matches()) {
             return download(Long.parseLong(matcher.group(2)), null);

@@ -66,13 +66,13 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
     }
 
     @Override
-    public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
+    public Future<?> download(DownloadParams settings, Bounds downloadArea, ProgressMonitor progressMonitor) {
         downloadTask = new DownloadBoundingBoxTask(new BoundingBoxDownloader(downloadArea), progressMonitor);
         return MainApplication.worker.submit(downloadTask);
     }
 
     @Override
-    public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
+    public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         if (url.matches(PATTERN_COMPRESS)) {
             downloadTask = new DownloadCompressedRawUrlTask(new OsmServerLocationReader(url), progressMonitor, Compression.byExtension(url));
         } else {

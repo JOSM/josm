@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -46,7 +47,7 @@ public final class DownloadOsmInViewAction extends JosmAction {
 
     private static class DownloadOsmInViewTask extends DownloadOsmTask {
         Future<?> download(Bounds downloadArea) {
-            return download(new DownloadTask(false, new BoundingBoxDownloader(downloadArea), null, false), downloadArea);
+            return download(new DownloadTask(new DownloadParams(), new BoundingBoxDownloader(downloadArea), null, false), downloadArea);
         }
     }
 }

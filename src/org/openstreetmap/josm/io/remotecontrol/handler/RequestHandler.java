@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
@@ -297,10 +298,16 @@ public abstract class RequestHandler {
         return contentType;
     }
 
-    protected boolean isLoadInNewLayer() {
+    private boolean isLoadInNewLayer() {
         return args.get("new_layer") != null && !args.get("new_layer").isEmpty()
                 ? Boolean.parseBoolean(args.get("new_layer"))
                 : Config.getPref().getBoolean(loadInNewLayerKey, loadInNewLayerDefault);
+    }
+
+    protected DownloadParams getDownloadParams() {
+        return new DownloadParams()
+                .withNewLayer(isLoadInNewLayer())
+                .withLayerName(args.get("layer_name"));
     }
 
     public void setSender(String sender) {

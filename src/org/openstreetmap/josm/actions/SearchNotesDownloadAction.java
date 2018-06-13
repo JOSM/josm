@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
@@ -103,6 +104,6 @@ public class SearchNotesDownloadAction extends JosmAction {
             .append("&q=")
             .append(Utils.encodeUrl(trimmedSearchTerm));
 
-        new DownloadNotesTask().loadUrl(false, sb.toString(), null);
+        new DownloadNotesTask().loadUrl(new DownloadParams(), sb.toString(), null);
     }
 }

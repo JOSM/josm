@@ -36,7 +36,7 @@ public class PostDownloadHandlerTest {
     private static DownloadTask newTask(final List<Object> errorObjects) {
         return new DownloadTask() {
             @Override
-            public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
+            public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
                 return null;
             }
 
@@ -61,7 +61,7 @@ public class PostDownloadHandlerTest {
             }
 
             @Override
-            public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
+            public Future<?> download(DownloadParams settings, Bounds downloadArea, ProgressMonitor progressMonitor) {
                 return null;
             }
 
