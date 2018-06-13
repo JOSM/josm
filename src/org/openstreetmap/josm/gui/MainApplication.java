@@ -92,6 +92,8 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
@@ -522,21 +524,23 @@ public class MainApplication extends Main {
         }
     }
 
-    /**
-     * Replies the current selected primitives, from a end-user point of view.
-     * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
-     * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
-     * see {@link DrawAction#getInProgressSelection()}.
-     *
-     * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
-     * @since 6546
-     */
     @Override
     public Collection<OsmPrimitive> getInProgressSelection() {
         if (map != null && map.mapMode instanceof DrawAction) {
             return ((DrawAction) map.mapMode).getInProgressSelection();
         } else {
             DataSet ds = layerManager.getActiveDataSet();
+            if (ds == null) return null;
+            return ds.getSelected();
+        }
+    }
+
+    @Override
+    public Collection<? extends IPrimitive> getInProgressISelection() {
+        if (map != null && map.mapMode instanceof DrawAction) {
+            return ((DrawAction) map.mapMode).getInProgressSelection();
+        } else {
+            OsmData<?, ?, ?, ?> ds = layerManager.getActiveData();
             if (ds == null) return null;
             return ds.getSelected();
         }

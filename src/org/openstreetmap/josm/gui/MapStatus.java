@@ -69,6 +69,7 @@ import org.openstreetmap.josm.data.coor.conversion.ProjectedCoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -601,9 +602,8 @@ public final class MapStatus extends JPanel implements
          * @param lbl The label to color
          * @param osm The primitive to derive the colors from
          */
-        private void popupSetLabelColors(JLabel lbl, OsmPrimitive osm) {
-            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-            if (ds.isSelected(osm)) {
+        private void popupSetLabelColors(JLabel lbl, IPrimitive osm) {
+            if (osm.isSelected()) {
                 lbl.setBackground(SystemColor.textHighlight);
                 lbl.setForeground(SystemColor.textHighlightText);
             } else {

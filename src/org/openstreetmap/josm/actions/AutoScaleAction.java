@@ -25,6 +25,8 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
@@ -76,11 +78,11 @@ public class AutoScaleAction extends JosmAction {
      *
      */
     public static void zoomToSelection() {
-        DataSet dataSet = MainApplication.getLayerManager().getActiveDataSet();
+        OsmData<?, ?, ?, ?> dataSet = MainApplication.getLayerManager().getActiveData();
         if (dataSet == null) {
             return;
         }
-        Collection<OsmPrimitive> sel = dataSet.getSelected();
+        Collection<? extends IPrimitive> sel = dataSet.getSelected();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -96,7 +98,7 @@ public class AutoScaleAction extends JosmAction {
      * Zooms the view to display the given set of primitives.
      * @param sel The primitives to zoom to, e.g. the current selection.
      */
-    public static void zoomTo(Collection<OsmPrimitive> sel) {
+    public static void zoomTo(Collection<? extends IPrimitive> sel) {
         BoundingXYVisitor bboxCalculator = new BoundingXYVisitor();
         bboxCalculator.computeBoundingBox(sel);
         // increase bbox. This is required
@@ -353,7 +355,7 @@ public class AutoScaleAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getActiveDataSet();
+        OsmData<?, ?, ?, ?> ds = getLayerManager().getActiveData();
         MapFrame map = MainApplication.getMap();
         switch (mode) {
         case "selection":

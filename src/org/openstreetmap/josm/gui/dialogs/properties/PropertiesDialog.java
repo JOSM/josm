@@ -62,7 +62,9 @@ import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -229,7 +231,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             + tr("Select objects for which to change tags.") + "</p></html>");
 
     private final PreferenceChangedListener preferenceListener = e -> {
-                if (MainApplication.getLayerManager().getActiveDataSet() != null) {
+                if (MainApplication.getLayerManager().getActiveData() != null) {
                     // Re-load data when display preference change
                     updateSelection();
                 }
@@ -487,8 +489,13 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         MainApplication.getMap().relationListDialog.selectRelation(relation);
         OsmDataLayer layer = MainApplication.getLayerManager().getActiveDataLayer();
         if (!layer.isLocked()) {
-            RelationEditor.getEditor(
-                    layer, relation, ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
+            List<RelationMember> members = new ArrayList<>();
+            for (IRelationMember<?> rm : ((MemberInfo) membershipData.getValueAt(row, 1)).role) {
+                if (rm instanceof RelationMember) {
+                    members.add((RelationMember) rm);
+                }
+            }
+            RelationEditor.getEditor(layer, relation, members).setVisible(true);
         }
     }
 
@@ -532,7 +539,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b && MainApplication.getLayerManager().getActiveDataSet() != null) {
+        if (b && MainApplication.getLayerManager().getActiveData() != null) {
             updateSelection();
         }
     }
@@ -558,7 +565,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
 
         // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
-        Collection<OsmPrimitive> newSel = Optional.ofNullable(Main.main.getInProgressSelection()).orElseGet(Collections::emptyList);
+        Collection<? extends IPrimitive> newSel = Optional.ofNullable(Main.main.getInProgressISelection()).orElseGet(Collections::emptyList);
         String selectedTag;
         Relation selectedRelation = null;
         selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
@@ -577,7 +584,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         final Map<String, String> tags = new HashMap<>();
         valueCount.clear();
         Set<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
-        for (OsmPrimitive osm : newSel) {
+        for (IPrimitive osm : newSel) {
             types.add(TaggingPresetType.forPrimitive(osm));
             for (String key : osm.keySet()) {
                 if (displayDiscardableKeys || !AbstractPrimitive.getDiscardableKeys().contains(key)) {
@@ -609,15 +616,15 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         membershipData.setRowCount(0);
 
-        Map<Relation, MemberInfo> roles = new HashMap<>();
-        for (OsmPrimitive primitive: newSel) {
-            for (OsmPrimitive ref: primitive.getReferrers(true)) {
-                if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
-                    Relation r = (Relation) ref;
+        Map<IRelation<?>, MemberInfo> roles = new HashMap<>();
+        for (IPrimitive primitive: newSel) {
+            for (IPrimitive ref: primitive.getReferrers(true)) {
+                if (ref instanceof IRelation && !ref.isIncomplete() && !ref.isDeleted()) {
+                    IRelation<?> r = (IRelation<?>) ref;
                     MemberInfo mi = Optional.ofNullable(roles.get(r)).orElseGet(() -> new MemberInfo(newSel));
                     roles.put(r, mi);
                     int i = 1;
-                    for (RelationMember m : r.getMembers()) {
+                    for (IRelationMember<?> m : r.getMembers()) {
                         if (m.getMember() == primitive) {
                             mi.add(m, i);
                         }
@@ -627,13 +634,13 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             }
         }
 
-        List<Relation> sortedRelations = new ArrayList<>(roles.keySet());
+        List<IRelation<?>> sortedRelations = new ArrayList<>(roles.keySet());
         sortedRelations.sort((o1, o2) -> {
             int comp = Boolean.compare(o1.isDisabledAndHidden(), o2.isDisabledAndHidden());
             return comp != 0 ? comp : DefaultNameFormatter.getInstance().getRelationComparator().compare(o1, o2);
         });
 
-        for (Relation r: sortedRelations) {
+        for (IRelation<?> r: sortedRelations) {
             membershipData.addRow(new Object[]{r, roles.get(r)});
         }
 
@@ -887,18 +894,18 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     }
 
     static class MemberInfo {
-        private final List<RelationMember> role = new ArrayList<>();
-        private Set<OsmPrimitive> members = new HashSet<>();
+        private final List<IRelationMember<?>> role = new ArrayList<>();
+        private Set<IPrimitive> members = new HashSet<>();
         private List<Integer> position = new ArrayList<>();
-        private Collection<OsmPrimitive> selection;
+        private Collection<? extends IPrimitive> selection;
         private String positionString;
         private String roleString;
 
-        MemberInfo(Collection<OsmPrimitive> selection) {
+        MemberInfo(Collection<? extends IPrimitive> selection) {
             this.selection = selection;
         }
 
-        void add(RelationMember r, Integer p) {
+        void add(IRelationMember<?> r, Integer p) {
             role.add(r);
             members.add(r.getMember());
             position.add(p);
@@ -920,7 +927,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         String getRoleString() {
             if (roleString == null) {
-                for (RelationMember r : role) {
+                for (IRelationMember<?> r : role) {
                     if (roleString == null) {
                         roleString = r.getRole();
                     } else if (!roleString.equals(r.getRole())) {
@@ -1174,7 +1181,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             if (tagTable.getSelectedRowCount() != 1)
                 return;
             String key = editHelper.getDataKey(tagTable.getSelectedRow());
-            Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
+            Collection<? extends IPrimitive> sel = Main.main.getInProgressISelection();
             if (sel.isEmpty())
                 return;
             final SearchSetting ss = createSearchSetting(key, sel, sameType);
@@ -1182,11 +1189,11 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
     }
 
-    static SearchSetting createSearchSetting(String key, Collection<OsmPrimitive> sel, boolean sameType) {
+    static SearchSetting createSearchSetting(String key, Collection<? extends IPrimitive> sel, boolean sameType) {
         String sep = "";
         StringBuilder s = new StringBuilder();
         Set<String> consideredTokens = new TreeSet<>();
-        for (OsmPrimitive p : sel) {
+        for (IPrimitive p : sel) {
             String val = p.get(key);
             if (val == null || (!sameType && consideredTokens.contains(val))) {
                 continue;

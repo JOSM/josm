@@ -42,14 +42,14 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (MainApplication.getLayerManager().getActiveDataSet() != null) {
+            if (MainApplication.getLayerManager().getActiveData() != null) {
                 TaggingPresetSearchPrimitiveDialog.getInstance().showDialog();
             }
         }
 
         @Override
         protected void updateEnabledState() {
-            setEnabled(getLayerManager().getActiveDataSet() != null);
+            setEnabled(getLayerManager().getActiveData() != null);
         }
     }
 

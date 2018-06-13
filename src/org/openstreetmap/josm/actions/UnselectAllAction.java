@@ -29,7 +29,7 @@ public class UnselectAllAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        getLayerManager().getActiveDataSet().setSelected();
+        getLayerManager().getActiveData().setSelected();
     }
 
     /**
@@ -37,6 +37,6 @@ public class UnselectAllAction extends JosmAction {
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getActiveDataSet() != null);
+        setEnabled(getLayerManager().getActiveData() != null);
     }
 }

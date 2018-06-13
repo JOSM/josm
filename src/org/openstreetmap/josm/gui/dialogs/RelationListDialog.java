@@ -343,7 +343,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         protected void setCurrentRelationAsSelection() {
-            MainApplication.getLayerManager().getActiveDataSet().setSelected(displaylist.getSelectedValue());
+            MainApplication.getLayerManager().getActiveData().setSelected(displaylist.getSelectedValue());
         }
 
         protected void editCurrentRelation() {
