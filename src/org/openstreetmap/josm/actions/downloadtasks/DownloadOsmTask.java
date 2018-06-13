@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
@@ -185,7 +186,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
      */
     public abstract static class AbstractInternalTask extends PleaseWaitRunnable {
 
-        protected final boolean newLayer;
+        protected final DownloadParams settings;
         protected final boolean zoomAfterDownload;
         protected DataSet dataSet;
 
@@ -200,7 +201,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          */
         public AbstractInternalTask(DownloadParams settings, String title, boolean ignoreException, boolean zoomAfterDownload) {
             super(title, ignoreException);
-            this.newLayer = settings.isNewLayer();
+            this.settings = Objects.requireNonNull(settings);
             this.zoomAfterDownload = zoomAfterDownload;
         }
 
@@ -217,7 +218,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         public AbstractInternalTask(DownloadParams settings, String title, ProgressMonitor progressMonitor, boolean ignoreException,
                 boolean zoomAfterDownload) {
             super(title, progressMonitor, ignoreException);
-            this.newLayer = settings.isNewLayer();
+            this.settings = Objects.requireNonNull(settings);
             this.zoomAfterDownload = zoomAfterDownload;
         }
 
@@ -260,6 +261,9 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
         protected OsmDataLayer createNewLayer(String layerName) {
             if (layerName == null || layerName.isEmpty()) {
+                layerName = settings.getLayerName();
+            }
+            if (layerName == null || layerName.isEmpty()) {
                 layerName = OsmDataLayer.createNewName();
             }
             return new OsmDataLayer(dataSet, layerName, null);
@@ -281,7 +285,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
         protected OsmDataLayer addNewLayerIfRequired(String newLayerName) {
             long numDataLayers = getNumModifiableDataLayers();
-            if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
+            if (settings.isNewLayer() || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
                 // the user explicitly wants a new layer, we don't have any layer at all
                 // or it is not clear which layer to merge to
                 final OsmDataLayer layer = createNewLayer(newLayerName);
