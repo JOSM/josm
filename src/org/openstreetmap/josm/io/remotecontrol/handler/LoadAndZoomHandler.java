@@ -82,7 +82,8 @@ public class LoadAndZoomHandler extends RequestHandler {
     @Override
     public String[] getOptionalParams() {
         return new String[] {"new_layer", "layer_name", "addtags", "select", "zoom_mode",
-                "changeset_comment", "changeset_source", "changeset_hashtags", "search"};
+                "changeset_comment", "changeset_source", "changeset_hashtags", "search",
+                "layer_locked", "download_policy", "upload_policy"};
     }
 
     @Override
@@ -260,6 +261,7 @@ public class LoadAndZoomHandler extends RequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
+        validateDownloadParams();
         // Process mandatory arguments
         minlat = 0;
         maxlat = 0;

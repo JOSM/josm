@@ -63,7 +63,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer", "layer_name"};
+        return new String[] {"new_layer", "layer_name", "layer_locked", "download_policy", "upload_policy"};
     }
 
     @Override
@@ -101,6 +101,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
+        validateDownloadParams();
         String urlString = args != null ? args.get("url") : null;
         if (Config.getPref().getBoolean("remotecontrol.importhandler.fix_url_query", true)) {
             urlString = Utils.fixURLQuery(urlString);

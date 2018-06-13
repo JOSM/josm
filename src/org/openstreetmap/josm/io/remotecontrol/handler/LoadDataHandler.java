@@ -50,7 +50,7 @@ public class LoadDataHandler extends RequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer", "mime_type", "layer_name"};
+        return new String[] {"new_layer", "mime_type", "layer_name", "layer_locked", "download_policy", "upload_policy"};
     }
 
     @Override
@@ -79,6 +79,7 @@ public class LoadDataHandler extends RequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
+        validateDownloadParams();
         this.data = args.get("data");
         /**
          * Holds the mime type. Currently only OSM_MIME_TYPE is supported
