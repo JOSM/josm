@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
@@ -35,6 +36,9 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadSourceSizingPolicy.AdjustableDownloadSizePolicy;
+import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration;
+import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration.OverpassQueryWizard;
+import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration.OverpassWizardCallbacks;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OverpassDownloadReader;
@@ -81,7 +85,8 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
      * The GUI representation of the Overpass download source.
      * @since 12652
      */
-    public static class OverpassDownloadSourcePanel extends AbstractDownloadSourcePanel<OverpassDownloadData> {
+    public static class OverpassDownloadSourcePanel extends AbstractDownloadSourcePanel<OverpassDownloadData>
+            implements OverpassWizardCallbacks {
 
         private static final String SIMPLE_NAME = "overpassdownloadpanel";
         private static final AbstractProperty<Integer> PANEL_SIZE_PROPERTY =
@@ -103,17 +108,6 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         public OverpassDownloadSourcePanel(OverpassDownloadSource ds) {
             super(ds);
             setLayout(new BorderLayout());
-
-            String tooltip = tr("Build an Overpass query using the Overpass Turbo Query Wizard tool");
-
-            JButton openQueryWizard = new JButton(tr("Query Wizard"));
-            openQueryWizard.setToolTipText(tooltip);
-            openQueryWizard.addActionListener(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new OverpassQueryWizardDialog(OverpassDownloadSourcePanel.this).showDialog();
-                }
-            });
 
             this.overpassQuery = new JosmTextArea(DOWNLOAD_QUERY.get(), 8, 80);
             this.overpassQuery.setFont(GuiHelper.getMonospacedFont(overpassQuery));
@@ -164,7 +158,10 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
             JPanel leftPanel = new JPanel(new GridBagLayout());
             leftPanel.add(new JLabel(tr("Overpass query:")), GBC.eol().insets(5, 1, 5, 1).anchor(GBC.NORTHWEST));
             leftPanel.add(new JLabel(), GBC.eol().fill(GBC.VERTICAL));
-            leftPanel.add(openQueryWizard, GBC.eol().anchor(GBC.CENTER));
+            OverpassWizardRegistration.getWizards()
+                .stream()
+                .map(this::generateWizardButton)
+                .forEach(button -> leftPanel.add(button, GBC.eol().anchor(GBC.CENTER)));
             leftPanel.add(new JLabel(), GBC.eol().fill(GBC.VERTICAL));
 
             add(leftPanel, BorderLayout.WEST);
@@ -172,6 +169,18 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
             add(listPanel, BorderLayout.EAST);
 
             setMinimumSize(new Dimension(450, 240));
+        }
+
+        private JButton generateWizardButton(OverpassQueryWizard wizard) {
+            JButton openQueryWizard = new JButton(wizard.getWizardName());
+            openQueryWizard.setToolTipText(wizard.getWizardTooltip().orElse(null));
+            openQueryWizard.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    wizard.startWizard(OverpassDownloadSourcePanel.this);
+                }
+            });
+            return openQueryWizard;
         }
 
         @Override
@@ -259,6 +268,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
          * @param query The query to set.
          */
         public void setOverpassQuery(String query) {
+            Objects.requireNonNull(query, "query");
             this.overpassQuery.setText(query);
         }
 
@@ -360,6 +370,11 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
                 checkEnabled();
             }
         }
+
+        @Override
+        public void submitWizardResult(String resultingQuery) {
+            setOverpassQuery(resultingQuery);
+        }
     }
 
     /**
@@ -382,4 +397,5 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
             return this.errorReporter;
         }
     }
+
 }
