@@ -22,6 +22,7 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration.OverpassWizardCallbacks;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
@@ -64,16 +65,16 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
             + "#desc {width: 350px;}"
             + "</style>\n";
 
-    private final OverpassDownloadSource.OverpassDownloadSourcePanel dsPanel;
+    private final OverpassWizardCallbacks dsPanel;
 
     /**
      * Create a new {@link OverpassQueryWizardDialog}
-     * @param dsPanel The Overpass download source panel.
+     * @param callbacks The Overpass download source panel.
      */
-    public OverpassQueryWizardDialog(OverpassDownloadSource.OverpassDownloadSourcePanel dsPanel) {
-        super(dsPanel.getParent(), tr("Overpass Turbo Query Wizard"),
+    public OverpassQueryWizardDialog(OverpassWizardCallbacks callbacks) {
+        super(callbacks.getParent(), tr("Overpass Turbo Query Wizard"),
                 tr("Build query"), tr("Build query and execute"), tr("Cancel"));
-        this.dsPanel = dsPanel;
+        this.dsPanel = callbacks;
 
         this.queryWizard = new HistoryComboBox();
         this.overpassQueryBuilder = OverpassTurboQueryWizard.getInstance();
@@ -167,14 +168,8 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
         final String wizardSearchTerm = this.queryWizard.getText();
 
         Optional<String> q = this.tryParseSearchTerm(wizardSearchTerm);
-        if (q.isPresent()) {
-            String query = q.get();
-            dsPanel.setOverpassQuery(query);
-
-            return true;
-        }
-
-        return false;
+        q.ifPresent(dsPanel::submitWizardResult);
+        return q.isPresent();
     }
 
     private static JTextComponent buildDescriptionSection() {
