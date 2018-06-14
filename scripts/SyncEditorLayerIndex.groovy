@@ -506,7 +506,11 @@ class SyncEditorLayerIndex {
             def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
-            if (!getCountryCode(e).equals(getCountryCode(j))) {
+            def cce = getCountryCode(e)
+            if ("ZZ".equals(cce)) { /* special ELI country code */
+                cce = null
+            }
+            if (!cce.equals(getCountryCode(j))) {
                 myprintln "* Country code differs (${getCountryCode(e)} != ${getCountryCode(j)}): ${getDescription(j)}"
             }
         }
