@@ -93,7 +93,7 @@ public final class OverpassWizardRegistration {
     }
 
     /**
-     * Wizard callbacks required by {@link OverpassWizardRegistration.OverpassQueryWizard#startWizard(OverpassWizardCallbacks)}
+     * Wizard callbacks required by {@link OverpassQueryWizard#startWizard}
      * @author Michael Zangl
      * @since 13930
      */

@@ -401,7 +401,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          * @param newLayer if {@code true}, force download to a new layer
          * @param reader OSM data reader
          * @param progressMonitor progress monitor
-         * @deprecated Use {@link DownloadOsmTask.DownloadTask#DownloadTask(DownloadParams, OsmServerReader, ProgressMonitor)}
+         * @deprecated Use {@code DownloadTask(DownloadParams, OsmServerReader, ProgressMonitor)}
          */
         @Deprecated
         public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
@@ -414,7 +414,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          * @param reader OSM data reader
          * @param progressMonitor progress monitor
          * @param zoomAfterDownload If true, the map view will zoom to download area after download
-         * @deprecated Use {@link DownloadOsmTask.DownloadTask#DownloadTask(DownloadParams, OsmServerReader, ProgressMonitor, boolean)}
+         * @deprecated Use {@code DownloadTask(DownloadParams, OsmServerReader, ProgressMonitor, boolean)}
          */
         @Deprecated
         public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor, boolean zoomAfterDownload) {
