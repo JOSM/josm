@@ -54,7 +54,7 @@ public final class SelectByInternalPointActionTest {
         SelectByInternalPointAction.performSelection(null, false, false);
     }
 
-    private static Layer initDataSet() {
+    static Layer initDataSet() {
         DataSet ds = new DataSet();
         Node n1 = new Node(new EastNorth(1, 1));
         Node n2 = new Node(new EastNorth(1, 2));

@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -30,7 +29,12 @@ public class SelectAllAction extends JosmAction {
         if (!isEnabled())
             return;
         OsmData<?, ?, ?, ?> ds = getLayerManager().getActiveData();
-        ds.setSelected(ds.getPrimitives(IPrimitive::isSelectable));
+        // Do not use method reference before the Java 11 migration
+        // Otherwise we face a compiler bug, see below:
+        // https://bugs.openjdk.java.net/browse/JDK-8141508
+        // https://bugs.openjdk.java.net/browse/JDK-8142476
+        // https://bugs.openjdk.java.net/browse/JDK-8191655
+        ds.setSelected(ds.getPrimitives(t -> t.isSelectable()));
     }
 
     /**
