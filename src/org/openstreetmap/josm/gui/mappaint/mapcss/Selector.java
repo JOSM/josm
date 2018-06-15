@@ -18,12 +18,10 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -250,7 +248,7 @@ public interface Selector {
                 @Override
                 public void visit(IRelation<?> r) {
                     if (r instanceof Relation && left.matches(e.withPrimitive(r))) {
-                        final List<Node> openEnds = MultipolygonCache.getInstance().get((Relation) r).getOpenEnds();
+                        final List<?> openEnds = MultipolygonCache.getInstance().get((Relation) r).getOpenEnds();
                         final int openEndIndex = openEnds.indexOf(e.osm);
                         if (openEndIndex >= 0) {
                             e.parent = r;
@@ -277,7 +275,7 @@ public interface Selector {
                 if (e.child == null && Objects.equals(layer, OsmUtils.getLayer(w))
                     && left.matches(new Environment(w).withParent(e.osm))
                     && e.osm instanceof IWay && Geometry.PolygonIntersection.CROSSING.equals(
-                            Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))) {
+                            Geometry.polygonIntersection(w.getNodes(), ((IWay<?>) e.osm).getNodes()))) {
                     e.child = w;
                 }
             }
@@ -292,7 +290,7 @@ public interface Selector {
             @Override
             public void visit(INode n) {
                 if (e.child == null && left.matches(new Environment(n).withParent(e.osm))
-                    && ((e.osm instanceof IWay && Geometry.nodeInsidePolygon(n, ((Way) e.osm).getNodes()))
+                    && ((e.osm instanceof IWay && Geometry.nodeInsidePolygon(n, ((IWay<?>) e.osm).getNodes()))
                             || (e.osm instanceof Relation && (
                                     (Relation) e.osm).isMultipolygon() && Geometry.isNodeInsideMultiPolygon(n, (Relation) e.osm, null)))) {
                     e.child = n;
@@ -303,7 +301,7 @@ public interface Selector {
             public void visit(IWay<?> w) {
                 if (e.child == null && left.matches(new Environment(w).withParent(e.osm))
                     && ((e.osm instanceof IWay && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(
-                            Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes())))
+                            Geometry.polygonIntersection(w.getNodes(), ((IWay<?>) e.osm).getNodes())))
                             || (e.osm instanceof Relation && (
                                     (Relation) e.osm).isMultipolygon()
                                     && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) e.osm, null)))) {
