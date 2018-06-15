@@ -307,19 +307,19 @@ public abstract class RequestHandler {
         return val != null && !val.isEmpty() ? parser.apply(val) : defaultSupplier.get();
     }
 
-    private boolean isLoadInNewLayer() {
-        return get("new_layer", Boolean::parseBoolean, () -> Config.getPref().getBoolean(loadInNewLayerKey, loadInNewLayerDefault));
+    private boolean get(String key) {
+        return get(key, Boolean::parseBoolean, () -> false);
     }
 
-    private boolean is(String key) {
-        return get(key, Boolean::parseBoolean, () -> false);
+    private boolean isLoadInNewLayer() {
+        return get("new_layer", Boolean::parseBoolean, () -> Config.getPref().getBoolean(loadInNewLayerKey, loadInNewLayerDefault));
     }
 
     protected DownloadParams getDownloadParams() {
         return new DownloadParams()
                 .withNewLayer(isLoadInNewLayer())
                 .withLayerName(args.get("layer_name"))
-                .withLocked(is("layer_locked"))
+                .withLocked(get("layer_locked"))
                 .withDownloadPolicy(get("download_policy", DownloadPolicy::of, () -> DownloadPolicy.NORMAL))
                 .withUploadPolicy(get("upload_policy", UploadPolicy::of, () -> UploadPolicy.NORMAL));
     }
