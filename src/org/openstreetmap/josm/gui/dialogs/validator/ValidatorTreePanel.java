@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javax.swing.JTree;
@@ -387,16 +388,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     /**
      * Expands complete tree
      */
-    @SuppressWarnings("unchecked")
     public void expandAll() {
-        DefaultMutableTreeNode root = getRoot();
-
-        int row = 0;
-        Enumeration<TreeNode> children = root.breadthFirstEnumeration();
-        while (children.hasMoreElements()) {
-            children.nextElement();
-            expandRow(row++);
-        }
+        visitTreeNodes(getRoot(), x -> expandPath(new TreePath(x.getPath())));
     }
 
     /**
@@ -420,6 +413,52 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             ds.removeDataSetListener(this);
         }
         clearErrors();
+    }
+
+    /**
+     * Visitor call for all tree nodes children of root, in breadth-first order.
+     * @param root Root node
+     * @param visitor Visitor
+     * @since 13940
+     */
+    public static void visitTreeNodes(DefaultMutableTreeNode root, Consumer<DefaultMutableTreeNode> visitor) {
+        @SuppressWarnings("unchecked")
+        Enumeration<TreeNode> errorMessages = root.breadthFirstEnumeration();
+        while (errorMessages.hasMoreElements()) {
+            visitor.accept(((DefaultMutableTreeNode) errorMessages.nextElement()));
+        }
+    }
+
+    /**
+     * Visitor call for all {@link TestError} nodes children of root, in breadth-first order.
+     * @param root Root node
+     * @param visitor Visitor
+     * @since 13940
+     */
+    public static void visitTestErrors(DefaultMutableTreeNode root, Consumer<TestError> visitor) {
+        visitTestErrors(root, visitor, null);
+    }
+
+    /**
+     * Visitor call for all {@link TestError} nodes children of root, in breadth-first order.
+     * @param root Root node
+     * @param visitor Visitor
+     * @param processedNodes Set of already visited nodes (optional)
+     * @since 13940
+     */
+    public static void visitTestErrors(DefaultMutableTreeNode root, Consumer<TestError> visitor,
+            Set<DefaultMutableTreeNode> processedNodes) {
+        visitTreeNodes(root, n -> {
+            if (processedNodes == null || !processedNodes.contains(n)) {
+                if (processedNodes != null) {
+                    processedNodes.add(n);
+                }
+                Object o = n.getUserObject();
+                if (o instanceof TestError) {
+                    visitor.accept((TestError) o);
+                }
+            }
+        });
     }
 
     @Override public void primitivesRemoved(PrimitivesRemovedEvent event) {

@@ -40,13 +40,17 @@ public class NameVisitor implements OsmPrimitiveVisitor {
      */
     public Icon icon;
 
+    private static final Icon nodeIcon = ImageProvider.get("data", "node");
+    private static final Icon wayIcon = ImageProvider.get("data", "way");
+    private static final Icon relIcon = ImageProvider.get("data", "relation");
+
     /**
      * If the node has a name-key or id-key, this is displayed. If not, (lat,lon) is displayed.
      */
     @Override
     public void visit(Node n) {
         name = n.getDisplayName(DefaultNameFormatter.getInstance());
-        icon = ImageProvider.get("data", "node");
+        icon = nodeIcon;
         className = "node";
         classNamePlural = trn("node", "nodes", 2);
     }
@@ -58,7 +62,7 @@ public class NameVisitor implements OsmPrimitiveVisitor {
     @Override
     public void visit(Way w) {
         name = w.getDisplayName(DefaultNameFormatter.getInstance());
-        icon = ImageProvider.get("data", "way");
+        icon = wayIcon;
         className = "way";
         classNamePlural = trn("way", "ways", 2);
     }
@@ -66,7 +70,7 @@ public class NameVisitor implements OsmPrimitiveVisitor {
     @Override
     public void visit(Relation e) {
         name = e.getDisplayName(DefaultNameFormatter.getInstance());
-        icon = ImageProvider.get("data", "relation");
+        icon = relIcon;
         className = "relation";
         classNamePlural = trn("relation", "relations", 2);
     }

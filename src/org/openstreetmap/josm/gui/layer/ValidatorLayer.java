@@ -6,13 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
@@ -25,6 +23,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
 import org.openstreetmap.josm.gui.io.importexport.ValidatorErrorExporter;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -67,7 +66,6 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
      * are drawn by the edit layer).
      * Draw nodes last to overlap the ways they belong to.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void paint(final Graphics2D g, final MapView mv, Bounds bounds) {
         DefaultMutableTreeNode root = MainApplication.getMap().validatorDialog.tree.getRoot();
@@ -78,13 +76,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
         DefaultMutableTreeNode severity = (DefaultMutableTreeNode) root.getLastChild();
         while (severity != null) {
-            Enumeration<TreeNode> errorMessages = severity.breadthFirstEnumeration();
-            while (errorMessages.hasMoreElements()) {
-                Object tn = ((DefaultMutableTreeNode) errorMessages.nextElement()).getUserObject();
-                if (tn instanceof TestError) {
-                    paintVisitor.visit((TestError) tn);
-                }
-            }
+            ValidatorTreePanel.visitTestErrors(severity, paintVisitor::visit);
 
             // Severities in inverse order
             severity = severity.getPreviousSibling();

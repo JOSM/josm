@@ -565,7 +565,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
 
         // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
-        Collection<? extends IPrimitive> newSel = Optional.ofNullable(Main.main.getInProgressISelection()).orElseGet(Collections::emptyList);
+        Collection<? extends IPrimitive> newSel = Main.main.getInProgressISelection();
         String selectedTag;
         Relation selectedRelation = null;
         selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default

@@ -1349,7 +1349,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
      */
     public Collection<OsmPrimitive> getInProgressSelection() {
         DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) return null;
+        if (ds == null) return Collections.emptyList();
         if (getCurrentBaseNode() != null && !ds.selectionEmpty()) {
             Way continueFrom = getWayForNode(getCurrentBaseNode());
             if (continueFrom != null)
