@@ -12,17 +12,14 @@ import org.openstreetmap.josm.command.PseudoCommand;
 public class CommandListMutableTreeNode extends DefaultMutableTreeNode {
 
     protected final transient PseudoCommand cmd;
-    protected final int idx;
 
     /**
      * Constructs a new {@code CommandListMutableTreeNode}.
      * @param cmd command
-     * @param idx index
      */
-    public CommandListMutableTreeNode(PseudoCommand cmd, int idx) {
+    public CommandListMutableTreeNode(PseudoCommand cmd) {
         super(new JLabel(cmd.getDescriptionText(), cmd.getDescriptionIcon(), JLabel.HORIZONTAL));
         this.cmd = cmd;
-        this.idx = idx;
     }
 
     /**
@@ -38,6 +35,6 @@ public class CommandListMutableTreeNode extends DefaultMutableTreeNode {
      * @return the index
      */
     public int getIndex() {
-        return idx;
+        return getParent().getIndex(this);
     }
 }
