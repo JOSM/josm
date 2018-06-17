@@ -219,8 +219,9 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
      * @param primitives The primitive(s) for which history will be displayed
      */
     public void showHistory(final Collection<? extends PrimitiveId> primitives) {
-        hooks.forEach(h -> h.modifyRequestedIds(primitives));
-        final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(primitives, notNewPredicate);
+        final List<PrimitiveId> realPrimitives = new ArrayList<>(primitives);
+        hooks.forEach(h -> h.modifyRequestedIds(realPrimitives));
+        final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(realPrimitives, notNewPredicate);
         if (notNewPrimitives.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -230,7 +231,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
             return;
         }
 
-        Collection<? extends PrimitiveId> toLoad = SubclassFilteredCollection.filter(primitives, unloadedHistoryPredicate);
+        Collection<? extends PrimitiveId> toLoad = SubclassFilteredCollection.filter(realPrimitives, unloadedHistoryPredicate);
         if (!toLoad.isEmpty()) {
             HistoryLoadTask task = new HistoryLoadTask();
             for (PrimitiveId p : notNewPrimitives) {
