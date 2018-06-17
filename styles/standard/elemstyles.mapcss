@@ -4247,6 +4247,10 @@ node[natural=bay] {
     icon-image: "presets/nautical/bay.svg";
     set icon_z17;
 }
+node[natural=cape] {
+    icon-image: "presets/nautical/cape.svg";
+    set icon_z17;
+}
 area[natural=reef] {
     fill-color: reef#80c9ff;
 }
