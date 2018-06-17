@@ -308,7 +308,7 @@ public abstract class RequestHandler {
     }
 
     private boolean get(String key) {
-        return get(key, Boolean::parseBoolean, () -> false);
+        return get(key, Boolean::parseBoolean, () -> Boolean.FALSE);
     }
 
     private boolean isLoadInNewLayer() {
