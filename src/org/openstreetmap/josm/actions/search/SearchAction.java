@@ -44,9 +44,9 @@ import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
@@ -625,8 +625,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @param mode the search mode to use
      * @return The result of the search.
      * @since 10457
+     * @since 13950 (signature)
      */
-    public static Collection<OsmPrimitive> searchAndReturn(String search, SearchMode mode) {
+    public static Collection<IPrimitive> searchAndReturn(String search, SearchMode mode) {
         final SearchSetting searchSetting = new SearchSetting();
         searchSetting.text = search;
         searchSetting.mode = mode;
@@ -677,6 +678,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @author Michael Zangl
      * @since 10457
      * @since 10600 (functional interface)
+     * @since 13950 (signature)
      */
     @FunctionalInterface
     interface SearchReceiver {
@@ -688,7 +690,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          * @param setting The setting used.
          * @param parent parent component
          */
-        void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting, Component parent);
+        void receiveSearchResult(OsmData<?, ?, ?, ?> ds, Collection<IPrimitive> result,
+                int foundMatches, SearchSetting setting, Component parent);
     }
 
     /**
@@ -697,7 +700,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     private static class SelectSearchReceiver implements SearchReceiver {
 
         @Override
-        public void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting, Component parent) {
+        public void receiveSearchResult(OsmData<?, ?, ?, ?> ds, Collection<IPrimitive> result,
+                int foundMatches, SearchSetting setting, Component parent) {
             ds.setSelected(result);
             MapFrame map = MainApplication.getMap();
             if (foundMatches == 0) {
@@ -731,26 +735,26 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @author Michael Zangl
      */
     private static final class CapturingSearchReceiver implements SearchReceiver {
-        private Collection<OsmPrimitive> result;
+        private Collection<IPrimitive> result;
 
         @Override
-        public void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches,
+        public void receiveSearchResult(OsmData<?, ?, ?, ?> ds, Collection<IPrimitive> result, int foundMatches,
                 SearchSetting setting, Component parent) {
                     this.result = result;
         }
     }
 
     static final class SearchTask extends PleaseWaitRunnable {
-        private final DataSet ds;
+        private final OsmData<?, ?, ?, ?> ds;
         private final SearchSetting setting;
-        private final Collection<OsmPrimitive> selection;
-        private final Predicate<OsmPrimitive> predicate;
+        private final Collection<IPrimitive> selection;
+        private final Predicate<IPrimitive> predicate;
         private boolean canceled;
         private int foundMatches;
         private final SearchReceiver resultReceiver;
 
-        private SearchTask(DataSet ds, SearchSetting setting, Collection<OsmPrimitive> selection, Predicate<OsmPrimitive> predicate,
-                SearchReceiver resultReceiver) {
+        private SearchTask(OsmData<?, ?, ?, ?> ds, SearchSetting setting, Collection<IPrimitive> selection,
+                Predicate<IPrimitive> predicate, SearchReceiver resultReceiver) {
             super(tr("Searching"));
             this.ds = ds;
             this.setting = setting;
@@ -760,7 +764,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         static SearchTask newSearchTask(SearchSetting setting, SearchReceiver resultReceiver) {
-            final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            final OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
             if (ds == null) {
                 throw new IllegalStateException("No active dataset");
             }
@@ -774,9 +778,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          * @param resultReceiver will receive the search result
          * @return A new search task.
          */
-        private static SearchTask newSearchTask(SearchSetting setting, final DataSet ds, SearchReceiver resultReceiver) {
-            final Collection<OsmPrimitive> selection = new HashSet<>(ds.getAllSelected());
-            return new SearchTask(ds, setting, selection, ds::isSelected, resultReceiver);
+        private static SearchTask newSearchTask(SearchSetting setting, final OsmData<?, ?, ?, ?> ds, SearchReceiver resultReceiver) {
+            final Collection<IPrimitive> selection = new HashSet<>(ds.getAllSelected());
+            return new SearchTask(ds, setting, selection, IPrimitive::isSelected, resultReceiver);
         }
 
         @Override
@@ -796,16 +800,16 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     foundMatches = selection.size();
                 }
 
-                Collection<OsmPrimitive> all;
+                Collection<? extends IPrimitive> all;
                 if (setting.allElements) {
                     all = ds.allPrimitives();
                 } else {
-                    all = ds.getPrimitives(OsmPrimitive::isSelectable);
+                    all = ds.getPrimitives(p -> p.isSelectable()); // Do not use method reference before Java 11!
                 }
                 final ProgressMonitor subMonitor = getProgressMonitor().createSubTaskMonitor(all.size(), false);
                 subMonitor.beginTask(trn("Searching in {0} object", "Searching in {0} objects", all.size(), all.size()));
 
-                for (OsmPrimitive osm : all) {
+                for (IPrimitive osm : all) {
                     if (canceled) {
                         return;
                     }
