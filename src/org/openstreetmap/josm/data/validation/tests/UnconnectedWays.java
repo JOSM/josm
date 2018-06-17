@@ -451,8 +451,8 @@ public abstract class UnconnectedWays extends Test {
                 // ignore addr:interpolation ways as they are not physical features and most of
                 // the time very near the associated highway, which is perfectly normal, see #9332
                 && !w.hasKey("addr:interpolation")
-                // similarly for public transport platforms
-                && !w.hasTag(HIGHWAY, "platform") && !w.hasTag(RAILWAY, "platform")
+                // similarly for public transport platforms, tree rows
+                && !w.hasTag(HIGHWAY, "platform") && !w.hasTag(RAILWAY, "platform") && !w.hasTag("natural", "tree_row")
                 ) {
             ways.addAll(getWaySegments(w));
             QuadBuckets<Node> set = endnodes;
