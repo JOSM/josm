@@ -4240,6 +4240,7 @@ node[natural=stone] {
     set icon_z17;
 }
 area[natural=bay],
+area[natural=cape],
 area[natural=cave_entrance] {
     fill-color: natural#002f00;
 }
