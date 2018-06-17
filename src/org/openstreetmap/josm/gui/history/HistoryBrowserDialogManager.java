@@ -63,6 +63,8 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
     private final Predicate<PrimitiveId> notNewPredicate = p -> !p.isNew();
 
+    private static final List<HistoryHook> hooks = new ArrayList<>();
+
     protected HistoryBrowserDialogManager() {
         dialogs = new HashMap<>();
         MainApplication.getLayerManager().addLayerChangeListener(this);
@@ -193,10 +195,31 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     }
 
     /**
+     * Adds a new {@code HistoryHook}.
+     * @param hook hook to add
+     * @return <tt>true</tt> (as specified by {@link Collection#add})
+     * @since 13947
+     */
+    public static boolean addHistoryHook(HistoryHook hook) {
+        return hooks.add(Objects.requireNonNull(hook));
+    }
+
+    /**
+     * Removes an existing {@code HistoryHook}.
+     * @param hook hook to remove
+     * @return <tt>true</tt> if this list contained the specified element
+     * @since 13947
+     */
+    public static boolean removeHistoryHook(HistoryHook hook) {
+        return hooks.remove(Objects.requireNonNull(hook));
+    }
+
+    /**
      * Show history dialog(s) for the given primitive(s).
      * @param primitives The primitive(s) for which history will be displayed
      */
     public void showHistory(final Collection<? extends PrimitiveId> primitives) {
+        hooks.forEach(h -> h.modifyRequestedIds(primitives));
         final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(primitives, notNewPredicate);
         if (notNewPrimitives.isEmpty()) {
             JOptionPane.showMessageDialog(
