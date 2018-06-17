@@ -43,7 +43,7 @@ public class CertificateAmendmentTest {
     @Test
     public void testDefault() throws IOException {
         // something that is not embedded
-        connect("https://google.com", true);
+        connect("https://www.bing.com", true);
     }
 
     /**
