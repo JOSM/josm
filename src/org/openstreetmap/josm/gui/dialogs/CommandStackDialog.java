@@ -272,7 +272,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         List<Command> undoCommands = MainApplication.undoRedo.commands;
         undoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < undoCommands.size(); ++i) {
-            undoRoot.add(getNodeForCommand(undoCommands.get(i), i));
+            undoRoot.add(getNodeForCommand(undoCommands.get(i)));
         }
         undoTreeModel.setRoot(undoRoot);
     }
@@ -281,7 +281,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         List<Command> redoCommands = MainApplication.undoRedo.redoCommands;
         redoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < redoCommands.size(); ++i) {
-            redoRoot.add(getNodeForCommand(redoCommands.get(i), i));
+            redoRoot.add(getNodeForCommand(redoCommands.get(i)));
         }
         redoTreeModel.setRoot(redoRoot);
     }
@@ -329,15 +329,14 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
      * Wraps a command in a CommandListMutableTreeNode.
      * Recursively adds child commands.
      * @param c the command
-     * @param idx index
      * @return the resulting node
      */
-    protected CommandListMutableTreeNode getNodeForCommand(PseudoCommand c, int idx) {
-        CommandListMutableTreeNode node = new CommandListMutableTreeNode(c, idx);
+    protected CommandListMutableTreeNode getNodeForCommand(PseudoCommand c) {
+        CommandListMutableTreeNode node = new CommandListMutableTreeNode(c);
         if (c.getChildren() != null) {
             List<PseudoCommand> children = new ArrayList<>(c.getChildren());
             for (int i = 0; i < children.size(); ++i) {
-                node.add(getNodeForCommand(children.get(i), i));
+                node.add(getNodeForCommand(children.get(i)));
             }
         }
         return node;
@@ -370,7 +369,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     @Override
     public void commandAdded(CommandAddedEvent e) {
         if (isVisible()) {
-            undoRoot.add(getNodeForCommand(e.getCommand(), undoRoot.getChildCount()));
+            undoRoot.add(getNodeForCommand(e.getCommand()));
             undoTreeModel.nodeStructureChanged(undoRoot);
             ensureTreesConsistency();
         }
