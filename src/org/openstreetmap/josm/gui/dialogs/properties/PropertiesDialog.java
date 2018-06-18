@@ -66,6 +66,7 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -181,11 +182,11 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             membershipTable, x -> (Relation) membershipData.getValueAt(x, 0));
     private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction(
-            tagTable, editHelper::getDataKey, Main.main::getInProgressSelection);
+            tagTable, editHelper::getDataKey, Main.main::getInProgressISelection);
     private final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction(
-            tagTable, editHelper::getDataKey, Main.main::getInProgressSelection);
+            tagTable, editHelper::getDataKey, Main.main::getInProgressISelection);
     private final CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction(
-            tagTable, editHelper::getDataKey, Main.main::getInProgressSelection);
+            tagTable, editHelper::getDataKey, Main.main::getInProgressISelection);
     private final SearchAction searchActionSame = new SearchAction(true);
     private final SearchAction searchActionAny = new SearchAction(false);
     private final AddAction addAction = new AddAction();
@@ -649,7 +650,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);
 
-        DataSet ds = Main.main.getActiveDataSet();
+        OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
         boolean isReadOnly = ds != null && ds.isLocked();
         boolean hasSelection = !newSel.isEmpty();
         boolean hasTags = hasSelection && tagData.getRowCount() > 0;

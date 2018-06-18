@@ -45,12 +45,10 @@ public abstract class AbstractCopyAction extends AbstractAction {
         int[] rows = tagTable.getSelectedRows();
         Set<String> values = new TreeSet<>();
         Collection<? extends Tagged> sel = objectSupplier.get();
-        if (rows.length == 0 || sel.isEmpty()) return;
+        if (rows.length == 0 || sel == null || sel.isEmpty()) return;
 
         for (int row: rows) {
             String key = keySupplier.apply(row);
-            if (sel.isEmpty())
-                return;
             for (Tagged p : sel) {
                 Collection<String> s = getString(p, key);
                 if (s != null) {
