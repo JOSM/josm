@@ -531,7 +531,7 @@ public class MainApplication extends Main {
             return ((DrawAction) map.mapMode).getInProgressSelection();
         } else {
             DataSet ds = layerManager.getActiveDataSet();
-            if (ds == null) return null;
+            if (ds == null) return Collections.emptyList();
             return ds.getSelected();
         }
     }
