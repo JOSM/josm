@@ -21,7 +21,6 @@ import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator.Hemisphere;
 import org.openstreetmap.josm.tools.Geometry;
@@ -172,7 +171,7 @@ public class InspectPrimitiveDataText {
             addBbox(o);
             add(tr("Centroid: "),
                     toStringCSV(", ", Main.getProjection().eastNorth2latlon(
-                            Geometry.getCentroid(((Way) o).getNodes()))));
+                            Geometry.getCentroid(((IWay<?>) o).getNodes()))));
             addWayNodes((IWay<?>) o);
         } else if (o instanceof IRelation) {
             addBbox(o);
