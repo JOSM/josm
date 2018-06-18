@@ -9,6 +9,7 @@ import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -34,9 +35,9 @@ public class InfoWebAction extends AbstractInfoAction {
 
     @Override
     protected String createInfoUrl(Object infoObject) {
-        if (infoObject instanceof OsmPrimitive) {
-            OsmPrimitive primitive = (OsmPrimitive) infoObject;
-            return Main.getBaseBrowseUrl() + '/' + OsmPrimitiveType.from(primitive).getAPIName() + '/' + primitive.getId();
+        if (infoObject instanceof IPrimitive) {
+            IPrimitive primitive = (IPrimitive) infoObject;
+            return Main.getBaseBrowseUrl() + '/' + OsmPrimitiveType.from(primitive).getAPIName() + '/' + primitive.getOsmId();
         } else if (infoObject instanceof Note) {
             Note note = (Note) infoObject;
             return Main.getBaseBrowseUrl() + "/note/" + note.getId();

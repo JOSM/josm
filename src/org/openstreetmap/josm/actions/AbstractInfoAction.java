@@ -13,8 +13,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
-import org.openstreetmap.josm.data.osm.AbstractPrimitive;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -100,8 +99,8 @@ public abstract class AbstractInfoAction extends JosmAction {
     }
 
     protected void launchInfoBrowsersForSelectedPrimitivesAndNote() {
-        List<OsmPrimitive> primitivesToShow = new ArrayList<>();
-        DataSet ds = getLayerManager().getActiveDataSet();
+        List<IPrimitive> primitivesToShow = new ArrayList<>();
+        OsmData<?, ?, ?, ?> ds = getLayerManager().getActiveData();
         if (ds != null) {
             primitivesToShow.addAll(ds.getAllSelected());
         }
@@ -110,7 +109,7 @@ public abstract class AbstractInfoAction extends JosmAction {
 
         // filter out new primitives which are not yet uploaded to the server
         //
-        primitivesToShow.removeIf(AbstractPrimitive::isNew);
+        primitivesToShow.removeIf(IPrimitive::isNew);
 
         if (primitivesToShow.isEmpty() && noteToShow == null) {
             JOptionPane.showMessageDialog(

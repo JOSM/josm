@@ -7,7 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -31,9 +31,9 @@ public class HistoryInfoWebAction extends AbstractInfoAction {
 
     @Override
     protected String createInfoUrl(Object infoObject) {
-        if (infoObject instanceof OsmPrimitive) {
-            OsmPrimitive primitive = (OsmPrimitive) infoObject;
-            return Main.getBaseBrowseUrl() + '/' + OsmPrimitiveType.from(primitive).getAPIName() + '/' + primitive.getId() + "/history";
+        if (infoObject instanceof IPrimitive) {
+            IPrimitive primitive = (IPrimitive) infoObject;
+            return Main.getBaseBrowseUrl() + '/' + OsmPrimitiveType.from(primitive).getAPIName() + '/' + primitive.getOsmId() + "/history";
         } else {
             return null;
         }
