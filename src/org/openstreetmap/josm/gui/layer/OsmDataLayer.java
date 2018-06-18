@@ -1177,21 +1177,6 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         super.setName(name);
     }
 
-    @Override
-    public void lock() {
-        data.lock();
-    }
-
-    @Override
-    public void unlock() {
-        data.unlock();
-    }
-
-    @Override
-    public boolean isLocked() {
-        return data.isLocked();
-    }
-
     /**
      * Sets the "upload in progress" flag, which will result in displaying a new icon and forbid to remove the layer.
      * @since 13434

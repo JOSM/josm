@@ -18,4 +18,19 @@ public abstract class AbstractOsmDataLayer extends AbstractModifiableLayer {
      * @return the {@link OsmData} behind this layer.
      */
     public abstract OsmData<?, ?, ?, ?> getDataSet();
+
+    @Override
+    public void lock() {
+        getDataSet().lock();
+    }
+
+    @Override
+    public void unlock() {
+        getDataSet().unlock();
+    }
+
+    @Override
+    public boolean isLocked() {
+        return getDataSet().isLocked();
+    }
 }
