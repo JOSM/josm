@@ -29,7 +29,6 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -286,19 +285,19 @@ public class AutoScaleAction extends JosmAction {
     }
 
     private BoundingXYVisitor modeSelectionOrConflict(BoundingXYVisitor v) {
-        Collection<OsmPrimitive> sel = new HashSet<>();
+        Collection<IPrimitive> sel = new HashSet<>();
         if ("selection".equals(mode)) {
-            DataSet dataSet = getLayerManager().getActiveDataSet();
+            OsmData<?, ?, ?, ?> dataSet = getLayerManager().getActiveData();
             if (dataSet != null) {
-                sel = dataSet.getSelected();
+                sel.addAll(dataSet.getSelected());
             }
         } else {
             ConflictDialog conflictDialog = MainApplication.getMap().conflictDialog;
-            Conflict<? extends OsmPrimitive> c = conflictDialog.getSelectedConflict();
+            Conflict<? extends IPrimitive> c = conflictDialog.getSelectedConflict();
             if (c != null) {
                 sel.add(c.getMy());
             } else if (conflictDialog.getConflicts() != null) {
-                sel = conflictDialog.getConflicts().getMyConflictParties();
+                sel.addAll(conflictDialog.getConflicts().getMyConflictParties());
             }
         }
         if (sel.isEmpty()) {
@@ -309,8 +308,8 @@ public class AutoScaleAction extends JosmAction {
                     JOptionPane.INFORMATION_MESSAGE);
             return null;
         }
-        for (OsmPrimitive osm : sel) {
-            osm.accept((PrimitiveVisitor) v);
+        for (IPrimitive osm : sel) {
+            osm.accept(v);
         }
 
         // Increase the bounding box by up to 100% to give more context.
