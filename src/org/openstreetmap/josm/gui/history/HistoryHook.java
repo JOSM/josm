@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 
@@ -19,7 +19,8 @@ public interface HistoryHook {
      * The request is cancelled if the collection is cleared.
      * Default implementation is to do no changes.
      * @param ids The current ids to change
+     * @since 13948
      */
-    default void modifyRequestedIds(Collection<? extends PrimitiveId> ids) {
+    default void modifyRequestedIds(List<PrimitiveId> ids) {
     }
 }

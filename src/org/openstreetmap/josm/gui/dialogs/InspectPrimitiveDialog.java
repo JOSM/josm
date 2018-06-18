@@ -24,7 +24,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveComparator;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -114,7 +113,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     protected static String buildMapPaintText() {
-        final Collection<OsmPrimitive> sel = MainApplication.getLayerManager().getActiveDataSet().getAllSelected();
+        final Collection<? extends IPrimitive> sel = MainApplication.getLayerManager().getActiveData().getAllSelected();
         ElemStyles elemstyles = MapPaintStyles.getStyles();
         NavigatableComponent nc = MainApplication.getMap().mapView;
         double scale = nc.getDist100Pixel();
@@ -122,7 +121,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         final StringBuilder txtMappaint = new StringBuilder();
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
-            for (OsmPrimitive osm : sel) {
+            for (IPrimitive osm : sel) {
                 txtMappaint.append(tr("Styles Cache for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())));
 
                 MultiCascade mc = new MultiCascade();
@@ -150,7 +149,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
         }
         if (sel.size() == 2) {
-            List<OsmPrimitive> selList = new ArrayList<>(sel);
+            List<IPrimitive> selList = new ArrayList<>(sel);
             StyleCache sc1 = selList.get(0).getCachedStyle();
             StyleCache sc2 = selList.get(1).getCachedStyle();
             if (sc1 == sc2) {
