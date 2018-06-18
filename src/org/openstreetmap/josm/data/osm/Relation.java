@@ -404,6 +404,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
      * Returns an unmodifiable list of the {@link OsmPrimitive}s referred to by at least one member of this relation.
      * @return an unmodifiable list of the primitives
      */
+    @Override
     public List<OsmPrimitive> getMemberPrimitivesList() {
         return Utils.transform(getMembers(), RelationMember::getMember);
     }
@@ -504,6 +505,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
      *
      * @return the incomplete children. Empty collection if no children are incomplete.
      */
+    @Override
     public Collection<OsmPrimitive> getIncompleteMembers() {
         Set<OsmPrimitive> ret = new HashSet<>();
         RelationMember[] members = this.members;

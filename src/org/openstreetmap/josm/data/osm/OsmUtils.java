@@ -161,9 +161,10 @@ public final class OsmUtils {
      * @param collection collection of OSM primitives
      * @return {@code true} if the given collection is not empty and does not contain any primitive in a locked layer.
      * @since 13611
+     * @since 13957 (signature)
      */
-    public static boolean isOsmCollectionEditable(Collection<? extends OsmPrimitive> collection) {
+    public static boolean isOsmCollectionEditable(Collection<? extends IPrimitive> collection) {
         return collection != null && !collection.isEmpty()
-            && collection.stream().map(OsmPrimitive::getDataSet).filter(Objects::nonNull).noneMatch(DataSet::isLocked);
+            && collection.stream().map(IPrimitive::getDataSet).filter(Objects::nonNull).noneMatch(OsmData::isLocked);
     }
 }

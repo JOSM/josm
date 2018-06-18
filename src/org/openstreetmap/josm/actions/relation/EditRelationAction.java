@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -21,6 +22,8 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The action for editing a relation.
@@ -70,17 +73,18 @@ public class EditRelationAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty()) return;
-        if (relations.size() > Config.getPref().getInt("warn.open.maxrelations", 5) &&
+        SubclassFilteredCollection<IRelation<?>, Relation> filteredRelations = Utils.filteredCollection(relations, Relation.class);
+        if (!isEnabled() || filteredRelations.isEmpty()) return;
+        if (filteredRelations.size() > Config.getPref().getInt("warn.open.maxrelations", 5) &&
             /* I18N english text for value 1 makes no real sense, never called for values <= maxrel (usually 5) */
             JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent,
                     "<html>"+trn("You are about to open <b>{0}</b> different relation editor simultaneously.<br/>Do you want to continue?",
                             "You are about to open <b>{0}</b> different relation editors simultaneously.<br/>Do you want to continue?",
-                            relations.size(), relations.size())+"</html>",
+                            filteredRelations.size(), filteredRelations.size())+"</html>",
                     tr("Confirmation"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)) {
             return;
         }
-        for (Relation r : relations) {
+        for (Relation r : filteredRelations) {
             launchEditor(r);
         }
     }
@@ -88,8 +92,9 @@ public class EditRelationAction extends AbstractRelationAction {
     @Override
     protected void updateEnabledState() {
         boolean enabled = false;
-        if (OsmUtils.isOsmCollectionEditable(relations)) {
-            for (Relation r : relations) {
+        SubclassFilteredCollection<IRelation<?>, Relation> filteredRelations = Utils.filteredCollection(relations, Relation.class);
+        if (OsmUtils.isOsmCollectionEditable(filteredRelations)) {
+            for (Relation r : filteredRelations) {
                 if (!r.isDeleted()) {
                     enabled = true;
                     break;

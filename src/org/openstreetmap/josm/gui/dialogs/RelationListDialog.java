@@ -34,7 +34,7 @@ import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.actions.OsmPrimitiveAction;
+import org.openstreetmap.josm.actions.IPrimitiveAction;
 import org.openstreetmap.josm.actions.relation.AddSelectionToRelations;
 import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
 import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
@@ -49,6 +49,8 @@ import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -71,14 +73,12 @@ import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
@@ -89,6 +89,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A dialog showing all known relations, with buttons to add, edit, and delete them.
@@ -99,7 +100,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 public class RelationListDialog extends ToggleDialog
         implements DataSetListener, NavigatableComponent.ZoomChangeListener, ExpertToggleAction.ExpertModeChangeListener {
     /** The display list. */
-    private final JList<Relation> displaylist;
+    private final JList<IRelation<?>> displaylist;
     /** the list model used */
     private final RelationListModel model;
 
@@ -221,13 +222,14 @@ public class RelationListDialog extends ToggleDialog
 
     // inform all actions about list of relations they need
     private void updateActionsRelationLists() {
-        List<Relation> sel = model.getSelectedRelations();
+        List<IRelation<?>> sel = model.getSelectedRelations();
         popupMenuHandler.setPrimitives(sel);
 
         Component focused = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
 
         //update highlights
-        if (highlightEnabled && focused == displaylist && MainApplication.isDisplayingMapView() && highlightHelper.highlightOnly(sel)) {
+        if (highlightEnabled && focused == displaylist && MainApplication.isDisplayingMapView()
+                && highlightHelper.highlightOnly(Utils.filteredCollection(sel, Relation.class))) {
             MainApplication.getMap().mapView.repaint();
         }
     }
@@ -260,20 +262,20 @@ public class RelationListDialog extends ToggleDialog
     }
 
     /**
-     * Initializes the relation list dialog from a layer. If <code>layer</code> is null
-     * or if it isn't an {@link OsmDataLayer} the dialog is reset to an empty dialog.
+     * Initializes the relation list dialog from a dataset. If <code>data</code> is null
+     * the dialog is reset to an empty dialog.
      * Otherwise it is initialized with the list of non-deleted and visible relations
-     * in the layer's dataset.
+     * in the dataset.
      *
-     * @param layer the layer. May be null.
+     * @param data the dataset. May be null.
+     * @since 13957
      */
-    protected void initFromLayer(Layer layer) {
-        if (!(layer instanceof OsmDataLayer)) {
+    protected void initFromData(OsmData<?, ?, ?, ?> data) {
+        if (data == null) {
             model.setRelations(null);
             return;
         }
-        OsmDataLayer l = (OsmDataLayer) layer;
-        model.setRelations(l.data.getRelations());
+        model.setRelations(data.getRelations());
         model.updateTitle();
         updateActionsRelationLists();
     }
@@ -281,7 +283,7 @@ public class RelationListDialog extends ToggleDialog
     /**
      * @return The selected relation in the list
      */
-    private Relation getSelected() {
+    private IRelation<?> getSelected() {
         if (model.getSize() == 1) {
             displaylist.setSelectedIndex(0);
         }
@@ -300,8 +302,9 @@ public class RelationListDialog extends ToggleDialog
     /**
      * Selects the relations in the list of relations.
      * @param relations  the relations to be selected
+     * @since 13957 (signature)
      */
-    public void selectRelations(Collection<Relation> relations) {
+    public void selectRelations(Collection<? extends IRelation<?>> relations) {
         if (relations == null || relations.isEmpty()) {
             model.setSelectedRelations(null);
         } else {
@@ -347,7 +350,10 @@ public class RelationListDialog extends ToggleDialog
         }
 
         protected void editCurrentRelation() {
-            EditRelationAction.launchEditor(getSelected());
+            IRelation<?> rel = getSelected();
+            if (rel instanceof Relation) {
+                EditRelationAction.launchEditor((Relation) rel);
+            }
         }
 
         @Override
@@ -411,9 +417,9 @@ public class RelationListDialog extends ToggleDialog
     /**
      * The list model for the list of relations displayed in the relation list dialog.
      */
-    private class RelationListModel extends AbstractListModel<Relation> {
-        private final transient List<Relation> relations = new ArrayList<>();
-        private transient List<Relation> filteredRelations;
+    private class RelationListModel extends AbstractListModel<IRelation<?>> {
+        private final transient List<IRelation<?>> relations = new ArrayList<>();
+        private transient List<IRelation<?>> filteredRelations;
         private final DefaultListSelectionModel selectionModel;
         private transient SearchCompiler.Match filter;
 
@@ -438,12 +444,12 @@ public class RelationListDialog extends ToggleDialog
             relations.sort(DefaultNameFormatter.getInstance().getRelationComparator());
         }
 
-        private boolean isValid(Relation r) {
+        private boolean isValid(IRelation<?> r) {
             return !r.isDeleted() && !r.isIncomplete();
         }
 
-        public void setRelations(Collection<Relation> relations) {
-            List<Relation> sel = getSelectedRelations();
+        public void setRelations(Collection<? extends IRelation<?>> relations) {
+            List<IRelation<?>> sel = getSelectedRelations();
             this.relations.clear();
             this.filteredRelations = null;
             if (relations == null) {
@@ -451,7 +457,7 @@ public class RelationListDialog extends ToggleDialog
                 fireContentsChanged(this, 0, getSize());
                 return;
             }
-            for (Relation r: relations) {
+            for (IRelation<?> r: relations) {
                 if (isValid(r)) {
                     this.relations.add(r);
                 }
@@ -486,7 +492,7 @@ public class RelationListDialog extends ToggleDialog
                 }
             }
             if (added) {
-                List<Relation> sel = getSelectedRelations();
+                List<IRelation<?>> sel = getSelectedRelations();
                 sort();
                 updateFilteredRelations();
                 fireIntervalAdded(this, 0, getSize());
@@ -519,7 +525,7 @@ public class RelationListDialog extends ToggleDialog
                 filteredRelations.removeAll(removedRelations);
             }
             if (size != relations.size()) {
-                List<Relation> sel = getSelectedRelations();
+                List<IRelation<?>> sel = getSelectedRelations();
                 sort();
                 fireContentsChanged(this, 0, getSize());
                 setSelectedRelations(sel);
@@ -537,23 +543,23 @@ public class RelationListDialog extends ToggleDialog
         public void setFilter(final SearchCompiler.Match filter) {
             this.filter = filter;
             updateFilteredRelations();
-            List<Relation> sel = getSelectedRelations();
+            List<IRelation<?>> sel = getSelectedRelations();
             fireContentsChanged(this, 0, getSize());
             setSelectedRelations(sel);
             updateTitle();
         }
 
-        private List<Relation> getVisibleRelations() {
+        private List<IRelation<?>> getVisibleRelations() {
             return filteredRelations == null ? relations : filteredRelations;
         }
 
-        private Relation getVisibleRelation(int index) {
+        private IRelation<?> getVisibleRelation(int index) {
             if (index < 0 || index >= getVisibleRelations().size()) return null;
             return getVisibleRelations().get(index);
         }
 
         @Override
-        public Relation getElementAt(int index) {
+        public IRelation<?> getElementAt(int index) {
             return getVisibleRelation(index);
         }
 
@@ -567,9 +573,10 @@ public class RelationListDialog extends ToggleDialog
          * if there are no selected relations.
          *
          * @return the list of selected, non-new relations.
+         * @since 13957 (signature)
          */
-        public List<Relation> getSelectedRelations() {
-            List<Relation> ret = new ArrayList<>();
+        public List<IRelation<?>> getSelectedRelations() {
+            List<IRelation<?>> ret = new ArrayList<>();
             for (int i = 0; i < getSize(); i++) {
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;
@@ -583,15 +590,16 @@ public class RelationListDialog extends ToggleDialog
          * Sets the selected relations.
          *
          * @param sel the list of selected relations
+         * @since 13957 (signature)
          */
-        public void setSelectedRelations(Collection<Relation> sel) {
+        public void setSelectedRelations(Collection<? extends IRelation<?>> sel) {
             selectionModel.setValueIsAdjusting(true);
             selectionModel.clearSelection();
             if (sel != null && !sel.isEmpty()) {
                 if (!getVisibleRelations().containsAll(sel)) {
                     resetFilter();
                 }
-                for (Relation r: sel) {
+                for (IRelation<?> r: sel) {
                     Integer i = getVisibleRelationIndex(r);
                     if (i != null) {
                         selectionModel.addSelectionInterval(i, i);
@@ -601,7 +609,7 @@ public class RelationListDialog extends ToggleDialog
             selectionModel.setValueIsAdjusting(false);
         }
 
-        private Integer getVisibleRelationIndex(Relation rel) {
+        private Integer getVisibleRelationIndex(IRelation<?> rel) {
             int i = getVisibleRelations().indexOf(rel);
             if (i < 0)
                 return null;
@@ -654,7 +662,7 @@ public class RelationListDialog extends ToggleDialog
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 for (JMenuItem mi: checkDisabled) {
-                    mi.setVisible(((OsmPrimitiveAction) mi.getAction()).isEnabled());
+                    mi.setVisible(((IPrimitiveAction) mi.getAction()).isEnabled());
 
                     Component sep = popupMenu.getComponent(
                             Math.max(0, popupMenu.getComponentIndex(mi)-1));
@@ -691,8 +699,9 @@ public class RelationListDialog extends ToggleDialog
     /**
      * Replies the list of selected relations. Empty list, if there are no selected relations.
      * @return the list of selected, non-new relations.
+     * @since 13957 (signature)
      */
-    public Collection<Relation> getSelectedRelations() {
+    public Collection<IRelation<?>> getSelectedRelations() {
         return model.getSelectedRelations();
     }
 
@@ -724,7 +733,7 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void relationMembersChanged(final RelationMembersChangedEvent event) {
-        List<Relation> sel = model.getSelectedRelations();
+        List<IRelation<?>> sel = model.getSelectedRelations();
         model.sort();
         model.setSelectedRelations(sel);
         displaylist.repaint();
@@ -736,7 +745,7 @@ public class RelationListDialog extends ToggleDialog
         if (!(prim instanceof Relation))
             return;
         // trigger a sort of the relation list because the display name may have changed
-        List<Relation> sel = model.getSelectedRelations();
+        List<IRelation<?>> sel = model.getSelectedRelations();
         model.sort();
         model.setSelectedRelations(sel);
         displaylist.repaint();
@@ -744,7 +753,7 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        initFromLayer(MainApplication.getLayerManager().getActiveDataLayer());
+        initFromData(MainApplication.getLayerManager().getActiveData());
     }
 
     @Override
