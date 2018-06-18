@@ -8,12 +8,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action for downloading incomplete members of selected relations
@@ -21,7 +24,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  */
 public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAction {
 
-    private transient Collection<OsmPrimitive> incompleteMembers;
+    private transient Collection<IPrimitive> incompleteMembers;
 
     /**
      * Constructs a new <code>DownloadSelectedIncompleteMembersAction</code>.
@@ -37,9 +40,9 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
      * @param rels The relations to inspect.
      * @return The set of incomplete members of the given relations.
      */
-    public static Set<OsmPrimitive> buildSetOfIncompleteMembers(Collection<Relation> rels) {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (Relation r : rels) {
+    public static Set<IPrimitive> buildSetOfIncompleteMembers(Collection<IRelation<?>> rels) {
+        Set<IPrimitive> ret = new HashSet<>();
+        for (IRelation<?> r : rels) {
             ret.addAll(SubclassFilteredCollection.filter(r.getIncompleteMembers(), osm -> !osm.isNew()));
         }
         return ret;
@@ -49,15 +52,15 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || !MainApplication.isDisplayingMapView()) return;
         MainApplication.worker.submit(new DownloadRelationMemberTask(
-                relations,
-                incompleteMembers,
+                Utils.filteredCollection(relations, Relation.class),
+                Utils.filteredCollection(incompleteMembers, OsmPrimitive.class),
                 MainApplication.getLayerManager().getEditLayer()));
     }
 
     @Override
-    public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
+    public void setPrimitives(Collection<? extends IPrimitive> primitives) {
         // selected relations with incomplete members
-        this.relations = SubclassFilteredCollection.filter(getRelations(primitives), Relation::hasIncompleteMembers);
+        this.relations = SubclassFilteredCollection.filter(getRelations(primitives), IRelation::hasIncompleteMembers);
         this.incompleteMembers = buildSetOfIncompleteMembers(relations);
         updateEnabledState();
     }

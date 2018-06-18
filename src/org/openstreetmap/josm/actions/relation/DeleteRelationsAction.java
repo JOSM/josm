@@ -13,6 +13,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action that delete relations
@@ -45,7 +46,7 @@ public class DeleteRelationsAction extends AbstractRelationAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        deleteRelation(relations);
+        deleteRelation(Utils.filteredCollection(relations, Relation.class));
     }
 
     @Override

@@ -1,7 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * IRelation captures the common functions of {@link Relation} and {@link RelationData}.
@@ -91,5 +96,31 @@ public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
     @Override
     default boolean isMultipolygon() {
         return "multipolygon".equals(get("type")) || isBoundary();
+    }
+
+    /**
+     * Returns an unmodifiable list of the {@link OsmPrimitive}s referred to by at least one member of this relation.
+     * @return an unmodifiable list of the primitives
+     * @since 13957
+     */
+    default List<? extends IPrimitive> getMemberPrimitivesList() {
+        return Utils.transform(getMembers(), IRelationMember::getMember);
+    }
+
+    /**
+     * Replies a collection with the incomplete children this relation refers to.
+     *
+     * @return the incomplete children. Empty collection if no children are incomplete.
+     * @since 13957
+     */
+    default Collection<? extends IPrimitive> getIncompleteMembers() {
+        Set<IPrimitive> ret = new HashSet<>();
+        for (M rm : getMembers()) {
+            if (!rm.getMember().isIncomplete()) {
+                continue;
+            }
+            ret.add(rm.getMember());
+        }
+        return ret;
     }
 }

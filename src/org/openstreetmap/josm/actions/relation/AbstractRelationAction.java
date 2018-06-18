@@ -7,11 +7,11 @@ import java.util.Collections;
 import javax.swing.AbstractAction;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.OsmPrimitiveAction;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.actions.IPrimitiveAction;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
@@ -19,26 +19,27 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  * Ancestor for all actions that want to work with relation collection and
  * to be disabled if the collection is empty
  * @since 5793
+ * @since 13957 (signature)
  */
-public abstract class AbstractRelationAction extends AbstractAction implements OsmPrimitiveAction {
+public abstract class AbstractRelationAction extends AbstractAction implements IPrimitiveAction {
     /** relation collection */
-    protected transient Collection<Relation> relations = Collections.<Relation>emptySet();
+    protected transient Collection<IRelation<?>> relations = Collections.<IRelation<?>>emptySet();
 
     /**
      * Returns the relations contained in the given collection.
      * @param primitives collection of primitives
      * @return the relation contained in {@code primitives}
      */
-    protected static final Collection<Relation> getRelations(Collection<? extends OsmPrimitive> primitives) {
+    protected static final Collection<IRelation<?>> getRelations(Collection<? extends IPrimitive> primitives) {
         if (primitives == null || primitives.isEmpty()) {
-            return Collections.<Relation>emptySet();
+            return Collections.<IRelation<?>>emptySet();
         } else {
-            return new SubclassFilteredCollection<>(primitives, Relation.class::isInstance);
+            return new SubclassFilteredCollection<>(primitives, IRelation.class::isInstance);
         }
     }
 
     @Override
-    public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
+    public void setPrimitives(Collection<? extends IPrimitive> primitives) {
         this.relations = getRelations(primitives);
         updateEnabledState();
     }
@@ -54,7 +55,7 @@ public abstract class AbstractRelationAction extends AbstractAction implements O
         if (relations.isEmpty()) {
             return false;
         }
-        DataSet ds = relations.iterator().next().getDataSet();
+        OsmData<?, ?, ?, ?> ds = relations.iterator().next().getDataSet();
         return !Main.isOffline(OnlineResource.OSM_API)
             && ds != null && !ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
     }

@@ -7,8 +7,8 @@ import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -37,14 +37,14 @@ public class SelectMembersAction extends AbstractRelationAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || !MainApplication.isDisplayingMapView()) return;
 
-        Set<OsmPrimitive> members = new HashSet<>();
-        for (Relation r: relations) {
+        Set<IPrimitive> members = new HashSet<>();
+        for (IRelation<?> r: relations) {
             members.addAll(r.getMemberPrimitivesList());
         }
         if (add) {
-            MainApplication.getLayerManager().getActiveDataSet().addSelected(members);
+            MainApplication.getLayerManager().getActiveData().addSelected(members);
         } else {
-            MainApplication.getLayerManager().getActiveDataSet().setSelected(members);
+            MainApplication.getLayerManager().getActiveData().setSelected(members);
         }
     }
 }

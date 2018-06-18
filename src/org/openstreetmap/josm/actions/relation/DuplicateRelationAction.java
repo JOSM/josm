@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
@@ -44,13 +45,17 @@ public class DuplicateRelationAction extends AbstractRelationAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty())
             return;
-        Relation r = relations.iterator().next();
-        duplicateRelationAndLaunchEditor(r);
+        IRelation<?> r = relations.iterator().next();
+        if (r instanceof Relation) {
+            duplicateRelationAndLaunchEditor((Relation) r);
+        }
     }
 
     @Override
     protected void updateEnabledState() {
         // only one selected relation can be edited
-        setEnabled(relations.size() == 1 && !relations.iterator().next().getDataSet().isLocked());
+        setEnabled(relations.size() == 1
+                && relations.iterator().next() instanceof Relation
+                && !relations.iterator().next().getDataSet().isLocked());
     }
 }

@@ -22,12 +22,12 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.openstreetmap.josm.actions.GpxExportAction;
-import org.openstreetmap.josm.actions.OsmPrimitiveAction;
+import org.openstreetmap.josm.actions.IPrimitiveAction;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  * @since 13210
  */
 public class ExportRelationToGpxAction extends GpxExportAction
-    implements OsmPrimitiveAction {
+    implements IPrimitiveAction {
 
     /** Enumeration of export variants */
     public enum Mode {
@@ -234,7 +234,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
     }
 
     @Override
-    public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
+    public void setPrimitives(Collection<? extends IPrimitive> primitives) {
         relations = Collections.<Relation>emptySet();
         if (primitives != null && !primitives.isEmpty()) {
             relations = new SubclassFilteredCollection<>(primitives,

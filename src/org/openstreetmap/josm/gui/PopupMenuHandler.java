@@ -12,8 +12,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.MenuElement;
 import javax.swing.event.PopupMenuListener;
 
-import org.openstreetmap.josm.actions.OsmPrimitiveAction;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.actions.IPrimitiveAction;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 
 /**
  * Handler to ease management of actions in different popup menus.
@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 public class PopupMenuHandler {
 
     // Set of enabled osm primitives actions
-    private final Set<OsmPrimitiveAction> primitiveActions = new HashSet<>();
+    private final Set<IPrimitiveAction> primitiveActions = new HashSet<>();
     // Managed menu
     private final JPopupMenu menu;
 
@@ -52,8 +52,8 @@ public class PopupMenuHandler {
      */
     public JMenuItem addAction(Action a) {
         if (a != null) {
-            if (a instanceof OsmPrimitiveAction) {
-                primitiveActions.add((OsmPrimitiveAction) a);
+            if (a instanceof IPrimitiveAction) {
+                primitiveActions.add((IPrimitiveAction) a);
             }
             return menu.add(a);
         }
@@ -68,7 +68,7 @@ public class PopupMenuHandler {
      */
     public void removeAction(Action a) {
         if (a != null) {
-            if (a instanceof OsmPrimitiveAction) {
+            if (a instanceof IPrimitiveAction) {
                 primitiveActions.remove(a);
             }
             MenuElement[] elements = menu.getSubElements();
@@ -105,18 +105,20 @@ public class PopupMenuHandler {
      * Returns all enabled primitive actions.
      * @return All primitive actions that have been added.
      * @see #addAction(Action)
+     * @since 13957 (signature)
      */
-    public Collection<OsmPrimitiveAction> getPrimitiveActions() {
+    public Collection<IPrimitiveAction> getPrimitiveActions() {
         return Collections.unmodifiableCollection(primitiveActions);
     }
 
     /**
      * Specifies the working set of primitives for all primitive actions.
      * @param primitives The new working set of primitives. Can be null or empty
-     * @see OsmPrimitiveAction#setPrimitives
+     * @see IPrimitiveAction#setPrimitives
+     * @since 13957 (signature)
      */
-    public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
-        for (OsmPrimitiveAction action : primitiveActions) {
+    public void setPrimitives(Collection<? extends IPrimitive> primitives) {
+        for (IPrimitiveAction action : primitiveActions) {
             action.setPrimitives(primitives);
         }
     }

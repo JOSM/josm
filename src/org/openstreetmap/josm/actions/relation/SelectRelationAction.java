@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -33,7 +33,7 @@ public class SelectRelationAction extends AbstractRelationAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty()) return;
-        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+        OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
         if (ds == null) return;
         if (add) {
             ds.addSelected(relations);
