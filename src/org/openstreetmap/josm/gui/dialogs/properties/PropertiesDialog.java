@@ -177,9 +177,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
     private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpAction = new HelpAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
-            membershipTable, x -> (Relation) membershipData.getValueAt(x, 0));
+            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
     private final TaginfoAction taginfoAction = new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
-            membershipTable, x -> (Relation) membershipData.getValueAt(x, 0));
+            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
     private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction(
             tagTable, editHelper::getDataKey, Main.main::getInProgressISelection);
@@ -377,9 +377,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             @Override
             protected int checkTableSelection(JTable table, Point p) {
                 int row = super.checkTableSelection(table, p);
-                List<Relation> rels = new ArrayList<>();
+                List<IRelation<?>> rels = new ArrayList<>();
                 for (int i: table.getSelectedRows()) {
-                    rels.add((Relation) table.getValueAt(i, 0));
+                    rels.add((IRelation<?>) table.getValueAt(i, 0));
                 }
                 membershipMenuHandler.setPrimitives(rels);
                 return row;
@@ -568,13 +568,13 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
         Collection<? extends IPrimitive> newSel = Main.main.getInProgressISelection();
         String selectedTag;
-        Relation selectedRelation = null;
+        IRelation<?> selectedRelation = null;
         selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
         if (selectedTag == null && tagTable.getSelectedRowCount() == 1) {
             selectedTag = editHelper.getDataKey(tagTable.getSelectedRow());
         }
         if (membershipTable.getSelectedRowCount() == 1) {
-            selectedRelation = (Relation) membershipData.getValueAt(membershipTable.getSelectedRow(), 0);
+            selectedRelation = (IRelation<?>) membershipData.getValueAt(membershipTable.getSelectedRow(), 0);
         }
 
         // re-load tag data
@@ -774,7 +774,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                 return this;
             if (c instanceof JLabel) {
                 JLabel label = (JLabel) c;
-                Relation r = (Relation) value;
+                IRelation<?> r = (IRelation<?>) value;
                 label.setText(r.getDisplayName(DefaultNameFormatter.getInstance()));
                 if (r.isDisabledAndHidden()) {
                     label.setFont(label.getFont().deriveFont(Font.ITALIC));
@@ -791,7 +791,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             if (value == null)
                 return this;
             Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-            boolean isDisabledAndHidden = ((Relation) table.getValueAt(row, 0)).isDisabledAndHidden();
+            boolean isDisabledAndHidden = ((IRelation<?>) table.getValueAt(row, 0)).isDisabledAndHidden();
             if (c instanceof JLabel) {
                 JLabel label = (JLabel) c;
                 label.setText(((MemberInfo) value).getRoleString());
@@ -808,7 +808,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
             Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-            boolean isDisabledAndHidden = ((Relation) table.getValueAt(row, 0)).isDisabledAndHidden();
+            boolean isDisabledAndHidden = ((IRelation<?>) table.getValueAt(row, 0)).isDisabledAndHidden();
             if (c instanceof JLabel) {
                 JLabel label = (JLabel) c;
                 label.setText(((MemberInfo) table.getValueAt(row, 1)).getPositionString());
