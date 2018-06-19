@@ -11,7 +11,7 @@ import java.util.function.IntFunction;
 import javax.swing.JTable;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
@@ -29,7 +29,7 @@ public class TaginfoAction extends JosmAction {
     private final IntFunction<Map<String, Integer>> tagValuesSupplier;
 
     private final JTable membershipTable;
-    private final IntFunction<Relation> memberValueSupplier;
+    private final IntFunction<IRelation<?>> memberValueSupplier;
 
     /**
      * Constructs a new {@code TaginfoAction}.
@@ -38,9 +38,10 @@ public class TaginfoAction extends JosmAction {
      * @param tagValuesSupplier Finds the values from given row of tag table (map of values and number of occurrences). Cannot be null
      * @param membershipTable The membership table. Can be null
      * @param memberValueSupplier Finds the parent relation from given row of membership table. Can be null
+     * @since 13959 (signature)
      */
     public TaginfoAction(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
-            JTable membershipTable, IntFunction<Relation> memberValueSupplier) {
+            JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier) {
         super(tr("Go to Taginfo"), "dialogs/taginfo", tr("Launch browser with Taginfo statistics for selected object"), null, false);
         this.tagTable = Objects.requireNonNull(tagTable);
         this.tagKeySupplier = Objects.requireNonNull(tagKeySupplier);

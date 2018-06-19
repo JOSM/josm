@@ -19,7 +19,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -39,7 +39,7 @@ public class HelpAction extends AbstractAction {
     private final IntFunction<Map<String, Integer>> tagValuesSupplier;
 
     private final JTable membershipTable;
-    private final IntFunction<Relation> memberValueSupplier;
+    private final IntFunction<IRelation<?>> memberValueSupplier;
 
     /**
      * Constructs a new {@code HelpAction}.
@@ -48,9 +48,10 @@ public class HelpAction extends AbstractAction {
      * @param tagValuesSupplier Finds the values from given row of tag table (map of values and number of occurrences). Cannot be null
      * @param membershipTable The membership table. Can be null
      * @param memberValueSupplier Finds the parent relation from given row of membership table. Can be null
+     * @since 13959 (signature)
      */
     public HelpAction(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
-            JTable membershipTable, IntFunction<Relation> memberValueSupplier) {
+            JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier) {
         this.tagTable = Objects.requireNonNull(tagTable);
         this.tagKeySupplier = Objects.requireNonNull(tagKeySupplier);
         this.tagValuesSupplier = Objects.requireNonNull(tagValuesSupplier);
@@ -127,8 +128,9 @@ public class HelpAction extends AbstractAction {
      * @return a list of URIs for the given relation by order of relevance
      * @throws URISyntaxException in case of internal error
      * @since 13522
+     * @since 13959 (signature)
      */
-    public static List<URI> getRelationURIs(String base, String lang, Relation rel) throws URISyntaxException {
+    public static List<URI> getRelationURIs(String base, String lang, IRelation<?> rel) throws URISyntaxException {
         List<URI> uris = new ArrayList<>();
         String type = rel.get("type");
         if (type != null) {
