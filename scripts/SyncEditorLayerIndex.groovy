@@ -1093,11 +1093,11 @@ class SyncEditorLayerIndex {
     static Map<String,String> getDescriptions(Object e) {
         Map<String,String> res = new HashMap<String, String>()
         if (e instanceof ImageryInfo) {
-          String a = e.getDescription()
-          if (a) res.put("en", a)
+            String a = e.getDescription()
+            if (a) res.put("en", a)
         } else {
-          String a = e.get("properties").getString("description", null)
-          if (a) res.put("en", a)
+            String a = e.get("properties").getString("description", null)
+            if (a) res.put("en", a.replaceAll("''","'"))
         }
         return res
     }
