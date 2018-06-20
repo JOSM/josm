@@ -726,6 +726,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="de.*"/>
             <ignore classname="edu.*"/>
             <ignore classname="groovy.*"/>
+            <ignore classname="io.*"/>
             <ignore classname="it.*"/>
             <ignore classname="javax.*"/>
             <ignore classname="jogamp.*"/>
