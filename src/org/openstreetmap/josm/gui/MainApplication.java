@@ -1027,9 +1027,14 @@ public class MainApplication extends Main {
         setupCallbacks();
 
         final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(SplashScreen::new);
-        final SplashScreen.SplashProgressMonitor monitor = splash.getProgressMonitor();
+        // splash can be null sometimes on Linux, in this case try to load JOSM silently
+        final SplashProgressMonitor monitor = splash != null ? splash.getProgressMonitor() : new SplashProgressMonitor(null, e -> {
+            Logging.debug(e.toString());
+        });
         monitor.beginTask(tr("Initializing"));
-        GuiHelper.runInEDT(() -> splash.setVisible(Config.getPref().getBoolean("draw.splashscreen", true)));
+        if (splash != null) {
+            GuiHelper.runInEDT(() -> splash.setVisible(Config.getPref().getBoolean("draw.splashscreen", true)));
+        }
         Main.setInitStatusListener(new InitStatusListener() {
 
             @Override
@@ -1070,8 +1075,10 @@ public class MainApplication extends Main {
 
         // Wait for splash disappearance (fix #9714)
         GuiHelper.runInEDTAndWait(() -> {
-            splash.setVisible(false);
-            splash.dispose();
+            if (splash != null) {
+                splash.setVisible(false);
+                splash.dispose();
+            }
             mainFrame.setVisible(true);
         });
 
