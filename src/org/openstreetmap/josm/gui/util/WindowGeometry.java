@@ -342,19 +342,23 @@ public class WindowGeometry {
         }
 
         // Ensure window does not hide taskbar
+        try {
+            Rectangle maxbounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
-        Rectangle maxbounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+            if (!isBugInMaximumWindowBounds(maxbounds)) {
+                deltax = size.width - maxbounds.width;
+                if (deltax > 0) {
+                    size.width -= deltax;
+                }
 
-        if (!isBugInMaximumWindowBounds(maxbounds)) {
-            deltax = size.width - maxbounds.width;
-            if (deltax > 0) {
-                size.width -= deltax;
+                deltay = size.height - maxbounds.height;
+                if (deltay > 0) {
+                    size.height -= deltay;
+                }
             }
-
-            deltay = size.height - maxbounds.height;
-            if (deltay > 0) {
-                size.height -= deltay;
-            }
+        } catch (IllegalArgumentException e) {
+            // See #16410: IllegalArgumentException: "Window must not be zero" on Linux/X11
+            Logging.error(e);
         }
         window.setLocation(p);
         window.setSize(size);
