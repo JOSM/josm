@@ -1029,7 +1029,9 @@ public class MainApplication extends Main {
         final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(SplashScreen::new);
         // splash can be null sometimes on Linux, in this case try to load JOSM silently
         final SplashProgressMonitor monitor = splash != null ? splash.getProgressMonitor() : new SplashProgressMonitor(null, e -> {
-            Logging.debug(e.toString());
+            if (e != null) {
+                Logging.debug(e.toString());
+            }
         });
         monitor.beginTask(tr("Initializing"));
         if (splash != null) {
