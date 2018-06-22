@@ -313,36 +313,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         tileCache.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     * @deprecated Use {@link TileSourceDisplaySettings#getDx()}
-     */
-    @Override
-    @Deprecated
-    public double getDx() {
-        return getDisplaySettings().getDx();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @deprecated Use {@link TileSourceDisplaySettings#getDy()}
-     */
-    @Override
-    @Deprecated
-    public double getDy() {
-        return getDisplaySettings().getDy();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @deprecated Use {@link TileSourceDisplaySettings}
-     */
-    @Override
-    @Deprecated
-    public void setOffset(OffsetBookmark offset) {
-        getDisplaySettings().setOffsetBookmark(offset);
-    }
-
     @Override
     public Object getInfoComponent() {
         JPanel panel = (JPanel) super.getInfoComponent();

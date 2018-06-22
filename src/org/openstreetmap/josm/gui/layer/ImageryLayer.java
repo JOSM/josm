@@ -31,13 +31,11 @@ import javax.swing.JTextField;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
-import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProcessor;
@@ -90,41 +88,6 @@ public abstract class ImageryLayer extends Layer {
         MapView mapView = MainApplication.getMap().mapView;
         ProjectionBounds bounds = mapView.getProjectionBounds();
         return mapView.getWidth() / (bounds.maxEast - bounds.minEast);
-    }
-
-    /**
-     * Gets the x displacement of this layer.
-     * To be removed end of 2016
-     * @return The x displacement.
-     * @deprecated Use {@link TileSourceDisplaySettings#getDx()}
-     */
-    @Deprecated
-    public double getDx() {
-        // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
-        return 0;
-    }
-
-    /**
-     * Gets the y displacement of this layer.
-     * To be removed end of 2016
-     * @return The y displacement.
-     * @deprecated Use {@link TileSourceDisplaySettings#getDy()}
-     */
-    @Deprecated
-    public double getDy() {
-        // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
-        return 0;
-    }
-
-    /**
-     * Sets the displacement offset of this layer. The layer is automatically invalidated.
-     * To be removed end of 2016
-     * @param offset the offset bookmark
-     * @deprecated Use {@link TileSourceDisplaySettings}
-     */
-    @Deprecated
-    public void setOffset(OffsetBookmark offset) {
-        // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
     }
 
     /**
