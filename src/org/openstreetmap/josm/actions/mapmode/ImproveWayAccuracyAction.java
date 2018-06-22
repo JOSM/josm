@@ -643,33 +643,35 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
      * Updates the state according to the current selection. Goes to Improve
      * state if a single way or node is selected. Extracts a way by a node in
      * the second case.
-     *
      */
     private void updateStateByCurrentSelection() {
         final List<Node> nodeList = new ArrayList<>();
         final List<Way> wayList = new ArrayList<>();
-        final Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
+        final DataSet ds = getLayerManager().getEditDataSet();
+        if (ds != null) {
+            final Collection<OsmPrimitive> sel = ds.getSelected();
 
-        // Collecting nodes and ways from the selection
-        for (OsmPrimitive p : sel) {
-            if (p instanceof Way) {
-                wayList.add((Way) p);
+            // Collecting nodes and ways from the selection
+            for (OsmPrimitive p : sel) {
+                if (p instanceof Way) {
+                    wayList.add((Way) p);
+                }
+                if (p instanceof Node) {
+                    nodeList.add((Node) p);
+                }
             }
-            if (p instanceof Node) {
-                nodeList.add((Node) p);
-            }
-        }
 
-        if (wayList.size() == 1) {
-            // Starting improving the single selected way
-            startImproving(wayList.get(0));
-            return;
-        } else if (nodeList.size() == 1) {
-            // Starting improving the only way of the single selected node
-            List<OsmPrimitive> r = nodeList.get(0).getReferrers();
-            if (r.size() == 1 && (r.get(0) instanceof Way)) {
-                startImproving((Way) r.get(0));
+            if (wayList.size() == 1) {
+                // Starting improving the single selected way
+                startImproving(wayList.get(0));
                 return;
+            } else if (nodeList.size() == 1) {
+                // Starting improving the only way of the single selected node
+                List<OsmPrimitive> r = nodeList.get(0).getReferrers();
+                if (r.size() == 1 && (r.get(0) instanceof Way)) {
+                    startImproving((Way) r.get(0));
+                    return;
+                }
             }
         }
 
