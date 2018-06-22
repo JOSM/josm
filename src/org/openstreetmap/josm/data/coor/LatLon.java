@@ -241,37 +241,9 @@ public class LatLon extends Coordinate implements ILatLon {
     }
 
     /**
-     * Returns the heading that you have to use to get from this lat/lon to another.
-     *
-     * Angle starts from north and increases counterclockwise (!), PI/2 means west.
-     * You can get usual clockwise angle from {@link #bearing(LatLon)} method.
-     * This method is kept as deprecated because it is called from many plugins.
-     *
-     * (I don't know the original source of this formula, but see
-     * <a href="https://math.stackexchange.com/questions/720/how-to-calculate-a-heading-on-the-earths-surface">this question</a>
-     * for some hints how it is derived.)
-     *
-     * @deprecated see bearing method
-     * @param other the "destination" position
-     * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
-     */
-    @Deprecated
-    public double heading(LatLon other) {
-        double hd = atan2(sin(toRadians(this.lon() - other.lon())) * cos(toRadians(other.lat())),
-                cos(toRadians(this.lat())) * sin(toRadians(other.lat())) -
-                sin(toRadians(this.lat())) * cos(toRadians(other.lat())) * cos(toRadians(this.lon() - other.lon())));
-        hd %= 2 * PI;
-        if (hd < 0) {
-            hd += 2 * PI;
-        }
-        return hd;
-    }
-
-    /**
      * Returns bearing from this point to another.
      *
      * Angle starts from north and increases clockwise, PI/2 means east.
-     * Old deprecated method {@link #heading(LatLon)} used unusual reverse angle.
      *
      * Please note that reverse bearing (from other point to this point) should NOT be
      * calculated from return value of this method, because great circle path
@@ -281,6 +253,7 @@ public class LatLon extends Coordinate implements ILatLon {
      *
      * @param other the "destination" position
      * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
+     * @since 9796
      */
     public double bearing(LatLon other) {
         double lat1 = toRadians(this.lat());
