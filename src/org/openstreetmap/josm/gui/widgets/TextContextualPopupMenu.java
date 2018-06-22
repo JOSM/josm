@@ -7,6 +7,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -42,6 +44,13 @@ import org.openstreetmap.josm.tools.Logging;
 public class TextContextualPopupMenu extends JPopupMenu {
 
     private static final String EDITABLE = "editable";
+
+    private static final Map<String, ImageIcon> iconCache = new HashMap<>();
+
+    private static ImageIcon loadIcon(String iconName) {
+        return iconCache.computeIfAbsent(iconName,
+                x -> new ImageProvider(iconName).setOptional(true).setSize(ImageProvider.ImageSizes.SMALLICON).get());
+    }
 
     protected JTextComponent component;
     protected boolean undoRedo;
@@ -172,7 +181,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
             JMenuItem mi = new JMenuItem(action);
             mi.setText(label);
             if (iconName != null && Config.getPref().getBoolean("text.popupmenu.useicons", true)) {
-                ImageIcon icon = new ImageProvider(iconName).setOptional(true).setSize(ImageProvider.ImageSizes.SMALLICON).get();
+                ImageIcon icon = loadIcon(iconName);
                 if (icon != null) {
                     mi.setIcon(icon);
                 }
