@@ -128,7 +128,7 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
                     }
                 }
             }
-            return true;
+            return !ids.isEmpty();
         }
     }
 }

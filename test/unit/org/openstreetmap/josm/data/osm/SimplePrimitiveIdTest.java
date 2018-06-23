@@ -62,6 +62,8 @@ public class SimplePrimitiveIdTest {
                 SimplePrimitiveId.fuzzyParse("foo relation/123 and way/345 but also node/789").toString());
         assertEquals("[relation 123, relation 124, way 345, way 346, node 789]",
                 SimplePrimitiveId.fuzzyParse("foo relation/123-24 and way/345-346 but also node/789").toString());
+        assertEquals("[]",
+                SimplePrimitiveId.fuzzyParse("foo relation/0 bar").toString());
     }
 
     @Test
@@ -92,6 +94,7 @@ public class SimplePrimitiveIdTest {
         assertEquals("[node 234, node 235]", SimplePrimitiveId.multipleFromString("node/234-35").toString());
         assertEquals("[node 234, node 235]", SimplePrimitiveId.multipleFromString("node/234-235").toString());
         assertEquals("[node 998, node 999, node 1000, node 1001]", SimplePrimitiveId.multipleFromString("node/998-1001").toString());
+        assertEquals("[]", SimplePrimitiveId.multipleFromString("node/0").toString());
     }
 
     /**
