@@ -132,10 +132,15 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
                 lastIdParsed = Long.parseLong(lastId);
             }
             for (long i = Long.parseLong(firstId); i <= lastIdParsed; i++) {
-                ids.add(new SimplePrimitiveId(i, type));
+                if (i > 0) {
+                    ids.add(new SimplePrimitiveId(i, type));
+                }
             }
         } else {
-            ids.add(new SimplePrimitiveId(Long.parseLong(firstId), type));
+            long i = Long.parseLong(firstId);
+            if (i > 0) {
+                ids.add(new SimplePrimitiveId(i, type));
+            }
         }
         return ids;
     }
