@@ -64,8 +64,8 @@ public class Addresses extends Test {
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
-    private Map<String, Collection<OsmPrimitive>> addresses = null;
-    private Set<String> ignoredAddresses = null;
+    private Map<String, Collection<OsmPrimitive>> addresses;
+    private Set<String> ignoredAddresses;
 
     /**
      * Constructor
