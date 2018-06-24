@@ -7030,7 +7030,7 @@
             <space />
             <key key="man_made" value="tower" />
             <text key="name" text="Name" />
-            <combo key="tower:type" text="Tower type" values="communication,observation" />
+            <combo key="tower:type" text="Tower type" values="bell_tower,communication,cooling,defensive,observation,radar,watchtower" />
             <optional>
                 <text key="height" text="Height (meters)" />
                 <text key="operator" text="Operator" />
