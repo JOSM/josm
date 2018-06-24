@@ -197,7 +197,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     /**
      * Adds a new {@code HistoryHook}.
      * @param hook hook to add
-     * @return <tt>true</tt> (as specified by {@link Collection#add})
+     * @return {@code true} (as specified by {@link Collection#add})
      * @since 13947
      */
     public static boolean addHistoryHook(HistoryHook hook) {
@@ -207,7 +207,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     /**
      * Removes an existing {@code HistoryHook}.
      * @param hook hook to remove
-     * @return <tt>true</tt> if this list contained the specified element
+     * @return {@code true} if this list contained the specified element
      * @since 13947
      */
     public static boolean removeHistoryHook(HistoryHook hook) {
