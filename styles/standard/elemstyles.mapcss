@@ -1447,7 +1447,7 @@ way[man_made=embankment][railway],
 way[man_made=embankment][waterway] {
     repeat-image: "presets/misc/embankment-pattern-centered.png";
 }
-way[man_made=pipeline] {
+way[man_made=pipeline][!waterway] {
     width: 2;
     color: pipeline#660000;
 }
@@ -4312,6 +4312,7 @@ area[waterway=riverbank] {
     width: 1;
     color: riverbank#0000cf;
 }
+way[waterway=pressurised],
 way[waterway=canal] {
     width: 2;
     color: water#0000ff;
@@ -4321,6 +4322,14 @@ way[waterway=canal][lock=yes] {
     casing-width: 2;
     casing-color: lock#303030;
     casing-dashes: 5,20;
+}
+way[waterway=pressurised][tunnel] {
+    casing-width: 1;
+    casing-color: tunnel#964B00;
+}
+way[waterway=pressurised][man_made=pipeline] {
+    casing-width: 1;
+    casing-color: pipeline#660000;
 }
 way[waterway=stream] {
     width: 1;

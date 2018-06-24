@@ -34,7 +34,6 @@ way[tilting_technology         ][!railway][route!=railway],
 way[track_class                ][!railway][route!=railway],
 way[tracks                     ][!railway][route!=railway],
 way[traffic_mode               ][!railway][route!=railway],
-way[usage                      ][!railway][route!=railway][man_made!=pipeline],
 way[workrules                  ][!railway][route!=railway],
 way[stream                     ][!waterway],
 way[length_unit                ][!waterway],
@@ -109,7 +108,8 @@ way[cutline                    ][man_made!=cutline],
 /* {0.key} without {1.tag} or {2.tag} */
 *[bridge:movable               ][bridge!=movable][man_made!=bridge],
 *[substation                   ][power!=substation][pipeline!=substation],
-*[reservoir_type               ][landuse!=reservoir][water!=reservoir] {
+*[reservoir_type               ][landuse!=reservoir][water!=reservoir],
+way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.tag}", "{2.tag}");
   group: tr("missing tag");
 }
@@ -178,6 +178,13 @@ way[highway=motorway_link][!oneway][junction!=roundabout] {
   group: tr("missing tag");
 }
 
+/* {0.tag} without {1.tag} */
+way[usage=penstock][man_made!=pipeline],
+way[usage=penstock][waterway!=pressurised] {
+  throwWarning: tr("{0} without {1}", "{0.tag}", "{1.tag}");
+  group: tr("missing tag");
+}
+
 /* {0.tag} without {1.tag} or {2.tag} */
 *[amenity=recycling][recycling_type!=container][recycling_type!=centre] {
   throwWarning: tr("{0} without {1} or {2}", "{0.tag}", "{1.tag}", "{2.tag}");
@@ -210,6 +217,8 @@ node[power=transformer][voltage],
 node[transformer=distribution][voltage][power=pole],
 *[amenity=vending_machine][shop],
 *[noname?][name],
+way[man_made=pipeline][tunnel=flooded]
+way[waterway=canal][tunnel=yes]
 way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath],
 way[oneway=yes][/:forward/][!traffic_sign:forward][bicycle:forward!=use_sidepath],
 way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath],
@@ -374,8 +383,9 @@ way[highway][natural][natural!=ridge],
     assertNoMatch: "node sport=10pin amenity=restaurant";
 }
 
-/* #10140 */
-*[building:levels][!building][!building:part] {
+/* {0.key} without {1.key} or {2.key} see #10140 */
+*[building:levels][!building][!building:part],
+way[usage][!railway][!waterway][route!=railway][man_made!=pipeline] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
   group: tr("missing tag");
 }
@@ -462,7 +472,7 @@ way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered
   fixAdd: "unisex=yes";
 }
 
-/* #13138, 14468 */
+/* {1.key} without {2.tag} see #13138, 14468 */
 area:closed[water][natural!~/water|bay|strait/][water!=intermittent] { /* water=intermittent is deprecated and has an own warning */
   throwWarning: tr("{0} without {1}", "{1.key}", "{2.tag}");
   group: tr("missing tag");

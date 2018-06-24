@@ -64,7 +64,7 @@ public class Addresses extends Test {
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
-    private Map<String, Collection<OsmPrimitive>> addresses;
+    private Map<String, Collection<OsmPrimitive>> knownAddresses;
     private Set<String> ignoredAddresses;
 
     /**
@@ -123,7 +123,7 @@ public class Addresses extends Test {
         return p.hasKey("shop", "amenity", "tourism", "leisure", "emergency", "craft", "office", "name");
     }
 
-    private boolean hasAddress(OsmPrimitive p) {
+    static boolean hasAddress(OsmPrimitive p) {
         return p.hasKey(ADDR_HOUSE_NUMBER) && p.hasKey(ADDR_STREET, ADDR_PLACE);
     }
 
@@ -135,13 +135,13 @@ public class Addresses extends Test {
         if (!isPOI(p)) {
             String simplifiedAddress = getSimplifiedAddress(p);
             if (!ignoredAddresses.contains(simplifiedAddress)) {
-                addresses.computeIfAbsent(simplifiedAddress, x -> new ArrayList<>()).add(p);
+                knownAddresses.computeIfAbsent(simplifiedAddress, x -> new ArrayList<>()).add(p);
             }
         }
     }
 
     protected void initAddressMap(OsmPrimitive primitive) {
-        addresses = new HashMap<>();
+        knownAddresses = new HashMap<>();
         ignoredAddresses = new HashSet<>();
         for (OsmPrimitive p : primitive.getDataSet().allNonDeletedPrimitives()) {
             if (p instanceof Node && p.hasKey(ADDR_UNIT, ADDR_FLATS)) {
@@ -152,8 +152,8 @@ public class Addresses extends Test {
                         String simplifiedAddress = getSimplifiedAddress(r);
                         if (!ignoredAddresses.contains(simplifiedAddress)) {
                             ignoredAddresses.add(simplifiedAddress);
-                        } else if (addresses.containsKey(simplifiedAddress)) {
-                            addresses.remove(simplifiedAddress);
+                        } else if (knownAddresses.containsKey(simplifiedAddress)) {
+                            knownAddresses.remove(simplifiedAddress);
                         }
                     }
                 }
@@ -166,13 +166,13 @@ public class Addresses extends Test {
 
     @Override
     public void endTest() {
-        addresses = null;
+        knownAddresses = null;
         ignoredAddresses = null;
         super.endTest();
     }
 
     protected void checkForDuplicate(OsmPrimitive p) {
-        if (addresses == null) {
+        if (knownAddresses == null) {
             initAddressMap(p);
         }
         if (!isPOI(p) && hasAddress(p)) {
@@ -180,13 +180,13 @@ public class Addresses extends Test {
             if (ignoredAddresses.contains(simplifiedAddress)) {
                 return;
             }
-            if (addresses.containsKey(simplifiedAddress)) {
+            if (knownAddresses.containsKey(simplifiedAddress)) {
                 double maxDistance = MAX_DUPLICATE_DISTANCE.get();
-                for (OsmPrimitive p2 : addresses.get(simplifiedAddress)) {
+                for (OsmPrimitive p2 : knownAddresses.get(simplifiedAddress)) {
                     if (p == p2) {
                         continue;
                     }
-                    Severity severityLevel = Severity.WARNING;
+                    Severity severityLevel;
                     String city1 = p.get(ADDR_CITY);
                     String city2 = p2.get(ADDR_CITY);
                     double distance = getDistance(p, p2);
@@ -226,7 +226,7 @@ public class Addresses extends Test {
                             .message(tr("Duplicate house numbers"), marktr("''{0}'' ({1}m)"), simplifiedAddress, (int) distance)
                             .primitives(Arrays.asList(p, p2)).build());
                 }
-                addresses.get(simplifiedAddress).remove(p); // otherwise we would get every warning two times
+                knownAddresses.get(simplifiedAddress).remove(p); // otherwise we would get every warning two times
             }
         }
     }

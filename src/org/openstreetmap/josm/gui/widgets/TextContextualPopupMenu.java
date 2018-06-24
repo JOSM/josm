@@ -49,7 +49,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
 
     private static ImageIcon loadIcon(String iconName) {
         return iconCache.computeIfAbsent(iconName,
-                x -> new ImageProvider(iconName).setOptional(true).setSize(ImageProvider.ImageSizes.SMALLICON).get());
+                x -> new ImageProvider(x).setOptional(true).setSize(ImageProvider.ImageSizes.SMALLICON).get());
     }
 
     protected JTextComponent component;

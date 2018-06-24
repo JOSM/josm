@@ -13,6 +13,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
@@ -30,6 +32,7 @@ import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -191,7 +194,6 @@ public class LoadAndZoomHandler extends RequestHandler {
                     forTagAdd.addAll(sel);
                 }
                 toSelect.clear();
-                isKeepingCurrentSelection = false;
                 ds.setSelected(newSel);
                 zoom(newSel, bbox);
                 MapFrame map = MainApplication.getMap();
@@ -234,7 +236,25 @@ public class LoadAndZoomHandler extends RequestHandler {
             });
         }
 
-        AddTagsDialog.addTags(args, sender, forTagAdd);
+        // add tags to objects
+        if (args.containsKey("addtags")) {
+            // needs to run in EDT since forTagAdd is updated in EDT as well
+            GuiHelper.executeByMainWorkerInEDT(() -> {
+                if (!forTagAdd.isEmpty()) {
+                    AddTagsDialog.addTags(args, sender, forTagAdd);
+                } else {
+                    new Notification(isKeepingCurrentSelection
+                            ? tr("You clicked on a JOSM remotecontrol link that would apply tags onto selected objects.\n"
+                                    + "Since no objects have been selected before this click, no tags were added.\n"
+                                    + "Select one or more objects and click the link again.")
+                            : tr("You clicked on a JOSM remotecontrol link that would apply tags onto objects.\n"
+                                    + "Unfortunately that link seems to be broken.\n"
+                                    + "Technical explanation: the URL query parameter ''select='' or ''search='' has an invalid value.\n"
+                                    + "Ask someone at the origin of the clicked link to fix this.")
+                        ).setIcon(JOptionPane.WARNING_MESSAGE).setDuration(Notification.TIME_LONG).show();
+                }
+            });
+        }
     }
 
     protected void zoom(Collection<OsmPrimitive> primitives, final Bounds bbox) {
