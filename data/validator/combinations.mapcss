@@ -217,8 +217,8 @@ node[power=transformer][voltage],
 node[transformer=distribution][voltage][power=pole],
 *[amenity=vending_machine][shop],
 *[noname?][name],
-way[man_made=pipeline][tunnel=flooded]
-way[waterway=canal][tunnel=yes]
+way[man_made=pipeline][tunnel=flooded],
+way[waterway=canal][tunnel=yes],
 way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath],
 way[oneway=yes][/:forward/][!traffic_sign:forward][bicycle:forward!=use_sidepath],
 way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath],
