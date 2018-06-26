@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.TextUtils;
 
 /**
  * The panel to nag a user ONCE that he/she has to align imagery.
@@ -39,7 +40,8 @@ public class AlignImageryPanel extends JPanel {
     public AlignImageryPanel(boolean oneLine, final BooleanProperty showAgain, ImageryInfo infoToAdd) {
         Font font = getFont().deriveFont(Font.PLAIN, 14.0f);
         JMultilineLabel nagLabel = new JMultilineLabel(
-                tr("Aerial imagery \"{0}\" might be misaligned. Please check its offset using GPS tracks!", infoToAdd.getName()));
+                tr("Aerial imagery \"{0}\" might be misaligned. Please check its offset using GPS tracks!",
+                        TextUtils.wrapLongUrl(infoToAdd.getName())));
         UrlLabel detailsList = new UrlLabel(tr("http://wiki.openstreetmap.org/wiki/Using_Imagery"), tr("Details..."));
         nagLabel.setFont(font);
         nagLabel.setForeground(Color.BLACK);
