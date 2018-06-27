@@ -2444,7 +2444,9 @@ way[amenity=bicycle_parking] {
     width: 2;
     color: amenity_traffic#f7efb7;
 }
-area[amenity=parking_space],
+area[amenity=parking_space] {
+    fill-color: parking_space#f7efb8;
+}
 area[amenity=parking],
 area[amenity=motorcycle_parking],
 area[amenity=bicycle_rental],
