@@ -874,6 +874,15 @@ node[type][pipeline=marker] {
   fixRemove: "power";
 }
 
+/* #16430 */
+*[power][location=kiosk] {
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  group: tr("deprecated tagging");
+  fixAdd: "man_made=street_cabinet";
+  fixAdd: "street_cabinet=power";
+  fixRemove: "location";
+}
+
 /* #12276 */
 *[man_made=well] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
