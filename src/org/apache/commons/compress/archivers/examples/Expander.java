@@ -238,7 +238,10 @@ public class Expander {
 
     private void expand(ArchiveEntrySupplier supplier, EntryWriter writer, File targetDirectory)
         throws IOException {
-        String targetDirPath = targetDirectory.getCanonicalPath() + File.separatorChar;
+        String targetDirPath = targetDirectory.getCanonicalPath();
+        if (!targetDirPath.endsWith(File.separator)) {
+            targetDirPath += File.separatorChar;
+        }
         ArchiveEntry nextEntry = supplier.getNextReadableEntry();
         while (nextEntry != null) {
             File f = new File(targetDirectory, nextEntry.getName());
