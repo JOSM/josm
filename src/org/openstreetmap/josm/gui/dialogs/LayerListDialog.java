@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -394,8 +393,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
     }
 
     static ImageIcon createBlankIcon() {
-        return new ImageIcon(new BufferedImage(
-                ImageSizes.LAYER.getAdjustedWidth(), ImageSizes.LAYER.getAdjustedHeight(), BufferedImage.TYPE_INT_ARGB));
+        return ImageProvider.createBlankIcon(ImageSizes.LAYER);
     }
 
     private static class ActiveLayerCheckBox extends JCheckBox {
