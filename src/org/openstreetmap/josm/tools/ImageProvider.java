@@ -2026,6 +2026,16 @@ public class ImageProvider {
         }
     }
 
+    /**
+     * Creates a blank icon of the given size.
+     * @param size image size
+     * @return a blank icon of the given size
+     * @since 13984
+     */
+    public static ImageIcon createBlankIcon(ImageSizes size) {
+        return new ImageIcon(new BufferedImage(size.getAdjustedWidth(), size.getAdjustedHeight(), BufferedImage.TYPE_INT_ARGB));
+    }
+
     @Override
     public String toString() {
         return ("ImageProvider ["
