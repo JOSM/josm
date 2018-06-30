@@ -62,7 +62,7 @@ public abstract class AbstractMapRenderer implements Rendering {
     protected int segmentNumberSpace;
 
     /** Performs slow operations by default. Can be disabled when fast partial rendering is required */
-    protected boolean doSlowOperations;
+    protected boolean doSlowOperations = true;
 
     /**
      * <p>Creates an abstract paint visitor</p>
