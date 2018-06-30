@@ -1552,7 +1552,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @return <code>true</code> to display names
      */
     public boolean isShowNames() {
-        return showNames;
+        return showNames && doSlowOperations;
     }
 
     /**

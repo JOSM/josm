@@ -79,8 +79,8 @@ import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.AbstractMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
-import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
@@ -492,7 +492,8 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             g.fill(a);
         }
 
-        Rendering painter = MapRendererFactory.getInstance().createActiveRenderer(g, mv, inactive);
+        AbstractMapRenderer painter = MapRendererFactory.getInstance().createActiveRenderer(g, mv, inactive);
+        painter.enableSlowOperations(mv.getMapMover() == null || !mv.getMapMover().movementInProgress());
         painter.render(data, virtual, box);
         MainApplication.getMap().conflictDialog.paintConflicts(g, mv);
     }
