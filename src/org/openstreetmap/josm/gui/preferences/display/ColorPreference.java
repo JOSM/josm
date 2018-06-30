@@ -169,7 +169,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         public void removeEntry(int row) {
             deleted.add(data.get(row));
             data.remove(row);
-            fireTableDataChanged();
+            fireTableRowsDeleted(row, row);
         }
 
         public ColorEntry getEntry(int row) {
@@ -439,7 +439,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
 
     private void updateEnabledState() {
         int sel = colors.getSelectedRow();
-        ColorEntry ce = sel >= 0 ? tableModel.getEntry(sel) : null;
+        ColorEntry ce = sel >= 0 && sel < tableModel.getRowCount() ? tableModel.getEntry(sel) : null;
         remove.setEnabled(ce != null && isRemoveColor(ce));
         colorEdit.setEnabled(ce != null);
         defaultSet.setEnabled(ce != null && !ce.isDefault());
