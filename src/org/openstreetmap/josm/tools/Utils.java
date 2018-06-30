@@ -1742,11 +1742,19 @@ public final class Utils {
      */
     public static String getJavaLatestVersion() {
         try {
-            return HttpClient.create(
+            String[] versions = HttpClient.create(
                     new URL(Config.getPref().get(
                             "java.baseline.version.url",
                             "http://javadl-esd-secure.oracle.com/update/baseline.version")))
-                    .connect().fetchContent().split("\n")[0];
+                    .connect().fetchContent().split("\n");
+            if (getJavaVersion() <= 8) {
+                for (String version : versions) {
+                    if (version.startsWith("1.8")) {
+                        return version;
+                    }
+                }
+            }
+            return versions[0];
         } catch (IOException e) {
             Logging.error(e);
         }
