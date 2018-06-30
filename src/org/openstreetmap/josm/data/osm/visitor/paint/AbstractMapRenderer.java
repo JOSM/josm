@@ -61,6 +61,9 @@ public abstract class AbstractMapRenderer implements Rendering {
     /** Preference: minimum space (displayed way length) to display segment numbers */
     protected int segmentNumberSpace;
 
+    /** Performs slow operations by default. Can be disabled when fast partial rendering is required */
+    protected boolean doSlowOperations;
+
     /**
      * <p>Creates an abstract paint visitor</p>
      *
@@ -241,5 +244,14 @@ public abstract class AbstractMapRenderer implements Rendering {
                 lastP = p;
             }
         }
+    }
+
+    /**
+     * Sets whether slow operations such as text rendering must be performed (true by default).
+     * @param enable whether slow operations such as text rendering must be performed
+     * @since 13987
+     */
+    public final void enableSlowOperations(boolean enable) {
+        doSlowOperations = enable;
     }
 }
