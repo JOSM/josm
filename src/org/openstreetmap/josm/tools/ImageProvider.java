@@ -1485,8 +1485,8 @@ public class ImageProvider {
      * @since 8903
      */
     public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize) {
-        // Check if the current styles have special icon for tagged nodes.
-        if (primitive instanceof org.openstreetmap.josm.data.osm.Node) {
+        // Check if the current styles have special icon for tagged objects.
+        if (primitive.isTagged()) {
             Pair<StyleElementList, Range> nodeStyles;
             DataSet ds = primitive.getDataSet();
             if (ds != null) {
