@@ -828,7 +828,6 @@ public final class DomainValidator extends AbstractValidator {
         "itau", // itau Itau Unibanco Holding S.A.
         "itv", // itv ITV Services Limited
         "iveco", // iveco CNH Industrial N.V.
-        "iwc", // iwc Richemont DNS Inc.
         "jaguar", // jaguar Jaguar Land Rover Ltd
         "java", // java Oracle Corporation
         "jcb", // jcb JCB Co., Ltd.
