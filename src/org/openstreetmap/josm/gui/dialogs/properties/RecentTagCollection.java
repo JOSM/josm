@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.preferences.ListProperty;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Manages list of recently used tags that will be displayed in the {@link PropertiesDialog}.
@@ -46,11 +47,17 @@ class RecentTagCollection {
 
     public void loadFromPreference(ListProperty property) {
         recentTags.clear();
-        Iterator<String> it = property.get().iterator();
+        List<String> list = property.get();
+        Iterator<String> it = list.iterator();
         while (it.hasNext()) {
             String key = it.next();
-            String value = it.next();
-            add(new Tag(key, value));
+            if (it.hasNext()) {
+                String value = it.next();
+                add(new Tag(key, value));
+            } else {
+                Logging.error("Invalid or incomplete list property: " + list);
+                break;
+            }
         }
     }
 
