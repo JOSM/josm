@@ -54,9 +54,12 @@ public class PluginHandlerTestIT {
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getKey(), e -> ExceptionUtils.getRootCause(e.getValue())));
 
+        List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
+        Map<String, List<String>> invalidManifestEntries = loadedPlugins.stream().filter(pi -> !pi.invalidManifestEntries.isEmpty())
+                .collect(Collectors.toMap(pi -> pi.name, pi -> pi.invalidManifestEntries));
+
         // Add/remove layers twice to test basic plugin good behaviour
         Map<String, Throwable> layerExceptions = new HashMap<>();
-        List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
         for (int i = 0; i < 2; i++) {
             OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Layer "+i, null);
             testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
@@ -68,11 +71,13 @@ public class PluginHandlerTestIT {
             testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
 
+        MapUtils.debugPrint(System.out, null, invalidManifestEntries);
         MapUtils.debugPrint(System.out, null, loadingExceptions);
         MapUtils.debugPrint(System.out, null, layerExceptions);
-        String msg = Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
+        String msg = Arrays.toString(invalidManifestEntries.entrySet().toArray()) + '\n' +
+                     Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
                      Arrays.toString(layerExceptions.entrySet().toArray());
-        assertTrue(msg, loadingExceptions.isEmpty() && layerExceptions.isEmpty());
+        assertTrue(msg, invalidManifestEntries.isEmpty() && loadingExceptions.isEmpty() && layerExceptions.isEmpty());
     }
 
     /**

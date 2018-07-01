@@ -83,6 +83,8 @@ public class PluginInformation {
     public List<URL> libraries = new LinkedList<>();
     /** All manifest attributes. */
     public final Map<String, String> attr = new TreeMap<>();
+    /** Invalid manifest entries */
+    final List<String> invalidManifestEntries = new ArrayList<>();
     /** Empty icon for these plugins which have none */
     private static final ImageIcon emptyIcon = ImageProvider.getEmpty(ImageProvider.ImageSizes.LARGEICON);
 
@@ -174,6 +176,8 @@ public class PluginInformation {
         this.libraries = other.libraries;
         this.attr.clear();
         this.attr.putAll(other.attr);
+        this.invalidManifestEntries.clear();
+        this.invalidManifestEntries.addAll(other.invalidManifestEntries);
     }
 
     /**
@@ -247,25 +251,25 @@ public class PluginInformation {
             }
         }
         canloadatruntime = Boolean.parseBoolean(attr.getValue("Plugin-Canloadatruntime"));
-        if (oldcheck && mainversion > Version.getInstance().getVersion()) {
-            int myv = Version.getInstance().getVersion();
-            for (Map.Entry<Object, Object> entry : attr.entrySet()) {
+        int myv = Version.getInstance().getVersion();
+        for (Map.Entry<Object, Object> entry : attr.entrySet()) {
+            String key = ((Attributes.Name) entry.getKey()).toString();
+            if (key.endsWith("_Plugin-Url")) {
                 try {
-                    String key = ((Attributes.Name) entry.getKey()).toString();
-                    if (key.endsWith("_Plugin-Url")) {
-                        int mv = Integer.parseInt(key.substring(0, key.length()-11));
-                        if (mv <= myv && (mv > mainversion || mainversion > myv)) {
-                            String v = (String) entry.getValue();
-                            int i = v.indexOf(';');
-                            if (i > 0) {
-                                downloadlink = v.substring(i+1);
-                                mainversion = mv;
-                                version = v.substring(0, i);
-                                oldmode = true;
-                            }
-                        }
+                    int mv = Integer.parseInt(key.substring(0, key.length()-11));
+                    String v = (String) entry.getValue();
+                    int i = v.indexOf(';');
+                    if (i <= 0) {
+                        invalidManifestEntries.add(key);
+                    } else if (oldcheck && mainversion > Version.getInstance().getVersion() &&
+                        mv <= myv && (mv > mainversion || mainversion > myv)) {
+                        downloadlink = v.substring(i+1);
+                        mainversion = mv;
+                        version = v.substring(0, i);
+                        oldmode = true;
                     }
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                    invalidManifestEntries.add(key);
                     Logging.error(e);
                 }
             }
