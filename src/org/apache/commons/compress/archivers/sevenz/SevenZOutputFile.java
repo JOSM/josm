@@ -130,10 +130,13 @@ public class SevenZOutputFile implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        if (!finished) {
-            finish();
+        try {
+            if (!finished) {
+                finish();
+            }
+        } finally {
+            channel.close();
         }
-        channel.close();
     }
 
     /**

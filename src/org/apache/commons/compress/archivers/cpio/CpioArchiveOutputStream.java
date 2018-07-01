@@ -482,13 +482,15 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
      */
     @Override
     public void close() throws IOException {
-        if(!finished) {
-            finish();
-        }
-
-        if (!this.closed) {
-            out.close();
-            this.closed = true;
+        try {
+            if (!finished) {
+                finish();
+            }
+        } finally {
+            if (!this.closed) {
+                out.close();
+                this.closed = true;
+            }
         }
     }
 

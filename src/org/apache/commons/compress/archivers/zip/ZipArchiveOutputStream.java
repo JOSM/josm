@@ -958,10 +958,13 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      */
     @Override
     public void close() throws IOException {
-        if (!finished) {
-            finish();
+        try {
+            if (!finished) {
+                finish();
+            }
+        } finally {
+            destroy();
         }
-        destroy();
     }
 
     /**
@@ -1597,11 +1600,14 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
      * corrupt archives so they can clean up any temporary files.</p>
      */
     void destroy() throws IOException {
-        if (channel != null) {
-            channel.close();
-        }
-        if (out != null) {
-            out.close();
+        try {
+            if (channel != null) {
+                channel.close();
+            }
+        } finally {
+            if (out != null) {
+                out.close();
+            }
         }
     }
 

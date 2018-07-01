@@ -45,8 +45,11 @@ class TempFileCachingStreamBridge extends StreamBridge {
         return new FilterInputStream(Files.newInputStream(f.toPath())) {
             @Override
             public void close() throws IOException {
-                super.close();
-                f.delete();
+                try {
+                    super.close();
+                } finally {
+                    f.delete();
+                }
             }
         };
     }

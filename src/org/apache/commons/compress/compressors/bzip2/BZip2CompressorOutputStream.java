@@ -501,8 +501,11 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     public void close() throws IOException {
         if (!closed) {
             final OutputStream outShadow = this.out;
-            finish();
-            outShadow.close();
+            try {
+                finish();
+            } finally {
+                outShadow.close();
+            }
         }
     }
 

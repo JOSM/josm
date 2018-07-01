@@ -144,8 +144,11 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
 
     @Override
     public void close() throws IOException {
-        finish();
-        os.close();
+        try {
+            finish();
+        } finally {
+            os.close();
+        }
     }
 
     /**

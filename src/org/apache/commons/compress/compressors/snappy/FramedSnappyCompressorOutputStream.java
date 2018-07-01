@@ -102,8 +102,11 @@ public class FramedSnappyCompressorOutputStream extends CompressorOutputStream {
 
     @Override
     public void close() throws IOException {
-        finish();
-        out.close();
+        try {
+            finish();
+        } finally {
+            out.close();
+        }
     }
 
     /**

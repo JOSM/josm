@@ -130,8 +130,11 @@ public class SnappyCompressorOutputStream extends CompressorOutputStream {
 
     @Override
     public void close() throws IOException {
-        finish();
-        os.close();
+        try {
+            finish();
+        } finally {
+            os.close();
+        }
     }
 
     /**

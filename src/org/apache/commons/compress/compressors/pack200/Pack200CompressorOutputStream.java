@@ -114,11 +114,14 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
 
     @Override
     public void close() throws IOException {
-        finish();
         try {
-            streamBridge.stop();
+            finish();
         } finally {
-            originalOutput.close();
+            try {
+                streamBridge.stop();
+            } finally {
+                originalOutput.close();
+            }
         }
     }
 

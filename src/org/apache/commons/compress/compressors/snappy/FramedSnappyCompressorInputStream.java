@@ -144,11 +144,14 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream
     /** {@inheritDoc} */
     @Override
     public void close() throws IOException {
-        if (currentCompressedChunk != null) {
-            currentCompressedChunk.close();
-            currentCompressedChunk = null;
+        try {
+            if (currentCompressedChunk != null) {
+                currentCompressedChunk.close();
+                currentCompressedChunk = null;
+            }
+        } finally {
+            in.close();
         }
-        in.close();
     }
 
     /** {@inheritDoc} */

@@ -204,10 +204,13 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
     @Override
     public void close() throws IOException {
         if (!closed) {
-            finish();
-            deflater.end();
-            out.close();
-            closed = true;
+            try {
+                finish();
+            } finally {
+                deflater.end();
+                out.close();
+                closed = true;
+            }
         }
     }
 
