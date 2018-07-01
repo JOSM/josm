@@ -7,7 +7,7 @@ import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.DetailNode;
 import com.puppycrawl.tools.checkstyle.api.JavadocTokenTypes;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.utils.JavadocUtils;
+import com.puppycrawl.tools.checkstyle.utils.JavadocUtil;
 
 /**
  * Checks that there is Javadoc for every top level class, interface or enum.
@@ -64,7 +64,7 @@ public class TopLevelJavadocCheck extends AbstractCheck {
                     return false;
             }
         }
-        if (!JavadocUtils.isJavadocComment(blockCommentBegin))
+        if (!JavadocUtil.isJavadocComment(blockCommentBegin))
             return false;
         DetailNode javadocTree = new JavadocDetailNodeParser().parseJavadocAsDetailNode(blockCommentBegin).getTree();
         return hasProperText(javadocTree);
