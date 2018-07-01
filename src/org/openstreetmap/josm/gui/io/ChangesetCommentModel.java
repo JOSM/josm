@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * ChangesetCommentModel is an observable model for the changeset comment edited
@@ -44,6 +45,9 @@ public class ChangesetCommentModel extends ChangeNotifier {
      * @since 13109
      */
     public List<String> findHashTags() {
-        return Arrays.stream(comment.split("\\s")).filter(s -> s.length() >= 2 && s.charAt(0) == '#').collect(Collectors.toList());
+        return Arrays.stream(comment.split("\\s"))
+                .map(s -> Utils.strip(s, ",;"))
+                .filter(s -> s.matches("#[a-zA-Z][a-zA-Z_\\-0-9]+"))
+                .collect(Collectors.toList());
     }
 }
