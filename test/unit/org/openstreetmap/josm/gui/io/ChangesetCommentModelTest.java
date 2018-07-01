@@ -39,9 +39,17 @@ public class ChangesetCommentModelTest {
         assertEquals(Collections.emptyList(), model.findHashTags());
         model.setComment(" https://example.com/#map ");
         assertEquals(Collections.emptyList(), model.findHashTags());
+        model.setComment("#59606086");
+        assertEquals(Collections.emptyList(), model.findHashTags());
         model.setComment(" #foo ");
         assertEquals(Arrays.asList("#foo"), model.findHashTags());
         model.setComment(" #foo #bar baz");
         assertEquals(Arrays.asList("#foo", "#bar"), model.findHashTags());
+        model.setComment(" #foo, #bar, baz");
+        assertEquals(Arrays.asList("#foo", "#bar"), model.findHashTags());
+        model.setComment(" #foo; #bar; baz");
+        assertEquals(Arrays.asList("#foo", "#bar"), model.findHashTags());
+        model.setComment("#hotosm-project-4773 #DRONEBIRD #OsakaQuake2018 #AOYAMAVISION");
+        assertEquals(Arrays.asList("#hotosm-project-4773", "#DRONEBIRD", "#OsakaQuake2018", "#AOYAMAVISION"), model.findHashTags());
     }
 }
