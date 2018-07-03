@@ -438,6 +438,14 @@
   <chunk id="motorcycle_brands">
     <multiselect key="brand" text="Motorcycle brand" values="Aprillia;BMW;Ducati;Gilera;Harley-Davidson;Honda;Kawasaki;KTM;Kymco;Piaggio;Peugeot;Piaggio;Suzuki;Triumph;Vespa;Yamaha" values_no_i18n="true" />
   </chunk>
+  <chunk id="walking_routes_roles">
+     <roles>
+         <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
+         <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
+         <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
+         <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
+     </roles>
+  </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact_address">
     <preset_link preset_name="Contact (Common Schema)" />
@@ -11693,11 +11701,7 @@
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
-                <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
-                    <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
-                    <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
-                </roles>
+                <reference ref="walking_routes_roles" />
             </item> <!-- Hiking Route -->
             <item name="Walking Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
                 <link href="https://wiki.openstreetmap.org/wiki/Tag:route=foot"
@@ -11711,11 +11715,7 @@
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
-                <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
-                    <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
-                    <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
-                </roles>
+                <reference ref="walking_routes_roles" />
             </item> <!-- Walking Route -->
             <item name="Riding Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
                 <link href="https://wiki.openstreetmap.org/wiki/Tag:route=horse"
