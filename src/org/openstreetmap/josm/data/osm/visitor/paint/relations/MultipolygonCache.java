@@ -80,7 +80,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
      */
     public Multipolygon get(Relation r, boolean forceRefresh) {
         Multipolygon multipolygon = null;
-        if (r != null) {
+        if (r != null && r.getDataSet() != null) {
             Map<Relation, Multipolygon> map2 = cache.get(r.getDataSet());
             if (map2 == null) {
                 map2 = new ConcurrentHashMap<>();

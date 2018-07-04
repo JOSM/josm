@@ -93,6 +93,7 @@
                     <group ref="tns:optional_elements" />
                     <element name="key" type="tns:key" />
                     <element name="optional" type="tns:optional" minOccurs="0" />
+                    <element name="roles" type="tns:roles" minOccurs="0" />
                 </choice>
             </sequence>
             <sequence>
