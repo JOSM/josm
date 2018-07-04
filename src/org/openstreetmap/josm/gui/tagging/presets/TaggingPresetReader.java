@@ -271,6 +271,8 @@ public final class TaggingPresetReader {
                         }
                         all.getLast().roles = (Roles) o;
                         lastrole = (Roles) o;
+                        // #16458 - Make sure we don't duplicate role entries if used in a chunk/reference
+                        lastrole.roles.clear();
                     } else if (o instanceof Role) {
                         if (lastrole == null)
                             throw new SAXException(tr("Preset role element without parent"));
