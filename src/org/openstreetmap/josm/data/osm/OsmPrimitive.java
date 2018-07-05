@@ -264,7 +264,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     protected void writeUnlock(boolean locked) {
-        if (locked) {
+        if (locked && dataSet != null) {
             // It shouldn't be possible for dataset to become null because
             // method calling setDataset would need write lock which is owned by this thread
             dataSet.endUpdate();
