@@ -65,7 +65,7 @@ public class CombineWayActionTest {
     public void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(NodePair.class).usingGetClass()
-            .suppress(Warning.ANNOTATION) // FIXME: remove it after https://github.com/jqno/equalsverifier/issues/152 is fixed
+            .suppress(Warning.ANNOTATION) // FIXME: remove it after https://github.com/jqno/equalsverifier/issues/197 is fixed
             .withPrefabValues(Node.class, new Node(1), new Node(2))
             .verify();
     }
