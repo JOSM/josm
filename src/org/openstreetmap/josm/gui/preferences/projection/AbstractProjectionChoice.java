@@ -22,19 +22,6 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
      *
      * @param name short name of the projection choice as shown in the GUI
      * @param id unique identifier for the projection choice
-     * @param cacheDir unused
-     * @deprecated use {@link #AbstractProjectionChoice(String, String)} instead
-     */
-    @Deprecated
-    public AbstractProjectionChoice(String name, String id, String cacheDir) {
-        this(name, id);
-    }
-
-    /**
-     * Constructs a new {@code AbstractProjectionChoice}.
-     *
-     * @param name short name of the projection choice as shown in the GUI
-     * @param id unique identifier for the projection choice
      */
     public AbstractProjectionChoice(String name, String id) {
         this.name = name;

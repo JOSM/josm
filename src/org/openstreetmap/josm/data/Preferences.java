@@ -237,51 +237,6 @@ public class Preferences extends AbstractPreferences {
     }
 
     /**
-     * Returns the user defined preferences directory, containing the preferences.xml file
-     * @return The user defined preferences directory, containing the preferences.xml file
-     * @since 7834
-     * @deprecated use {@link #getPreferencesDirectory(boolean)}
-     */
-    @Deprecated
-    public File getPreferencesDirectory() {
-        return getPreferencesDirectory(false);
-    }
-
-    /**
-     * @param createIfMissing if true, automatically creates this directory,
-     * in case it is missing
-     * @return the preferences directory
-     * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
-     */
-    @Deprecated
-    public File getPreferencesDirectory(boolean createIfMissing) {
-        return dirs.getPreferencesDirectory(createIfMissing);
-    }
-
-    /**
-     * Returns the user data directory, containing autosave, plugins, etc.
-     * Depending on the OS it may be the same directory as preferences directory.
-     * @return The user data directory, containing autosave, plugins, etc.
-     * @since 7834
-     * @deprecated use {@link #getUserDataDirectory(boolean)}
-     */
-    @Deprecated
-    public File getUserDataDirectory() {
-        return getUserDataDirectory(false);
-    }
-
-    /**
-     * @param createIfMissing if true, automatically creates this directory,
-     * in case it is missing
-     * @return the user data directory
-     * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
-     */
-    @Deprecated
-    public File getUserDataDirectory(boolean createIfMissing) {
-        return dirs.getUserDataDirectory(createIfMissing);
-    }
-
-    /**
      * Returns the user preferences file (preferences.xml).
      * @return The user preferences file (preferences.xml)
      */
@@ -303,30 +258,6 @@ public class Preferences extends AbstractPreferences {
      */
     public File getPluginsDirectory() {
         return new File(dirs.getUserDataDirectory(false), "plugins");
-    }
-
-    /**
-     * Get the directory where cached content of any kind should be stored.
-     *
-     * If the directory doesn't exist on the file system, it will be created by this method.
-     *
-     * @return the cache directory
-     * @deprecated use {@link #getCacheDirectory(boolean)}
-     */
-    @Deprecated
-    public File getCacheDirectory() {
-        return getCacheDirectory(true);
-    }
-
-    /**
-     * @param createIfMissing if true, automatically creates this directory,
-     * in case it is missing
-     * @return the cache directory
-     * @deprecated use {@link #getDirs()} or (more generally) {@link Config#getDirs()}
-     */
-    @Deprecated
-    public File getCacheDirectory(boolean createIfMissing) {
-        return dirs.getCacheDirectory(createIfMissing);
     }
 
     private static void addPossibleResourceDir(Set<String> locations, String s) {

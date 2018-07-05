@@ -4,13 +4,8 @@ package org.openstreetmap.josm.plugins;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
@@ -137,17 +132,6 @@ public abstract class Plugin implements MapFrameListener {
         return pluginBaseDirectories;
     }
 
-    /**
-     * @return The directory for the plugin to store all kind of stuff.
-     * @deprecated (since 13007) to get the same directory as this method, use {@code getPluginDirs().getUserDataDirectory(false)}.
-     * However, for files that can be characterized as cache or preferences, you are encouraged to use the appropriate
-     * {@link IBaseDirectories} method from {@link #getPluginDirs()}.
-     */
-    @Deprecated
-    public String getPluginDir() {
-        return new File(Main.pref.getPluginsDirectory(), info.name).getPath();
-    }
-
     @Override
     public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {}
 
@@ -166,30 +150,6 @@ public abstract class Plugin implements MapFrameListener {
      * @param list list of bounding box selectors
      */
     public void addDownloadSelection(List<DownloadSelection> list) {}
-
-    /**
-     * Copies the resource 'from' to the file in the plugin directory named 'to'.
-     * @param from source file
-     * @param to target file
-     * @throws FileNotFoundException if the file exists but is a directory rather than a regular file,
-     * does not exist but cannot be created, or cannot be opened for any other reason
-     * @throws IOException if any other I/O error occurs
-     * @deprecated without replacement
-     */
-    @Deprecated
-    public void copy(String from, String to) throws IOException {
-        String pluginDirName = getPluginDir();
-        File pluginDir = new File(pluginDirName);
-        if (!pluginDir.exists()) {
-            Utils.mkDirs(pluginDir);
-        }
-        try (InputStream in = getClass().getResourceAsStream(from)) {
-            if (in == null) {
-                throw new IOException("Resource not found: "+from);
-            }
-            Files.copy(in, new File(pluginDirName, to).toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
 
     /**
      * Get a class loader for loading resources from the plugin jar.

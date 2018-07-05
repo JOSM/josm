@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions.mapmode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.event.InputEvent;
@@ -101,17 +100,5 @@ public class DrawActionTest {
             // Ensure we clean the place before leaving, even if test fails.
             MainApplication.getLayerManager().removeLayer(layer);
         }
-    }
-
-    /**
-     * Non regression test case for bug #14762.
-     * @deprecated test to remove
-     */
-    @Test
-    @Deprecated
-    public void testTicket14762() {
-        DrawAction action = new DrawAction();
-        assertNull(action.getLayerManager().getEditDataSet());
-        assertEquals(0, action.getPreservedPrimitives().size());
     }
 }

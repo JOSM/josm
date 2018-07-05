@@ -1358,19 +1358,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         return ds.getSelected();
     }
 
-    /**
-     * Gets a collection of primitives that should not be hidden by the filter.
-     * @return The primitives that the filter should not hide.
-     * @deprecated use {@link org.openstreetmap.josm.data.osm.DataSet#allPreservedPrimitives}
-     * @since 11993
-     */
-    @Override
-    @Deprecated
-    public Collection<? extends OsmPrimitive> getPreservedPrimitives() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        return ds != null ? ds.allPreservedPrimitives() : Collections.emptySet();
-    }
-
     @Override
     public boolean layerIsSupported(Layer l) {
         return isEditableDataLayer(l);

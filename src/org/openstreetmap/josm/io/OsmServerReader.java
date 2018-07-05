@@ -284,30 +284,6 @@ public abstract class OsmServerReader extends OsmConnection {
     }
 
     /**
-     * Download BZip2-compressed OSM Change files from somewhere
-     * @param progressMonitor The progress monitor
-     * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs
-     * @deprecated use {@link #parseOsmChange(ProgressMonitor, Compression)} instead
-     */
-    @Deprecated
-    public DataSet parseOsmChangeBzip2(ProgressMonitor progressMonitor) throws OsmTransferException {
-        return parseOsmChange(progressMonitor, Compression.BZIP2);
-    }
-
-    /**
-     * Download GZip-compressed OSM Change files from somewhere
-     * @param progressMonitor The progress monitor
-     * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs
-     * @deprecated use {@link #parseOsmChange(ProgressMonitor, Compression)} instead
-     */
-    @Deprecated
-    public DataSet parseOsmChangeGzip(ProgressMonitor progressMonitor) throws OsmTransferException {
-        return parseOsmChange(progressMonitor, Compression.GZIP);
-    }
-
-    /**
      * Retrieve raw gps waypoints from the server API.
      * @param progressMonitor The progress monitor
      * @return The corresponding GPX tracks
@@ -327,56 +303,6 @@ public abstract class OsmServerReader extends OsmConnection {
      */
     public GpxData parseRawGps(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
         return null;
-    }
-
-    /**
-     * Retrieve BZip2-compressed GPX files from somewhere.
-     * @param progressMonitor The progress monitor
-     * @return The corresponding GPX tracks
-     * @throws OsmTransferException if any error occurs
-     * @deprecated use {@link #parseRawGps(ProgressMonitor, Compression)} instead
-     * @since 6244
-     */
-    @Deprecated
-    public GpxData parseRawGpsBzip2(ProgressMonitor progressMonitor) throws OsmTransferException {
-        return parseRawGps(progressMonitor, Compression.BZIP2);
-    }
-
-    /**
-     * Download BZip2-compressed OSM files from somewhere
-     * @param progressMonitor The progress monitor
-     * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs
-     * @deprecated use {@link #parseOsm(ProgressMonitor, Compression)} instead
-     */
-    @Deprecated
-    public DataSet parseOsmBzip2(ProgressMonitor progressMonitor) throws OsmTransferException {
-        return parseOsm(progressMonitor, Compression.BZIP2);
-    }
-
-    /**
-     * Download GZip-compressed OSM files from somewhere
-     * @param progressMonitor The progress monitor
-     * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs
-     * @deprecated use {@link #parseOsm(ProgressMonitor, Compression)} instead
-     */
-    @Deprecated
-    public DataSet parseOsmGzip(ProgressMonitor progressMonitor) throws OsmTransferException {
-        return parseOsm(progressMonitor, Compression.GZIP);
-    }
-
-    /**
-     * Download Zip-compressed OSM files from somewhere
-     * @param progressMonitor The progress monitor
-     * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs
-     * @deprecated use {@link #parseOsm(ProgressMonitor, Compression)} instead
-     * @since 6882
-     */
-    @Deprecated
-    public DataSet parseOsmZip(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return parseOsm(progressMonitor, Compression.ZIP);
     }
 
     /**
@@ -444,18 +370,6 @@ public abstract class OsmServerReader extends OsmConnection {
      */
     public List<Note> parseRawNotes(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
         return null;
-    }
-
-    /**
-     * Download notes from a URL that contains a bzip2 compressed notes dump file
-     * @param progressMonitor progress monitor
-     * @return A list of notes parsed from the URL
-     * @throws OsmTransferException if any error occurs during dialog with OSM API
-     * @deprecated Use {@link #parseRawNotes(ProgressMonitor, Compression)} instead
-     */
-    @Deprecated
-    public List<Note> parseRawNotesBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
-        return parseRawNotes(progressMonitor, Compression.BZIP2);
     }
 
     /**
