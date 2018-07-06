@@ -84,7 +84,7 @@ public class GeoPropertyIndex<T> {
             if (isInside(ll))
                 return getBounded(ll);
             if (DEBUG) System.err.print("up["+level+"]");
-            return parent.get(ll);
+            return parent != null ? parent.get(ll) : null;
         }
 
         private T getBounded(LatLon ll) {
