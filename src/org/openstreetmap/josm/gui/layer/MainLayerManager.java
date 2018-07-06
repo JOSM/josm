@@ -73,16 +73,6 @@ public class MainLayerManager extends LayerManager {
         /**
          * Gets the data layer that was previously used.
          * @return The old data layer, <code>null</code> if there is none.
-         * @deprecated use {@link #getPreviousDataLayer}
-         */
-        @Deprecated
-        public OsmDataLayer getPreviousEditLayer() {
-            return getPreviousDataLayer();
-        }
-
-        /**
-         * Gets the data layer that was previously used.
-         * @return The old data layer, <code>null</code> if there is none.
          * @since 13434
          */
         public OsmDataLayer getPreviousDataLayer() {
@@ -95,16 +85,6 @@ public class MainLayerManager extends LayerManager {
          */
         public Layer getPreviousActiveLayer() {
             return previousActiveLayer;
-        }
-
-        /**
-         * Gets the data set that was previously used.
-         * @return The data set of {@link #getPreviousDataLayer()}.
-         * @deprecated use {@link #getPreviousDataSet}
-         */
-        @Deprecated
-        public DataSet getPreviousEditDataSet() {
-            return getPreviousDataSet();
         }
 
         /**

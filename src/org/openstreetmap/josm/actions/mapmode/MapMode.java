@@ -7,13 +7,10 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Collection;
-import java.util.Collections;
 
 import javax.swing.Action;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -233,17 +230,6 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         readPreferences();
-    }
-
-    /**
-     * Gets a collection of primitives that should not be hidden by the filter.
-     * @return The primitives that the filter should not hide.
-     * @deprecated use {@link org.openstreetmap.josm.data.osm.DataSet#allPreservedPrimitives}
-     * @since 11993
-     */
-    @Deprecated
-    public Collection<? extends OsmPrimitive> getPreservedPrimitives() {
-        return Collections.emptySet();
     }
 
     /**

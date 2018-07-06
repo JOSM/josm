@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tag represents an immutable key/value-pair. Both the key and the value may be empty, but not null.
@@ -137,18 +136,6 @@ public class Tag implements Tagged, Entry<String, String>, Serializable {
     @Override
     public String toString() {
         return key + '=' + value;
-    }
-
-    /**
-     * Removes leading, trailing, and multiple inner whitespaces from the given string, to be used as a key or value.
-     * @param s The string
-     * @return The string without leading, trailing or multiple inner whitespaces
-     * @since 6699
-     * @deprecated since 13597. Use {@link Utils#removeWhiteSpaces(String)} instead
-     */
-    @Deprecated
-    public static String removeWhiteSpaces(String s) {
-        return Utils.removeWhiteSpaces(s);
     }
 
     /**

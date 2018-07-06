@@ -276,20 +276,6 @@ public class ProjectionPreference implements SubPreferenceSetting {
      * @param name short name of the projection choice as shown in the GUI
      * @param id short name of the projection choice as shown in the GUI
      * @param epsg the unique numeric EPSG identifier for the projection
-     * @param cacheDir unused
-     * @return the registered {@link ProjectionChoice}
-     * @deprecated use {@link #registerProjectionChoice(String, String, Integer)} instead
-     */
-    @Deprecated
-    public static ProjectionChoice registerProjectionChoice(String name, String id, Integer epsg, String cacheDir) {
-        return registerProjectionChoice(name, id, epsg);
-    }
-
-    /**
-     * Registers a new projection choice.
-     * @param name short name of the projection choice as shown in the GUI
-     * @param id short name of the projection choice as shown in the GUI
-     * @param epsg the unique numeric EPSG identifier for the projection
      * @return the registered {@link ProjectionChoice}
      */
     private static ProjectionChoice registerProjectionChoice(String name, String id, Integer epsg) {

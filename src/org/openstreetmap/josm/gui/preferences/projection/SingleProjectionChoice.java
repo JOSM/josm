@@ -22,20 +22,6 @@ public class SingleProjectionChoice extends AbstractProjectionChoice {
      * @param name short name of the projection choice as shown in the GUI
      * @param id unique identifier for the projection choice, e.g. "core:thisproj"
      * @param code the unique identifier for the projection, e.g. "EPSG:1234"
-     * @param cacheDir unused
-     * @deprecated use {@link #SingleProjectionChoice(String, String, String)} instead
-     */
-    @Deprecated
-    public SingleProjectionChoice(String name, String id, String code, String cacheDir) {
-        this(name, id, code);
-    }
-
-    /**
-     * Constructs a new {@code SingleProjectionChoice}.
-     *
-     * @param name short name of the projection choice as shown in the GUI
-     * @param id unique identifier for the projection choice, e.g. "core:thisproj"
-     * @param code the unique identifier for the projection, e.g. "EPSG:1234"
      */
     public SingleProjectionChoice(String name, String id, String code) {
         super(name, id);
