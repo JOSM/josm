@@ -25,6 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.DropMode;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -835,8 +836,9 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             layer.addPropertyChangeListener(this);
             fireTableDataChanged();
             int idx = getLayers().indexOf(layer);
-            if (layerList != null) {
-                layerList.setRowHeight(idx, Math.max(16, layer.getIcon().getIconHeight()));
+            Icon icon = layer.getIcon();
+            if (layerList != null && icon != null) {
+                layerList.setRowHeight(idx, Math.max(16, icon.getIconHeight()));
             }
             selectionModel.setSelectionInterval(idx, idx);
             ensureSelectedIsVisible();
