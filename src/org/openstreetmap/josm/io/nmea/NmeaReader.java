@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -20,9 +21,11 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.io.IGpxReader;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
+import org.xml.sax.SAXException;
 
 /**
  * Reads a NMEA 0183 file. Based on information from
@@ -39,7 +42,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  *
  * @author cbrill
  */
-public class NmeaReader {
+public class NmeaReader implements IGpxReader {
 
     enum VTG {
         COURSE(1), COURSE_REF(2), // true course
@@ -128,7 +131,8 @@ public class NmeaReader {
         }
     }
 
-    public GpxData data;
+    private final InputStream source;
+    GpxData data;
 
     private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS", Locale.ENGLISH);
     private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss", Locale.ENGLISH);
@@ -170,9 +174,13 @@ public class NmeaReader {
      * @throws IOException if an I/O error occurs
      */
     public NmeaReader(InputStream source) throws IOException {
+        this.source = Objects.requireNonNull(source);
         rmcTimeFmt.setTimeZone(DateUtils.UTC);
         rmcTimeFmtStd.setTimeZone(DateUtils.UTC);
+    }
 
+    @Override
+    public boolean parse(boolean tryToFinish) throws SAXException, IOException {
         // create the data tree
         data = new GpxData();
         Collection<Collection<WayPoint>> currentTrack = new ArrayList<>();
@@ -183,7 +191,7 @@ public class NmeaReader {
             ps = new NMEAParserState();
             if (loopstartChar == -1)
                 //TODO tell user about the problem?
-                return;
+                return false;
             sb.append((char) loopstartChar);
             ps.pDate = "010100"; // TODO date problem
             while (true) {
@@ -209,7 +217,9 @@ public class NmeaReader {
 
         } catch (IllegalDataException e) {
             Logging.warn(e);
+            return false;
         }
+        return true;
     }
 
     private static class NMEAParserState {
@@ -527,5 +537,10 @@ public class NmeaReader {
             lon = -lon;
         }
         return new LatLon(lat, lon);
+    }
+
+    @Override
+    public GpxData getGpxData() {
+        return data;
     }
 }

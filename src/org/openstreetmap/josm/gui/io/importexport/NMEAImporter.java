@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.nmea.NmeaReader;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.xml.sax.SAXException;
 
 /**
  * File importer allowing to import NMEA-0183 files (*.nmea/nme/nma/log/txt files).
@@ -47,16 +48,16 @@ public class NMEAImporter extends FileImporter {
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
         final String fn = file.getName();
         try (InputStream fis = Compression.getUncompressedFileInputStream(file)) {
-            final NmeaReader r = new NmeaReader(fis);
+            final NmeaReader r = buildAndParse(fis);
             if (r.getNumberOfCoordinates() > 0) {
-                r.data.storageFile = file;
-                final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
+                r.getGpxData().storageFile = file;
+                final GpxLayer gpxLayer = new GpxLayer(r.getGpxData(), fn, true);
                 final File fileFinal = file;
 
                 GuiHelper.runInEDT(() -> {
                     MainApplication.getLayerManager().addLayer(gpxLayer);
                     if (Config.getPref().getBoolean("marker.makeautomarkers", true)) {
-                        MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
+                        MarkerLayer ml = new MarkerLayer(r.getGpxData(), tr("Markers from {0}", fn), fileFinal, gpxLayer);
                         if (!ml.data.isEmpty()) {
                             MainApplication.getLayerManager().addLayer(ml);
                         }
@@ -102,9 +103,19 @@ public class NMEAImporter extends FileImporter {
      */
     public static GpxImporterData loadLayers(InputStream is, final File associatedFile,
             final String gpxLayerName, String markerLayerName) throws IOException {
-        final NmeaReader r = new NmeaReader(is);
+        final NmeaReader r = buildAndParse(is);
         final boolean parsedProperly = r.getNumberOfCoordinates() > 0;
-        r.data.storageFile = associatedFile;
-        return GpxImporter.loadLayers(r.data, parsedProperly, gpxLayerName, markerLayerName);
+        r.getGpxData().storageFile = associatedFile;
+        return GpxImporter.loadLayers(r.getGpxData(), parsedProperly, gpxLayerName, markerLayerName);
+    }
+
+    static NmeaReader buildAndParse(InputStream fis) throws IOException {
+        final NmeaReader r = new NmeaReader(fis);
+        try {
+            r.parse(true);
+        } catch (SAXException e) {
+            throw new IOException(e);
+        }
+        return r;
     }
 }
