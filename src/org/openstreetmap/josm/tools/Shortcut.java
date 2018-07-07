@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -436,6 +437,36 @@ public final class Shortcut {
         final Shortcut shortcut = new Shortcut(shortText, longText, key, RESERVED, key, modifier, true, false);
         shortcuts.add(shortcut);
         return shortcut;
+    }
+
+    /**
+     * Register a shortcut linked to several characters.
+     *
+     * @param shortText an ID. re-use a {@code "system:*"} ID if possible, else use something unique.
+     * {@code "menu:*"} is reserved for menu mnemonics, {@code "core:*"} is reserved for
+     * actions that are part of JOSM's core. Use something like
+     * {@code <pluginname>+":"+<actionname>}.
+     * @param longText this will be displayed in the shortcut preferences dialog. Better
+     * use something the user will recognize...
+     * @param characters the characters you'd prefer
+     * @param requestedGroup the group this shortcut fits best. This will determine the
+     * modifiers your shortcut will get assigned. Use the constants defined above.
+     * @return the shortcut
+     */
+    public static List<Shortcut> registerMultiShortcuts(String shortText, String longText, List<Character> characters, int requestedGroup) {
+        List<Shortcut> result = new ArrayList<>();
+        int i = 1;
+        Map<Integer, Integer> regularKeyCodes = KeyboardUtils.getRegularKeyCodesMap();
+        for (Character c : characters) {
+            Integer code = (int) c;
+            result.add(registerShortcut(
+                    new StringBuilder(shortText).append(" (").append(i).append(')').toString(), longText,
+                    // Add extended keyCode if not a regular one
+                    regularKeyCodes.containsKey(code) ? regularKeyCodes.get(code) : c | KeyboardUtils.EXTENDED_KEYCODE_FLAG,
+                    requestedGroup));
+            i++;
+        }
+        return result;
     }
 
     /**
