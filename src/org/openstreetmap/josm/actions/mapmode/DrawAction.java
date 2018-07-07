@@ -1216,7 +1216,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     }
 
     @Override
-    public void paint(Graphics2D g, MapView mv, Bounds box) {
+    public synchronized void paint(Graphics2D g, MapView mv, Bounds box) {
         // sanity checks
         MapView mapView = MainApplication.getMap().mapView;
         if (mapView == null || mousePos == null
