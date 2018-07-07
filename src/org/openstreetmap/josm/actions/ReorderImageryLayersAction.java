@@ -4,13 +4,12 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.tools.KeyboardUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -19,18 +18,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ReorderImageryLayersAction extends JosmAction {
 
-    private static final int VK_SQUARE = 0x10000b2;
-
     /**
      * Constructs a new {@code ReorderImageryLayersAction}.
      */
     public ReorderImageryLayersAction() {
         // TODO: find a suitable icon
         super(tr("Reorder imagery layers"), "dialogs/layerlist", tr("Reorders non-overlay imagery layers."),
-            Shortcut.registerShortcut("imagery:reorder", tr("Reorder imagery layers"), KeyEvent.VK_DEAD_TILDE, Shortcut.DIRECT), true);
-        // On AZERTY keyboard layour the key displays the character '²'
-        MainApplication.registerActionShortcut(this,
-            Shortcut.registerShortcut("imagery:reorderbis", tr("Reorder imagery layers"), VK_SQUARE, Shortcut.DIRECT));
+            Shortcut.registerMultiShortcuts("imagery:reorder", tr("Reorder imagery layers"),
+                    KeyboardUtils.getCharactersForKey('E', 0), Shortcut.DIRECT));
     }
 
     @Override

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -181,6 +182,25 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         setHelpId();
         if (installAdapters) {
             installAdapters();
+        }
+    }
+
+    /**
+     * Constructs a new {@code JosmAction}.
+     *
+     * Use this super constructor to setup your action.
+     *
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName the filename of the icon to use
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu actions on some platforms.
+     * @param shortcuts ready-created shortcut objects
+     * @since 14012
+     */
+    public JosmAction(String name, String iconName, String tooltip, List<Shortcut> shortcuts) {
+        this(name, iconName, tooltip, shortcuts.get(0), true, null, true);
+        for (int i = 1; i < shortcuts.size(); i++) {
+            MainApplication.registerActionShortcut(this, shortcuts.get(i));
         }
     }
 

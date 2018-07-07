@@ -13,6 +13,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.im.InputContext;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -49,6 +50,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.tools.KeyboardUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -113,6 +115,8 @@ public class PrefJPanel extends JPanel {
                 }
             }
         }
+        KeyboardUtils.getExtendedKeyCodes(InputContext.getInstance().getLocale()).entrySet()
+            .forEach(e -> list.put(e.getKey(), e.getValue().toString()));
         list.put(Integer.valueOf(-1), "");
         return list;
     }
@@ -332,9 +336,10 @@ public class PrefJPanel extends JPanel {
                 if (e != null) { // only if we've been called by a user action
                     int row = panel.shortcutTable.convertRowIndexToModel(lsm.getMinSelectionIndex());
                     Shortcut sc = (Shortcut) panel.model.getValueAt(row, -1);
+                    Object selectedKey = panel.tfKey.getSelectedItem();
                     if (panel.cbDisable.isSelected()) {
                         sc.setAssignedModifier(-1);
-                    } else if (panel.tfKey.getSelectedItem() == null || "".equals(panel.tfKey.getSelectedItem())) {
+                    } else if (selectedKey == null || "".equals(selectedKey)) {
                         sc.setAssignedModifier(KeyEvent.VK_CANCEL);
                     } else {
                         sc.setAssignedModifier(
@@ -344,7 +349,7 @@ public class PrefJPanel extends JPanel {
                                 (panel.cbMeta.isSelected() ? KeyEvent.META_DOWN_MASK : 0)
                         );
                         for (Map.Entry<Integer, String> entry : keyList.entrySet()) {
-                            if (entry.getValue().equals(panel.tfKey.getSelectedItem())) {
+                            if (entry.getValue().equals(selectedKey)) {
                                 sc.setAssignedKey(entry.getKey());
                             }
                         }
