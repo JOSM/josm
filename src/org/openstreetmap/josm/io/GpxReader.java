@@ -41,7 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author imi, ramack
  */
-public class GpxReader implements GpxConstants {
+public class GpxReader implements GpxConstants, IGpxReader {
 
     private enum State {
         INIT,
@@ -578,6 +578,7 @@ public class GpxReader implements GpxConstants {
      * @throws SAXException if any SAX parsing error occurs
      * @throws IOException if any I/O error occurs
      */
+    @Override
     public boolean parse(boolean tryToFinish) throws SAXException, IOException {
         Parser parser = new Parser();
         try {
@@ -603,10 +604,7 @@ public class GpxReader implements GpxConstants {
         }
     }
 
-    /**
-     * Replies the GPX data.
-     * @return The GPX data
-     */
+    @Override
     public GpxData getGpxData() {
         return gpxData;
     }

@@ -22,11 +22,11 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.GZIPInputStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -59,10 +58,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
+import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -71,20 +70,25 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
+import org.openstreetmap.josm.gui.io.importexport.NMEAImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.GpxReader;
+import org.openstreetmap.josm.io.IGpxReader;
+import org.openstreetmap.josm.io.nmea.NmeaReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.SAXException;
 
@@ -250,19 +254,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private class LoadGpxDataActionListener implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            FileFilter filter = new FileFilter() {
-                @Override
-                public boolean accept(File f) {
-                    return f.isDirectory() || Utils.hasExtension(f, "gpx", "gpx.gz");
-                }
-
-                @Override
-                public String getDescription() {
-                    return tr("GPX Files (*.gpx *.gpx.gz)");
-                }
-            };
-            AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, filter, JFileChooser.FILES_ONLY, null);
+        public void actionPerformed(ActionEvent e) {
+            ExtensionFileFilter gpxFilter = GpxImporter.getFileFilter();
+            AbstractFileChooser fc = new FileChooserManager(true, null).createFileChooser(false, null,
+                    Arrays.asList(gpxFilter, NMEAImporter.FILE_FILTER), gpxFilter, JFileChooser.FILES_ONLY).openFileChooser();
             if (fc == null)
                 return;
             File sel = fc.getSelectedFile();
@@ -286,8 +281,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     }
                 }
                 GpxData data = null;
-                try (InputStream iStream = createInputStream(sel)) {
-                    GpxReader reader = new GpxReader(iStream);
+                try (InputStream iStream = Compression.getUncompressedFileInputStream(sel)) {
+                    IGpxReader reader = gpxFilter.accept(sel) ? new GpxReader(iStream) : new NmeaReader(iStream);
                     reader.parse(false);
                     data = reader.getGpxData();
                     data.storageFile = sel;
@@ -324,14 +319,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 cbGpx.setSelectedIndex(cbGpx.getItemCount() - 1);
             } finally {
                 outerPanel.setCursor(Cursor.getDefaultCursor());
-            }
-        }
-
-        private InputStream createInputStream(File sel) throws IOException {
-            if (Utils.hasExtension(sel, "gpx.gz")) {
-                return new GZIPInputStream(Files.newInputStream(sel.toPath()));
-            } else {
-                return Files.newInputStream(sel.toPath());
             }
         }
     }
