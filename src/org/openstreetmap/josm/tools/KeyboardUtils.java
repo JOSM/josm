@@ -180,7 +180,7 @@ public final class KeyboardUtils {
                     result.add('#');
                 } else if (!"LU".equals(l.getCountry())) {
                     // France and Belgium, https://en.wikipedia.org/wiki/AZERTY
-                    result.add('²'); // 10000B2
+                    result.add('²');
                 }
                 // BÉPO, https://en.wikipedia.org/wiki/Keyboard_layout#B%C3%89PO
                 result.add('$');
@@ -201,7 +201,7 @@ public final class KeyboardUtils {
                 break;
             case "de": // German
                 // https://en.wikipedia.org/wiki/German_keyboard_layout
-                result.add('^');
+                result.add((char) KeyEvent.VK_DEAD_CIRCUMFLEX);
                 break;
             case "cs": // Czech
             case "he": // Hebrew
@@ -212,12 +212,6 @@ public final class KeyboardUtils {
             case "hu":
                 // Hungary, https://en.wikipedia.org/wiki/QWERTZ#Hungary
                 result.add('0');
-                break;
-            case "pl": // Polish
-                // Poland, https://en.wikipedia.org/wiki/QWERTZ#Poland
-                result.add('µ');
-                result.add('^');
-                result.add('˛'); // https://en.wikipedia.org/wiki/Ogonek
                 break;
             case "bs": // Bosnian
             case "hr": // Croatian
@@ -242,11 +236,12 @@ public final class KeyboardUtils {
                 break;
             case "et": // Estonian
                 // https://en.wikipedia.org/wiki/QWERTY#Estonian
-                result.add('ˇ'); // https://en.wikipedia.org/wiki/Caron
+                result.add((char) KeyEvent.VK_DEAD_CARON); // https://en.wikipedia.org/wiki/Caron
                 break;
             case "is": // Icelandic
                 // https://en.wikipedia.org/wiki/Icelandic_keyboard_layout
                 result.add('°'); // https://en.wikipedia.org/wiki/Ring_(diacritic)
+                // FIXME It doesn't work with Java 8: [KEY_PRESSED,keyCode=0,keyChar=Undefined keyChar,extendedKeyCode=0x0]
                 break;
             case "es": // Spanish
                 // Latin America only, https://en.wikipedia.org/wiki/QWERTY#Latin_America
@@ -289,6 +284,7 @@ public final class KeyboardUtils {
             case "ES": // Spain
                 // https://en.wikipedia.org/wiki/QWERTY#Spain,_also_known_as_Spanish_(International_sort)
                 result.add('º'); // https://en.wikipedia.org/wiki/Ordinal_indicator
+                // FIXME It doesn't work with Java 8: [KEY_PRESSED,keyCode=0,keyChar=Undefined keyChar,extendedKeyCode=0x0]
                 break;
             default:
                 // Do nothing
@@ -302,8 +298,8 @@ public final class KeyboardUtils {
 
             // Add default US QWERTY keys, https://en.wikipedia.org/wiki/QWERTY
             // Works also for Dvorak, https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
-            result.add('`');
-            result.add('~');
+            result.add('`'); // On US QWERTY, this is not a dead key
+            result.add((char) KeyEvent.VK_DEAD_GRAVE); // On International QWERTY, this is a dead key
             return result;
         }
         throw new UnsupportedOperationException();

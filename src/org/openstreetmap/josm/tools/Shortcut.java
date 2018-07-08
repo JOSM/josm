@@ -461,11 +461,16 @@ public final class Shortcut {
             result.add(registerShortcut(
                     new StringBuilder(shortText).append(" (").append(i).append(')').toString(), longText,
                     // Add extended keyCode if not a regular one
-                    regularKeyCodes.containsKey(code) ? regularKeyCodes.get(code) : c | KeyboardUtils.EXTENDED_KEYCODE_FLAG,
+                    regularKeyCodes.containsKey(code) ? regularKeyCodes.get(code) :
+                        isDeadKey(code) ? code : c | KeyboardUtils.EXTENDED_KEYCODE_FLAG,
                     requestedGroup));
             i++;
         }
         return result;
+    }
+
+    static boolean isDeadKey(int keyCode) {
+        return KeyEvent.VK_DEAD_GRAVE <= keyCode && keyCode <= KeyEvent.VK_DEAD_SEMIVOICED_SOUND;
     }
 
     /**

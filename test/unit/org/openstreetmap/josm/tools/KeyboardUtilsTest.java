@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -52,40 +53,43 @@ public class KeyboardUtilsTest {
      */
     @Test
     public void testgetCharactersForKeyE00() {
-        testgetCharactersForKeyE00("ar", 'ذ', '>', '`', '~');
-        testgetCharactersForKeyE00("fr_FR", '²', '$', '`', '~');
-        testgetCharactersForKeyE00("fr_CA", '#', '$', '/', '`', '~');
-        testgetCharactersForKeyE00("sq", '\\', '`', '~');
-        testgetCharactersForKeyE00("it", '\\', '`', '~');
-        testgetCharactersForKeyE00("pt", '\\', '`', '~');
-        testgetCharactersForKeyE00("pt_BR", '\'', '`', '~');
-        testgetCharactersForKeyE00("de", '^', '`', '~');
-        testgetCharactersForKeyE00("cs", ';', '`', '~');
-        testgetCharactersForKeyE00("he", '`', '~');
-        testgetCharactersForKeyE00("hu", '0', '`', '~');
-        testgetCharactersForKeyE00("pl", 'µ', '^', '˛', '`', '~');
-        testgetCharactersForKeyE00("bs", '¸', '`', '~');
-        testgetCharactersForKeyE00("hr", '¸', '`', '~');
-        testgetCharactersForKeyE00("sl", '¸', '`', '~');
-        testgetCharactersForKeyE00("sr", '¸', '`', '~');
-        testgetCharactersForKeyE00("ro", ']', '`', '~');
-        testgetCharactersForKeyE00("da", '½', '`', '~');
-        testgetCharactersForKeyE00("fo", '½', '`', '~');
-        testgetCharactersForKeyE00("nl", '@', '`', '~');
-        testgetCharactersForKeyE00("et", 'ˇ', '`', '~');
-        testgetCharactersForKeyE00("is", '°', '`', '~');
-        testgetCharactersForKeyE00("es", '|', '`', '~');
-        testgetCharactersForKeyE00("es_ES", 'º', '`', '~');
-        testgetCharactersForKeyE00("tr", '"', '*', '`', '~');
-        testgetCharactersForKeyE00("de_LU", '^', '²', '§', '`', '~');
-        testgetCharactersForKeyE00("fr_LU", '$', '²', '§', '`', '~');
-        testgetCharactersForKeyE00("de_CH", '^', '§', '`', '~');
-        testgetCharactersForKeyE00("fr_CH", '²', '$', '§', '`', '~');
-        testgetCharactersForKeyE00("de_LI", '^', '§', '`', '~');
-        testgetCharactersForKeyE00("fi_FI", '§', '`', '~');
-        testgetCharactersForKeyE00("sv_SE", '§', '`', '~');
-        testgetCharactersForKeyE00("no_NO", '|', '`', '~');
-        testgetCharactersForKeyE00("sv_NO", '|', '`', '~');
+        char deadCircumflex = (char) KeyEvent.VK_DEAD_CIRCUMFLEX;
+        char deadGrave = (char) KeyEvent.VK_DEAD_GRAVE;
+        char deadCaron = (char) KeyEvent.VK_DEAD_CARON;
+        testgetCharactersForKeyE00("ar", 'ذ', '>', '`', deadGrave);
+        testgetCharactersForKeyE00("fr_FR", '²', '$', '`', deadGrave);
+        testgetCharactersForKeyE00("fr_CA", '#', '$', '/', '`', deadGrave);
+        testgetCharactersForKeyE00("sq", '\\', '`', deadGrave);
+        testgetCharactersForKeyE00("it", '\\', '`', deadGrave);
+        testgetCharactersForKeyE00("pt", '\\', '`', deadGrave);
+        testgetCharactersForKeyE00("pt_BR", '\'', '`', deadGrave);
+        testgetCharactersForKeyE00("de", deadCircumflex, '`', deadGrave);
+        testgetCharactersForKeyE00("cs", ';', '`', deadGrave);
+        testgetCharactersForKeyE00("he", '`', deadGrave);
+        testgetCharactersForKeyE00("hu", '0', '`', deadGrave);
+        testgetCharactersForKeyE00("pl", '`', deadGrave);
+        testgetCharactersForKeyE00("bs", '¸', '`', deadGrave);
+        testgetCharactersForKeyE00("hr", '¸', '`', deadGrave);
+        testgetCharactersForKeyE00("sl", '¸', '`', deadGrave);
+        testgetCharactersForKeyE00("sr", '¸', '`', deadGrave);
+        testgetCharactersForKeyE00("ro", ']', '`', deadGrave);
+        testgetCharactersForKeyE00("da", '½', '`', deadGrave);
+        testgetCharactersForKeyE00("fo", '½', '`', deadGrave);
+        testgetCharactersForKeyE00("nl", '@', '`', deadGrave);
+        testgetCharactersForKeyE00("et", deadCaron, '`', deadGrave);
+        testgetCharactersForKeyE00("is", '°', '`', deadGrave);
+        testgetCharactersForKeyE00("es", '|', '`', deadGrave);
+        testgetCharactersForKeyE00("es_ES", 'º', '`', deadGrave);
+        testgetCharactersForKeyE00("tr", '"', '*', '`', deadGrave);
+        testgetCharactersForKeyE00("de_LU", deadCircumflex, '²', '§', '`', deadGrave);
+        testgetCharactersForKeyE00("fr_LU", '$', '²', '§', '`', deadGrave);
+        testgetCharactersForKeyE00("fr_CH", '²', '$', '§', '`', deadGrave);
+        testgetCharactersForKeyE00("de_CH", deadCircumflex, '§', '`', deadGrave);
+        testgetCharactersForKeyE00("de_LI", deadCircumflex, '§', '`', deadGrave);
+        testgetCharactersForKeyE00("fi_FI", '§', '`', deadGrave);
+        testgetCharactersForKeyE00("sv_SE", '§', '`', deadGrave);
+        testgetCharactersForKeyE00("no_NO", '|', '`', deadGrave);
+        testgetCharactersForKeyE00("sv_NO", '|', '`', deadGrave);
     }
 
     private static void testgetCharactersForKeyE00(String locale, Character... expected) {
