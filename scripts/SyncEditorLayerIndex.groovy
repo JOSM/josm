@@ -34,8 +34,6 @@ import org.openstreetmap.josm.data.validation.routines.DomainValidator
 import org.openstreetmap.josm.io.imagery.ImageryReader
 import org.openstreetmap.josm.spi.preferences.Config
 
-import groovy.cli.commons.CliBuilder
-
 class SyncEditorLayerIndex {
 
     List<ImageryInfo> josmEntries
