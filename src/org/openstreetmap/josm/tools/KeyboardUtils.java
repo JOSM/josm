@@ -159,6 +159,9 @@ public final class KeyboardUtils {
      * @return the plausible characters expected to be displayed for the given physical key and locale
      */
     public static List<Character> getCharactersForKey(char row, int column, Locale l) {
+        if (l == null) {
+            l = I18n.getOriginalLocale();
+        }
         if ('E' == row && 0 == column) {
             List<Character> result = new ArrayList<>();
 
@@ -257,6 +260,8 @@ public final class KeyboardUtils {
                 result.add('"');
                 result.add('*');
                 break;
+            default:
+                // Do nothing
             }
 
             // By country regardless of language
@@ -285,6 +290,8 @@ public final class KeyboardUtils {
                 // https://en.wikipedia.org/wiki/QWERTY#Spain,_also_known_as_Spanish_(International_sort)
                 result.add('º'); // https://en.wikipedia.org/wiki/Ordinal_indicator
                 break;
+            default:
+                // Do nothing
             }
 
             // UK Apple, https://en.wikipedia.org/wiki/QWERTY#UK_Apple_keyboard
@@ -347,6 +354,8 @@ public final class KeyboardUtils {
             case "Thai": // https://en.wikipedia.org/wiki/Thai_alphabet
                 addThaiCharacters(map);
                 break;
+            default:
+                // Do nothing
         }
 
         return map;

@@ -782,7 +782,7 @@ public class Preferences extends AbstractPreferences {
      * @param loadedVersion JOSM version when the preferences file was written
      */
     private void removeObsolete(int loadedVersion) {
-        Logging.trace("Remove obsolete preferences for version {}", loadedVersion);
+        Logging.trace("Remove obsolete preferences for version {0}", Integer.toString(loadedVersion));
         for (String key : OBSOLETE_PREF_KEYS) {
             if (settingsMap.containsKey(key)) {
                 settingsMap.remove(key);

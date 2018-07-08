@@ -89,6 +89,7 @@ public final class I18n {
     private static volatile Map<String, String> strings;
     /** Map (english/locale) of plural strings **/
     private static volatile Map<String, String[]> pstrings;
+    private static Locale originalLocale = Locale.getDefault();
     private static Map<String, PluralMode> languages = new HashMap<>();
     static {
         //languages.put("ar", PluralMode.MODE_AR);
@@ -633,5 +634,15 @@ public final class I18n {
      */
     public static Map<String, String[]> getPluralTranslations() {
         return new HashMap<>(pstrings);
+    }
+
+    /**
+     * Returns the original default locale found when the JVM started.
+     * Used to guess real language/country of current user disregarding language chosen in JOSM preferences.
+     * @return the original default locale found when the JVM started
+     * @since 14013
+     */
+    public static Locale getOriginalLocale() {
+        return originalLocale;
     }
 }
