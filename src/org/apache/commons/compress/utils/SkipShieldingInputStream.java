@@ -25,7 +25,7 @@ import java.io.InputStream;
  * A wrapper that overwrites {@link #skip} and delegates to {@link #read} instead.
  *
  * <p>Some implementations of {@link InputStream} implement {@link
- * InputStream#skip} in a way that throws an expecption if the stream
+ * InputStream#skip} in a way that throws an exception if the stream
  * is not seekable - {@link System#in System.in} is known to behave
  * that way. For such a stream it is impossible to invoke skip at all
  * and you have to read from the stream (and discard the data read)
