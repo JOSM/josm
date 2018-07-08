@@ -17,6 +17,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 import javax.imageio.ImageIO
+import javax.json.Json
+import javax.json.stream.JsonGenerator
 
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.actions.DeleteAction
@@ -55,7 +57,6 @@ import org.openstreetmap.josm.tools.Territories
 import org.openstreetmap.josm.tools.Utils
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import groovy.json.JsonBuilder
 
 class TagInfoExtract {
 
@@ -359,23 +360,46 @@ class TagInfoExtract {
         write_json("JOSM main mappaint style", "Tags supported by the main mappaint style in the OSM editor JOSM", tags)
     }
 
-    void write_json(name, description, tags) {
-        def json = new JsonBuilder()
-        def project = [
-                name: name,
-                description: description,
-                project_url: "https://josm.openstreetmap.de/",
-                icon_url: "https://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png",
-                contact_name: "JOSM developer team",
-                contact_email: "josm-dev@openstreetmap.org",
-        ]
-        json data_format: 1, data_updated: DateTimeFormatter.ofPattern("yyyyMMdd'T'hhmmss'Z'").withZone(ZoneId.of("Z")).format(Instant.now()), project: project, tags: tags
+    void write_json(String name, String description, List<Map<String, ?>> tags) {
+        def config = [:]
+        config[JsonGenerator.PRETTY_PRINTING] = output_file == null
+        def writer = output_file != null ? output_file : new StringWriter()
+        Json.createWriterFactory(config).createWriter(writer).withCloseable {json ->
+            def project = Json.createObjectBuilder()
+                .add("name", name)
+                .add("description", description)
+                .add("project_url", "https://josm.openstreetmap.de/")
+                .add("icon_url", "https://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png")
+                .add("contact_name", "JOSM developer team")
+                .add("contact_email", "josm-dev@openstreetmap.org")
+            def jsonTags = Json.createArrayBuilder()
+            for (def t : tags) {
+                def o = Json.createObjectBuilder()
+                for (def e : t.entrySet()) {
+                    def val = e.getValue()
+                    if (e.getValue() instanceof List) {
+                        def arr = Json.createArrayBuilder()
+                        for (def v : e.getValue()) {
+                            arr.add(v)
+                        }
+                        val = arr.build()
+                    }
+                    o.add(e.getKey(), val)
+                }
+                jsonTags.add(o.build())
+            }
+            json.writeObject(Json.createObjectBuilder()
+                .add("data_format", 1)
+                .add("data_updated", DateTimeFormatter.ofPattern("yyyyMMdd'T'hhmmss'Z'").withZone(ZoneId.of("Z")).format(Instant.now()))
+                .add("project", project.build())
+                .add("tags", jsonTags.build())
+                .build())
+        }
 
         if (output_file != null) {
-            json.writeTo(output_file)
             output_file.close()
         } else {
-            print json.toPrettyString()
+            print writer.toString()
         }
     }
 

@@ -7539,7 +7539,7 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:bridge:support"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:bridge:support" />
             <space />
-            <combo key="bridge:support" text="Type" values="pier,abutment,lift_pier,pivot_pier" match="key" />
+            <combo key="bridge:support" text="Type" values="pier,abutment,lift_pier,pivot_pier,pylon" match="key" />
         </item> <!-- Bridge Support -->
         <item name="Bridge outline" icon="presets/transport/bridge/bridge_outline.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:man_made=bridge"
