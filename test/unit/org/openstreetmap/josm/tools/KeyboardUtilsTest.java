@@ -52,7 +52,7 @@ public class KeyboardUtilsTest {
      * Unit test of {@link KeyboardUtils#getCharactersForKey} - E00 character
      */
     @Test
-    public void testgetCharactersForKeyE00() {
+    public void testGetCharactersForKeyE00() {
         char deadCircumflex = (char) KeyEvent.VK_DEAD_CIRCUMFLEX;
         char deadGrave = (char) KeyEvent.VK_DEAD_GRAVE;
         char deadCaron = (char) KeyEvent.VK_DEAD_CARON;

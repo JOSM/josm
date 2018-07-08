@@ -98,7 +98,9 @@ public class BBox {
      * @param w the way
      */
     public BBox(IWay<?> w) {
-        w.getNodes().forEach(this::add);
+        for (INode ll : w.getNodes()) {
+            add(ll);
+        }
     }
 
     /**
