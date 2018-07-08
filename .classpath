@@ -153,11 +153,6 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="tools/groovy/groovy-json-2.5.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="tools/groovy/groovy-xml-2.5.0.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
