@@ -20,8 +20,6 @@ import org.openstreetmap.josm.io.OsmReader
 class ChildOrParentSelectorTest {
     static private Logger logger = Logger.getLogger(ChildOrParentSelectorTest.class.getName());
 
-    def shouldFail = new GroovyTestCase().&shouldFail
-
     def DataSet ds;
 
     @BeforeClass

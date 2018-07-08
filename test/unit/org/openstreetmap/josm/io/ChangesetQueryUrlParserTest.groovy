@@ -1,15 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io
 
-import org.junit.Test
-import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException
-import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlParser
+import static groovy.test.GroovyAssert.shouldFail
 
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
+import org.junit.Test
+import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException
+import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlParser
+
 class ChangesetQueryUrlParserTest {
-    final shouldFail = new GroovyTestCase().&shouldFail
 
     @Test
     public void testConstructor() {

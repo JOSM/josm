@@ -17,6 +17,7 @@
  * Add option "-h" to show the available command line flags.
  */
 import java.text.DecimalFormat
+
 import javax.json.Json
 import javax.json.JsonArray
 import javax.json.JsonObject
@@ -726,7 +727,7 @@ class SyncEditorLayerIndex {
                 }
             } catch(IllegalArgumentException err) {
                 def desc = getDescription(e)
-                myprintln("* Invalid data in ELI geometry for $desc: ${err.getMessage()}") 
+                myprintln("* Invalid data in ELI geometry for $desc: ${err.getMessage()}")
             }
             if (s == null || !josmUrls.containsKey(url)) {
                 continue

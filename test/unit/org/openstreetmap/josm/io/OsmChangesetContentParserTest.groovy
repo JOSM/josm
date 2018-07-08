@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static groovy.test.GroovyAssert.shouldFail
+
 import java.nio.charset.StandardCharsets
 
 import org.junit.Test
@@ -14,7 +16,6 @@ import org.openstreetmap.josm.data.osm.history.HistoryWay
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor
 
 class OsmChangesetContentParserTest {
-    final shouldFail = new GroovyTestCase().&shouldFail
 
     @Test
     public void test_Constructor() {

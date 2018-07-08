@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static groovy.test.GroovyAssert.shouldFail
 import static org.junit.Assert.*
 
 import org.junit.Test
@@ -29,8 +30,6 @@ class DiffResultProcessorTest {
     @Test
     public void testParse_NOK_Cases() {
         def DiffResultProcessor processor  = new DiffResultProcessor([])
-
-        final shouldFail = new GroovyTestCase().&shouldFail
 
         shouldFail(IllegalArgumentException) {
             processor.parse null, NullProgressMonitor.INSTANCE

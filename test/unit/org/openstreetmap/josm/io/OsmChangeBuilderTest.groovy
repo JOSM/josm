@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.io;
 
+import static groovy.test.GroovyAssert.shouldFail
 import static org.junit.Assert.*
 
 import org.junit.Test
@@ -37,8 +38,6 @@ class OsmChangeBuilderTest {
     public void testSequenceOfMethodCalls() {
         def Changeset cs = new Changeset(1)
         OsmChangeBuilder builder = new OsmChangeBuilder(cs)
-
-        final shouldFail = new GroovyTestCase().&shouldFail
 
         // should be OK
         builder.start()
