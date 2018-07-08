@@ -17,6 +17,7 @@
  * Add option "-h" to show the available command line flags.
  */
 import java.text.DecimalFormat
+
 import javax.json.Json
 import javax.json.JsonArray
 import javax.json.JsonObject
@@ -32,6 +33,8 @@ import org.openstreetmap.josm.data.projection.Projections
 import org.openstreetmap.josm.data.validation.routines.DomainValidator
 import org.openstreetmap.josm.io.imagery.ImageryReader
 import org.openstreetmap.josm.spi.preferences.Config
+
+import groovy.cli.commons.CliBuilder
 
 class SyncEditorLayerIndex {
 
@@ -726,7 +729,7 @@ class SyncEditorLayerIndex {
                 }
             } catch(IllegalArgumentException err) {
                 def desc = getDescription(e)
-                myprintln("* Invalid data in ELI geometry for $desc: ${err.getMessage()}") 
+                myprintln("* Invalid data in ELI geometry for $desc: ${err.getMessage()}")
             }
             if (s == null || !josmUrls.containsKey(url)) {
                 continue

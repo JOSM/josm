@@ -38,7 +38,6 @@
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
-        <property name="groovy.jar" location="${tools.dir}/groovy-all.jar"/>
         <property name="error_prone_ant.jar" location="${tools.dir}/error_prone_ant.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
@@ -74,12 +73,17 @@
                 <isset property="isJava11"/>
             </not>
         </condition>
+        <path id="groovy.classpath">
+            <fileset dir="${tools.dir}/groovy">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
         <path id="test.classpath">
             <fileset dir="${test.dir}/lib">
                 <include name="**/*.jar"/>
             </fileset>
             <pathelement path="${dist.jar}"/>
-            <pathelement path="${groovy.jar}"/>
+            <pathelement path="${toString:groovy.classpath}"/>
             <pathelement path="${spotbugs.dir}/spotbugs-annotations.jar"/>
         </path>
         <path id="pmd.classpath">
@@ -467,7 +471,7 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
     <target name="test-compile" depends="test-init,dist">
-        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="${groovy.jar}"/>
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="${toString:groovy.classpath}"/>
         <call-groovyc testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
@@ -800,7 +804,7 @@ Build-Date: ${build.tstamp}
     </macrodef>
 
     <target name="taginfo" depends="dist">
-        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};${tools.dir}/commons-cli-1.3.1.jar"/>
+        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${toString:groovy.classpath};${tools.dir}/commons-cli-1.3.1.jar"/>
         <property name="taginfoextract" value="scripts/TagInfoExtract.groovy"/>
         <property name="imgurlprefix" value="http://josm.openstreetmap.de/download/taginfo/taginfo-img"/>
         <_taginfo type="mappaint" output="taginfo_style.json"/>
@@ -809,7 +813,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="imageryindex" depends="init-properties">
-        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};${tools.dir}/commons-cli-1.3.1.jar"/>
+        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${toString:groovy.classpath};${tools.dir}/commons-cli-1.3.1.jar"/>
         <echo message="Checking editor imagery difference"/>
         <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.jar}">
                 <arg value="-noeli"/>

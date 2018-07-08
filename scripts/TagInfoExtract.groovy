@@ -52,6 +52,7 @@ import org.openstreetmap.josm.tools.Territories
 import org.openstreetmap.josm.tools.Utils
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+import groovy.cli.commons.CliBuilder
 import groovy.json.JsonBuilder
 
 class TagInfoExtract {

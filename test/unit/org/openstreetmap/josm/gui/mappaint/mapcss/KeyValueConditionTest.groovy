@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import static groovy.test.GroovyAssert.shouldFail
+
 import org.junit.*
 import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.data.coor.LatLon
@@ -14,10 +16,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 
-
 class KeyValueConditionTest {
-
-    def shouldFail = new GroovyTestCase().&shouldFail
 
     def DataSet ds;
 

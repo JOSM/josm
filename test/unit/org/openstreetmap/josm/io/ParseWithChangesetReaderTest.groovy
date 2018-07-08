@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static groovy.test.GroovyAssert.shouldFail
 import static org.junit.Assert.*
 
 import java.nio.charset.StandardCharsets
@@ -166,8 +167,6 @@ class ParseWithChangesetReaderTest {
         </osm>
         """
 
-        final shouldFail = new GroovyTestCase().&shouldFail
-
         shouldFail(IllegalDataException) {
             DataSet ds = getDataSet(doc)
         }
@@ -184,8 +183,6 @@ class ParseWithChangesetReaderTest {
         </osm>
         """
 
-        final shouldFail = new GroovyTestCase().&shouldFail
-
         shouldFail(IllegalDataException) {
             DataSet ds = getDataSet(doc)
         }
@@ -201,8 +198,6 @@ class ParseWithChangesetReaderTest {
             <node id="1" lat="0.0" lon="0.0" version="1" changeset="abc"/>
             </osm>
             """
-
-        final shouldFail = new GroovyTestCase().&shouldFail
 
         shouldFail(IllegalDataException) {
             DataSet ds = getDataSet(doc)
