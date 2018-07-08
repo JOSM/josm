@@ -364,7 +364,8 @@ class TagInfoExtract {
         def config = [:]
         config[JsonGenerator.PRETTY_PRINTING] = output_file == null
         def writer = output_file != null ? output_file : new StringWriter()
-        Json.createWriterFactory(config).createWriter(writer).withCloseable {json ->
+        def json = Json.createWriterFactory(config).createWriter(writer)
+        try {
             def project = Json.createObjectBuilder()
                 .add("name", name)
                 .add("description", description)
@@ -394,6 +395,8 @@ class TagInfoExtract {
                 .add("project", project.build())
                 .add("tags", jsonTags.build())
                 .build())
+        } finally {
+            json.close()
         }
 
         if (output_file != null) {
