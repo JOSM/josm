@@ -293,7 +293,7 @@ public final class KeyboardUtils {
             // UK Apple, https://en.wikipedia.org/wiki/QWERTY#UK_Apple_keyboard
             // International English Apple, https://en.wikipedia.org/wiki/QWERTY#Apple_International_English_Keyboard
             if (Main.isPlatformOsx()) {
-                result.add('§');
+                result.add('§'); // https://en.wikipedia.org/wiki/Section_sign
             }
 
             // Add default US QWERTY keys, https://en.wikipedia.org/wiki/QWERTY
@@ -656,181 +656,174 @@ public final class KeyboardUtils {
     }
 
     static void addArabicCharacters(Map<Integer, Character> map) {
-        /* TODO Arabic characters
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F0, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F1, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F2, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F3, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F4, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F5, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F6, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F7, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F8, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06F9, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0670, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x067E, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0686, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x060C, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06D4, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0660, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0661, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0662, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0663, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0664, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0665, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0666, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0667, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0668, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0669, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x061B, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0621, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0624, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0626, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0627, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0628, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0629, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x062A, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x062B, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x062C, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x062D, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x062E, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x062F, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0630, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0631, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0632, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0633, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0634, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0635, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0636, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0637, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0638, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0639, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x063A, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0641, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0642, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0643, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0644, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0645, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0646, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0647, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0648, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0649, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x064A, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x064E, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x064F, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0650, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0652, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0698, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06A4, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06A9, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06AF, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06BE, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06CC, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06CC, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x06D2, ''); //
-        */
+        map.put(EXTENDED_KEYCODE_FLAG + 0x060C, '،'); // ARABIC COMMA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x061B, '؛'); // ARABIC SEMICOLON
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0621, 'ء'); // ARABIC LETTER HAMZA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0624, 'ؤ'); // ARABIC LETTER WAW WITH HAMZA ABOVE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0626, 'ئ'); // ARABIC LETTER YEH WITH HAMZA ABOVE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0627, 'ا'); // ARABIC LETTER ALEF
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0628, 'ب'); // ARABIC LETTER BEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0629, 'ة'); // ARABIC LETTER TEH MARBUTA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x062A, 'ت'); // ARABIC LETTER TEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x062B, 'ث'); // ARABIC LETTER THEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x062C, 'ج'); // ARABIC LETTER JEEM
+        map.put(EXTENDED_KEYCODE_FLAG + 0x062D, 'ح'); // ARABIC LETTER HAH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x062E, 'خ'); // ARABIC LETTER KHAH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x062F, 'د'); // ARABIC LETTER DAL
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0630, 'ذ'); // ARABIC LETTER THAL
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0631, 'ر'); // ARABIC LETTER REH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0632, 'ز'); // ARABIC LETTER ZAIN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0633, 'س'); // ARABIC LETTER SEEN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0634, 'ش'); // ARABIC LETTER SHEEN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0635, 'ص'); // ARABIC LETTER SAD
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0636, 'ض'); // ARABIC LETTER DAD
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0637, 'ط'); // ARABIC LETTER TAH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0638, 'ظ'); // ARABIC LETTER ZAH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0639, 'ع'); // ARABIC LETTER AIN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x063A, 'غ'); // ARABIC LETTER GHAIN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0641, 'ف'); // ARABIC LETTER FEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0642, 'ق'); // ARABIC LETTER QAF
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0643, 'ك'); // ARABIC LETTER KAF
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0644, 'ل'); // ARABIC LETTER LAM
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0645, 'م'); // ARABIC LETTER MEEM
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0646, 'ن'); // ARABIC LETTER NOON
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0647, 'ه'); // ARABIC LETTER HEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0648, 'و'); // ARABIC LETTER WAW
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0649, 'ى'); // ARABIC LETTER ALEF MAKSURA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x064A, 'ي'); // ARABIC LETTER YEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x064E, 'َ'); // ARABIC FATHA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x064F, 'ُ'); // ARABIC DAMMA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0650, 'ِ'); // ARABIC KASRA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0652, 'ْ'); // ARABIC SUKUN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0660, '٠'); // ARABIC-INDIC DIGIT ZERO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0661, '١'); // ARABIC-INDIC DIGIT ONE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0662, '٢'); // ARABIC-INDIC DIGIT TWO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0663, '٣'); // ARABIC-INDIC DIGIT THREE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0664, '٤'); // ARABIC-INDIC DIGIT FOUR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0665, '٥'); // ARABIC-INDIC DIGIT FIVE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0666, '٦'); // ARABIC-INDIC DIGIT SIX
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0667, '٧'); // ARABIC-INDIC DIGIT SEVEN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0668, '٨'); // ARABIC-INDIC DIGIT EIGHT
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0669, '٩'); // ARABIC-INDIC DIGIT NINE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0670, 'ٰ'); // ARABIC LETTER SUPERSCRIPT ALEF
+        map.put(EXTENDED_KEYCODE_FLAG + 0x067E, 'پ'); // ARABIC LETTER PEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0686, 'چ'); // ARABIC LETTER TCHEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0698, 'ژ'); // ARABIC LETTER JEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06A4, 'ڤ'); // ARABIC LETTER VEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06A9, 'ک'); // ARABIC LETTER KEHEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06AF, 'گ'); // ARABIC LETTER GAF
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06BE, 'ھ'); // ARABIC LETTER HEH DOACHASHMEE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06CC, 'ی'); // ARABIC LETTER FARSI YEH
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06D2, 'ے'); // ARABIC LETTER YEH BARREE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06D4, '۔'); // ARABIC FULL STOP
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F0, '۰'); // EXTENDED ARABIC-INDIC DIGIT ZERO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F1, '۱'); // EXTENDED ARABIC-INDIC DIGIT ONE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F2, '۲'); // EXTENDED ARABIC-INDIC DIGIT TWO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F3, '۳'); // EXTENDED ARABIC-INDIC DIGIT THREE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F4, '۴'); // EXTENDED ARABIC-INDIC DIGIT FOUR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F5, '۵'); // EXTENDED ARABIC-INDIC DIGIT FIVE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F6, '۶'); // EXTENDED ARABIC-INDIC DIGIT SIX
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F7, '۷'); // EXTENDED ARABIC-INDIC DIGIT SEVEN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F8, '۸'); // EXTENDED ARABIC-INDIC DIGIT EIGHT
+        map.put(EXTENDED_KEYCODE_FLAG + 0x06F9, '۹'); // EXTENDED ARABIC-INDIC DIGIT NINE
     }
 
     static void addThaiCharacters(Map<Integer, Character> map) {
-        /* TODO Thai characters
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E01, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E02, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E03, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E04, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E05, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E07, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E08, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E0A, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E0C, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E14, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E15, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E16, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E17, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E19, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1A, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1B, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1C, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1D, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1E, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1F, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E20, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E21, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E22, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E23, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E25, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E27, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E2A, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E2B, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E2D, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E30, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E31, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E32, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E33, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E34, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E35, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E36, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E37, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E38, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E39, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E3F, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E40, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E41, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E43, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E44, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E45, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E46, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E47, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E48, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E49, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E50, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E51, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E52, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E53, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E54, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E55, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E56, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E57, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E58, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x0E59, ''); //
-        */
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E01, 'ก'); // THAI CHARACTER KO KAI
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E02, 'ข'); // THAI CHARACTER KHO KHAI
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E03, 'ฃ'); // THAI CHARACTER KHO KHUAT
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E04, 'ค'); // THAI CHARACTER KHO KHWAI
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E05, 'ฅ'); // THAI CHARACTER KHO KHON
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E07, 'ง'); // THAI CHARACTER NGO NGU
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E08, 'จ'); // THAI CHARACTER CHO CHAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E0A, 'ช'); // THAI CHARACTER CHO CHANG
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E0C, 'ฌ'); // THAI CHARACTER CHO CHOE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E14, 'ด'); // THAI CHARACTER DO DEK
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E15, 'ต'); // THAI CHARACTER TO TAO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E16, 'ถ'); // THAI CHARACTER THO THUNG
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E17, 'ท'); // THAI CHARACTER THO THAHAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E19, 'น'); // THAI CHARACTER NO NU
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1A, 'บ'); // THAI CHARACTER BO BAIMAI
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1B, 'ป'); // THAI CHARACTER PO PLA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1C, 'ผ'); // THAI CHARACTER PHO PHUNG
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1D, 'ฝ'); // THAI CHARACTER FO FA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1E, 'พ'); // THAI CHARACTER PHO PHAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E1F, 'ฟ'); // THAI CHARACTER FO FAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E20, 'ภ'); // THAI CHARACTER PHO SAMPHAO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E21, 'ม'); // THAI CHARACTER MO MA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E22, 'ย'); // THAI CHARACTER YO YAK
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E23, 'ร'); // THAI CHARACTER RO RUA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E25, 'ล'); // THAI CHARACTER LO LING
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E27, 'ว'); // THAI CHARACTER WO WAEN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E2A, 'ส'); // THAI CHARACTER SO SUA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E2B, 'ห'); // THAI CHARACTER HO HIP
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E2D, 'อ'); // THAI CHARACTER O ANG
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E30, 'ะ'); // THAI CHARACTER SARA A
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E31, 'ั'); // THAI CHARACTER MAI HAN-AKAT
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E32, 'า'); // THAI CHARACTER SARA AA
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E33, 'ำ'); // THAI CHARACTER SARA AM
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E34, 'ิ'); // THAI CHARACTER SARA I
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E35, 'ี'); // THAI CHARACTER SARA II
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E36, 'ึ'); // THAI CHARACTER SARA UE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E37, 'ื'); // THAI CHARACTER SARA UEE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E38, 'ุ'); // THAI CHARACTER SARA U
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E39, 'ู'); // THAI CHARACTER SARA UU
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E3F, '฿'); // THAI CURRENCY SYMBOL BAHT
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E40, 'เ'); // THAI CHARACTER SARA E
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E41, 'แ'); // THAI CHARACTER SARA AE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E43, 'ใ'); // THAI CHARACTER SARA AI MAIMUAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E44, 'ไ'); // THAI CHARACTER SARA AI MAIMALAI
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E45, 'ๅ'); // THAI CHARACTER LAKKHANGYAO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E46, 'ๆ'); // THAI CHARACTER MAIYAMOK
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E47, '็'); // THAI CHARACTER MAITAIKHU
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E48, '่'); // THAI CHARACTER MAI EK
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E49, '้'); // THAI CHARACTER MAI THO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E50, '๐'); // THAI DIGIT ZERO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E51, '๑'); // THAI DIGIT ONE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E52, '๒'); // THAI DIGIT TWO
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E53, '๓'); // THAI DIGIT THREE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E54, '๔'); // THAI DIGIT FOUR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E55, '๕'); // THAI DIGIT FIVE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E56, '๖'); // THAI DIGIT SIX
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E57, '๗'); // THAI DIGIT SEVEN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E58, '๘'); // THAI DIGIT EIGHT
+        map.put(EXTENDED_KEYCODE_FLAG + 0x0E59, '๙'); // THAI DIGIT NINE
     }
 
     static void addGeorgianCharacters(Map<Integer, Character> map) {
-        /* TODO Georgian characters
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D0, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D1, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D2, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D3, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D4, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D5, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D6, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D7, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D8, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10D9, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10DA, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10DB, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10DC, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10DD, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10DE, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10DF, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E0, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E1, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E2, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E3, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E4, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E5, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E6, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E7, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E8, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10E9, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10EA, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10EB, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10EC, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10ED, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10EE, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10EF, ''); //
-        map.put(EXTENDED_KEYCODE_FLAG + 0x10F0, ''); //
-        */
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D0, 'ა'); // GEORGIAN LETTER AN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D1, 'ბ'); // GEORGIAN LETTER BAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D2, 'გ'); // GEORGIAN LETTER GAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D3, 'დ'); // GEORGIAN LETTER DON
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D4, 'ე'); // GEORGIAN LETTER EN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D5, 'ვ'); // GEORGIAN LETTER VIN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D6, 'ზ'); // GEORGIAN LETTER ZEN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D7, 'თ'); // GEORGIAN LETTER TAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D8, 'ი'); // GEORGIAN LETTER IN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10D9, 'კ'); // GEORGIAN LETTER KAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10DA, 'ლ'); // GEORGIAN LETTER LAS
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10DB, 'მ'); // GEORGIAN LETTER MAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10DC, 'ნ'); // GEORGIAN LETTER NAR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10DD, 'ო'); // GEORGIAN LETTER ON
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10DE, 'პ'); // GEORGIAN LETTER PAR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10DF, 'ჟ'); // GEORGIAN LETTER ZHAR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E0, 'რ'); // GEORGIAN LETTER RAE
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E1, 'ს'); // GEORGIAN LETTER SAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E2, 'ტ'); // GEORGIAN LETTER TAR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E3, 'უ'); // GEORGIAN LETTER UN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E4, 'ფ'); // GEORGIAN LETTER PHAR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E5, 'ქ'); // GEORGIAN LETTER KHAR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E6, 'ღ'); // GEORGIAN LETTER GHAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E7, 'ყ'); // GEORGIAN LETTER QAR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E8, 'შ'); // GEORGIAN LETTER SHIN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10E9, 'ჩ'); // GEORGIAN LETTER CHIN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10EA, 'ც'); // GEORGIAN LETTER CAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10EB, 'ძ'); // GEORGIAN LETTER JIL
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10EC, 'წ'); // GEORGIAN LETTER CIL
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10ED, 'ჭ'); // GEORGIAN LETTER CHAR
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10EE, 'ხ'); // GEORGIAN LETTER XAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10EF, 'ჯ'); // GEORGIAN LETTER JHAN
+        map.put(EXTENDED_KEYCODE_FLAG + 0x10F0, 'ჰ'); // GEORGIAN LETTER HAE
     }
 
     static void addSymbolCharacters(Map<Integer, Character> map) {
