@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 
@@ -215,5 +216,17 @@ public class OverpassDownloadReaderTest {
                 "  way[\"historic\"=\"ringfort\"];\n" +
                 ");\n" +
                 "out body;"));
+    }
+
+    /**
+     * Unit test of {@link OverpassDownloadReader#searchName(java.util.List)}
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testSearchName() throws Exception {
+        try (StringReader reader = new StringReader(NameFinderTest.SAMPLE)) {
+            assertEquals(1942586L,
+                    OverpassDownloadReader.searchName(NameFinder.parseSearchResults(reader)).getOsmId().getUniqueId());
+        }
     }
 }
