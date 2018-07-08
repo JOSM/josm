@@ -323,6 +323,10 @@ public final class KeyboardUtils {
         addLatinCharacters(map);
         addSymbolCharacters(map);
 
+        if (locale == null) {
+            locale = I18n.getOriginalLocale();
+        }
+
         // Detect current script
         // https://en.wikipedia.org/wiki/ISO_15924#List_of_codes
         switch (locale.getScript()) {
