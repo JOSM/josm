@@ -12,6 +12,9 @@ import java.awt.image.BufferedImage
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 import javax.imageio.ImageIO
 
@@ -52,7 +55,6 @@ import org.openstreetmap.josm.tools.Territories
 import org.openstreetmap.josm.tools.Utils
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import groovy.cli.commons.CliBuilder
 import groovy.json.JsonBuilder
 
 class TagInfoExtract {
@@ -367,7 +369,7 @@ class TagInfoExtract {
                 contact_name: "JOSM developer team",
                 contact_email: "josm-dev@openstreetmap.org",
         ]
-        json data_format: 1, data_updated: new Date().format("yyyyMMdd'T'hhmmss'Z'", TimeZone.getTimeZone('UTC')), project: project, tags: tags
+        json data_format: 1, data_updated: DateTimeFormatter.ofPattern("yyyyMMdd'T'hhmmss'Z'").withZone(ZoneId.of("Z")).format(Instant.now()), project: project, tags: tags
 
         if (output_file != null) {
             json.writeTo(output_file)

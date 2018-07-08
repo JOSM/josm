@@ -790,7 +790,7 @@ Build-Date: ${build.tstamp}
         <attribute name="output"/>
         <sequential>
             <echo message="Generating Taginfo for type @{type} to @{output}"/>
-            <groovy src="${taginfoextract}" classpath="${dist.jar}:${spotbugs.dir}/spotbugs-annotations.jar">
+            <groovy src="${taginfoextract}" classpath="${dist.jar};${toString:groovy.classpath};${spotbugs.dir}/spotbugs-annotations.jar">
                 <arg value="-t"/>
                 <arg value="@{type}"/>
                 <arg value="--noexit"/>
@@ -804,7 +804,8 @@ Build-Date: ${build.tstamp}
     </macrodef>
 
     <target name="taginfo" depends="dist">
-        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${toString:groovy.classpath};${tools.dir}/commons-cli-1.3.1.jar"/>
+        <!-- http://docs.groovy-lang.org/2.5.0/html/documentation/#_the_groovy_ant_task -->
+        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="groovy.classpath"/>
         <property name="taginfoextract" value="scripts/TagInfoExtract.groovy"/>
         <property name="imgurlprefix" value="http://josm.openstreetmap.de/download/taginfo/taginfo-img"/>
         <_taginfo type="mappaint" output="taginfo_style.json"/>
@@ -813,7 +814,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="imageryindex" depends="init-properties">
-        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${toString:groovy.classpath};${tools.dir}/commons-cli-1.3.1.jar"/>
+        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="groovy.classpath"/>
         <echo message="Checking editor imagery difference"/>
         <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.jar}">
                 <arg value="-noeli"/>
