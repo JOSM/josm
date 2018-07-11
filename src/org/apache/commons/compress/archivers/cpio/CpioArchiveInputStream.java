@@ -393,7 +393,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
                                   + ArchiveUtils.sanitize(name)
                                   + " Occured at byte: " + getBytesRead());
         }
-        skip(ret.getHeaderPadCount());
+        skip(ret.getHeaderPadCount(namesize - 1));
 
         return ret;
     }
@@ -449,7 +449,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
                                   + ArchiveUtils.sanitize(name)
                                   + "Occured at byte: " + getBytesRead());
         }
-        skip(ret.getHeaderPadCount());
+        skip(ret.getHeaderPadCount(namesize - 1));
 
         return ret;
     }
