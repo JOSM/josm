@@ -10,10 +10,6 @@ import java.awt.event.KeyEvent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -22,6 +18,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 9496
  */
 public class DownloadIncompleteMembersAction extends AbstractRelationEditorAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code DownloadIncompleteMembersAction}.
@@ -31,9 +28,8 @@ public class DownloadIncompleteMembersAction extends AbstractRelationEditorActio
      * @param layer OSM data layer
      * @param editor relation editor
      */
-    public DownloadIncompleteMembersAction(MemberTable memberTable, MemberTableModel memberTableModel, String actionMapKey,
-            OsmDataLayer layer, IRelationEditor editor) {
-        super(memberTable, memberTableModel, actionMapKey, layer, editor);
+    public DownloadIncompleteMembersAction(IRelationEditorActionAccess editorAccess, String actionMapKey) {
+        super(editorAccess, actionMapKey, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);
         Shortcut sc = Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
             KeyEvent.VK_HOME, Shortcut.ALT);
         sc.setAccelerator(this);
@@ -48,15 +44,15 @@ public class DownloadIncompleteMembersAction extends AbstractRelationEditorActio
         if (!isEnabled())
             return;
         MainApplication.worker.submit(new DownloadRelationMemberTask(
-                editor.getRelation(),
-                memberTableModel.getIncompleteMemberPrimitives(),
-                layer,
-                (Dialog) editor)
+        		getEditor().getRelation(),
+                getMemberTableModel().getIncompleteMemberPrimitives(),
+                getLayer(),
+                (Dialog) getEditor())
         );
     }
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(memberTableModel.hasIncompleteMembers() && canDownload());
+        setEnabled(getMemberTableModel().hasIncompleteMembers() && canDownload());
     }
 }

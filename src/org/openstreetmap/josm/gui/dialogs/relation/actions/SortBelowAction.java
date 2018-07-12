@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -14,14 +12,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class SortBelowAction extends AbstractRelationEditorAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code SortBelowAction}.
      * @param memberTable member table
      * @param memberTableModel member table model
      */
-    public SortBelowAction(MemberTable memberTable, MemberTableModel memberTableModel) {
-        super(memberTable, memberTableModel, null);
+    public SortBelowAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);
         new ImageProvider("dialogs", "sort_below").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Sort below"));
         putValue(SHORT_DESCRIPTION, tr("Sort the selected relation members and all members below"));
@@ -30,11 +29,16 @@ public class SortBelowAction extends AbstractRelationEditorAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        memberTableModel.sortBelow();
+    	editorAccess.getMemberTableModel().sortBelow();
     }
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(memberTableModel.getRowCount() > 0 && !memberTableModel.getSelectionModel().isSelectionEmpty());
+        setEnabled(editorAccess.getMemberTableModel().getRowCount() > 0 && !editorAccess.getMemberTableModel().getSelectionModel().isSelectionEmpty());
+    }
+    
+    @Override
+    public boolean isExpertOnly() {
+    	return true;
     }
 }

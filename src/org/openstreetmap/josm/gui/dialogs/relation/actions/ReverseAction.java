@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -14,14 +12,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class ReverseAction extends AbstractRelationEditorAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code ReverseAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
+     * @param editorAccess
      */
-    public ReverseAction(MemberTable memberTable, MemberTableModel memberTableModel) {
-        super(memberTable, memberTableModel, null);
+    public ReverseAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);
+
         putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
         new ImageProvider("dialogs/relation", "reverse").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Reverse"));
@@ -30,11 +29,11 @@ public class ReverseAction extends AbstractRelationEditorAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        memberTableModel.reverse();
+        editorAccess.getMemberTableModel().reverse();
     }
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(memberTableModel.getRowCount() > 0);
+        setEnabled(editorAccess.getMemberTableModel().getRowCount() > 0);
     }
 }

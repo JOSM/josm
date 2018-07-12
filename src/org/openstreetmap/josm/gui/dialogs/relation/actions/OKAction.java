@@ -5,12 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.TagEditorModel;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -18,6 +12,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Apply the updates and close the dialog.
  */
 public class OKAction extends SavingAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code OKAction}.
@@ -28,9 +23,8 @@ public class OKAction extends SavingAction {
      * @param editor relation editor
      * @param tfRole role text field
      */
-    public OKAction(MemberTable memberTable, MemberTableModel memberTableModel, TagEditorModel tagModel, OsmDataLayer layer,
-            IRelationEditor editor, AutoCompletingTextField tfRole) {
-        super(memberTable, memberTableModel, tagModel, layer, editor, tfRole);
+    public OKAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess);
         putValue(SHORT_DESCRIPTION, tr("Apply the updates and close the dialog"));
         new ImageProvider("ok").getResource().attachImageIcon(this);
         putValue(NAME, tr("OK"));
@@ -40,7 +34,7 @@ public class OKAction extends SavingAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Config.getPref().put("relation.editor.generic.lastrole", tfRole.getText());
-        memberTable.stopHighlighting();
+        editorAccess.getMemberTable().stopHighlighting();
         if (!applyChanges())
             return;
         hideEditor();

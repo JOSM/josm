@@ -10,10 +10,7 @@ import java.util.HashSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -21,6 +18,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class EditAction extends AbstractRelationEditorAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code EditAction}.
@@ -28,8 +26,8 @@ public class EditAction extends AbstractRelationEditorAction {
      * @param memberTableModel member table model
      * @param layer layer
      */
-    public EditAction(MemberTable memberTable, MemberTableModel memberTableModel, OsmDataLayer layer) {
-        super(memberTable, memberTableModel, null, layer, null);
+    public EditAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);
         putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
         new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
         updateEnabledState();
@@ -37,13 +35,14 @@ public class EditAction extends AbstractRelationEditorAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(memberTable.getSelectedRowCount() == 1
-                && memberTableModel.isEditableRelation(memberTable.getSelectedRow()));
+        setEnabled(editorAccess.getMemberTable().getSelectedRowCount() == 1
+				&& editorAccess.getMemberTableModel()
+						.isEditableRelation(editorAccess.getMemberTable().getSelectedRow()));
     }
 
     protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
         Collection<RelationMember> members = new HashSet<>();
-        Collection<OsmPrimitive> selection = layer.data.getSelected();
+        Collection<OsmPrimitive> selection = getLayer().data.getSelected();
         for (RelationMember member: r.getMembers()) {
             if (selection.contains(member.getMember())) {
                 members.add(member);
@@ -56,16 +55,16 @@ public class EditAction extends AbstractRelationEditorAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        int idx = memberTable.getSelectedRow();
+        int idx = editorAccess.getMemberTable().getSelectedRow();
         if (idx < 0)
             return;
-        OsmPrimitive primitive = memberTableModel.getReferredPrimitive(idx);
+        OsmPrimitive primitive = editorAccess.getMemberTableModel().getReferredPrimitive(idx);
         if (!(primitive instanceof Relation))
             return;
         Relation r = (Relation) primitive;
         if (r.isIncomplete())
             return;
 
-        RelationEditor.getEditor(layer, r, getMembersForCurrentSelection(r)).setVisible(true);
+        RelationEditor.getEditor(getLayer(), r, getMembersForCurrentSelection(r)).setVisible(true);
     }
 }

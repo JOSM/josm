@@ -23,6 +23,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -48,7 +49,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -75,6 +75,8 @@ import org.openstreetmap.josm.gui.dialogs.relation.actions.DownloadIncompleteMem
 import org.openstreetmap.josm.gui.dialogs.relation.actions.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.DuplicateRelationAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.EditAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.IRelationEditorActionAccess;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.IRelationEditorActionGroup;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.MoveDownAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.MoveUpAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.OKAction;
@@ -92,6 +94,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.actions.SortBelowAction;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -220,12 +223,12 @@ public class GenericRelationEditor extends RelationEditor {
         selectionTable = new SelectionTable(selectionTableModel, memberTableModel);
         selectionTable.setRowHeight(ce.getEditor().getPreferredSize().height);
 
-        leftButtonToolbar = new LeftButtonToolbar(memberTable, memberTableModel, this);
+        leftButtonToolbar = new LeftButtonToolbar(new RelationEditorActionAccess());
         tfRole = buildRoleTextField(this);
 
         JSplitPane pane = buildSplitPane(
                 buildTagEditorPanel(tagEditorPanel),
-                buildMemberEditorPanel(memberTable, memberTableModel, selectionTable, selectionTableModel, this, leftButtonToolbar, tfRole),
+                buildMemberEditorPanel(leftButtonToolbar, new RelationEditorActionAccess()),
                 this);
         pane.setPreferredSize(new Dimension(100, 100));
 
@@ -247,16 +250,18 @@ public class GenericRelationEditor extends RelationEditor {
                 referrerBrowser.init();
             }
         });
+        
+        IRelationEditorActionAccess actionAccess = new RelationEditorActionAccess();
 
-        refreshAction = new RefreshAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this);
-        applyAction = new ApplyAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this);
-        selectAction = new SelectAction(getLayer(), this);
-        duplicateAction = new DuplicateRelationAction(memberTableModel, tagEditorPanel.getModel(), getLayer());
-        deleteAction = new DeleteCurrentRelationAction(getLayer(), this);
+        refreshAction = new RefreshAction(actionAccess);
+        applyAction = new ApplyAction(actionAccess);
+        selectAction = new SelectAction(actionAccess);
+        duplicateAction = new DuplicateRelationAction(actionAccess);
+        deleteAction = new DeleteCurrentRelationAction(actionAccess);
         addPropertyChangeListener(deleteAction);
 
-        okAction = new OKAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this, tfRole);
-        cancelAction = new CancelAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this, tfRole);
+        okAction = new OKAction(actionAccess);
+        cancelAction = new CancelAction(actionAccess);
 
         getContentPane().add(buildToolBar(refreshAction, applyAction, selectAction, duplicateAction, deleteAction), BorderLayout.NORTH);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -287,8 +292,10 @@ public class GenericRelationEditor extends RelationEditor {
         KeyStroke key = Shortcut.getPasteKeyStroke();
         if (key != null) {
             // handle uncommon situation, that user has no keystroke assigned to paste
-            registerCopyPasteAction(new PasteMembersAction(memberTable, getLayer(), this) {
-                @Override
+            registerCopyPasteAction(new PasteMembersAction(actionAccess) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
                 public void actionPerformed(ActionEvent e) {
                     super.actionPerformed(e);
                     tfRole.requestFocusInWindow();
@@ -298,7 +305,7 @@ public class GenericRelationEditor extends RelationEditor {
         key = Shortcut.getCopyKeyStroke();
         if (key != null) {
             // handle uncommon situation, that user has no keystroke assigned to copy
-            registerCopyPasteAction(new CopyMembersAction(memberTableModel, getLayer(), this),
+            registerCopyPasteAction(new CopyMembersAction(actionAccess),
                     "COPY_MEMBERS", key, getRootPane(), memberTable, selectionTable);
         }
         tagEditorPanel.setNextFocusComponent(memberTable);
@@ -446,21 +453,15 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel for the relation member editor
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param selectionTable selection table
-     * @param selectionTableModel selection table model
-     * @param re relation editor
      * @param leftButtonToolbar left button toolbar
-     * @param tfRole role text field
+     * @param editorAccess The relation editor
      *
      * @return the panel for the relation member editor
      */
-    protected static JPanel buildMemberEditorPanel(final MemberTable memberTable, MemberTableModel memberTableModel,
-            SelectionTable selectionTable, SelectionTableModel selectionTableModel, IRelationEditor re,
-            LeftButtonToolbar leftButtonToolbar, final AutoCompletingTextField tfRole) {
+    protected static JPanel buildMemberEditorPanel(
+            LeftButtonToolbar leftButtonToolbar, IRelationEditorActionAccess editorAccess) {
         final JPanel pnl = new JPanel(new GridBagLayout());
-        final JScrollPane scrollPane = new JScrollPane(memberTable);
+        final JScrollPane scrollPane = new JScrollPane(editorAccess.getMemberTable());
 
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
@@ -494,15 +495,15 @@ public class GenericRelationEditor extends RelationEditor {
         // --- role editing
         JPanel p3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         p3.add(new JLabel(tr("Apply Role:")));
-        p3.add(tfRole);
-        SetRoleAction setRoleAction = new SetRoleAction(memberTable, memberTableModel, tfRole);
-        memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
-        tfRole.getDocument().addDocumentListener(setRoleAction);
-        tfRole.addActionListener(setRoleAction);
-        memberTableModel.getSelectionModel().addListSelectionListener(
-                e -> tfRole.setEnabled(memberTable.getSelectedRowCount() > 0)
+        p3.add(editorAccess.getTextFieldRole());
+        SetRoleAction setRoleAction = new SetRoleAction(editorAccess);
+        editorAccess.getMemberTableModel().getSelectionModel().addListSelectionListener(setRoleAction);
+        editorAccess.getTextFieldRole().getDocument().addDocumentListener(setRoleAction);
+        editorAccess.getTextFieldRole().addActionListener(setRoleAction);
+        editorAccess.getMemberTableModel().getSelectionModel().addListSelectionListener(
+                e -> editorAccess.getTextFieldRole().setEnabled(editorAccess.getMemberTable().getSelectedRowCount() > 0)
         );
-        tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
+        editorAccess.getTextFieldRole().setEnabled(editorAccess.getMemberTable().getSelectedRowCount() > 0);
         JButton btnApply = new JButton(setRoleAction);
         btnApply.setPreferredSize(new Dimension(20, 20));
         btnApply.setText("");
@@ -536,7 +537,7 @@ public class GenericRelationEditor extends RelationEditor {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
         gc.weighty = 1.0;
-        pnl2.add(new ScrollViewport(buildSelectionControlButtonToolbar(memberTable, memberTableModel, selectionTableModel, re),
+        pnl2.add(new ScrollViewport(buildSelectionControlButtonToolbar(editorAccess),
                 ScrollViewport.VERTICAL_DIRECTION), gc);
 
         gc.gridx = 1;
@@ -544,14 +545,14 @@ public class GenericRelationEditor extends RelationEditor {
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
-        pnl2.add(buildSelectionTablePanel(selectionTable), gc);
+        pnl2.add(buildSelectionTablePanel(editorAccess.getSelectionTable()), gc);
 
         final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(pnl);
         splitPane.setRightComponent(pnl2);
         splitPane.setOneTouchExpandable(false);
-        if (re instanceof Window) {
-            ((Window) re).addWindowListener(new WindowAdapter() {
+        if (editorAccess.getEditor() instanceof Window) {
+            ((Window) editorAccess.getEditor()).addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowOpened(WindowEvent e) {
                     // has to be called when the window is visible, otherwise no effect
@@ -607,79 +608,52 @@ public class GenericRelationEditor extends RelationEditor {
      * The toolbar with the buttons on the left
      */
     static class LeftButtonToolbar extends JToolBar {
+		private static final long serialVersionUID = 1L;
 
-        /**
-         * Button for performing the {@link org.openstreetmap.josm.gui.dialogs.relation.actions.SortBelowAction}.
-         */
-        final JButton sortBelowButton;
-
-        /**
+		/**
          * Constructs a new {@code LeftButtonToolbar}.
-         * @param memberTable member table
-         * @param memberTableModel member table model
          * @param re relation editor
          */
-        LeftButtonToolbar(MemberTable memberTable, MemberTableModel memberTableModel, IRelationEditor re) {
+        LeftButtonToolbar(IRelationEditorActionAccess editorAccess) {
             setOrientation(JToolBar.VERTICAL);
             setFloatable(false);
 
-            // -- move up action
-            MoveUpAction moveUpAction = new MoveUpAction(memberTable, memberTableModel, "moveUp");
-            memberTableModel.getSelectionModel().addListSelectionListener(moveUpAction);
-            add(moveUpAction);
+            List<IRelationEditorActionGroup> groups = new ArrayList<>();
+            // Move
+            groups.add(buildNativeGroup(10,
+            		new MoveUpAction(editorAccess, "moveUp"),
+            		new MoveDownAction(editorAccess, "moveDown")
+            		));
+            // Edit
+            groups.add(buildNativeGroup(20,
+            		new EditAction(editorAccess),
+            		new RemoveAction(editorAccess, "removeSelected")
+            		));
+            // Sort
+            groups.add(buildNativeGroup(30,
+            		new SortAction(editorAccess),
+            		new SortBelowAction(editorAccess)
+            		));
+            // Reverse
+            groups.add(buildNativeGroup(40,
+            		new ReverseAction(editorAccess)
+            		));
+            // Download
+            groups.add(buildNativeGroup(50,
+            		new DownloadIncompleteMembersAction(editorAccess, "downloadIncomplete"),
+            		new DownloadSelectedIncompleteMembersAction(editorAccess)
+            		));
+            groups.addAll(RelationEditorHooks.getMemberActions());
+            
+            IRelationEditorActionGroup.fillToolbar(this, groups, editorAccess);
+            
 
-            // -- move down action
-            MoveDownAction moveDownAction = new MoveDownAction(memberTable, memberTableModel, "moveDown");
-            memberTableModel.getSelectionModel().addListSelectionListener(moveDownAction);
-            add(moveDownAction);
-
-            addSeparator();
-
-            // -- edit action
-            EditAction editAction = new EditAction(memberTable, memberTableModel, re.getLayer());
-            memberTableModel.getSelectionModel().addListSelectionListener(editAction);
-            add(editAction);
-
-            // -- delete action
-            RemoveAction removeSelectedAction = new RemoveAction(memberTable, memberTableModel, "removeSelected");
-            memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
-            add(removeSelectedAction);
-
-            addSeparator();
-            // -- sort action
-            SortAction sortAction = new SortAction(memberTable, memberTableModel);
-            memberTableModel.addTableModelListener(sortAction);
-            add(sortAction);
-            final SortBelowAction sortBelowAction = new SortBelowAction(memberTable, memberTableModel);
-            memberTableModel.addTableModelListener(sortBelowAction);
-            memberTableModel.getSelectionModel().addListSelectionListener(sortBelowAction);
-            sortBelowButton = add(sortBelowAction);
-
-            // -- reverse action
-            ReverseAction reverseAction = new ReverseAction(memberTable, memberTableModel);
-            memberTableModel.addTableModelListener(reverseAction);
-            add(reverseAction);
-
-            addSeparator();
-
-            // -- download action
-            DownloadIncompleteMembersAction downloadIncompleteMembersAction = new DownloadIncompleteMembersAction(
-                    memberTable, memberTableModel, "downloadIncomplete", re.getLayer(), re);
-            memberTable.getModel().addTableModelListener(downloadIncompleteMembersAction);
-            add(downloadIncompleteMembersAction);
-
-            // -- download selected action
-            DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction(
-                    memberTable, memberTableModel, null, re.getLayer(), re);
-            memberTable.getModel().addTableModelListener(downloadSelectedIncompleteMembersAction);
-            memberTable.getSelectionModel().addListSelectionListener(downloadSelectedIncompleteMembersAction);
-            add(downloadSelectedIncompleteMembersAction);
-
-            InputMap inputMap = memberTable.getInputMap(MemberTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            inputMap.put((KeyStroke) removeSelectedAction.getValue(AbstractAction.ACCELERATOR_KEY), "removeSelected");
-            inputMap.put((KeyStroke) moveUpAction.getValue(AbstractAction.ACCELERATOR_KEY), "moveUp");
-            inputMap.put((KeyStroke) moveDownAction.getValue(AbstractAction.ACCELERATOR_KEY), "moveDown");
-            inputMap.put((KeyStroke) downloadIncompleteMembersAction.getValue(AbstractAction.ACCELERATOR_KEY), "downloadIncomplete");
+            InputMap inputMap = editorAccess.getMemberTable().getInputMap(MemberTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            inputMap.put((KeyStroke) new RemoveAction(editorAccess, "removeSelected").getValue(AbstractAction.ACCELERATOR_KEY), "removeSelected");
+            inputMap.put((KeyStroke) new MoveUpAction(editorAccess, "moveUp").getValue(AbstractAction.ACCELERATOR_KEY), "moveUp");
+            inputMap.put((KeyStroke) new MoveDownAction(editorAccess, "moveDown").getValue(AbstractAction.ACCELERATOR_KEY), "moveDown");
+            inputMap.put((KeyStroke) new DownloadIncompleteMembersAction(
+            		editorAccess, "downloadIncomplete").getValue(AbstractAction.ACCELERATOR_KEY), "downloadIncomplete");
         }
     }
 
@@ -692,60 +666,42 @@ public class GenericRelationEditor extends RelationEditor {
      *
      * @return control buttons panel for selection/members
      */
-    protected static JToolBar buildSelectionControlButtonToolbar(MemberTable memberTable,
-            MemberTableModel memberTableModel, SelectionTableModel selectionTableModel, IRelationEditor re) {
+    protected static JToolBar buildSelectionControlButtonToolbar(IRelationEditorActionAccess editorAccess) {
         JToolBar tb = new JToolBar(JToolBar.VERTICAL);
         tb.setFloatable(false);
 
-        // -- add at start action
-        AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction(
-                memberTableModel, selectionTableModel, re);
-        selectionTableModel.addTableModelListener(addSelectionAction);
-        tb.add(addSelectionAction);
-
-        // -- add before selected action
-        AddSelectedBeforeSelection addSelectedBeforeSelectionAction = new AddSelectedBeforeSelection(
-                memberTableModel, selectionTableModel, re);
-        selectionTableModel.addTableModelListener(addSelectedBeforeSelectionAction);
-        memberTableModel.getSelectionModel().addListSelectionListener(addSelectedBeforeSelectionAction);
-        tb.add(addSelectedBeforeSelectionAction);
-
-        // -- add after selected action
-        AddSelectedAfterSelection addSelectedAfterSelectionAction = new AddSelectedAfterSelection(
-                memberTableModel, selectionTableModel, re);
-        selectionTableModel.addTableModelListener(addSelectedAfterSelectionAction);
-        memberTableModel.getSelectionModel().addListSelectionListener(addSelectedAfterSelectionAction);
-        tb.add(addSelectedAfterSelectionAction);
-
-        // -- add at end action
-        AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction(
-                memberTableModel, selectionTableModel, re);
-        selectionTableModel.addTableModelListener(addSelectedAtEndAction);
-        tb.add(addSelectedAtEndAction);
-
-        tb.addSeparator();
-
-        // -- select members action
-        SelectedMembersForSelectionAction selectMembersForSelectionAction = new SelectedMembersForSelectionAction(
-                memberTableModel, selectionTableModel, re.getLayer());
-        selectionTableModel.addTableModelListener(selectMembersForSelectionAction);
-        memberTableModel.addTableModelListener(selectMembersForSelectionAction);
-        tb.add(selectMembersForSelectionAction);
-
-        // -- select action
-        SelectPrimitivesForSelectedMembersAction selectAction = new SelectPrimitivesForSelectedMembersAction(
-                memberTable, memberTableModel, re.getLayer());
-        memberTable.getSelectionModel().addListSelectionListener(selectAction);
-        tb.add(selectAction);
-
-        tb.addSeparator();
-
-        // -- remove selected action
-        RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction(memberTableModel, selectionTableModel, re.getLayer());
-        selectionTableModel.addTableModelListener(removeSelectedAction);
-        tb.add(removeSelectedAction);
-
+		List<IRelationEditorActionGroup> groups = new ArrayList<>();
+		groups.add(buildNativeGroup(10,
+				new AddSelectedAtStartAction(editorAccess),
+				new AddSelectedBeforeSelection(editorAccess),
+				new AddSelectedAfterSelection(editorAccess),
+				new AddSelectedAtEndAction(editorAccess)
+				));
+		groups.add(buildNativeGroup(20,
+				new SelectedMembersForSelectionAction(editorAccess),
+				new SelectPrimitivesForSelectedMembersAction(editorAccess)
+				));
+		groups.add(buildNativeGroup(30,
+				new RemoveSelectedAction(editorAccess)
+				));
+		groups.addAll(RelationEditorHooks.getSelectActions());
+        
+        IRelationEditorActionGroup.fillToolbar(tb, groups, editorAccess);
         return tb;
+    }
+    
+    private static IRelationEditorActionGroup buildNativeGroup(int order, AbstractRelationEditorAction... actions) {
+    	return new IRelationEditorActionGroup() {
+    		@Override
+    		public int order() {
+    			return order;
+    		}
+    		
+			@Override
+			public List<AbstractRelationEditorAction> getActions(IRelationEditorActionAccess editorAccess) {
+				return Arrays.asList(actions);
+			}
+		};
     }
 
     @Override
@@ -764,7 +720,6 @@ public class GenericRelationEditor extends RelationEditor {
         super.setVisible(visible);
         Clipboard clipboard = ClipboardUtils.getClipboard();
         if (visible) {
-            leftButtonToolbar.sortBelowButton.setVisible(ExpertToggleAction.isExpert());
             RelationDialogManager.getRelationDialogManager().positionOnScreen(this);
             if (windowMenuItem == null) {
                 windowMenuItem = addToWindowMenu(this, getLayer().getName());
@@ -805,7 +760,9 @@ public class GenericRelationEditor extends RelationEditor {
                 "dialogs/relationlist",
                 tr("Focus Relation Editor with relation ''{0}'' in layer ''{1}''", name, layerName),
                 null, false, false) {
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 ((RelationEditor) getValue("relationEditor")).setVisible(true);
             }
@@ -987,8 +944,47 @@ public class GenericRelationEditor extends RelationEditor {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-                new EditAction(memberTable, memberTableModel, getLayer()).actionPerformed(null);
+                new EditAction(new RelationEditorActionAccess()).actionPerformed(null);
             }
         }
+    }
+    
+    private class RelationEditorActionAccess implements IRelationEditorActionAccess {
+
+		@Override
+		public MemberTable getMemberTable() {
+			return memberTable;
+		}
+
+		@Override
+		public MemberTableModel getMemberTableModel() {
+			return memberTableModel;
+		}
+
+		@Override
+		public SelectionTable getSelectionTable() {
+			return selectionTable;
+		}
+
+		@Override
+		public SelectionTableModel getSelectionTableModel() {
+			return selectionTableModel;
+		}
+
+		@Override
+		public IRelationEditor getEditor() {
+			return GenericRelationEditor.this;
+		}
+
+		@Override
+		public TagEditorModel getTagModel() {
+			return tagEditorPanel.getModel();
+		}
+
+		@Override
+		public AutoCompletingTextField getTextFieldRole() {
+			return tfRole;
+		}
+    	
     }
 }

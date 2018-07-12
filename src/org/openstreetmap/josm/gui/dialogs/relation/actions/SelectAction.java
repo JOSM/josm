@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -15,14 +13,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 12933
  */
 public class SelectAction extends AbstractRelationEditorAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code SelectAction}.
      * @param layer OSM data layer
      * @param editor relation editor
      */
-    public SelectAction(OsmDataLayer layer, IRelationEditor editor) {
-        super(null, null, null, layer, editor);
+    public SelectAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess);
         putValue(NAME, tr("Select"));
         putValue(SHORT_DESCRIPTION, tr("Select the currently edited relation"));
         new ImageProvider("dialogs", "select").getResource().attachImageIcon(this, true);
@@ -31,14 +30,14 @@ public class SelectAction extends AbstractRelationEditorAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Relation toSelect = editor.getRelation();
+        Relation toSelect = editorAccess.getEditor().getRelation();
         if (toSelect == null)
             return;
-        layer.data.setSelected(toSelect);
+        getLayer().data.setSelected(toSelect);
     }
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(editor.getRelationSnapshot() != null);
+        setEnabled(editorAccess.getEditor().getRelationSnapshot() != null);
     }
 }

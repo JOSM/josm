@@ -10,31 +10,21 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbortException;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.SelectionTable;
-import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * Abstract superclass of "Add from selection" actions.
  * @since 9496
  */
 abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
+	private static final long serialVersionUID = 1L;
 
-    protected final SelectionTable selectionTable;
-    protected final SelectionTableModel selectionTableModel;
-
-    protected AddFromSelectionAction(MemberTable memberTable, MemberTableModel memberTableModel, SelectionTable selectionTable,
-            SelectionTableModel selectionTableModel, String actionMapKey, OsmDataLayer layer, IRelationEditor editor) {
-        super(memberTable, memberTableModel, actionMapKey, layer, editor);
-        this.selectionTable = selectionTable;
-        this.selectionTableModel = selectionTableModel;
+    protected AddFromSelectionAction(IRelationEditorActionAccess editorAccess,
+			IRelationEditorUpdateOn... updateOn) {
+        super(editorAccess, updateOn);
     }
 
     protected boolean isPotentialDuplicate(OsmPrimitive primitive) {
-        return memberTableModel.hasMembersReferringTo(Collections.singleton(primitive));
+        return editorAccess.getMemberTableModel().hasMembersReferringTo(Collections.singleton(primitive));
     }
 
     protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
@@ -43,7 +33,7 @@ abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
         List<OsmPrimitive> ret = new ArrayList<>();
         ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");
         for (OsmPrimitive primitive : primitives) {
-            if (primitive instanceof Relation && editor.getRelation() != null && editor.getRelation().equals(primitive)) {
+            if (primitive instanceof Relation && editorAccess.getEditor().getRelation() != null && editorAccess.getEditor().getRelation().equals(primitive)) {
                 GenericRelationEditor.warnOfCircularReferences(primitive);
                 continue;
             }

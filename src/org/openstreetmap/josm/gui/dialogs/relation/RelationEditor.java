@@ -5,10 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -16,15 +13,15 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract relation editor.
  * @since 1599
  */
 public abstract class RelationEditor extends ExtendedDialog implements IRelationEditor {
+	private static final long serialVersionUID = 1L;
 
-    /** the property name for the current relation.
+	/** the property name for the current relation.
      * @see #setRelation(Relation)
      * @see #getRelation()
      */
@@ -34,9 +31,6 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
      * @see #getRelationSnapshot()
      */
     public static final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
-
-    /** the list of registered relation editor classes */
-    private static List<Class<RelationEditor>> editors = new ArrayList<>();
 
     /** The relation that this editor is working on. */
     private transient Relation relation;
@@ -70,28 +64,10 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
     }
 
     /**
-     * Registers a relation editor class. Depending on the type of relation to be edited
-     * {@link #getEditor(OsmDataLayer, Relation, Collection)} will create an instance of
-     * this class.
-     *
-     * @param clazz the class
-     */
-    public void registerRelationEditor(Class<RelationEditor> clazz) {
-        if (clazz != null && !editors.contains(clazz)) {
-            editors.add(clazz);
-        }
-    }
-
-    /**
      * This is a factory method that creates an appropriate RelationEditor instance suitable for editing the relation
      * that was passed in as an argument.
      *
-     * This method is guaranteed to return a working RelationEditor. If no specific editor has been registered for the
-     * type of relation, then a generic editor will be returned.
-     *
-     * Editors can be registered by adding their class to the static list "editors" in the RelationEditor class.
-     * When it comes to editing a relation, all registered editors are queried via their static "canEdit" method whether
-     * they feel responsible for that kind of relation, and if they return true then an instance of that class will be used.
+     * This method is guaranteed to return a working RelationEditor.
      *
      * @param layer the data layer the relation is a member of
      * @param r the relation to be edited
@@ -99,17 +75,6 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
      * @return an instance of RelationEditor suitable for editing that kind of relation
      */
     public static RelationEditor getEditor(OsmDataLayer layer, Relation r, Collection<RelationMember> selectedMembers) {
-        for (Class<RelationEditor> e : editors) {
-            try {
-                Method m = e.getMethod("canEdit", Relation.class);
-                Boolean canEdit = (Boolean) m.invoke(null, r);
-                if (canEdit) {
-                    return e.getConstructor(Relation.class, Collection.class).newInstance(layer, r, selectedMembers);
-                }
-            } catch (ReflectiveOperationException ex) {
-                Logging.warn(ex);
-            }
-        }
         if (RelationDialogManager.getRelationDialogManager().isOpenInEditor(layer, r))
             return RelationDialogManager.getRelationDialogManager().getEditorForRelation(layer, r);
         else {

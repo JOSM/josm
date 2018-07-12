@@ -15,11 +15,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -28,6 +23,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 9657
  */
 public class RefreshAction extends SavingAction implements CommandQueueListener {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code RefreshAction}.
@@ -37,18 +33,17 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
      * @param editor relation editor
      * @param tagModel tag editor model
      */
-    public RefreshAction(MemberTable memberTable, MemberTableModel memberTableModel, TagEditorModel tagModel, OsmDataLayer layer,
-            IRelationEditor editor) {
-        super(memberTable, memberTableModel, tagModel, layer, editor, null);
+    public RefreshAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess);
         // CHECKSTYLE.OFF: LineLength
         Shortcut sc = Shortcut.registerShortcut("relationeditor:refresh", tr("Relation Editor: Refresh"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
         // CHECKSTYLE.ON: LineLength
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tr("Refresh relation from data layer"), sc));
         new ImageProvider("dialogs/refresh").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Refresh"));
-        if (editor instanceof JComponent) {
-            ((JComponent) editor).getRootPane().getActionMap().put("refresh", this);
-            ((JComponent) editor).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "refresh");
+        if (editorAccess.getEditor() instanceof JComponent) {
+            ((JComponent) editorAccess.getEditor()).getRootPane().getActionMap().put("refresh", this);
+            ((JComponent) editorAccess.getEditor()).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "refresh");
         }
         MainApplication.undoRedo.addCommandQueueListener(this);
         updateEnabledState();
@@ -56,7 +51,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Relation relation = editor.getRelation();
+        Relation relation = editorAccess.getEditor().getRelation();
         if (relation == null)
             return;
         if (relation.isDeleted()) {
@@ -67,13 +62,13 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         }
         if (isEditorDirty() && confirmDiscardDirtyData() != 0)
             return;
-        editor.reloadDataFromRelation();
+        editorAccess.getEditor().reloadDataFromRelation();
     }
 
     @Override
     public void updateEnabledState() {
-        Relation relation = editor.getRelation();
-        Relation snapshot = editor.getRelationSnapshot();
+        Relation relation = editorAccess.getEditor().getRelation();
+        Relation snapshot = editorAccess.getEditor().getRelationSnapshot();
         setEnabled(snapshot != null && (
             !relation.hasEqualTechnicalAttributes(snapshot) ||
             !relation.hasEqualSemanticAttributes(snapshot)
