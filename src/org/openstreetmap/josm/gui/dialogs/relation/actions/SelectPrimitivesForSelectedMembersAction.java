@@ -5,9 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -16,6 +13,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class SelectPrimitivesForSelectedMembersAction extends AbstractRelationEditorAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Select objects for selected relation members.
@@ -23,8 +21,8 @@ public class SelectPrimitivesForSelectedMembersAction extends AbstractRelationEd
      * @param memberTableModel member table model
      * @param layer layer
      */
-    public SelectPrimitivesForSelectedMembersAction(MemberTable memberTable, MemberTableModel memberTableModel, OsmDataLayer layer) {
-        super(memberTable, memberTableModel, null, layer, null);
+    public SelectPrimitivesForSelectedMembersAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);
         putValue(SHORT_DESCRIPTION, tr("Select objects for selected relation members"));
         new ImageProvider("dialogs/relation", "selectprimitives").getResource().attachImageIcon(this, true);
         updateEnabledState();
@@ -32,11 +30,11 @@ public class SelectPrimitivesForSelectedMembersAction extends AbstractRelationEd
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(memberTable.getSelectedRowCount() > 0);
+        setEnabled(editorAccess.getMemberTable().getSelectedRowCount() > 0);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        layer.data.setSelected(memberTableModel.getSelectedChildPrimitives());
+        getLayer().data.setSelected(editorAccess.getMemberTableModel().getSelectedChildPrimitives());
     }
 }

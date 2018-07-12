@@ -9,10 +9,7 @@ import java.util.Optional;
 import javax.swing.TransferHandler.TransferSupport;
 
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTransferHandler;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -20,6 +17,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 9496
  */
 public class PasteMembersAction extends AddFromSelectionAction implements FlavorListener {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code PasteMembersAction}.
@@ -27,8 +25,8 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
      * @param layer OSM data layer
      * @param editor relation editor
      */
-    public PasteMembersAction(MemberTable memberTable, OsmDataLayer layer, IRelationEditor editor) {
-        super(memberTable, null, null, null, null, layer, editor);
+    public PasteMembersAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess);
         updateEnabledState();
     }
 
@@ -42,7 +40,7 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
     }
 
     private TransferSupport getSupport() {
-        return new TransferSupport(memberTable, Optional.ofNullable(ClipboardUtils.getClipboardContent())
+        return new TransferSupport(editorAccess.getMemberTable(), Optional.ofNullable(ClipboardUtils.getClipboardContent())
                 .orElseThrow(() -> new IllegalStateException("Failed to retrieve clipboard content")));
     }
 

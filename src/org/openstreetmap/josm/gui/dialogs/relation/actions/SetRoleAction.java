@@ -12,8 +12,6 @@ import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -22,6 +20,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class SetRoleAction extends AbstractRelationEditorAction implements DocumentListener {
+	private static final long serialVersionUID = 1L;
 
     private final transient AutoCompletingTextField tfRole;
 
@@ -31,9 +30,9 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
      * @param memberTableModel member table model
      * @param tfRole role text field
      */
-    public SetRoleAction(MemberTable memberTable, MemberTableModel memberTableModel, AutoCompletingTextField tfRole) {
-        super(memberTable, memberTableModel, null);
-        this.tfRole = tfRole;
+    public SetRoleAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess);
+        this.tfRole = editorAccess.getTextFieldRole();
         putValue(SHORT_DESCRIPTION, tr("Sets a role for the selected members"));
         new ImageProvider("apply").getResource().attachImageIcon(this);
         putValue(NAME, tr("Apply Role"));
@@ -42,7 +41,7 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(memberTable.getSelectedRowCount() > 0);
+        setEnabled(editorAccess.getMemberTable().getSelectedRowCount() > 0);
     }
 
     protected boolean isEmptyRole() {
@@ -82,10 +81,10 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (isEmptyRole() && !confirmSettingEmptyRole(memberTable.getSelectedRowCount())) {
+        if (isEmptyRole() && !confirmSettingEmptyRole(editorAccess.getMemberTable().getSelectedRowCount())) {
             return;
         }
-        memberTableModel.updateRole(memberTable.getSelectedRows(), tfRole.getText());
+        editorAccess.getMemberTableModel().updateRole(editorAccess.getMemberTable().getSelectedRows(), tfRole.getText());
     }
 
     @Override

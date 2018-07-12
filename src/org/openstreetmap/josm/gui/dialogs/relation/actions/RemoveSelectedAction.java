@@ -6,9 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -16,6 +13,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class RemoveSelectedAction extends AddFromSelectionAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code RemoveSelectedAction}.
@@ -23,8 +21,8 @@ public class RemoveSelectedAction extends AddFromSelectionAction {
      * @param selectionTableModel selection table model
      * @param layer OSM data layer
      */
-    public RemoveSelectedAction(MemberTableModel memberTableModel, SelectionTableModel selectionTableModel, OsmDataLayer layer) {
-        super(null, memberTableModel, null, selectionTableModel, null, layer, null);
+    public RemoveSelectedAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess, IRelationEditorUpdateOn.SELECTION_TABLE_CHANGE);
         putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected objects"));
         new ImageProvider("dialogs/relation", "deletemembers").getResource().attachImageIcon(this, true);
         updateEnabledState();
@@ -32,17 +30,17 @@ public class RemoveSelectedAction extends AddFromSelectionAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = layer.data;
+        DataSet ds = getLayer().data;
         if (ds == null || ds.selectionEmpty()) {
             setEnabled(false);
             return;
         }
         // only enable the action if we have members referring to the selected primitives
-        setEnabled(memberTableModel.hasMembersReferringTo(ds.getSelected()));
+        setEnabled(editorAccess.getMemberTableModel().hasMembersReferringTo(ds.getSelected()));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        memberTableModel.removeMembersReferringTo(selectionTableModel.getSelection());
+    	editorAccess.getMemberTableModel().removeMembersReferringTo(getSelectionTableModel().getSelection());
     }
 }

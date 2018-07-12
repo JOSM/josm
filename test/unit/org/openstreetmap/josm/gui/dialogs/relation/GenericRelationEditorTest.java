@@ -117,34 +117,14 @@ public class GenericRelationEditorTest {
         SelectionTableModel selectionTableModel = new SelectionTableModel(layer);
         SelectionTable selectionTable = new SelectionTable(selectionTableModel, memberTableModel);
 
-        LeftButtonToolbar leftButtonToolbar = new LeftButtonToolbar(memberTable, memberTableModel, re);
-        assertNotNull(leftButtonToolbar.sortBelowButton);
-
         AutoCompletingTextField tfRole = GenericRelationEditor.buildRoleTextField(re);
         assertNotNull(tfRole);
 
         TagEditorPanel tagEditorPanel = new TagEditorPanel(relation, null);
 
         JPanel top = GenericRelationEditor.buildTagEditorPanel(tagEditorPanel);
-        JPanel bottom = GenericRelationEditor.buildMemberEditorPanel(
-                memberTable, memberTableModel, selectionTable, selectionTableModel, re, leftButtonToolbar, tfRole);
         assertNotNull(top);
-        assertNotNull(bottom);
-        assertNotNull(GenericRelationEditor.buildSplitPane(top, bottom, re));
-
         TagEditorModel tagModel = tagEditorPanel.getModel();
 
-        assertNotNull(GenericRelationEditor.buildOkCancelButtonPanel(
-                new OKAction(memberTable, memberTableModel, tagModel, layer, re, tfRole),
-                new CancelAction(memberTable, memberTableModel, tagModel, layer, re, tfRole)));
-        assertNotNull(GenericRelationEditor.buildSelectionControlButtonToolbar(memberTable, memberTableModel, selectionTableModel, re));
-        assertNotNull(GenericRelationEditor.buildSelectionTablePanel(selectionTable));
-
-        assertNotNull(GenericRelationEditor.buildToolBar(
-                new RefreshAction(memberTable, memberTableModel, tagModel, layer, re),
-                new ApplyAction(memberTable, memberTableModel, tagModel, layer, re),
-                new SelectAction(layer, re),
-                new DuplicateRelationAction(memberTableModel, tagModel, layer),
-                new DeleteCurrentRelationAction(layer, re)));
     }
 }

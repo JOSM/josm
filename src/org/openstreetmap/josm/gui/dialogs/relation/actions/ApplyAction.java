@@ -4,23 +4,15 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
-import javax.swing.event.TableModelEvent;
-
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Apply the current updates.
  * @since 9496
  */
-public class ApplyAction extends SavingAction implements PropertyChangeListener {
+public class ApplyAction extends SavingAction {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code ApplyAction}.
@@ -30,36 +22,23 @@ public class ApplyAction extends SavingAction implements PropertyChangeListener 
      * @param editor relation editor
      * @param tagModel tag editor model
      */
-    public ApplyAction(MemberTable memberTable, MemberTableModel memberTableModel, TagEditorModel tagModel, OsmDataLayer layer,
-            IRelationEditor editor) {
-        super(memberTable, memberTableModel, tagModel, layer, editor, null);
+    public ApplyAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE, IRelationEditorUpdateOn.TAG_CHANGE);
         putValue(SHORT_DESCRIPTION, tr("Apply the current updates"));
         new ImageProvider("save").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Apply"));
-        updateEnabledState();
-        memberTableModel.addTableModelListener(this);
-        tagModel.addPropertyChangeListener(this);
+        updateEnabledState();        
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (applyChanges()) {
-            editor.reloadDataFromRelation();
+        	editorAccess.getEditor().reloadDataFromRelation();
         }
     }
 
     @Override
     protected void updateEnabledState() {
         setEnabled(isEditorDirty());
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        updateEnabledState();
-    }
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        updateEnabledState();
     }
 }

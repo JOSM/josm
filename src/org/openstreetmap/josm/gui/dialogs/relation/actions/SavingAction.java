@@ -21,12 +21,8 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -37,15 +33,13 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 9496
  */
 abstract class SavingAction extends AbstractRelationEditorAction {
+	private static final long serialVersionUID = 1L;
 
-    protected final TagEditorModel tagModel;
     protected final AutoCompletingTextField tfRole;
 
-    protected SavingAction(MemberTable memberTable, MemberTableModel memberTableModel, TagEditorModel tagModel, OsmDataLayer layer,
-            IRelationEditor editor, AutoCompletingTextField tfRole) {
-        super(memberTable, memberTableModel, null, layer, editor);
-        this.tagModel = tagModel;
-        this.tfRole = tfRole;
+    protected SavingAction(IRelationEditorActionAccess editorAccess, IRelationEditorUpdateOn... updateOn) {
+        super(editorAccess, updateOn);
+        this.tfRole = editorAccess.getTextFieldRole();
     }
 
     /**
@@ -55,7 +49,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
     protected void applyNewRelation(TagEditorModel tagEditorModel) {
         final Relation newRelation = new Relation();
         tagEditorModel.applyToPrimitive(newRelation);
-        memberTableModel.applyToRelation(newRelation);
+        getMemberTableModel().applyToRelation(newRelation);
         List<RelationMember> newMembers = new ArrayList<>();
         for (RelationMember rm: newRelation.getMembers()) {
             if (!rm.getMember().isDeleted()) {
@@ -72,14 +66,14 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         // tags, don't add an empty relation
         if (newRelation.getMembersCount() == 0 && !newRelation.hasKeys())
             return;
-        MainApplication.undoRedo.add(new AddCommand(layer.getDataSet(), newRelation));
+        MainApplication.undoRedo.add(new AddCommand(getLayer().getDataSet(), newRelation));
 
         // make sure everybody is notified about the changes
         //
-        editor.setRelation(newRelation);
-        if (editor instanceof RelationEditor) {
+        getEditor().setRelation(newRelation);
+        if (getEditor() instanceof RelationEditor) {
             RelationDialogManager.getRelationDialogManager().updateContext(
-                    layer, editor.getRelation(), (RelationEditor) editor);
+                    getLayer(), getEditor().getRelation(), (RelationEditor) getEditor());
         }
         // Relation list gets update in EDT so selecting my be postponed to following EDT run
         SwingUtilities.invokeLater(() -> MainApplication.getMap().relationListDialog.selectRelation(newRelation));
@@ -90,11 +84,11 @@ abstract class SavingAction extends AbstractRelationEditorAction {
      * @param tagEditorModel tag editor model
      */
     protected void applyExistingConflictingRelation(TagEditorModel tagEditorModel) {
-        Relation editedRelation = new Relation(editor.getRelation());
+        Relation editedRelation = new Relation(editorAccess.getEditor().getRelation());
         tagEditorModel.applyToPrimitive(editedRelation);
-        memberTableModel.applyToRelation(editedRelation);
-        Conflict<Relation> conflict = new Conflict<>(editor.getRelation(), editedRelation);
-        MainApplication.undoRedo.add(new ConflictAddCommand(layer.getDataSet(), conflict));
+        editorAccess.getMemberTableModel().applyToRelation(editedRelation);
+        Conflict<Relation> conflict = new Conflict<>(editorAccess.getEditor().getRelation(), editedRelation);
+        MainApplication.undoRedo.add(new ConflictAddCommand(getLayer().getDataSet(), conflict));
     }
 
     /**
@@ -102,10 +96,10 @@ abstract class SavingAction extends AbstractRelationEditorAction {
      * @param tagEditorModel tag editor model
      */
     protected void applyExistingNonConflictingRelation(TagEditorModel tagEditorModel) {
-        Relation originRelation = editor.getRelation();
+        Relation originRelation = editorAccess.getEditor().getRelation();
         Relation editedRelation = new Relation(originRelation);
         tagEditorModel.applyToPrimitive(editedRelation);
-        memberTableModel.applyToRelation(editedRelation);
+        getMemberTableModel().applyToRelation(editedRelation);
         if (!editedRelation.hasEqualSemanticAttributes(originRelation, false)) {
             MainApplication.undoRedo.add(new ChangeCommand(originRelation, editedRelation));
         }
@@ -152,8 +146,8 @@ abstract class SavingAction extends AbstractRelationEditorAction {
                 tr("<html>Layer ''{0}'' already has a conflict for object<br>"
                         + "''{1}''.<br>"
                         + "Please resolve this conflict first, then try again.</html>",
-                        Utils.escapeReservedCharactersHTML(layer.getName()),
-                        Utils.escapeReservedCharactersHTML(editor.getRelation().getDisplayName(DefaultNameFormatter.getInstance()))
+                        Utils.escapeReservedCharactersHTML(getLayer().getName()),
+                        Utils.escapeReservedCharactersHTML(getEditor().getRelation().getDisplayName(DefaultNameFormatter.getInstance()))
                 ),
                 tr("Double conflict"),
                 JOptionPane.WARNING_MESSAGE
@@ -166,35 +160,35 @@ abstract class SavingAction extends AbstractRelationEditorAction {
     }
 
     protected boolean applyChanges() {
-        if (editor.getRelation() == null) {
-            applyNewRelation(tagModel);
+        if (editorAccess.getEditor().getRelation() == null) {
+            applyNewRelation(getTagModel());
         } else if (isEditorDirty()) {
-            if (editor.isDirtyRelation()) {
+            if (editorAccess.getEditor().isDirtyRelation()) {
                 if (confirmClosingBecauseOfDirtyState()) {
-                    if (layer.getConflicts().hasConflictForMy(editor.getRelation())) {
+                    if (getLayer().getConflicts().hasConflictForMy(editorAccess.getEditor().getRelation())) {
                         warnDoubleConflict();
                         return false;
                     }
-                    applyExistingConflictingRelation(tagModel);
+                    applyExistingConflictingRelation(getTagModel());
                     hideEditor();
                 } else
                     return false;
             } else {
-                applyExistingNonConflictingRelation(tagModel);
+                applyExistingNonConflictingRelation(getTagModel());
             }
         }
-        editor.setRelation(editor.getRelation());
+        editorAccess.getEditor().setRelation(editorAccess.getEditor().getRelation());
         return true;
     }
 
     protected void hideEditor() {
-        if (editor instanceof Component) {
-            ((Component) editor).setVisible(false);
+        if (editorAccess.getEditor() instanceof Component) {
+            ((Component) editorAccess.getEditor()).setVisible(false);
         }
     }
 
     protected boolean isEditorDirty() {
-        Relation snapshot = editor.getRelationSnapshot();
-        return (snapshot != null && !memberTableModel.hasSameMembersAs(snapshot)) || tagModel.isDirty();
+        Relation snapshot = editorAccess.getEditor().getRelationSnapshot();
+        return (snapshot != null && !getMemberTableModel().hasSameMembersAs(snapshot)) || getTagModel().isDirty();
     }
 }

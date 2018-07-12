@@ -10,8 +10,6 @@ import java.beans.PropertyChangeListener;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -19,14 +17,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class DeleteCurrentRelationAction extends AbstractRelationEditorAction implements PropertyChangeListener {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code DeleteCurrentRelationAction}.
      * @param layer OSM data layer
      * @param editor relation editor
      */
-    public DeleteCurrentRelationAction(OsmDataLayer layer, IRelationEditor editor) {
-        super(null, null, null, layer, editor);
+    public DeleteCurrentRelationAction(IRelationEditorActionAccess editorAccess) {
+        super(editorAccess);
         putValue(SHORT_DESCRIPTION, tr("Delete the currently edited relation"));
         new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Delete"));
@@ -35,15 +34,15 @@ public class DeleteCurrentRelationAction extends AbstractRelationEditorAction im
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Relation toDelete = editor.getRelation();
+        Relation toDelete = getEditor().getRelation();
         if (toDelete == null)
             return;
-        DeleteAction.deleteRelation(layer, toDelete);
+        DeleteAction.deleteRelation(getLayer(), toDelete);
     }
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(editor.getRelationSnapshot() != null);
+        setEnabled(getEditor().getRelationSnapshot() != null);
     }
 
     @Override
