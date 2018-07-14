@@ -16,8 +16,11 @@ import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditorTest;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
+import org.openstreetmap.josm.gui.dialogs.relation.SelectionTable;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.TagEditorModel;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -34,17 +37,55 @@ public abstract class AbstractRelationEditorActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform();
-
-    protected SelectionTableModel selectionTableModel;
-
-    protected IRelationEditor editor;
-
-    protected MemberTable memberTable;
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().main();
 
     protected OsmDataLayer layer;
 
-    protected MemberTableModel memberTableModel;
+    private SelectionTableModel selectionTableModel;
+    private SelectionTable selectionTable;
+    private IRelationEditor editor;
+    private MemberTable memberTable;
+    private MemberTableModel memberTableModel;
+    private AutoCompletingTextField tfRole;
+    private TagEditorModel tagModel;
+
+    protected final IRelationEditorActionAccess relationEditorAccess = new IRelationEditorActionAccess() {
+
+        @Override
+        public AutoCompletingTextField getTextFieldRole() {
+            return tfRole;
+        }
+
+        @Override
+        public TagEditorModel getTagModel() {
+            return tagModel;
+        }
+
+        @Override
+        public SelectionTableModel getSelectionTableModel() {
+            return selectionTableModel;
+        }
+
+        @Override
+        public SelectionTable getSelectionTable() {
+            return selectionTable;
+        }
+
+        @Override
+        public MemberTableModel getMemberTableModel() {
+            return memberTableModel;
+        }
+
+        @Override
+        public MemberTable getMemberTable() {
+            return memberTable;
+        }
+
+        @Override
+        public IRelationEditor getEditor() {
+            return editor;
+        }
+    };
 
     /**
      * Set up the test data required for common tests using one relation.
@@ -66,9 +107,10 @@ public abstract class AbstractRelationEditorActionTest {
             }
         });
         selectionTableModel = new SelectionTableModel(layer);
-
+        selectionTable = new SelectionTable(selectionTableModel, memberTableModel);
         editor = GenericRelationEditorTest.newRelationEditor(orig, layer);
-
+        tfRole = new AutoCompletingTextField();
+        tagModel = new TagEditorModel();
         memberTable = new MemberTable(layer, editor.getRelation(), memberTableModel);
     }
 }

@@ -16,16 +16,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.LeftButtonToolbar;
-import org.openstreetmap.josm.gui.dialogs.relation.actions.ApplyAction;
-import org.openstreetmap.josm.gui.dialogs.relation.actions.CancelAction;
-import org.openstreetmap.josm.gui.dialogs.relation.actions.DeleteCurrentRelationAction;
-import org.openstreetmap.josm.gui.dialogs.relation.actions.DuplicateRelationAction;
-import org.openstreetmap.josm.gui.dialogs.relation.actions.OKAction;
-import org.openstreetmap.josm.gui.dialogs.relation.actions.RefreshAction;
-import org.openstreetmap.josm.gui.dialogs.relation.actions.SelectAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -111,12 +102,6 @@ public class GenericRelationEditorTest {
         OsmDataLayer layer = new OsmDataLayer(ds, "test", null);
         IRelationEditor re = newRelationEditor(relation, layer);
 
-        MemberTableModel memberTableModel = new MemberTableModel(relation, layer, null);
-        MemberTable memberTable = new MemberTable(layer, relation, memberTableModel);
-
-        SelectionTableModel selectionTableModel = new SelectionTableModel(layer);
-        SelectionTable selectionTable = new SelectionTable(selectionTableModel, memberTableModel);
-
         AutoCompletingTextField tfRole = GenericRelationEditor.buildRoleTextField(re);
         assertNotNull(tfRole);
 
@@ -124,7 +109,6 @@ public class GenericRelationEditorTest {
 
         JPanel top = GenericRelationEditor.buildTagEditorPanel(tagEditorPanel);
         assertNotNull(top);
-        TagEditorModel tagModel = tagEditorPanel.getModel();
-
+        assertNotNull(tagEditorPanel.getModel());
     }
 }
