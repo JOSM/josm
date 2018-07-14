@@ -31,7 +31,7 @@ public class PasteMembersActionTest extends AbstractRelationEditorActionTest {
     public void testEnabledState() {
         copyString();
 
-        PasteMembersAction action = new PasteMembersAction(memberTable, layer, editor);
+        PasteMembersAction action = new PasteMembersAction(relationEditorAccess);
         ClipboardUtils.getClipboard().addFlavorListener(action);
 
         try {
@@ -66,11 +66,11 @@ public class PasteMembersActionTest extends AbstractRelationEditorActionTest {
     @Test
     public void testActionWrongClipboard() {
         copyString();
-        PasteMembersAction action = new PasteMembersAction(memberTable, layer, editor);
+        PasteMembersAction action = new PasteMembersAction(relationEditorAccess);
         action.actionPerformed(null);
 
         Relation relation = new Relation(1);
-        memberTableModel.applyToRelation(relation);
+        relationEditorAccess.getMemberTableModel().applyToRelation(relation);
         assertEquals(0, relation.getMembersCount());
     }
 
@@ -82,11 +82,11 @@ public class PasteMembersActionTest extends AbstractRelationEditorActionTest {
         Node testNode = new Node(10);
         layer.data.addPrimitive(testNode);
         copyMember(testNode);
-        PasteMembersAction action = new PasteMembersAction(memberTable, layer, editor);
+        PasteMembersAction action = new PasteMembersAction(relationEditorAccess);
         action.actionPerformed(null);
 
         Relation relation = new Relation(1);
-        memberTableModel.applyToRelation(relation);
+        relationEditorAccess.getMemberTableModel().applyToRelation(relation);
         assertEquals(1, relation.getMembersCount());
         assertEquals("test", relation.getMember(0).getRole());
         assertSame(testNode, relation.getMember(0).getMember());
@@ -100,11 +100,11 @@ public class PasteMembersActionTest extends AbstractRelationEditorActionTest {
         Node testNode = new Node(10);
         layer.data.addPrimitive(testNode);
         copyNode(testNode);
-        PasteMembersAction action = new PasteMembersAction(memberTable, layer, editor);
+        PasteMembersAction action = new PasteMembersAction(relationEditorAccess);
         action.actionPerformed(null);
 
         Relation relation = new Relation(1);
-        memberTableModel.applyToRelation(relation);
+        relationEditorAccess.getMemberTableModel().applyToRelation(relation);
         assertEquals(1, relation.getMembersCount());
         assertEquals("", relation.getMember(0).getRole());
         assertSame(testNode, relation.getMember(0).getMember());
