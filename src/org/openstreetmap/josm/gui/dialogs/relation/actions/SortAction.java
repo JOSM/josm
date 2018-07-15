@@ -15,12 +15,11 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 9496
  */
 public class SortAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code SortAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SortAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);
@@ -34,7 +33,7 @@ public class SortAction extends AbstractRelationEditorAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    	editorAccess.getMemberTableModel().sort();
+        editorAccess.getMemberTableModel().sort();
     }
 
     @Override

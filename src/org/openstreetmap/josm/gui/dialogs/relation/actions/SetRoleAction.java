@@ -20,15 +20,13 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class SetRoleAction extends AbstractRelationEditorAction implements DocumentListener {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private final transient AutoCompletingTextField tfRole;
 
     /**
      * Constructs a new {@code SetRoleAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param tfRole role text field
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SetRoleAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

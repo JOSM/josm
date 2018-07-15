@@ -15,13 +15,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class DuplicateRelationAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code DuplicateRelationAction}.
-     * @param memberTableModel member table model
-     * @param tagEditorModel tag editor model
-     * @param layer OSM data layer
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public DuplicateRelationAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

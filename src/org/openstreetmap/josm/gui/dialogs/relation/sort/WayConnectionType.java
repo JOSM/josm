@@ -77,8 +77,8 @@ public class WayConnectionType {
     }
 
     /**
-     * Returns tooltip.
-     * @return tooltip
+     * Returns the tooltip to display when hovering over the relation member.
+     * @return The tooltip, never null.
      * @since 10248
      */
     public String getTooltip() {

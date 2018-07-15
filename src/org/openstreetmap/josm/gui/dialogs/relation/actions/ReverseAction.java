@@ -12,11 +12,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class ReverseAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code ReverseAction}.
-     * @param editorAccess
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public ReverseAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);

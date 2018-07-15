@@ -15,15 +15,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class DownloadSelectedIncompleteMembersAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code DownloadSelectedIncompleteMembersAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param actionMapKey action map key
-     * @param layer OSM data layer
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public DownloadSelectedIncompleteMembersAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);
@@ -38,7 +34,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationEdi
         if (!isEnabled())
             return;
         MainApplication.worker.submit(new DownloadRelationMemberTask(
-        		getEditor().getRelation(),
+                getEditor().getRelation(),
                 getMemberTableModel().getSelectedIncompleteMemberPrimitives(),
                 getLayer(),
                 (Dialog) getEditor())

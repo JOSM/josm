@@ -15,13 +15,12 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 9496
  */
 public class MoveUpAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code MoveUpAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param actionMapKey key in table action map
+     * @param editorAccess An interface to access the relation editor contents.
+     * @param actionMapKey action map key
      */
     public MoveUpAction(IRelationEditorActionAccess editorAccess, String actionMapKey) {
         super(editorAccess, actionMapKey, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);
@@ -34,7 +33,7 @@ public class MoveUpAction extends AbstractRelationEditorAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    	editorAccess.getMemberTableModel().moveUp(editorAccess.getMemberTable().getSelectedRows());
+        editorAccess.getMemberTableModel().moveUp(editorAccess.getMemberTable().getSelectedRows());
     }
 
     @Override

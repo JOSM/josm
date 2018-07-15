@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import java.util.Collections;
 
@@ -93,6 +94,8 @@ public class GenericRelationEditorTest {
 
     /**
      * Unit test of {@code GenericRelationEditor#build*} methods.
+     * <p>
+     * This test only tests if they do not throw exceptions.
      */
     @Test
     public void testBuild() {
@@ -110,5 +113,8 @@ public class GenericRelationEditorTest {
         JPanel top = GenericRelationEditor.buildTagEditorPanel(tagEditorPanel);
         assertNotNull(top);
         assertNotNull(tagEditorPanel.getModel());
+        assertNotNull(tagModel);
+        assertSame(memberTableModel, memberTable.getModel());
+        assertSame(selectionTableModel, selectionTable.getModel());
     }
 }

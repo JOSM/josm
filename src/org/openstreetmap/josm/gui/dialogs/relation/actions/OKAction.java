@@ -12,16 +12,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Apply the updates and close the dialog.
  */
 public class OKAction extends SavingAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code OKAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param tagModel tag editor model
-     * @param layer OSM data layer
-     * @param editor relation editor
-     * @param tfRole role text field
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public OKAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

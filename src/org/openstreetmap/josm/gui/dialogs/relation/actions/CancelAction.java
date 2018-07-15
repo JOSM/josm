@@ -21,16 +21,11 @@ import org.openstreetmap.josm.tools.InputMapUtils;
  * @since 9496
  */
 public class CancelAction extends SavingAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code CancelAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param tagModel tag editor model
-     * @param layer OSM data layer
-     * @param editor relation editor
-     * @param tfRole role text field
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public CancelAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

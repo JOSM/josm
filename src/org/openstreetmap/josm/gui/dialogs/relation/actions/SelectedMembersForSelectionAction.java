@@ -12,13 +12,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class SelectedMembersForSelectionAction extends AddFromSelectionAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code SelectedMembersForSelectionAction}.
-     * @param memberTableModel member table model
-     * @param selectionTableModel selection table model
-     * @param layer OSM data layer
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SelectedMembersForSelectionAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.SELECTION_TABLE_CHANGE, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);
@@ -34,7 +32,7 @@ public class SelectedMembersForSelectionAction extends AddFromSelectionAction {
 
         if (enabled) {
             putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to {0} objects in the current selection",
-            		editorAccess.getMemberTableModel().getChildPrimitives(getLayer().data.getSelected()).size()));
+                    editorAccess.getMemberTableModel().getChildPrimitives(getLayer().data.getSelected()).size()));
         } else {
             putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
         }
@@ -43,6 +41,6 @@ public class SelectedMembersForSelectionAction extends AddFromSelectionAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    	editorAccess.getMemberTableModel().selectMembersReferringTo(getLayer().data.getSelected());
+        editorAccess.getMemberTableModel().selectMembersReferringTo(getLayer().data.getSelected());
     }
 }

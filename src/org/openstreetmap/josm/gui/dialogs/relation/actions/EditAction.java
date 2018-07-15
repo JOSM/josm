@@ -18,13 +18,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class EditAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code EditAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param layer layer
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public EditAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);
@@ -36,8 +34,8 @@ public class EditAction extends AbstractRelationEditorAction {
     @Override
     protected void updateEnabledState() {
         setEnabled(editorAccess.getMemberTable().getSelectedRowCount() == 1
-				&& editorAccess.getMemberTableModel()
-						.isEditableRelation(editorAccess.getMemberTable().getSelectedRow()));
+                && editorAccess.getMemberTableModel()
+                        .isEditableRelation(editorAccess.getMemberTable().getSelectedRow()));
     }
 
     protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {

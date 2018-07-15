@@ -14,13 +14,11 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 9496
  */
 public class AddSelectedAtEndAction extends AddFromSelectionAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code AddSelectedAtEndAction}.
-     * @param memberTableModel member table model
-     * @param selectionTableModel selection table model
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public AddSelectedAtEndAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.SELECTION_TABLE_CHANGE);
@@ -37,7 +35,7 @@ public class AddSelectedAtEndAction extends AddFromSelectionAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-        	getMemberTableModel().addMembersAtEnd(filterConfirmedPrimitives(getSelectionTableModel().getSelection()));
+            getMemberTableModel().addMembersAtEnd(filterConfirmedPrimitives(getSelectionTableModel().getSelection()));
         } catch (AddAbortException ex) {
             Logging.trace(ex);
         }

@@ -16,10 +16,10 @@ import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbor
  * @since 9496
  */
 abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     protected AddFromSelectionAction(IRelationEditorActionAccess editorAccess,
-			IRelationEditorUpdateOn... updateOn) {
+            IRelationEditorUpdateOn... updateOn) {
         super(editorAccess, updateOn);
     }
 
@@ -33,7 +33,8 @@ abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
         List<OsmPrimitive> ret = new ArrayList<>();
         ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");
         for (OsmPrimitive primitive : primitives) {
-            if (primitive instanceof Relation && editorAccess.getEditor().getRelation() != null && editorAccess.getEditor().getRelation().equals(primitive)) {
+            if (primitive instanceof Relation
+                    && editorAccess.getEditor().getRelation() != null && editorAccess.getEditor().getRelation().equals(primitive)) {
                 GenericRelationEditor.warnOfCircularReferences(primitive);
                 continue;
             }
