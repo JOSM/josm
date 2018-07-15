@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 9496
  */
 public class DownloadIncompleteMembersAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code DownloadIncompleteMembersAction}.
@@ -44,7 +44,7 @@ public class DownloadIncompleteMembersAction extends AbstractRelationEditorActio
         if (!isEnabled())
             return;
         MainApplication.worker.submit(new DownloadRelationMemberTask(
-        		getEditor().getRelation(),
+                getEditor().getRelation(),
                 getMemberTableModel().getIncompleteMemberPrimitives(),
                 getLayer(),
                 (Dialog) getEditor())

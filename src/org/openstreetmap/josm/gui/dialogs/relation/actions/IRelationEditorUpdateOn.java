@@ -11,20 +11,20 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
  */
 @FunctionalInterface
 public interface IRelationEditorUpdateOn {
-	/**
-	 * Update when the member table contents change
-	 */
-	IRelationEditorUpdateOn MEMBER_TABLE_CHANGE = (editor, action) -> editor.getMemberTableModel()
-			.addTableModelListener(action);
-	/**
-	 * Update upon a member table selection change
-	 */
-	IRelationEditorUpdateOn MEMBER_TABLE_SELECTION = (editor, action) -> editor.getMemberTable().getSelectionModel()
-			.addListSelectionListener(action);
+    /**
+     * Update when the member table contents change
+     */
+    IRelationEditorUpdateOn MEMBER_TABLE_CHANGE = (editor, action) -> editor.getMemberTableModel()
+            .addTableModelListener(action);
+    /**
+     * Update upon a member table selection change
+     */
+    IRelationEditorUpdateOn MEMBER_TABLE_SELECTION = (editor, action) -> editor.getMemberTable().getSelectionModel()
+            .addListSelectionListener(action);
 
-	IRelationEditorUpdateOn TAG_CHANGE = (editor, action) -> editor.getTagModel().addPropertyChangeListener(action);
-	IRelationEditorUpdateOn SELECTION_TABLE_CHANGE = (editor, action) -> editor.getSelectionTableModel()
-			.addTableModelListener(action);
+    IRelationEditorUpdateOn TAG_CHANGE = (editor, action) -> editor.getTagModel().addPropertyChangeListener(action);
+    IRelationEditorUpdateOn SELECTION_TABLE_CHANGE = (editor, action) -> editor.getSelectionTableModel()
+            .addTableModelListener(action);
 
-	void register(IRelationEditorActionAccess editor, AbstractRelationEditorAction action);
+    void register(IRelationEditorActionAccess editor, AbstractRelationEditorAction action);
 }

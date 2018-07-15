@@ -19,9 +19,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * @since 1599
  */
 public abstract class RelationEditor extends ExtendedDialog implements IRelationEditor {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** the property name for the current relation.
+    /** the property name for the current relation.
      * @see #setRelation(Relation)
      * @see #getRelation()
      */

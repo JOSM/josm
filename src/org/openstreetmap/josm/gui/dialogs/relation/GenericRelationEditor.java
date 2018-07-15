@@ -250,7 +250,7 @@ public class GenericRelationEditor extends RelationEditor {
                 referrerBrowser.init();
             }
         });
-        
+
         IRelationEditorActionAccess actionAccess = new RelationEditorActionAccess();
 
         refreshAction = new RefreshAction(actionAccess);
@@ -293,9 +293,9 @@ public class GenericRelationEditor extends RelationEditor {
         if (key != null) {
             // handle uncommon situation, that user has no keystroke assigned to paste
             registerCopyPasteAction(new PasteMembersAction(actionAccess) {
-				private static final long serialVersionUID = 1L;
+                private static final long serialVersionUID = 1L;
 
-				@Override
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     super.actionPerformed(e);
                     tfRole.requestFocusInWindow();
@@ -608,9 +608,9 @@ public class GenericRelationEditor extends RelationEditor {
      * The toolbar with the buttons on the left
      */
     static class LeftButtonToolbar extends JToolBar {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-		/**
+        /**
          * Constructs a new {@code LeftButtonToolbar}.
          * @param re relation editor
          */
@@ -621,39 +621,39 @@ public class GenericRelationEditor extends RelationEditor {
             List<IRelationEditorActionGroup> groups = new ArrayList<>();
             // Move
             groups.add(buildNativeGroup(10,
-            		new MoveUpAction(editorAccess, "moveUp"),
-            		new MoveDownAction(editorAccess, "moveDown")
-            		));
+                    new MoveUpAction(editorAccess, "moveUp"),
+                    new MoveDownAction(editorAccess, "moveDown")
+                    ));
             // Edit
             groups.add(buildNativeGroup(20,
-            		new EditAction(editorAccess),
-            		new RemoveAction(editorAccess, "removeSelected")
-            		));
+                    new EditAction(editorAccess),
+                    new RemoveAction(editorAccess, "removeSelected")
+                    ));
             // Sort
             groups.add(buildNativeGroup(30,
-            		new SortAction(editorAccess),
-            		new SortBelowAction(editorAccess)
-            		));
+                    new SortAction(editorAccess),
+                    new SortBelowAction(editorAccess)
+                    ));
             // Reverse
             groups.add(buildNativeGroup(40,
-            		new ReverseAction(editorAccess)
-            		));
+                    new ReverseAction(editorAccess)
+                    ));
             // Download
             groups.add(buildNativeGroup(50,
-            		new DownloadIncompleteMembersAction(editorAccess, "downloadIncomplete"),
-            		new DownloadSelectedIncompleteMembersAction(editorAccess)
-            		));
+                    new DownloadIncompleteMembersAction(editorAccess, "downloadIncomplete"),
+                    new DownloadSelectedIncompleteMembersAction(editorAccess)
+                    ));
             groups.addAll(RelationEditorHooks.getMemberActions());
-            
+
             IRelationEditorActionGroup.fillToolbar(this, groups, editorAccess);
-            
+
 
             InputMap inputMap = editorAccess.getMemberTable().getInputMap(MemberTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             inputMap.put((KeyStroke) new RemoveAction(editorAccess, "removeSelected").getValue(AbstractAction.ACCELERATOR_KEY), "removeSelected");
             inputMap.put((KeyStroke) new MoveUpAction(editorAccess, "moveUp").getValue(AbstractAction.ACCELERATOR_KEY), "moveUp");
             inputMap.put((KeyStroke) new MoveDownAction(editorAccess, "moveDown").getValue(AbstractAction.ACCELERATOR_KEY), "moveDown");
             inputMap.put((KeyStroke) new DownloadIncompleteMembersAction(
-            		editorAccess, "downloadIncomplete").getValue(AbstractAction.ACCELERATOR_KEY), "downloadIncomplete");
+                    editorAccess, "downloadIncomplete").getValue(AbstractAction.ACCELERATOR_KEY), "downloadIncomplete");
         }
     }
 
@@ -670,38 +670,38 @@ public class GenericRelationEditor extends RelationEditor {
         JToolBar tb = new JToolBar(JToolBar.VERTICAL);
         tb.setFloatable(false);
 
-		List<IRelationEditorActionGroup> groups = new ArrayList<>();
-		groups.add(buildNativeGroup(10,
-				new AddSelectedAtStartAction(editorAccess),
-				new AddSelectedBeforeSelection(editorAccess),
-				new AddSelectedAfterSelection(editorAccess),
-				new AddSelectedAtEndAction(editorAccess)
-				));
-		groups.add(buildNativeGroup(20,
-				new SelectedMembersForSelectionAction(editorAccess),
-				new SelectPrimitivesForSelectedMembersAction(editorAccess)
-				));
-		groups.add(buildNativeGroup(30,
-				new RemoveSelectedAction(editorAccess)
-				));
-		groups.addAll(RelationEditorHooks.getSelectActions());
-        
+        List<IRelationEditorActionGroup> groups = new ArrayList<>();
+        groups.add(buildNativeGroup(10,
+                new AddSelectedAtStartAction(editorAccess),
+                new AddSelectedBeforeSelection(editorAccess),
+                new AddSelectedAfterSelection(editorAccess),
+                new AddSelectedAtEndAction(editorAccess)
+                ));
+        groups.add(buildNativeGroup(20,
+                new SelectedMembersForSelectionAction(editorAccess),
+                new SelectPrimitivesForSelectedMembersAction(editorAccess)
+                ));
+        groups.add(buildNativeGroup(30,
+                new RemoveSelectedAction(editorAccess)
+                ));
+        groups.addAll(RelationEditorHooks.getSelectActions());
+
         IRelationEditorActionGroup.fillToolbar(tb, groups, editorAccess);
         return tb;
     }
-    
+
     private static IRelationEditorActionGroup buildNativeGroup(int order, AbstractRelationEditorAction... actions) {
-    	return new IRelationEditorActionGroup() {
-    		@Override
-    		public int order() {
-    			return order;
-    		}
-    		
-			@Override
-			public List<AbstractRelationEditorAction> getActions(IRelationEditorActionAccess editorAccess) {
-				return Arrays.asList(actions);
-			}
-		};
+        return new IRelationEditorActionGroup() {
+            @Override
+            public int order() {
+                return order;
+            }
+
+            @Override
+            public List<AbstractRelationEditorAction> getActions(IRelationEditorActionAccess editorAccess) {
+                return Arrays.asList(actions);
+            }
+        };
     }
 
     @Override
@@ -760,9 +760,9 @@ public class GenericRelationEditor extends RelationEditor {
                 "dialogs/relationlist",
                 tr("Focus Relation Editor with relation ''{0}'' in layer ''{1}''", name, layerName),
                 null, false, false) {
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			@Override
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ((RelationEditor) getValue("relationEditor")).setVisible(true);
             }
@@ -948,43 +948,43 @@ public class GenericRelationEditor extends RelationEditor {
             }
         }
     }
-    
+
     private class RelationEditorActionAccess implements IRelationEditorActionAccess {
 
-		@Override
-		public MemberTable getMemberTable() {
-			return memberTable;
-		}
+        @Override
+        public MemberTable getMemberTable() {
+            return memberTable;
+        }
 
-		@Override
-		public MemberTableModel getMemberTableModel() {
-			return memberTableModel;
-		}
+        @Override
+        public MemberTableModel getMemberTableModel() {
+            return memberTableModel;
+        }
 
-		@Override
-		public SelectionTable getSelectionTable() {
-			return selectionTable;
-		}
+        @Override
+        public SelectionTable getSelectionTable() {
+            return selectionTable;
+        }
 
-		@Override
-		public SelectionTableModel getSelectionTableModel() {
-			return selectionTableModel;
-		}
+        @Override
+        public SelectionTableModel getSelectionTableModel() {
+            return selectionTableModel;
+        }
 
-		@Override
-		public IRelationEditor getEditor() {
-			return GenericRelationEditor.this;
-		}
+        @Override
+        public IRelationEditor getEditor() {
+            return GenericRelationEditor.this;
+        }
 
-		@Override
-		public TagEditorModel getTagModel() {
-			return tagEditorPanel.getModel();
-		}
+        @Override
+        public TagEditorModel getTagModel() {
+            return tagEditorPanel.getModel();
+        }
 
-		@Override
-		public AutoCompletingTextField getTextFieldRole() {
-			return tfRole;
-		}
-    	
+        @Override
+        public AutoCompletingTextField getTextFieldRole() {
+            return tfRole;
+        }
+
     }
 }

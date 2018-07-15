@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 9496
  */
 public class PasteMembersAction extends AddFromSelectionAction implements FlavorListener {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code PasteMembersAction}.

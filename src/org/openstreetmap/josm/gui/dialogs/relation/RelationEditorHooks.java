@@ -13,36 +13,36 @@ import org.openstreetmap.josm.gui.dialogs.relation.actions.IRelationEditorAction
  * @since 14027
  */
 public class RelationEditorHooks {
-	
-	private static final CopyOnWriteArrayList<IRelationEditorActionGroup> memberActions = new CopyOnWriteArrayList<>();
-	private static final CopyOnWriteArrayList<IRelationEditorActionGroup> selectionActions = new CopyOnWriteArrayList<>();
+    
+    private static final CopyOnWriteArrayList<IRelationEditorActionGroup> memberActions = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<IRelationEditorActionGroup> selectionActions = new CopyOnWriteArrayList<>();
 
-	private RelationEditorHooks() {
-		// only static methods.
-	}
-	
-	/**
-	 * Adds actions to the members action toolbar
-	 * @param group The group to add
-	 */
-	public static void addActionsToMembers(IRelationEditorActionGroup group) {
-		memberActions.add(group);
-	}
-	
-	/**
-	 * Adds actions to the selection action toolbar
-	 * @param group The group to add
-	 */
-	public static void addActionsToSelectio(IRelationEditorActionGroup group) {
-		selectionActions.add(group);
-	}
-	
-	/* package */ static List<IRelationEditorActionGroup> getMemberActions() {
-		return Collections.unmodifiableList(memberActions);
-	}
-	
-	/* package */ static List<IRelationEditorActionGroup> getSelectActions() {
-		return Collections.unmodifiableList(selectionActions);
-	}
-	
+    private RelationEditorHooks() {
+        // only static methods.
+    }
+    
+    /**
+     * Adds actions to the members action toolbar
+     * @param group The group to add
+     */
+    public static void addActionsToMembers(IRelationEditorActionGroup group) {
+        memberActions.add(group);
+    }
+    
+    /**
+     * Adds actions to the selection action toolbar
+     * @param group The group to add
+     */
+    public static void addActionsToSelectio(IRelationEditorActionGroup group) {
+        selectionActions.add(group);
+    }
+    
+    /* package */ static List<IRelationEditorActionGroup> getMemberActions() {
+        return Collections.unmodifiableList(memberActions);
+    }
+    
+    /* package */ static List<IRelationEditorActionGroup> getSelectActions() {
+        return Collections.unmodifiableList(selectionActions);
+    }
+    
 }

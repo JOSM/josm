@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class DeleteCurrentRelationAction extends AbstractRelationEditorAction implements PropertyChangeListener {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code DeleteCurrentRelationAction}.

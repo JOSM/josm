@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 9496
  */
 public class MoveDownAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code MoveDownAction}.
@@ -34,7 +34,7 @@ public class MoveDownAction extends AbstractRelationEditorAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    	editorAccess.getMemberTableModel().moveDown(editorAccess.getMemberTable().getSelectedRows());
+        editorAccess.getMemberTableModel().moveDown(editorAccess.getMemberTable().getSelectedRows());
     }
 
     @Override

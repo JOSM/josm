@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 9496
  */
 abstract class SavingAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     protected final AutoCompletingTextField tfRole;
 

@@ -16,37 +16,37 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
  */
 public interface IRelationEditorActionGroup {
 
-	/**
-	 * Get the position at which the action group should be added.
-	 * 
-	 * @return The order index, default is to add at the end.
-	 */
-	default int order() {
-		return 100;
-	}
+    /**
+     * Get the position at which the action group should be added.
+     * 
+     * @return The order index, default is to add at the end.
+     */
+    default int order() {
+        return 100;
+    }
 
-	/**
-	 * Get the actions in this action group.
-	 * 
-	 * @param editorAccess
-	 *            Methods to access the relation editor.
-	 * @return The actions
-	 */
-	List<AbstractRelationEditorAction> getActions(IRelationEditorActionAccess editorAccess);
+    /**
+     * Get the actions in this action group.
+     * 
+     * @param editorAccess
+     *            Methods to access the relation editor.
+     * @return The actions
+     */
+    List<AbstractRelationEditorAction> getActions(IRelationEditorActionAccess editorAccess);
 
-	static void fillToolbar(JToolBar toolbar, List<IRelationEditorActionGroup> groups,
-			IRelationEditorActionAccess editorAccess) {
-		groups.stream().sorted(Comparator.comparingInt(IRelationEditorActionGroup::order)).forEach(group -> {
-			if (toolbar.getComponentCount() > 0) {
-				toolbar.addSeparator();
-			}
+    static void fillToolbar(JToolBar toolbar, List<IRelationEditorActionGroup> groups,
+            IRelationEditorActionAccess editorAccess) {
+        groups.stream().sorted(Comparator.comparingInt(IRelationEditorActionGroup::order)).forEach(group -> {
+            if (toolbar.getComponentCount() > 0) {
+                toolbar.addSeparator();
+            }
 
-			for (AbstractRelationEditorAction action : group.getActions(editorAccess)) {
-				JButton button = toolbar.add(action);
-				if (action.isExpertOnly()) {
-					ExpertToggleAction.addVisibilitySwitcher(button);
-				}
-			}
-		});
-	}
+            for (AbstractRelationEditorAction action : group.getActions(editorAccess)) {
+                JButton button = toolbar.add(action);
+                if (action.isExpertOnly()) {
+                    ExpertToggleAction.addVisibilitySwitcher(button);
+                }
+            }
+        });
+    }
 }

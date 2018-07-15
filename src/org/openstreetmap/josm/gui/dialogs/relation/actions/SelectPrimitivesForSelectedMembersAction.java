@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class SelectPrimitivesForSelectedMembersAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Select objects for selected relation members.

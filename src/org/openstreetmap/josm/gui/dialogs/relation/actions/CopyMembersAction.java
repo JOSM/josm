@@ -13,7 +13,7 @@ import org.openstreetmap.josm.gui.datatransfer.RelationMemberTransferable;
  * @since 9496
  */
 public class CopyMembersAction extends AddFromSelectionAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code CopyMembersAction}.

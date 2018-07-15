@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 9657
  */
 public class RefreshAction extends SavingAction implements CommandQueueListener {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code RefreshAction}.

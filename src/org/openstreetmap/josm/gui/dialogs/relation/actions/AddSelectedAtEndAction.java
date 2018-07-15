@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 9496
  */
 public class AddSelectedAtEndAction extends AddFromSelectionAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code AddSelectedAtEndAction}.
@@ -37,7 +37,7 @@ public class AddSelectedAtEndAction extends AddFromSelectionAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-        	getMemberTableModel().addMembersAtEnd(filterConfirmedPrimitives(getSelectionTableModel().getSelection()));
+            getMemberTableModel().addMembersAtEnd(filterConfirmedPrimitives(getSelectionTableModel().getSelection()));
         } catch (AddAbortException ex) {
             Logging.trace(ex);
         }

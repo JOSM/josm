@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 9496
  */
 public class AddSelectedAfterSelection extends AddFromSelectionAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code AddSelectedAfterSelection}.
@@ -31,15 +31,15 @@ public class AddSelectedAfterSelection extends AddFromSelectionAction {
 
     @Override
     protected void updateEnabledState() {
-		setEnabled(getSelectionTableModel().getRowCount() > 0
-				&& getMemberTableModel().getSelectionModel().getMinSelectionIndex() >= 0);
+        setEnabled(getSelectionTableModel().getRowCount() > 0
+                && getMemberTableModel().getSelectionModel().getMinSelectionIndex() >= 0);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-        	getMemberTableModel().addMembersAfterIdx(filterConfirmedPrimitives(getSelectionTableModel().getSelection()),
-        			getMemberTableModel().getSelectionModel().getMaxSelectionIndex());
+            getMemberTableModel().addMembersAfterIdx(filterConfirmedPrimitives(getSelectionTableModel().getSelection()),
+                    getMemberTableModel().getSelectionModel().getMaxSelectionIndex());
         } catch (AddAbortException ex) {
             Logging.trace(ex);
         }

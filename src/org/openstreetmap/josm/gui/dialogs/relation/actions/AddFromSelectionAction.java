@@ -16,10 +16,10 @@ import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbor
  * @since 9496
  */
 abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     protected AddFromSelectionAction(IRelationEditorActionAccess editorAccess,
-			IRelationEditorUpdateOn... updateOn) {
+            IRelationEditorUpdateOn... updateOn) {
         super(editorAccess, updateOn);
     }
 

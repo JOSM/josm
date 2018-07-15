@@ -12,7 +12,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Apply the updates and close the dialog.
  */
 public class OKAction extends SavingAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code OKAction}.

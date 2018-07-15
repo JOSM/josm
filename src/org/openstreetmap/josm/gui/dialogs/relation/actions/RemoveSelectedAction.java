@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class RemoveSelectedAction extends AddFromSelectionAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code RemoveSelectedAction}.
@@ -41,6 +41,6 @@ public class RemoveSelectedAction extends AddFromSelectionAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    	editorAccess.getMemberTableModel().removeMembersReferringTo(getSelectionTableModel().getSelection());
+        editorAccess.getMemberTableModel().removeMembersReferringTo(getSelectionTableModel().getSelection());
     }
 }

@@ -12,7 +12,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class SortBelowAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code SortBelowAction}.
@@ -29,7 +29,7 @@ public class SortBelowAction extends AbstractRelationEditorAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    	editorAccess.getMemberTableModel().sortBelow();
+        editorAccess.getMemberTableModel().sortBelow();
     }
 
     @Override
@@ -39,6 +39,6 @@ public class SortBelowAction extends AbstractRelationEditorAction {
     
     @Override
     public boolean isExpertOnly() {
-    	return true;
+        return true;
     }
 }

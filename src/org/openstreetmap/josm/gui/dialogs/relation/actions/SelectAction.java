@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 12933
  */
 public class SelectAction extends AbstractRelationEditorAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code SelectAction}.

@@ -29,104 +29,104 @@ import org.openstreetmap.josm.io.OnlineResource;
  * @since 9496
  */
 public abstract class AbstractRelationEditorAction extends AbstractAction
-		implements TableModelListener, ListSelectionListener, PropertyChangeListener {
-	private static final long serialVersionUID = 1L;
-	protected final transient IRelationEditorActionAccess editorAccess;
+        implements TableModelListener, ListSelectionListener, PropertyChangeListener {
+    private static final long serialVersionUID = 1L;
+    protected final transient IRelationEditorActionAccess editorAccess;
 
-	/**
-	 * Create a new relation editor action
-	 * 
-	 * @param editorAccess
-	 *            The editor this action is for
-	 * @param actionMapKey
-	 *            The key for the member table action map.
-	 * @param updateOn
-	 *            The events that may cause the enabled state of this button to
-	 *            change.
-	 */
-	protected AbstractRelationEditorAction(IRelationEditorActionAccess editorAccess,
-			IRelationEditorUpdateOn... updateOn) {
-		Objects.requireNonNull(editorAccess, "editorAccess");
-		Objects.requireNonNull(updateOn, "updateOn");
-		this.editorAccess = editorAccess;
-		for (IRelationEditorUpdateOn u : updateOn) {
-			u.register(editorAccess, this);
-		}
-	}
+    /**
+     * Create a new relation editor action
+     * 
+     * @param editorAccess
+     *            The editor this action is for
+     * @param actionMapKey
+     *            The key for the member table action map.
+     * @param updateOn
+     *            The events that may cause the enabled state of this button to
+     *            change.
+     */
+    protected AbstractRelationEditorAction(IRelationEditorActionAccess editorAccess,
+            IRelationEditorUpdateOn... updateOn) {
+        Objects.requireNonNull(editorAccess, "editorAccess");
+        Objects.requireNonNull(updateOn, "updateOn");
+        this.editorAccess = editorAccess;
+        for (IRelationEditorUpdateOn u : updateOn) {
+            u.register(editorAccess, this);
+        }
+    }
 
-	/**
-	 * Create a new relation editor action
-	 * 
-	 * @param editorAccess
-	 *            The editor this action is for
-	 * @param actionMapKey
-	 *            The key for the member table action map.
-	 * @param updateOn
-	 *            The events that may cause the enabled state of this button to
-	 *            change.
-	 */
-	protected AbstractRelationEditorAction(IRelationEditorActionAccess editorAccess, String actionMapKey,
-			IRelationEditorUpdateOn... updateOn) {
-		this(editorAccess, updateOn);
-		Objects.requireNonNull(actionMapKey, "actionMapKey");
+    /**
+     * Create a new relation editor action
+     * 
+     * @param editorAccess
+     *            The editor this action is for
+     * @param actionMapKey
+     *            The key for the member table action map.
+     * @param updateOn
+     *            The events that may cause the enabled state of this button to
+     *            change.
+     */
+    protected AbstractRelationEditorAction(IRelationEditorActionAccess editorAccess, String actionMapKey,
+            IRelationEditorUpdateOn... updateOn) {
+        this(editorAccess, updateOn);
+        Objects.requireNonNull(actionMapKey, "actionMapKey");
 
-		this.editorAccess.addMemberTableAction(actionMapKey, this);
-	}
+        this.editorAccess.addMemberTableAction(actionMapKey, this);
+    }
 
-	@Override
-	public void tableChanged(TableModelEvent e) {
-		updateEnabledState();
-	}
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        updateEnabledState();
+    }
 
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		updateEnabledState();
-	}
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        updateEnabledState();
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         updateEnabledState();
     }
 
-	protected abstract void updateEnabledState();
+    protected abstract void updateEnabledState();
 
-	protected final boolean canDownload() {
-		if (editorAccess.getEditor().getRelation() == null)
-			return false;
-		DataSet ds = editorAccess.getEditor().getRelation().getDataSet();
-		return !Main.isOffline(OnlineResource.OSM_API) && ds != null && !ds.isLocked()
-				&& !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
-	}
+    protected final boolean canDownload() {
+        if (editorAccess.getEditor().getRelation() == null)
+            return false;
+        DataSet ds = editorAccess.getEditor().getRelation().getDataSet();
+        return !Main.isOffline(OnlineResource.OSM_API) && ds != null && !ds.isLocked()
+                && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
+    }
 
-	protected MemberTable getMemberTable() {
-		return editorAccess.getMemberTable();
-	}
+    protected MemberTable getMemberTable() {
+        return editorAccess.getMemberTable();
+    }
 
-	protected MemberTableModel getMemberTableModel() {
-		return editorAccess.getMemberTableModel();
-	}
+    protected MemberTableModel getMemberTableModel() {
+        return editorAccess.getMemberTableModel();
+    }
 
-	protected SelectionTable getSelectionTable() {
-		return editorAccess.getSelectionTable();
-	}
+    protected SelectionTable getSelectionTable() {
+        return editorAccess.getSelectionTable();
+    }
 
-	protected SelectionTableModel getSelectionTableModel() {
-		return editorAccess.getSelectionTableModel();
-	}
+    protected SelectionTableModel getSelectionTableModel() {
+        return editorAccess.getSelectionTableModel();
+    }
 
-	protected IRelationEditor getEditor() {
-		return editorAccess.getEditor();
-	}
+    protected IRelationEditor getEditor() {
+        return editorAccess.getEditor();
+    }
 
-	protected TagEditorModel getTagModel() {
-		return editorAccess.getTagModel();
-	}
+    protected TagEditorModel getTagModel() {
+        return editorAccess.getTagModel();
+    }
 
-	protected OsmDataLayer getLayer() {
-		return editorAccess.getEditor().getLayer();
-	}
+    protected OsmDataLayer getLayer() {
+        return editorAccess.getEditor().getLayer();
+    }
 
-	public boolean isExpertOnly() {
-		return false;
-	}
+    public boolean isExpertOnly() {
+        return false;
+    }
 }

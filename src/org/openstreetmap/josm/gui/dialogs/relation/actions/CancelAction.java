@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.InputMapUtils;
  * @since 9496
  */
 public class CancelAction extends SavingAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code CancelAction}.

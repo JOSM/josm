@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class SetRoleAction extends AbstractRelationEditorAction implements DocumentListener {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private final transient AutoCompletingTextField tfRole;
 

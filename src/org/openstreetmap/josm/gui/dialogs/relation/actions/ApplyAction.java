@@ -12,7 +12,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 9496
  */
 public class ApplyAction extends SavingAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new {@code ApplyAction}.
@@ -33,7 +33,7 @@ public class ApplyAction extends SavingAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (applyChanges()) {
-        	editorAccess.getEditor().reloadDataFromRelation();
+            editorAccess.getEditor().reloadDataFromRelation();
         }
     }
 
