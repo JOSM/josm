@@ -33,7 +33,8 @@ abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
         List<OsmPrimitive> ret = new ArrayList<>();
         ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");
         for (OsmPrimitive primitive : primitives) {
-            if (primitive instanceof Relation && editorAccess.getEditor().getRelation() != null && editorAccess.getEditor().getRelation().equals(primitive)) {
+            if (primitive instanceof Relation
+                    && editorAccess.getEditor().getRelation() != null && editorAccess.getEditor().getRelation().equals(primitive)) {
                 GenericRelationEditor.warnOfCircularReferences(primitive);
                 continue;
             }

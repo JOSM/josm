@@ -16,8 +16,7 @@ public class SortBelowAction extends AbstractRelationEditorAction {
 
     /**
      * Constructs a new {@code SortBelowAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SortBelowAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);
@@ -34,9 +33,10 @@ public class SortBelowAction extends AbstractRelationEditorAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(editorAccess.getMemberTableModel().getRowCount() > 0 && !editorAccess.getMemberTableModel().getSelectionModel().isSelectionEmpty());
+        setEnabled(editorAccess.getMemberTableModel().getRowCount() > 0
+                && !editorAccess.getMemberTableModel().getSelectionModel().isSelectionEmpty());
     }
-    
+
     @Override
     public boolean isExpertOnly() {
         return true;

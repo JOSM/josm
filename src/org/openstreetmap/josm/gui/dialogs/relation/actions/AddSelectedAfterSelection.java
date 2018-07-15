@@ -18,9 +18,7 @@ public class AddSelectedAfterSelection extends AddFromSelectionAction {
 
     /**
      * Constructs a new {@code AddSelectedAfterSelection}.
-     * @param memberTableModel member table model
-     * @param selectionTableModel selection table model
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public AddSelectedAfterSelection(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION, IRelationEditorUpdateOn.SELECTION_TABLE_CHANGE);

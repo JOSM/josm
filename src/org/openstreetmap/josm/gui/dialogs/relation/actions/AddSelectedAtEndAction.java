@@ -18,9 +18,7 @@ public class AddSelectedAtEndAction extends AddFromSelectionAction {
 
     /**
      * Constructs a new {@code AddSelectedAtEndAction}.
-     * @param memberTableModel member table model
-     * @param selectionTableModel selection table model
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public AddSelectedAtEndAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.SELECTION_TABLE_CHANGE);

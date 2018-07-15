@@ -26,9 +26,7 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
 
     /**
      * Constructs a new {@code SetRoleAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param tfRole role text field
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SetRoleAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

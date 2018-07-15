@@ -17,9 +17,7 @@ public class CopyMembersAction extends AddFromSelectionAction {
 
     /**
      * Constructs a new {@code CopyMembersAction}.
-     * @param memberTableModel member table model
-     * @param layer OSM data layer
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public CopyMembersAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

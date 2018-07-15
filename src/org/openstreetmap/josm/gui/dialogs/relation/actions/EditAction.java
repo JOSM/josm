@@ -22,9 +22,7 @@ public class EditAction extends AbstractRelationEditorAction {
 
     /**
      * Constructs a new {@code EditAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param layer layer
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public EditAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);

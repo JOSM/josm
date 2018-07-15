@@ -19,9 +19,8 @@ public class MoveUpAction extends AbstractRelationEditorAction {
 
     /**
      * Constructs a new {@code MoveUpAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param actionMapKey key in table action map
+     * @param editorAccess An interface to access the relation editor contents.
+     * @param actionMapKey action map key
      */
     public MoveUpAction(IRelationEditorActionAccess editorAccess, String actionMapKey) {
         super(editorAccess, actionMapKey, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);

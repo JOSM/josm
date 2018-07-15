@@ -30,6 +30,8 @@ import org.openstreetmap.josm.data.osm.Way;
  */
 public class RelationNodeMap {
 
+    private static final String ROLE_BACKWARD = "backward";
+
     private static class NodesWays {
         public final Map<Node, Set<Integer>> nodes = new TreeMap<>();
         public final Map<Integer, Set<Node>> ways = new TreeMap<>();
@@ -61,17 +63,27 @@ public class RelationNodeMap {
      */
     private final List<Integer> notSortable = new ArrayList<>();
 
+    /**
+     * Gets the start node of the member, respecting the direction role.
+     * @param m The relation member.
+     * @return <code>null</code> if the member is no way, the node otherwise.
+     */
     public static Node firstOnewayNode(RelationMember m) {
         if (!m.isWay()) return null;
-        if ("backward".equals(m.getRole())) {
+        if (ROLE_BACKWARD.equals(m.getRole())) {
             return m.getWay().lastNode();
         }
         return m.getWay().firstNode();
     }
 
+    /**
+     * Gets the end node of the member, respecting the direction role.
+     * @param m The relation member.
+     * @return <code>null</code> if the member is no way, the node otherwise.
+     */
     public static Node lastOnewayNode(RelationMember m) {
         if (!m.isWay()) return null;
-        if ("backward".equals(m.getRole())) {
+        if (ROLE_BACKWARD.equals(m.getRole())) {
             return m.getWay().firstNode();
         }
         return m.getWay().lastNode();

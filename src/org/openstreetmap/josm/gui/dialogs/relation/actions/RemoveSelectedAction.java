@@ -17,9 +17,7 @@ public class RemoveSelectedAction extends AddFromSelectionAction {
 
     /**
      * Constructs a new {@code RemoveSelectedAction}.
-     * @param memberTableModel member table model
-     * @param selectionTableModel selection table model
-     * @param layer OSM data layer
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public RemoveSelectedAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.SELECTION_TABLE_CHANGE);

@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation.actions;
 
 import javax.swing.Action;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 /**
  * This interface provides access to the relation editor for actions.
  * <p>
- * 
+ *
  * @author Michael Zangl
  * @since 14027
  */
@@ -33,28 +34,37 @@ public interface IRelationEditorActionAccess {
      * @return The member table
      */
     MemberTable getMemberTable();
-    
+
     /**
      * Get the model the member table is using.
      * @return That model
      */
     MemberTableModel getMemberTableModel();
-    
+
     /**
      * Get the table that displays the current user selection
      * @return That table
      */
     SelectionTable getSelectionTable();
-    
+
     /**
      * Get the model that the selection table is based on.
      * @return The model
      */
     SelectionTableModel getSelectionTableModel();
-    
+
+    /**
+     * Get the current relation editor
+     * @return The relation editor object.
+     */
     IRelationEditor getEditor();
+
+    /**
+     * Gets the model for the tag table.
+     * @return The tag editor model.
+     */
     TagEditorModel getTagModel();
-    
+
     /**
      * Get the text field that is used to edit the role.
      * @return The role text field.

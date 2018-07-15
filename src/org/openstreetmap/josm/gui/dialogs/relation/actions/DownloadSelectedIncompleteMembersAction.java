@@ -19,11 +19,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationEdi
 
     /**
      * Constructs a new {@code DownloadSelectedIncompleteMembersAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param actionMapKey action map key
-     * @param layer OSM data layer
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public DownloadSelectedIncompleteMembersAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);

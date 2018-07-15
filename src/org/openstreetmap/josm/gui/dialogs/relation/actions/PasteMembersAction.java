@@ -21,9 +21,7 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
 
     /**
      * Constructs a new {@code PasteMembersAction}.
-     * @param memberTable member table
-     * @param layer OSM data layer
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public PasteMembersAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

@@ -18,9 +18,7 @@ public class AddSelectedBeforeSelection extends AddFromSelectionAction {
 
     /**
      * Constructs a new {@code AddSelectedBeforeSelection}.
-     * @param memberTableModel member table model
-     * @param selectionTableModel selection table model
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public AddSelectedBeforeSelection(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION, IRelationEditorUpdateOn.SELECTION_TABLE_CHANGE);

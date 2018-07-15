@@ -16,12 +16,7 @@ public class OKAction extends SavingAction {
 
     /**
      * Constructs a new {@code OKAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param tagModel tag editor model
-     * @param layer OSM data layer
-     * @param editor relation editor
-     * @param tfRole role text field
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public OKAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

@@ -612,7 +612,7 @@ public class GenericRelationEditor extends RelationEditor {
 
         /**
          * Constructs a new {@code LeftButtonToolbar}.
-         * @param re relation editor
+         * @param editorAccess relation editor
          */
         LeftButtonToolbar(IRelationEditorActionAccess editorAccess) {
             setOrientation(JToolBar.VERTICAL);
@@ -649,9 +649,12 @@ public class GenericRelationEditor extends RelationEditor {
 
 
             InputMap inputMap = editorAccess.getMemberTable().getInputMap(MemberTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            inputMap.put((KeyStroke) new RemoveAction(editorAccess, "removeSelected").getValue(AbstractAction.ACCELERATOR_KEY), "removeSelected");
-            inputMap.put((KeyStroke) new MoveUpAction(editorAccess, "moveUp").getValue(AbstractAction.ACCELERATOR_KEY), "moveUp");
-            inputMap.put((KeyStroke) new MoveDownAction(editorAccess, "moveDown").getValue(AbstractAction.ACCELERATOR_KEY), "moveDown");
+            inputMap.put((KeyStroke) new RemoveAction(editorAccess, "removeSelected")
+                    .getValue(AbstractAction.ACCELERATOR_KEY), "removeSelected");
+            inputMap.put((KeyStroke) new MoveUpAction(editorAccess, "moveUp")
+                    .getValue(AbstractAction.ACCELERATOR_KEY), "moveUp");
+            inputMap.put((KeyStroke) new MoveDownAction(editorAccess, "moveDown")
+                    .getValue(AbstractAction.ACCELERATOR_KEY), "moveDown");
             inputMap.put((KeyStroke) new DownloadIncompleteMembersAction(
                     editorAccess, "downloadIncomplete").getValue(AbstractAction.ACCELERATOR_KEY), "downloadIncomplete");
         }
@@ -659,10 +662,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * build the toolbar with the buttons for adding or removing the current selection
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param selectionTableModel selection table model
-     * @param re relation editor
+     * @param editorAccess relation editor
      *
      * @return control buttons panel for selection/members
      */

@@ -19,8 +19,7 @@ public class SortAction extends AbstractRelationEditorAction {
 
     /**
      * Constructs a new {@code SortAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SortAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);

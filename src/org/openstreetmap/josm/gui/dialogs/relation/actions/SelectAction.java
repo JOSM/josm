@@ -17,8 +17,7 @@ public class SelectAction extends AbstractRelationEditorAction {
 
     /**
      * Constructs a new {@code SelectAction}.
-     * @param layer OSM data layer
-     * @param editor relation editor
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SelectAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

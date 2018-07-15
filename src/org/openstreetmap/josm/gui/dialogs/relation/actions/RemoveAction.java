@@ -19,8 +19,7 @@ public class RemoveAction extends AbstractRelationEditorAction {
 
     /**
      * Constructs a new {@code RemoveAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
+     * @param editorAccess An interface to access the relation editor contents.
      * @param actionMapKey action map key
      */
     public RemoveAction(IRelationEditorActionAccess editorAccess, String actionMapKey) {

@@ -16,7 +16,7 @@ public class ReverseAction extends AbstractRelationEditorAction {
 
     /**
      * Constructs a new {@code ReverseAction}.
-     * @param editorAccess
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public ReverseAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);

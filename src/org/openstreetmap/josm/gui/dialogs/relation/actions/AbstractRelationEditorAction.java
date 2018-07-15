@@ -25,7 +25,7 @@ import org.openstreetmap.josm.io.OnlineResource;
 
 /**
  * Abstract superclass of relation editor actions.
- * 
+ *
  * @since 9496
  */
 public abstract class AbstractRelationEditorAction extends AbstractAction
@@ -35,11 +35,9 @@ public abstract class AbstractRelationEditorAction extends AbstractAction
 
     /**
      * Create a new relation editor action
-     * 
+     *
      * @param editorAccess
      *            The editor this action is for
-     * @param actionMapKey
-     *            The key for the member table action map.
      * @param updateOn
      *            The events that may cause the enabled state of this button to
      *            change.
@@ -56,7 +54,7 @@ public abstract class AbstractRelationEditorAction extends AbstractAction
 
     /**
      * Create a new relation editor action
-     * 
+     *
      * @param editorAccess
      *            The editor this action is for
      * @param actionMapKey
@@ -126,6 +124,11 @@ public abstract class AbstractRelationEditorAction extends AbstractAction
         return editorAccess.getEditor().getLayer();
     }
 
+    /**
+     * Indicates that this action only visible in expert mode
+     * @return <code>true</code> for expert mode actions.
+     * @since 14027
+     */
     public boolean isExpertOnly() {
         return false;
     }

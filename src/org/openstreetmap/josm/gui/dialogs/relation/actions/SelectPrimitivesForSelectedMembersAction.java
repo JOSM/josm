@@ -17,9 +17,7 @@ public class SelectPrimitivesForSelectedMembersAction extends AbstractRelationEd
 
     /**
      * Select objects for selected relation members.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param layer layer
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SelectPrimitivesForSelectedMembersAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);

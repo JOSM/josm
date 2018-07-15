@@ -19,9 +19,7 @@ public class DuplicateRelationAction extends AbstractRelationEditorAction {
 
     /**
      * Constructs a new {@code DuplicateRelationAction}.
-     * @param memberTableModel member table model
-     * @param tagEditorModel tag editor model
-     * @param layer OSM data layer
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public DuplicateRelationAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);

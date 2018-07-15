@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -27,11 +29,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
 
     /**
      * Constructs a new {@code RefreshAction}.
-     * @param memberTable member table
-     * @param memberTableModel member table model
-     * @param layer OSM data layer
-     * @param editor relation editor
-     * @param tagModel tag editor model
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public RefreshAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);
@@ -41,9 +39,11 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tr("Refresh relation from data layer"), sc));
         new ImageProvider("dialogs/refresh").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Refresh"));
-        if (editorAccess.getEditor() instanceof JComponent) {
-            ((JComponent) editorAccess.getEditor()).getRootPane().getActionMap().put("refresh", this);
-            ((JComponent) editorAccess.getEditor()).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "refresh");
+        IRelationEditor editor = editorAccess.getEditor();
+        if (editor instanceof JComponent) {
+            JRootPane rootPane = ((JComponent) editorAccess.getEditor()).getRootPane();
+            rootPane.getActionMap().put("refresh", this);
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "refresh");
         }
         MainApplication.undoRedo.addCommandQueueListener(this);
         updateEnabledState();

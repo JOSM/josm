@@ -16,9 +16,7 @@ public class SelectedMembersForSelectionAction extends AddFromSelectionAction {
 
     /**
      * Constructs a new {@code SelectedMembersForSelectionAction}.
-     * @param memberTableModel member table model
-     * @param selectionTableModel selection table model
-     * @param layer OSM data layer
+     * @param editorAccess An interface to access the relation editor contents.
      */
     public SelectedMembersForSelectionAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess, IRelationEditorUpdateOn.SELECTION_TABLE_CHANGE, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);
