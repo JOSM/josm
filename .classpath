@@ -148,12 +148,12 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="tools/groovy/groovy-cli-commons-2.5.0.jar">
+	<classpathentry kind="lib" path="tools/groovy/groovy-cli-commons-2.5.1.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="tools/groovy/groovy-xml-2.5.0.jar">
+	<classpathentry kind="lib" path="tools/groovy/groovy-xml-2.5.1.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>

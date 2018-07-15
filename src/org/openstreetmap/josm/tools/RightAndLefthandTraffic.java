@@ -37,6 +37,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Look up, if there is right- or left-hand traffic at a certain place.
+ * See <a href="https://en.wikipedia.org/wiki/Left-_and_right-hand_traffic">Left- and right-hand traffic</a>
  */
 public final class RightAndLefthandTraffic {
 
@@ -57,7 +58,8 @@ public final class RightAndLefthandTraffic {
      * @return true if there is right-hand traffic, false if there is left-hand traffic
      */
     public static synchronized boolean isRightHandTraffic(LatLon ll) {
-        return !rlCache.get(ll);
+        Boolean value = rlCache.get(ll);
+        return value == null || !value;
     }
 
     /**

@@ -804,7 +804,7 @@ Build-Date: ${build.tstamp}
     </macrodef>
 
     <target name="taginfo" depends="dist">
-        <!-- http://docs.groovy-lang.org/2.5.0/html/documentation/#_the_groovy_ant_task -->
+        <!-- http://docs.groovy-lang.org/2.5.1/html/documentation/#_the_groovy_ant_task -->
         <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="groovy.classpath"/>
         <property name="taginfoextract" value="scripts/TagInfoExtract.groovy"/>
         <property name="imgurlprefix" value="http://josm.openstreetmap.de/download/taginfo/taginfo-img"/>
