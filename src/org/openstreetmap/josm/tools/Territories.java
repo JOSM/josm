@@ -63,7 +63,7 @@ public final class Territories {
             Logging.warn(tr("Unknown territory id: {0}", code));
             return false;
         }
-        return gpi.get(ll);
+        return Boolean.TRUE.equals(gpi.get(ll)); // avoid NPE, see #16491
     }
 
     /**
