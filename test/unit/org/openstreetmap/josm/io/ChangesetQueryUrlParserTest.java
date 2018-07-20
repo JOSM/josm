@@ -13,6 +13,7 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlParser;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Unit tests of {@link ChangesetQueryUrlParser} class
@@ -44,7 +45,7 @@ public class ChangesetQueryUrlParserTest {
             new ChangesetQueryUrlParser().parse(s);
             fail("should throw exception");
         } catch (ChangesetQueryUrlException e) {
-            // OK
+            Logging.trace(e);
         }
     }
 

@@ -155,7 +155,7 @@ public class ChangesetQuery {
      * @since 14039
      */
     public Date getClosedAfter() {
-        return closedAfter;
+        return DateUtils.cloneDate(closedAfter);
     }
 
     /**
@@ -166,7 +166,7 @@ public class ChangesetQuery {
      * @since 14039
      */
     public Date getCreatedBefore() {
-        return createdBefore;
+        return DateUtils.cloneDate(createdBefore);
     }
 
     /**
