@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -42,12 +43,13 @@ public class ChangesetQuery {
     private String userName;
     /** the bounding box this query is restricted to. null, if no restriction to a bounding box applies */
     private Bounds bounds;
-
+    /** the date after which changesets have been closed this query is restricted to. null, if no restriction to closure date applies */
     private Date closedAfter;
+    /** the date before which changesets have been created this query is restricted to. null, if no restriction to creation date applies */
     private Date createdBefore;
     /** indicates whether only open changesets are queried. null, if no restrictions regarding open changesets apply */
     private Boolean open;
-    /** indicates whether only closed changesets are queried. null, if no restrictions regarding open changesets apply */
+    /** indicates whether only closed changesets are queried. null, if no restrictions regarding closed changesets apply */
     private Boolean closed;
     /** a collection of changeset ids to query for */
     private Collection<Long> changesetIds;
@@ -123,6 +125,66 @@ public class ChangesetQuery {
      */
     public boolean isRestrictedToPartiallyIdentifiedUser() {
         return userName != null;
+    }
+
+    /**
+     * Replies true/false if this query is restricted to changesets which are or aren't open.
+     *
+     * @return whether changesets should or should not be open, or {@code null} if there is no restriction
+     * @since 14039
+     */
+    public Boolean getRestrictionToOpen() {
+        return open;
+    }
+
+    /**
+     * Replies true/false if this query is restricted to changesets which are or aren't closed.
+     *
+     * @return whether changesets should or should not be closed, or {@code null} if there is no restriction
+     * @since 14039
+     */
+    public Boolean getRestrictionToClosed() {
+        return closed;
+    }
+
+    /**
+     * Replies the date after which changesets have been closed this query is restricted to.
+     *
+     * @return the date after which changesets have been closed this query is restricted to.
+     *         {@code null}, if no restriction to closure date applies
+     * @since 14039
+     */
+    public Date getClosedAfter() {
+        return closedAfter;
+    }
+
+    /**
+     * Replies the date before which changesets have been created this query is restricted to.
+     *
+     * @return the date before which changesets have been created this query is restricted to.
+     *         {@code null}, if no restriction to creation date applies
+     * @since 14039
+     */
+    public Date getCreatedBefore() {
+        return createdBefore;
+    }
+
+    /**
+     * Replies the list of additional changeset ids to query.
+     * @return the list of additional changeset ids to query (never null)
+     * @since 14039
+     */
+    public final Collection<Long> getAdditionalChangesetIds() {
+        return changesetIds != null ? new ArrayList<>(changesetIds) : Collections.emptyList();
+    }
+
+    /**
+     * Replies the bounding box this query is restricted to.
+     * @return the bounding box this query is restricted to. null, if no restriction to a bounding box applies
+     * @since 14039
+     */
+    public final Bounds getBounds() {
+        return bounds;
     }
 
     /**
