@@ -12,17 +12,28 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link OsmReader} class.
  */
 public class OsmReaderTest {
+
+    /**
+     * Setup rule
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
 
     private static final class PostProcessorStub implements OsmServerReadPostprocessor {
         boolean called;
@@ -98,6 +109,18 @@ public class OsmReaderTest {
     public void testUnknownTag() throws Exception {
         testUnknown("<osm version='0.6'><foo>bar</foo></osm>");
         testUnknown("<osm version='0.6'><foo><bar/></foo></osm>");
+    }
+
+    /**
+     * Test valid data.
+     * @param osm OSM data without XML prefix
+     * @throws Exception if any error occurs
+     */
+    private static void testValidData(String osm) throws Exception {
+        try (InputStream in = new ByteArrayInputStream(
+                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
+            OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+        }
     }
 
     /**
@@ -239,8 +262,17 @@ public class OsmReaderTest {
     public void testIllegalChangeset() throws Exception {
         testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='nan'/></osm>",
                 "Illegal value for attribute 'changeset'. Got nan. (at line 1, column 100). 100 bytes have been read");
-        testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='0'/></osm>",
-                "Illegal value for attribute 'changeset'. Got 0. (at line 1, column 98). 98 bytes have been read");
+        testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='-1'/></osm>",
+                "Illegal value for attribute 'changeset'. Got -1. (at line 1, column 99). 99 bytes have been read");
+    }
+
+    /**
+     * Test GPDR-compliant changeset.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testGdprChangeset() throws Exception {
+        testValidData("<osm version='0.6'><node id='1' version='1' changeset='0'/></osm>");
     }
 
     /**
