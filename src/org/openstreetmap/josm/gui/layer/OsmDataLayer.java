@@ -488,7 +488,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             MapViewPoint anchor = mv.getState().getPointFor(new EastNorth(0, 0));
             Rectangle2D anchorRect = new Rectangle2D.Double(anchor.getInView().getX() % HATCHED_SIZE,
                     anchor.getInView().getY() % HATCHED_SIZE, HATCHED_SIZE, HATCHED_SIZE);
-            g.setPaint(new TexturePaint(hatched, anchorRect));
+            if (hatched != null) {
+                g.setPaint(new TexturePaint(hatched, anchorRect));
+            }
             g.fill(a);
         }
 
