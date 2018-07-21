@@ -212,7 +212,8 @@ way[incline                    ][!highway][!railway][aeroway!~/^(runway|taxiway)
   group: tr("missing tag");
 }
 
-/* {0.tag} together with {1.key}, see #10837, #14034, #9389, #11977, #13156 */
+/* {0.tag} together with {1.key}, see #16464, #10837, #14034, #9389, #11977, #13156 */
+*[internet_access=no][internet_access:fee],
 node[power=transformer][voltage],
 node[transformer=distribution][voltage][power=pole],
 *[amenity=vending_machine][shop],
