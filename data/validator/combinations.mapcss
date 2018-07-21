@@ -217,8 +217,6 @@ node[power=transformer][voltage],
 node[transformer=distribution][voltage][power=pole],
 *[amenity=vending_machine][shop],
 *[noname?][name],
-way[man_made=pipeline][tunnel=flooded],
-way[waterway=canal][tunnel=yes],
 way[oneway=yes][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath],
 way[oneway=yes][/:forward/][!traffic_sign:forward][bicycle:forward!=use_sidepath],
 way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath],
@@ -233,7 +231,9 @@ way[highway=footway][oneway=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.tag} together with {1.tag}, see #10186 */
+/* {0.tag} together with {1.tag}, see #16147, #10186 */
+way[man_made=pipeline][tunnel=flooded],
+way[waterway=canal][tunnel=yes],
 way[highway=footway][bicycle=designated] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
