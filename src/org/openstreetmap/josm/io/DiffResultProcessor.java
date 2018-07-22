@@ -45,9 +45,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DiffResultProcessor {
 
-    private static class DiffResultEntry {
-        private long newId;
-        private int newVersion;
+    static class DiffResultEntry {
+        long newId;
+        int newVersion;
     }
 
     /**
@@ -207,5 +207,9 @@ public class DiffResultProcessor {
                 throw new XmlParsingException(e).rememberLocation(locator);
             }
         }
+    }
+
+    final Map<PrimitiveId, DiffResultEntry> getDiffResults() {
+        return new HashMap<>(diffResults);
     }
 }
