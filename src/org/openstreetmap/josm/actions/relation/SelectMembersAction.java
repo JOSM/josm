@@ -4,7 +4,7 @@ package org.openstreetmap.josm.actions.relation;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -37,7 +37,7 @@ public class SelectMembersAction extends AbstractRelationAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || !MainApplication.isDisplayingMapView()) return;
 
-        Set<IPrimitive> members = new HashSet<>();
+        Set<IPrimitive> members = new LinkedHashSet<>();
         for (IRelation<?> r: relations) {
             members.addAll(r.getMemberPrimitivesList());
         }
