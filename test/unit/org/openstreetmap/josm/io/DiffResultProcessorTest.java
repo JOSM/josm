@@ -77,7 +77,7 @@ public class DiffResultProcessorTest {
      */
     @Test
     public void testParse_OK_Cases() throws XmlParsingException {
-        DiffResultProcessor processor  = new DiffResultProcessor(null);
+        DiffResultProcessor processor = new DiffResultProcessor(null);
         String doc =
         "<diffResult version=\"0.6\" generator=\"Test Data\">\n" +
         "    <node old_id=\"-1\" new_id=\"1\" new_version=\"1\"/>\n" +
@@ -112,7 +112,7 @@ public class DiffResultProcessorTest {
      */
     @Test
     public void testPostProcess_Invocation_Variants() throws XmlParsingException {
-        DiffResultProcessor processor  = new DiffResultProcessor(null);
+        DiffResultProcessor processor = new DiffResultProcessor(null);
         String doc =
         "<diffResult version=\"0.6\" generator=\"Test Data\">\n" +
         "    <node old_id=\"-1\" new_id=\"1\" new_version=\"1\"/>\n" +
