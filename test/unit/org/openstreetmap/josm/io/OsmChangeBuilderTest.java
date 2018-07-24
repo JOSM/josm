@@ -104,7 +104,7 @@ public class OsmChangeBuilderTest {
         assertEquals(String.format(
                 "<osmChange version=\"0.6\" generator=\"JOSM\">%n" +
                 "<create>%n" +
-                "  <node id='-6' changeset='1' lat='0.0' lon='0.0' />%n" +
+                "  <node id='" + n.getUniqueId() + "' changeset='1' lat='0.0' lon='0.0' />%n" +
                 "</create>%n" +
                 "</osmChange>%n"), builder.getDocument());
     }
@@ -182,7 +182,7 @@ public class OsmChangeBuilderTest {
                 "  <node id='1' version='1' changeset='1'/>%n" +
                 "</delete>%n" +
                 "<create>%n" +
-                "  <node id='-3' changeset='1' lat='0.0' lon='0.0' />%n" +
+                "  <node id='" + n2.getUniqueId() + "' changeset='1' lat='0.0' lon='0.0' />%n" +
                 "</create>%n" +
                 "<modify>%n" +
                 "  <node id='2' version='1' changeset='1' lat='0.0' lon='0.0' />%n" +
