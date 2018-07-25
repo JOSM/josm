@@ -2353,6 +2353,13 @@
             <key key="waterway" value="dam" />
             <reference ref="name_wikipedia" />
         </item> <!-- Dam -->
+        <item name="Levee" icon="presets/misc/dyke.svg" type="way" preset_name_label="true">
+            <link href="https://wiki.openstreetmap.org/wiki/Tag:man_made=dyke"
+                  cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=dyke"
+                  de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:man_made=dyke" />
+            <space />
+            <key key="man_made" value="dyke" />
+        </item> <!-- Levee -->
         <item name="Groyne" icon="presets/nautical/groyne.svg" type="way,closedway" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:man_made=groyne"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=groyne"
