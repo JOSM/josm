@@ -18,6 +18,7 @@ import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
@@ -65,6 +66,7 @@ public class WMTSTileSourceTest {
     private ImageryInfo testMissingStyleIdentifer = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-missing-style-identifier.xml");
     private ImageryInfo testMultipleTileMatrixForLayer = getImagery(TestUtils.getTestDataRoot() +
             "wmts/bug13975-multiple-tile-matrices-for-one-layer-projection.xml");
+    private ImageryInfo testImageryGisKtnGvAt = getImagery(TestUtils.getTestDataRoot() + "wmts/gis.ktn.gv.at.xml");
 
     private static ImageryInfo getImagery(String path) {
         try {
@@ -407,5 +409,16 @@ public class WMTSTileSourceTest {
         LatLon expected = CoordinateConversion.coorToLL(verifier.tileXYToLatLon(x, y, z + zoomOffset));
         assertEquals("Longitude", LatLon.normalizeLon(expected.lon() - result.lon()), 0.0, 1e-04);
         assertEquals("Latitude", expected.lat(), result.lat(), 1e-04);
+    }
+
+    @Test
+    public void testGisKtnGvAt() throws IOException, WMTSGetCapabilitiesException {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:31258"));
+        final WMTSTileSource source = new WMTSTileSource(testImageryGisKtnGvAt);
+        source.initProjection(Main.getProjection());
+        final TileXY tile = source.latLonToTileXY(46.6103, 13.8558, 11);
+        assertEquals("https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015" +
+                        "/MapServer/WMTS/tile/1.0.0/tilecache_Ortho_2013_2015/default/default028mm/11/6299/7373.jpg",
+                source.getTileUrl(11, tile.getXIndex(), tile.getYIndex()));
     }
 }

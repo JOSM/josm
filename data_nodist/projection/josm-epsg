@@ -136,6 +136,24 @@
 <27564> +proj=lcc +lat_0=42.165 +lat_1=41d33'37.396" +lat_2=42d46'3.588" +lon_0=2d20'14.025" +x_0=234.358 +y_0=185861.369 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93.gsb +units=m +bounds=-4.416666666666665,41.49,9.18,44.267667  <>
 # Rijksdriehoekscoördinaten (Netherlands)
 <28992> +proj=sterea +lat_0=52d9'22.178" +lon_0=5d23'15.5" +k_0=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.4171,50.3319,465.5524,-0.398957,0.343988,-1.877402,4.0725 +units=m +bounds=3.1,50.56,7.6,53.63  <>
+# MGI / Austria GK West
+<31254> +proj=tmerc +lat_0=0 +lon_0=10.33333333333333 +k=1 +x_0=0 +y_0=-5000000 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
+# MGI / Austria GK Central
+<31255> +proj=tmerc +lat_0=0 +lon_0=13.33333333333333 +k=1 +x_0=0 +y_0=-5000000 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
+# MGI / Austria GK East
+<31256> +proj=tmerc +lat_0=0 +lon_0=16.33333333333333 +k=1 +x_0=0 +y_0=-5000000 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
+# MGI / Austria GK M28
+<31257> +proj=tmerc +lat_0=0 +lon_0=10.33333333333333 +k=1 +x_0=150000 +y_0=-5000000 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
+# MGI / Austria GK M31
+<31258> +proj=tmerc +lat_0=0 +lon_0=13.33333333333333 +k=1 +x_0=450000 +y_0=-5000000 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
+# MGI / Austria GK M34
+<31259> +proj=tmerc +lat_0=0 +lon_0=16.33333333333333 +k=1 +x_0=750000 +y_0=-5000000 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
+# MGI / Austria M28
+<31284> +proj=tmerc +lat_0=0 +lon_0=10.33333333333333 +k=1 +x_0=150000 +y_0=0 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
+# MGI / Austria M31
+<31285> +proj=tmerc +lat_0=0 +lon_0=13.33333333333333 +k=1 +x_0=450000 +y_0=0 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
+# MGI / Austria M34
+<31286> +proj=tmerc +lat_0=0 +lon_0=16.33333333333333 +k=1 +x_0=750000 +y_0=0 +datum=hermannskogel +units=m +axis=neu +no_defs  <>
 # Belgian Lambert 1972
 <31370> +proj=lcc +lat_0=90 +lat_1=49d50'0.00204" +lat_2=51d10'0.00204" +lon_0=4d22'2.952" +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=-99.06,53.32,-112.49,0.419,-0.83,1.885,-1.0 +units=m +bounds=2.54,49.51,6.4,51.5  <>
 # Gauß-Krüger Zone 2
