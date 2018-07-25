@@ -64,6 +64,16 @@ public class CustomProjection extends AbstractProjection {
     protected String code;
     protected Bounds bounds;
     private double metersPerUnitWMTS;
+    /**
+     * Starting in PROJ 4.8.0, the {@code +axis} argument can be used to control the axis orientation of the coordinate system.
+     * The default orientation is "easting, northing, up" but directions can be flipped, or axes flipped using
+     * combinations of the axes in the {@code +axis} switch. The values are: {@code e} (Easting), {@code w} (Westing),
+     * {@code n} (Northing), {@code s} (Southing), {@code u} (Up), {@code d} (Down);
+     * Examples: {@code +axis=enu} (the default easting, northing, elevation), {@code +axis=neu} (northing, easting, up;
+     * useful for "lat/long" geographic coordinates, or south orientated transverse mercator), {@code +axis=wnu}
+     * (westing, northing, up - some planetary coordinate systems have "west positive" coordinate systems)
+     * @apiNote https://proj4.org/usage/projections.html#axis-orientation
+     */
     private String axis = "enu"; // default axis orientation is East, North, Up
 
     private static final List<String> LON_LAT_VALUES = Arrays.asList("longlat", "latlon", "latlong");
@@ -724,6 +734,7 @@ public class CustomProjection extends AbstractProjection {
     @Override
     public boolean switchXY() {
         // TODO: support for other axis orientation such as West South, and Up Down
+        // +axis=neu
         return this.axis.startsWith("ne");
     }
 

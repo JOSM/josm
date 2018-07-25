@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd" version="1.0.0">
+  <!-- Service Identification -->
+  <ows:ServiceIdentification>
+    <ows:Title>tilecache_Ortho_2013_2015</ows:Title>
+    <ows:ServiceType>OGC WMTS</ows:ServiceType>
+    <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+  </ows:ServiceIdentification>
+  <!-- Operations Metadata -->
+  <ows:OperationsMetadata>
+    <ows:Operation name="GetCapabilities">
+      <ows:DCP>
+        <ows:HTTP>
+          <ows:Get xlink:href="https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015/MapServer/WMTS/1.0.0/WMTSCapabilities.xml">
+            <ows:Constraint name="GetEncoding">
+              <ows:AllowedValues>
+                <ows:Value>RESTful</ows:Value>
+              </ows:AllowedValues>
+            </ows:Constraint>
+          </ows:Get>
+          <!-- add KVP binding in 10.1 -->
+          <ows:Get xlink:href="https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015/MapServer/WMTS?">
+            <ows:Constraint name="GetEncoding">
+              <ows:AllowedValues>
+                <ows:Value>KVP</ows:Value>
+              </ows:AllowedValues>
+            </ows:Constraint>
+          </ows:Get>
+        </ows:HTTP>
+      </ows:DCP>
+    </ows:Operation>
+    <ows:Operation name="GetTile">
+      <ows:DCP>
+        <ows:HTTP>
+          <ows:Get xlink:href="https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015/MapServer/WMTS/tile/1.0.0/">
+            <ows:Constraint name="GetEncoding">
+              <ows:AllowedValues>
+                <ows:Value>RESTful</ows:Value>
+              </ows:AllowedValues>
+            </ows:Constraint>
+          </ows:Get>
+          <ows:Get xlink:href="https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015/MapServer/WMTS?">
+            <ows:Constraint name="GetEncoding">
+              <ows:AllowedValues>
+                <ows:Value>KVP</ows:Value>
+              </ows:AllowedValues>
+            </ows:Constraint>
+          </ows:Get>
+        </ows:HTTP>
+      </ows:DCP>
+    </ows:Operation>
+  </ows:OperationsMetadata>
+  <Contents>
+    <!--Layer-->
+    <Layer>
+      <ows:Title>tilecache_Ortho_2013_2015</ows:Title>
+      <ows:Identifier>tilecache_Ortho_2013_2015</ows:Identifier>
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG::31258">
+        <ows:LowerCorner>111871.360936951 382761.8933615012</ows:LowerCorner>
+        <ows:UpperCorner>253506.25403528888 604987.341343819</ows:UpperCorner>
+      </ows:BoundingBox>
+      <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+        <ows:LowerCorner>12.442197980476916 46.12908803990147</ows:LowerCorner>
+        <ows:UpperCorner>15.386895699410875 47.42090756083137</ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+      <Style isDefault="true">
+        <ows:Title>Default Style</ows:Title>
+        <ows:Identifier>default</ows:Identifier>
+      </Style>
+      <Format>image/jpeg</Format>
+      <TileMatrixSetLink>
+        <TileMatrixSet>default028mm</TileMatrixSet>
+      </TileMatrixSetLink>
+      <ResourceURL format="image/jpeg" resourceType="tile" template="https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015/MapServer/WMTS/tile/1.0.0/tilecache_Ortho_2013_2015/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpg"/>
+    </Layer>
+    <!--TileMatrixSet-->
+    <TileMatrixSet>
+      <ows:Title>TileMatrix using 0.28mm</ows:Title>
+      <ows:Abstract>The tile matrix set that has scale values calculated based on the dpi defined by OGC specification (dpi assumes 0.28mm as the physical distance of a pixel).</ows:Abstract>
+      <ows:Identifier>default028mm</ows:Identifier>
+      <ows:SupportedCRS>urn:ogc:def:crs:EPSG::31258</ows:SupportedCRS>
+      <TileMatrix>
+        <ows:Identifier>0</ows:Identifier>
+        <ScaleDenominator>1428574.2633983472</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>29</MatrixWidth>
+        <MatrixHeight>24</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>1</ows:Identifier>
+        <ScaleDenominator>714287.6041703566</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>57</MatrixWidth>
+        <MatrixHeight>48</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>2</ows:Identifier>
+        <ScaleDenominator>357143.8020851783</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>113</MatrixWidth>
+        <MatrixHeight>96</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>3</ows:Identifier>
+        <ScaleDenominator>178571.4285714061</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>226</MatrixWidth>
+        <MatrixHeight>191</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>4</ows:Identifier>
+        <ScaleDenominator>89285.71428570306</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>452</MatrixWidth>
+        <MatrixHeight>382</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>5</ows:Identifier>
+        <ScaleDenominator>53571.61755989506</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>753</MatrixWidth>
+        <MatrixHeight>637</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>6</ows:Identifier>
+        <ScaleDenominator>35714.09672580801</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>1129</MatrixWidth>
+        <MatrixHeight>955</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>7</ows:Identifier>
+        <ScaleDenominator>17857.52083408704</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>2257</MatrixWidth>
+        <MatrixHeight>1910</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>8</ows:Identifier>
+        <ScaleDenominator>10714.70148892544</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>3762</MatrixWidth>
+        <MatrixHeight>3183</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>9</ows:Identifier>
+        <ScaleDenominator>8928.76041704352</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>4514</MatrixWidth>
+        <MatrixHeight>3820</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>10</ows:Identifier>
+        <ScaleDenominator>7142.8193451616025</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>5643</MatrixWidth>
+        <MatrixHeight>4775</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>11</ows:Identifier>
+        <ScaleDenominator>5356.878273279683</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>7524</MatrixWidth>
+        <MatrixHeight>6367</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>12</ows:Identifier>
+        <ScaleDenominator>3571.8821437638385</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>11283</MatrixWidth>
+        <MatrixHeight>9548</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>13</ows:Identifier>
+        <ScaleDenominator>1785.9410718819192</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>22566</MatrixWidth>
+        <MatrixHeight>19096</MatrixHeight>
+      </TileMatrix>
+      <TileMatrix>
+        <ows:Identifier>14</ows:Identifier>
+        <ScaleDenominator>892.9705359409596</ScaleDenominator>
+        <TopLeftCorner>5001000.0 -5172500.0</TopLeftCorner>
+        <TileWidth>512</TileWidth>
+        <TileHeight>512</TileHeight>
+        <MatrixWidth>45131</MatrixWidth>
+        <MatrixHeight>38192</MatrixHeight>
+      </TileMatrix>
+    </TileMatrixSet>
+  </Contents>
+  <ServiceMetadataURL xlink:href="https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"/>
+</Capabilities>
