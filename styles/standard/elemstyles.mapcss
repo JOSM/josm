@@ -1394,6 +1394,10 @@ way[man_made=breakwater] {
     width: 2;
     color: manmade#d8d8d8;
 }
+way[man_made=dyke] {
+    width: 2;
+    color: dyke#0aa846;
+}
 node[man_made=lighthouse] {
     icon-image: "presets/landmark/lighthouse.svg";
     set icon_z17;
