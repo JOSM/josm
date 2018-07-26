@@ -158,7 +158,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/jmockit-1.40.jar" sourcepath="C:/Users/vippy/.m2/repository/org/jmockit/jmockit/1.40/jmockit-1.40-sources.jar">
+	<classpathentry kind="lib" path="test/lib/jmockit-1.40.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
