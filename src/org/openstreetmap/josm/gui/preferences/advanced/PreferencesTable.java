@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -95,14 +94,12 @@ public class PreferencesTable extends JTable {
      */
     public boolean editPreference(final JComponent gui) {
         if (getSelectedRowCount() != 1) {
-            if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(
-                        gui,
-                        tr("Please select the row to edit."),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                        );
-            }
+            JOptionPane.showMessageDialog(
+                    gui,
+                    tr("Please select the row to edit."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+                    );
             return false;
         }
         final PrefEntry e = (PrefEntry) model.getValueAt(getSelectedRow(), 1);
@@ -196,7 +193,7 @@ public class PreferencesTable extends JTable {
 
         PrefEntry pe = null;
         boolean ok = false;
-        if (!GraphicsEnvironment.isHeadless() && askAddSetting(gui, p)) {
+        if (askAddSetting(gui, p)) {
             if (rbString.isSelected()) {
                 StringSetting sSetting = new StringSetting(null);
                 pe = new PrefEntry(tkey.getText(), sSetting, sSetting, false);
@@ -281,14 +278,12 @@ public class PreferencesTable extends JTable {
      */
     public void resetPreferences(final JComponent gui) {
         if (getSelectedRowCount() == 0) {
-            if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(
-                        gui,
-                        tr("Please select the row to delete."),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                        );
-            }
+            JOptionPane.showMessageDialog(
+                    gui,
+                    tr("Please select the row to delete."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+                    );
             return;
         }
         for (int row : getSelectedRows()) {

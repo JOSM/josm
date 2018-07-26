@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.io;
 
 import java.util.Optional;
 
+import javax.swing.JOptionPane;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,6 +19,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
+
+import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -36,10 +41,17 @@ public class AsynchronousUploadPrimitivesTaskTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().assertionsInEDT();
 
+    /**
+     * Bootstrap.
+     */
     @Before
     public void bootStrap() {
+        new JOptionPaneSimpleMocker(ImmutableMap.of(
+            "A background upload is already in progress. Kindly wait for it to finish before uploading new changes", JOptionPane.OK_OPTION
+        ));
+
         DataSet dataSet = new DataSet();
         Node node1 = new Node();
         Node node2 = new Node();
@@ -59,6 +71,9 @@ public class AsynchronousUploadPrimitivesTaskTest {
         uploadPrimitivesTask = AsynchronousUploadPrimitivesTask.createAsynchronousUploadTask(strategy, layer, toUpload, changeset).get();
     }
 
+    /**
+     * Tear down.
+     */
     @After
     public void tearDown() {
         toUpload = null;
@@ -69,6 +84,9 @@ public class AsynchronousUploadPrimitivesTaskTest {
         uploadPrimitivesTask = null;
     }
 
+    /**
+     * Test single upload instance.
+     */
     @Test
     public void testSingleUploadInstance() {
         Optional<AsynchronousUploadPrimitivesTask> task = AsynchronousUploadPrimitivesTask.

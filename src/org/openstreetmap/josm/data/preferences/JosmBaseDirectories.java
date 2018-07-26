@@ -154,4 +154,15 @@ public final class JosmBaseDirectories implements IBaseDirectories {
         }
         return cacheDir;
     }
+
+    /**
+     * Clears any previously calculated values used for {@link #getPreferencesDirectory(boolean)},
+     * {@link #getCacheDirectory(boolean)} or {@link #getUserDataDirectory(boolean)}. Useful for tests.
+     * @since 14052
+     */
+    public void clearMemos() {
+        this.preferencesDir = null;
+        this.cacheDir = null;
+        this.userdataDir = null;
+    }
 }

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GraphicsEnvironment;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
@@ -85,12 +84,10 @@ public final class AsynchronousUploadPrimitivesTask extends UploadPrimitivesTask
              OsmDataLayer dataLayer, APIDataSet apiDataSet, Changeset changeset) {
         synchronized (AsynchronousUploadPrimitivesTask.class) {
             if (asynchronousUploadPrimitivesTask != null) {
-                if (!GraphicsEnvironment.isHeadless()) {
-                    GuiHelper.runInEDTAndWait(() ->
-                            JOptionPane.showMessageDialog(MainApplication.parent,
-                                    tr("A background upload is already in progress. " +
-                                            "Kindly wait for it to finish before uploading new changes")));
-                }
+                GuiHelper.runInEDTAndWait(() ->
+                        JOptionPane.showMessageDialog(MainApplication.parent,
+                                tr("A background upload is already in progress. " +
+                                        "Kindly wait for it to finish before uploading new changes")));
                 return Optional.empty();
             } else {
                 // Create an asynchronous upload task

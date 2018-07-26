@@ -50,6 +50,67 @@ public final class Logging {
     private static final Logger LOGGER = Logger.getAnonymousLogger();
     private static final RememberWarningHandler WARNINGS = new RememberWarningHandler();
 
+    /**
+     * A {@link ConsoleHandler} with a couple of extra features, allowing it to be targeted at an
+     * an arbitrary {@link OutputStream} which it can be asked to reaquire the reference for on demand
+     * through {@link #reacquireOutputStream()}. It can also prevent a LogRecord's output if a
+     * specified {@code prioritizedHandler} would have outputted it.
+     * @since 14052
+     */
+    public static class ReacquiringConsoleHandler extends ConsoleHandler {
+        private final Supplier<OutputStream> outputStreamSupplier;
+        private final Handler prioritizedHandler;
+        private OutputStream outputStreamMemo;
+
+        /**
+        * Construct a new {@link ReacquiringConsoleHandler}.
+        * @param outputStreamSupplier A {@link Supplier} which will return the desired
+        *   {@link OutputStream} for this handler when called. Particularly useful if you happen to be
+        *   using a test framework which will switch out references to the stderr/stdout streams with
+        *   new dummy ones from time to time.
+        * @param prioritizedHandler If non-null, will suppress output of any log records which pass this
+        *   handler's {@code Handler#isLoggable(LogRecord)} method.
+        */
+        public ReacquiringConsoleHandler(
+            final Supplier<OutputStream> outputStreamSupplier,
+            final Handler prioritizedHandler
+        ) {
+            this.outputStreamSupplier = outputStreamSupplier;
+            this.prioritizedHandler = prioritizedHandler;
+
+            this.reacquireOutputStream();
+        }
+
+        /**
+         * Set output stream to one acquired from calling outputStreamSupplier
+         */
+        public void reacquireOutputStream() {
+            final OutputStream reacquiredStream = this.outputStreamSupplier.get();
+
+            // only bother calling setOutputStream if it's actually different, as setOutputStream
+            // has the nasty side effect of closing any previous output stream, which is certainly not
+            // what we would want were the new stream the same one
+            if (reacquiredStream != this.outputStreamMemo) {
+                this.setOutputStream(reacquiredStream);
+            }
+        }
+
+        @Override
+        public synchronized void setOutputStream(final OutputStream outputStream) {
+            // this wouldn't be necessary if StreamHandler made it possible to see what the current
+            // output stream is set to
+            this.outputStreamMemo = outputStream;
+            super.setOutputStream(outputStream);
+        }
+
+        @Override
+        public synchronized void publish(LogRecord record) {
+            if (this.prioritizedHandler == null || !this.prioritizedHandler.isLoggable(record)) {
+                super.publish(record);
+            }
+        }
+    }
+
     static {
         // We need to be sure java.locale.providers system property is initialized by JOSM, not by JRE
         // The call to ConsoleHandler constructor makes the JRE access this property by side effect
@@ -61,7 +122,7 @@ public final class Logging {
         // for a more concise logging output via java.util.logging.SimpleFormatter
         Utils.updateSystemProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT.%1$tL %4$s: %5$s%6$s%n");
 
-        ConsoleHandler stderr = new ConsoleHandler();
+        ConsoleHandler stderr = new ReacquiringConsoleHandler(() -> System.err, null);
         LOGGER.addHandler(stderr);
         try {
             stderr.setLevel(LEVEL_WARN);
@@ -69,20 +130,7 @@ public final class Logging {
             System.err.println("Unable to set logging level: " + e.getMessage());
         }
 
-        ConsoleHandler stdout = new ConsoleHandler() {
-            @Override
-            protected synchronized void setOutputStream(OutputStream out) {
-                // overwrite output stream.
-                super.setOutputStream(System.out);
-            }
-
-            @Override
-            public synchronized void publish(LogRecord record) {
-                if (!stderr.isLoggable(record)) {
-                    super.publish(record);
-                }
-            }
-        };
+        ConsoleHandler stdout = new ReacquiringConsoleHandler(() -> System.out, stderr);
         LOGGER.addHandler(stdout);
         try {
             stdout.setLevel(Level.ALL);

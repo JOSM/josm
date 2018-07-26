@@ -2,12 +2,17 @@
 package org.openstreetmap.josm.testutils;
 
 import java.awt.Color;
+import java.awt.Window;
+import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.logging.Handler;
 
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
@@ -36,6 +41,10 @@ import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.testutils.mockers.EDTAssertionMocker;
+import org.openstreetmap.josm.testutils.mockers.WindowlessMapViewStateMocker;
+import org.openstreetmap.josm.testutils.mockers.WindowlessNavigatableComponentMocker;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -43,6 +52,8 @@ import org.openstreetmap.josm.tools.MemoryManagerTest;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.date.DateUtils;
+
+import org.awaitility.Awaitility;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -63,6 +74,9 @@ public class JOSMTestRules implements TestRule {
     private TileSourceRule tileSourceRule;
     private String assumeRevisionString;
     private Version originalVersion;
+    private Runnable mapViewStateMockingRunnable;
+    private Runnable navigableComponentMockingRunnable;
+    private Runnable edtAssertionMockingRunnable;
     private boolean platform;
     private boolean useProjection;
     private boolean useProjectionNadGrids;
@@ -259,6 +273,25 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
+     * Re-raise AssertionErrors thrown in the EDT where they would have normally been swallowed.
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules assertionsInEDT() {
+        return this.assertionsInEDT(EDTAssertionMocker::new);
+    }
+
+    /**
+     * Re-raise AssertionErrors thrown in the EDT where they would have normally been swallowed.
+     * @param edtAssertionMockingRunnable Runnable for initializing this functionality
+     *
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules assertionsInEDT(final Runnable edtAssertionMockingRunnable) {
+        this.edtAssertionMockingRunnable = edtAssertionMockingRunnable;
+        return this;
+    }
+
+    /**
      * Replace imagery sources with a default set of mock tile sources
      *
      * @return this instance, for easy chaining
@@ -296,8 +329,30 @@ public class JOSMTestRules implements TestRule {
      * @since 12557
      */
     public JOSMTestRules main() {
+        return this.main(
+            WindowlessMapViewStateMocker::new,
+            WindowlessNavigatableComponentMocker::new
+        );
+    }
+
+    /**
+     * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
+     *         global variables in this test.
+     * @param mapViewStateMockingRunnable Runnable to use for mocking out any required parts of
+     *        {@link org.openstreetmap.josm.gui.MapViewState}, null to skip.
+     * @param navigableComponentMockingRunnable Runnable to use for mocking out any required parts
+     *        of {@link org.openstreetmap.josm.gui.NavigatableComponent}, null to skip.
+     *
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules main(
+        final Runnable mapViewStateMockingRunnable,
+        final Runnable navigableComponentMockingRunnable
+    ) {
         platform();
-        main = true;
+        this.main = true;
+        this.mapViewStateMockingRunnable = mapViewStateMockingRunnable;
+        this.navigableComponentMockingRunnable = navigableComponentMockingRunnable;
         return this;
     }
 
@@ -343,9 +398,6 @@ public class JOSMTestRules implements TestRule {
      * @throws ReflectiveOperationException if a reflective access error occurs
      */
     protected void before() throws InitializationError, ReflectiveOperationException {
-        // Tests are running headless by default.
-        System.setProperty("java.awt.headless", "true");
-
         cleanUpFromJosmFixture();
 
         if (this.assumeRevisionString != null) {
@@ -354,12 +406,32 @@ public class JOSMTestRules implements TestRule {
             TestUtils.setPrivateStaticField(Version.class, "instance", replacementVersion);
         }
 
+        // Add JOSM home
+        if (josmHome != null) {
+            try {
+                File home = josmHome.newFolder();
+                System.setProperty("josm.home", home.getAbsolutePath());
+                JosmBaseDirectories.getInstance().clearMemos();
+            } catch (IOException e) {
+                throw new InitializationError(e);
+            }
+        }
+
         Config.setPreferencesInstance(Main.pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
+
+        // Force log handers to reacquire reference to (junit's fake) stdout/stderr
+        for (Handler handler : Logging.getLogger().getHandlers()) {
+            if (handler instanceof Logging.ReacquiringConsoleHandler) {
+                handler.flush();
+                ((Logging.ReacquiringConsoleHandler) handler).reacquireOutputStream();
+            }
+        }
         // Set log level to info
         Logging.setLogLevel(Logging.LEVEL_INFO);
+
         // Assume anonymous user
         UserIdentityManager.getInstance().setAnonymous();
         User.clearUserMap();
@@ -372,18 +444,11 @@ public class JOSMTestRules implements TestRule {
             I18n.set(i18n);
         }
 
-        // Add JOSM home
-        if (josmHome != null) {
-            try {
-                File home = josmHome.newFolder();
-                System.setProperty("josm.home", home.getAbsolutePath());
-            } catch (IOException e) {
-                throw new InitializationError(e);
-            }
-        }
-
         // Add preferences
         if (usePreferences) {
+            @SuppressWarnings("unchecked")
+            final Map<String, Setting<?>> defaultsMap = (Map<String, Setting<?>>) TestUtils.getPrivateField(Main.pref, "defaultsMap");
+            defaultsMap.clear();
             Main.pref.resetToInitialState();
             Main.pref.enableSaveOnPut(false);
             // No pref init -> that would only create the preferences file.
@@ -447,11 +512,24 @@ public class JOSMTestRules implements TestRule {
             RightAndLefthandTraffic.initialize();
         }
 
+        if (this.edtAssertionMockingRunnable != null) {
+            this.edtAssertionMockingRunnable.run();
+        }
+
         if (commands) {
             // TODO: Implement a more selective version of this once Main is restructured.
             JOSMFixture.createUnitTestFixture().init(true);
         } else {
             if (main) {
+                // apply mockers to MapViewState and NavigableComponent whether we're headless or not
+                // as we generally don't create the josm main window even in non-headless mode.
+                if (this.mapViewStateMockingRunnable != null) {
+                    this.mapViewStateMockingRunnable.run();
+                }
+                if (this.navigableComponentMockingRunnable != null) {
+                    this.navigableComponentMockingRunnable.run();
+                }
+
                 new MainApplication();
                 JOSMFixture.initContentPane();
                 JOSMFixture.initMainPanel(true);
@@ -499,11 +577,11 @@ public class JOSMTestRules implements TestRule {
     @SuppressFBWarnings("DM_GC")
     protected void after() throws ReflectiveOperationException {
         // Sync AWT Thread
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-            }
-        });
+        GuiHelper.runInEDTAndWait(() -> { });
+        // Sync worker thread
+        final boolean[] queueEmpty = {false};
+        MainApplication.worker.submit(() -> queueEmpty[0] = true);
+        Awaitility.await().forever().until(() -> queueEmpty[0]);
         // Remove all layers
         cleanLayerEnvironment();
         MemoryManagerTest.resetState(allowMemoryManagerLeaks);
@@ -516,6 +594,21 @@ public class JOSMTestRules implements TestRule {
         if (this.assumeRevisionString != null && this.originalVersion != null) {
             TestUtils.setPrivateStaticField(Version.class, "instance", this.originalVersion);
         }
+
+        Window[] windows = Window.getWindows();
+        if (windows.length != 0) {
+            Logging.info(
+                "Attempting to close {0} windows left open by tests: {1}",
+                windows.length,
+                Arrays.toString(windows)
+            );
+        }
+        GuiHelper.runInEDTAndWait(() -> {
+            for (Window window : windows) {
+                window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+                window.dispose();
+            }
+        });
 
         // Parts of JOSM uses weak references - destroy them.
         System.gc();
@@ -569,6 +662,7 @@ public class JOSMTestRules implements TestRule {
                 if (exception != null) {
                     throw exception;
                 } else {
+                    Logging.debug("Thread state at timeout: {0}", Thread.getAllStackTraces());
                     throw new Exception(MessageFormat.format("Test timed out after {0}ms", timeout));
                 }
             }
