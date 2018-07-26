@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -158,15 +157,13 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
         }
         sb.append("</html>");
-        if (!GraphicsEnvironment.isHeadless()) {
-            GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
-                    parent,
-                    sb.toString(),
-                    tr("Update plugins"),
-                    !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
-                            HelpUtil.ht("/Preferences/Plugins")
-                    ));
-        }
+        GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
+                parent,
+                sb.toString(),
+                tr("Update plugins"),
+                !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
+                        HelpUtil.ht("/Preferences/Plugins")
+                ));
     }
 
     private JPanel buildSearchFieldPanel() {
@@ -214,10 +211,20 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     private JPanel buildActionPanel() {
         JPanel pnl = new JPanel(new GridLayout(1, 4));
 
-        pnl.add(new JButton(new DownloadAvailablePluginsAction()));
-        pnl.add(new JButton(new UpdateSelectedPluginsAction()));
-        ExpertToggleAction.addVisibilitySwitcher(pnl.add(new JButton(new SelectByListAction())));
-        ExpertToggleAction.addVisibilitySwitcher(pnl.add(new JButton(new ConfigureSitesAction())));
+        // assign some component names to these as we go to aid testing
+        final JButton downloadListButton = new JButton(new DownloadAvailablePluginsAction());
+        downloadListButton.setName("downloadListButton");
+        final JButton updatePluginsButton = new JButton(new UpdateSelectedPluginsAction());
+        updatePluginsButton.setName("updatePluginsButton");
+        final JButton loadFromListButton = new JButton(new SelectByListAction());
+        loadFromListButton.setName("loadFromListButton");
+        final JButton configureSitesButton = new JButton(new ConfigureSitesAction());
+        configureSitesButton.setName("configureSitesButton");
+
+        pnl.add(downloadListButton);
+        pnl.add(updatePluginsButton);
+        ExpertToggleAction.addVisibilitySwitcher(pnl.add(loadFromListButton));
+        ExpertToggleAction.addVisibilitySwitcher(pnl.add(configureSitesButton));
         return pnl;
     }
 

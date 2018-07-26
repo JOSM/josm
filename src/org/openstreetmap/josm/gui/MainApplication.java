@@ -487,14 +487,13 @@ public class MainApplication extends Main {
 
     @Override
     protected void shutdown() {
-        if (!GraphicsEnvironment.isHeadless()) {
-            try {
-                worker.shutdown();
-            } catch (SecurityException e) {
-                Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
-            }
-            JCSCacheManager.shutdown();
+        try {
+            worker.shutdown();
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
         }
+        JCSCacheManager.shutdown();
+
         if (mainFrame != null) {
             mainFrame.storeState();
         }
@@ -504,12 +503,12 @@ public class MainApplication extends Main {
         // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
         layerManager.resetState();
         super.shutdown();
-        if (!GraphicsEnvironment.isHeadless()) {
-            try {
-                worker.shutdownNow();
-            } catch (SecurityException e) {
-                Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
-            }
+
+        try {
+            // in case the current task still hasn't finished
+            worker.shutdownNow();
+        } catch (SecurityException e) {
+            Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
         }
     }
 

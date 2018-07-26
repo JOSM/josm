@@ -55,10 +55,8 @@ public class ExportProfileAction extends AbstractAction {
             }
         }
         if (keys.isEmpty()) {
-            if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("All the preferences of this group are default, nothing to save"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(Main.parent,
+                    tr("All the preferences of this group are default, nothing to save"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
             return;
         }
         File f = askUserForCustomSettingsFile();

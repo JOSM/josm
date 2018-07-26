@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -59,6 +58,7 @@ import org.openstreetmap.josm.gui.preferences.shortcut.ShortcutPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTestsPreference;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -174,7 +174,9 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 }
             }
 
-            Main.parent.repaint();
+            if (Main.parent != null) {
+                Main.parent.repaint();
+            }
         }
     }
 
@@ -420,7 +422,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 // if we have to launch a plugin download task we do it asynchronously, followed
                 // by the remaining "save preferences" activites run on the Swing EDT.
                 MainApplication.worker.submit(task);
-                MainApplication.worker.submit(() -> SwingUtilities.invokeLater(continuation));
+                MainApplication.worker.submit(() -> GuiHelper.runInEDT(continuation));
             } else {
                 // no need for asynchronous activities. Simply run the remaining "save preference"
                 // activities on this thread (we are already on the Swing EDT

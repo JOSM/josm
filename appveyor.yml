@@ -7,7 +7,7 @@ install:
   - cinst ant
   - refreshenv
 build_script:
-  - ant compile javadoc dist distmac checkstyle pmd spotbugs
+  - ant compile dist distmac checkstyle pmd spotbugs
 test_script:
   - ant test
 after_test:
