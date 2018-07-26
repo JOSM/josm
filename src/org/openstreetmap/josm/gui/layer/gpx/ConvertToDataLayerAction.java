@@ -90,6 +90,10 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
                                 Logging.log(Logging.LEVEL_WARN, e);
                             }
                         }
+                        String elestr = p.getString(GpxConstants.PT_ELE);
+                        if (elestr != null) {
+                            n.put("ele", elestr);
+                        }
                         ds.addPrimitive(n);
                         nodes.add(n);
                     }
