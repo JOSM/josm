@@ -8,24 +8,31 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
+import javax.swing.JOptionPane;
+
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.spi.preferences.StringSetting;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.advanced.PreferencesTable.AllSettingsTableModel;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
+import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
+
+import com.google.common.collect.ImmutableMap;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link PreferencesTable} class.
  */
 public class PreferencesTableTest {
-
     /**
-     * Setup test.
+     * Setup tests
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().assertionsInEDT();
 
     private static PrefEntry newPrefEntry(String value) {
         StringSetting val = new StringSetting(value);
@@ -42,6 +49,20 @@ public class PreferencesTableTest {
      */
     @Test
     public void testPreferencesTable() {
+        new JOptionPaneSimpleMocker(ImmutableMap.of(
+            "Please select the row to edit.", JOptionPane.OK_OPTION,
+            "Please select the row to delete.", JOptionPane.OK_OPTION
+        ));
+        new ExtendedDialogMocker() {
+            @Override
+            protected int getMockResult(final ExtendedDialog instance) {
+                if (instance.getTitle().equals("Add setting")) {
+                    return 1 + this.getButtonPositionFromLabel(instance, "Cancel");
+                } else {
+                    return super.getMockResult(instance);
+                }
+            }
+        };
         PreferencesTable t = newTable();
         t.fireDataChanged();
         assertTrue(t.getSelectedItems().isEmpty());

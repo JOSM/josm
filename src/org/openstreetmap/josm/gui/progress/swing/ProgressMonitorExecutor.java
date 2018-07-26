@@ -1,10 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress.swing;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -36,4 +40,23 @@ public class ProgressMonitorExecutor extends ThreadPoolExecutor {
         super.execute(command);
     }
 
+    @Override
+    public void afterExecute(final Runnable r, Throwable t) {
+        // largely as proposed by JDK8 docs
+        super.afterExecute(r, t);
+        if (t == null && r instanceof Future<?>) {
+            try {
+                ((Future<?>) r).get();
+            } catch (CancellationException cancellationException) {
+                t = cancellationException;
+            } catch (ExecutionException executionException) {
+                t = executionException.getCause();
+            } catch (InterruptedException interruptedException) {
+                Thread.currentThread().interrupt(); // ignore/reset
+            }
+        }
+        if (t != null) {
+            Logging.error("Thread {0} raised {1}", Thread.currentThread().getName(), t);
+        }
+    }
 }

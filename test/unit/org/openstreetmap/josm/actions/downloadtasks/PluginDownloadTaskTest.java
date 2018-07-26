@@ -55,7 +55,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
      */
     @Test
     public void testUpdatePluginValid() throws Exception {
-        this.pluginPath = "plugin/dummy_plugin.jar";
+        this.pluginPath = "plugin/dummy_plugin.v31772.jar";
         this.mockHttp();
 
         final File srcPluginFile = new File(
@@ -73,7 +73,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
         }
 
         // get PluginInformation from jar file
-        final PluginInformation pluginInformation = new PluginInformation(srcPluginFile);
+        final PluginInformation pluginInformation = new PluginInformation(srcPluginFile, "dummy_plugin");
         // ...and grafting on the downloadlink
         pluginInformation.downloadlink = this.getRemoteFileUrl();
 
@@ -86,18 +86,8 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
 
         // the ".jar.new" file should have been deleted
         assertFalse(pluginFileNew.exists());
-        // the ".jar" file should still exist
-        assertTrue(pluginFile.exists());
-        try (
-            FileInputStream pluginDirPluginStream = new FileInputStream(pluginFile);
-            FileInputStream srcPluginStream = new FileInputStream(srcPluginFile);
-        ) {
-            // and its contents should equal those that were served to the task
-            assertArrayEquals(
-                ByteStreams.toByteArray(pluginDirPluginStream),
-                ByteStreams.toByteArray(srcPluginStream)
-            );
-        }
+        // the ".jar" file should still exist and its contents should equal those that were served to the task
+        TestUtils.assertFileContentsEqual(pluginFile, srcPluginFile);
     }
 
     /**
@@ -139,24 +129,17 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
             pluginDownloadTask.run();
         }
 
-        // the ".jar.new" file should exist, even though invalid
-        assertTrue(pluginFileNew.exists());
+        // assert that the "corrupt" jar file made it through in tact
+        TestUtils.assertFileContentsEqual(pluginFileNew, srcPluginFile);
         // the ".jar" file should still exist
         assertTrue(pluginFile.exists());
         try (
-            FileInputStream pluginDirPluginNewStream = new FileInputStream(pluginFileNew);
             FileInputStream pluginDirPluginStream = new FileInputStream(pluginFile);
-            FileInputStream srcPluginStream = new FileInputStream(srcPluginFile);
         ) {
             // the ".jar" file's contents should be as before
             assertArrayEquals(
                 existingPluginContents,
                 ByteStreams.toByteArray(pluginDirPluginStream)
-            );
-            // just assert that the "corrupt" jar file made it through in tact
-            assertArrayEquals(
-                ByteStreams.toByteArray(pluginDirPluginNewStream),
-                ByteStreams.toByteArray(srcPluginStream)
             );
         }
     }

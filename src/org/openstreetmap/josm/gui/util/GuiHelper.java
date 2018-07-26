@@ -201,6 +201,10 @@ public final class GuiHelper {
         }
     }
 
+    private static void handleEDTException(Throwable t) {
+        Logging.logWithStackTrace(Logging.LEVEL_ERROR, t, "Exception raised in EDT");
+    }
+
     /**
      * Executes synchronously a runnable in
      * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
@@ -214,7 +218,7 @@ public final class GuiHelper {
             try {
                 SwingUtilities.invokeAndWait(task);
             } catch (InterruptedException | InvocationTargetException e) {
-                Logging.error(e);
+                handleEDTException(e);
             }
         }
     }
@@ -255,7 +259,7 @@ public final class GuiHelper {
             try {
                 return callable.call();
             } catch (Exception e) { // NOPMD
-                Logging.error(e);
+                handleEDTException(e);
                 return null;
             }
         } else {
@@ -264,7 +268,7 @@ public final class GuiHelper {
             try {
                 return task.get();
             } catch (InterruptedException | ExecutionException e) {
-                Logging.error(e);
+                handleEDTException(e);
                 return null;
             }
         }

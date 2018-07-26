@@ -264,7 +264,7 @@ public final class ConditionalOptionPaneUtil {
      * a checkbox for enabling/disabling this particular dialog.
      *
      */
-    static class MessagePanel extends JPanel {
+    public static class MessagePanel extends JPanel {
         private final JRadioButton cbShowPermanentDialog = new JRadioButton(NotShowAgain.PERMANENT.getLabel());
         private final JRadioButton cbShowSessionDialog = new JRadioButton(NotShowAgain.SESSION.getLabel());
         private final JRadioButton cbShowImmediateDialog = new JRadioButton(NotShowAgain.OPERATION.getLabel());

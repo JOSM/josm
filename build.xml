@@ -42,6 +42,7 @@
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
         <property name="java.lang.version" value="1.8" />
+        <property name="test.headless" value="true" />
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
         <property name="jacoco.inclbootstrapclasses" value="false" />
         <property name="jacoco.inclnolocationclasses" value="false" />
@@ -500,6 +501,7 @@ Build-Date: ${build.tstamp}
                 inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}">
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
+                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit-1.40.jar"/>
                     <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
                     <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
                     <jvmarg value="--add-exports" if:set="isJava9" />
@@ -524,7 +526,7 @@ Build-Date: ${build.tstamp}
                     <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" if:set="isJava9" />
                     <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
                     <sysproperty key="josm.test.data" value="${test.dir}/data"/>
-                    <sysproperty key="java.awt.headless" value="true"/>
+                    <sysproperty key="java.awt.headless" value="${test.headless}"/>
                     <sysproperty key="glass.platform" value="Monocle"/>
                     <sysproperty key="monocle.platform" value="Headless"/>
                     <sysproperty key="prism.order" value="sw"/>
