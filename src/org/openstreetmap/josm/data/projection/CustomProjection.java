@@ -71,8 +71,8 @@ public class CustomProjection extends AbstractProjection {
      * {@code n} (Northing), {@code s} (Southing), {@code u} (Up), {@code d} (Down);
      * Examples: {@code +axis=enu} (the default easting, northing, elevation), {@code +axis=neu} (northing, easting, up;
      * useful for "lat/long" geographic coordinates, or south orientated transverse mercator), {@code +axis=wnu}
-     * (westing, northing, up - some planetary coordinate systems have "west positive" coordinate systems)
-     * @apiNote https://proj4.org/usage/projections.html#axis-orientation
+     * (westing, northing, up - some planetary coordinate systems have "west positive" coordinate systems)<p>
+     * See <a href="https://proj4.org/usage/projections.html#axis-orientation">proj4.org</a>
      */
     private String axis = "enu"; // default axis orientation is East, North, Up
 
