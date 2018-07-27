@@ -724,7 +724,7 @@ public class PluginPreferenceHighLevelTest {
     @Test
     public void testInstallWithoutRestartRequired() throws Exception {
         final boolean[] loadPluginsCalled = new boolean[] {false};
-        final mockit.MockUp<PluginHandler> pluginHandlerMocker = new mockit.MockUp<PluginHandler>() {
+        new mockit.MockUp<PluginHandler>() {
             @mockit.Mock
             private void loadPlugins(
                 final Component parent,
