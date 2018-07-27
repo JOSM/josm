@@ -147,10 +147,20 @@ public final class DateUtils {
      * Formats a date to the XML UTC format regardless of current locale.
      * @param timestamp number of seconds since the epoch
      * @return The formatted date
+     * @since 14055
      */
-    public static synchronized String fromTimestamp(int timestamp) {
+    public static synchronized String fromTimestamp(long timestamp) {
         final ZonedDateTime temporal = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(timestamp)).atZone(ZoneOffset.UTC);
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(temporal);
+    }
+
+    /**
+     * Formats a date to the XML UTC format regardless of current locale.
+     * @param timestamp number of seconds since the epoch
+     * @return The formatted date
+     */
+    public static synchronized String fromTimestamp(int timestamp) {
+        return fromTimestamp((long) timestamp);
     }
 
     /**
@@ -244,6 +254,15 @@ public final class DateUtils {
         } else {
             return DateFormat.getDateInstance(dateStyle, Locale.getDefault());
         }
+    }
+
+    /**
+     * Returns the date format used for GPX waypoints.
+     * @return the date format used for GPX waypoints
+     * @since 14055
+     */
+    public static DateFormat getGpxFormat() {
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     }
 
     /**
