@@ -7,11 +7,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import javax.swing.AbstractAction;
@@ -66,6 +69,8 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
      */
     public static class FromGpxLayer extends ConvertToDataLayerAction<GpxLayer> {
 
+        private final DateFormat timeFormatter = DateUtils.getGpxFormat();
+
         /**
          * Creates a new {@code FromGpxLayer}.
          * @param layer the source layer
@@ -82,17 +87,26 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
                     List<Node> nodes = new ArrayList<>();
                     for (WayPoint p : segment.getWayPoints()) {
                         Node n = new Node(p.getCoor());
-                        String timestr = p.getString(GpxConstants.PT_TIME);
-                        if (timestr != null) {
-                            try {
-                                n.setTimestamp(DateUtils.fromString(timestr));
-                            } catch (UncheckedParseException e) {
-                                Logging.log(Logging.LEVEL_WARN, e);
+                        for (Entry<String, Object> entry : p.attr.entrySet()) {
+                            String key = entry.getKey();
+                            String str = p.getString(key);
+                            if (str != null) {
+                                n.put(key, str);
+                                if (GpxConstants.PT_TIME.equals(key)) {
+                                    try {
+                                        n.setTimestamp(DateUtils.fromString(str));
+                                    } catch (UncheckedParseException e) {
+                                        Logging.log(Logging.LEVEL_WARN, e);
+                                    }
+                                }
+                            } else {
+                                Object obj = p.get(key);
+                                if (obj instanceof Date && GpxConstants.PT_TIME.equals(key)) {
+                                    Date date = (Date) obj;
+                                    n.put(key, timeFormatter.format(date));
+                                    n.setTimestamp(date);
+                                }
                             }
-                        }
-                        String elestr = p.getString(GpxConstants.PT_ELE);
-                        if (elestr != null) {
-                            n.put("ele", elestr);
                         }
                         ds.addPrimitive(n);
                         nodes.add(n);

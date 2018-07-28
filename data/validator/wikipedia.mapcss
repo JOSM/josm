@@ -48,21 +48,21 @@
 
 *[wikipedia =~ /(?i)^[-a-z]{2,12}:.*%[0-9A-F][0-9A-F]/] {
   throwError: tr("{0} tag should not have URL-encoded values like ''%27''", "{0.tag}");
-  fixAdd: concat("wikipedia=", get(regexp_match("^([-a-z]+:)(.*)$", tag("wikipedia")),1), trim(replace(URL_decode(get(regexp_match("^([-a-z]+:)(.+)$", tag("wikipedia")),2)), "_", " ")));
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("wikipedia")),1), trim(replace(URL_decode(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),2)), "_", " ")));
   assertMatch: "node wikipedia=en:Foo%27s";
   assertNoMatch: "node wikipedia=en:Foo";
 }
 
 *[wikipedia =~ /(?i)^[-a-z]{2,12}: /] {
   throwWarning: tr("wikipedia title should not start with a space after language code");
-  fixAdd: concat("wikipedia=", get(regexp_match("^([-a-z]+:)(.*)$", tag("wikipedia")),1), trim(get(regexp_match("^([-a-z]+:)(.*)$", tag("wikipedia")),2)));
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("wikipedia")),1), trim(get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("wikipedia")),2)));
   assertMatch: "node wikipedia=en: foo";
   assertNoMatch: "node wikipedia=en:foo";
 }
 
 *[wikipedia =~ /(?i)^[-a-z]{2,12}:wiki\//] { 
   throwWarning: tr("wikipedia title should not have ''{0}'' prefix", "wiki/");
-  fixAdd: concat("wikipedia=", get(regexp_match("^([-a-z]+:)wiki/(.*)$", tag("wikipedia")),1), trim(get(regexp_match("^([-a-z]+:)wiki/(.*)$", tag("wikipedia")),2)));
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)wiki/(.*)$", tag("wikipedia")),1), trim(get(regexp_match("(?i)^([-a-z]+:)wiki/(.*)$", tag("wikipedia")),2)));
   assertMatch: "node wikipedia=en:wiki/foo";
   assertNoMatch: "node wikipedia=en:foo";
 }
@@ -72,7 +72,7 @@
    and look for 'wgCapitalLinks' setting. */
 *[wikipedia =~ /^[-a-zA-Z]{2,12}:\p{Ll}/][wikipedia !~ /^jbo:/][wikipedia !~ /(?i)^[-a-z]{2,12}:https?:/] {
   throwWarning: tr("wikipedia page title should have first letter capitalized");
-  fixAdd: concat("wikipedia=", get(regexp_match("^([-a-z]+:)(.)(.*)$", tag("wikipedia")),1), upper(get(regexp_match("^([-a-z]+:)(.)(.*)$", tag("wikipedia")),2)), get(regexp_match("^([-a-z]+:)(.)(.*)$", tag("wikipedia")),3));
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),1), upper(get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),2)), get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),3));
   assertMatch: "node wikipedia=en:foo";
   assertNoMatch: "node wikipedia=en:Foo";
   assertMatch: "node wikipedia=ru:абв";
@@ -81,7 +81,7 @@
 
 *[wikipedia =~ /(?i)^[-a-z]{2,12}:.*_/][wikipedia !~ /(?i)^[-a-z]{2,12}:https?:/] {
   throwWarning: tr("wikipedia page title should have spaces instead of underscores (''_''→'' '')");
-  fixAdd: concat("wikipedia=", get(regexp_match("^([-a-z]+:)(.+)$", tag("wikipedia")),1), trim(replace(get(regexp_match("^([-a-z]+:)(.+)$", tag("wikipedia")),2), "_", " ")));
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),1), trim(replace(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),2), "_", " ")));
   assertMatch: "node wikipedia=en:foo_bar";
   assertNoMatch: "node wikipedia=en:foo bar";
 }
@@ -110,7 +110,7 @@
 *[wikipedia ^= "ru:ru:"],
 *[wikipedia ^= "zh:zh:"] {
   throwWarning: tr("wikipedia language seems to be duplicated, e.g. en:en:Foo");
-  fixAdd: concat("wikipedia=", get(regexp_match("^([-a-z]+:)([-a-z]+:)(.*)$", tag("wikipedia")),2), trim(get(regexp_match("^([-a-z]+:)([-a-z]+:)(.*)$", tag("wikipedia")),3)));
+  fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)([-a-z]+:)(.*)$", tag("wikipedia")),2), trim(get(regexp_match("(?i)^([-a-z]+:)([-a-z]+:)(.*)$", tag("wikipedia")),3)));
   assertMatch: "node wikipedia=en:en:Foo";
   assertMatch: "node wikipedia=en:fr:Foo";
   assertNoMatch: "node wikipedia=en:Bar";

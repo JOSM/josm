@@ -772,9 +772,13 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
 
         if (time > 0) {
+            wpt.put(GpxConstants.PT_TIME, DateUtils.fromTimestamp(time));
             wpt.setTime(time);
+        } else if (n.hasKey(GpxConstants.PT_TIME)) {
+            wpt.put(GpxConstants.PT_TIME, DateUtils.fromString(n.get(GpxConstants.PT_TIME)));
+            wpt.setTime();
         } else if (!n.isTimestampEmpty()) {
-            wpt.put("time", DateUtils.fromTimestamp(n.getRawTimestamp()));
+            wpt.put(GpxConstants.PT_TIME, DateUtils.fromTimestamp(n.getRawTimestamp()));
             wpt.setTime();
         }
 

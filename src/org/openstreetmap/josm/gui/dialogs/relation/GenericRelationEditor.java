@@ -135,10 +135,6 @@ public class GenericRelationEditor extends RelationEditor {
      */
     private JMenuItem windowMenuItem;
     /**
-     * The toolbar with the buttons on the left
-     */
-    private final LeftButtonToolbar leftButtonToolbar;
-    /**
      * Action for performing the {@link RefreshAction}
      */
     private final RefreshAction refreshAction;
@@ -223,7 +219,7 @@ public class GenericRelationEditor extends RelationEditor {
         selectionTable = new SelectionTable(selectionTableModel, memberTableModel);
         selectionTable.setRowHeight(ce.getEditor().getPreferredSize().height);
 
-        leftButtonToolbar = new LeftButtonToolbar(new RelationEditorActionAccess());
+        LeftButtonToolbar leftButtonToolbar = new LeftButtonToolbar(new RelationEditorActionAccess());
         tfRole = buildRoleTextField(this);
 
         JSplitPane pane = buildSplitPane(
