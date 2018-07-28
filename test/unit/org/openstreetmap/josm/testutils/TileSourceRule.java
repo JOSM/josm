@@ -216,6 +216,15 @@ public class TileSourceRule extends WireMockRule {
     }
 
     /**
+     * Get the tile sources served by this TileSourceRule.
+     *
+     * @return an unmodifiable list of the tile sources served by this TileSourceRule
+     */
+    public List<ConstSource> getSourcesList() {
+        return Collections.unmodifiableList(this.sourcesList);
+    }
+
+    /**
      * A junit-rule {@code apply} method exposed separately to allow a chaining rule to put this much earlier in
      * the test's initialization routine. The idea being to allow WireMock's web server to be starting up while other
      * necessary initialization is taking place.
