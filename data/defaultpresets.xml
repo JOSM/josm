@@ -512,6 +512,7 @@
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:highway=motorway_link"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:highway=motorway_link"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:highway=motorway_link"
+                  ko.href="https://wiki.openstreetmap.org/wiki/Ko:Tag:highway=motorway_link"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:highway=motorway_link"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:highway=motorway_link"
                   uk.href="https://wiki.openstreetmap.org/wiki/Uk:Tag:highway=motorway_link" />
@@ -576,7 +577,8 @@
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Highway_link"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Highway_link"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Highway_link"
-                  ja.href="https://wiki.openstreetmap.org/wiki/JA:Highway_link" />
+                  ja.href="https://wiki.openstreetmap.org/wiki/JA:Highway_link"
+                  ko.href="https://wiki.openstreetmap.org/wiki/Ko:Highway_link" />
             <space />
             <key key="highway" value="trunk_link" />
             <text key="ref" text="Reference" />
@@ -1415,6 +1417,7 @@
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:highway=stop"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:highway=stop"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:highway=stop"
+                  ko.href="https://wiki.openstreetmap.org/wiki/Ko:Tag:highway=stop"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:highway=stop"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:highway=stop"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:highway=stop" />
@@ -1884,6 +1887,7 @@
             <link href="https://wiki.openstreetmap.org/wiki/Tag:barrier=guard_rail"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:barrier=guard_rail"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:barrier=guard_rail"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:barrier=guard_rail"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:barrier=guard_rail"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=guard_rail"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:barrier=guard_rail" />
@@ -2356,7 +2360,11 @@
         <item name="Levee" icon="presets/misc/dyke.svg" type="way" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:man_made=dyke"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=dyke"
-                  de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:man_made=dyke" />
+                  de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:man_made=dyke"
+                  ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:man_made=dyke"
+                  pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=dyke"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:man_made=dyke"
+                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:man_made=dyke" />
             <space />
             <key key="man_made" value="dyke" />
         </item> <!-- Levee -->
@@ -4084,6 +4092,7 @@
             <link href="https://wiki.openstreetmap.org/wiki/Tag:tourism=guest_house"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=guest_house"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:tourism=guest_house"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:tourism=guest_house"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:tourism=guest_house"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:tourism=guest_house"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:tourism=guest_house"
@@ -4150,6 +4159,7 @@
             <link href="https://wiki.openstreetmap.org/wiki/Tag:tourism=hostel"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=hostel"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:tourism=hostel"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:tourism=hostel"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:tourism=hostel"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:tourism=hostel"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:tourism=hostel"
@@ -6238,6 +6248,7 @@
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=watering_place"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:amenity=watering_place"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:amenity=watering_place"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:amenity=watering_place"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=watering_place"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=watering_place"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=watering_place" />
@@ -6616,7 +6627,8 @@
         <item name="Equestrian" icon="presets/sport/equestrian.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:sport=equestrian"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:sport=equestrian"
-                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:sport=equestrian" />
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:sport=equestrian"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:sport=equestrian" />
             <space />
             <key key="sport" value="equestrian" />
             <text key="name" text="Name" />
@@ -6624,7 +6636,8 @@
         </item> <!-- Equestrian -->
         <item name="Horse Racing" icon="presets/sport/riding.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:sport=horse_racing"
-                  de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:sport=horse_racing" />
+                  de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:sport=horse_racing"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:sport=horse_racing" />
             <space />
             <key key="sport" value="horse_racing" />
             <text key="name" text="Name" />
@@ -6925,7 +6938,8 @@
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:sport=motocross"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:sport=motocross"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:sport=motocross"
-                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:sport=motocross" />
+                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:sport=motocross"
+                  sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:sport=motocross" />
             <space />
             <key key="sport" value="motocross" />
             <text key="name" text="Name" />
@@ -7544,7 +7558,8 @@
             <link href="https://wiki.openstreetmap.org/wiki/Key:bridge:support"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Key:bridge:support"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:bridge:support"
-                  pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:bridge:support" />
+                  pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:bridge:support"
+                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:bridge:support" />
             <space />
             <combo key="bridge:support" text="Type" values="pier,abutment,lift_pier,pivot_pier,pylon" match="key" />
         </item> <!-- Bridge Support -->
@@ -9735,6 +9750,7 @@
     <item name="It specialist" icon="presets/office/it.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="https://wiki.openstreetmap.org/wiki/Tag:office=it"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:office=it"
+                  es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:office=it"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:office=it"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:office=it"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:office=it"
