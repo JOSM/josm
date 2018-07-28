@@ -456,40 +456,39 @@ Build-Date: ${build.tstamp}
         <delete file="${test.dir}/config/functional-josm.home" failonerror="false"/>
         <delete file="${test.dir}/config/performance-josm.home" failonerror="false"/>
     </target>
-    <macrodef name="call-groovyc">
+    <macrodef name="call-javac">
         <attribute name="testfamily"/>
         <element name="cp-elements"/>
         <sequential>
-            <groovyc srcdir="${test.dir}/@{testfamily}" destdir="${test.dir}/build/@{testfamily}" encoding="UTF-8">
+            <javac srcdir="${test.dir}/@{testfamily}" destdir="${test.dir}/build/@{testfamily}"
+                target="${java.lang.version}" source="${java.lang.version}" debug="on"
+                includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+                <compilerarg value="-Xlint:all"/>
+                <compilerarg value="-Xlint:-serial"/>
                 <classpath>
                     <cp-elements/>
                 </classpath>
-                <javac target="${java.lang.version}" source="${java.lang.version}" debug="on" encoding="UTF-8">
-                    <compilerarg value="-Xlint:all"/>
-                    <compilerarg value="-Xlint:-serial"/>
-                </javac>
-            </groovyc>
+            </javac>
         </sequential>
     </macrodef>
     <target name="test-compile" depends="test-init,dist">
-        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="${toString:groovy.classpath}"/>
-        <call-groovyc testfamily="unit">
+        <call-javac testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
             </cp-elements>
-        </call-groovyc>
-        <call-groovyc testfamily="functional">
-            <cp-elements>
-                <path refid="test.classpath"/>
-                <pathelement path="${test.dir}/build/unit"/>
-            </cp-elements>
-        </call-groovyc>
-        <call-groovyc testfamily="performance">
+        </call-javac>
+        <call-javac testfamily="functional">
             <cp-elements>
                 <path refid="test.classpath"/>
                 <pathelement path="${test.dir}/build/unit"/>
             </cp-elements>
-        </call-groovyc>
+        </call-javac>
+        <call-javac testfamily="performance">
+            <cp-elements>
+                <path refid="test.classpath"/>
+                <pathelement path="${test.dir}/build/unit"/>
+            </cp-elements>
+        </call-javac>
     </target>
     <macrodef name="call-junit">
         <attribute name="testfamily"/>
