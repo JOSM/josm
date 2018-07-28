@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayerTest;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadWmsAlongTrackAction.PrecacheWmsTask;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.TileSourceRule;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -28,7 +29,7 @@ public class DownloadWmsAlongTrackActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().main().projection().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().platform().main().projection().fakeImagery().timeout(20000);
 
     /**
      * Test action without layer.
@@ -44,8 +45,11 @@ public class DownloadWmsAlongTrackActionTest {
      */
     @Test
     public void testTMSLayer() throws Exception {
-        // Create new TMS layer and clear cache
-        TMSLayer layer = new TMSLayer(new ImageryInfo("OSM TMS", "https://a.tile.openstreetmap.org/{zoom}/{x}/{y}.png", "tms", null, null));
+        final TileSourceRule tileSourceRule = this.test.getTileSourceRule();
+
+        TMSLayer layer = new TMSLayer(
+            tileSourceRule.getSourcesList().get(0).getImageryInfo(tileSourceRule.port())
+        );
         try {
             MainApplication.getLayerManager().addLayer(layer);
             TMSLayer.getCache().clear();
