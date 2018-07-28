@@ -52,7 +52,10 @@ node[boundary=administrative] {
   throwWarning: tr("{0} on a node. Should be used on a way or relation.", "{0.tag}");
 }
 
-/* {0} on a node, should be an area; see ticket #10679 */
+/* {0} on a node, should be an area; #10679 #16528 */
+node[golf=green],
+node[golf=bunker],
+node[golf=fairway],
 node[area=yes],
 node[landuse],
 node[natural=scree],
