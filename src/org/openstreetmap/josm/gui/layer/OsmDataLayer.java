@@ -82,6 +82,7 @@ import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.AbstractMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
@@ -155,6 +156,11 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      * The extension that should be used when saving the OSM file.
      */
     public static final StringProperty PROPERTY_SAVE_EXTENSION = new StringProperty("save.extension.osm", "osm");
+
+    /**
+     * Property to determine if labels must be hidden while dragging the map.
+     */
+    public static final BooleanProperty PROPERTY_HIDE_LABELS_WHILE_DRAGGING = new BooleanProperty("mappaint.hide.labels.while.dragging", true);
 
     private static final NamedColorProperty PROPERTY_BACKGROUND_COLOR = new NamedColorProperty(marktr("background"), Color.BLACK);
     private static final NamedColorProperty PROPERTY_OUTSIDE_COLOR = new NamedColorProperty(marktr("outside downloaded area"), Color.YELLOW);
@@ -495,7 +501,8 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         }
 
         AbstractMapRenderer painter = MapRendererFactory.getInstance().createActiveRenderer(g, mv, inactive);
-        painter.enableSlowOperations(mv.getMapMover() == null || !mv.getMapMover().movementInProgress());
+        painter.enableSlowOperations(mv.getMapMover() == null || !mv.getMapMover().movementInProgress()
+                || !PROPERTY_HIDE_LABELS_WHILE_DRAGGING.get());
         painter.render(data, virtual, box);
         MainApplication.getMap().conflictDialog.paintConflicts(g, mv);
     }
