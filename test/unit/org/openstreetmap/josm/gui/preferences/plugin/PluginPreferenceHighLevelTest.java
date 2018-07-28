@@ -231,7 +231,7 @@ public class PluginPreferenceHighLevelTest {
 
         assertEquals(1, haMocker.getInvocationLog().size());
         Object[] invocationLogEntry = haMocker.getInvocationLog().get(0);
-        assertEquals(2, (int) invocationLogEntry[0]);
+        assertEquals(1, (int) invocationLogEntry[0]);
         assertEquals("Restart", invocationLogEntry[2]);
 
         // dummy_plugin jar shouldn't have been updated
@@ -353,7 +353,7 @@ public class PluginPreferenceHighLevelTest {
 
         assertEquals(1, haMocker.getInvocationLog().size());
         Object[] invocationLogEntry = haMocker.getInvocationLog().get(0);
-        assertEquals(2, (int) invocationLogEntry[0]);
+        assertEquals(1, (int) invocationLogEntry[0]);
         assertEquals("Restart", invocationLogEntry[2]);
 
         // dummy_plugin jar shouldn't have been updated

@@ -84,7 +84,7 @@ public final class Logging {
         /**
          * Set output stream to one acquired from calling outputStreamSupplier
          */
-        public void reacquireOutputStream() {
+        public synchronized void reacquireOutputStream() {
             final OutputStream reacquiredStream = this.outputStreamSupplier.get();
 
             // only bother calling setOutputStream if it's actually different, as setOutputStream

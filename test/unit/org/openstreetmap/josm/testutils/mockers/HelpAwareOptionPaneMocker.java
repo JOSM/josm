@@ -100,8 +100,7 @@ public class HelpAwareOptionPaneMocker extends BaseDialogMockUp<HelpAwareOptionP
                     Arrays.toString(Arrays.stream(options).map((buttonSpec) -> buttonSpec.text).toArray())
                 ));
             }
-            // buttons are numbered with 1-based indexing
-            return optIndex.getAsInt() + 1;
+            return optIndex.getAsInt();
         }
     }
 
@@ -161,7 +160,7 @@ public class HelpAwareOptionPaneMocker extends BaseDialogMockUp<HelpAwareOptionP
                     + "JOptionPane.OK_OPTION for closed windows if that was the intent)",
                     retval
                 ));
-            } else if (retval > (options == null ? 0 : options.length)) {  // NOTE 1-based indexing
+            } else if (retval > (options == null ? 0 : options.length-1)) {
                 fail(String.format(
                     "Invalid result for HelpAwareOptionPane: %s (in call with options = %s)",
                     retval,
