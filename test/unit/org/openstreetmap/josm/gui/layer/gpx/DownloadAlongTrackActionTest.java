@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.gpx;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -14,6 +15,9 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
+
+import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -30,12 +34,32 @@ public class DownloadAlongTrackActionTest {
     public JOSMTestRules test = new JOSMTestRules().preferences().platform();
 
     private static PleaseWaitRunnable createTask(String file) throws Exception {
+        // click "Download" when presented with the appropriate HelpAwareOptionPane
+        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(ImmutableMap.of(
+            "DownloadAlongPanel", "Download"
+        )) {
+            // expected "message" for HelpAwareOptionPane call is not a simple string, so instead
+            // just detect the class name of the message object
+            @Override
+            protected String getStringFromMessage(final Object message) {
+                return message instanceof String ? (String) message : message.getClass().getSimpleName();
+            }
+        };
+
         final OsmDataLayer layer = new OsmDataLayer(new DataSet(), DownloadAlongTrackActionTest.class.getName(), null);
         try {
             MainApplication.getLayerManager().addLayer(layer);
             // Perform action
             final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + file);
-            return new DownloadAlongTrackAction(gpx).createTask();
+            final PleaseWaitRunnable retval = new DownloadAlongTrackAction(gpx).createTask();
+
+            // assert that we were indeed presented with the expected HelpAwareOptionPane
+            assertEquals(1, haMocker.getInvocationLog().size());
+            assertEquals(0, haMocker.getInvocationLog().get(0)[0]);
+            assertEquals("DownloadAlongPanel", haMocker.getInvocationLog().get(0)[1]);
+            assertEquals("Download from OSM along this track", haMocker.getInvocationLog().get(0)[2]);
+
+            return retval;
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             MainApplication.getLayerManager().removeLayer(layer);
