@@ -50,6 +50,7 @@ public class ProgressMonitorExecutor extends ThreadPoolExecutor {
             } catch (CancellationException cancellationException) {
                 t = cancellationException;
             } catch (ExecutionException executionException) {
+                Logging.trace(executionException);
                 t = executionException.getCause();
             } catch (InterruptedException interruptedException) {
                 Thread.currentThread().interrupt(); // ignore/reset

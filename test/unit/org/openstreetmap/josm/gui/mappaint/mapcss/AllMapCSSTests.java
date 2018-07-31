@@ -4,8 +4,6 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import junit.framework.TestCase;
-
 /**
  * All MapCSS tests.
  */
@@ -17,6 +15,6 @@ import junit.framework.TestCase;
     MapCSSParserTest.class,
     ChildOrParentSelectorTest.class
 })
-public class AllMapCSSTests extends TestCase{
+public class AllMapCSSTests {
 
 }

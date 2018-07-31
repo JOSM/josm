@@ -171,8 +171,11 @@ public class NmeaReaderTest {
      */
     @Test
     public void testTicket16496() throws Exception {
-        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(readDate("$GNRMC,162859.400,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13")));
-        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(readDate("$GNRMC,162859.40,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*23")));
-        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(readDate("$GNRMC,162859.4,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13")));
+        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(
+                readDate("$GNRMC,162859.400,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13")));
+        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(
+                readDate("$GNRMC,162859.40,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*23")));
+        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(
+                readDate("$GNRMC,162859.4,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13")));
     }
 }

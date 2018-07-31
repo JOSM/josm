@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -94,12 +95,12 @@ public class ChangesetQueryUrlParserTest {
         // OK
         q = parser.parse("open=true");
         assertNotNull(q);
-        assertEquals(Boolean.TRUE, q.getRestrictionToOpen());
+        assertTrue(q.getRestrictionToOpen());
 
         // OK
         q = parser.parse("open=false");
         assertNotNull(q);
-        assertEquals(Boolean.FALSE, q.getRestrictionToOpen());
+        assertFalse(q.getRestrictionToOpen());
 
         // illegal value for open
         shouldFail("open=abcd");
@@ -117,12 +118,12 @@ public class ChangesetQueryUrlParserTest {
         // OK
         q = parser.parse("closed=true");
         assertNotNull(q);
-        assertEquals(Boolean.TRUE, q.getRestrictionToClosed());
+        assertTrue(q.getRestrictionToClosed());
 
         // OK
         q = parser.parse("closed=false");
         assertNotNull(q);
-        assertEquals(Boolean.FALSE, q.getRestrictionToClosed());
+        assertFalse(q.getRestrictionToClosed());
 
         // illegal value for open
         shouldFail("closed=abcd");

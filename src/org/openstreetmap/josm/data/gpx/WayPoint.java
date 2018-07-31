@@ -162,9 +162,9 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         if (attr.containsKey(PT_TIME)) {
             try {
                 final Object obj = get(PT_TIME);
-                final Date time = obj instanceof Date ? (Date) obj : DateUtils.fromString(obj.toString());
-                this.time = time.getTime() / 1000.;
-                return time;
+                final Date date = obj instanceof Date ? (Date) obj : DateUtils.fromString(obj.toString());
+                time = date.getTime() / 1000.;
+                return date;
             } catch (UncheckedParseException e) {
                 Logging.warn(e);
                 time = 0;
