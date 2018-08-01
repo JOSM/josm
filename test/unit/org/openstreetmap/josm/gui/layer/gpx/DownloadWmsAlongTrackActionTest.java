@@ -5,7 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import org.awaitility.Awaitility;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -46,7 +48,7 @@ public class DownloadWmsAlongTrackActionTest {
     public void testTMSLayer() throws Exception {
         final TileSourceRule tileSourceRule = this.test.getTileSourceRule();
 
-        TMSLayer layer = new TMSLayer(
+        final TMSLayer layer = new TMSLayer(
             tileSourceRule.getSourcesList().get(0).getImageryInfo(tileSourceRule.port())
         );
         try {
@@ -57,8 +59,8 @@ public class DownloadWmsAlongTrackActionTest {
             PrecacheWmsTask task = new DownloadWmsAlongTrackAction(GpxLayerTest.getMinimalGpxData()).createTask();
             assertNotNull(task);
             task.run();
-            // Ensure cache is not empty
-            assertFalse(TMSLayer.getCache().getMatching(".*").isEmpty());
+            // Ensure cache is (eventually) not empty
+            Awaitility.await().atMost(10000, MILLISECONDS).until(() -> !TMSLayer.getCache().getMatching(".*").isEmpty());
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             MainApplication.getLayerManager().removeLayer(layer);
