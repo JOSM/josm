@@ -61,6 +61,13 @@ public final class Logging {
         private final Supplier<OutputStream> outputStreamSupplier;
         private final Handler prioritizedHandler;
         private OutputStream outputStreamMemo;
+        /**
+         * This variables is set to true as soon as the superconstructor has completed.
+         * The superconstructor calls {@code setOutputStream(System.err)}, any subsequent call of
+         * {@link #setOutputStream(OutputStream)} would then flush and close {@link System#err}. To avoid this,
+         * we override {@link #setOutputStream(OutputStream)} to completely ignore all calls from the superconstructor.
+         */
+        private boolean superCompleted = false;
 
         /**
         * Construct a new {@link ReacquiringConsoleHandler}.
@@ -75,6 +82,8 @@ public final class Logging {
             final Supplier<OutputStream> outputStreamSupplier,
             final Handler prioritizedHandler
         ) {
+            super();
+            superCompleted = true;
             this.outputStreamSupplier = outputStreamSupplier;
             this.prioritizedHandler = prioritizedHandler;
 
@@ -97,10 +106,13 @@ public final class Logging {
 
         @Override
         public synchronized void setOutputStream(final OutputStream outputStream) {
-            // this wouldn't be necessary if StreamHandler made it possible to see what the current
-            // output stream is set to
-            this.outputStreamMemo = outputStream;
-            super.setOutputStream(outputStream);
+            // Ignore calls from superconstructor (see javadoc of the variable for details)
+            if (superCompleted) {
+                // this wouldn't be necessary if StreamHandler made it possible to see what the current
+                // output stream is set to
+                this.outputStreamMemo = outputStream;
+                super.setOutputStream(outputStream);
+            }
         }
 
         @Override
