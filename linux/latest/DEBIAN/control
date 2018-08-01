@@ -5,7 +5,7 @@ Maintainer: josm developers <josm-dev@openstreetmap.org>
 Homepage: https://josm.openstreetmap.de
 Priority: extra
 Architecture: all
-Depends: openjdk-11-jre | openjdk-8-jre | java8-runtime,
+Depends: openjdk-11-jre | java11-runtime | openjdk-8-jre | java8-runtime,
          proj-data
 Recommends: openjfx
 Description: Editor for OpenStreetMap (daily development snapshot)
