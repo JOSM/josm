@@ -67,7 +67,7 @@ public final class Logging {
          * {@link #setOutputStream(OutputStream)} would then flush and close {@link System#err}. To avoid this,
          * we override {@link #setOutputStream(OutputStream)} to completely ignore all calls from the superconstructor.
          */
-        private boolean superCompleted;
+        private final boolean superCompleted;
 
         /**
         * Construct a new {@link ReacquiringConsoleHandler}.
