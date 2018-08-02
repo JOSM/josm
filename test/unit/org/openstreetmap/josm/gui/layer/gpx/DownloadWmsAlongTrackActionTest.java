@@ -1,11 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.gpx;
 
-import static org.junit.Assert.assertFalse;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import org.awaitility.Awaitility;
 import org.junit.Rule;
