@@ -72,6 +72,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -746,7 +747,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
                     trkseg = new ArrayList<>();
                     trk.add(trkseg);
                 }
-                if (!n.isTagged()) {
+                if (!n.isTagged() || containsOnlyGpxTags(n)) {
                     doneNodes.add(n);
                 }
                 trkseg.add(nodeToWayPoint(n));
@@ -754,6 +755,15 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
             gpxData.addTrack(new ImmutableGpxTrack(trk, trkAttr));
         });
+    }
+
+    private static boolean containsOnlyGpxTags(Tagged t) {
+        for (String key : t.getKeys().keySet()) {
+            if (!GpxConstants.WPT_KEYS.contains(key)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

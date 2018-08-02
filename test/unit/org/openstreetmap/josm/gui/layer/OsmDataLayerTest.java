@@ -6,7 +6,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,13 +20,21 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
+import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -189,11 +202,49 @@ public class OsmDataLayerTest {
 
     /**
      * Unit test of {@link OsmDataLayer#toGpxData}.
+     * @throws IllegalDataException never
      */
     @Test
-    public void testToGpxData() {
-        fillDataSet(ds);
-        assertNotNull(layer.toGpxData());
+    public void testToGpxData() throws IllegalDataException {
+        ds.mergeFrom(OsmReader.parseDataSet(new ByteArrayInputStream((
+                "<?xml version='1.0' encoding='UTF-8'?>\n" +
+                "<osm version='0.6' upload='false' generator='JOSM'>\n" +
+                "  <node id='-546306' timestamp='2018-08-01T10:00:00Z' lat='47.0' lon='9.0'>\n" +
+                "    <tag k='ele' v='123' />\n" +
+                "    <tag k='time' v='2018-08-01T10:00:00Z' />\n" +
+                "  </node>\n" +
+                "  <node id='-546307' timestamp='2018-08-01T10:01:00Z' lat='47.1' lon='9.1'>\n" +
+                "    <tag k='ele' v='456' />\n" +
+                "    <tag k='time' v='2018-08-01T10:01:00Z' />\n" +
+                "  </node>\n" +
+                "  <way id='-546308'>\n" +
+                "    <nd ref='-546306' />\n" +
+                "    <nd ref='-546307' />\n" +
+                "  </way>\r\n" +
+                "</osm>").getBytes(StandardCharsets.UTF_8)), null));
+        GpxData gpx = layer.toGpxData();
+        assertNotNull(gpx);
+        // Check metadata
+        assertEquals(new Bounds(47.0, 9.0, 47.1, 9.1), gpx.recalculateBounds());
+        // Check there is no waypoint
+        assertTrue(gpx.getWaypoints().isEmpty());
+        // Check that track is correct
+        assertEquals(1, gpx.getTrackCount());
+        GpxTrack track = gpx.getTracks().iterator().next();
+        Collection<GpxTrackSegment> segments = track.getSegments();
+        assertEquals(1, segments.size());
+        Collection<WayPoint> trackpoints = segments.iterator().next().getWayPoints();
+        assertEquals(2, trackpoints.size());
+        Iterator<WayPoint> it = trackpoints.iterator();
+        DateFormat gpxFormat = DateUtils.getGpxFormat();
+        WayPoint p1 = it.next();
+        assertEquals(new LatLon(47.0, 9.0), p1.getCoor());
+        assertEquals("123", p1.get(GpxConstants.PT_ELE));
+        assertEquals("2018-08-01T10:00:00.000Z", gpxFormat.format(p1.get(GpxConstants.PT_TIME)));
+        WayPoint p2 = it.next();
+        assertEquals(new LatLon(47.1, 9.1), p2.getCoor());
+        assertEquals("456", p2.get(GpxConstants.PT_ELE));
+        assertEquals("2018-08-01T10:01:00.000Z", gpxFormat.format(p2.get(GpxConstants.PT_TIME)));
     }
 
     /**
