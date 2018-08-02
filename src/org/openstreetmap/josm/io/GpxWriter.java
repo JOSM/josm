@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.IWithAttributes;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Writes GPX files from GPX data or OSM data.
@@ -80,10 +82,10 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         }
 
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
-        out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
-                (hasExtensions ? String.format("    xmlns:josm=\"%s\"%n", JOSM_EXTENSIONS_NAMESPACE_URI) : "") +
-                "    xmlns:xsi=\""+XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI+"\" \n" +
-                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
+        out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"");
+        out.println((hasExtensions ? String.format("    xmlns:josm=\"%s\"%n", JOSM_EXTENSIONS_NAMESPACE_URI) : "") +
+                    "    xmlns:xsi=\""+XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI+"\"");
+        out.println("    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
         indent = "  ";
         writeMetaData();
         writeWayPoints();
@@ -111,6 +113,11 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 String value = obj.getString(key);
                 if (value != null) {
                     simpleTag(key, value);
+                } else {
+                    Object val = obj.get(key);
+                    if (val instanceof Date) {
+                        simpleTag(key, DateUtils.getGpxFormat().format(val));
+                    }
                 }
             }
         }
