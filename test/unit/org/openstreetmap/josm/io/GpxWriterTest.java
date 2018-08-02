@@ -11,16 +11,27 @@ import java.time.Month;
 import java.time.ZoneOffset;
 import java.util.Date;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Tests the {@link GpxWriter}.
  */
 public class GpxWriterTest {
+
+    /**
+     * Setup rule
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/16550">#16550</a>
