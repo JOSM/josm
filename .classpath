@@ -22,6 +22,11 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="test/lib/jmockit-1.40.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4">
 		<attributes>
 			<attribute name="test" value="true"/>
@@ -154,11 +159,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="tools/groovy/groovy-xml-2.5.1.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/jmockit-1.40.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
