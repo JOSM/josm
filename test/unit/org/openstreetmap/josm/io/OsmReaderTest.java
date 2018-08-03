@@ -267,7 +267,7 @@ public class OsmReaderTest {
     }
 
     /**
-     * Test GPDR-compliant changeset.
+     * Test GDPR-compliant changeset.
      * @throws Exception if any error occurs
      */
     @Test
