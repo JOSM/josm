@@ -571,7 +571,7 @@ public class OsmReader extends AbstractReader {
                             v, current.getUniqueId()));
                     current.setChangesetId(0);
                 } else if (current.getChangesetId() < 0) {
-                    // for an existing primitive this is a problem only for negative ids (GPDR extracts are set to 0)
+                    // for an existing primitive this is a problem only for negative ids (GDPR extracts are set to 0)
                     throwException(tr("Illegal value for attribute ''changeset''. Got {0}.", v));
                 }
             }
