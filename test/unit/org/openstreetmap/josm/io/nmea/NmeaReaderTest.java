@@ -50,7 +50,7 @@ public class NmeaReaderTest {
      */
     @Before
     public void setUp() {
-        iso8601.setTimeZone(TimeZone.getTimeZone("UTC"));
+        iso8601.setTimeZone(DateUtils.UTC);
     }
 
     /**

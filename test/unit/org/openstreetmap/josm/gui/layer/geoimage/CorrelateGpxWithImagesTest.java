@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.TimeZone;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -39,7 +38,7 @@ public class CorrelateGpxWithImagesTest {
      */
     @BeforeClass
     public static void setUp() {
-        DateUtilsTest.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateUtilsTest.setTimeZone(DateUtils.UTC);
     }
 
     /**

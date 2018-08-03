@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
 
@@ -237,7 +236,6 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
 
     private Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String text, String iconName, MarkerLayer parentLayer,
             double time, double offset) {
-        timeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         setCoor(ll);
 
         this.offset = offset;

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Fixture to define a proper and safe environment before running tests.
@@ -96,7 +97,7 @@ public class JOSMFixture {
             }
         }
         System.setProperty("josm.home", josmHome);
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        TimeZone.setDefault(DateUtils.UTC);
         Config.setPreferencesInstance(Main.pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         Main.pref.resetToInitialState();
