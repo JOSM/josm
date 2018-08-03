@@ -4,12 +4,12 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
-import java.util.TimeZone;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.date.DateUtilsTest;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -31,7 +31,7 @@ public class TimezoneTest {
      */
     @BeforeClass
     public static void setUp() {
-        DateUtilsTest.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateUtilsTest.setTimeZone(DateUtils.UTC);
     }
 
     /**

@@ -262,7 +262,9 @@ public final class DateUtils {
      * @since 14055
      */
     public static DateFormat getGpxFormat() {
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        SimpleDateFormat result = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        result.setTimeZone(UTC);
+        return result;
     }
 
     /**
