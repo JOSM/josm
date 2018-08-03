@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
@@ -29,6 +30,7 @@ public class ExportProfileActionTest {
      */
     @Test
     public void testAction() {
+        TestUtils.assumeWorkingJMockit();
         new JOptionPaneSimpleMocker(ImmutableMap.of(
             "All the preferences of this group are default, nothing to save", JOptionPane.OK_OPTION
         ));

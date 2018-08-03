@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -48,6 +49,7 @@ public class AsynchronousUploadPrimitivesTaskTest {
      */
     @Before
     public void bootStrap() {
+        TestUtils.assumeWorkingJMockit();
         new JOptionPaneSimpleMocker(ImmutableMap.of(
             "A background upload is already in progress. Kindly wait for it to finish before uploading new changes", JOptionPane.OK_OPTION
         ));

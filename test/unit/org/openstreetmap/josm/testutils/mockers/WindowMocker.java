@@ -12,7 +12,7 @@ import mockit.MockUp;
 /**
  * MockUp for a {@link Window} which simply (and naively) makes its constructor(s) a no-op. This has
  * the advantage of removing the isHeadless check. Though if course it also leaves you with
- * uninintialized objects, and so of course they don't *necessarily* work properly. But often they
+ * uninitialized objects, and so of course they don't *necessarily* work properly. But often they
  * work *just enough* to behave how a test needs them to. Exercise left to the reader to discover
  * the limits here.
  */

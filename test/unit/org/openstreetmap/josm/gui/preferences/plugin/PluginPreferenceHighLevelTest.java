@@ -38,6 +38,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import mockit.MockUp;
 
 /**
  * Higher level tests of {@link PluginPreference} class.
@@ -392,6 +393,7 @@ public class PluginPreferenceHighLevelTest {
      */
     @Test
     public void testUpdateOnlySelectedPlugin() throws Exception {
+        TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
@@ -585,6 +587,7 @@ public class PluginPreferenceHighLevelTest {
      */
     @Test
     public void testUpdateWithNoAvailableUpdates() throws Exception {
+        TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarOld),
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
@@ -723,8 +726,9 @@ public class PluginPreferenceHighLevelTest {
      */
     @Test
     public void testInstallWithoutRestartRequired() throws Exception {
+        TestUtils.assumeWorkingJMockit();
         final boolean[] loadPluginsCalled = new boolean[] {false};
-        new mockit.MockUp<PluginHandler>() {
+        new MockUp<PluginHandler>() {
             @mockit.Mock
             private void loadPlugins(
                 final Component parent,

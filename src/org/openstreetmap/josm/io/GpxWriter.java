@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,8 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * Writes GPX files from GPX data or OSM data.
  */
 public class GpxWriter extends XmlWriter implements GpxConstants {
+
+    private final DateFormat gpxFormat = DateUtils.getGpxFormat();
 
     /**
      * Constructs a new {@code GpxWriter}.
@@ -116,7 +119,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 } else {
                     Object val = obj.get(key);
                     if (val instanceof Date) {
-                        simpleTag(key, DateUtils.getGpxFormat().format(val));
+                        simpleTag(key, gpxFormat.format(val));
                     }
                 }
             }

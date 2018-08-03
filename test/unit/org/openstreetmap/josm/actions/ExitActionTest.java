@@ -6,16 +6,16 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link ExitAction}.
@@ -27,7 +27,7 @@ public final class ExitActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules().platform().main();
 
     /**
      * System.exit rule
@@ -40,6 +40,7 @@ public final class ExitActionTest {
      */
     @Test
     public void testActionPerformed() {
+        TestUtils.assumeWorkingJMockit();
         exit.expectSystemExitWithStatus(0);
 
         boolean[] workerShutdownCalled = {false};
