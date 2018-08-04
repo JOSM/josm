@@ -56,7 +56,7 @@ public class GpxWriterTest {
                 "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>%n" +
                 "  </metadata>%n" +
                 "  <wpt lat=\"0.0\" lon=\"0.0\">%n" +
-                "    <time>2018-08-02T02:00:00.000Z</time>%n" +
+                "    <time>2018-08-02T00:00:00.000Z</time>%n" +
                 "  </wpt>%n" +
                 "</gpx>"), baos.toString(StandardCharsets.UTF_8.name()));
     }

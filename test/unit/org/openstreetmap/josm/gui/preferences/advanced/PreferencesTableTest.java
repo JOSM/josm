@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.advanced.PreferencesTable.AllSettingsTableModel;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
@@ -49,6 +50,7 @@ public class PreferencesTableTest {
      */
     @Test
     public void testPreferencesTable() {
+        TestUtils.assumeWorkingJMockit();
         new JOptionPaneSimpleMocker(ImmutableMap.of(
             "Please select the row to edit.", JOptionPane.OK_OPTION,
             "Please select the row to delete.", JOptionPane.OK_OPTION

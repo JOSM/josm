@@ -95,6 +95,7 @@ public class PluginHandlerJOSMTooOldTest {
      */
     @Test
     public void testUpdatePluginsDownloadBoth() throws IOException {
+        TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
@@ -158,6 +159,7 @@ public class PluginHandlerJOSMTooOldTest {
      */
     @Test
     public void testUpdatePluginsSkipOne() throws IOException {
+        TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
@@ -236,6 +238,7 @@ public class PluginHandlerJOSMTooOldTest {
      */
     @Test
     public void testUpdatePluginsUnexpectedlyJOSMTooOld() throws IOException {
+        TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew, ImmutableMap.of(

@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.testutils.FakeGraphics;
+import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -391,6 +392,19 @@ public final class TestUtils {
             // Inspired by https://issues.apache.org/jira/browse/SOLR-11606
             nl.jqno.equalsverifier.internal.lib.bytebuddy.ClassFileVersion.ofThisVm();
         } catch (IllegalArgumentException e) {
+            Assume.assumeNoException(e);
+        }
+    }
+
+    /**
+     * Use to assume that JMockit is working with the current JVM.
+     */
+    public static void assumeWorkingJMockit() {
+        try {
+            // Workaround to https://github.com/jmockit/jmockit1/issues/534
+            // Inspired by https://issues.apache.org/jira/browse/SOLR-11606
+            new WindowMocker();
+        } catch (UnsupportedOperationException e) {
             Assume.assumeNoException(e);
         }
     }
