@@ -61,7 +61,6 @@ public class ReverseWayTagCorrectorTest {
         // direction=forward/backward/...
         assertSwitch(new Tag("direction", "forward"), new Tag("direction", "backward"));
         assertSwitch(new Tag("direction", "backward"), new Tag("direction", "forward"));
-        assertSwitch(new Tag("direction", "north"), new Tag("direction", "south"));
         // :left/:right with oneway (see #10977)
         assertSwitch(new Tag("cycleway:left:oneway", "-1"), new Tag("cycleway:right:oneway", "yes"));
         // :forward/:backward (see #8518)
@@ -75,46 +74,26 @@ public class ReverseWayTagCorrectorTest {
         assertSwitch(new Tag("backward", "something"), new Tag("forward", "something"));
         assertSwitch(new Tag("up", "something"), new Tag("down", "something"));
         assertSwitch(new Tag("down", "something"), new Tag("up", "something"));
-        assertSwitch(new Tag("east", "something"), new Tag("west", "something"));
-        assertSwitch(new Tag("west", "something"), new Tag("east", "something"));
-        assertSwitch(new Tag("south", "something"), new Tag("north", "something"));
-        assertSwitch(new Tag("north", "something"), new Tag("south", "something"));
         // values
         assertSwitch(new Tag("something", "forward"), new Tag("something", "backward"));
         assertSwitch(new Tag("something", "backward"), new Tag("something", "forward"));
         assertSwitch(new Tag("something", "up"), new Tag("something", "down"));
         assertSwitch(new Tag("something", "down"), new Tag("something", "up"));
-        assertSwitch(new Tag("something", "east"), new Tag("something", "west"));
-        assertSwitch(new Tag("something", "west"), new Tag("something", "east"));
-        assertSwitch(new Tag("something", "south"), new Tag("something", "north"));
-        assertSwitch(new Tag("something", "north"), new Tag("something", "south"));
         // value[:_]suffix
         assertSwitch(new Tag("something", "forward:suffix"), new Tag("something", "backward:suffix"));
         assertSwitch(new Tag("something", "backward_suffix"), new Tag("something", "forward_suffix"));
         assertSwitch(new Tag("something", "up:suffix"), new Tag("something", "down:suffix"));
         assertSwitch(new Tag("something", "down_suffix"), new Tag("something", "up_suffix"));
-        assertSwitch(new Tag("something", "east:suffix"), new Tag("something", "west:suffix"));
-        assertSwitch(new Tag("something", "west_suffix"), new Tag("something", "east_suffix"));
-        assertSwitch(new Tag("something", "south:suffix"), new Tag("something", "north:suffix"));
-        assertSwitch(new Tag("something", "north_suffix"), new Tag("something", "south_suffix"));
         // prefix[:_]value
         assertSwitch(new Tag("something", "prefix:forward"), new Tag("something", "prefix:backward"));
         assertSwitch(new Tag("something", "prefix_backward"), new Tag("something", "prefix_forward"));
         assertSwitch(new Tag("something", "prefix:up"), new Tag("something", "prefix:down"));
         assertSwitch(new Tag("something", "prefix_down"), new Tag("something", "prefix_up"));
-        assertSwitch(new Tag("something", "prefix:east"), new Tag("something", "prefix:west"));
-        assertSwitch(new Tag("something", "prefix_west"), new Tag("something", "prefix_east"));
-        assertSwitch(new Tag("something", "prefix:south"), new Tag("something", "prefix:north"));
-        assertSwitch(new Tag("something", "prefix_north"), new Tag("something", "prefix_south"));
         // prefix[:_]value[:_]suffix
         assertSwitch(new Tag("something", "prefix:forward:suffix"), new Tag("something", "prefix:backward:suffix"));
         assertSwitch(new Tag("something", "prefix_backward:suffix"), new Tag("something", "prefix_forward:suffix"));
         assertSwitch(new Tag("something", "prefix:up_suffix"), new Tag("something", "prefix:down_suffix"));
         assertSwitch(new Tag("something", "prefix_down_suffix"), new Tag("something", "prefix_up_suffix"));
-        assertSwitch(new Tag("something", "prefix:east:suffix"), new Tag("something", "prefix:west:suffix"));
-        assertSwitch(new Tag("something", "prefix_west:suffix"), new Tag("something", "prefix_east:suffix"));
-        assertSwitch(new Tag("something", "prefix:south_suffix"), new Tag("something", "prefix:north_suffix"));
-        assertSwitch(new Tag("something", "prefix_north_suffix"), new Tag("something", "prefix_south_suffix"));
         // #8499
         assertSwitch(new Tag("type", "drawdown"), new Tag("type", "drawdown"));
     }
