@@ -170,8 +170,6 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     private static final IStringSwitcher COMBINED_SWITCHERS = IStringSwitcher.combined(
         new StringSwitcher("left", "right"),
         new StringSwitcher("forwards", "backwards"),
-        new StringSwitcher("east", "west"),
-        new StringSwitcher("north", "south"),
         FORWARD_BACKWARD, UP_DOWN
     );
 
