@@ -49,7 +49,6 @@ public class AsynchronousUploadPrimitivesTaskTest {
      */
     @Before
     public void bootStrap() {
-        TestUtils.assumeWorkingJMockit();
         new JOptionPaneSimpleMocker(ImmutableMap.of(
             "A background upload is already in progress. Kindly wait for it to finish before uploading new changes", JOptionPane.OK_OPTION
         ));
@@ -91,6 +90,7 @@ public class AsynchronousUploadPrimitivesTaskTest {
      */
     @Test
     public void testSingleUploadInstance() {
+        TestUtils.assumeWorkingJMockit();
         Optional<AsynchronousUploadPrimitivesTask> task = AsynchronousUploadPrimitivesTask.
                 createAsynchronousUploadTask(strategy, layer, toUpload, changeset);
         Assert.assertNotNull(uploadPrimitivesTask);
