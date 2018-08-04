@@ -431,8 +431,7 @@ public class NmeaReader implements IGpxReader {
                     accu = e[VTG.SPEED_KMH.position];
                     if (!accu.isEmpty() && currentwp != null) {
                         double speed = Double.parseDouble(accu);
-                        speed /= 3.6; // speed in m/s
-                        currentwp.put("speed", Double.toString(speed));
+                        currentwp.put("speed", Double.toString(speed)); // speed in km/h
                     }
                 }
             } else if (isSentence(e[0], Sentence.GSA)) {
@@ -480,7 +479,7 @@ public class NmeaReader implements IGpxReader {
                 accu = e[RMC.SPEED.position];
                 if (!accu.isEmpty() && !currentwp.attr.containsKey("speed")) {
                     double speed = Double.parseDouble(accu);
-                    speed *= 0.514444444; // to m/s
+                    speed *= 0.514444444 * 3.6; // to km/h
                     currentwp.put("speed", Double.toString(speed));
                 }
                 // course
