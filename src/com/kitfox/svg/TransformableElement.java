@@ -110,7 +110,7 @@ abstract public class TransformableElement extends SVGElement
 
     protected Rectangle2D boundsToParent(Rectangle2D rect)
     {
-        if (xform == null)
+        if (xform == null || rect == null)
         {
             return rect;
         }
