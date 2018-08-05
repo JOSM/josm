@@ -136,6 +136,14 @@ public class OsmReader extends AbstractReader {
         }
     }
 
+    private void handleIllegalDataException(IllegalDataException e) throws XMLStreamException {
+        if (e.getCause() instanceof XMLStreamException) {
+            throw (XMLStreamException) e.getCause();
+        } else {
+            throwException(e);
+        }
+    }
+
     private void parseBounds(String generator) throws XMLStreamException {
         String minlon = parser.getAttributeValue(null, "minlon");
         String minlat = parser.getAttributeValue(null, "minlat");
@@ -145,7 +153,7 @@ public class OsmReader extends AbstractReader {
         try {
             parseBounds(generator, minlon, minlat, maxlon, maxlat, origin);
         } catch (IllegalDataException e) {
-            throwException(e);
+            handleIllegalDataException(e);
         }
         jumpToEnd();
     }
@@ -156,7 +164,7 @@ public class OsmReader extends AbstractReader {
         try {
             return parseNode(lat, lon, this::readCommon, this::parseNodeTags);
         } catch (IllegalDataException e) {
-            throwException(e);
+            handleIllegalDataException(e);
         }
         return null;
     }
@@ -184,7 +192,7 @@ public class OsmReader extends AbstractReader {
         try {
             return parseWay(this::readCommon, this::parseWayNodesAndTags);
         } catch (IllegalDataException e) {
-            throwException(e);
+            handleIllegalDataException(e);
         }
         return null;
     }
@@ -233,8 +241,9 @@ public class OsmReader extends AbstractReader {
         try {
             return parseRelation(this::readCommon, this::parseRelationMembersAndTags);
         } catch (IllegalDataException e) {
-            throw new XMLStreamException(e);
+            handleIllegalDataException(e);
         }
+        return null;
     }
 
     private void parseRelationMembersAndTags(Relation r, Collection<RelationMemberData> members) throws IllegalDataException {
@@ -270,7 +279,7 @@ public class OsmReader extends AbstractReader {
             result = parseRelationMember(r, ref, type, role);
             jumpToEnd();
         } catch (IllegalDataException e) {
-            throwException(e);
+            handleIllegalDataException(e);
         }
         return result;
     }
