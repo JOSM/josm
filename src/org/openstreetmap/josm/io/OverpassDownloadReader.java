@@ -82,6 +82,10 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         }
     }
 
+    static final class OverpassOsmJsonReader extends OsmJsonReader {
+
+    }
+
     /**
      * Possible Overpass API output format, with the {@code [out:<directive>]} statement.
      * @since 11916
@@ -164,6 +168,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
     static {
         registerOverpassOutpoutFormatReader(OverpassOutpoutFormat.OSM_XML, OverpassOsmReader.class);
+        registerOverpassOutpoutFormatReader(OverpassOutpoutFormat.OSM_JSON, OverpassOsmJsonReader.class);
     }
 
     @Override
@@ -409,6 +414,6 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
     public static String fixQuery(String query) {
         return query == null ? query : query
                 .replaceAll("out( body| skel| ids)?( id| qt)?;", "out meta$2;")
-                .replaceAll("(?s)\\[out:(json|csv)[^\\]]*\\]", "[out:xml]");
+                .replaceAll("(?s)\\[out:(csv)[^\\]]*\\]", "[out:xml]");
     }
 }
