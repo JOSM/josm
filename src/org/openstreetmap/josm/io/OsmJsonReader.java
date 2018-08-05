@@ -120,7 +120,7 @@ public class OsmJsonReader extends AbstractReader {
         }
     }
 
-    private void readTags(JsonObject item, Tagged t) {
+    private static void readTags(JsonObject item, Tagged t) {
         JsonObject tags = item.getJsonObject("tags");
         if (tags != null) {
             for (Entry<String, JsonValue> entry : tags.entrySet()) {

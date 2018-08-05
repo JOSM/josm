@@ -86,8 +86,7 @@ public class CertificateAmendmentTestIT {
             connection.connect();
         } catch (SSLHandshakeException e) {
             if (shouldWork) {
-                e.printStackTrace();
-                Assert.fail("Untrusted: " + url);
+                throw new IOException("Untrusted: " + url, e);
             } else {
                 return;
             }
