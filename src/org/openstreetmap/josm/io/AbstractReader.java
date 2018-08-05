@@ -572,7 +572,7 @@ public abstract class AbstractReader {
     }
 
     private static boolean areLatLonDefined(double lat, double lon) {
-        return lat != Double.NaN && lon != Double.NaN;
+        return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
     private Node addNode(NodeData nd, NodeReader nodeReader) throws IllegalDataException {
