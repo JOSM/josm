@@ -32,4 +32,24 @@ public class StaticText implements TemplateEntry {
     public String toString() {
         return staticText;
     }
+
+    @Override
+    public int hashCode() {
+        return 31 + ((staticText == null) ? 0 : staticText.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        StaticText other = (StaticText) obj;
+        if (staticText == null) {
+            if (other.staticText != null)
+                return false;
+        } else if (!staticText.equals(other.staticText))
+            return false;
+        return true;
+    }
 }

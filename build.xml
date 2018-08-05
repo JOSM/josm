@@ -500,7 +500,7 @@ Build-Date: ${build.tstamp}
                 inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}">
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
-                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit-1.40.jar"/>
+                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit-1.41.jar"/>
                     <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
                     <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
                     <jvmarg value="--add-exports" if:set="isJava9" />

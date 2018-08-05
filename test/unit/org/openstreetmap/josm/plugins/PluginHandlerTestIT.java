@@ -15,8 +15,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
@@ -71,13 +70,20 @@ public class PluginHandlerTestIT {
             testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
 
-        MapUtils.debugPrint(System.out, null, invalidManifestEntries);
-        MapUtils.debugPrint(System.out, null, loadingExceptions);
-        MapUtils.debugPrint(System.out, null, layerExceptions);
+        debugPrint(invalidManifestEntries);
+        debugPrint(loadingExceptions);
+        debugPrint(layerExceptions);
         String msg = Arrays.toString(invalidManifestEntries.entrySet().toArray()) + '\n' +
                      Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
                      Arrays.toString(layerExceptions.entrySet().toArray());
         assertTrue(msg, invalidManifestEntries.isEmpty() && loadingExceptions.isEmpty() && layerExceptions.isEmpty());
+    }
+
+    private static void debugPrint(Map<String, ?> invalidManifestEntries) {
+        System.out.println(invalidManifestEntries.entrySet()
+                .stream()
+                .map(e -> e.getKey() + "=\"" + e.getValue() + "\"")
+                .collect(Collectors.joining(", ")));
     }
 
     /**

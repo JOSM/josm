@@ -36,4 +36,33 @@ public class SearchExpressionCondition implements TemplateEntry {
     public String toString() {
         return condition + " '" + text + '\'';
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((condition == null) ? 0 : condition.hashCode());
+        result = prime * result + ((text == null) ? 0 : text.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        SearchExpressionCondition other = (SearchExpressionCondition) obj;
+        if (condition == null) {
+            if (other.condition != null)
+                return false;
+        } else if (!condition.equals(other.condition))
+            return false;
+        if (text == null) {
+            if (other.text != null)
+                return false;
+        } else if (!text.equals(other.text))
+            return false;
+        return true;
+    }
 }
