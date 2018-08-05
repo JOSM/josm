@@ -43,12 +43,12 @@ public class WindowsShortcut {
      * @throws IOException if an IOException is thrown while reading from the file
      */
     public static boolean isPotentialValidLink(File file) throws IOException {
-        final int minimum_length = 0x64;
+        final int minimumLength = 0x64;
         boolean isPotentiallyValid = false;
         try (InputStream fis = Files.newInputStream(file.toPath())) {
             isPotentiallyValid = file.isFile()
                 && file.getName().toLowerCase(Locale.ENGLISH).endsWith(".lnk")
-                && fis.available() >= minimum_length
+                && fis.available() >= minimumLength
                 && isMagicPresent(getBytes(fis, 32));
         }
         return isPotentiallyValid;
@@ -125,8 +125,8 @@ public class WindowsShortcut {
 
     private static boolean isMagicPresent(byte[] link) {
         final int magic = 0x0000004C;
-        final int magic_offset = 0x00;
-        return link.length >= 32 && bytesToDword(link, magic_offset) == magic;
+        final int magicOffset = 0x00;
+        return link.length >= 32 && bytesToDword(link, magicOffset) == magic;
     }
 
     /**

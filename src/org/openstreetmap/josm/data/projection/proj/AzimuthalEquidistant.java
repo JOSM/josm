@@ -213,33 +213,33 @@ public class AzimuthalEquidistant extends AbstractProj {
         double y = north;
         double lambda = 0;
         double phi = 0;
-        double c_rh = Math.hypot(x, y);
-        if (c_rh > Math.PI) {
-            if (c_rh - EPS10 > Math.PI) {
+        double cRh = Math.hypot(x, y);
+        if (cRh > Math.PI) {
+            if (cRh - EPS10 > Math.PI) {
                 throw new JosmRuntimeException("TOLERANCE_ERROR");
             }
-        } else if (c_rh < EPS10) {
+        } else if (cRh < EPS10) {
             phi = latitudeOfOrigin;
             lambda = 0.;
         } else {
             if (mode == Mode.OBLIQUE || mode == Mode.EQUATORIAL) {
-                double sinc = Math.sin(c_rh);
-                double cosc = Math.cos(c_rh);
+                double sinc = Math.sin(cRh);
+                double cosc = Math.cos(cRh);
                 if (mode == Mode.EQUATORIAL) {
-                    phi = aasin(y * sinc / c_rh);
+                    phi = aasin(y * sinc / cRh);
                     x *= sinc;
-                    y = cosc * c_rh;
+                    y = cosc * cRh;
                 } else { // Oblique
-                    phi = aasin(cosc * sinph0 + y * sinc * cosph0 / c_rh);
-                    y = (cosc - sinph0 * Math.sin(phi)) * c_rh;
+                    phi = aasin(cosc * sinph0 + y * sinc * cosph0 / cRh);
+                    y = (cosc - sinph0 * Math.sin(phi)) * cRh;
                     x *= sinc * cosph0;
                 }
                 lambda = (y == 0) ? 0 : Math.atan2(x, y);
             } else if (mode == Mode.NORTH_POLAR) {
-                phi = HALF_PI - c_rh;
+                phi = HALF_PI - cRh;
                 lambda = Math.atan2(x, -y);
             } else { // South Polar
-                phi = c_rh - HALF_PI;
+                phi = cRh - HALF_PI;
                 lambda = Math.atan2(x, y);
             }
         }
