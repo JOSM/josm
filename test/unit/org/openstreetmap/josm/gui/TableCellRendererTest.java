@@ -15,9 +15,9 @@ import javax.swing.table.TableCellRenderer;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
-import org.reflections.Reflections;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -60,8 +60,7 @@ public class TableCellRendererTest {
      */
     @Test
     public void testTableCellRenderer() throws ReflectiveOperationException {
-        Reflections reflections = new Reflections("org.openstreetmap.josm");
-        Set<Class<? extends TableCellRenderer>> renderers = reflections.getSubTypesOf(TableCellRenderer.class);
+        Set<Class<? extends TableCellRenderer>> renderers = TestUtils.getJosmSubtypes(TableCellRenderer.class);
         Assert.assertTrue(renderers.size() >= 10); // if it finds less than 10 classes, something is broken
         JTable tbl = new JTable(2, 2);
         for (Class<? extends TableCellRenderer> klass : renderers) {
