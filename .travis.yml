@@ -1,5 +1,5 @@
 language: java
-script: (eval "$ANT_INVOCATION $(test $TRAVIS_JDK_VERSION = openjdk8 && echo -DnoJavaFX=true) test")
+script: (eval "$ANT_INVOCATION $(test $TRAVIS_JDK_VERSION = openjdk8 && echo -DnoJavaFX=true) test-unit-hardfail")
 os: linux
 dist: trusty
 env:
