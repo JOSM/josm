@@ -271,7 +271,13 @@ public abstract class AbstractReader {
 
     @FunctionalInterface
     protected interface ParserWorker {
-       void accept(InputStreamReader ir) throws IllegalDataException, IOException;
+        /**
+         * Effectively parses the file, depending on the format (XML, JSON, etc.)
+         * @param ir input stream reader
+         * @throws IllegalDataException in case of invalid data
+         * @throws IOException in case of I/O error
+         */
+        void accept(InputStreamReader ir) throws IllegalDataException, IOException;
     }
 
     protected final DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor, ParserWorker parserWorker)
@@ -549,22 +555,44 @@ public abstract class AbstractReader {
 
     @FunctionalInterface
     protected interface CommonReader {
-       void accept(PrimitiveData pd) throws IllegalDataException;
+        /**
+         * Reads the common primitive attributes and sets them in {@code pd}
+         * @param pd primitive data to update
+         * @throws IllegalDataException in case of invalid data
+         */
+        void accept(PrimitiveData pd) throws IllegalDataException;
     }
 
     @FunctionalInterface
     protected interface NodeReader {
-       void accept(Node n) throws IllegalDataException;
+        /**
+         * Reads the node tags.
+         * @param n node
+         * @throws IllegalDataException in case of invalid data
+         */
+        void accept(Node n) throws IllegalDataException;
     }
 
     @FunctionalInterface
     protected interface WayReader {
-       void accept(Way w, Collection<Long> nodeIds) throws IllegalDataException;
+        /**
+         * Reads the way nodes and tags.
+         * @param w way
+         * @param nodeIds collection of resulting node ids
+         * @throws IllegalDataException in case of invalid data
+         */
+        void accept(Way w, Collection<Long> nodeIds) throws IllegalDataException;
     }
 
     @FunctionalInterface
     protected interface RelationReader {
-       void accept(Relation r, Collection<RelationMemberData> members) throws IllegalDataException;
+        /**
+         * Reads the relation members and tags.
+         * @param r relation
+         * @param members collection of resulting members
+         * @throws IllegalDataException in case of invalid data
+         */
+        void accept(Relation r, Collection<RelationMemberData> members) throws IllegalDataException;
     }
 
     private static boolean areLatLonDefined(String lat, String lon) {

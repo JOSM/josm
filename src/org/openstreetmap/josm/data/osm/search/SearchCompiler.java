@@ -1219,9 +1219,7 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             ExactType other = (ExactType) obj;
-            if (type != other.type)
-                return false;
-            return true;
+            return type == other.type;
         }
     }
 
@@ -1391,11 +1389,8 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             Nth other = (Nth) obj;
-            if (modulo != other.modulo)
-                return false;
-            if (nth != other.nth)
-                return false;
-            return true;
+            return modulo == other.modulo
+                   && nth == other.nth;
         }
     }
 
@@ -1450,11 +1445,8 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             RangeMatch other = (RangeMatch) obj;
-            if (max != other.max)
-                return false;
-            if (min != other.min)
-                return false;
-            return true;
+            return max == other.max
+                && min == other.min;
         }
     }
 
@@ -1858,9 +1850,7 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             InArea other = (InArea) obj;
-            if (all != other.all)
-                return false;
-            return true;
+            return all == other.all;
         }
     }
 

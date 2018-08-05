@@ -68,8 +68,6 @@ public final class CompoundTemplateEntry implements TemplateEntry {
         if (obj == null || getClass() != obj.getClass())
             return false;
         CompoundTemplateEntry other = (CompoundTemplateEntry) obj;
-        if (!Arrays.equals(entries, other.entries))
-            return false;
-        return true;
+        return Arrays.equals(entries, other.entries);
     }
 }
