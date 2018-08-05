@@ -137,8 +137,9 @@ public class OsmReader extends AbstractReader {
     }
 
     private void handleIllegalDataException(IllegalDataException e) throws XMLStreamException {
-        if (e.getCause() instanceof XMLStreamException) {
-            throw (XMLStreamException) e.getCause();
+        Throwable cause = e.getCause();
+        if (cause instanceof XMLStreamException) {
+            throw (XMLStreamException) cause;
         } else {
             throwException(e);
         }
