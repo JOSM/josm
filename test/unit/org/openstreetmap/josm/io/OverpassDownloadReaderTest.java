@@ -199,12 +199,12 @@ public class OverpassDownloadReaderTest {
         assertEquals("out meta qt;", OverpassDownloadReader.fixQuery("out skel qt;"));
         assertEquals("out meta qt;", OverpassDownloadReader.fixQuery("out ids qt;"));
 
-        assertEquals("[out:xml]", OverpassDownloadReader.fixQuery("[out:json]"));
+        assertEquals("[out:json]", OverpassDownloadReader.fixQuery("[out:json]"));
         assertEquals("[out:xml]", OverpassDownloadReader.fixQuery("[out:csv(\n" +
                 "    ::\"id\", amenity, name, operator, opening_hours, \"contact:website\", \"contact:phone\", brand, dispensing, lastcheck\n" +
                 "  )]"));
 
-        assertEquals("[out:xml][timeout:25];\n" +
+        assertEquals("[out:json][timeout:25];\n" +
                 "(\n" +
                 "  node[\"historic\"=\"ringfort\"];\n" +
                 "  way[\"historic\"=\"ringfort\"];\n" +
