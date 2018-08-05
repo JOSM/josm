@@ -13,7 +13,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -38,9 +40,12 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests for class {@link SearchCompiler}.
@@ -699,5 +704,28 @@ public class SearchCompilerTest {
         for (OsmPrimitive osm : new OsmPrimitive[] {ctx.r1, ctx.r2, ctx.w1, ctx.w2}) {
             ctx.match(osm, false);
         }
+    }
+
+    /**
+     * Unit test of methods {@link Match#equals} and {@link Match#hashCode}, including all subclasses.
+     */
+    @Test
+    public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
+        Set<Class<? extends Match>> matchers = TestUtils.getJosmSubtypes(Match.class);
+        Assert.assertTrue(matchers.size() >= 10); // if it finds less than 10 classes, something is broken
+        for (Class<?> c : matchers) {
+            Logging.debug(c.toString());
+            EqualsVerifier.forClass(c).usingGetClass()
+                .suppress(Warning.NONFINAL_FIELDS, Warning.INHERITED_DIRECTLY_FROM_OBJECT)
+                .withPrefabValues(TaggingPreset.class, newTaggingPreset("foo"), newTaggingPreset("bar"))
+                .verify();
+        }
+    }
+
+    private static TaggingPreset newTaggingPreset(String name) {
+        TaggingPreset result = new TaggingPreset();
+        result.name = name;
+        return result;
     }
 }
