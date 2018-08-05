@@ -351,7 +351,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
     }
 
     @Override
-    public void playing(URL playingURL) {
-        this.playingUrl = playingURL;
+    public void playing(URL playingUrl) {
+        this.playingUrl = playingUrl;
     }
 }

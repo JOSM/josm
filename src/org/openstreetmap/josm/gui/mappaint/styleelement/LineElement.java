@@ -91,9 +91,9 @@ public class LineElement extends StyleElement {
          */
         public final float defaultMajorZIndex;
 
-        LineType(String prefix, float defaultMajorZindex) {
+        LineType(String prefix, float defaultMajorZIndex) {
             this.prefix = prefix;
-            this.defaultMajorZIndex = defaultMajorZindex;
+            this.defaultMajorZIndex = defaultMajorZIndex;
         }
     }
 

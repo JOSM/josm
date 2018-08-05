@@ -345,6 +345,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xlint:unchecked"/>
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
+            <compilerarg value="-Xep:CatchAndPrintStackTrace:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:ReferenceEquality:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:StringSplitter:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg line="-Xmaxwarns 1000"/>

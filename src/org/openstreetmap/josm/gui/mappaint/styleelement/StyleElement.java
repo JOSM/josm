@@ -57,17 +57,17 @@ public abstract class StyleElement implements StyleKeys {
 
     /**
      * Construct a new StyleElement
-     * @param majorZindex like z-index, but higher priority
+     * @param majorZIndex like z-index, but higher priority
      * @param zIndex order the objects are drawn
-     * @param objectZindex like z-index, but lower priority
+     * @param objectZIndex like z-index, but lower priority
      * @param isModifier if false, a default line or node symbol is generated
      * @param defaultSelectedHandling true if default behavior for selected objects
      * is enabled, false if a style for selected state is given explicitly
      */
-    public StyleElement(float majorZindex, float zIndex, float objectZindex, boolean isModifier, boolean defaultSelectedHandling) {
-        this.majorZIndex = majorZindex;
+    public StyleElement(float majorZIndex, float zIndex, float objectZIndex, boolean isModifier, boolean defaultSelectedHandling) {
+        this.majorZIndex = majorZIndex;
         this.zIndex = zIndex;
-        this.objectZIndex = objectZindex;
+        this.objectZIndex = objectZIndex;
         this.isModifier = isModifier;
         this.defaultSelectedHandling = defaultSelectedHandling;
     }

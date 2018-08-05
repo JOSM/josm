@@ -159,34 +159,34 @@ public class Bounds {
 
     /**
      * Constructs bounds out of two points. Coords will be rounded.
-     * @param minlat min lat
-     * @param minlon min lon
-     * @param maxlat max lat
-     * @param maxlon max lon
+     * @param minLat min lat
+     * @param minLon min lon
+     * @param maxLat max lat
+     * @param maxLon max lon
      */
-    public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
-        this(minlat, minlon, maxlat, maxlon, true);
+    public Bounds(double minLat, double minLon, double maxLat, double maxLon) {
+        this(minLat, minLon, maxLat, maxLon, true);
     }
 
     /**
      * Constructs bounds out of two points.
-     * @param minlat min lat
-     * @param minlon min lon
-     * @param maxlat max lat
-     * @param maxlon max lon
+     * @param minLat min lat
+     * @param minLon min lon
+     * @param maxLat max lat
+     * @param maxLon max lon
      * @param roundToOsmPrecision defines if lat/lon will be rounded
      */
-    public Bounds(double minlat, double minlon, double maxlat, double maxlon, boolean roundToOsmPrecision) {
+    public Bounds(double minLat, double minLon, double maxLat, double maxLon, boolean roundToOsmPrecision) {
         if (roundToOsmPrecision) {
-            this.minLat = LatLon.roundToOsmPrecision(minlat);
-            this.minLon = LatLon.roundToOsmPrecision(minlon);
-            this.maxLat = LatLon.roundToOsmPrecision(maxlat);
-            this.maxLon = LatLon.roundToOsmPrecision(maxlon);
+            this.minLat = LatLon.roundToOsmPrecision(minLat);
+            this.minLon = LatLon.roundToOsmPrecision(minLon);
+            this.maxLat = LatLon.roundToOsmPrecision(maxLat);
+            this.maxLon = LatLon.roundToOsmPrecision(maxLon);
         } else {
-            this.minLat = minlat;
-            this.minLon = minlon;
-            this.maxLat = maxlat;
-            this.maxLon = maxlon;
+            this.minLat = minLat;
+            this.minLon = minLon;
+            this.maxLat = maxLat;
+            this.maxLon = maxLon;
         }
     }
 

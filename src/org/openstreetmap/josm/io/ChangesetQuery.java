@@ -106,14 +106,14 @@ public class ChangesetQuery {
      * Caveat: for historical reasons the username might not be unique! It is recommended to use
      * {@link #forUser(int)} to restrict the query to a specific user.
      *
-     * @param username the username. Must not be null.
+     * @param userName the username. Must not be null.
      * @return the query object with the applied restriction
      * @throws IllegalArgumentException if username is null.
      * @see #forUser(int)
      */
-    public ChangesetQuery forUser(String username) {
-        CheckParameterUtil.ensureParameterNotNull(username, "username");
-        this.userName = username;
+    public ChangesetQuery forUser(String userName) {
+        CheckParameterUtil.ensureParameterNotNull(userName, "userName");
+        this.userName = userName;
         this.uid = null;
         return this;
     }
