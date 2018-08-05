@@ -84,7 +84,7 @@
                 <include name="**/*.jar"/>
             </fileset>
             <pathelement path="${dist.jar}"/>
-            <pathelement path="${toString:groovy.classpath}"/>
+            <pathelement path="${pmd.dir}/commons-lang3-3.7.jar"/>
             <pathelement path="${spotbugs.dir}/spotbugs-annotations.jar"/>
         </path>
         <path id="pmd.classpath">
