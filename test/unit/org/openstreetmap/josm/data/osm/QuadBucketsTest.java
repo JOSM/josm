@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.TestUtils.getPrivateField;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.SecureRandom;
@@ -11,8 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.fest.reflect.core.Reflection;
-import org.fest.reflect.reference.TypeRef;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,16 +37,16 @@ public class QuadBucketsTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    private void removeAllTest(DataSet ds) {
+    @SuppressWarnings("unchecked")
+    private void removeAllTest(DataSet ds) throws ReflectiveOperationException {
         List<Node> allNodes = new ArrayList<>(ds.getNodes());
         List<Way> allWays = new ArrayList<>(ds.getWays());
         List<Relation> allRelations = new ArrayList<>(ds.getRelations());
 
-        QuadBucketPrimitiveStore<Node, Way, Relation> s = Reflection.field("store").ofType(
-                new TypeRef<QuadBucketPrimitiveStore<Node, Way, Relation>>() {}).in(ds).get();
-        QuadBuckets<Node> nodes = Reflection.field("nodes").ofType(new TypeRef<QuadBuckets<Node>>() {}).in(s).get();
-        QuadBuckets<Way> ways = Reflection.field("ways").ofType(new TypeRef<QuadBuckets<Way>>() {}).in(s).get();
-        Collection<Relation> relations = Reflection.field("relations").ofType(new TypeRef<Collection<Relation>>() {}).in(s).get();
+        QuadBucketPrimitiveStore<Node, Way, Relation> s = (QuadBucketPrimitiveStore<Node, Way, Relation>) getPrivateField(ds, "store");
+        QuadBuckets<Node> nodes = (QuadBuckets<Node>) getPrivateField(s, "nodes");
+        QuadBuckets<Way> ways = (QuadBuckets<Way>) getPrivateField(s, "ways");
+        Collection<Relation> relations = (Collection<Relation>) getPrivateField(s, "relations");
 
         int expectedCount = allNodes.size();
         for (OsmPrimitive o: allNodes) {
@@ -76,6 +76,10 @@ public class QuadBucketsTest {
         Assert.assertEquals(expectedCount, count);
     }
 
+    /**
+     * Test that all primitives can be removed from the Quad Buckets.
+     * @throws Exception never
+     */
     @Test
     public void testRemove() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
@@ -85,6 +89,10 @@ public class QuadBucketsTest {
         }
     }
 
+    /**
+     * Test that all primitives can be removed from the Quad Buckets, even if moved before.
+     * @throws Exception never
+     */
     @Test
     public void testMove() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator

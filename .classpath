@@ -22,7 +22,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/jmockit-1.40.jar">
+	<classpathentry kind="lib" path="test/lib/jmockit-1.41.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
@@ -32,47 +32,17 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/fest-assert-1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/fest-reflect-1.1.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/fest-swing-1.1.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/fest-util-1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/jcip-annotations-1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/MRJToolkitStubs-1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="test/lib/jfcunit.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="test/lib/equalsverifier-2.4.8.jar">
+	<classpathentry exported="true" kind="lib" path="test/lib/equalsverifier-2.5.1.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/reflections/reflections-0.9.10.jar">
+	<classpathentry kind="lib" path="test/lib/reflections/reflections-0.9.11.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
@@ -107,7 +77,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="test/lib/awaitility-3.1.0.jar">
+	<classpathentry exported="true" kind="lib" path="test/lib/awaitility-3.1.2.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
@@ -134,11 +104,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="test/lib/unitils-core/ognl-2.6.9.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>

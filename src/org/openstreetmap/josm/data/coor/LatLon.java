@@ -233,7 +233,7 @@ public class LatLon extends Coordinate implements ILatLon {
         // For points opposite to each other on the sphere,
         // rounding errors could make the argument of asin greater than 1
         // (This should almost never happen.)
-        if (java.lang.Double.isNaN(d)) {
+        if (Double.isNaN(d)) {
             Logging.error("NaN in greatCircleDistance");
             d = PI * WGS84.a;
         }
