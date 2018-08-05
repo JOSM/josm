@@ -48,6 +48,26 @@ public class ContextSwitchTemplate implements TemplateEntry {
         protected Match condition;
 
         abstract List<OsmPrimitive> getPrimitives(OsmPrimitive root);
+
+        @Override
+        public int hashCode() {
+            return 31 + ((condition == null) ? 0 : condition.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            ContextProvider other = (ContextProvider) obj;
+            if (condition == null) {
+                if (other.condition != null)
+                    return false;
+            } else if (!condition.equals(other.condition))
+                return false;
+            return true;
+        }
     }
 
     private static class ParentSet extends ContextProvider {
@@ -82,6 +102,26 @@ public class ContextSwitchTemplate implements TemplateEntry {
                 }
             }
             return result;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * super.hashCode() + ((childCondition == null) ? 0 : childCondition.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj) || getClass() != obj.getClass())
+                return false;
+            ParentSet other = (ParentSet) obj;
+            if (childCondition == null) {
+                if (other.childCondition != null)
+                    return false;
+            } else if (!childCondition.equals(other.childCondition))
+                return false;
+            return true;
         }
     }
 
@@ -126,6 +166,26 @@ public class ContextSwitchTemplate implements TemplateEntry {
             }
             return result;
         }
+
+        @Override
+        public int hashCode() {
+            return 31 * super.hashCode() + ((parentCondition == null) ? 0 : parentCondition.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj) || getClass() != obj.getClass())
+                return false;
+            ChildSet other = (ChildSet) obj;
+            if (parentCondition == null) {
+                if (other.parentCondition != null)
+                    return false;
+            } else if (!parentCondition.equals(other.parentCondition))
+                return false;
+            return true;
+        }
     }
 
     private static class OrSet extends ContextProvider {
@@ -157,6 +217,35 @@ public class ContextSwitchTemplate implements TemplateEntry {
             }
             return result;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((lhs == null) ? 0 : lhs.hashCode());
+            result = prime * result + ((rhs == null) ? 0 : rhs.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj) || getClass() != obj.getClass())
+                return false;
+            OrSet other = (OrSet) obj;
+            if (lhs == null) {
+                if (other.lhs != null)
+                    return false;
+            } else if (!lhs.equals(other.lhs))
+                return false;
+            if (rhs == null) {
+                if (other.rhs != null)
+                    return false;
+            } else if (!rhs.equals(other.rhs))
+                return false;
+            return true;
+        }
     }
 
     private static class AndSet extends ContextProvider {
@@ -183,6 +272,35 @@ public class ContextSwitchTemplate implements TemplateEntry {
                 }
             }
             return result;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((lhs == null) ? 0 : lhs.hashCode());
+            result = prime * result + ((rhs == null) ? 0 : rhs.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj) || getClass() != obj.getClass())
+                return false;
+            AndSet other = (AndSet) obj;
+            if (lhs == null) {
+                if (other.lhs != null)
+                    return false;
+            } else if (!lhs.equals(other.lhs))
+                return false;
+            if (rhs == null) {
+                if (other.rhs != null)
+                    return false;
+            } else if (!rhs.equals(other.rhs))
+                return false;
+            return true;
         }
     }
 
@@ -287,5 +405,34 @@ public class ContextSwitchTemplate implements TemplateEntry {
             }
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((context == null) ? 0 : context.hashCode());
+        result = prime * result + ((template == null) ? 0 : template.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        ContextSwitchTemplate other = (ContextSwitchTemplate) obj;
+        if (context == null) {
+            if (other.context != null)
+                return false;
+        } else if (!context.equals(other.context))
+            return false;
+        if (template == null) {
+            if (other.template != null)
+                return false;
+        } else if (!template.equals(other.template))
+            return false;
+        return true;
     }
 }

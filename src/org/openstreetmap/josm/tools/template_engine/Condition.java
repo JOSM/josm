@@ -70,4 +70,24 @@ public class Condition implements TemplateEntry {
         sb.append(" }");
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        return 31 + ((entries == null) ? 0 : entries.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Condition other = (Condition) obj;
+        if (entries == null) {
+            if (other.entries != null)
+                return false;
+        } else if (!entries.equals(other.entries))
+            return false;
+        return true;
+    }
 }

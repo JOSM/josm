@@ -240,11 +240,11 @@ public final class UserIdentityManager implements PreferenceChangedListener {
     /**
      * Replies true if the user with name <code>username</code> is the current user
      *
-     * @param username the user name
+     * @param userName the user name
      * @return true if the user with name <code>username</code> is the current user
      */
-    public boolean isCurrentUser(String username) {
-        return this.userName != null && this.userName.equals(username);
+    public boolean isCurrentUser(String userName) {
+        return this.userName != null && this.userName.equals(userName);
     }
 
     /**

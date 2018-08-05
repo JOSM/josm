@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 

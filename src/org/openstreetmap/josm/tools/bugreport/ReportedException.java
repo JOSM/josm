@@ -71,7 +71,7 @@ public class ReportedException extends RuntimeException {
         try {
             BugReportQueue.getInstance().submit(this);
         } catch (RuntimeException e) { // NOPMD
-            e.printStackTrace();
+            Logging.error(e);
         }
     }
 

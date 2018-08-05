@@ -321,6 +321,26 @@ public class SearchCompiler {
         public Match getOperand() {
             return match;
         }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((match == null) ? 0 : match.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            UnaryMatch other = (UnaryMatch) obj;
+            if (match == null) {
+                if (other.match != null)
+                    return false;
+            } else if (!match.equals(other.match))
+                return false;
+            return true;
+        }
     }
 
     /**
@@ -359,6 +379,35 @@ public class SearchCompiler {
 
         protected static String parenthesis(Match m) {
             return '(' + m.toString() + ')';
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((lhs == null) ? 0 : lhs.hashCode());
+            result = prime * result + ((rhs == null) ? 0 : rhs.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            AbstractBinaryMatch other = (AbstractBinaryMatch) obj;
+            if (lhs == null) {
+                if (other.lhs != null)
+                    return false;
+            } else if (!lhs.equals(other.lhs))
+                return false;
+            if (rhs == null) {
+                if (other.rhs != null)
+                    return false;
+            } else if (!rhs.equals(other.rhs))
+                return false;
+            return true;
         }
     }
 
@@ -434,6 +483,32 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return key + '?';
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (defaultValue ? 1231 : 1237);
+            result = prime * result + ((key == null) ? 0 : key.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            BooleanMatch other = (BooleanMatch) obj;
+            if (defaultValue != other.defaultValue)
+                return false;
+            if (key == null) {
+                if (other.key != null)
+                    return false;
+            } else if (!key.equals(other.key))
+                return false;
+            return true;
         }
     }
 
@@ -699,6 +774,50 @@ public class SearchCompiler {
         public String toString() {
             return key + '=' + value;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (caseSensitive ? 1231 : 1237);
+            result = prime * result + ((key == null) ? 0 : key.hashCode());
+            result = prime * result + ((keyPattern == null) ? 0 : keyPattern.hashCode());
+            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            result = prime * result + ((valuePattern == null) ? 0 : valuePattern.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            KeyValue other = (KeyValue) obj;
+            if (caseSensitive != other.caseSensitive)
+                return false;
+            if (key == null) {
+                if (other.key != null)
+                    return false;
+            } else if (!key.equals(other.key))
+                return false;
+            if (keyPattern == null) {
+                if (other.keyPattern != null)
+                    return false;
+            } else if (!keyPattern.equals(other.keyPattern))
+                return false;
+            if (value == null) {
+                if (other.value != null)
+                    return false;
+            } else if (!value.equals(other.value))
+                return false;
+            if (valuePattern == null) {
+                if (other.valuePattern != null)
+                    return false;
+            } else if (!valuePattern.equals(other.valuePattern))
+                return false;
+            return true;
+        }
     }
 
     public static class ValueComparison extends TaggedMatch {
@@ -746,6 +865,44 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return key + (compareMode == -1 ? "<" : compareMode == +1 ? ">" : "") + referenceValue;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + compareMode;
+            result = prime * result + ((key == null) ? 0 : key.hashCode());
+            result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
+            result = prime * result + ((referenceValue == null) ? 0 : referenceValue.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            ValueComparison other = (ValueComparison) obj;
+            if (compareMode != other.compareMode)
+                return false;
+            if (key == null) {
+                if (other.key != null)
+                    return false;
+            } else if (!key.equals(other.key))
+                return false;
+            if (referenceNumber == null) {
+                if (other.referenceNumber != null)
+                    return false;
+            } else if (!referenceNumber.equals(other.referenceNumber))
+                return false;
+            if (referenceValue == null) {
+                if (other.referenceValue != null)
+                    return false;
+            } else if (!referenceValue.equals(other.referenceValue))
+                return false;
+            return true;
         }
     }
 
@@ -882,6 +1039,50 @@ public class SearchCompiler {
         public String toString() {
             return key + '=' + value;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((key == null) ? 0 : key.hashCode());
+            result = prime * result + ((keyPattern == null) ? 0 : keyPattern.hashCode());
+            result = prime * result + ((mode == null) ? 0 : mode.hashCode());
+            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            result = prime * result + ((valuePattern == null) ? 0 : valuePattern.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            ExactKeyValue other = (ExactKeyValue) obj;
+            if (key == null) {
+                if (other.key != null)
+                    return false;
+            } else if (!key.equals(other.key))
+                return false;
+            if (keyPattern == null) {
+                if (other.keyPattern != null)
+                    return false;
+            } else if (!keyPattern.equals(other.keyPattern))
+                return false;
+            if (mode != other.mode)
+                return false;
+            if (value == null) {
+                if (other.value != null)
+                    return false;
+            } else if (!value.equals(other.value))
+                return false;
+            if (valuePattern == null) {
+                if (other.valuePattern != null)
+                    return false;
+            } else if (!valuePattern.equals(other.valuePattern))
+                return false;
+            return true;
+        }
     }
 
     /**
@@ -953,6 +1154,38 @@ public class SearchCompiler {
         public String toString() {
             return search;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (caseSensitive ? 1231 : 1237);
+            result = prime * result + ((search == null) ? 0 : search.hashCode());
+            result = prime * result + ((searchRegex == null) ? 0 : searchRegex.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Any other = (Any) obj;
+            if (caseSensitive != other.caseSensitive)
+                return false;
+            if (search == null) {
+                if (other.search != null)
+                    return false;
+            } else if (!search.equals(other.search))
+                return false;
+            if (searchRegex == null) {
+                if (other.searchRegex != null)
+                    return false;
+            } else if (!searchRegex.equals(other.searchRegex))
+                return false;
+            return true;
+        }
     }
 
     private static class ExactType extends Match {
@@ -972,6 +1205,23 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return "type=" + type;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((type == null) ? 0 : type.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            ExactType other = (ExactType) obj;
+            if (type != other.type)
+                return false;
+            return true;
         }
     }
 
@@ -1000,6 +1250,26 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return "user=" + (user == null ? "" : user);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((user == null) ? 0 : user.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            UserMatch other = (UserMatch) obj;
+            if (user == null) {
+                if (other.user != null)
+                    return false;
+            } else if (!user.equals(other.user))
+                return false;
+            return true;
         }
     }
 
@@ -1036,6 +1306,26 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return "role=" + role;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((role == null) ? 0 : role.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            RoleMatch other = (RoleMatch) obj;
+            if (role == null) {
+                if (other.role != null)
+                    return false;
+            } else if (!role.equals(other.role))
+                return false;
+            return true;
         }
     }
 
@@ -1084,6 +1374,29 @@ public class SearchCompiler {
         public String toString() {
             return "Nth{nth=" + nth + ", modulo=" + modulo + '}';
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (modulo ? 1231 : 1237);
+            result = prime * result + nth;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Nth other = (Nth) obj;
+            if (modulo != other.modulo)
+                return false;
+            if (nth != other.nth)
+                return false;
+            return true;
+        }
     }
 
     /**
@@ -1119,6 +1432,29 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return getString() + '=' + min + '-' + max;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (int) (max ^ (max >>> 32));
+            result = prime * result + (int) (min ^ (min >>> 32));
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            RangeMatch other = (RangeMatch) obj;
+            if (max != other.max)
+                return false;
+            if (min != other.min)
+                return false;
+            return true;
         }
     }
 
@@ -1236,6 +1572,26 @@ public class SearchCompiler {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm instanceof Relation && ((Relation) osm).getMemberRoles().contains(role);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((role == null) ? 0 : role.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            HasRole other = (HasRole) obj;
+            if (role == null) {
+                if (other.role != null)
+                    return false;
+            } else if (!role.equals(other.role))
+                return false;
+            return true;
         }
     }
 
@@ -1489,6 +1845,23 @@ public class SearchCompiler {
             } else
                 return false;
         }
+
+        @Override
+        public int hashCode() {
+            return 31 + (all ? 1231 : 1237);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            InArea other = (InArea) obj;
+            if (all != other.all)
+                return false;
+            return true;
+        }
     }
 
     /**
@@ -1598,6 +1971,26 @@ public class SearchCompiler {
                 Logging.trace(ex);
                 return false;
             }
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((presets == null) ? 0 : presets.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            Preset other = (Preset) obj;
+            if (presets == null) {
+                if (other.presets != null)
+                    return false;
+            } else if (!presets.equals(other.presets))
+                return false;
+            return true;
         }
     }
 

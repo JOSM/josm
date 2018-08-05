@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.template_engine;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +17,6 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.testutils.DatasetFactory;
-import org.unitils.reflectionassert.ReflectionAssert;
 
 /**
  * Unit tests of {@link TemplateParser} class.
@@ -37,7 +38,7 @@ public class TemplateParserTest {
     @Test
     public void testEmpty() throws ParseError {
         TemplateParser parser = new TemplateParser("");
-        ReflectionAssert.assertReflectionEquals(new StaticText(""), parser.parse());
+        assertEquals(new StaticText(""), parser.parse());
     }
 
     /**
@@ -47,7 +48,7 @@ public class TemplateParserTest {
     @Test
     public void testVariable() throws ParseError {
         TemplateParser parser = new TemplateParser("abc{var}\\{ef\\$\\{g");
-        ReflectionAssert.assertReflectionEquals(CompoundTemplateEntry.fromArray(new StaticText("abc"),
+        assertEquals(CompoundTemplateEntry.fromArray(new StaticText("abc"),
                 new Variable("var"), new StaticText("{ef${g")), parser.parse());
     }
 
@@ -62,7 +63,7 @@ public class TemplateParserTest {
             CompoundTemplateEntry.fromArray(new Variable("name"), new StaticText(" "), new Variable("desc")),
             new Variable("name"),
             new Variable("desc")));
-        ReflectionAssert.assertReflectionEquals(condition, parser.parse());
+        assertEquals(condition, parser.parse());
     }
 
     /**
@@ -76,7 +77,7 @@ public class TemplateParserTest {
                 CompoundTemplateEntry.fromArray(new Variable("name"), new StaticText(" "), new Variable("desc")),
                 new Variable("name"),
                 new Variable("desc")));
-        ReflectionAssert.assertReflectionEquals(condition, parser.parse());
+        assertEquals(condition, parser.parse());
     }
 
     private static Match compile(String expression) throws SearchParseError {
@@ -95,7 +96,8 @@ public class TemplateParserTest {
                 new SearchExpressionCondition(compile("admin_level = 2"), new StaticText("NUTS 1")),
                 new SearchExpressionCondition(compile("admin_level = 4"), new StaticText("NUTS 2")),
                 new Variable("admin_level")));
-        ReflectionAssert.assertReflectionEquals(condition, parser.parse());
+        TemplateEntry parse = parser.parse();
+        assertEquals(condition, parse);
     }
 
     TemplateEngineDataProvider dataProvider = new TemplateEngineDataProvider() {
