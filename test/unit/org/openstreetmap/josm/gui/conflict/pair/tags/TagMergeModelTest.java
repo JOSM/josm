@@ -1,17 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.tags;
 
-import static org.fest.reflect.core.Reflection.field;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -31,60 +30,54 @@ public class TagMergeModelTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    @Test
-    public void testAddPropertyChangeListener() {
-        TagMergeModel model = new TagMergeModel();
-        PropertyChangeListener listener = new PropertyChangeListener() {
+    protected Set<PropertyChangeListener> getListeners(TagMergeModel model) throws ReflectiveOperationException {
+        return (Set<PropertyChangeListener>) TestUtils.getPrivateField(model, "listeners");
+    }
 
-            public void propertyChange(PropertyChangeEvent evt) {
-            }
+    protected List<TagMergeItem> getTagMergeItems(TagMergeModel model) throws ReflectiveOperationException {
+        return (List<TagMergeItem>) TestUtils.getPrivateField(model, "tagMergeItems");
+    }
+
+    @Test
+    public void testAddPropertyChangeListener() throws ReflectiveOperationException {
+        TagMergeModel model = new TagMergeModel();
+        PropertyChangeListener listener = evt -> {
         };
         model.addPropertyChangeListener(listener);
 
-        Set<?> list = field("listeners").ofType(Set.class)
-        .in(model)
-        .get();
+        Set<?> list = getListeners(model);
 
         assertEquals(1, list.size());
         assertEquals(listener, list.iterator().next());
     }
 
     @Test
-    public void testRemovePropertyChangeListener() {
+    public void testRemovePropertyChangeListener() throws ReflectiveOperationException {
         TagMergeModel model = new TagMergeModel();
-        PropertyChangeListener listener = new PropertyChangeListener() {
-
-            public void propertyChange(PropertyChangeEvent evt) {
-            }
+        PropertyChangeListener listener = evt -> {
         };
         model.addPropertyChangeListener(listener);
         model.removePropertyChangeListener(listener);
 
-        Set<?> list = field("listeners")
-        .ofType(Set.class)
-        .in(model)
-        .get();
+        Set<?> list = getListeners(model);
 
         assertEquals(0, list.size());
     }
 
     @Test
-    public void testPopulateNoConflichts() {
+    public void testPopulateNoConflichts() throws ReflectiveOperationException {
         Node my = new Node(1);
         Node their = new Node(1);
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        List<TagMergeItem> list = field("tagMergeItems")
-        .ofType(List.class)
-        .in(model)
-        .get();
+        List<TagMergeItem> list = getTagMergeItems(model);
 
         assertEquals(0, list.size());
     }
 
     @Test
-    public void testPopulateNoConflicts1() {
+    public void testPopulateNoConflicts1() throws ReflectiveOperationException {
         Node my = new Node(1);
         my.put("key", "value");
         Node their = new Node(1);
@@ -92,26 +85,20 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        List<TagMergeItem> list = field("tagMergeItems")
-        .ofType(List.class)
-        .in(model)
-        .get();
+        List<TagMergeItem> list = getTagMergeItems(model);
 
         assertEquals(0, list.size());
     }
 
     @Test
-    public void testPopulateMissingKeyMine() {
+    public void testPopulateMissingKeyMine() throws ReflectiveOperationException {
         Node my = new Node(1);
         Node their = new Node(1);
         their.put("key", "value");
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        List<TagMergeItem> list = field("tagMergeItems")
-        .ofType(List.class)
-        .in(model)
-        .get();
+        List<TagMergeItem> list = getTagMergeItems(model);
 
         assertEquals(1, list.size());
         TagMergeItem item = list.get(0);
@@ -122,17 +109,14 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testPopulateMissingKeyTheir() {
+    public void testPopulateMissingKeyTheir() throws ReflectiveOperationException {
         Node my = new Node(1);
         my.put("key", "value");
         Node their = new Node(1);
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        List<TagMergeItem> list = field("tagMergeItems")
-        .ofType(List.class)
-        .in(model)
-        .get();
+        List<TagMergeItem> list = getTagMergeItems(model);
 
         assertEquals(1, list.size());
         TagMergeItem item = list.get(0);
@@ -143,7 +127,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testPopulateConflictingValues() {
+    public void testPopulateConflictingValues() throws ReflectiveOperationException {
         Node my = new Node(1);
         my.put("key", "myvalue");
         Node their = new Node(1);
@@ -151,10 +135,7 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        List<TagMergeItem> list = field("tagMergeItems")
-        .ofType(List.class)
-        .in(model)
-        .get();
+        List<TagMergeItem> list = getTagMergeItems(model);
 
         assertEquals(1, list.size());
         TagMergeItem item = list.get(0);
@@ -165,15 +146,12 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testAddItem() {
+    public void testAddItem() throws ReflectiveOperationException {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         TagMergeModel model = new TagMergeModel();
         model.addItem(item);
 
-        List<TagMergeItem> list = field("tagMergeItems")
-        .ofType(List.class)
-        .in(model)
-        .get();
+        List<TagMergeItem> list = getTagMergeItems(model);
 
         assertEquals(1, list.size());
         item = list.get(0);
@@ -184,15 +162,12 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testDecide() {
+    public void testDecide() throws ReflectiveOperationException {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         TagMergeModel model = new TagMergeModel();
         model.addItem(item);
 
-        List<TagMergeItem> list = field("tagMergeItems")
-        .ofType(List.class)
-        .in(model)
-        .get();
+        List<TagMergeItem> list = getTagMergeItems(model);
 
         model.decide(0, MergeDecisionType.KEEP_MINE);
         assertEquals(1, list.size());
@@ -211,17 +186,14 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testDecideMultiple() {
+    public void testDecideMultiple() throws ReflectiveOperationException {
 
         TagMergeModel model = new TagMergeModel();
         for (int i = 0; i < 10; i++) {
             model.addItem(new TagMergeItem("key-" + i, "myvalue-" + i, "theirvalue-" +i));
         }
 
-        List<TagMergeItem> list = field("tagMergeItems")
-        .ofType(List.class)
-        .in(model)
-        .get();
+        List<TagMergeItem> list = getTagMergeItems(model);
 
         assertEquals(10, list.size());
 

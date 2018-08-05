@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
-import static org.fest.reflect.core.Reflection.field;
-import static org.fest.reflect.core.Reflection.method;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -10,6 +8,9 @@ import static org.junit.Assert.fail;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,8 +20,10 @@ import javax.swing.DefaultListSelectionModel;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractListMergeModel;
 import org.openstreetmap.josm.testutils.DatasetFactory;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
@@ -44,16 +47,30 @@ public class NodeListMergeModelTest {
 
     @SuppressWarnings("unchecked")
     protected List<Node> inspectNodeList(NodeListMergeModel model, String name) {
-        return method("get" + name + "Entries")
-        .withReturnType(List.class)
-        .in(model)
-        .invoke();
+        try {
+            Method getNamedEntries = AbstractListMergeModel.class.getDeclaredMethod("get" + name + "Entries");
+            AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+                getNamedEntries.setAccessible(true);
+                return null;
+            });
+            return (List<Node>) getNamedEntries.invoke(model);
+        } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected DefaultListSelectionModel inspectListSelectionModel(NodeListMergeModel model, String name) {
-        return field(name).ofType(DefaultListSelectionModel.class)
-        .in(model)
-        .get();
+        try {
+            return (DefaultListSelectionModel) TestUtils.getPrivateField(AbstractListMergeModel.class, model, name);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Set<PropertyChangeListener> getListeners(NodeListMergeModel model) throws ReflectiveOperationException {
+        return (Set<PropertyChangeListener>)
+                TestUtils.getPrivateField(AbstractListMergeModel.class, model, "listeners");
     }
 
     protected void ensureSelected(DefaultListSelectionModel model, Object... idx) {
@@ -643,21 +660,15 @@ public class NodeListMergeModelTest {
     /* ----------------------------------------------------------------------------- */
     @SuppressWarnings("unchecked")
     @Test
-    public void testAddPropertyChangeListener() {
+    public void testAddPropertyChangeListener() throws ReflectiveOperationException {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        PropertyChangeListener listener = new PropertyChangeListener() {
-
-            public void propertyChange(PropertyChangeEvent evt) {
-            }
+        PropertyChangeListener listener = evt -> {
         };
 
         model.addPropertyChangeListener(listener);
 
-        Set<PropertyChangeListener> listeners = field("listeners")
-        .ofType(Set.class)
-        .in(model)
-        .get();
+        Set<PropertyChangeListener> listeners = getListeners(model);
 
         assertEquals(1, listeners.size());
         assertEquals(listener, listeners.iterator().next());
@@ -665,22 +676,16 @@ public class NodeListMergeModelTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testRemovePropertyChangeListener() {
+    public void testRemovePropertyChangeListener() throws ReflectiveOperationException {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        PropertyChangeListener listener = new PropertyChangeListener() {
-
-            public void propertyChange(PropertyChangeEvent evt) {
-            }
+        PropertyChangeListener listener = evt -> {
         };
 
         model.addPropertyChangeListener(listener);
         model.removePropertyChangeListener(listener);
 
-        Set<PropertyChangeListener> listeners = field("listeners")
-        .ofType(Set.class)
-        .in(model)
-        .get();
+        Set<PropertyChangeListener> listeners = getListeners(model);
 
         assertEquals(0, listeners.size());
     }

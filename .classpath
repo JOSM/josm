@@ -32,36 +32,6 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/fest-assert-1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/fest-reflect-1.1.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/fest-swing-1.1.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/fest-util-1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/jcip-annotations-1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/MRJToolkitStubs-1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="test/lib/jfcunit.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
@@ -134,11 +104,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="test/lib/unitils-core/ognl-2.6.9.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>

@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.fest.util.Collections;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
@@ -121,7 +120,7 @@ public class WMSEndpointTileSourceTest {
         Config.getPref().putList("imagery.layers.sites", Arrays.asList(tileServer.url("//maps")));
         ImageryLayerInfo.instance.loadDefaults(true, null, false);
         ImageryInfo wmsImageryInfo = ImageryLayerInfo.instance.getDefaultLayers().get(0);
-        wmsImageryInfo.setDefaultLayers(Collections.list(new DefaultLayer(ImageryType.WMS_ENDPOINT, "historiske-ortofoto", "", "")));
+        wmsImageryInfo.setDefaultLayers(Arrays.asList(new DefaultLayer(ImageryType.WMS_ENDPOINT, "historiske-ortofoto", "", "")));
         WMSEndpointTileSource tileSource = new WMSEndpointTileSource(wmsImageryInfo, Main.getProjection());
         tileSource.initProjection(Projections.getProjectionByCode("EPSG:3857"));
         assertEquals("b8e36d51-119a-423b-b156-d744d54123d5", wmsImageryInfo.getCustomHttpHeaders().get("X-WAAPI-TOKEN"));

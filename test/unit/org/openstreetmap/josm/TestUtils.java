@@ -178,7 +178,19 @@ public final class TestUtils {
      * @throws ReflectiveOperationException if a reflection operation error occurs
      */
     public static Object getPrivateField(Object obj, String fieldName) throws ReflectiveOperationException {
-        Field f = obj.getClass().getDeclaredField(fieldName);
+        return getPrivateField(obj.getClass(), obj, fieldName);
+    }
+
+    /**
+     * Returns a private field value.
+     * @param cls object class
+     * @param obj object
+     * @param fieldName private field name
+     * @return private field value
+     * @throws ReflectiveOperationException if a reflection operation error occurs
+     */
+    public static Object getPrivateField(Class<?> cls, Object obj, String fieldName) throws ReflectiveOperationException {
+        Field f = cls.getDeclaredField(fieldName);
         AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
             f.setAccessible(true);
             return null;
