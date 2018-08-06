@@ -13,7 +13,10 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -21,6 +24,7 @@ import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmChangeReader;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * File importer that reads OSM change files (*.osc).
@@ -28,16 +32,23 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class OsmChangeImporter extends FileImporter {
 
+    /**
+     * File filter for OsmChange files.
+     */
     public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
             "osc", "osc", tr("OsmChange File"), true);
 
     /**
-     * Constructs a new {@code OsmChangeImporter}.
+     * Constructs a new {@code OsmChangeImporter} with default file filter.
      */
     public OsmChangeImporter() {
         super(FILE_FILTER);
     }
 
+    /**
+     * Constructs a new {@code OsmChangeImporter} with custom file filter.
+     * @param filter file filter
+     */
     public OsmChangeImporter(ExtensionFileFilter filter) {
         super(filter);
     }
@@ -53,22 +64,30 @@ public class OsmChangeImporter extends FileImporter {
     }
 
     protected void importData(InputStream in, final File associatedFile, ProgressMonitor progressMonitor) throws IllegalDataException {
-        final DataSet dataSet = OsmChangeReader.parseDataSet(in, progressMonitor);
-        final OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
-        addDataLayer(dataSet, layer, associatedFile.getPath());
-    }
-
-    protected void addDataLayer(final DataSet dataSet, final OsmDataLayer layer, final String filePath) {
-        // FIXME: remove UI stuff from IO subsystem
-        //
-        GuiHelper.runInEDT(() -> {
-            if (dataSet.allPrimitives().isEmpty()) {
+        final Pair<DataSet, NoteData> p = OsmChangeReader.parseDataSetAndNotes(in, progressMonitor);
+        final boolean hasOsmData = p.a != null && !p.a.allPrimitives().isEmpty();
+        final boolean hasNotes = p.b != null && !p.b.getNotes().isEmpty();
+        if (hasOsmData) {
+            addLayer(new OsmDataLayer(p.a, associatedFile.getName(), associatedFile));
+        }
+        if (hasNotes) {
+            addLayer(new NoteLayer(p.b, associatedFile.getName()));
+        }
+        if (!hasOsmData && !hasNotes) {
+            // FIXME: remove UI stuff from IO subsystem
+            GuiHelper.runInEDT(() -> {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("No data found in file {0}.", filePath),
+                        tr("No data found in file {0}.", associatedFile.getPath()),
                         tr("Open OsmChange file"),
                         JOptionPane.INFORMATION_MESSAGE);
-            }
+            });
+        }
+    }
+
+    protected void addLayer(final Layer layer) {
+        // FIXME: remove UI stuff from IO subsystem
+        GuiHelper.runInEDT(() -> {
             MainApplication.getLayerManager().addLayer(layer);
             layer.onPostLoadFromFile();
         });

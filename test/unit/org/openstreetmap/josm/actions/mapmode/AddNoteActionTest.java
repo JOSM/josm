@@ -4,11 +4,8 @@ package org.openstreetmap.josm.actions.mapmode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collections;
-
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -38,7 +35,7 @@ public class AddNoteActionTest {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
             MainApplication.getLayerManager().addLayer(layer);
-            AddNoteAction mapMode = new AddNoteAction(new NoteData(Collections.<Note>emptyList()));
+            AddNoteAction mapMode = new AddNoteAction(new NoteData());
             MapFrame map = MainApplication.getMap();
             MapMode oldMapMode = map.mapMode;
             assertTrue(map.selectMapMode(mapMode));

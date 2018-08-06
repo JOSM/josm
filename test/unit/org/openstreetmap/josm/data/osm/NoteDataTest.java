@@ -19,7 +19,7 @@ public class NoteDataTest {
      */
     @Test
     public void testNoteData() {
-        NoteData empty = new NoteData(null);
+        NoteData empty = new NoteData();
         assertEquals(0, empty.getNotes().size());
         NoteData notEmpty = new NoteData(Arrays.asList(new Note(LatLon.ZERO)));
         assertEquals(1, notEmpty.getNotes().size());

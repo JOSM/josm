@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -84,10 +85,7 @@ public class NoteReader {
 
             if (parseMode == NoteParseMode.API) {
                 if ("note".equals(qName)) {
-                    double lat = Double.parseDouble(attrs.getValue("lat"));
-                    double lon = Double.parseDouble(attrs.getValue("lon"));
-                    LatLon noteLatLon = new LatLon(lat, lon);
-                    thisNote = new Note(noteLatLon);
+                    thisNote = parseNoteBasic(attrs);
                 }
                 return;
             }
@@ -95,19 +93,7 @@ public class NoteReader {
             //The rest only applies for dump mode
             switch(qName) {
             case "note":
-                double lat = Double.parseDouble(attrs.getValue("lat"));
-                double lon = Double.parseDouble(attrs.getValue("lon"));
-                LatLon noteLatLon = new LatLon(lat, lon);
-                thisNote = new Note(noteLatLon);
-                thisNote.setId(Long.parseLong(attrs.getValue("id")));
-                String closedTimeStr = attrs.getValue("closed_at");
-                if (closedTimeStr == null) { //no closed_at means the note is still open
-                    thisNote.setState(Note.State.OPEN);
-                } else {
-                    thisNote.setState(Note.State.CLOSED);
-                    thisNote.setClosedAt(DateUtils.fromString(closedTimeStr));
-                }
-                thisNote.setCreatedAt(DateUtils.fromString(attrs.getValue("created_at")));
+                thisNote = parseNoteFull(attrs);
                 break;
             case "comment":
                 commentUid = Long.parseLong(Optional.ofNullable(attrs.getValue("uid")).orElse("0"));
@@ -187,6 +173,44 @@ public class NoteReader {
         public void endDocument() throws SAXException {
             parsedNotes = notes;
         }
+    }
+
+    static LatLon parseLatLon(Function<String, String> attrs) {
+        double lat = Double.parseDouble(attrs.apply("lat"));
+        double lon = Double.parseDouble(attrs.apply("lon"));
+        return new LatLon(lat, lon);
+    }
+
+    static Note parseNoteBasic(Attributes attrs) {
+        return parseNoteBasic(attrs::getValue);
+    }
+
+    static Note parseNoteBasic(Function<String, String> attrs) {
+        return new Note(parseLatLon(attrs));
+    }
+
+    static Note parseNoteFull(Attributes attrs) {
+        return parseNoteFull(attrs::getValue);
+    }
+
+    static Note parseNoteFull(Function<String, String> attrs) {
+        Note note = parseNoteBasic(attrs);
+        String id = attrs.apply("id");
+        if (id != null) {
+            note.setId(Long.parseLong(id));
+        }
+        String closedTimeStr = attrs.apply("closed_at");
+        if (closedTimeStr == null) { //no closed_at means the note is still open
+            note.setState(Note.State.OPEN);
+        } else {
+            note.setState(Note.State.CLOSED);
+            note.setClosedAt(DateUtils.fromString(closedTimeStr));
+        }
+        String createdAt = attrs.apply("created_at");
+        if (createdAt != null) {
+            note.setCreatedAt(DateUtils.fromString(createdAt));
+        }
+        return note;
     }
 
     /**
