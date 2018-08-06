@@ -51,6 +51,14 @@ public class NoteData {
 
     /**
      * Construct a new note container with a given list of notes
+     * @since 14101
+     */
+    public NoteData() {
+        this(null);
+    }
+
+    /**
+     * Construct a new note container with a given list of notes
      * @param notes The list of notes to populate the container with
      */
     public NoteData(Collection<Note> notes) {

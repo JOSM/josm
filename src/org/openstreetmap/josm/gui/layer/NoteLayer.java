@@ -101,6 +101,18 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
         noteData.addNoteDataUpdateListener(this);
     }
 
+    /**
+     * Create a new note layer with a notes data
+     * @param noteData Notes data
+     * @param name The name of the layer. Typically "Notes"
+     * @since 14101
+     */
+    public NoteLayer(NoteData noteData, String name) {
+        super(name);
+        this.noteData = noteData;
+        this.noteData.addNoteDataUpdateListener(this);
+    }
+
     /** Convenience constructor that creates a layer with an empty note list */
     public NoteLayer() {
         this(Collections.<Note>emptySet(), tr("Notes"));
