@@ -276,9 +276,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
     static class StringRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            FilterTableModel model = (FilterTableModel) table.getModel();
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            cell.setEnabled(model.isCellEnabled(row, column));
+            TableModel model = table.getModel();
+            if (model instanceof FilterTableModel) {
+                cell.setEnabled(((FilterTableModel) model).isCellEnabled(row, column));
+            }
             return cell;
         }
     }

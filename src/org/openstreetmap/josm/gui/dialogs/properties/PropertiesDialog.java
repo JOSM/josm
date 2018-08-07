@@ -812,7 +812,10 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             boolean isDisabledAndHidden = relation != null && relation.isDisabledAndHidden();
             if (c instanceof JLabel) {
                 JLabel label = (JLabel) c;
-                label.setText(((MemberInfo) table.getValueAt(row, 1)).getPositionString());
+                MemberInfo member = (MemberInfo) table.getValueAt(row, 1);
+                if (member != null) {
+                    label.setText(member.getPositionString());
+                }
                 if (isDisabledAndHidden) {
                     label.setFont(label.getFont().deriveFont(Font.ITALIC));
                 }

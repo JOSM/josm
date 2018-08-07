@@ -50,7 +50,7 @@ public class NoteData {
     private final ListenerList<NoteDataUpdateListener> listeners = ListenerList.create();
 
     /**
-     * Construct a new note container with a given list of notes
+     * Construct a new note container without notes
      * @since 14101
      */
     public NoteData() {
