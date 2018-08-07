@@ -977,8 +977,8 @@ public class ImageProvider {
                 BufferedImage img = null;
                 try {
                     img = read(Utils.fileToURL(cf.getFile()), false, false);
-                } catch (IOException e) {
-                    Logging.log(Logging.LEVEL_WARN, "IOException while reading HTTP image:", e);
+                } catch (IOException | UnsatisfiedLinkError e) {
+                    Logging.log(Logging.LEVEL_WARN, "Exception while reading HTTP image:", e);
                 }
                 return img == null ? null : new ImageResource(img);
             default:
@@ -1034,8 +1034,8 @@ public class ImageProvider {
                     // CHECKSTYLE.ON: LineLength
                     Image img = read(new ByteArrayInputStream(bytes), false, true);
                     return img == null ? null : new ImageResource(img);
-                } catch (IOException e) {
-                    Logging.log(Logging.LEVEL_WARN, "IOException while reading image:", e);
+                } catch (IOException | UnsatisfiedLinkError e) {
+                    Logging.log(Logging.LEVEL_WARN, "Exception while reading image:", e);
                 }
             }
         }
@@ -1119,7 +1119,7 @@ public class ImageProvider {
                         BufferedImage img = null;
                         try {
                             img = read(new ByteArrayInputStream(buf), false, false);
-                        } catch (IOException e) {
+                        } catch (IOException | UnsatisfiedLinkError e) {
                             Logging.warn(e);
                         }
                         return img == null ? null : new ImageResource(img);
@@ -1128,7 +1128,7 @@ public class ImageProvider {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | UnsatisfiedLinkError e) {
             Logging.log(Logging.LEVEL_WARN, tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()), e);
         }
         return null;
@@ -1164,7 +1164,7 @@ public class ImageProvider {
                 if (Logging.isDebugEnabled() && isTransparencyForced(img)) {
                     Logging.debug("Transparency has been forced for image {0}", path);
                 }
-            } catch (IOException e) {
+            } catch (IOException | UnsatisfiedLinkError e) {
                 Logging.log(Logging.LEVEL_WARN, "Unable to read image", e);
                 Logging.debug(e);
             }
