@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -17,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -70,7 +72,12 @@ public class TableCellRendererTest {
             if (klass.isAnonymousClass()) {
                 continue;
             }
-            assertNotNull(createInstance(klass).getTableCellRendererComponent(tbl, null, false, false, 0, 0));
+            try {
+                Logging.info(klass.toString());
+                assertNotNull(createInstance(klass).getTableCellRendererComponent(tbl, null, false, false, 0, 0));
+            } catch (ReflectiveOperationException e) {
+                Logging.logWithStackTrace(Level.WARNING, "Unable to test " + klass, e);
+            }
         }
     }
 
