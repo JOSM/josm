@@ -2,7 +2,7 @@
 # Simple wrapper script used to start JOSM in Debian
 set -e
 
-# First, the alternative (if known to work) or users preference as defined by $JAVA_HOME. Next, use OpenJDK or Oracle's proprietary JDK.
+# First, the alternative (if known to work) or users preference as defined by $JAVA_HOME. Next, use OpenJDK.
 # Override to a specific one using $JAVACMD
 ALTERNATIVE_JDK="`readlink -n -f /etc/alternatives/java`"
 
