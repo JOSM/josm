@@ -65,7 +65,7 @@ public class PluginHandlerTestIT {
             testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
         for (int i = 0; i < 2; i++) {
-            GpxLayer layer = new GpxLayer(new GpxData());
+            GpxLayer layer = new GpxLayer(new GpxData(), "Layer "+i);
             testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
             testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
