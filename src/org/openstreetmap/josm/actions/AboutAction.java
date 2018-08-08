@@ -109,7 +109,7 @@ public final class AboutAction extends JosmAction {
         logos.add(createImageLink("Twitter", /* ICON(dialogs/about/) */ "twitter", "https://twitter.com/josmeditor"));
         logos.add(createImageLink("Facebook", /* ICON(dialogs/about/) */ "facebook", "https://www.facebook.com/josmeditor"));
         logos.add(createImageLink("Google+", /* ICON(dialogs/about/) */ "google-plus", "https://plus.google.com/115458051662705872607"));
-        logos.add(createImageLink("Github", /* ICON(dialogs/about/) */ "github", "https://github.com/JOSM"));
+        logos.add(createImageLink("GitHub", /* ICON(dialogs/about/) */ "github", "https://github.com/JOSM"));
         info.add(logos, GBC.eol().insets(0, 10, 0, 0));
         info.add(GBC.glue(0, 5), GBC.eol());
 

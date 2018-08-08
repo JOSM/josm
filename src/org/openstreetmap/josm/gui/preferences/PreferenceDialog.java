@@ -66,11 +66,13 @@ public class PreferenceDialog extends JDialog {
 
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btns.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        btns.add(new JButton(new OKAction()));
+        OKAction okAction = new OKAction();
+        btns.add(new JButton(okAction));
         btns.add(new JButton(new CancelAction()));
         btns.add(new JButton(helpAction));
         pnl.add(expert, GBC.std().insets(5, 0, 0, 0));
         pnl.add(btns, GBC.std().fill(GBC.HORIZONTAL));
+        InputMapUtils.addCtrlEnterAction(pnl, okAction);
         return pnl;
     }
 

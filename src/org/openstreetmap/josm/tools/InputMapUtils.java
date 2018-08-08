@@ -116,4 +116,16 @@ public final class InputMapUtils {
          c.getActionMap().put("escape", a);
          c.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
     }
+
+    /**
+     * Add an action activated with Ctrl+Enter key on a component.
+     * @param c The Swing component
+     * @param a action activated with Ctrl+Enter key
+     * @see JComponent#WHEN_IN_FOCUSED_WINDOW
+     */
+    public static void addCtrlEnterAction(JComponent c, Action a) {
+        final KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK);
+        c.getActionMap().put("ctrl_enter", a);
+        c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "ctrl_enter");
+    }
 }
