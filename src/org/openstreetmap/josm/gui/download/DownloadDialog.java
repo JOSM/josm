@@ -207,6 +207,7 @@ public class DownloadDialog extends JDialog {
         InputMapUtils.addEnterActionWhenAncestor(cbNewLayer, btnDownload.getAction());
         InputMapUtils.addEnterActionWhenAncestor(cbStartup, btnDownload.getAction());
         InputMapUtils.addEnterActionWhenAncestor(cbZoomToDownloadedData, btnDownload.getAction());
+        InputMapUtils.addCtrlEnterAction(pnl, btnDownload.getAction());
 
         return pnl;
     }

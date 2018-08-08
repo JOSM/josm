@@ -11,8 +11,6 @@ import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -30,15 +28,12 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
@@ -187,7 +182,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         pnl.add(btnUpload);
         btnUpload.setFocusable(true);
         InputMapUtils.enableEnter(btnUpload);
-        bindCtrlEnterToAction(getRootPane(), btnUpload.getAction());
+        InputMapUtils.addCtrlEnterAction(getRootPane(), btnUpload.getAction());
 
         // -- cancel button
         CancelAction cancelAction = new CancelAction(this);
@@ -488,7 +483,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 @Override
                 public void setupDialog() {
                     super.setupDialog();
-                    bindCtrlEnterToAction(getRootPane(), buttons.get(buttons.size() - 1).getAction());
+                    InputMapUtils.addCtrlEnterAction(getRootPane(), buttons.get(buttons.size() - 1).getAction());
                 }
             };
             dlg.setContent("<html>" + message + "</html>");
@@ -702,9 +697,4 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         tpConfigPanels.setSelectedIndex(0);
     }
 
-    private static void bindCtrlEnterToAction(JComponent component, Action actionToBind) {
-        final KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK);
-        component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "ctrl_enter");
-        component.getActionMap().put("ctrl_enter", actionToBind);
-    }
 }
