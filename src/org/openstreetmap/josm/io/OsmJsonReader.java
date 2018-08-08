@@ -138,7 +138,7 @@ public class OsmJsonReader extends AbstractReader {
         parseWay(wd -> readCommon(item, wd), (w, nodeIds) -> readWayNodesAndTags(item, w, nodeIds));
     }
 
-    private void readWayNodesAndTags(JsonObject item, Way w, Collection<Long> nodeIds) {
+    private static void readWayNodesAndTags(JsonObject item, Way w, Collection<Long> nodeIds) {
         for (JsonValue v : item.getJsonArray("nodes")) {
             nodeIds.add(((JsonNumber) v).longValue());
         }

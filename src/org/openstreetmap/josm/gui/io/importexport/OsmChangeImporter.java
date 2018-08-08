@@ -75,13 +75,13 @@ public class OsmChangeImporter extends FileImporter {
         }
         if (!hasOsmData && !hasNotes) {
             // FIXME: remove UI stuff from IO subsystem
-            GuiHelper.runInEDT(() -> {
+            GuiHelper.runInEDT(() ->
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("No data found in file {0}.", associatedFile.getPath()),
                         tr("Open OsmChange file"),
-                        JOptionPane.INFORMATION_MESSAGE);
-            });
+                        JOptionPane.INFORMATION_MESSAGE)
+            );
         }
     }
 

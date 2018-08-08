@@ -195,7 +195,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
          * @param listNeg The keys that were previously unselected
          * @return {@link TagConversionDialogResponse} containing the selection
          */
-        private TagConversionDialogResponse showTagConversionDialog(List<String> keys, List<String> listPos, List<String> listNeg) {
+        private static TagConversionDialogResponse showTagConversionDialog(List<String> keys, List<String> listPos, List<String> listNeg) {
             TagConversionDialogResponse res = new TagConversionDialogResponse(listPos, listNeg);
             String lSel = Config.getPref().get(GPX_SETTING + ".last", "all");
 
