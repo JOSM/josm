@@ -122,7 +122,8 @@ public abstract class AbstractToStringProperty<T> extends AbstractProperty<T> {
      */
     protected String getAsString() {
         T def = getDefaultValue();
-        return getPreferences().get(key, def == null ? "" : toString(def));
+        String sdef = def == null ? "" : toString(def);
+        return getPreferences() != null ? getPreferences().get(key, sdef) : sdef;
     }
 
     /**
