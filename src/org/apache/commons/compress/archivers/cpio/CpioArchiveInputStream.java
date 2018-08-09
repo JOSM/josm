@@ -332,7 +332,9 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
                 this.crc &= 0xFFFFFFFFL;
             }
         }
-        this.entryBytesRead += tmpread;
+        if (tmpread > 0) {
+            this.entryBytesRead += tmpread;
+        }
 
         return tmpread;
     }
