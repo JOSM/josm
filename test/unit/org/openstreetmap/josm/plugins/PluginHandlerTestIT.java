@@ -41,7 +41,7 @@ public class PluginHandlerTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().main().projection().timeout(10*60*1000);
+    public JOSMTestRules test = new JOSMTestRules().platform().main().projection().preferences().timeout(10*60*1000);
 
     /**
      * Test that available plugins rules can be loaded.
@@ -65,7 +65,7 @@ public class PluginHandlerTestIT {
             testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
         for (int i = 0; i < 2; i++) {
-            GpxLayer layer = new GpxLayer(new GpxData());
+            GpxLayer layer = new GpxLayer(new GpxData(), "Layer "+i);
             testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
             testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
