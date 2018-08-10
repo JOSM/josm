@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm;
+package org.openstreetmap.josm.cli;
 
 /**
  * A command line interface module.
@@ -23,5 +23,4 @@ public interface CLIModule {
      * @param argArray command line arguments without the initial action keyword
      */
     void processArguments(String[] argArray);
-
 }
