@@ -5074,9 +5074,12 @@
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:tourism=artwork" />
             <space />
             <key key="tourism" value="artwork" />
-            <combo key="artwork_type" text="Type" values="mural,sculpture,statue" />
+            <combo key="artwork_type" text="Type" values="architecture,mural,painting,sculpture,statue,bust,stone,installation,graffiti" />
             <text key="name" text="Name" />
             <text key="artist_name" text="Artist Name" />
+            <text key="artwork_subject" text="Artwork Subject" />
+            <combo key="material" text="Material" values="stone,concrete,metal,plastic,steel,wood" />
+            <text key="start_date" text="Start date" />
         </item> <!-- Artwork -->
         <item name="Studio" icon="presets/service/studio.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:amenity=studio"
