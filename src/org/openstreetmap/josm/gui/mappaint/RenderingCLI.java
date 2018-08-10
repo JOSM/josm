@@ -20,8 +20,8 @@ import java.util.logging.Level;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.josm.CLIModule;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;

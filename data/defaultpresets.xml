@@ -2479,7 +2479,7 @@
             <text key="name" text="Name" />
             <combo key="water" text="Water Body" values="canal,lake,lagoon,oxbow,pond,reservoir,river,lock,wastewater" match="key" values_searchable="true" />
             <check key="salt" text="Salt Water" disable_off="true" />
-            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
             <text key="wikipedia" text="Wikipedia" />
             <reference ref="water_access" />
@@ -2512,7 +2512,7 @@
             <space />
             <key key="waterway" value="riverbank" />
             <text key="name" text="Name" />
-            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
         </item> <!-- Riverbank -->
         <separator/>
