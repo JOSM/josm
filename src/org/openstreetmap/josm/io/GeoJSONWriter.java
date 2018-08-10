@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -45,7 +46,7 @@ public class GeoJSONWriter {
 
     private final DataSet data;
     private final Projection projection;
-    private static final boolean SKIP_EMPTY_NODES = true;
+    private static final BooleanProperty SKIP_EMPTY_NODES = new BooleanProperty("geojson.export.skip-empty-nodes", true);
 
     /**
      * Constructs a new {@code GeoJSONWriter}.
@@ -165,7 +166,7 @@ public class GeoJSONWriter {
     protected void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {
         if (p.isIncomplete()) {
             return;
-        } else if (SKIP_EMPTY_NODES && p instanceof Node && p.getKeys().isEmpty()) {
+        } else if (SKIP_EMPTY_NODES.get() && p instanceof Node && p.getKeys().isEmpty()) {
             return;
         }
 
