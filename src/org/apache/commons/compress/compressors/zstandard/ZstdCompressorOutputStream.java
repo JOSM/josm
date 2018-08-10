@@ -36,6 +36,7 @@ public class ZstdCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * Wraps the given stream into a zstd-jni ZstdOutputStream.
+     * @param outStream the stream to write to
      * @param level value for zstd-jni's level argument
      * @param closeFrameOnFlush value for zstd-jni's closeFrameOnFlush argument
      * @param useChecksum value for zstd-jni's useChecksum argument
@@ -49,6 +50,7 @@ public class ZstdCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * Wraps the given stream into a zstd-jni ZstdOutputStream using the default value for {@code useChecksum}.
+     * @param outStream the stream to write to
      * @param level value for zstd-jni's level argument
      * @param closeFrameOnFlush value for zstd-jni's closeFrameOnFlush argument
      * @throws IOException if zstd-jni does
@@ -62,6 +64,7 @@ public class ZstdCompressorOutputStream extends CompressorOutputStream {
     /**
      * Wraps the given stream into a zstd-jni ZstdOutputStream using the default values for {@code closeFrameOnFlush}
      * and {@code useChecksum}.
+     * @param outStream the stream to write to
      * @param level value for zstd-jni's level argument
      * @throws IOException if zstd-jni does
      * @since 1.18
@@ -73,6 +76,7 @@ public class ZstdCompressorOutputStream extends CompressorOutputStream {
     /**
      * Wraps the given stream into a zstd-jni ZstdOutputStream using the default values for {@code level}, {@code
      * closeFrameOnFlush} and {@code useChecksum}.
+     * @param outStream the stream to write to
      * @throws IOException if zstd-jni does
      */
     public ZstdCompressorOutputStream(final OutputStream outStream) throws IOException {
