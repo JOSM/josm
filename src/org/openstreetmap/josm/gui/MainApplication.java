@@ -250,7 +250,7 @@ public class MainApplication extends Main {
         public void layerRemoving(LayerRemoveEvent e) {
             Layer layer = e.getRemovedLayer();
             if (layer instanceof OsmDataLayer) {
-                undoRedo.clean(((OsmDataLayer) layer).getDataSet());
+                UndoRedoHandler.getInstance().clean(((OsmDataLayer) layer).getDataSet());
             }
         }
 
@@ -414,7 +414,7 @@ public class MainApplication extends Main {
             new InitializationTask(tr("Executing platform startup hook"), () -> platform.startupHook(MainApplication::askUpdateJava)),
             new InitializationTask(tr("Building main menu"), this::initializeMainWindow),
             new InitializationTask(tr("Updating user interface"), () -> {
-                undoRedo.addCommandQueueListener(redoUndoListener);
+                UndoRedoHandler.getInstance().addCommandQueueListener(redoUndoListener);
                 // creating toolbar
                 GuiHelper.runInEDTAndWait(() -> contentPanePrivate.add(toolbar.control, BorderLayout.NORTH));
                 // help shortcut

@@ -40,7 +40,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -1601,7 +1600,7 @@ public class JoinAreasAction extends JosmAction {
     private void makeCommitsOneAction(String message) {
         cmds.clear();
         if (Main.main != null && addUndoRedo) {
-            UndoRedoHandler ur = MainApplication.undoRedo;
+            UndoRedoHandler ur = UndoRedoHandler.getInstance();
             int i = Math.max(ur.commands.size() - cmdsCount, 0);
             for (; i < ur.commands.size(); i++) {
                 cmds.add(ur.commands.get(i));
