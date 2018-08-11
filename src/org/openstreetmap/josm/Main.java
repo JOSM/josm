@@ -277,17 +277,13 @@ public abstract class Main {
      * Shutdown JOSM.
      */
     protected void shutdown() {
-        if (!GraphicsEnvironment.isHeadless()) {
-            ImageProvider.shutdown(false);
-        }
+        ImageProvider.shutdown(false);
         try {
             pref.saveDefaults();
         } catch (IOException | InvalidPathException ex) {
             Logging.log(Logging.LEVEL_WARN, tr("Failed to save default preferences."), ex);
         }
-        if (!GraphicsEnvironment.isHeadless()) {
-            ImageProvider.shutdown(true);
-        }
+        ImageProvider.shutdown(true);
     }
 
     /**
