@@ -29,6 +29,7 @@
         </condition>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
+        <property name="modules.dir" location="${dist.dir}/modules"/>
         <property name="tools.dir" location="${base.dir}/tools"/>
         <property name="pmd.dir" location="${tools.dir}/pmd"/>
         <property name="checkstyle.dir" location="${tools.dir}/checkstyle"/>
@@ -956,5 +957,62 @@ Build-Date: ${build.tstamp}
             </classpath>
             <arg value="${base.dir}"/>
         </java>
+    </target>
+    <!--
+      ** generate jdeps dependency graph
+    -->
+    <target name="jdeps" depends="compile">
+        <delete dir="${modules.dir}"/>
+        <mkdir dir="${modules.dir}"/>
+        <!-- JOSM only -->
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-main.jar" includes="org/openstreetmap/josm/Main.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-actions.jar" includes="org/openstreetmap/josm/actions/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-cli.jar" includes="org/openstreetmap/josm/cli/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-command.jar" includes="org/openstreetmap/josm/command/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-corrector.jar" includes="org/openstreetmap/josm/corrector/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-data.jar" includes="org/openstreetmap/josm/data/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-gui.jar" includes="org/openstreetmap/josm/gui/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-io.jar" includes="org/openstreetmap/josm/io/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-plugins.jar" includes="org/openstreetmap/josm/plugins/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-spi.jar" includes="org/openstreetmap/josm/spi/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-tools.jar" includes="org/openstreetmap/josm/tools/**/*.class"/>
+        <exec executable="jdeps" dir="${modules.dir}">
+            <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.*|gnu.*|oauth.*|org.apache.*|org.glassfish.*|org.jdesktop.*|org.openstreetmap.gui.*'"/>
+            <arg line="-dotoutput dots *.jar"/>
+        </exec>
+        <exec executable="dot" dir="${modules.dir}/dots">
+            <arg line="-O -Tpng summary.dot"/>
+        </exec>
+        <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-without-dependencies.png"/>
+        <!-- Direct dependencies -->
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/metadata-extractor.jar" includes="com/drew/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/svgSalamander.jar" includes="com/kitfox/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/gnu-getopt.jar" includes="gnu/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/javax-json.jar" includes="javax/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/oauth-signpost.jar" includes="oauth/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-compress.jar" includes="org/apache/commons/compress/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-jcs.jar" includes="org/apache/commons/jcs/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/glassfish-json.jar" includes="org/glassfish/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/jdesktop.jar" includes="org/jdesktop/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/jmapviewer.jar" includes="org/openstreetmap/gui/**/*.class"/>
+        <exec executable="jdeps" dir="${modules.dir}">
+            <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.sun.*|com.google.*|org.tukaani.*|org.apache.commons.logging.*'"/>
+            <arg line="-dotoutput dots *.jar"/>
+        </exec>
+        <exec executable="dot" dir="${modules.dir}/dots">
+            <arg line="-O -Tpng summary.dot"/>
+        </exec>
+        <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-with-direct-dependencies.png"/>
+        <!-- All dependencies -->
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-logging.jar" includes="org/apache/commons/logging/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/google-gdata.jar" includes="com/google/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/tukaani-xz.jar" includes="org/tukaani/**/*.class"/>
+        <exec executable="jdeps" dir="${modules.dir}">
+            <arg line="-dotoutput dots *.jar"/>
+        </exec>
+        <exec executable="dot" dir="${modules.dir}/dots">
+            <arg line="-O -Tpng summary.dot"/>
+        </exec>
+        <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-with-all-dependencies.png"/>
     </target>
 </project>
