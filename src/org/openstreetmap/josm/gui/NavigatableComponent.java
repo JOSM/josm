@@ -31,7 +31,6 @@ import java.util.zip.CRC32;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
@@ -52,6 +51,7 @@ import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer.Scale;
@@ -187,7 +187,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public NavigatableComponent() {
         setLayout(null);
         state = MapViewState.createDefaultState(getWidth(), getHeight());
-        Main.addProjectionChangeListener(projectionChangeListener);
+        ProjectionRegistry.addProjectionChangeListener(projectionChangeListener);
     }
 
     @Override
@@ -333,7 +333,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Made public temporarily, will be made private later.
      */
     public void fixProjection() {
-        state = state.usingProjection(Main.getProjection());
+        state = state.usingProjection(ProjectionRegistry.getProjection());
         repaint();
     }
 
@@ -491,7 +491,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return Minimum bounds that will cover rectangle
      */
     public Bounds getLatLonBounds(Rectangle r) {
-        return Main.getProjection().getLatLonBoundsBox(getProjectionBounds(r));
+        return ProjectionRegistry.getProjection().getLatLonBoundsBox(getProjectionBounds(r));
     }
 
     /**
@@ -524,7 +524,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (latlon == null) {
             return new Point();
         } else {
-            return getPoint2D(latlon.getEastNorth(Main.getProjection()));
+            return getPoint2D(latlon.getEastNorth(ProjectionRegistry.getProjection()));
         }
     }
 

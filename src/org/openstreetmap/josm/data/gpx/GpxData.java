@@ -19,12 +19,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.gpx.GpxTrack.GpxTrackChangeListener;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -538,7 +538,7 @@ public class GpxData extends WithAttributes implements Data {
             for (GpxTrackSegment seg : track.getSegments()) {
                 WayPoint r = null;
                 for (WayPoint wpSeg : seg.getWayPoints()) {
-                    EastNorth en = wpSeg.getEastNorth(Main.getProjection());
+                    EastNorth en = wpSeg.getEastNorth(ProjectionRegistry.getProjection());
                     if (r == null) {
                         r = wpSeg;
                         rx = en.east();
@@ -585,7 +585,7 @@ public class GpxData extends WithAttributes implements Data {
                     }
                 }
                 if (r != null) {
-                    EastNorth c = r.getEastNorth(Main.getProjection());
+                    EastNorth c = r.getEastNorth(ProjectionRegistry.getProjection());
                     /* if there is only one point in the seg, it will do this twice, but no matter */
                     rx = c.east();
                     ry = c.north();
@@ -602,7 +602,7 @@ public class GpxData extends WithAttributes implements Data {
         }
         if (bestEN == null)
             return null;
-        WayPoint best = new WayPoint(Main.getProjection().eastNorth2latlon(bestEN));
+        WayPoint best = new WayPoint(ProjectionRegistry.getProjection().eastNorth2latlon(bestEN));
         best.time = bestTime;
         return best;
     }

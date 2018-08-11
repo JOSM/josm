@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -188,7 +189,7 @@ public class ImportAudioAction extends AbstractAction {
                 if (waypoints.contains(w)) {
                     continue;
                 }
-                WayPoint wNear = layer.data.nearestPointOnTrack(w.getEastNorth(Main.getProjection()), snapDistance);
+                WayPoint wNear = layer.data.nearestPointOnTrack(w.getEastNorth(ProjectionRegistry.getProjection()), snapDistance);
                 if (wNear != null) {
                     WayPoint wc = new WayPoint(w.getCoor());
                     wc.time = wNear.time;

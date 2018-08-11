@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
@@ -492,7 +493,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
         pc.setPreferences(pref);
         Projection proj = pc.getProjection();
-        Main.setProjection(proj);
+        ProjectionRegistry.setProjection(proj);
     }
 
     /**

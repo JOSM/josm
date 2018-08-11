@@ -17,7 +17,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Geometry;
@@ -179,8 +179,8 @@ public final class CreateCircleAction extends JosmAction {
         double r = n1.distance(center);
 
         // see #10777
-        LatLon ll1 = Main.getProjection().eastNorth2latlon(n1);
-        LatLon ll2 = Main.getProjection().eastNorth2latlon(center);
+        LatLon ll1 = ProjectionRegistry.getProjection().eastNorth2latlon(n1);
+        LatLon ll2 = ProjectionRegistry.getProjection().eastNorth2latlon(center);
 
         double radiusInMeters = ll1.greatCircleDistance(ll2);
 
@@ -217,7 +217,7 @@ public final class CreateCircleAction extends JosmAction {
                 double alpha = angles[i].a + (j+1)*delta/(count[i]+1);
                 double x = center.east() + r*Math.cos(alpha);
                 double y = center.north() + r*Math.sin(alpha);
-                LatLon ll = Main.getProjection().eastNorth2latlon(new EastNorth(x, y));
+                LatLon ll = ProjectionRegistry.getProjection().eastNorth2latlon(new EastNorth(x, y));
                 if (ll.isOutSideWorld()) {
                     notifyNodesNotOnCircle();
                     return;

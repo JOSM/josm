@@ -6,13 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.util.concurrent.Future;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 
 /**
@@ -42,7 +42,7 @@ public final class DownloadOsmInViewAction extends JosmAction {
     @Override
     protected void updateEnabledState() {
         setEnabled(getLayerManager().getActiveLayer() != null
-                && !Main.isOffline(OnlineResource.OSM_API));
+                && !NetworkManager.isOffline(OnlineResource.OSM_API));
     }
 
     private static class DownloadOsmInViewTask extends DownloadOsmTask {

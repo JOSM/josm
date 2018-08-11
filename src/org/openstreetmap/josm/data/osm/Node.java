@@ -9,12 +9,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.Projecting;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -113,12 +113,12 @@ public final class Node extends OsmPrimitive implements INode {
             this.lon = coor.lon();
             invalidateEastNorthCache();
         } else if (eastNorth != null) {
-            LatLon ll = Main.getProjection().eastNorth2latlon(eastNorth);
+            LatLon ll = ProjectionRegistry.getProjection().eastNorth2latlon(eastNorth);
             this.lat = ll.lat();
             this.lon = ll.lon();
             this.east = eastNorth.east();
             this.north = eastNorth.north();
-            this.eastNorthCacheKey = Main.getProjection().getCacheKey();
+            this.eastNorthCacheKey = ProjectionRegistry.getProjection().getCacheKey();
         } else {
             this.lat = Double.NaN;
             this.lon = Double.NaN;

@@ -6,25 +6,19 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
@@ -37,7 +31,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.FileWatcher;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IUrls;
@@ -82,10 +78,6 @@ public abstract class Main {
      * The file watcher service.
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
-
-    private static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
-
-    private static final Set<OnlineResource> OFFLINE_RESOURCES = EnumSet.noneOf(OnlineResource.class);
 
     /**
      * Platform specific code goes in here.
@@ -363,77 +355,26 @@ public abstract class Main {
         platform = Platform.determinePlatform().accept(PlatformHook.CONSTRUCT_FROM_PLATFORM);
     }
 
-    /* ----------------------------------------------------------------------------------------- */
-    /* projection handling  - Main is a registry for a single, global projection instance        */
-    /*                                                                                           */
-    /* TODO: For historical reasons the registry is implemented by Main. An alternative approach */
-    /* would be a singleton org.openstreetmap.josm.data.projection.ProjectionRegistry class.     */
-    /* ----------------------------------------------------------------------------------------- */
-    /**
-     * The projection method used.
-     * Use {@link #getProjection()} and {@link #setProjection(Projection)} for access.
-     * Use {@link #setProjection(Projection)} in order to trigger a projection change event.
-     */
-    private static volatile Projection proj;
-
     /**
      * Replies the current projection.
      *
      * @return the currently active projection
+     * @deprecated Use {@link ProjectionRegistry#getProjection}
      */
+    @Deprecated
     public static Projection getProjection() {
-        return proj;
+        return ProjectionRegistry.getProjection();
     }
 
     /**
      * Sets the current projection
      *
      * @param p the projection
+     * @deprecated Use {@link ProjectionRegistry#setProjection}
      */
+    @Deprecated
     public static void setProjection(Projection p) {
-        CheckParameterUtil.ensureParameterNotNull(p);
-        Projection oldValue = proj;
-        Bounds b = main != null ? main.getRealBounds() : null;
-        proj = p;
-        fireProjectionChanged(oldValue, proj, b);
-    }
-
-    /**
-     * Returns the bounds for the current projection. Used for projection events.
-     * @return the bounds for the current projection
-     * @see #restoreOldBounds
-     */
-    protected Bounds getRealBounds() {
-        // To be overriden
-        return null;
-    }
-
-    /**
-     * Restore clean state corresponding to old bounds after a projection change event.
-     * @param oldBounds bounds previously returned by {@link #getRealBounds}, before the change of projection
-     * @see #getRealBounds
-     */
-    protected void restoreOldBounds(Bounds oldBounds) {
-        // To be overriden
-    }
-
-    /*
-     * Keep WeakReferences to the listeners. This relieves clients from the burden of
-     * explicitly removing the listeners and allows us to transparently register every
-     * created dataset as projection change listener.
-     */
-    private static final List<WeakReference<ProjectionChangeListener>> listeners = new CopyOnWriteArrayList<>();
-
-    private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
-        if ((newValue == null ^ oldValue == null)
-                || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
-            listeners.removeIf(x -> x.get() == null);
-            listeners.stream().map(WeakReference::get).filter(Objects::nonNull).forEach(x -> x.projectionChanged(oldValue, newValue));
-            if (newValue != null && oldBounds != null && main != null) {
-                main.restoreOldBounds(oldBounds);
-            }
-            /* TODO - remove layers with fixed projection */
-        }
+        ProjectionRegistry.setProjection(p);
     }
 
     /**
@@ -441,33 +382,32 @@ public abstract class Main {
      * The listener is registered to be weak, so keep a reference of it if you want it to be preserved.
      *
      * @param listener the listener. Ignored if <code>null</code>.
+     * @deprecated Use {@link ProjectionRegistry#addProjectionChangeListener}
      */
+    @Deprecated
     public static void addProjectionChangeListener(ProjectionChangeListener listener) {
-        if (listener == null) return;
-        for (WeakReference<ProjectionChangeListener> wr : listeners) {
-            // already registered ? => abort
-            if (wr.get() == listener) return;
-        }
-        listeners.add(new WeakReference<>(listener));
+        ProjectionRegistry.addProjectionChangeListener(listener);
     }
 
     /**
      * Removes a projection change listener.
      *
      * @param listener the listener. Ignored if <code>null</code>.
+     * @deprecated Use {@link ProjectionRegistry#removeProjectionChangeListener}
      */
+    @Deprecated
     public static void removeProjectionChangeListener(ProjectionChangeListener listener) {
-        if (listener == null) return;
-        // remove the listener - and any other listener which got garbage collected in the meantime
-        listeners.removeIf(wr -> wr.get() == null || wr.get() == listener);
+        ProjectionRegistry.removeProjectionChangeListener(listener);
     }
 
     /**
      * Remove all projection change listeners. For testing purposes only.
      * @since 13322
+     * @deprecated Use {@link ProjectionRegistry#clearProjectionChangeListeners}
      */
+    @Deprecated
     public static void clearProjectionChangeListeners() {
-        listeners.clear();
+        ProjectionRegistry.clearProjectionChangeListeners();
     }
 
     /**
@@ -477,17 +417,12 @@ public abstract class Main {
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
+     * @deprecated Use {@link NetworkManager#addNetworkError(URL, Throwable)}
      * @since 6642
      */
+    @Deprecated
     public static Throwable addNetworkError(URL url, Throwable t) {
-        if (url != null && t != null) {
-            Throwable old = addNetworkError(url.toExternalForm(), t);
-            if (old != null) {
-                Logging.warn("Already here "+old);
-            }
-            return old;
-        }
-        return null;
+        return NetworkManager.addNetworkError(url, t);
     }
 
     /**
@@ -497,30 +432,33 @@ public abstract class Main {
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
+     * @deprecated Use {@link NetworkManager#addNetworkError(String, Throwable)}
      * @since 6642
      */
+    @Deprecated
     public static Throwable addNetworkError(String url, Throwable t) {
-        if (url != null && t != null) {
-            return NETWORK_ERRORS.put(url, t);
-        }
-        return null;
+        return NetworkManager.addNetworkError(url, t);
     }
 
     /**
      * Returns the network errors that occured until now.
      * @return the network errors that occured until now, indexed by URL
+     * @deprecated Use {@link NetworkManager#getNetworkErrors}
      * @since 6639
      */
+    @Deprecated
     public static Map<String, Throwable> getNetworkErrors() {
-        return new HashMap<>(NETWORK_ERRORS);
+        return NetworkManager.getNetworkErrors();
     }
 
     /**
      * Clears the network errors cache.
+     * @deprecated Use {@link NetworkManager#clearNetworkErrors}
      * @since 12011
      */
+    @Deprecated
     public static void clearNetworkErrors() {
-        NETWORK_ERRORS.clear();
+        NetworkManager.clearNetworkErrors();
     }
 
     /**
@@ -600,38 +538,46 @@ public abstract class Main {
      * Determines if the given online resource is currently offline.
      * @param r the online resource
      * @return {@code true} if {@code r} is offline and should not be accessed
+     * @deprecated Use {@link NetworkManager#isOffline}
      * @since 7434
      */
+    @Deprecated
     public static boolean isOffline(OnlineResource r) {
-        return OFFLINE_RESOURCES.contains(r) || OFFLINE_RESOURCES.contains(OnlineResource.ALL);
+        return NetworkManager.isOffline(r);
     }
 
     /**
      * Sets the given online resource to offline state.
      * @param r the online resource
      * @return {@code true} if {@code r} was not already offline
+     * @deprecated Use {@link NetworkManager#setOffline}
      * @since 7434
      */
+    @Deprecated
     public static boolean setOffline(OnlineResource r) {
-        return OFFLINE_RESOURCES.add(r);
+        return NetworkManager.setOffline(r);
     }
 
     /**
      * Sets the given online resource to online state.
      * @param r the online resource
      * @return {@code true} if {@code r} was offline
+     * @deprecated Use {@link NetworkManager#setOnline}
      * @since 8506
      */
+    @Deprecated
     public static boolean setOnline(OnlineResource r) {
-        return OFFLINE_RESOURCES.remove(r);
+        return NetworkManager.setOnline(r);
     }
 
     /**
      * Replies the set of online resources currently offline.
      * @return the set of online resources currently offline
+     * @deprecated Use {@link NetworkManager#getOfflineResources}
      * @since 7434
      */
+    @Deprecated
     public static Set<OnlineResource> getOfflineResources() {
-        return EnumSet.copyOf(OFFLINE_RESOURCES);
+        return NetworkManager.getOfflineResources();
     }
 }

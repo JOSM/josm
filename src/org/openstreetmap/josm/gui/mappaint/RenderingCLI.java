@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.mappaint.RenderingHelper.StyleData;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -426,7 +426,7 @@ public class RenderingCLI implements CLIModule {
         Config.setUrlsProvider(JosmUrls.getInstance());
         Config.getPref().putBoolean("mappaint.auto_reload_local_styles", false); // unnecessary to listen for external changes
         String projCode = Optional.ofNullable(argProjection).orElse("epsg:3857");
-        Main.setProjection(Projections.getProjectionByCode(projCode.toUpperCase(Locale.US)));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode(projCode.toUpperCase(Locale.US)));
 
         RightAndLefthandTraffic.initialize();
     }
@@ -448,7 +448,7 @@ public class RenderingCLI implements CLIModule {
      */
     RenderingArea determineRenderingArea(DataSet ds) {
 
-        Projection proj = Main.getProjection();
+        Projection proj = ProjectionRegistry.getProjection();
         Double scale = null; // scale in east-north units per pixel
         if (argZoom != null) {
             scale = OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, argZoom) / OsmMercator.DEFAUL_TILE_SIZE / proj.getMetersPerUnit();

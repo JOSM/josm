@@ -8,11 +8,11 @@ import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -54,7 +54,7 @@ public class OsmTransferHandlerTest {
         assertTrue(ds2.getNodes().isEmpty());
 
         LatLon pos = new LatLon(55, -5);
-        transferHandler.pasteOn(target, Main.getProjection().latlon2eastNorth(pos));
+        transferHandler.pasteOn(target, ProjectionRegistry.getProjection().latlon2eastNorth(pos));
         assertTrue(pos.equalsEpsilon(ds2.getNodes().iterator().next().getCoor()));
     }
 

@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -37,6 +36,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -166,7 +166,7 @@ public class OsmServerBackreferenceReaderTest {
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
         Config.getPref().putBoolean("osm-server.atomic-upload", false);
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         Logging.setLogLevel(Logging.LEVEL_DEBUG);
 
         File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"),

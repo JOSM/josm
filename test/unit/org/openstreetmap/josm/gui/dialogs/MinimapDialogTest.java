@@ -2,11 +2,11 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 
-import javax.swing.JMenuItem;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.awaitility.Awaitility;
@@ -30,13 +30,14 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.bbox.SourceButton;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.ImagePatternMatching;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -277,7 +278,7 @@ public class MinimapDialogTest {
 
         Main.pref.put("slippy_map_chooser.mapstyle", "White Tiles");
         // ensure projection matches JMapViewer's
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
 
         MapView mapView = MainApplication.getMap().mapView;
         GuiHelper.runInEDTAndWaitWithException(() -> {

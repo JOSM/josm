@@ -6,12 +6,12 @@ import java.util.Collections;
 
 import javax.swing.AbstractAction;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.IPrimitiveAction;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.OsmData;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
@@ -56,7 +56,7 @@ public abstract class AbstractRelationAction extends AbstractAction implements I
             return false;
         }
         OsmData<?, ?, ?, ?> ds = relations.iterator().next().getDataSet();
-        return !Main.isOffline(OnlineResource.OSM_API)
+        return !NetworkManager.isOffline(OnlineResource.OSM_API)
             && ds != null && !ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
     }
 }

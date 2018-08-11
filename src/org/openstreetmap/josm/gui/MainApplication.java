@@ -101,7 +101,9 @@ import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
+import org.openstreetmap.josm.data.projection.ProjectionBoundsProvider;
 import org.openstreetmap.josm.data.projection.ProjectionCLI;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileSource;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
@@ -144,6 +146,7 @@ import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.MessageNotifier;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -257,6 +260,20 @@ public class MainApplication extends Main {
         }
     };
 
+    private static final ProjectionBoundsProvider mainBoundsProvider = new ProjectionBoundsProvider() {
+        @Override
+        public Bounds getRealBounds() {
+            return isDisplayingMapView() ? map.mapView.getRealBounds() : null;
+        }
+
+        @Override
+        public void restoreOldBounds(Bounds oldBounds) {
+            if (isDisplayingMapView()) {
+                map.mapView.zoomTo(oldBounds);
+            }
+        }
+    };
+
     private static final List<CLIModule> cliModules = new ArrayList<>();
 
     /**
@@ -340,6 +357,7 @@ public class MainApplication extends Main {
         this.mainFrame = mainFrame;
         undoRedo = super.undoRedo;
         getLayerManager().addLayerChangeListener(undoRedoCleaner);
+        ProjectionRegistry.setboundsProvider(mainBoundsProvider);
     }
 
     /**
@@ -510,18 +528,6 @@ public class MainApplication extends Main {
             worker.shutdownNow();
         } catch (SecurityException e) {
             Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
-        }
-    }
-
-    @Override
-    protected Bounds getRealBounds() {
-        return isDisplayingMapView() ? map.mapView.getRealBounds() : null;
-    }
-
-    @Override
-    protected void restoreOldBounds(Bounds oldBounds) {
-        if (isDisplayingMapView()) {
-            map.mapView.zoomTo(oldBounds);
         }
     }
 
@@ -1304,7 +1310,7 @@ public class MainApplication extends Main {
         for (String offlineNames : args.get(Option.OFFLINE)) {
             for (String s : offlineNames.split(",")) {
                 try {
-                    Main.setOffline(OnlineResource.valueOf(s.toUpperCase(Locale.ENGLISH)));
+                    NetworkManager.setOffline(OnlineResource.valueOf(s.toUpperCase(Locale.ENGLISH)));
                 } catch (IllegalArgumentException e) {
                     Logging.log(Logging.LEVEL_ERROR,
                             tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
@@ -1314,7 +1320,7 @@ public class MainApplication extends Main {
                 }
             }
         }
-        Set<OnlineResource> offline = Main.getOfflineResources();
+        Set<OnlineResource> offline = NetworkManager.getOfflineResources();
         if (!offline.isEmpty()) {
             Logging.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
                     "JOSM is running in offline mode. These resources will not be available: {0}",
@@ -1502,7 +1508,7 @@ public class MainApplication extends Main {
         }
 
         private static boolean handleNetworkErrors() {
-            Map<String, Throwable> networkErrors = Main.getNetworkErrors();
+            Map<String, Throwable> networkErrors = NetworkManager.getNetworkErrors();
             boolean condition = !networkErrors.isEmpty();
             if (condition) {
                 Set<String> errors = new TreeSet<>();

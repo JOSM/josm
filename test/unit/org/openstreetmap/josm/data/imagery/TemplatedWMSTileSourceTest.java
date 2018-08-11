@@ -9,12 +9,12 @@ import org.junit.Test;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -41,7 +41,7 @@ public class TemplatedWMSTileSourceTest {
     @Test
     public void testEPSG3857() {
         Projection projection = Projections.getProjectionByCode("EPSG:3857");
-        Main.setProjection(projection);
+        ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = new TemplatedWMSTileSource(testImageryWMS, projection);
         verifyMercatorTile(source, 0, 0, 1);
         verifyMercatorTile(source, 0, 0, 2);
@@ -66,7 +66,7 @@ public class TemplatedWMSTileSourceTest {
     @Test
     public void testEPSG4326() {
         Projection projection = Projections.getProjectionByCode("EPSG:4326");
-        Main.setProjection(projection);
+        ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = getSource(projection);
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
@@ -82,7 +82,7 @@ public class TemplatedWMSTileSourceTest {
     @Test
     public void testEPSG4326widebounds() {
         Projection projection = new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=-180,53,180,54");
-        Main.setProjection(projection);
+        ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = getSource(projection);
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
@@ -95,7 +95,7 @@ public class TemplatedWMSTileSourceTest {
     @Test
     public void testEPSG4326narrowbounds() {
         Projection projection = new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=18,-90,20,90");
-        Main.setProjection(projection);
+        ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = getSource(projection);
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
@@ -108,7 +108,7 @@ public class TemplatedWMSTileSourceTest {
     @Test
     public void testEPSG2180() {
         Projection projection = Projections.getProjectionByCode("EPSG:2180");
-        Main.setProjection(projection);
+        ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = getSource(projection);
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
@@ -127,7 +127,7 @@ public class TemplatedWMSTileSourceTest {
         Projection projection =
                 new CustomProjection("+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 "
                         + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006 +bounds=10.5700,55.2000,24.1800,69.1000 ");
-        Main.setProjection(projection);
+        ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = getSource(projection);
 
         verifyTileSquarness(source, 0, 1, 4);
@@ -143,7 +143,7 @@ public class TemplatedWMSTileSourceTest {
         Projection projection =
                 new CustomProjection("+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 "
                         + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006");
-        Main.setProjection(projection);
+        ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = getSource(projection);
 
         verifyTileSquarness(source, 0, 1, 4);
@@ -173,9 +173,10 @@ public class TemplatedWMSTileSourceTest {
     }
 
     private void verifyLocation(TemplatedWMSTileSource source, LatLon location, int z) {
+        Projection projection = ProjectionRegistry.getProjection();
         assertTrue(
                 "Point outside world bounds",
-                Main.getProjection().getWorldBoundsLatLon().contains(location)
+                projection.getWorldBoundsLatLon().contains(location)
                 );
 
         TileXY tileIndex = source.latLonToTileXY(CoordinateConversion.llToCoor(location), z);
@@ -186,9 +187,9 @@ public class TemplatedWMSTileSourceTest {
         assertTrue("Y index: " + tileIndex.getYIndex() + " greater than tileYmax: " + source.getTileYMax(z) + " at zoom: " + z,
                 tileIndex.getYIndex() <= source.getTileYMax(z));
 
-        EastNorth locationEN = Main.getProjection().latlon2eastNorth(location);
-        EastNorth x1 = Main.getProjection().latlon2eastNorth(getTileLatLon(source, tileIndex, z));
-        EastNorth x2 = Main.getProjection().latlon2eastNorth(getTileLatLon(source, tileIndex.getXIndex() + 1, tileIndex.getYIndex() + 1, z));
+        EastNorth locationEN = projection.latlon2eastNorth(location);
+        EastNorth x1 = projection.latlon2eastNorth(getTileLatLon(source, tileIndex, z));
+        EastNorth x2 = projection.latlon2eastNorth(getTileLatLon(source, tileIndex.getXIndex() + 1, tileIndex.getYIndex() + 1, z));
         // test that location is within tile bounds
         assertTrue(locationEN.toString() + " not within " + bboxStr(x1, x2) +
                 " for tile " + z + "/" + tileIndex.getXIndex() + "/" + tileIndex.getYIndex(),

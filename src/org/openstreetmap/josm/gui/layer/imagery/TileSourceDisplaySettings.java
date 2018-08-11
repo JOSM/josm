@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.io.session.SessionAwareReadApply;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -205,7 +205,7 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
         if (offsetBookmark == null) {
             setDisplacement(EastNorth.ZERO);
         } else {
-            setDisplacement(offsetBookmark.getDisplacement(Main.getProjection()));
+            setDisplacement(offsetBookmark.getDisplacement(ProjectionRegistry.getProjection()));
         }
     }
 

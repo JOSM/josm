@@ -5,11 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
@@ -66,7 +66,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
         if (instance == null) {
             instance = new UserIdentityManager();
             if (OsmApi.isUsingOAuth() && OAuthAccessTokenHolder.getInstance().containsAccessToken() &&
-                    !Main.isOffline(OnlineResource.OSM_API)) {
+                    !NetworkManager.isOffline(OnlineResource.OSM_API)) {
                 try {
                     instance.initFromOAuth();
                 } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {

@@ -22,11 +22,11 @@ import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -195,7 +195,7 @@ public class LatLonDialog extends ExtendedDialog {
         LatLon llc = Optional.ofNullable(ll).orElse(LatLon.ZERO);
         tfLatLon.setText(CoordinateFormatManager.getDefaultFormat().latToString(llc) + ' ' +
                          CoordinateFormatManager.getDefaultFormat().lonToString(llc));
-        EastNorth en = Main.getProjection().latlon2eastNorth(llc);
+        EastNorth en = ProjectionRegistry.getProjection().latlon2eastNorth(llc);
         tfEastNorth.setText(Double.toString(en.east()) + ' ' + Double.toString(en.north()));
         // Both latLonCoordinates and eastNorthCoordinates may have been reset to null if ll is out of the world
         latLonCoordinates = llc;
@@ -212,7 +212,7 @@ public class LatLonDialog extends ExtendedDialog {
             return latLonCoordinates;
         } else {
             if (eastNorthCoordinates == null) return null;
-            return Main.getProjection().eastNorth2latlon(eastNorthCoordinates);
+            return ProjectionRegistry.getProjection().eastNorth2latlon(eastNorthCoordinates);
         }
     }
 

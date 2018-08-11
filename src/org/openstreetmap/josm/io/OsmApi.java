@@ -24,7 +24,6 @@ import java.util.function.Function;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -258,7 +257,7 @@ public class OsmApi extends OsmConnection {
                 Logging.log(Logging.LEVEL_ERROR, "Unable to initialize OSM API", e);
             }
             if (capabilities == null) {
-                if (Main.isOffline(OnlineResource.OSM_API)) {
+                if (NetworkManager.isOffline(OnlineResource.OSM_API)) {
                     Logging.warn(tr("{0} not available (offline mode)", tr("OSM API")));
                 } else {
                     Logging.error(tr("Unable to initialize OSM API."));
@@ -279,7 +278,7 @@ public class OsmApi extends OsmConnection {
             throw e;
         } catch (OsmTransferException e) {
             initialized = false;
-            Main.addNetworkError(url, Utils.getRootCause(e));
+            NetworkManager.addNetworkError(url, Utils.getRootCause(e));
             throw new OsmApiInitializationException(e);
         } catch (SAXException | IOException | ParserConfigurationException e) {
             initialized = false;

@@ -14,7 +14,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -56,7 +56,7 @@ public class MoveCommandTest {
     @Test
     public void testConstructors() {
         EastNorth offset = new EastNorth(1, 2);
-        LatLon destLatLon = Main.getProjection().eastNorth2latlon(offset);
+        LatLon destLatLon = ProjectionRegistry.getProjection().eastNorth2latlon(offset);
         EastNorth start = new EastNorth(2, 0);
 
         Set<OsmPrimitive> nodeAsCollection = Collections.<OsmPrimitive>singleton(testData.existingNode);

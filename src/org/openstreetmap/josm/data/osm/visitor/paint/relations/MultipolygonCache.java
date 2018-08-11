@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -28,6 +27,7 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -48,7 +48,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
     private final Collection<PolyData> selectedPolyData = new ArrayList<>();
 
     private MultipolygonCache() {
-        Main.addProjectionChangeListener(this);
+        ProjectionRegistry.addProjectionChangeListener(this);
         SelectionEventManager.getInstance().addSelectionListener(this);
         MainApplication.getLayerManager().addLayerChangeListener(this);
     }

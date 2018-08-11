@@ -12,9 +12,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 
@@ -110,8 +110,8 @@ public class MapViewStateTest {
         assertHasViewCoords(WIDTH / 2d, HEIGHT / 2d, p);
 
         EastNorth eastnorth = p.getEastNorth();
-        LatLon shouldLatLon = Main.getProjection().getWorldBoundsLatLon().getCenter();
-        EastNorth shouldEastNorth = Main.getProjection().latlon2eastNorth(shouldLatLon);
+        LatLon shouldLatLon = ProjectionRegistry.getProjection().getWorldBoundsLatLon().getCenter();
+        EastNorth shouldEastNorth = ProjectionRegistry.getProjection().latlon2eastNorth(shouldLatLon);
         assertEquals("east", shouldEastNorth.east(), eastnorth.east(), 0.01);
         assertEquals("north", shouldEastNorth.north(), eastnorth.north(), 0.01);
         MapViewPoint reversed = state.getPointFor(shouldEastNorth);

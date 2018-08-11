@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -64,7 +64,7 @@ public class RenderingHelper {
         this.bounds = bounds;
         this.scale = scale;
         this.styles = styles;
-        Projection proj = Main.getProjection();
+        Projection proj = ProjectionRegistry.getProjection();
         projBounds = new ProjectionBounds();
         projBounds.extend(proj.latlon2eastNorth(bounds.getMin()));
         projBounds.extend(proj.latlon2eastNorth(bounds.getMax()));

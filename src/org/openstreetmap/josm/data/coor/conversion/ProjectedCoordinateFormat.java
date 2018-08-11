@@ -3,8 +3,8 @@ package org.openstreetmap.josm.data.coor.conversion;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 
 /**
  * Coordinate format that projects a coordinate and returns northing and easting in
@@ -24,11 +24,11 @@ public class ProjectedCoordinateFormat extends AbstractCoordinateFormat {
 
     @Override
     public String latToString(ILatLon ll) {
-        return cDdFormatter.format(ll.getEastNorth(Main.getProjection()).north());
+        return cDdFormatter.format(ll.getEastNorth(ProjectionRegistry.getProjection()).north());
     }
 
     @Override
     public String lonToString(ILatLon ll) {
-        return cDdFormatter.format(ll.getEastNorth(Main.getProjection()).east());
+        return cDdFormatter.format(ll.getEastNorth(ProjectionRegistry.getProjection()).east());
     }
 }

@@ -90,6 +90,7 @@ import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -327,7 +328,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
         if (coordinateConverter.requiresReprojection()) {
             content.add(Arrays.asList(tr("Tile download projection"), tileSource.getServerCRS()));
-            content.add(Arrays.asList(tr("Tile display projection"), Main.getProjection().toCode()));
+            content.add(Arrays.asList(tr("Tile display projection"), ProjectionRegistry.getProjection().toCode()));
         }
         content.add(Arrays.asList(tr("Current zoom"), Integer.toString(currentZoomLevel)));
         for (List<String> entry: content) {
@@ -448,7 +449,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 if (layer.coordinateConverter.requiresReprojection()) {
                     content.add(Arrays.asList(tr("Reprojection"),
                             tile.getTileSource().getServerCRS() +
-                            " -> " + Main.getProjection().toCode()));
+                            " -> " + ProjectionRegistry.getProjection().toCode()));
                     BufferedImage img = tile.getImage();
                     if (img != null) {
                         content.add(Arrays.asList(tr("Reprojected tile size"),
@@ -565,7 +566,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 throw new IllegalArgumentException(tr("Failed to create tile source"));
             }
             // check if projection is supported
-            projectionChanged(null, Main.getProjection());
+            projectionChanged(null, ProjectionRegistry.getProjection());
             initTileSource(this.tileSource);
         }
     }
@@ -1411,7 +1412,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             ProjectionBounds projBounds = new ProjectionBounds(
                     CoordinateConversion.projToEn(topLeftUnshifted),
                     CoordinateConversion.projToEn(botRightUnshifted));
-            ProjectionBounds bbox = projServer.getEastNorthBoundsBox(projBounds, Main.getProjection());
+            ProjectionBounds bbox = projServer.getEastNorthBoundsBox(projBounds, ProjectionRegistry.getProjection());
             t1 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(bbox.getMin()), zoom);
             t2 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(bbox.getMax()), zoom);
         } else {
@@ -1961,7 +1962,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         @Override
         public boolean isActive() {
-            EastNorth offset = bookmark.getDisplacement(Main.getProjection());
+            EastNorth offset = bookmark.getDisplacement(ProjectionRegistry.getProjection());
             EastNorth active = getDisplaySettings().getDisplacement();
             return Utils.equalsEpsilon(offset.east(), active.east()) && Utils.equalsEpsilon(offset.north(), active.north());
         }

@@ -28,11 +28,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.ProgressInputStream;
 import org.openstreetmap.josm.io.ProgressOutputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
@@ -161,7 +161,7 @@ public final class HttpClient {
                 Logging.info("{0} {1} -> !!!", requestMethod, url);
                 Logging.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
-                Main.addNetworkError(url, Utils.getRootCause(e));
+                NetworkManager.addNetworkError(url, Utils.getRootCause(e));
                 throw e;
             }
             if (isRedirect(connection.getResponseCode())) {

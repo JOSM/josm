@@ -3,8 +3,6 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * Online resources directly used by JOSM.
  * This does not include websites where user can sometimes be redirected through its web browser,
@@ -42,7 +40,7 @@ public enum OnlineResource {
      * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
      */
     public final void checkOfflineAccess(String downloadString, String resourceString) {
-        if (Main.isOffline(this) && downloadString.substring(downloadString.indexOf("://"))
+        if (NetworkManager.isOffline(this) && downloadString.substring(downloadString.indexOf("://"))
                 .startsWith(resourceString.substring(resourceString.indexOf("://")))) {
             throw new OfflineAccessException(tr("Unable to access ''{0}'': {1} not available (offline mode)", downloadString, getLocName()));
         }

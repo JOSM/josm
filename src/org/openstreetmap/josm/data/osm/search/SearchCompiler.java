@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Range;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Token;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
@@ -1894,7 +1894,8 @@ public class SearchCompiler {
         @Override
         protected Collection<Bounds> getBounds(OsmPrimitive primitive) {
             final Collection<Bounds> bounds = super.getBounds(primitive);
-            return bounds == null || bounds.isEmpty() ? Collections.singleton(Main.getProjection().getWorldBoundsLatLon()) : bounds;
+            return bounds == null || bounds.isEmpty() ?
+                    Collections.singleton(ProjectionRegistry.getProjection().getWorldBoundsLatLon()) : bounds;
         }
 
         @Override

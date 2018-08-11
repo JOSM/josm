@@ -90,6 +90,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -1154,7 +1155,7 @@ public abstract class SourceEditor extends JPanel {
             new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this);
             this.url = url;
             this.sourceProviders = sourceProviders;
-            setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
+            setEnabled(!NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
         }
 
         @Override

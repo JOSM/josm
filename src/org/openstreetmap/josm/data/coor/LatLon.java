@@ -16,8 +16,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -194,7 +194,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * @return <code>true</code>, if the coordinate is outside the world, compared by using lat/lon.
      */
     public boolean isOutSideWorld() {
-        Bounds b = Main.getProjection().getWorldBoundsLatLon();
+        Bounds b = ProjectionRegistry.getProjection().getWorldBoundsLatLon();
         return lat() < b.getMinLat() || lat() > b.getMaxLat() ||
                 lon() < b.getMinLon() || lon() > b.getMaxLon();
     }

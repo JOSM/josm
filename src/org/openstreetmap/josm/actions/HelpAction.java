@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -34,7 +35,7 @@ public class HelpAction extends JosmAction {
         super(tr("Help"), "help", null,
                 shortcut ? Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.DIRECT) : null,
                 true);
-        setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
+        setEnabled(!NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
     }
 
     /**

@@ -32,7 +32,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
@@ -55,6 +54,7 @@ import org.openstreetmap.josm.gui.io.CloseChangesetTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -360,7 +360,7 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0 && !Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0 && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -497,7 +497,7 @@ public class ChangesetDialog extends ToggleDialog {
          */
         public static void displayChangesets(final Set<Integer> sel) {
             final Set<Integer> toDownload = new HashSet<>();
-            if (!Main.isOffline(OnlineResource.OSM_API)) {
+            if (!NetworkManager.isOffline(OnlineResource.OSM_API)) {
                 ChangesetCache cc = ChangesetCache.getInstance();
                 for (int id: sel) {
                     if (!cc.contains(id)) {

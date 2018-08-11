@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
@@ -27,6 +26,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ListenerList;
 
@@ -326,7 +326,7 @@ public class GpxDataTest {
     public void testNearestPointOnTrack() {
         List<WayPoint> points = Stream
                 .of(new EastNorth(10, 10), new EastNorth(10, 0), new EastNorth(-1, 0))
-                .map(Main.getProjection()::eastNorth2latlon)
+                .map(ProjectionRegistry.getProjection()::eastNorth2latlon)
                 .map(WayPoint::new)
                 .collect(Collectors.toList());
         data.addTrack(new ImmutableGpxTrack(Arrays.asList(points), Collections.emptyMap()));
@@ -335,12 +335,12 @@ public class GpxDataTest {
         assertEquals(points.get(1), closeToMiddle);
 
         WayPoint close = data.nearestPointOnTrack(new EastNorth(5, 5), 10);
-        assertEquals(10, close.getEastNorth(Main.getProjection()).east(), .01);
-        assertEquals(5, close.getEastNorth(Main.getProjection()).north(), .01);
+        assertEquals(10, close.getEastNorth(ProjectionRegistry.getProjection()).east(), .01);
+        assertEquals(5, close.getEastNorth(ProjectionRegistry.getProjection()).north(), .01);
 
         close = data.nearestPointOnTrack(new EastNorth(15, 5), 10);
-        assertEquals(10, close.getEastNorth(Main.getProjection()).east(), .01);
-        assertEquals(5, close.getEastNorth(Main.getProjection()).north(), .01);
+        assertEquals(10, close.getEastNorth(ProjectionRegistry.getProjection()).east(), .01);
+        assertEquals(5, close.getEastNorth(ProjectionRegistry.getProjection()).north(), .01);
 
         assertNull(data.nearestPointOnTrack(new EastNorth(5, 5), 1));
     }

@@ -19,11 +19,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -82,7 +82,7 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
         }
 
         public void initProperties(Changeset cs) {
-            setEnabled(cs != null && !Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(cs != null && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
     }
 

@@ -6,7 +6,6 @@ import java.util.Collection;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -14,6 +13,7 @@ import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.Logging;
@@ -80,7 +80,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
         }
         double displayScale = MainApplication.getMap().mapView.getScale();
         if (coordinateConverter.requiresReprojection()) {
-            displayScale *= Main.getProjection().getMetersPerUnit();
+            displayScale *= ProjectionRegistry.getProjection().getMetersPerUnit();
         }
         Scale snap = scaleList.getSnapScale(displayScale, false);
         return Utils.clamp(snap != null ? snap.getIndex() : getMaxZoomLvl(),

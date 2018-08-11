@@ -11,7 +11,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
@@ -21,6 +20,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.SelectionTable;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 
 /**
@@ -92,7 +92,7 @@ public abstract class AbstractRelationEditorAction extends AbstractAction
         if (editorAccess.getEditor().getRelation() == null)
             return false;
         DataSet ds = editorAccess.getEditor().getRelation().getDataSet();
-        return !Main.isOffline(OnlineResource.OSM_API) && ds != null && !ds.isLocked()
+        return !NetworkManager.isOffline(OnlineResource.OSM_API) && ds != null && !ds.isLocked()
                 && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
     }
 

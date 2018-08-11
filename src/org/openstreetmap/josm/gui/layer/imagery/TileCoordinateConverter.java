@@ -13,11 +13,11 @@ import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.projection.Projecting;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.ShiftedProjecting;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
@@ -201,6 +201,6 @@ public class TileCoordinateConverter {
      * @return true if tiles need to be reprojected from server projection to display projection
      */
     public boolean requiresReprojection() {
-        return !Objects.equals(tileSource.getServerCRS(), Main.getProjection().toCode());
+        return !Objects.equals(tileSource.getServerCRS(), ProjectionRegistry.getProjection().toCode());
     }
 }

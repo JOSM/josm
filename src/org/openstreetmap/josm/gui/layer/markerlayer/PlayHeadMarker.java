@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -214,7 +215,7 @@ public final class PlayHeadMarker extends Marker {
             double closestAudioMarkerDistanceSquared = 1.0E100;
             for (Marker m : recent.parentLayer.data) {
                 if (m instanceof AudioMarker) {
-                    double distanceSquared = m.getEastNorth(Main.getProjection()).distanceSq(en);
+                    double distanceSquared = m.getEastNorth(ProjectionRegistry.getProjection()).distanceSq(en);
                     if (distanceSquared < closestAudioMarkerDistanceSquared) {
                         ca = (AudioMarker) m;
                         closestAudioMarkerDistanceSquared = distanceSquared;
@@ -347,8 +348,8 @@ public final class PlayHeadMarker extends Marker {
         if (w1 == null)
             return;
         setEastNorth(w2 == null ?
-                w1.getEastNorth(Main.getProjection()) :
-                    w1.getEastNorth(Main.getProjection()).interpolate(w2.getEastNorth(Main.getProjection()),
+                w1.getEastNorth(ProjectionRegistry.getProjection()) :
+                    w1.getEastNorth(ProjectionRegistry.getProjection()).interpolate(w2.getEastNorth(ProjectionRegistry.getProjection()),
                             (audioTime - w1.time)/(w2.time - w1.time)));
         time = audioTime;
         MapView mapView = MainApplication.getMap().mapView;

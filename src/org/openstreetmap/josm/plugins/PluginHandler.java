@@ -66,6 +66,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -529,10 +530,10 @@ public final class PluginHandler {
     }
 
     private static boolean checkOfflineAccess() {
-        if (Main.isOffline(OnlineResource.ALL)) {
+        if (NetworkManager.isOffline(OnlineResource.ALL)) {
             return false;
         }
-        if (Main.isOffline(OnlineResource.JOSM_WEBSITE)) {
+        if (NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE)) {
             for (String updateSite : Main.pref.getPluginSites()) {
                 try {
                     OnlineResource.JOSM_WEBSITE.checkOfflineAccess(updateSite, Config.getUrls().getJOSMWebsite());

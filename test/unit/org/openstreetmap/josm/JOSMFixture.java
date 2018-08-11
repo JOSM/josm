@@ -17,6 +17,7 @@ import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainApplicationTest;
@@ -125,7 +126,7 @@ public class JOSMFixture {
         }
 
         // init projection
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
 
         // setup projection grid files
         MainApplication.setupNadGridSources();
