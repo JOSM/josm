@@ -45,7 +45,6 @@ public class DownloadWmsAlongTrackActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore("Test fails since r14052 - see #16590")
     public void testTMSLayer() throws Exception {
         final TileSourceRule tileSourceRule = this.test.getTileSourceRule();
 
