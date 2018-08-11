@@ -31,6 +31,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -313,7 +314,7 @@ public class UnGlueAction extends JosmAction {
             n.setCoor(mv.getLatLon(mv.lastMEvent.getX(), mv.lastMEvent.getY()));
         }
 
-        MainApplication.undoRedo.add(new SequenceCommand(tr("Unglued Node"), cmds));
+        UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Unglued Node"), cmds));
         getLayerManager().getEditDataSet().setSelected(n);
         mv.repaint();
     }
@@ -552,7 +553,7 @@ public class UnGlueAction extends JosmAction {
      * @param newNodes New created nodes by this set of command
      */
     private void execCommands(List<Command> cmds, List<Node> newNodes) {
-        MainApplication.undoRedo.add(new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
+        UndoRedoHandler.getInstance().add(new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
                 trn("Dupe into {0} node", "Dupe into {0} nodes", newNodes.size() + 1L, newNodes.size() + 1L), cmds));
         // select one of the new nodes
         getLayerManager().getEditDataSet().setSelected(newNodes.get(0));
@@ -640,7 +641,7 @@ public class UnGlueAction extends JosmAction {
         cmds.add(new ChangeCommand(selectedWay, tmpWay)); // only one changeCommand for a way, else garbage will happen
         notifyWayPartOfRelation(Collections.singleton(selectedWay));
 
-        MainApplication.undoRedo.add(new SequenceCommand(
+        UndoRedoHandler.getInstance().add(new SequenceCommand(
                 trn("Dupe {0} node into {1} nodes", "Dupe {0} nodes into {1} nodes",
                         selectedNodes.size(), selectedNodes.size(), selectedNodes.size()+allNewNodes.size()), cmds));
         getLayerManager().getEditDataSet().setSelected(allNewNodes);

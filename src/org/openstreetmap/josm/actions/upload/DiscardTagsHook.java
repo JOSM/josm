@@ -12,9 +12,9 @@ import java.util.Map;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.APIDataSet;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MainApplication;
 
 /**
  * Removes discardable tags such as created_by from all modified objects before upload
@@ -44,7 +44,7 @@ public class DiscardTagsHook implements UploadHook {
 
             SequenceCommand removeKeys = new SequenceCommand(tr("Removed obsolete tags"),
                     new ChangePropertyCommand(objectsToUpload, map));
-            MainApplication.undoRedo.add(removeKeys);
+            UndoRedoHandler.getInstance().add(removeKeys);
         }
         return true;
     }

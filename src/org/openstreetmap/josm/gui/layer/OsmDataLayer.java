@@ -51,6 +51,7 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -617,7 +618,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         if (processed == null || processed.isEmpty())
             return;
 
-        MainApplication.undoRedo.clean(data);
+        UndoRedoHandler.getInstance().clean(data);
 
         // if uploaded, clean the modified flags as well
         data.cleanupDeletedPrimitives();

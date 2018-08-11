@@ -569,8 +569,8 @@ public class JoinAreasAction extends JosmAction {
             //FIXME: this is dirty hack
             makeCommitsOneAction(tr("Reverting changes"));
             if (addUndoRedo) {
-                MainApplication.undoRedo.undo();
-                MainApplication.undoRedo.redoCommands.clear();
+                UndoRedoHandler.getInstance().undo();
+                UndoRedoHandler.getInstance().redoCommands.clear();
             }
         }
     }
@@ -834,7 +834,7 @@ public class JoinAreasAction extends JosmAction {
 
     private void commitCommand(Command c) {
         if (Main.main != null && addUndoRedo) {
-            MainApplication.undoRedo.add(c);
+            UndoRedoHandler.getInstance().add(c);
         } else {
             c.executeCommand();
         }

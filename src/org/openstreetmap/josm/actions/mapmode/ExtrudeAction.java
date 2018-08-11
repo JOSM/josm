@@ -36,6 +36,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -496,7 +497,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                         moveCommand = new MoveCommand(movingNodeList.get(0), movement1.getX(), movement1.getY());
                         moveCommand2 = new MoveCommand(movingNodeList.get(1), movement2.getX(), movement2.getY());
                         Command c = new SequenceCommand(tr("Extrude Way"), moveCommand, moveCommand2);
-                        MainApplication.undoRedo.add(c);
+                        UndoRedoHandler.getInstance().add(c);
                     } else {
                         // reuse existing move commands
                         moveCommand.moveAgainTo(movement1.getX(), movement1.getY());
@@ -511,7 +512,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     if (moveCommand == null) {
                         //make a new move command
                         moveCommand = new MoveCommand(new ArrayList<OsmPrimitive>(movingNodeList), bestMovement);
-                        MainApplication.undoRedo.add(moveCommand);
+                        UndoRedoHandler.getInstance().add(moveCommand);
                     } else {
                         //reuse existing move command
                         moveCommand.moveAgainTo(bestMovement.getX(), bestMovement.getY());
@@ -593,7 +594,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             Way wnew = new Way(ws.way);
             wnew.addNode(ws.lowerIndex+1, n);
             DataSet ds = ws.way.getDataSet();
-            MainApplication.undoRedo.add(new SequenceCommand(tr("Add a new node to an existing way"),
+            UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Add a new node to an existing way"),
                     new AddCommand(ds, n), new ChangeCommand(ds, ws.way, wnew)));
         }
     }
@@ -625,7 +626,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         }
         cmds.add(new AddCommand(ds, wnew));
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
-        MainApplication.undoRedo.add(c);
+        UndoRedoHandler.getInstance().add(c);
         ds.setSelected(wnew);
     }
 
@@ -714,7 +715,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             cmds.add(new ChangeCommand(selectedSegment.way, wnew));
         }
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
-        MainApplication.undoRedo.add(c);
+        UndoRedoHandler.getInstance().add(c);
         joinNodesIfCollapsed(changedNodes);
     }
 
@@ -726,10 +727,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         Node locNode = MergeNodesAction.selectTargetLocationNode(changedNodes);
         Command mergeCmd = MergeNodesAction.mergeNodes(changedNodes, targetNode, locNode);
         if (mergeCmd != null) {
-            MainApplication.undoRedo.add(mergeCmd);
+            UndoRedoHandler.getInstance().add(mergeCmd);
         } else {
             // undo extruding command itself
-            MainApplication.undoRedo.undo();
+            UndoRedoHandler.getInstance().undo();
         }
     }
 

@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * <p>
  * If you want to change a data set, you can use {@link #add(Command)} to execute a command on it and make that command undoable.
  */
-public class UndoRedoHandler {
+public final class UndoRedoHandler {
 
     /**
      * All commands that were made on the dataset. Don't write from outside!
@@ -33,11 +33,24 @@ public class UndoRedoHandler {
     private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<>();
     private final LinkedList<CommandQueuePreciseListener> preciseListenerCommands = new LinkedList<>();
 
+    private static class InstanceHolder {
+        static final UndoRedoHandler INSTANCE = new UndoRedoHandler();
+    }
+
+    /**
+     * Returns the unique instance.
+     * @return the unique instance
+     * @since 14134
+     */
+    public static UndoRedoHandler getInstance() {
+        return InstanceHolder.INSTANCE;
+    }
+
     /**
      * Constructs a new {@code UndoRedoHandler}.
      */
-    public UndoRedoHandler() {
-        // Do nothing
+    private UndoRedoHandler() {
+        // Hide constructor
     }
 
     /**

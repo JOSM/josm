@@ -18,6 +18,7 @@ import javax.swing.KeyStroke;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -48,7 +49,7 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
         this.editButton = editButton;
         arrow = editButton.createArrow(this);
         arrow.setToolTipText(tr("List of recent relations"));
-        MainApplication.undoRedo.addCommandQueueListener(this);
+        UndoRedoHandler.getInstance().addCommandQueueListener(this);
         enableArrow();
         shortcut = Shortcut.registerShortcut("relationeditor:editrecentrelation",
             tr("Relation Editor: {0}", tr("Open recent relation")), KeyEvent.VK_ESCAPE, Shortcut.SHIFT);

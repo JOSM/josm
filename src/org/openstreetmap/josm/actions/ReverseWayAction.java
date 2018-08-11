@@ -20,11 +20,11 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayNoTagCorrector;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
@@ -137,7 +137,7 @@ public final class ReverseWayAction extends JosmAction {
             }
             c.addAll(revResult.getCommands());
         }
-        MainApplication.undoRedo.add(new SequenceCommand(tr("Reverse Ways"), c));
+        UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Reverse Ways"), c));
     }
 
     /**

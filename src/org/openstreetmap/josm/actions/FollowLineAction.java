@@ -14,6 +14,7 @@ import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.SelectCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -113,7 +114,7 @@ public class FollowLineAction extends JosmAction {
             } else {
                 newFollower.addNode(newPoint);
             }
-            MainApplication.undoRedo.add(new SequenceCommand(tr("Follow line"),
+            UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Follow line"),
                     new ChangeCommand(ds, follower, newFollower),
                     new SelectCommand(ds, newFollower.isClosed() // see #10028 - unselect last node when closing a way
                             ? Arrays.<OsmPrimitive>asList(follower)

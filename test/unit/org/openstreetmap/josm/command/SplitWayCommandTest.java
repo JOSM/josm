@@ -12,6 +12,7 @@ import java.util.Iterator;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.command.SplitWayCommand.Strategy;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -19,7 +20,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -120,7 +120,7 @@ public final class SplitWayCommandTest {
             };
         final SplitWayCommand result = SplitWayCommand.splitWay(
                 w2, SplitWayCommand.buildSplitChunks(w2, Arrays.asList(n3, n4, n5)), new ArrayList<OsmPrimitive>(), strategy);
-        MainApplication.undoRedo.add(result);
+        UndoRedoHandler.getInstance().add(result);
 
         assertEquals(6, route.getMembersCount());
         assertEquals(w1, route.getMemberPrimitivesList().get(0));

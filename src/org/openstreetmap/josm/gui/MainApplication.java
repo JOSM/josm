@@ -240,8 +240,10 @@ public class MainApplication extends Main {
     /**
      * The commands undo/redo handler.
      * @since 12641
+     * @deprecated Use {@link UndoRedoHandler#getInstance}
      */
-    public static volatile UndoRedoHandler undoRedo;
+    @Deprecated
+    public static final UndoRedoHandler undoRedo = UndoRedoHandler.getInstance();
 
     private static final LayerChangeListener undoRedoCleaner = new LayerChangeListener() {
         @Override
@@ -359,7 +361,6 @@ public class MainApplication extends Main {
      */
     public MainApplication(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        undoRedo = super.undoRedo;
         getLayerManager().addLayerChangeListener(undoRedoCleaner);
         ProjectionRegistry.setboundsProvider(mainBoundsProvider);
     }

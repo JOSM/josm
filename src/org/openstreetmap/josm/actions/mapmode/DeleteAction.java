@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -156,7 +157,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         }
         // if c is null, an error occurred or the user aborted. Don't do anything in that case.
         if (c != null) {
-            MainApplication.undoRedo.add(c);
+            UndoRedoHandler.getInstance().add(c);
             //FIXME: This should not be required, DeleteCommand should update the selection, otherwise undo/redo won't work.
             lm.getEditDataSet().setSelected();
         }
@@ -303,7 +304,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
 
         Command c = buildDeleteCommands(e, e.getModifiersEx(), false);
         if (c != null) {
-            MainApplication.undoRedo.add(c);
+            UndoRedoHandler.getInstance().add(c);
         }
 
         getLayerManager().getEditDataSet().setSelected();
@@ -354,7 +355,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         final Command cmd = DeleteCommand.delete(toDelete);
         if (cmd != null) {
             // cmd can be null if the user cancels dialogs DialogCommand displays
-            MainApplication.undoRedo.add(cmd);
+            UndoRedoHandler.getInstance().add(cmd);
             for (Relation relation : toDelete) {
                 if (layer.data.getSelectedRelations().contains(relation)) {
                     layer.data.toggleSelected(relation);

@@ -9,6 +9,7 @@ import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.MoveCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -50,7 +51,7 @@ public final class MoveNodeAction extends JosmAction {
             return;
 
         // move the node
-        MainApplication.undoRedo.add(new MoveCommand(n, coordinates));
+        UndoRedoHandler.getInstance().add(new MoveCommand(n, coordinates));
         MainApplication.getMap().mapView.repaint();
     }
 

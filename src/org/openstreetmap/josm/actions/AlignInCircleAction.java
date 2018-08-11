@@ -19,13 +19,13 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -242,7 +242,7 @@ public final class AlignInCircleAction extends JosmAction {
             i = j; // Update start point for next iteration
         }
 
-        MainApplication.undoRedo.add(new SequenceCommand(tr("Align Nodes in Circle"), cmds));
+        UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Align Nodes in Circle"), cmds));
     }
 
     /**

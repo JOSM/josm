@@ -114,6 +114,7 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.gui.dialogs.MenuItemSearchDialog;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -686,9 +687,9 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, exit);
 
         add(editMenu, undo);
-        MainApplication.undoRedo.addCommandQueueListener(undo);
+        UndoRedoHandler.getInstance().addCommandQueueListener(undo);
         add(editMenu, redo);
-        MainApplication.undoRedo.addCommandQueueListener(redo);
+        UndoRedoHandler.getInstance().addCommandQueueListener(redo);
         editMenu.addSeparator();
         add(editMenu, copy);
         add(editMenu, copyCoordinates, true);

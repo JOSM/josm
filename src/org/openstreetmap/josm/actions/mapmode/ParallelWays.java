@@ -14,12 +14,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeGraph;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Geometry;
 
 /**
@@ -185,7 +185,7 @@ public class ParallelWays {
      * Performs the action by adding a new sequence command to the undo/redo queue.
      */
     public void commit() {
-        MainApplication.undoRedo.add(new SequenceCommand("Make parallel way(s)", makeAddWayAndNodesCommandList()));
+        UndoRedoHandler.getInstance().add(new SequenceCommand("Make parallel way(s)", makeAddWayAndNodesCommandList()));
     }
 
     private List<Command> makeAddWayAndNodesCommandList() {

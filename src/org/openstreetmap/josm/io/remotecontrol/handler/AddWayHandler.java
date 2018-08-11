@@ -17,6 +17,7 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -169,7 +170,7 @@ public class AddWayHandler extends RequestHandler {
         allCoordinates.clear();
         DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         commands.add(new AddCommand(ds, way));
-        MainApplication.undoRedo.add(new SequenceCommand(tr("Add way"), commands));
+        UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Add way"), commands));
         ds.setSelected(way);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");

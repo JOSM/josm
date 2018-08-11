@@ -28,11 +28,11 @@ import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.PurgeCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -103,9 +103,9 @@ public class PurgeAction extends JosmAction {
             Config.getPref().putBoolean("purge.clear_undo_redo", clearUndoRedo);
         }
 
-        MainApplication.undoRedo.add(cmd);
+        UndoRedoHandler.getInstance().add(cmd);
         if (clearUndoRedo) {
-            MainApplication.undoRedo.clean();
+            UndoRedoHandler.getInstance().clean();
             getLayerManager().getEditDataSet().clearSelectionHistory();
         }
     }

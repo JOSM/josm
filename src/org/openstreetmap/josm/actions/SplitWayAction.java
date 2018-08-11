@@ -25,6 +25,7 @@ import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.SplitWayCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -280,7 +281,7 @@ public class SplitWayAction extends JosmAction {
         final MapFrame map = MainApplication.getMap();
         final boolean isMapModeDraw = map != null && map.mapMode == map.mapModeDraw;
         final SplitWayCommand result = SplitWayCommand.doSplitWay(way, wayToKeep, newWays, !isMapModeDraw ? newSelection : null);
-        MainApplication.undoRedo.add(result);
+        UndoRedoHandler.getInstance().add(result);
         List<? extends PrimitiveId> newSel = result.getNewSelection();
         if (newSel != null && !newSel.isEmpty()) {
             MainApplication.getLayerManager().getEditDataSet().setSelected(newSel);

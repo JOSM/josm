@@ -4,11 +4,9 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.validation.tests.SimilarNamedWays;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainApplicationTest;
 import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -33,7 +31,6 @@ public final class I18nSimilarStrings {
         Preferences pref = new Preferences();
         Config.setPreferencesInstance(pref);
         pref.init(false);
-        MainApplication.undoRedo = new UndoRedoHandler();
         MainApplicationTest.initContentPane();
         MainApplicationTest.initToolbar();
         MainApplicationTest.initMainMenu();

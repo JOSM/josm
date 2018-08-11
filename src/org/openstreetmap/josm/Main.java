@@ -70,8 +70,10 @@ public abstract class Main {
 
     /**
      * The commands undo/redo handler.
+     * @deprecated Use {@link UndoRedoHandler#getInstance}
      */
-    public final UndoRedoHandler undoRedo = new UndoRedoHandler();
+    @Deprecated
+    public final UndoRedoHandler undoRedo = UndoRedoHandler.getInstance();
 
     /**
      * The file watcher service.

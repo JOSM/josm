@@ -8,6 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -51,12 +52,12 @@ public class CommandStackDialogTest {
         try {
             Command cmd1 = TestUtils.newCommand(ds);
             Command cmd2 = TestUtils.newCommand(ds);
-            MainApplication.undoRedo.add(cmd1);
-            MainApplication.undoRedo.add(cmd2);
-            MainApplication.undoRedo.undo(1);
+            UndoRedoHandler.getInstance().add(cmd1);
+            UndoRedoHandler.getInstance().add(cmd2);
+            UndoRedoHandler.getInstance().undo(1);
 
-            assertFalse(MainApplication.undoRedo.commands.isEmpty());
-            assertFalse(MainApplication.undoRedo.redoCommands.isEmpty());
+            assertFalse(UndoRedoHandler.getInstance().commands.isEmpty());
+            assertFalse(UndoRedoHandler.getInstance().redoCommands.isEmpty());
 
             MapFrame map = MainApplication.getMap();
             CommandStackDialog dlg = new CommandStackDialog();
@@ -67,7 +68,7 @@ public class CommandStackDialogTest {
             dlg.hideDialog();
             assertFalse(dlg.isVisible());
         } finally {
-            MainApplication.undoRedo.clean();
+            UndoRedoHandler.getInstance().clean();
             MainApplication.getLayerManager().removeLayer(layer);
         }
     }

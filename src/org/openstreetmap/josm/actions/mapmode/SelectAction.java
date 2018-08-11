@@ -30,6 +30,7 @@ import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.RotateCommand;
 import org.openstreetmap.josm.command.ScaleCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -717,7 +718,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     ((MoveCommand) c).applyVectorTo(currentEN);
                 } else if (!selection.isEmpty()) {
                     c = new MoveCommand(selection, startEN, currentEN);
-                    MainApplication.undoRedo.add(c);
+                    UndoRedoHandler.getInstance().add(c);
                 }
                 for (Node n : affectedNodes) {
                     LatLon ll = n.getCoor();
@@ -752,13 +753,13 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
                         ((RotateCommand) c).handleEvent(currentEN);
                     } else {
-                        MainApplication.undoRedo.add(new RotateCommand(selection, currentEN));
+                        UndoRedoHandler.getInstance().add(new RotateCommand(selection, currentEN));
                     }
                 } else if (mode == Mode.SCALE) {
                     if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
                         ((ScaleCommand) c).handleEvent(currentEN);
                     } else {
-                        MainApplication.undoRedo.add(new ScaleCommand(selection, currentEN));
+                        UndoRedoHandler.getInstance().add(new ScaleCommand(selection, currentEN));
                     }
                 }
 
@@ -807,7 +808,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * @return last command
      */
     private static Command getLastCommandInDataset(DataSet ds) {
-        Command lastCommand = MainApplication.undoRedo.getLastCommand();
+        Command lastCommand = UndoRedoHandler.getInstance().getLastCommand();
         if (lastCommand instanceof SequenceCommand) {
             lastCommand = ((SequenceCommand) lastCommand).getLastCommand();
         }
@@ -833,7 +834,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             ed.toggleEnable("movedHiddenElements");
             ed.showDialog();
             if (ed.getValue() != 1) {
-                MainApplication.undoRedo.undo();
+                UndoRedoHandler.getInstance().undo();
             }
         }
         Set<Node> nodes = new HashSet<>();
@@ -859,7 +860,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             ed.showDialog();
 
             if (ed.getValue() != 1) {
-                MainApplication.undoRedo.undo();
+                UndoRedoHandler.getInstance().undo();
             }
         } else {
             // if small number of elements were moved,
@@ -1259,7 +1260,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             String text = trn("Add and move a virtual new node to way",
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
-            MainApplication.undoRedo.add(new SequenceCommand(text, virtualCmds));
+            UndoRedoHandler.getInstance().add(new SequenceCommand(text, virtualCmds));
             ds.setSelected(Collections.singleton((OsmPrimitive) virtualNode));
             clear();
         }
