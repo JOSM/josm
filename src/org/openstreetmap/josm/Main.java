@@ -35,9 +35,9 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.spi.lifecycle.InitializationTask;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IUrls;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -86,36 +86,6 @@ public abstract class Main {
      * to the JOSM team for inclusion.
      */
     public static volatile PlatformHook platform;
-
-    private static volatile InitStatusListener initListener;
-
-    /**
-     * Initialization task listener.
-     */
-    public interface InitStatusListener {
-
-        /**
-         * Called when an initialization task updates its status.
-         * @param event task name
-         * @return new status
-         */
-        Object updateStatus(String event);
-
-        /**
-         * Called when an initialization task completes.
-         * @param status final status
-         */
-        void finish(Object status);
-    }
-
-    /**
-     * Sets initialization task listener.
-     * @param listener initialization task listener
-     */
-    public static void setInitStatusListener(InitStatusListener listener) {
-        CheckParameterUtil.ensureParameterNotNull(listener);
-        initListener = listener;
-    }
 
     /**
      * Constructs new {@code Main} object.
@@ -214,35 +184,6 @@ public abstract class Main {
      */
     protected List<InitializationTask> afterInitializationTasks() {
         return Collections.emptyList();
-    }
-
-    protected static final class InitializationTask implements Callable<Void> {
-
-        private final String name;
-        private final Runnable task;
-
-        /**
-         * Constructs a new {@code InitializationTask}.
-         * @param name translated name to be displayed to user
-         * @param task runnable initialization task
-         */
-        public InitializationTask(String name, Runnable task) {
-            this.name = name;
-            this.task = task;
-        }
-
-        @Override
-        public Void call() {
-            Object status = null;
-            if (initListener != null) {
-                status = initListener.updateStatus(name);
-            }
-            task.run();
-            if (initListener != null) {
-                initListener.finish(status);
-            }
-            return null;
-        }
     }
 
     /**

@@ -160,6 +160,9 @@ import org.openstreetmap.josm.io.protocols.data.Handler;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.spi.lifecycle.InitStatusListener;
+import org.openstreetmap.josm.spi.lifecycle.InitializationTask;
+import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
@@ -317,6 +320,7 @@ public class MainApplication extends Main {
     public static final NTV2GridShiftFileSource JOSM_WEBSITE_NTV2_SOURCE = gridFileName -> {
         String location = Config.getUrls().getJOSMWebsite() + "/proj/" + gridFileName;
         // Try to load grid file
+        @SuppressWarnings("resource")
         CachedFile cf = new CachedFile(location);
         try {
             return cf.getInputStream();
@@ -666,6 +670,10 @@ public class MainApplication extends Main {
         return false;
     }
 
+    /**
+     * Redirects the key inputs from {@code source} to main content pane.
+     * @param source source component from which key inputs are redirected
+     */
     public static void redirectToMainContentPane(JComponent source) {
         RedirectInputMap.redirect(source, contentPanePrivate);
     }
@@ -1044,7 +1052,7 @@ public class MainApplication extends Main {
         if (splash != null) {
             GuiHelper.runInEDT(() -> splash.setVisible(Config.getPref().getBoolean("draw.splashscreen", true)));
         }
-        Main.setInitStatusListener(new InitStatusListener() {
+        Lifecycle.setInitStatusListener(new InitStatusListener() {
 
             @Override
             public Object updateStatus(String event) {
