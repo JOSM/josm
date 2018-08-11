@@ -409,7 +409,7 @@ public class MainApplication extends Main {
     @Override
     protected List<InitializationTask> beforeInitializationTasks() {
         return Arrays.asList(
-            new InitializationTask(tr("Starting file watcher"), fileWatcher::start),
+            new InitializationTask(tr("Starting file watcher"), FileWatcher.getDefaultInstance()::start),
             new InitializationTask(tr("Executing platform startup hook"), () -> platform.startupHook(MainApplication::askUpdateJava)),
             new InitializationTask(tr("Building main menu"), this::initializeMainWindow),
             new InitializationTask(tr("Updating user interface"), () -> {

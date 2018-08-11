@@ -28,7 +28,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -61,6 +60,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -761,7 +761,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
                 addMapCSS(i);
                 if (Config.getPref().getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
-                    Main.fileWatcher.registerSource(source);
+                    FileWatcher.getDefaultInstance().registerSource(source);
                 }
             } catch (IOException | IllegalStateException | IllegalArgumentException ex) {
                 Logging.warn(tr("Failed to add {0} to tag checker", i));

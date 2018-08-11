@@ -76,8 +76,10 @@ public abstract class Main {
 
     /**
      * The file watcher service.
+     * @deprecated Use {@link FileWatcher#getDefaultInstance}
      */
-    public static final FileWatcher fileWatcher = new FileWatcher();
+    @Deprecated
+    public static final FileWatcher fileWatcher = FileWatcher.getDefaultInstance();
 
     /**
      * Platform specific code goes in here.
