@@ -7,6 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -45,7 +46,9 @@ public final class ExitActionTest {
 
         boolean[] workerShutdownCalled = {false};
         boolean[] workerShutdownNowCalled = {false};
-        boolean[] imageProviderShutdownCalled = {false};
+        boolean[] imageProviderShutdownCalledNowFalse = {false};
+        boolean[] imageProviderShutdownCalledNowTrue = {false};
+        boolean[] jcsCacheManagerShutdownCalled = {false};
 
         // critically we don't proceed into the actual implementation in any of these mock methods -
         // that would be quite annoying for tests following this one which were expecting to use any
@@ -69,17 +72,35 @@ public final class ExitActionTest {
         };
         new MockUp<ImageProvider>() {
             @Mock
+            private void shutdown(Invocation invocation, boolean now) {
+                if (now) {
+                    // should have already been called with now = false
+                    assertTrue(imageProviderShutdownCalledNowFalse[0]);
+                    imageProviderShutdownCalledNowTrue[0] = true;
+                } else {
+                    imageProviderShutdownCalledNowFalse[0] = true;
+                }
+            }
+        };
+        new MockUp<JCSCacheManager>() {
+            @Mock
             private void shutdown(Invocation invocation) {
-                imageProviderShutdownCalled[0] = true;
+                jcsCacheManagerShutdownCalled[0] = true;
             }
         };
 
         // No layer
 
-        new ExitAction().actionPerformed(null);
-
-        assertTrue(workerShutdownCalled[0]);
-        assertTrue(workerShutdownNowCalled[0]);
-        assertTrue(imageProviderShutdownCalled[0]);
+        try {
+            new ExitAction().actionPerformed(null);
+        } finally {
+            // ExpectedSystemExit presumably works using an exception, so executing anything after the
+            // previous line requires it to be put in a finally block
+            assertTrue(workerShutdownCalled[0]);
+            assertTrue(workerShutdownNowCalled[0]);
+            assertTrue(imageProviderShutdownCalledNowFalse[0]);
+            assertTrue(imageProviderShutdownCalledNowTrue[0]);
+            assertTrue(jcsCacheManagerShutdownCalled[0]);
+        }
     }
 }

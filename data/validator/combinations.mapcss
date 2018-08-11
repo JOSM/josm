@@ -192,9 +192,9 @@ way[usage=penstock][waterway!=pressurised] {
 }
 
 /* {0.key} without {1.key}, {2.tag} or {3.tag} */
-*[intermittent                 ][!waterway][natural!~/^(water|spring)$/][ford!=yes],
-*[boat                         ][!waterway][natural!=water][landuse!=basin] {
-  throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.tag}", "{3.tag}");
+*[intermittent                 ][!waterway][natural!~/^(water|spring)$/][landuse!~/^(basin|reservoir)$/][ford!=yes],
+*[boat                         ][!waterway][natural!=water             ][landuse!~/^(basin|reservoir)$/][ford!=yes] {
+  throwWarning: tr("{0} without {1}, {2}, {3} or {4}", "{0.key}", "{1.key}", "{2.tag}", "{3.tag}", "{4.tag}");
   group: tr("missing tag");
 }
 

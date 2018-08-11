@@ -299,6 +299,18 @@ public class SearchCompiler {
         public final boolean match(OsmPrimitive osm) {
             return match((Tagged) osm);
         }
+
+        protected static Pattern compilePattern(String regex, int flags) throws SearchParseError {
+            try {
+                return Pattern.compile(regex, flags);
+            } catch (PatternSyntaxException e) {
+                throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
+            } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
+                // StringIndexOutOfBoundsException catched because of https://bugs.openjdk.java.net/browse/JI-9044959
+                // See #13870: To remove after we switch to a version of Java which resolves this bug
+                throw new SearchParseError(tr(rxErrorMsgNoPos, regex, e.getMessage()), e);
+            }
+        }
     }
 
     /**
@@ -685,24 +697,10 @@ public class SearchCompiler {
             this.caseSensitive = caseSensitive;
             if (regexSearch) {
                 int searchFlags = regexFlags(caseSensitive);
-
-                try {
-                    this.keyPattern = Pattern.compile(key, searchFlags);
-                } catch (PatternSyntaxException e) {
-                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (IllegalArgumentException e) {
-                    throw new SearchParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
-                }
-                try {
-                    this.valuePattern = Pattern.compile(value, searchFlags);
-                } catch (PatternSyntaxException e) {
-                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
-                    throw new SearchParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
-                }
+                this.keyPattern = compilePattern(key, searchFlags);
+                this.valuePattern = compilePattern(value, searchFlags);
                 this.key = key;
                 this.value = value;
-
             } else {
                 this.key = key;
                 this.value = value;
@@ -965,24 +963,12 @@ public class SearchCompiler {
             }
 
             if (regexp && !key.isEmpty() && !"*".equals(key)) {
-                try {
-                    keyPattern = Pattern.compile(key, regexFlags(false));
-                } catch (PatternSyntaxException e) {
-                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (IllegalArgumentException e) {
-                    throw new SearchParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
-                }
+                keyPattern = compilePattern(key, regexFlags(false));
             } else {
                 keyPattern = null;
             }
             if (regexp && !this.value.isEmpty() && !"*".equals(this.value)) {
-                try {
-                    valuePattern = Pattern.compile(this.value, regexFlags(false));
-                } catch (PatternSyntaxException e) {
-                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (IllegalArgumentException e) {
-                    throw new SearchParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
-                }
+                valuePattern = compilePattern(this.value, regexFlags(false));
             } else {
                 valuePattern = null;
             }
@@ -1097,15 +1083,7 @@ public class SearchCompiler {
             s = Normalizer.normalize(s, Normalizer.Form.NFC);
             this.caseSensitive = caseSensitive;
             if (regexSearch) {
-                try {
-                    this.searchRegex = Pattern.compile(s, regexFlags(caseSensitive));
-                } catch (PatternSyntaxException e) {
-                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
-                    // StringIndexOutOfBoundsException catched because of https://bugs.openjdk.java.net/browse/JI-9044959
-                    // See #13870: To remove after we switch to a version of Java which resolves this bug
-                    throw new SearchParseError(tr(rxErrorMsgNoPos, s, e.getMessage()), e);
-                }
+                this.searchRegex = compilePattern(s, regexFlags(caseSensitive));
                 this.search = s;
             } else if (caseSensitive) {
                 this.search = s;

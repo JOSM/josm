@@ -34,6 +34,19 @@ public class FileWatcher {
     private static final Map<SourceType, Consumer<SourceEntry>> loaderMap = new EnumMap<>(SourceType.class);
     private final Map<Path, SourceEntry> sourceMap = new HashMap<>();
 
+    private static class InstanceHolder {
+        static final FileWatcher INSTANCE = new FileWatcher();
+    }
+
+    /**
+     * Returns the default instance.
+     * @return the default instance
+     * @since 14128
+     */
+    public static FileWatcher getDefaultInstance() {
+        return InstanceHolder.INSTANCE;
+    }
+
     /**
      * Constructs a new {@code FileWatcher}.
      */

@@ -14,7 +14,6 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -326,7 +326,7 @@ public final class MapPaintStyles {
         source.loadStyleSource();
         if (Config.getPref().getBoolean("mappaint.auto_reload_local_styles", true) && source.isLocal()) {
             try {
-                Main.fileWatcher.registerSource(source);
+                FileWatcher.getDefaultInstance().registerSource(source);
             } catch (IOException | IllegalStateException | IllegalArgumentException e) {
                 Logging.error(e);
             }

@@ -48,7 +48,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerAction;
+import org.openstreetmap.josm.gui.layer.gpx.ConvertFromMarkerLayerAction;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -247,7 +247,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         }
         components.add(new JumpToNextMarker(this));
         components.add(new JumpToPreviousMarker(this));
-        components.add(new ConvertToDataLayerAction.FromMarkerLayer(this));
+        components.add(new ConvertFromMarkerLayerAction(this));
         components.add(new RenameLayerAction(getAssociatedFile(), this));
         components.add(SeparatorLayerAction.INSTANCE);
         components.add(new LayerListPopup.InfoAction(this));

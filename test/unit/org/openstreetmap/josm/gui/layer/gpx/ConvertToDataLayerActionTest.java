@@ -39,7 +39,7 @@ public class ConvertToDataLayerActionTest {
     public void testFromMarkerLayer() throws Exception {
         final GpxData data = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "minimal.gpx");
         final MarkerLayer markers = new MarkerLayer(data, "Markers", data.storageFile, null);
-        final DataSet osm = new ConvertToDataLayerAction.FromMarkerLayer(markers).convert();
+        final DataSet osm = new ConvertFromMarkerLayerAction(markers).convert();
         assertEquals(1, osm.getNodes().size());
         assertEquals(new TagMap("name", "Schranke", "description", "Pfad", "note", "Pfad", "gpxicon", "Toll Booth"),
                 osm.getNodes().iterator().next().getKeys());
