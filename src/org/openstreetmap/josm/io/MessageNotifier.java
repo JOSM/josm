@@ -9,7 +9,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -99,7 +98,7 @@ public final class MessageNotifier {
      */
     public static void start() {
         int interval = PROP_INTERVAL.get();
-        if (Main.isOffline(OnlineResource.OSM_API)) {
+        if (NetworkManager.isOffline(OnlineResource.OSM_API)) {
             Logging.info(tr("{0} not available (offline mode)", tr("Message notifier")));
         } else if (!isRunning() && interval > 0 && isUserEnoughIdentified()) {
             task = EXECUTOR.scheduleAtFixedRate(WORKER, 0, TimeUnit.MINUTES.toSeconds(interval), TimeUnit.SECONDS);

@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.OsmIdSelectionDialog;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -66,7 +67,7 @@ public class HistoryInfoAction extends JosmAction {
         @Override
         public void setupDialog() {
             super.setupDialog();
-            buttons.get(0).setEnabled(!Main.isOffline(OnlineResource.OSM_API));
+            buttons.get(0).setEnabled(!NetworkManager.isOffline(OnlineResource.OSM_API));
         }
     }
 }

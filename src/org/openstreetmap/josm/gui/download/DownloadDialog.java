@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -548,7 +549,7 @@ public class DownloadDialog extends JDialog {
             putValue(NAME, tr("Download"));
             new ImageProvider("download").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area"));
-            setEnabled(!Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(!NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
         /**

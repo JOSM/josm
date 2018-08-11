@@ -146,6 +146,7 @@ import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.MessageNotifier;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -1309,7 +1310,7 @@ public class MainApplication extends Main {
         for (String offlineNames : args.get(Option.OFFLINE)) {
             for (String s : offlineNames.split(",")) {
                 try {
-                    Main.setOffline(OnlineResource.valueOf(s.toUpperCase(Locale.ENGLISH)));
+                    NetworkManager.setOffline(OnlineResource.valueOf(s.toUpperCase(Locale.ENGLISH)));
                 } catch (IllegalArgumentException e) {
                     Logging.log(Logging.LEVEL_ERROR,
                             tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
@@ -1319,7 +1320,7 @@ public class MainApplication extends Main {
                 }
             }
         }
-        Set<OnlineResource> offline = Main.getOfflineResources();
+        Set<OnlineResource> offline = NetworkManager.getOfflineResources();
         if (!offline.isEmpty()) {
             Logging.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
                     "JOSM is running in offline mode. These resources will not be available: {0}",
@@ -1507,7 +1508,7 @@ public class MainApplication extends Main {
         }
 
         private static boolean handleNetworkErrors() {
-            Map<String, Throwable> networkErrors = Main.getNetworkErrors();
+            Map<String, Throwable> networkErrors = NetworkManager.getNetworkErrors();
             boolean condition = !networkErrors.isEmpty();
             if (condition) {
                 Set<String> errors = new TreeSet<>();

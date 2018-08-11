@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.tagging.presets.items.Text;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
@@ -385,7 +386,7 @@ public final class TaggingPresetReader {
                 Logging.log(Logging.LEVEL_ERROR, e);
                 Logging.error(source);
                 if (source.startsWith("http")) {
-                    Main.addNetworkError(source, e);
+                    NetworkManager.addNetworkError(source, e);
                 }
                 if (displayErrMsg) {
                     JOptionPane.showMessageDialog(

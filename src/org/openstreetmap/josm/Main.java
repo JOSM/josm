@@ -10,8 +10,6 @@ import java.net.URL;
 import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +33,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.FileWatcher;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IUrls;
@@ -79,10 +78,6 @@ public abstract class Main {
      * The file watcher service.
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
-
-    private static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
-
-    private static final Set<OnlineResource> OFFLINE_RESOURCES = EnumSet.noneOf(OnlineResource.class);
 
     /**
      * Platform specific code goes in here.
@@ -422,17 +417,12 @@ public abstract class Main {
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
+     * @deprecated Use {@link NetworkManager#addNetworkError(URL, Throwable)}
      * @since 6642
      */
+    @Deprecated
     public static Throwable addNetworkError(URL url, Throwable t) {
-        if (url != null && t != null) {
-            Throwable old = addNetworkError(url.toExternalForm(), t);
-            if (old != null) {
-                Logging.warn("Already here "+old);
-            }
-            return old;
-        }
-        return null;
+        return NetworkManager.addNetworkError(url, t);
     }
 
     /**
@@ -442,30 +432,33 @@ public abstract class Main {
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
+     * @deprecated Use {@link NetworkManager#addNetworkError(String, Throwable)}
      * @since 6642
      */
+    @Deprecated
     public static Throwable addNetworkError(String url, Throwable t) {
-        if (url != null && t != null) {
-            return NETWORK_ERRORS.put(url, t);
-        }
-        return null;
+        return NetworkManager.addNetworkError(url, t);
     }
 
     /**
      * Returns the network errors that occured until now.
      * @return the network errors that occured until now, indexed by URL
+     * @deprecated Use {@link NetworkManager#getNetworkErrors}
      * @since 6639
      */
+    @Deprecated
     public static Map<String, Throwable> getNetworkErrors() {
-        return new HashMap<>(NETWORK_ERRORS);
+        return NetworkManager.getNetworkErrors();
     }
 
     /**
      * Clears the network errors cache.
+     * @deprecated Use {@link NetworkManager#clearNetworkErrors}
      * @since 12011
      */
+    @Deprecated
     public static void clearNetworkErrors() {
-        NETWORK_ERRORS.clear();
+        NetworkManager.clearNetworkErrors();
     }
 
     /**
@@ -545,38 +538,46 @@ public abstract class Main {
      * Determines if the given online resource is currently offline.
      * @param r the online resource
      * @return {@code true} if {@code r} is offline and should not be accessed
+     * @deprecated Use {@link NetworkManager#isOffline}
      * @since 7434
      */
+    @Deprecated
     public static boolean isOffline(OnlineResource r) {
-        return OFFLINE_RESOURCES.contains(r) || OFFLINE_RESOURCES.contains(OnlineResource.ALL);
+        return NetworkManager.isOffline(r);
     }
 
     /**
      * Sets the given online resource to offline state.
      * @param r the online resource
      * @return {@code true} if {@code r} was not already offline
+     * @deprecated Use {@link NetworkManager#setOffline}
      * @since 7434
      */
+    @Deprecated
     public static boolean setOffline(OnlineResource r) {
-        return OFFLINE_RESOURCES.add(r);
+        return NetworkManager.setOffline(r);
     }
 
     /**
      * Sets the given online resource to online state.
      * @param r the online resource
      * @return {@code true} if {@code r} was offline
+     * @deprecated Use {@link NetworkManager#setOnline}
      * @since 8506
      */
+    @Deprecated
     public static boolean setOnline(OnlineResource r) {
-        return OFFLINE_RESOURCES.remove(r);
+        return NetworkManager.setOnline(r);
     }
 
     /**
      * Replies the set of online resources currently offline.
      * @return the set of online resources currently offline
+     * @deprecated Use {@link NetworkManager#getOfflineResources}
      * @since 7434
      */
+    @Deprecated
     public static Set<OnlineResource> getOfflineResources() {
-        return EnumSet.copyOf(OFFLINE_RESOURCES);
+        return NetworkManager.getOfflineResources();
     }
 }

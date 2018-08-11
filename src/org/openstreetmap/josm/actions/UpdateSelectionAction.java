@@ -24,6 +24,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.UpdatePrimitivesTask;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -124,7 +125,7 @@ public class UpdateSelectionAction extends JosmAction {
         } else {
             DataSet ds = selection.iterator().next().getDataSet();
             setEnabled(!ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy())
-                    && !Main.isOffline(OnlineResource.OSM_API));
+                    && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
     }
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import javax.swing.AbstractAction;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -47,7 +47,7 @@ public class ContextSensitiveHelpAction extends AbstractAction {
         putValue(NAME, tr("Help"));
         new ImageProvider("help").getResource().attachImageIcon(this);
         this.helpTopic = helpTopic;
-        setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
+        setEnabled(!NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
     }
 
     @Override

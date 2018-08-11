@@ -8,10 +8,10 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -48,7 +48,7 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
     protected void updateEnabledState() {
         DataSet ds = getLayerManager().getEditDataSet();
         setEnabled(ds != null && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy())
-                && !Main.isOffline(OnlineResource.OSM_API));
+                && !NetworkManager.isOffline(OnlineResource.OSM_API));
     }
 
     @Override

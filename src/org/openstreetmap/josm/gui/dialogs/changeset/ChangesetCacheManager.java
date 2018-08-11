@@ -40,7 +40,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.AbstractChangesetDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
@@ -63,6 +62,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -386,7 +386,7 @@ public class ChangesetCacheManager extends JFrame {
             putValue(NAME, tr("Query"));
             new ImageProvider("dialogs", "search").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Launch the dialog for querying changesets"));
-            setEnabled(!Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(!NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -510,7 +510,7 @@ public class ChangesetCacheManager extends JFrame {
         }
 
         protected void updateEnabledState() {
-            setEnabled(model.hasSelectedChangesets() && !Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(model.hasSelectedChangesets() && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -543,7 +543,7 @@ public class ChangesetCacheManager extends JFrame {
         }
 
         protected void updateEnabledState() {
-            setEnabled(model.hasSelectedChangesets() && !Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(model.hasSelectedChangesets() && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -583,7 +583,7 @@ public class ChangesetCacheManager extends JFrame {
         }
 
         protected void updateEnabledState() {
-            setEnabled(model.hasSelectedChangesets() && !Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(model.hasSelectedChangesets() && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -617,7 +617,7 @@ public class ChangesetCacheManager extends JFrame {
             putValue(NAME, tr("My changesets"));
             new ImageProvider("dialogs/changeset", "downloadchangeset").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Download my changesets from the OSM server (max. 100 changesets)"));
-            setEnabled(!Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(!NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
         protected void alertAnonymousUser(Component parent) {

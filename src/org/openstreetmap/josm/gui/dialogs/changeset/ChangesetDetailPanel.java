@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
@@ -44,6 +43,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -330,7 +330,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         }
 
         public void initProperties(Changeset cs) {
-            setEnabled(cs != null && !Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(cs != null && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
     }
 

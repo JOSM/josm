@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -32,7 +33,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
     public boolean checkUpload(APIDataSet apiData) {
         OsmApi api = OsmApi.getOsmApi();
         try {
-            if (Main.isOffline(OnlineResource.OSM_API)) {
+            if (NetworkManager.isOffline(OnlineResource.OSM_API)) {
                 return false;
             }
             // FIXME: this should run asynchronously and a progress monitor

@@ -16,10 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
 import org.openstreetmap.josm.gui.widgets.ChangesetIdTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -87,7 +87,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
             int id = getChangesetId();
@@ -101,21 +101,21 @@ public class SingleChangesetDownloadPanel extends JPanel {
         }
 
         protected void updateEnabledState() {
-            setEnabled(tfChangesetId.readIds() && !Main.isOffline(OnlineResource.OSM_API));
+            setEnabled(tfChangesetId.readIds() && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
-        public void changedUpdate(DocumentEvent arg0) {
+        public void changedUpdate(DocumentEvent e) {
             updateEnabledState();
         }
 
         @Override
-        public void insertUpdate(DocumentEvent arg0) {
+        public void insertUpdate(DocumentEvent e) {
             updateEnabledState();
         }
 
         @Override
-        public void removeUpdate(DocumentEvent arg0) {
+        public void removeUpdate(DocumentEvent e) {
             updateEnabledState();
         }
     }
