@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Preferences implementation that keeps all settings in memory.
@@ -21,7 +22,7 @@ public class MemoryPreferences extends AbstractPreferences {
 
     @Override
     public boolean putSetting(String key, Setting<?> setting) {
-        Setting current = settings.get(key);
+        Setting<?> current = settings.get(key);
         if (setting == null) {
             settings.remove(key);
         } else {
@@ -32,7 +33,7 @@ public class MemoryPreferences extends AbstractPreferences {
 
     @Override
     public <T extends Setting<?>> T getSetting(String key, T def, Class<T> klass) {
-        Setting current = settings.get(key);
+        Setting<?> current = settings.get(key);
         if (current != null && klass.isInstance(current)) {
             @SuppressWarnings("unchecked")
             T result = (T) current;
@@ -44,6 +45,11 @@ public class MemoryPreferences extends AbstractPreferences {
     @Override
     public Set<String> getKeySet() {
         return Collections.unmodifiableSet(settings.keySet());
+    }
+
+    @Override
+    public Map<String, Setting<?>> getAllSettings() {
+        return new TreeMap<>(settings);
     }
 
     @Override
@@ -65,5 +71,4 @@ public class MemoryPreferences extends AbstractPreferences {
     public void removeKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
         // do nothing
     }
-
 }
