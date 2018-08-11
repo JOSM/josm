@@ -13,9 +13,9 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -180,7 +180,7 @@ public class LayerTest {
     @Test
     public void testIsProjectionSupported() {
         assertFalse(testLayer.isProjectionSupported(null));
-        assertTrue(testLayer.isProjectionSupported(Main.getProjection()));
+        assertTrue(testLayer.isProjectionSupported(ProjectionRegistry.getProjection()));
     }
 
     /**

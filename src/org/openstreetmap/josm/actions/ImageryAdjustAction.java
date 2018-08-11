@@ -25,6 +25,7 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -73,15 +74,15 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             layer.setVisible(true);
         }
         old = layer.getDisplaySettings().getOffsetBookmark();
-        EastNorth curOff = old == null ? EastNorth.ZERO : old.getDisplacement(Main.getProjection());
+        EastNorth curOff = old == null ? EastNorth.ZERO : old.getDisplacement(ProjectionRegistry.getProjection());
         LatLon center;
         if (MainApplication.isDisplayingMapView()) {
-            center = Main.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter());
+            center = ProjectionRegistry.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter());
         } else {
             center = LatLon.ZERO;
         }
         tempOffset = new OffsetBookmark(
-                Main.getProjection().toCode(),
+                ProjectionRegistry.getProjection().toCode(),
                 layer.getInfo().getId(),
                 layer.getInfo().getName(),
                 null,
@@ -257,7 +258,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             pnl.add(new JMultilineLabel(tr("Use arrow keys or drag the imagery layer with mouse to adjust the imagery offset.\n" +
                     "You can also enter east and north offset in the {0} coordinates.\n" +
                     "If you want to save the offset as bookmark, enter the bookmark name below",
-                    Main.getProjection().toString())), GBC.eop());
+                    ProjectionRegistry.getProjection().toString())), GBC.eop());
             pnl.add(new JLabel(tr("Offset:")), GBC.std());
             pnl.add(tOffset, GBC.eol().fill(GBC.HORIZONTAL).insets(0, 0, 0, 5));
             pnl.add(new JLabel(tr("Bookmark name: ")), GBC.std());
@@ -312,7 +313,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         private void updateOffsetIntl() {
             if (layer != null) {
                 // Support projections with very small numbers (e.g. 4326)
-                int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
+                int precision = ProjectionRegistry.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
                 // US locale to force decimal separator to be '.'
                 try (Formatter us = new Formatter(Locale.US)) {
                     EastNorth displacement = layer.getDisplaySettings().getDisplacement();

@@ -20,12 +20,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -84,9 +84,9 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testPseudoMercator() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryPSEUDO_MERCATOR);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
 
         verifyMercatorTile(testSource, 0, 0, 1);
         verifyMercatorTile(testSource, 0, 0, 2);
@@ -114,9 +114,9 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testWALLONIE() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWALLONIE);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
 
         assertEquals("http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/"
                 + "MapServer/WMTS/tile/1.0.0/DONNEES_BASE_FOND_PLAN_ANNOTATIONS_2012_RW_NB/default/default028mm/5/1219/1063.png",
@@ -134,9 +134,9 @@ public class WMTSTileSourceTest {
     @Test
     @Ignore("disable this test, needs further working") // XXX
     public void testWALLONIENoMatrixDimension() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(getImagery("test/data/wmts/WMTSCapabilities-Wallonie-nomatrixdimension.xml"));
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
 
         Bounds wallonieBounds = new Bounds(
                 new LatLon(49.485372459967245, 2.840548314430268),
@@ -158,9 +158,9 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testWIEN() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         int zoomOffset = 10;
 
         verifyMercatorTile(testSource, 0, 0, 1, zoomOffset);
@@ -200,9 +200,9 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testGeoportalTOPOPL() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryTOPO_PL);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 1);
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 2);
         verifyTile(new LatLon(51.13231917844218, 16.867680821557823), testSource, 1, 1, 1);
@@ -222,18 +222,18 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testGeoportalORTOPL4326() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         verifyTile(new LatLon(53.60205873528009, 19.552206794646956), testSource, 12412, 3941, 13);
         verifyTile(new LatLon(49.79005619189761, 22.778262259134397), testSource, 17714, 10206, 13);
     }
 
     @Test
     public void testGeoportalORTOPL2180() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:2180"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:2180"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
 
         verifyTile(new LatLon(53.59940948387726, 19.560544913270064), testSource, 6453, 3140, 13);
         verifyTile(new LatLon(49.782984840526055, 22.790064966993445), testSource, 9932, 9305, 13);
@@ -241,9 +241,9 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testTicket12168() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImagery12168);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         assertEquals(
                 "http://www.ngi.be/cartoweb/1.0.0/topo/default/3857/7/1/1.png",
                 testSource.getTileUrl(0, 1, 1));
@@ -251,13 +251,13 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testTwoTileSetsForOneProjection() throws Exception {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo ontario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
         ontario.setDefaultLayers(Arrays.asList(new DefaultLayer[] {
                 new DefaultLayer(ImageryType.WMTS, "Basemap_Imagery_2014", null, "default028mm")
         }));
         WMTSTileSource testSource = new WMTSTileSource(ontario);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         assertEquals(
                 "http://maps.ottawa.ca/arcgis/rest/services/Basemap_Imagery_2014/MapServer/WMTS/tile/1.0.0/Basemap_Imagery_2014/default/"
                 + "default028mm/4/2932/2371.jpg",
@@ -268,13 +268,13 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testTwoTileSetsForOneProjectionSecondLayer() throws Exception {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo ontario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
         ontario.setDefaultLayers(Arrays.asList(new DefaultLayer[] {
                 new DefaultLayer(ImageryType.WMTS, "Basemap_Imagery_2014", null, "GoogleMapsCompatible")
         }));
         WMTSTileSource testSource = new WMTSTileSource(ontario);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         assertEquals(
                 "http://maps.ottawa.ca/arcgis/rest/services/Basemap_Imagery_2014/MapServer/WMTS/tile/1.0.0/Basemap_Imagery_2014/default/"
                 + "GoogleMapsCompatible/4/2932/2371.jpg",
@@ -285,16 +285,16 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testManyLayersScrollbars() throws Exception {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testLotsOfLayers);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
     }
 
     @Test
     public void testParserForDuplicateTags() throws Exception {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testDuplicateTags);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         assertEquals(
                 "http://tile.informatievlaanderen.be/ws/raadpleegdiensten/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=grb_bsk&"
                         + "STYLE=&FORMAT=image/png&tileMatrixSet=GoogleMapsVL&tileMatrix=1&tileRow=1&tileCol=1",
@@ -304,20 +304,20 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testParserForMissingStyleIdentifier() throws Exception {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testMissingStyleIdentifer);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
     }
 
     @Test
     public void testForMultipleTileMatricesForOneLayerProjection() throws Exception {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo copy = new ImageryInfo(testMultipleTileMatrixForLayer);
         List<DefaultLayer> defaultLayers = new ArrayList<>(1);
         defaultLayers.add(new DefaultLayer(ImageryType.WMTS, "Mashhad_BaseMap_1", null, "default028mm"));
         copy.setDefaultLayers(defaultLayers);
         WMTSTileSource testSource = new WMTSTileSource(copy);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         assertEquals(
                 "http://188.253.0.155:6080/arcgis/rest/services/Mashhad_BaseMap_1/MapServer/WMTS/tile/1.0.0/Mashhad_BaseMap_1"
                         + "/default/default028mm/1/3/2",
@@ -332,13 +332,13 @@ public class WMTSTileSourceTest {
      */
     @Test
     public void testDimension() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:21781"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:21781"));
         ImageryInfo info = new ImageryInfo(testImageryGeoAdminCh);
         List<DefaultLayer> defaultLayers = new ArrayList<>(1);
         defaultLayers.add(new DefaultLayer(ImageryType.WMTS, "ch.are.agglomerationen_isolierte_staedte", null, "21781_26"));
         info.setDefaultLayers(defaultLayers);
         WMTSTileSource testSource = new WMTSTileSource(info);
-        testSource.initProjection(Main.getProjection());
+        testSource.initProjection(ProjectionRegistry.getProjection());
         assertEquals(
                 "http://wmts.geo.admin.ch/1.0.0/ch.are.agglomerationen_isolierte_staedte/default/20140101/21781/1/3/2.png",
                 testSource.getTileUrl(1, 2, 3)
@@ -413,9 +413,9 @@ public class WMTSTileSourceTest {
 
     @Test
     public void testGisKtnGvAt() throws IOException, WMTSGetCapabilitiesException {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:31258"));
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:31258"));
         final WMTSTileSource source = new WMTSTileSource(testImageryGisKtnGvAt);
-        source.initProjection(Main.getProjection());
+        source.initProjection(ProjectionRegistry.getProjection());
         final TileXY tile = source.latLonToTileXY(46.6103, 13.8558, 11);
         assertEquals("https://gis.ktn.gv.at/arcgis/rest/services/tilecache/Ortho_2013_2015" +
                         "/MapServer/WMTS/tile/1.0.0/tilecache_Ortho_2013_2015/default/default028mm/11/6299/7373.jpg",

@@ -3,9 +3,9 @@ package org.openstreetmap.josm.data.coor;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 
 /**
  * LatLon class that maintains a cache of projected EastNorth coordinates.
@@ -45,7 +45,7 @@ public class CachedLatLon extends LatLon {
      * @param eastNorth easting/northing
      */
     public CachedLatLon(EastNorth eastNorth) {
-        this(eastNorth, Main.getProjection());
+        this(eastNorth, ProjectionRegistry.getProjection());
     }
 
     private CachedLatLon(EastNorth eastNorth, Projection projection) {

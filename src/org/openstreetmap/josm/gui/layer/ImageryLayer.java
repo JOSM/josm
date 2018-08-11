@@ -28,10 +28,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MenuScroller;
@@ -84,7 +84,7 @@ public abstract class ImageryLayer extends Layer {
 
     public double getPPD() {
         if (!MainApplication.isDisplayingMapView())
-            return Main.getProjection().getDefaultZoomInPPD();
+            return ProjectionRegistry.getProjection().getDefaultZoomInPPD();
         MapView mapView = MainApplication.getMap().mapView;
         ProjectionBounds bounds = mapView.getProjectionBounds();
         return mapView.getWidth() / (bounds.maxEast - bounds.minEast);

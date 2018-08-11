@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls
+import org.openstreetmap.josm.data.projection.ProjectionRegistry
 import org.openstreetmap.josm.data.projection.Projections
 import org.openstreetmap.josm.gui.NavigatableComponent
 import org.openstreetmap.josm.gui.mappaint.Environment
@@ -417,7 +418,7 @@ class TagInfoExtract {
         Config.setPreferencesInstance(Main.pref)
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance())
         Config.setUrlsProvider(JosmUrls.getInstance())
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"))
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"))
         Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")
         tmpdir.toFile().deleteOnExit()
         System.setProperty("josm.home", tmpdir.toString())

@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
@@ -21,6 +20,7 @@ import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator.Hemisphere;
 import org.openstreetmap.josm.tools.Geometry;
@@ -170,7 +170,7 @@ public class InspectPrimitiveDataText {
         } else if (o instanceof IWay) {
             addBbox(o);
             add(tr("Centroid: "),
-                    toStringCSV(", ", Main.getProjection().eastNorth2latlon(
+                    toStringCSV(", ", ProjectionRegistry.getProjection().eastNorth2latlon(
                             Geometry.getCentroid(((IWay<?>) o).getNodes()))));
             addWayNodes((IWay<?>) o);
         } else if (o instanceof IRelation) {
@@ -202,8 +202,8 @@ public class InspectPrimitiveDataText {
         BBox bbox = o.getBBox();
         if (bbox != null) {
             add(tr("Bounding box: "), bbox.toStringCSV(", "));
-            EastNorth bottomRigth = bbox.getBottomRight().getEastNorth(Main.getProjection());
-            EastNorth topLeft = bbox.getTopLeft().getEastNorth(Main.getProjection());
+            EastNorth bottomRigth = bbox.getBottomRight().getEastNorth(ProjectionRegistry.getProjection());
+            EastNorth topLeft = bbox.getTopLeft().getEastNorth(ProjectionRegistry.getProjection());
             add(tr("Bounding box (projected): "),
                     Double.toString(topLeft.east()), ", ",
                     Double.toString(bottomRigth.north()), ", ",

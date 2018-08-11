@@ -10,9 +10,9 @@ import java.util.Arrays;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -77,7 +77,7 @@ public class WMSEndpointTileSourceTest {
         assertEquals(1, ImageryLayerInfo.instance.getDefaultLayers().size());
         ImageryInfo wmsImageryInfo = ImageryLayerInfo.instance.getDefaultLayers().get(0);
         assertEquals("single_node_in_way", wmsImageryInfo.getDefaultLayers().get(0).getLayerName());
-        WMSEndpointTileSource tileSource = new WMSEndpointTileSource(wmsImageryInfo, Main.getProjection());
+        WMSEndpointTileSource tileSource = new WMSEndpointTileSource(wmsImageryInfo, ProjectionRegistry.getProjection());
         tileSource.initProjection(Projections.getProjectionByCode("EPSG:3857"));
         assertEquals("https://tools.geofabrik.de/osmi/views/geometry/wxs?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&"
                 + "REQUEST=GetMap&LAYERS=single_node_in_way&STYLES=default&"
@@ -121,7 +121,7 @@ public class WMSEndpointTileSourceTest {
         ImageryLayerInfo.instance.loadDefaults(true, null, false);
         ImageryInfo wmsImageryInfo = ImageryLayerInfo.instance.getDefaultLayers().get(0);
         wmsImageryInfo.setDefaultLayers(Arrays.asList(new DefaultLayer(ImageryType.WMS_ENDPOINT, "historiske-ortofoto", "", "")));
-        WMSEndpointTileSource tileSource = new WMSEndpointTileSource(wmsImageryInfo, Main.getProjection());
+        WMSEndpointTileSource tileSource = new WMSEndpointTileSource(wmsImageryInfo, ProjectionRegistry.getProjection());
         tileSource.initProjection(Projections.getProjectionByCode("EPSG:3857"));
         assertEquals("b8e36d51-119a-423b-b156-d744d54123d5", wmsImageryInfo.getCustomHttpHeaders().get("X-WAAPI-TOKEN"));
         assertEquals("b8e36d51-119a-423b-b156-d744d54123d5", tileSource.getHeaders().get("X-WAAPI-TOKEN"));

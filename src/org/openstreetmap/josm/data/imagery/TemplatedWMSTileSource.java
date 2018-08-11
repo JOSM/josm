@@ -15,9 +15,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -107,7 +107,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
             switchLatLon = true;
         } else if (baseUrl.toLowerCase(Locale.US).contains("crs=")) {
             // assume WMS 1.3.0
-            switchLatLon = Main.getProjection().switchXY();
+            switchLatLon = ProjectionRegistry.getProjection().switchXY();
         }
         String bbox = getBbox(zoom, tilex, tiley, switchLatLon);
 

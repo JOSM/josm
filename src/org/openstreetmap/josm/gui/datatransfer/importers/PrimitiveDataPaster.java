@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
@@ -72,7 +73,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
             try {
                 if (data instanceof NodeData) {
                     NodeData nodeData = (NodeData) data;
-                    nodeData.setEastNorth(nodeData.getEastNorth(Main.getProjection()).add(offset));
+                    nodeData.setEastNorth(nodeData.getEastNorth(ProjectionRegistry.getProjection()).add(offset));
                 } else if (data instanceof WayData) {
                     updateNodes(newIds.get(OsmPrimitiveType.NODE), data);
                 } else if (data instanceof RelationData) {

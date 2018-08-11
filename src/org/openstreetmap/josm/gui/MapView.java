@@ -36,7 +36,6 @@ import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -47,6 +46,7 @@ import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
@@ -357,7 +357,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 }
 
                 layer.addPropertyChangeListener(this);
-                Main.addProjectionChangeListener(layer);
+                ProjectionRegistry.addProjectionChangeListener(layer);
                 invalidatedListener.addTo(layer);
                 AudioPlayer.reset();
 
@@ -397,7 +397,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             return;
         }
         painter.detachFromMapView(new MapViewEvent(this, false));
-        Main.removeProjectionChangeListener(layer);
+        ProjectionRegistry.removeProjectionChangeListener(layer);
         layer.removePropertyChangeListener(this);
         invalidatedListener.removeFrom(layer);
         layer.destroy();

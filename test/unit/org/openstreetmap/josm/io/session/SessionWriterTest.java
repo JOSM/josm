@@ -12,7 +12,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -20,6 +19,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -143,7 +143,7 @@ public class SessionWriterTest {
     private ImageryLayer createImageryLayer() {
         TMSLayer layer = new TMSLayer(new ImageryInfo("the name", "http://www.url.com/"));
         layer.getDisplaySettings().setOffsetBookmark(
-                new OffsetBookmark(Main.getProjection().toCode(), layer.getInfo().getId(), layer.getInfo().getName(), "", 12, 34));
+                new OffsetBookmark(ProjectionRegistry.getProjection().toCode(), layer.getInfo().getId(), layer.getInfo().getName(), "", 12, 34));
         return layer;
     }
 

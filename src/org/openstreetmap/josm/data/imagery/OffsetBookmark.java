@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
@@ -17,6 +16,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
@@ -48,7 +48,7 @@ public class OffsetBookmark {
      */
     public boolean isUsable(ImageryLayer layer) {
         if (projection_code == null) return false;
-        if (!Main.getProjection().toCode().equals(projection_code) && !hasCenter()) return false;
+        if (!ProjectionRegistry.getProjection().toCode().equals(projection_code) && !hasCenter()) return false;
         ImageryInfo info = layer.getInfo();
         return imagery_id != null ? Objects.equals(info.getId(), imagery_id) : Objects.equals(info.getName(), imagery_name);
     }
@@ -362,12 +362,12 @@ public class OffsetBookmark {
     public static void bookmarkOffset(String name, AbstractTileSourceLayer<?> layer) {
         LatLon center;
         if (MainApplication.isDisplayingMapView()) {
-            center = Main.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter());
+            center = ProjectionRegistry.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter());
         } else {
             center = LatLon.ZERO;
         }
         OffsetBookmark nb = new OffsetBookmark(
-                Main.getProjection().toCode(), layer.getInfo().getId(), layer.getInfo().getName(),
+                ProjectionRegistry.getProjection().toCode(), layer.getInfo().getId(), layer.getInfo().getName(),
                 name, layer.getDisplaySettings().getDisplacement(), center);
         for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator(); it.hasNext();) {
             OffsetBookmark b = it.next();

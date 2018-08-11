@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
 import java.util.Collection;
@@ -15,16 +14,13 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
@@ -37,6 +33,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -363,77 +360,26 @@ public abstract class Main {
         platform = Platform.determinePlatform().accept(PlatformHook.CONSTRUCT_FROM_PLATFORM);
     }
 
-    /* ----------------------------------------------------------------------------------------- */
-    /* projection handling  - Main is a registry for a single, global projection instance        */
-    /*                                                                                           */
-    /* TODO: For historical reasons the registry is implemented by Main. An alternative approach */
-    /* would be a singleton org.openstreetmap.josm.data.projection.ProjectionRegistry class.     */
-    /* ----------------------------------------------------------------------------------------- */
-    /**
-     * The projection method used.
-     * Use {@link #getProjection()} and {@link #setProjection(Projection)} for access.
-     * Use {@link #setProjection(Projection)} in order to trigger a projection change event.
-     */
-    private static volatile Projection proj;
-
     /**
      * Replies the current projection.
      *
      * @return the currently active projection
+     * @deprecated Use {@link ProjectionRegistry#getProjection}
      */
+    @Deprecated
     public static Projection getProjection() {
-        return proj;
+        return ProjectionRegistry.getProjection();
     }
 
     /**
      * Sets the current projection
      *
      * @param p the projection
+     * @deprecated Use {@link ProjectionRegistry#setProjection}
      */
+    @Deprecated
     public static void setProjection(Projection p) {
-        CheckParameterUtil.ensureParameterNotNull(p);
-        Projection oldValue = proj;
-        Bounds b = main != null ? main.getRealBounds() : null;
-        proj = p;
-        fireProjectionChanged(oldValue, proj, b);
-    }
-
-    /**
-     * Returns the bounds for the current projection. Used for projection events.
-     * @return the bounds for the current projection
-     * @see #restoreOldBounds
-     */
-    protected Bounds getRealBounds() {
-        // To be overriden
-        return null;
-    }
-
-    /**
-     * Restore clean state corresponding to old bounds after a projection change event.
-     * @param oldBounds bounds previously returned by {@link #getRealBounds}, before the change of projection
-     * @see #getRealBounds
-     */
-    protected void restoreOldBounds(Bounds oldBounds) {
-        // To be overriden
-    }
-
-    /*
-     * Keep WeakReferences to the listeners. This relieves clients from the burden of
-     * explicitly removing the listeners and allows us to transparently register every
-     * created dataset as projection change listener.
-     */
-    private static final List<WeakReference<ProjectionChangeListener>> listeners = new CopyOnWriteArrayList<>();
-
-    private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
-        if ((newValue == null ^ oldValue == null)
-                || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
-            listeners.removeIf(x -> x.get() == null);
-            listeners.stream().map(WeakReference::get).filter(Objects::nonNull).forEach(x -> x.projectionChanged(oldValue, newValue));
-            if (newValue != null && oldBounds != null && main != null) {
-                main.restoreOldBounds(oldBounds);
-            }
-            /* TODO - remove layers with fixed projection */
-        }
+        ProjectionRegistry.setProjection(p);
     }
 
     /**
@@ -441,33 +387,32 @@ public abstract class Main {
      * The listener is registered to be weak, so keep a reference of it if you want it to be preserved.
      *
      * @param listener the listener. Ignored if <code>null</code>.
+     * @deprecated Use {@link ProjectionRegistry#addProjectionChangeListener}
      */
+    @Deprecated
     public static void addProjectionChangeListener(ProjectionChangeListener listener) {
-        if (listener == null) return;
-        for (WeakReference<ProjectionChangeListener> wr : listeners) {
-            // already registered ? => abort
-            if (wr.get() == listener) return;
-        }
-        listeners.add(new WeakReference<>(listener));
+        ProjectionRegistry.addProjectionChangeListener(listener);
     }
 
     /**
      * Removes a projection change listener.
      *
      * @param listener the listener. Ignored if <code>null</code>.
+     * @deprecated Use {@link ProjectionRegistry#removeProjectionChangeListener}
      */
+    @Deprecated
     public static void removeProjectionChangeListener(ProjectionChangeListener listener) {
-        if (listener == null) return;
-        // remove the listener - and any other listener which got garbage collected in the meantime
-        listeners.removeIf(wr -> wr.get() == null || wr.get() == listener);
+        ProjectionRegistry.removeProjectionChangeListener(listener);
     }
 
     /**
      * Remove all projection change listeners. For testing purposes only.
      * @since 13322
+     * @deprecated Use {@link ProjectionRegistry#clearProjectionChangeListeners}
      */
+    @Deprecated
     public static void clearProjectionChangeListeners() {
-        listeners.clear();
+        ProjectionRegistry.clearProjectionChangeListeners();
     }
 
     /**

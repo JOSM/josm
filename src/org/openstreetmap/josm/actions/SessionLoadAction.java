@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -146,7 +147,7 @@ public class SessionLoadAction extends DiskAccessAction {
                     MainApplication.getLayerManager().setActiveLayer(active);
                 }
                 if (noMap && viewport != null) {
-                    MainApplication.getMap().mapView.scheduleZoomTo(viewport.getEastNorthViewport(Main.getProjection()));
+                    MainApplication.getMap().mapView.scheduleZoomTo(viewport.getEastNorthViewport(ProjectionRegistry.getProjection()));
                 }
             }
         }

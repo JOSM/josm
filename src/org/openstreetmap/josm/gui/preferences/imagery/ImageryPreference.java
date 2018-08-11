@@ -61,6 +61,7 @@ import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -855,7 +856,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             JButton add = new JButton(tr("Add"));
             buttonPanel.add(add, GBC.std().insets(0, 5, 0, 0));
-            add.addActionListener(e -> model.addRow(new OffsetBookmark(Main.getProjection().toCode(), "", "", "", 0, 0)));
+            add.addActionListener(e -> model.addRow(new OffsetBookmark(ProjectionRegistry.getProjection().toCode(), "", "", "", 0, 0)));
 
             JButton delete = new JButton(tr("Delete"));
             buttonPanel.add(delete, GBC.std().insets(0, 5, 0, 0));

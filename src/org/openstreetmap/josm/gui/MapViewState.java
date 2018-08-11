@@ -15,7 +15,6 @@ import java.util.Optional;
 
 import javax.swing.JComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
@@ -393,7 +393,7 @@ public final class MapViewState implements Serializable {
      * @since 10375
      */
     public static MapViewState createDefaultState(int width, int height) {
-        Projection projection = Main.getProjection();
+        Projection projection = ProjectionRegistry.getProjection();
         double scale = projection.getDefaultZoomInPPD();
         MapViewState state = new MapViewState(projection, width, height, scale, new EastNorth(0, 0));
         EastNorth center = calculateDefaultCenter();
@@ -402,8 +402,8 @@ public final class MapViewState implements Serializable {
 
     private static EastNorth calculateDefaultCenter() {
         Bounds b = Optional.ofNullable(DownloadDialog.getSavedDownloadBounds()).orElseGet(
-                () -> Main.getProjection().getWorldBoundsLatLon());
-        return b.getCenter().getEastNorth(Main.getProjection());
+                () -> ProjectionRegistry.getProjection().getWorldBoundsLatLon());
+        return b.getCenter().getEastNorth(ProjectionRegistry.getProjection());
     }
 
     /**

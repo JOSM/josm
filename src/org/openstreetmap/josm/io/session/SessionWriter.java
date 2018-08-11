@@ -25,9 +25,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -263,7 +263,7 @@ public class SessionWriter {
         viewportEl.appendChild(centerEl);
         MapView mapView = MainApplication.getMap().mapView;
         EastNorth center = mapView.getCenter();
-        LatLon centerLL = Main.getProjection().eastNorth2latlon(center);
+        LatLon centerLL = ProjectionRegistry.getProjection().eastNorth2latlon(center);
         centerEl.setAttribute("lat", Double.toString(centerLL.lat()));
         centerEl.setAttribute("lon", Double.toString(centerLL.lon()));
         Element scale = doc.createElement("scale");
@@ -292,7 +292,7 @@ public class SessionWriter {
                 paramEl.setTextContent(param);
             }
         }
-        String code = Main.getProjection().toCode();
+        String code = ProjectionRegistry.getProjection().toCode();
         if (code != null) {
             Element codeEl = doc.createElement("code");
             projectionEl.appendChild(codeEl);

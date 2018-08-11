@@ -30,13 +30,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -182,8 +182,8 @@ public class MapCSSRendererTest {
         dataSet.setSelected(dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("selected")).collect(Collectors.toList()));
 
         ProjectionBounds pb = new ProjectionBounds();
-        pb.extend(Main.getProjection().latlon2eastNorth(testConfig.getTestArea().getMin()));
-        pb.extend(Main.getProjection().latlon2eastNorth(testConfig.getTestArea().getMax()));
+        pb.extend(ProjectionRegistry.getProjection().latlon2eastNorth(testConfig.getTestArea().getMin()));
+        pb.extend(ProjectionRegistry.getProjection().latlon2eastNorth(testConfig.getTestArea().getMax()));
         double scale = (pb.maxEast - pb.minEast) / testConfig.imageWidth;
 
         RenderingHelper.StyleData sd = new RenderingHelper.StyleData();

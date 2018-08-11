@@ -8,8 +8,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -39,7 +39,7 @@ public class OsmPrimitiveTest {
      */
     @BeforeClass
     public static void setUp() {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
     }
 
     @Test

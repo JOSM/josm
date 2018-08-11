@@ -7,11 +7,11 @@ import java.awt.image.BufferedImage;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -121,7 +121,7 @@ public class ReprojectionTile extends Tile {
                 interpolation = ImageWarp.Interpolation.BILINEAR;
         }
 
-        Projection projCurrent = Main.getProjection();
+        Projection projCurrent = ProjectionRegistry.getProjection();
         Projection projServer = Projections.getProjectionByCode(source.getServerCRS());
         EastNorth en00Server = tileToEastNorth(xtile, ytile, zoom);
         EastNorth en11Server = tileToEastNorth(xtile + 1, ytile + 1, zoom);

@@ -5,6 +5,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 
 /**
  * INode captures the common functions of {@link Node} and {@link NodeData}.
@@ -33,7 +34,7 @@ public interface INode extends IPrimitive, ILatLon {
      * @since 13666
      */
     default EastNorth getEastNorth() {
-        return getEastNorth(Main.getProjection());
+        return getEastNorth(ProjectionRegistry.getProjection());
     }
 
     /**

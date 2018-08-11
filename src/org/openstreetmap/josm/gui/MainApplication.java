@@ -101,7 +101,9 @@ import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
+import org.openstreetmap.josm.data.projection.ProjectionBoundsProvider;
 import org.openstreetmap.josm.data.projection.ProjectionCLI;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileSource;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
@@ -257,6 +259,20 @@ public class MainApplication extends Main {
         }
     };
 
+    private static final ProjectionBoundsProvider mainBoundsProvider = new ProjectionBoundsProvider() {
+        @Override
+        public Bounds getRealBounds() {
+            return isDisplayingMapView() ? map.mapView.getRealBounds() : null;
+        }
+
+        @Override
+        public void restoreOldBounds(Bounds oldBounds) {
+            if (isDisplayingMapView()) {
+                map.mapView.zoomTo(oldBounds);
+            }
+        }
+    };
+
     private static final List<CLIModule> cliModules = new ArrayList<>();
 
     /**
@@ -340,6 +356,7 @@ public class MainApplication extends Main {
         this.mainFrame = mainFrame;
         undoRedo = super.undoRedo;
         getLayerManager().addLayerChangeListener(undoRedoCleaner);
+        ProjectionRegistry.setboundsProvider(mainBoundsProvider);
     }
 
     /**
@@ -510,18 +527,6 @@ public class MainApplication extends Main {
             worker.shutdownNow();
         } catch (SecurityException e) {
             Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
-        }
-    }
-
-    @Override
-    protected Bounds getRealBounds() {
-        return isDisplayingMapView() ? map.mapView.getRealBounds() : null;
-    }
-
-    @Override
-    protected void restoreOldBounds(Bounds oldBounds) {
-        if (isDisplayingMapView()) {
-            map.mapView.zoomTo(oldBounds);
         }
     }
 

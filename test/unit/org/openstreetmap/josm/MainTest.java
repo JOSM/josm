@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main.InitStatusListener;
 import org.openstreetmap.josm.Main.InitializationTask;
+import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -37,7 +38,7 @@ public class MainTest {
     @Test
     public void testPreConstructorInit() {
         Main.preConstructorInit();
-        assertNotNull(Main.getProjection());
+        assertNotNull(CoordinateFormatManager.getDefaultFormat());
     }
 
     /**

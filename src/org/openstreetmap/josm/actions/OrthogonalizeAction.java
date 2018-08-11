@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
@@ -147,7 +148,7 @@ public final class OrthogonalizeAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        if ("EPSG:4326".equals(Main.getProjection().toString())) {
+        if ("EPSG:4326".equals(ProjectionRegistry.getProjection().toString())) {
             String msg = tr("<html>You are using the EPSG:4326 projection which might lead<br>" +
                     "to undesirable results when doing rectangular alignments.<br>" +
                     "Change your projection to get rid of this warning.<br>" +
@@ -306,7 +307,7 @@ public final class OrthogonalizeAction extends JosmAction {
         if (rightAnglePositions.isEmpty()) {
             throw new InvalidUserInputException("Unable to orthogonalize " + singleNode);
         }
-        return new MoveCommand(singleNode, Main.getProjection().eastNorth2latlon(Geometry.getCentroidEN(rightAnglePositions)));
+        return new MoveCommand(singleNode, ProjectionRegistry.getProjection().eastNorth2latlon(Geometry.getCentroidEN(rightAnglePositions)));
     }
 
     /**

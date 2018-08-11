@@ -24,7 +24,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet.APIOperation;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
@@ -53,6 +52,7 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -174,7 +174,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     public DataSet() {
         // Transparently register as projection change listener. No need to explicitly remove
         // the listener, projection change listeners are managed as WeakReferences.
-        Main.addProjectionChangeListener(this);
+        ProjectionRegistry.addProjectionChangeListener(this);
         addSelectionListener((DataSelectionListener) e -> fireSelectionChange(e.getSelection()));
     }
 
@@ -1044,7 +1044,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * changed.
      */
     public void invalidateEastNorthCache() {
-        if (Main.getProjection() == null)
+        if (ProjectionRegistry.getProjection() == null)
             return; // sanity check
         beginUpdate();
         try {
