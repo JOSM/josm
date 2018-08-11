@@ -61,7 +61,7 @@ public abstract class AbstractReader {
      * Register a new postprocessor.
      * @param pp postprocessor
      * @see #deregisterPostprocessor
-     * @since xxx (moved from OsmReader)
+     * @since 14119 (moved from OsmReader)
      */
     public static void registerPostprocessor(OsmServerReadPostprocessor pp) {
         if (postprocessors == null) {
@@ -74,7 +74,7 @@ public abstract class AbstractReader {
      * Deregister a postprocessor previously registered with {@link #registerPostprocessor}.
      * @param pp postprocessor
      * @see #registerPostprocessor
-     * @since xxx (moved from OsmReader)
+     * @since 14119 (moved from OsmReader)
      */
     public static void deregisterPostprocessor(OsmServerReadPostprocessor pp) {
         if (postprocessors != null) {

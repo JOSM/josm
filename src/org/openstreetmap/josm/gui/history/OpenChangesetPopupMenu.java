@@ -14,7 +14,6 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -51,7 +50,7 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
     }
 
     private static final List<ChangesetViewerEntry> DEFAULT_ENTRIES = Arrays.asList(
-            new ChangesetViewerEntry(tr("View changeset in web browser"), Main.getBaseBrowseUrl() + "/changeset/{0}"),
+            new ChangesetViewerEntry(tr("View changeset in web browser"), Config.getUrls().getBaseBrowseUrl() + "/changeset/{0}"),
             new ChangesetViewerEntry(tr("Open {0}", "achavi (Augmented OSM Change Viewer)"), "https://overpass-api.de/achavi/?changeset={0}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSMCha (OSM Changeset Analyzer)"), "https://osmcha.mapbox.com/changesets/{0}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer"), "http://osmhv.openstreetmap.de/changeset.jsp?id={0}"),

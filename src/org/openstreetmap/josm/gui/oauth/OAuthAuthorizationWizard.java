@@ -45,7 +45,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -151,7 +151,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         cbAuthorisationProcedure.addItemListener(new AuthorisationProcedureChangeListener());
         lbl.setLabelFor(cbAuthorisationProcedure);
 
-        if (!OsmApi.DEFAULT_API_URL.equals(apiUrl)) {
+        if (!Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl)) {
             gc.gridy = 3;
             gc.gridwidth = 2;
             gc.gridx = 0;

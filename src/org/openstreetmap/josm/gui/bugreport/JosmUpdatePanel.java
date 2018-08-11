@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -60,7 +61,7 @@ public class JosmUpdatePanel extends JPanel {
     }
 
     private static int getTestedVersion() {
-        try (CachedFile testedVersion = new CachedFile(Main.getJOSMWebsite() + "/tested")) {
+        try (CachedFile testedVersion = new CachedFile(Config.getUrls().getJOSMWebsite() + "/tested")) {
             testedVersion.setMaxAge(60L * 15); // 15 Minutes
             String testedString = new String(testedVersion.getByteContent(), StandardCharsets.ISO_8859_1);
             return Integer.parseInt(testedString.trim());
@@ -90,7 +91,7 @@ public class JosmUpdatePanel extends JPanel {
 
     private void showUpdateButton() {
         add(new JMultilineLabel(tr("Before you file a bug report make sure you have updated to the latest version of JOSM here:")), GBC.eol());
-        add(new UrlLabel(Main.getJOSMWebsite(), 2), GBC.eop().insets(8, 0, 0, 0));
+        add(new UrlLabel(Config.getUrls().getJOSMWebsite(), 2), GBC.eop().insets(8, 0, 0, 0));
         JButton updateButton = new JButton(tr("Update JOSM"), ImageProvider.getIfAvailable("download"));
         updateButton.addActionListener(e -> openJosmUpdateSite());
         add(updateButton, GBC.eol().anchor(GBC.EAST));
@@ -98,7 +99,7 @@ public class JosmUpdatePanel extends JPanel {
 
     private static void openJosmUpdateSite() {
         try {
-            Main.platform.openUrl(Main.getJOSMWebsite());
+            Main.platform.openUrl(Config.getUrls().getJOSMWebsite());
         } catch (IOException ex) {
             Logging.log(Logging.LEVEL_WARN, "Unable to access JOSM website:", ex);
         }

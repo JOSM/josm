@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Parses various URL used in OpenStreetMap projects into {@link Bounds}.
@@ -289,6 +289,6 @@ public final class OsmUrlToBounds {
         lat /= decimals;
         double lon = Math.round(dlon * decimals);
         lon /= decimals;
-        return Main.getOSMWebsite() + "/#map="+zoom+'/'+lat+'/'+lon;
+        return Config.getUrls().getOSMWebsite() + "/#map="+zoom+'/'+lat+'/'+lon;
     }
 }

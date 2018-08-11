@@ -12,8 +12,8 @@ import javax.swing.JPanel;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Unit tests of {@link Link} class.
@@ -39,11 +39,11 @@ public class LinkTest {
         assertFalse(l.addToPanel(p, Collections.<OsmPrimitive>emptyList(), false));
         assertEquals(0, p.getComponentCount());
 
-        l.href = Main.getJOSMWebsite();
+        l.href = Config.getUrls().getJOSMWebsite();
         assertFalse(l.addToPanel(p, Collections.<OsmPrimitive>emptyList(), false));
         assertTrue(p.getComponentCount() > 0);
 
-        l.locale_href = Main.getJOSMWebsite();
+        l.locale_href = Config.getUrls().getJOSMWebsite();
         assertFalse(l.addToPanel(p, Collections.<OsmPrimitive>emptyList(), false));
         assertTrue(p.getComponentCount() > 0);
     }

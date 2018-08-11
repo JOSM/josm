@@ -71,6 +71,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -377,7 +378,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             add(defaultToolbar, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 5, 0));
 
             HtmlPanel help = new HtmlPanel(tr("New default entries can be added in the <a href=\"{0}\">Wiki</a>.",
-                Main.getJOSMWebsite()+"/wiki/Maps"));
+                Config.getUrls().getJOSMWebsite()+"/wiki/Maps"));
             help.enableClickableHyperlinks();
             add(help, GBC.eol().insets(10, 0, 0, 0).fill(GBC.HORIZONTAL));
 

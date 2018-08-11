@@ -39,6 +39,7 @@ import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -341,7 +342,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
             if (uploadCanceled) return;
             if (lastException == null) {
                 HtmlPanel panel = new HtmlPanel(
-                        "<h3><a href=\"" + Main.getBaseBrowseUrl() + "/changeset/" + changeset.getId() + "\">"
+                        "<h3><a href=\"" + Config.getUrls().getBaseBrowseUrl() + "/changeset/" + changeset.getId() + "\">"
                                 + tr("Upload successful!") + "</a></h3>");
                 panel.enableClickableHyperlinks();
                 panel.setOpaque(false);

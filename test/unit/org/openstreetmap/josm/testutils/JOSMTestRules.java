@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Handler;
 
+import org.awaitility.Awaitility;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -29,6 +30,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -52,8 +54,6 @@ import org.openstreetmap.josm.tools.MemoryManagerTest;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.date.DateUtils;
-
-import org.awaitility.Awaitility;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -419,6 +419,7 @@ public class JOSMTestRules implements TestRule {
 
         Config.setPreferencesInstance(Main.pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
+        Config.setUrlsProvider(JosmUrls.getInstance());
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
 

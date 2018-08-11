@@ -30,7 +30,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -47,6 +46,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -236,7 +236,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
         protected String createInfoUrl(Object infoObject) {
             if (infoObject instanceof User) {
                 User user = (User) infoObject;
-                return Main.getBaseUserUrl() + '/' + Utils.encodeUrl(user.getName()).replaceAll("\\+", "%20");
+                return Config.getUrls().getBaseUserUrl() + '/' + Utils.encodeUrl(user.getName()).replaceAll("\\+", "%20");
             } else {
                 return null;
             }

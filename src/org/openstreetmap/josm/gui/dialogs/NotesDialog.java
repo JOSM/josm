@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -431,7 +432,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         public void actionPerformed(ActionEvent e) {
             final Note note = displayList.getSelectedValue();
             if (note.getId() > 0) {
-                final String url = Main.getBaseBrowseUrl() + "/note/" + note.getId();
+                final String url = Config.getUrls().getBaseBrowseUrl() + "/note/" + note.getId();
                 OpenBrowser.displayUrl(url);
             }
         }

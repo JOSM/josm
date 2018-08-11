@@ -23,7 +23,7 @@ public class OsmServerHistoryReaderTest {
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();
-        Config.getPref().put("osm-server.url", OsmApi.DEFAULT_API_URL);
+        Config.getPref().put("osm-server.url", Config.getUrls().getDefaultOsmApiUrl());
     }
 
     /**

@@ -71,7 +71,8 @@ public class OsmApiUrlInputPanel extends JPanel {
     }
 
     protected JComponent buildDefaultServerUrlPanel() {
-        cbUseDefaultServerUrl = new JCheckBox(tr("<html>Use the default OSM server URL (<strong>{0}</strong>)</html>", OsmApi.DEFAULT_API_URL));
+        cbUseDefaultServerUrl = new JCheckBox(
+                tr("<html>Use the default OSM server URL (<strong>{0}</strong>)</html>", Config.getUrls().getDefaultOsmApiUrl()));
         cbUseDefaultServerUrl.addItemListener(new UseDefaultServerUrlChangeHandler());
         cbUseDefaultServerUrl.setFont(cbUseDefaultServerUrl.getFont().deriveFont(Font.PLAIN));
         return cbUseDefaultServerUrl;
@@ -127,9 +128,9 @@ public class OsmApiUrlInputPanel extends JPanel {
     public void initFromPreferences() {
         String url = OsmApi.getOsmApi().getServerUrl();
         tfOsmServerUrl.setPossibleItems(SERVER_URL_HISTORY.get());
-        if (OsmApi.DEFAULT_API_URL.equals(url.trim())) {
+        if (Config.getUrls().getDefaultOsmApiUrl().equals(url.trim())) {
             cbUseDefaultServerUrl.setSelected(true);
-            propagator.propagate(OsmApi.DEFAULT_API_URL);
+            propagator.propagate(Config.getUrls().getDefaultOsmApiUrl());
         } else {
             cbUseDefaultServerUrl.setSelected(false);
             tfOsmServerUrl.setText(url);
@@ -143,7 +144,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     public void saveToPreferences() {
         String oldUrl = OsmApi.getOsmApi().getServerUrl();
         String hmiUrl = getStrippedApiUrl();
-        if (cbUseDefaultServerUrl.isSelected() || OsmApi.DEFAULT_API_URL.equals(hmiUrl)) {
+        if (cbUseDefaultServerUrl.isSelected() || Config.getUrls().getDefaultOsmApiUrl().equals(hmiUrl)) {
             Config.getPref().put("osm-server.url", null);
         } else {
             Config.getPref().put("osm-server.url", hmiUrl);
@@ -277,7 +278,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             switch(e.getStateChange()) {
             case ItemEvent.SELECTED:
                 setApiUrlInputEnabled(false);
-                propagator.propagate(OsmApi.DEFAULT_API_URL);
+                propagator.propagate(Config.getUrls().getDefaultOsmApiUrl());
                 break;
             case ItemEvent.DESELECTED:
                 setApiUrlInputEnabled(true);

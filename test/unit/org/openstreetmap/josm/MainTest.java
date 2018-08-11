@@ -41,14 +41,6 @@ public class MainTest {
     }
 
     /**
-     * Unit test of {@link Main#getBaseUserUrl}.
-     */
-    @Test
-    public void testGetBaseUserUrl() {
-        assertEquals("https://api06.dev.openstreetmap.org/user", Main.getBaseUserUrl());
-    }
-
-    /**
      * Unit test of {@link Main#addNetworkError}, {@link Main#getNetworkErrors} and {@link Main#clearNetworkErrors}.
      * @throws MalformedURLException if any error occurs
      */

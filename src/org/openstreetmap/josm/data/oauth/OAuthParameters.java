@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.oauth;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -55,14 +54,14 @@ public class OAuthParameters {
             apiUrl = null;
         }
 
-        if (apiUrl != null && !OsmApi.DEFAULT_API_URL.equals(apiUrl)) {
+        if (apiUrl != null && !Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl)) {
             consumerKey = ""; // a custom consumer key is required
             consumerSecret = ""; // a custom consumer secret is requireds
             serverUrl = apiUrl.replaceAll("/api$", "");
         } else {
             consumerKey = DEFAULT_JOSM_CONSUMER_KEY;
             consumerSecret = DEFAULT_JOSM_CONSUMER_SECRET;
-            serverUrl = Main.getOSMWebsite();
+            serverUrl = Config.getUrls().getOSMWebsite();
         }
 
         return new OAuthParameters(

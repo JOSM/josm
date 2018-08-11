@@ -10,7 +10,6 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -33,7 +32,7 @@ public final class HelpUtil {
      * @return the base wiki URL
      */
     public static String getWikiBaseUrl() {
-        return Config.getPref().get("help.baseurl", Main.getJOSMWebsite());
+        return Config.getPref().get("help.baseurl", Config.getUrls().getJOSMWebsite());
     }
 
     /**

@@ -21,6 +21,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlTest;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Unit tests of {@link PlatformHookWindows} class.
@@ -118,10 +119,10 @@ public class PlatformHookWindowsTest {
     @Test
     public void testOpenUrl() throws IOException {
         if (Main.isPlatformWindows()) {
-            hook.openUrl(Main.getJOSMWebsite());
+            hook.openUrl(Config.getUrls().getJOSMWebsite());
         } else {
             try {
-                hook.openUrl(Main.getJOSMWebsite());
+                hook.openUrl(Config.getUrls().getJOSMWebsite());
                 fail("Expected IOException");
             } catch (IOException e) {
                 Logging.info(e.getMessage());

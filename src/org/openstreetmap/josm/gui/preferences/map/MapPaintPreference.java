@@ -13,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.MapPaintPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
@@ -85,7 +84,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         private static final String ICONPREF = "mappaint.icon.sources";
 
         MapPaintSourceEditor() {
-            super(SourceType.MAP_PAINT_STYLE, Main.getJOSMWebsite()+"/styles", styleSourceProviders, true);
+            super(SourceType.MAP_PAINT_STYLE, Config.getUrls().getJOSMWebsite()+"/styles", styleSourceProviders, true);
         }
 
         @Override

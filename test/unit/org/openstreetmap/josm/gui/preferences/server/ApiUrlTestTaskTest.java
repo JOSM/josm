@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -42,7 +42,7 @@ public class ApiUrlTestTaskTest {
      */
     @Test
     public void testNominalUrl() {
-        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, OsmApi.DEFAULT_API_URL);
+        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, Config.getUrls().getDefaultOsmApiUrl());
         task.run();
         assertTrue(task.isSuccess());
     }

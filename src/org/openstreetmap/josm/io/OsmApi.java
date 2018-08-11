@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IUrls;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -72,8 +73,10 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Default URL of the standard OSM API.
+     * @deprecated Use {@link IUrls#getDefaultOsmApiUrl}
      * @since 5422
      */
+    @Deprecated
     public static final String DEFAULT_API_URL = "https://api.openstreetmap.org/api";
 
     // The collection of instantiated OSM APIs
@@ -135,7 +138,7 @@ public class OsmApi extends OsmConnection {
     }
 
     private static String getServerUrlFromPref() {
-        return Config.getPref().get("osm-server.url", DEFAULT_API_URL);
+        return Config.getPref().get("osm-server.url", Config.getUrls().getDefaultOsmApiUrl());
     }
 
     /**

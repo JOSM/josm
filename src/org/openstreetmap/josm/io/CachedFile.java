@@ -540,7 +540,7 @@ public class CachedFile implements Closeable {
     }
 
     private static void checkOfflineAccess(String urlString) {
-        OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlString, Main.getJOSMWebsite());
+        OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlString, Config.getUrls().getJOSMWebsite());
         OnlineResource.OSM_API.checkOfflineAccess(urlString, OsmApi.getOsmApi().getServerUrl());
     }
 

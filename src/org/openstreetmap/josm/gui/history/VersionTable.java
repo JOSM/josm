@@ -26,7 +26,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.History;
@@ -161,7 +160,7 @@ public class VersionTable extends JTable implements ChangeListener {
         protected String createInfoUrl(Object infoObject) {
             if (infoObject instanceof HistoryOsmPrimitive) {
                 HistoryOsmPrimitive prim = (HistoryOsmPrimitive) infoObject;
-                return Main.getBaseBrowseUrl() + "/changeset/" + prim.getChangesetId();
+                return Config.getUrls().getBaseBrowseUrl() + "/changeset/" + prim.getChangesetId();
             } else {
                 return null;
             }
@@ -198,7 +197,7 @@ public class VersionTable extends JTable implements ChangeListener {
         protected String createInfoUrl(Object infoObject) {
             if (infoObject instanceof HistoryOsmPrimitive) {
                 HistoryOsmPrimitive hp = (HistoryOsmPrimitive) infoObject;
-                return hp.getUser() == null ? null : Main.getBaseUserUrl() + '/' + hp.getUser().getName();
+                return hp.getUser() == null ? null : Config.getUrls().getBaseUserUrl() + '/' + hp.getUser().getName();
             } else {
                 return null;
             }

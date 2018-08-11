@@ -11,6 +11,7 @@ public final class Config {
 
     private static IPreferences preferences;
     private static IBaseDirectories baseDirectories;
+    private static IUrls urls;
 
     private Config() {
         // hide constructor
@@ -35,6 +36,15 @@ public final class Config {
     }
 
     /**
+     * Get class that provides the value of certain URLs
+     * @return the global {@link IUrls} instance
+     * @since 14119
+     */
+    public static IUrls getUrls() {
+        return urls;
+    }
+
+    /**
      * Install the global preference instance.
      * @param preferences the global preference instance to set (must not be null)
      * @since 12847
@@ -51,5 +61,14 @@ public final class Config {
      */
     public static void setBaseDirectoriesProvider(IBaseDirectories baseDirectories) {
         Config.baseDirectories = Objects.requireNonNull(baseDirectories, "baseDirectories");
+    }
+
+    /**
+     * Install the global URLs provider.
+     * @param urls the global URLs provider instance to set (must not be null)
+     * @since xx
+     */
+    public static void setUrlsProvider(IUrls urls) {
+        Config.urls = Objects.requireNonNull(urls, "urls");
     }
 }

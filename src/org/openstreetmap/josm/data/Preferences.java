@@ -714,7 +714,7 @@ public class Preferences extends AbstractPreferences {
      * @see #getOnlinePluginSites
      */
     public Collection<String> getPluginSites() {
-        return getList("pluginmanager.sites", Collections.singletonList(Main.getJOSMWebsite()+"/pluginicons%<?plugins=>"));
+        return getList("pluginmanager.sites", Collections.singletonList(Config.getUrls().getJOSMWebsite()+"/pluginicons%<?plugins=>"));
     }
 
     /**
@@ -726,7 +726,7 @@ public class Preferences extends AbstractPreferences {
         Collection<String> pluginSites = new ArrayList<>(getPluginSites());
         for (Iterator<String> it = pluginSites.iterator(); it.hasNext();) {
             try {
-                OnlineResource.JOSM_WEBSITE.checkOfflineAccess(it.next(), Main.getJOSMWebsite());
+                OnlineResource.JOSM_WEBSITE.checkOfflineAccess(it.next(), Config.getUrls().getJOSMWebsite());
             } catch (OfflineAccessException ex) {
                 Logging.log(Logging.LEVEL_WARN, ex);
                 it.remove();
