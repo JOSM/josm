@@ -692,10 +692,7 @@ public class Preferences extends AbstractPreferences {
         return Collections.unmodifiableSet(settingsMap.keySet());
     }
 
-    /**
-     * Gets a map of all settings that are currently stored
-     * @return The settings
-     */
+    @Override
     public Map<String, Setting<?>> getAllSettings() {
         return new TreeMap<>(settingsMap);
     }

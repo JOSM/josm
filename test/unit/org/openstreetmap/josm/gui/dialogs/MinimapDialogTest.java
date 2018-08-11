@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.bbox.SourceButton;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.ImagePatternMatching;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -224,7 +225,7 @@ public class MinimapDialogTest {
      */
     @Test
     public void testSourcePrefObeyed() throws Exception {
-        Main.pref.put("slippy_map_chooser.mapstyle", "Green Tiles");
+        Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
 
         this.setUpMiniMap();
 
@@ -251,7 +252,7 @@ public class MinimapDialogTest {
      */
     @Test
     public void testSourcePrefInvalid() throws Exception {
-        Main.pref.put("slippy_map_chooser.mapstyle", "Hooloovoo Tiles");
+        Config.getPref().put("slippy_map_chooser.mapstyle", "Hooloovoo Tiles");
 
         this.setUpMiniMap();
 
@@ -276,7 +277,7 @@ public class MinimapDialogTest {
         // Add a test layer to the layer manager to get the MapFrame & MapView
         MainApplication.getLayerManager().addLayer(new TestLayer());
 
-        Main.pref.put("slippy_map_chooser.mapstyle", "White Tiles");
+        Config.getPref().put("slippy_map_chooser.mapstyle", "White Tiles");
         // ensure projection matches JMapViewer's
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
 
@@ -414,8 +415,8 @@ public class MinimapDialogTest {
      */
     @Test
     public void testShowDownloadedArea() throws Exception {
-        Main.pref.put("slippy_map_chooser.mapstyle", "Green Tiles");
-        Main.pref.putBoolean("slippy_map_chooser.show_downloaded_area", false);
+        Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
+        Config.getPref().putBoolean("slippy_map_chooser.show_downloaded_area", false);
 
         DataSet dataSet = new DataSet();
         dataSet.addDataSource(new DataSource(new Bounds(51.725, -0.0209, 51.746, 0.0162), "Somewhere"));
@@ -573,8 +574,8 @@ public class MinimapDialogTest {
      */
     @Test
     public void testShowDownloadedAreaLayerSwitching() throws Exception {
-        Main.pref.put("slippy_map_chooser.mapstyle", "Green Tiles");
-        Main.pref.putBoolean("slippy_map_chooser.show_downloaded_area", true);
+        Config.getPref().put("slippy_map_chooser.mapstyle", "Green Tiles");
+        Config.getPref().putBoolean("slippy_map_chooser.show_downloaded_area", true);
 
         DataSet dataSetA = new DataSet();
         // dataSetA has a long thin horizontal downloaded area (extending off the left & right of the map)

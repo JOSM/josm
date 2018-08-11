@@ -123,6 +123,12 @@ public abstract class AbstractPreferences implements IPreferences {
     }
 
     /**
+     * Gets a map of all settings that are currently stored
+     * @return The settings
+     */
+    public abstract Map<String, Setting<?>> getAllSettings();
+
+    /**
      * Set a value for a certain setting. The changed setting is saved to the preference file immediately.
      * Due to caching mechanisms on modern operating systems and hardware, this shouldn't be a performance problem.
      * @param key the unique identifier for the setting
