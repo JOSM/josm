@@ -4,7 +4,6 @@ package org.openstreetmap.josm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
