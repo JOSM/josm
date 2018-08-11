@@ -99,6 +99,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.data.projection.ProjectionCLI;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileSource;
@@ -297,7 +298,7 @@ public class MainApplication extends Main {
      * @since 12777
      */
     public static final NTV2GridShiftFileSource JOSM_WEBSITE_NTV2_SOURCE = gridFileName -> {
-        String location = Main.getJOSMWebsite() + "/proj/" + gridFileName;
+        String location = Config.getUrls().getJOSMWebsite() + "/proj/" + gridFileName;
         // Try to load grid file
         CachedFile cf = new CachedFile(location);
         try {
@@ -917,6 +918,7 @@ public class MainApplication extends Main {
 
         Config.setPreferencesInstance(Main.pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
+        Config.setUrlsProvider(JosmUrls.getInstance());
 
         if (args.showVersion()) {
             System.out.println(Version.getInstance().getAgentString());
@@ -1565,7 +1567,7 @@ public class MainApplication extends Main {
             panel.add(new JLabel(trn("You have {0} unread message.", "You have {0} unread messages.",
                     userInfo.getUnreadMessages(), userInfo.getUnreadMessages())),
                     GBC.eol());
-            panel.add(new UrlLabel(Main.getBaseUserUrl() + '/' + userInfo.getDisplayName() + "/inbox",
+            panel.add(new UrlLabel(Config.getUrls().getBaseUserUrl() + '/' + userInfo.getDisplayName() + "/inbox",
                     tr("Click here to see your inbox.")), GBC.eol());
             panel.setOpaque(false);
             new Notification().setContent(panel)

@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -35,7 +35,7 @@ public class OAuthParametersTest {
     public void testCreateDefault() {
         OAuthParameters def = OAuthParameters.createDefault();
         assertNotNull(def);
-        assertEquals(def, OAuthParameters.createDefault(OsmApi.DEFAULT_API_URL));
+        assertEquals(def, OAuthParameters.createDefault(Config.getUrls().getDefaultOsmApiUrl()));
         OAuthParameters dev = OAuthParameters.createDefault("https://api06.dev.openstreetmap.org/api");
         assertNotNull(dev);
         assertNotEquals(def, dev);

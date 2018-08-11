@@ -197,7 +197,7 @@ public final class ShowStatusReportAction extends JosmAction {
         appendCollection(text, "Last errors/warnings", Utils.transform(Logging.getLastErrorAndWarnings(), i -> "- " + i));
 
         String osmApi = OsmApi.getOsmApi().getServerUrl();
-        if (!OsmApi.DEFAULT_API_URL.equals(osmApi.trim())) {
+        if (!Config.getUrls().getDefaultOsmApiUrl().equals(osmApi.trim())) {
             text.append("OSM API: ").append(osmApi).append("\n\n");
         }
 

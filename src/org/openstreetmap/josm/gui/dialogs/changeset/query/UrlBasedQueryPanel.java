@@ -22,12 +22,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -79,7 +79,7 @@ public class UrlBasedQueryPanel extends JPanel {
 
     protected static List<String> getExamples() {
         return Arrays.asList(
-                Main.getOSMWebsite()+"/history?open=true",
+                Config.getUrls().getOSMWebsite()+"/history?open=true",
                 OsmApi.getOsmApi().getBaseUrl()+"/changesets?open=true");
     }
 

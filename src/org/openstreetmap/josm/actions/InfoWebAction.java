@@ -7,12 +7,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -37,10 +37,10 @@ public class InfoWebAction extends AbstractInfoAction {
     protected String createInfoUrl(Object infoObject) {
         if (infoObject instanceof IPrimitive) {
             IPrimitive primitive = (IPrimitive) infoObject;
-            return Main.getBaseBrowseUrl() + '/' + OsmPrimitiveType.from(primitive).getAPIName() + '/' + primitive.getOsmId();
+            return Config.getUrls().getBaseBrowseUrl() + '/' + OsmPrimitiveType.from(primitive).getAPIName() + '/' + primitive.getOsmId();
         } else if (infoObject instanceof Note) {
             Note note = (Note) infoObject;
-            return Main.getBaseBrowseUrl() + "/note/" + note.getId();
+            return Config.getUrls().getBaseBrowseUrl() + "/note/" + note.getId();
         } else {
             return null;
         }

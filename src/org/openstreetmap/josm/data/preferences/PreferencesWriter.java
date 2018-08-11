@@ -8,14 +8,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.io.XmlWriter;
-import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.ListListSetting;
-import org.openstreetmap.josm.spi.preferences.SettingVisitor;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.spi.preferences.MapListSetting;
+import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.SettingVisitor;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 
 /**
@@ -56,7 +56,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
     public void write(Stream<Map.Entry<String, Setting<?>>> settings) {
         out.write(String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n"));
         String rootElement = defaults ? "preferences-defaults" : "preferences";
-        out.write(String.format("<%s xmlns='%s/preferences-1.0'", rootElement, Main.getXMLBase()));
+        out.write(String.format("<%s xmlns='%s/preferences-1.0'", rootElement, Config.getUrls().getXMLBase()));
         if (defaults) {
             out.write(" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'");
         }

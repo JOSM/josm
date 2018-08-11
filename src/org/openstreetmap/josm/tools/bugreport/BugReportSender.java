@@ -15,7 +15,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
@@ -135,7 +135,7 @@ public class BugReportSender extends Thread {
     }
 
     private static String getJOSMTicketURL() {
-        return Main.getJOSMWebsite() + "/josmticket";
+        return Config.getUrls().getJOSMWebsite() + "/josmticket";
     }
 
     private static String retrieveDebugToken(Document document) throws XPathExpressionException, BugReportSenderException {

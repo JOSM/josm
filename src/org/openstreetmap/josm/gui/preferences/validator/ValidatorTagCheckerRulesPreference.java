@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceProvider;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * The general validator preferences, allowing to enable/disable tests.
@@ -57,7 +57,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
     static class TagCheckerRulesSourceEditor extends SourceEditor {
 
         TagCheckerRulesSourceEditor() {
-            super(SourceType.TAGCHECKER_RULE, Main.getJOSMWebsite()+"/rules", ruleSourceProviders, false);
+            super(SourceType.TAGCHECKER_RULE, Config.getUrls().getJOSMWebsite()+"/rules", ruleSourceProviders, false);
         }
 
         @Override

@@ -6,6 +6,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.validation.tests.SimilarNamedWays;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainApplicationTest;
@@ -28,6 +29,7 @@ public final class I18nSimilarStrings {
         I18n.init();
         Main.determinePlatformHook();
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
+        Config.setUrlsProvider(JosmUrls.getInstance());
         Preferences pref = new Preferences();
         Config.setPreferencesInstance(pref);
         pref.init(false);

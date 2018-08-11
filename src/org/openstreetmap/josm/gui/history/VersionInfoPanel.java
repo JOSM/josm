@@ -25,7 +25,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetDiscussionPanel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -214,7 +214,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
     }
 
     protected static String getUserUrl(String username) {
-        return Main.getBaseUserUrl() + '/' + Utils.encodeUrl(username).replaceAll("\\+", "%20");
+        return Config.getUrls().getBaseUserUrl() + '/' + Utils.encodeUrl(username).replaceAll("\\+", "%20");
     }
 
     @Override
@@ -247,7 +247,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
 
         if (!isLatest && cs != null) {
             User user = cs.getUser();
-            String url = Main.getBaseBrowseUrl() + "/changeset/" + cs.getId();
+            String url = Config.getUrls().getBaseBrowseUrl() + "/changeset/" + cs.getId();
             lblChangeset.setUrl(url);
             lblChangeset.setDescription(Long.toString(cs.getId()));
             changesetCommentsDialogAction.setId(cs.getId());

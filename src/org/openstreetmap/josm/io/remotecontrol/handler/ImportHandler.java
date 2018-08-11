@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -74,7 +73,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
     @Override
     public String[] getUsageExamples() {
         return new String[] {"/import?url=" + Utils.encodeUrl(
-                Main.getJOSMWebsite()+"/browser/josm/trunk/data_nodist/direction-arrows.osm?format=txt")};
+                Config.getUrls().getJOSMWebsite()+"/browser/josm/trunk/data_nodist/direction-arrows.osm?format=txt")};
     }
 
     @Override

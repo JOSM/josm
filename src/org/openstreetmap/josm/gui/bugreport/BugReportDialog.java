@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -73,7 +74,7 @@ public class BugReportDialog extends JDialog {
                 errorPanel.add(new JMultilineLabel(
                         tr("Opening the bug report failed. Please report manually using this website:")),
                         GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-                errorPanel.add(new UrlLabel(Main.getJOSMWebsite() + "/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
+                errorPanel.add(new UrlLabel(Config.getUrls().getJOSMWebsite() + "/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
                 errorPanel.add(new DebugTextDisplay(statusText));
 
                 JOptionPane.showMessageDialog(Main.parent, errorPanel, tr("You have encountered a bug in JOSM"),
@@ -141,7 +142,7 @@ public class BugReportDialog extends JDialog {
         panel.add(textPanel, GBC.eop().fill());
 
         panel.add(new JLabel(tr("Manually report at:")+' '), GBC.std());
-        panel.add(new UrlLabel(Main.getJOSMWebsite() + "/newticket"), GBC.std().fill(GBC.HORIZONTAL));
+        panel.add(new UrlLabel(Config.getUrls().getJOSMWebsite() + "/newticket"), GBC.std().fill(GBC.HORIZONTAL));
         JButton copy = new JButton("Copy to clipboard");
         copy.addActionListener(e -> textPanel.copyToClipboard());
         panel.add(copy, GBC.eol().anchor(GBC.EAST));

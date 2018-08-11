@@ -54,6 +54,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
@@ -771,7 +772,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             Logging.warn(tr(
                     "JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
                             + "at {2}. This is not a critical error, it should be safe to continue in your work.",
-                    primitiveId.getType(), Long.toString(primitiveId.getUniqueId()), Main.getJOSMWebsite()));
+                    primitiveId.getType(), Long.toString(primitiveId.getUniqueId()), Config.getUrls().getJOSMWebsite()));
             Logging.error(new Exception());
         }
 

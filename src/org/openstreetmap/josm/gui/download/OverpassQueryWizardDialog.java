@@ -19,12 +19,12 @@ import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration.OverpassWizardCallbacks;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -195,7 +195,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                 .append(tr("Allows you to interact with <i>Overpass API</i> by writing declarative, human-readable terms."))
                 .append(tr("The <i>Query Wizard</i> tool will transform those to a valid overpass query."))
                 .append(tr("For more detailed description see "))
-                .append(tr("<a href=\"{0}\">OSM Wiki</a>.", Main.getOSMWebsite() + "/wiki/Overpass_turbo/Wizard"))
+                .append(tr("<a href=\"{0}\">OSM Wiki</a>.", Config.getUrls().getOSMWebsite() + "/wiki/Overpass_turbo/Wizard"))
                 .append("</p>")
                 .append(HEADLINE_START).append(tr("Hints")).append(HEADLINE_END)
                 .append("<table>").append(TR_START).append(TD_START)

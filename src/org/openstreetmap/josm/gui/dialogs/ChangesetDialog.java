@@ -428,7 +428,7 @@ public class ChangesetDialog extends ToggleDialog {
                 return;
             if (sel.size() > 10 && !AbstractInfoAction.confirmLaunchMultiple(sel.size()))
                 return;
-            String baseUrl = Main.getBaseBrowseUrl();
+            String baseUrl = Config.getUrls().getBaseBrowseUrl();
             for (Changeset cs: sel) {
                 OpenBrowser.displayUrl(baseUrl + "/changeset/" + cs.getId());
             }

@@ -18,7 +18,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.datatransfer.OpenTransferHandler;
@@ -104,7 +103,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
 
         @Override
         protected void checkOfflineAccess() {
-            OnlineResource.JOSM_WEBSITE.checkOfflineAccess(new WikiReader().getBaseUrlWiki(), Main.getJOSMWebsite());
+            OnlineResource.JOSM_WEBSITE.checkOfflineAccess(new WikiReader().getBaseUrlWiki(), Config.getUrls().getJOSMWebsite());
         }
 
         /**

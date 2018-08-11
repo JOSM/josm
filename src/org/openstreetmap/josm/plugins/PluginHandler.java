@@ -535,7 +535,7 @@ public final class PluginHandler {
         if (Main.isOffline(OnlineResource.JOSM_WEBSITE)) {
             for (String updateSite : Main.pref.getPluginSites()) {
                 try {
-                    OnlineResource.JOSM_WEBSITE.checkOfflineAccess(updateSite, Main.getJOSMWebsite());
+                    OnlineResource.JOSM_WEBSITE.checkOfflineAccess(updateSite, Config.getUrls().getJOSMWebsite());
                 } catch (OfflineAccessException e) {
                     Logging.trace(e);
                     return false;

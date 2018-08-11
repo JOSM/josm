@@ -39,8 +39,8 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IUrls;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -57,18 +57,6 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * @since 98
  */
 public abstract class Main {
-
-    /**
-     * The JOSM website URL.
-     * @since 6897 (was public from 6143 to 6896)
-     */
-    private static final String JOSM_WEBSITE = "https://josm.openstreetmap.de";
-
-    /**
-     * The OSM website URL.
-     * @since 6897 (was public from 6453 to 6896)
-     */
-    private static final String OSM_WEBSITE = "https://www.openstreetmap.org";
 
     /**
      * Global parent component for all dialogs and message boxes
@@ -538,68 +526,56 @@ public abstract class Main {
     /**
      * Returns the JOSM website URL.
      * @return the josm website URL
+     * @deprecated Use {@link IUrls#getJOSMWebsite}
      * @since 6897
      */
+    @Deprecated
     public static String getJOSMWebsite() {
-        if (Config.getPref() != null)
-            return Config.getPref().get("josm.url", JOSM_WEBSITE);
-        return JOSM_WEBSITE;
+        return Config.getUrls().getJOSMWebsite();
     }
 
     /**
      * Returns the JOSM XML URL.
      * @return the josm XML URL
+     * @deprecated Use {@link IUrls#getXMLBase}
      * @since 6897
      */
+    @Deprecated
     public static String getXMLBase() {
-        // Always return HTTP (issues reported with HTTPS)
-        return "http://josm.openstreetmap.de";
+        return Config.getUrls().getXMLBase();
     }
 
     /**
      * Returns the OSM website URL.
      * @return the OSM website URL
+     * @deprecated Use {@link IUrls#getOSMWebsite}
      * @since 6897
      */
+    @Deprecated
     public static String getOSMWebsite() {
-        if (Config.getPref() != null)
-            return Config.getPref().get("osm.url", OSM_WEBSITE);
-        return OSM_WEBSITE;
-    }
-
-    /**
-     * Returns the OSM website URL depending on the selected {@link OsmApi}.
-     * @return the OSM website URL depending on the selected {@link OsmApi}
-     */
-    private static String getOSMWebsiteDependingOnSelectedApi() {
-        final String api = OsmApi.getOsmApi().getServerUrl();
-        if (OsmApi.DEFAULT_API_URL.equals(api)) {
-            return getOSMWebsite();
-        } else {
-            return api.replaceAll("/api$", "");
-        }
+        return Config.getUrls().getOSMWebsite();
     }
 
     /**
      * Replies the base URL for browsing information about a primitive.
      * @return the base URL, i.e. https://www.openstreetmap.org
+     * @deprecated Use {@link IUrls#getBaseBrowseUrl}
      * @since 7678
      */
+    @Deprecated
     public static String getBaseBrowseUrl() {
-        if (Config.getPref() != null)
-            return Config.getPref().get("osm-browse.url", getOSMWebsiteDependingOnSelectedApi());
-        return getOSMWebsiteDependingOnSelectedApi();
+        return Config.getUrls().getBaseBrowseUrl();
     }
 
     /**
      * Replies the base URL for browsing information about a user.
      * @return the base URL, i.e. https://www.openstreetmap.org/user
+     * @deprecated Use {@link IUrls#getBaseUserUrl}
      * @since 7678
      */
+    @Deprecated
     public static String getBaseUserUrl() {
-        if (Config.getPref() != null)
-            return Config.getPref().get("osm-user.url", getOSMWebsiteDependingOnSelectedApi() + "/user");
-        return getOSMWebsiteDependingOnSelectedApi() + "/user";
+        return Config.getUrls().getBaseUserUrl();
     }
 
     /**

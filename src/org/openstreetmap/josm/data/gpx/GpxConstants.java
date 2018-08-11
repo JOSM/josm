@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Constants for GPX handling.
@@ -102,7 +102,7 @@ public interface GpxConstants {
     /**
      * A namespace for josm GPX extensions
      */
-    String JOSM_EXTENSIONS_NAMESPACE_URI = Main.getXMLBase() + "/gpx-extensions-1.0";
+    String JOSM_EXTENSIONS_NAMESPACE_URI = Config.getUrls().getXMLBase() + "/gpx-extensions-1.0";
 
     /** Elevation (in meters) of the point. */
     String PT_ELE = "ele";

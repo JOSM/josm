@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -49,7 +48,7 @@ public class ImageryLayerInfo {
     static final Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
-        Main.getJOSMWebsite()+"/maps%<?ids=>"
+            Config.getUrls().getJOSMWebsite()+"/maps%<?ids=>"
     };
 
     /**
@@ -161,7 +160,7 @@ public class ImageryLayerInfo {
         protected void loadSource(String source) {
             boolean online = true;
             try {
-                OnlineResource.JOSM_WEBSITE.checkOfflineAccess(source, Main.getJOSMWebsite());
+                OnlineResource.JOSM_WEBSITE.checkOfflineAccess(source, Config.getUrls().getJOSMWebsite());
             } catch (OfflineAccessException e) {
                 Logging.log(Logging.LEVEL_WARN, e);
                 online = false;
