@@ -7939,6 +7939,15 @@
             <reference ref="ref_operator_branch" />
             <preset_link preset_name="Power Substation" />
         </item> <!-- Transformer Tower -->
+        <item name="Terminal" icon="presets/power/terminal.svg" type="node" preset_name_label="true">
+            <link href="https://wiki.openstreetmap.org/wiki/Tag:power=terminal" />
+            <space />
+            <key key="power" value="terminal" />
+            <optional>
+                <text key="ref" text="Reference" />
+                <text key="operator" text="Operator" />
+            </optional>
+        </item> <!-- Terminal -->
         <item name="Power Portal" icon="presets/power/portal.svg" type="node,way" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:power=portal"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:power=portal"
@@ -8034,6 +8043,15 @@
             <reference ref="transformer_voltage_frequency" />
             <reference ref="optional_transformer_rating_phases_devices_windings" />
         </item> <!-- Pole with Transformer -->
+        <item name="Catenary mast" icon="presets/power/catenary_mast.svg" type="node" preset_name_label="true">
+            <link href="https://wiki.openstreetmap.org/wiki/Tag:power=catenary_mast" />
+            <space />
+            <key key="power" value="catenary_mast" />
+            <optional>
+                <text key="ref" text="Reference" />
+                <text key="operator" text="Operator" />
+            </optional>
+        </item> <!-- Catenary mast -->
         <item name="Insulator" icon="presets/power/insulator.svg" type="node,way" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:power=insulator"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:power=insulator" />
