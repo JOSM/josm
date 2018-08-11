@@ -38,10 +38,10 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.layer.gpx.ChooseTrackVisibilityAction;
-import org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerAction;
 import org.openstreetmap.josm.gui.layer.gpx.CustomizeDrawingAction;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadAlongTrackAction;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadWmsAlongTrackAction;
+import org.openstreetmap.josm.gui.layer.gpx.ConvertFromGpxLayerAction;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.gpx.ImportAudioAction;
 import org.openstreetmap.josm.gui.layer.gpx.ImportImagesAction;
@@ -224,7 +224,7 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
                 new ImportImagesAction(this),
                 new ImportAudioAction(this),
                 new MarkersFromNamedPointsAction(this),
-                new ConvertToDataLayerAction.FromGpxLayer(this),
+                new ConvertFromGpxLayerAction(this),
                 new DownloadAlongTrackAction(data),
                 new DownloadWmsAlongTrackAction(data),
                 SeparatorLayerAction.INSTANCE,
