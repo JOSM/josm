@@ -19,13 +19,13 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -174,7 +174,7 @@ public final class AlignInLineAction extends JosmAction {
         try {
             Command cmd = buildCommand(getLayerManager().getEditDataSet());
             if (cmd != null) {
-                MainApplication.undoRedo.add(cmd);
+                UndoRedoHandler.getInstance().add(cmd);
             }
         } catch (InvalidSelection except) {
             Logging.debug(except);

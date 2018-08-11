@@ -28,6 +28,7 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -477,7 +478,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                         "Add a new node to {0} ways",
                         virtualSegments.size(), virtualSegments.size());
 
-                MainApplication.undoRedo.add(new SequenceCommand(text, virtualCmds));
+                UndoRedoHandler.getInstance().add(new SequenceCommand(text, virtualCmds));
 
             } else if (alt && !ctrl && candidateNode != null) {
                 // Deleting the highlighted node
@@ -494,10 +495,10 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                     if (nodes.size() < 2) {
                         final Command deleteCmd = DeleteCommand.delete(Collections.singleton(targetWay), true);
                         if (deleteCmd != null) {
-                            MainApplication.undoRedo.add(deleteCmd);
+                            UndoRedoHandler.getInstance().add(deleteCmd);
                         }
                     } else {
-                        MainApplication.undoRedo.add(new ChangeCommand(targetWay, newWay));
+                        UndoRedoHandler.getInstance().add(new ChangeCommand(targetWay, newWay));
                     }
                 } else if (candidateNode.isTagged()) {
                     JOptionPane.showMessageDialog(Main.parent,
@@ -506,7 +507,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 } else {
                     final Command deleteCmd = DeleteCommand.delete(Collections.singleton(candidateNode), true);
                     if (deleteCmd != null) {
-                        MainApplication.undoRedo.add(deleteCmd);
+                        UndoRedoHandler.getInstance().add(deleteCmd);
                     }
                 }
 
@@ -516,7 +517,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 EastNorth nodeEN = candidateNode.getEastNorth();
                 EastNorth cursorEN = mv.getEastNorth(mousePos.x, mousePos.y);
 
-                MainApplication.undoRedo.add(new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
+                UndoRedoHandler.getInstance().add(new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
             }
         }
 

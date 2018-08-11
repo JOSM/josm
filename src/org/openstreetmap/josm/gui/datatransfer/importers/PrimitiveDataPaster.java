@@ -15,6 +15,7 @@ import javax.swing.TransferHandler.TransferSupport;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddPrimitivesCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -24,7 +25,6 @@ import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -58,7 +58,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
         AddPrimitivesCommand command = createNewPrimitives(pasteBuffer, offset, layer);
 
         /* Now execute the commands to add the duplicated contents of the paste buffer to the map */
-        MainApplication.undoRedo.add(command);
+        UndoRedoHandler.getInstance().add(command);
         return true;
     }
 

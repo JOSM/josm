@@ -17,9 +17,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.I18n;
 
@@ -65,7 +65,7 @@ public abstract class AbstractTagPaster extends AbstractOsmDataPaster {
             String title2 = trn("to {0} object", "to {0} objects", selection.size(), selection.size());
             @I18n.QuirkyPluralString
             final String title = title1 + ' ' + title2;
-            MainApplication.undoRedo.add(new SequenceCommand(title, commands));
+            UndoRedoHandler.getInstance().add(new SequenceCommand(title, commands));
         }
     }
 

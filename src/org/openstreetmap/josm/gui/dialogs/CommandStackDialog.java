@@ -39,6 +39,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandAddedEvent;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueCleanedEvent;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueuePreciseListener;
@@ -236,7 +237,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         for (IEnabledStateUpdating listener : showNotifyListener) {
             listener.updateEnabledState();
         }
-        MainApplication.undoRedo.addCommandQueuePreciseListener(this);
+        UndoRedoHandler.getInstance().addCommandQueuePreciseListener(this);
     }
 
     /**
@@ -254,7 +255,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         redoRoot = new DefaultMutableTreeNode();
         undoTreeModel.setRoot(undoRoot);
         redoTreeModel.setRoot(redoRoot);
-        MainApplication.undoRedo.removeCommandQueuePreciseListener(this);
+        UndoRedoHandler.getInstance().removeCommandQueuePreciseListener(this);
     }
 
     /**
@@ -269,7 +270,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     }
 
     private void buildUndoTree() {
-        List<Command> undoCommands = MainApplication.undoRedo.commands;
+        List<Command> undoCommands = UndoRedoHandler.getInstance().commands;
         undoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < undoCommands.size(); ++i) {
             undoRoot.add(getNodeForCommand(undoCommands.get(i)));
@@ -278,7 +279,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     }
 
     private void buildRedoTree() {
-        List<Command> redoCommands = MainApplication.undoRedo.redoCommands;
+        List<Command> redoCommands = UndoRedoHandler.getInstance().redoCommands;
         redoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < redoCommands.size(); ++i) {
             redoRoot.add(getNodeForCommand(redoCommands.get(i)));
@@ -287,8 +288,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     }
 
     private void ensureTreesConsistency() {
-        List<Command> undoCommands = MainApplication.undoRedo.commands;
-        List<Command> redoCommands = MainApplication.undoRedo.redoCommands;
+        List<Command> undoCommands = UndoRedoHandler.getInstance().commands;
+        List<Command> redoCommands = UndoRedoHandler.getInstance().redoCommands;
         if (redoTreeModel.getChildCount(redoRoot) > 0) {
             redoTree.scrollRowToVisible(0);
             scrollPane.getHorizontalScrollBar().setValue(0);
@@ -504,11 +505,11 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
             switch (type) {
             case UNDO:
                 int numUndo = ((DefaultMutableTreeNode) undoTreeModel.getRoot()).getChildCount() - idx;
-                MainApplication.undoRedo.undo(numUndo);
+                UndoRedoHandler.getInstance().undo(numUndo);
                 break;
             case REDO:
                 int numRedo = idx+1;
-                MainApplication.undoRedo.redo(numRedo);
+                UndoRedoHandler.getInstance().redo(numRedo);
                 break;
             }
             MainApplication.getMap().repaint();

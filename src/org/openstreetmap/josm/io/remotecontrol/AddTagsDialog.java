@@ -30,6 +30,7 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -258,7 +259,7 @@ public class AddTagsDialog extends ExtendedDialog {
                 if (buttonIndex == 1 || (Boolean) tm.getValueAt(i, 0)) {
                     String key = (String) tm.getValueAt(i, 1);
                     Object value = tm.getValueAt(i, 2);
-                    MainApplication.undoRedo.add(new ChangePropertyCommand(sel,
+                    UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel,
                             key, value instanceof String ? (String) value : ""));
                 }
             }
@@ -312,7 +313,7 @@ public class AddTagsDialog extends ExtendedDialog {
         if (trustedSenders.contains(sender)) {
             if (MainApplication.getLayerManager().getEditDataSet() != null) {
                 for (String[] row : keyValue) {
-                    MainApplication.undoRedo.add(new ChangePropertyCommand(primitives, row[0], row[1]));
+                    UndoRedoHandler.getInstance().add(new ChangePropertyCommand(primitives, row[0], row[1]));
                 }
             }
         } else {

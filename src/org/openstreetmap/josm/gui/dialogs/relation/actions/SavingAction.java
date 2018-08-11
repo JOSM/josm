@@ -14,6 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.conflict.ConflictAddCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -66,7 +67,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         // tags, don't add an empty relation
         if (newRelation.getMembersCount() == 0 && !newRelation.hasKeys())
             return;
-        MainApplication.undoRedo.add(new AddCommand(getLayer().getDataSet(), newRelation));
+        UndoRedoHandler.getInstance().add(new AddCommand(getLayer().getDataSet(), newRelation));
 
         // make sure everybody is notified about the changes
         //
@@ -88,7 +89,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         tagEditorModel.applyToPrimitive(editedRelation);
         editorAccess.getMemberTableModel().applyToRelation(editedRelation);
         Conflict<Relation> conflict = new Conflict<>(editorAccess.getEditor().getRelation(), editedRelation);
-        MainApplication.undoRedo.add(new ConflictAddCommand(getLayer().getDataSet(), conflict));
+        UndoRedoHandler.getInstance().add(new ConflictAddCommand(getLayer().getDataSet(), conflict));
     }
 
     /**
@@ -101,7 +102,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         tagEditorModel.applyToPrimitive(editedRelation);
         getMemberTableModel().applyToRelation(editedRelation);
         if (!editedRelation.hasEqualSemanticAttributes(originRelation, false)) {
-            MainApplication.undoRedo.add(new ChangeCommand(originRelation, editedRelation));
+            UndoRedoHandler.getInstance().add(new ChangeCommand(originRelation, editedRelation));
         }
     }
 

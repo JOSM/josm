@@ -40,6 +40,7 @@ import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.conflict.IConflictListener;
@@ -522,7 +523,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                     }
                 }
             }
-            MainApplication.undoRedo.add(new SequenceCommand(name, commands));
+            UndoRedoHandler.getInstance().add(new SequenceCommand(name, commands));
             refreshView();
         }
     }

@@ -4,7 +4,6 @@ package org.openstreetmap.josm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
@@ -71,8 +70,10 @@ public abstract class Main {
 
     /**
      * The commands undo/redo handler.
+     * @deprecated Use {@link UndoRedoHandler#getInstance}
      */
-    public final UndoRedoHandler undoRedo = new UndoRedoHandler();
+    @Deprecated
+    public final UndoRedoHandler undoRedo = UndoRedoHandler.getInstance();
 
     /**
      * The file watcher service.
@@ -277,17 +278,13 @@ public abstract class Main {
      * Shutdown JOSM.
      */
     protected void shutdown() {
-        if (!GraphicsEnvironment.isHeadless()) {
-            ImageProvider.shutdown(false);
-        }
+        ImageProvider.shutdown(false);
         try {
             pref.saveDefaults();
         } catch (IOException | InvalidPathException ex) {
             Logging.log(Logging.LEVEL_WARN, tr("Failed to save default preferences."), ex);
         }
-        if (!GraphicsEnvironment.isHeadless()) {
-            ImageProvider.shutdown(true);
-        }
+        ImageProvider.shutdown(true);
     }
 
     /**

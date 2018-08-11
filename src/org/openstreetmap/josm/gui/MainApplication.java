@@ -240,15 +240,17 @@ public class MainApplication extends Main {
     /**
      * The commands undo/redo handler.
      * @since 12641
+     * @deprecated Use {@link UndoRedoHandler#getInstance}
      */
-    public static volatile UndoRedoHandler undoRedo;
+    @Deprecated
+    public static final UndoRedoHandler undoRedo = UndoRedoHandler.getInstance();
 
     private static final LayerChangeListener undoRedoCleaner = new LayerChangeListener() {
         @Override
         public void layerRemoving(LayerRemoveEvent e) {
             Layer layer = e.getRemovedLayer();
             if (layer instanceof OsmDataLayer) {
-                undoRedo.clean(((OsmDataLayer) layer).getDataSet());
+                UndoRedoHandler.getInstance().clean(((OsmDataLayer) layer).getDataSet());
             }
         }
 
@@ -359,7 +361,6 @@ public class MainApplication extends Main {
      */
     public MainApplication(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        undoRedo = super.undoRedo;
         getLayerManager().addLayerChangeListener(undoRedoCleaner);
         ProjectionRegistry.setboundsProvider(mainBoundsProvider);
     }
@@ -413,7 +414,7 @@ public class MainApplication extends Main {
             new InitializationTask(tr("Executing platform startup hook"), () -> platform.startupHook(MainApplication::askUpdateJava)),
             new InitializationTask(tr("Building main menu"), this::initializeMainWindow),
             new InitializationTask(tr("Updating user interface"), () -> {
-                undoRedo.addCommandQueueListener(redoUndoListener);
+                UndoRedoHandler.getInstance().addCommandQueueListener(redoUndoListener);
                 // creating toolbar
                 GuiHelper.runInEDTAndWait(() -> contentPanePrivate.add(toolbar.control, BorderLayout.NORTH));
                 // help shortcut

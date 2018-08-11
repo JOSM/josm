@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
@@ -47,7 +48,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements D
             }
         }
         if (!cmds.isEmpty()) {
-            MainApplication.undoRedo.add(new SequenceCommand(tr("Add selection to relation"), cmds));
+            UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Add selection to relation"), cmds));
             new Notification(
                     "<html>"+
                     tr("{0}Add selection to relation{1}: Verify every single relation to avoid damage!", "<strong>", "</strong>")+

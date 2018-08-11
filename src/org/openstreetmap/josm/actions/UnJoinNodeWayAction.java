@@ -15,10 +15,10 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.RemoveNodesCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -88,7 +88,7 @@ public class UnJoinNodeWayAction extends JosmAction {
         Way selectedWay = applicableWays.get(0);
 
         // I'm sure there's a better way to handle this
-        MainApplication.undoRedo.add(new RemoveNodesCommand(selectedWay, selectedNodes));
+        UndoRedoHandler.getInstance().add(new RemoveNodesCommand(selectedWay, selectedNodes));
     }
 
     /**

@@ -15,9 +15,9 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.APIDataSet;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -204,7 +204,7 @@ public class FixDataHook implements UploadHook {
             }
 
             if (!cmds.isEmpty()) {
-                MainApplication.undoRedo.add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
+                UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
             }
         }
         return true;

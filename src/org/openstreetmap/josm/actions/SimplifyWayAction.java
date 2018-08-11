@@ -24,6 +24,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -31,7 +32,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -119,7 +119,7 @@ public class SimplifyWayAction extends JosmAction {
                     trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
                     allCommands
                     );
-            MainApplication.undoRedo.add(rootCommand);
+            UndoRedoHandler.getInstance().add(rootCommand);
         } finally {
             ds.endUpdate();
         }

@@ -67,6 +67,7 @@ import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
@@ -80,7 +81,6 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.IExtendedDialog;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
@@ -507,7 +507,7 @@ public class TagEditHelper {
             if (key.equals(newkey) && tr("<different>").equals(value))
                 return;
             if (key.equals(newkey) || value == null) {
-                MainApplication.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
+                UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel, newkey, value));
                 AutoCompletionManager.rememberUserInput(newkey, value, true);
             } else {
                 for (OsmPrimitive osm: sel) {
@@ -541,7 +541,7 @@ public class TagEditHelper {
                     commands.add(new ChangePropertyCommand(sel, newkey, value));
                     AutoCompletionManager.rememberUserInput(newkey, value, false);
                 }
-                MainApplication.undoRedo.add(new SequenceCommand(
+                UndoRedoHandler.getInstance().add(new SequenceCommand(
                         trn("Change properties of up to {0} object",
                                 "Change properties of up to {0} objects", sel.size(), sel.size()),
                                 commands));
@@ -1076,7 +1076,7 @@ public class TagEditHelper {
             valueCount.put(key, new TreeMap<String, Integer>());
             AutoCompletionManager.rememberUserInput(key, value, false);
             commandCount++;
-            MainApplication.undoRedo.add(new ChangePropertyCommand(sel, key, value));
+            UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel, key, value));
             changedKey = key;
             clearEntries();
         }
@@ -1087,7 +1087,7 @@ public class TagEditHelper {
         }
 
         public void undoAllTagsAdding() {
-            MainApplication.undoRedo.undo(commandCount);
+            UndoRedoHandler.getInstance().undo(commandCount);
         }
 
         private void refreshRecentTags() {

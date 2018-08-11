@@ -26,6 +26,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
@@ -107,7 +108,7 @@ public class CreateMultipolygonAction extends JosmAction {
 
             // to avoid EDT violations
             SwingUtilities.invokeLater(() -> {
-                    MainApplication.undoRedo.add(command);
+                    UndoRedoHandler.getInstance().add(command);
 
                     // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
                     // knows about the new relation before we try to select it.

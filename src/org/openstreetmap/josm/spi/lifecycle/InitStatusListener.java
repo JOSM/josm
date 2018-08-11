@@ -3,7 +3,7 @@ package org.openstreetmap.josm.spi.lifecycle;
 
 /**
  * Initialization task listener.
- * @since xxx
+ * @since 14125
  */
 public interface InitStatusListener {
 

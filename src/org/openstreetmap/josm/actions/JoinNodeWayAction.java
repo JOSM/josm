@@ -22,6 +22,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -161,7 +162,7 @@ public class JoinNodeWayAction extends JosmAction {
         }
 
         if (cmds.isEmpty()) return;
-        MainApplication.undoRedo.add(new SequenceCommand(getValue(NAME).toString(), cmds));
+        UndoRedoHandler.getInstance().add(new SequenceCommand(getValue(NAME).toString(), cmds));
     }
 
     private static SortedSet<Integer> pruneSuccs(Collection<Integer> is) {

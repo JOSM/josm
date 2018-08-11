@@ -58,6 +58,7 @@ import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -843,7 +844,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         public void updateTags(List<Tag> tags) {
             Command command = TaggingPreset.createCommand(getSelection(), tags);
             if (command != null) {
-                MainApplication.undoRedo.add(command);
+                UndoRedoHandler.getInstance().add(command);
             }
         }
 
@@ -1010,7 +1011,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             }
 
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
-            MainApplication.undoRedo.add(new ChangePropertyCommand(sel, tags));
+            UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel, tags));
 
             membershipTable.clearSelection();
             if (nextKey != null) {
@@ -1041,7 +1042,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             for (OsmPrimitive primitive: Main.main.getInProgressSelection()) {
                 rel.removeMembersFor(primitive);
             }
-            MainApplication.undoRedo.add(new ChangeCommand(cur, rel));
+            UndoRedoHandler.getInstance().add(new ChangeCommand(cur, rel));
 
             tagTable.clearSelection();
             if (nextRelation != null) {
@@ -1163,7 +1164,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             String clipboard = ClipboardUtils.getClipboardStringContent();
             if (sel.isEmpty() || clipboard == null || sel.iterator().next().getDataSet().isLocked())
                 return;
-            MainApplication.undoRedo.add(new ChangePropertyCommand(sel, key, Utils.strip(clipboard)));
+            UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel, key, Utils.strip(clipboard)));
         }
     }
 

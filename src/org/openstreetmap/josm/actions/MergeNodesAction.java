@@ -25,6 +25,7 @@ import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -97,7 +98,7 @@ public class MergeNodesAction extends JosmAction {
             Node targetLocationNode = selectTargetLocationNode(selectedNodes);
             Command cmd = mergeNodes(selectedNodes, targetNode, targetLocationNode);
             if (cmd != null) {
-                MainApplication.undoRedo.add(cmd);
+                UndoRedoHandler.getInstance().add(cmd);
                 getLayerManager().getEditLayer().data.setSelected(targetNode);
             }
         }
@@ -276,7 +277,7 @@ public class MergeNodesAction extends JosmAction {
         if (target != null) {
             Command cmd = mergeNodes(nodes, target, targetLocationNode);
             if (cmd != null) {
-                MainApplication.undoRedo.add(cmd);
+                UndoRedoHandler.getInstance().add(cmd);
                 layer.data.setSelected(target);
             }
         }

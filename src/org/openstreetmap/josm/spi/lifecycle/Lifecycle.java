@@ -5,7 +5,7 @@ import java.util.Objects;
 
 /**
  * JOSM lifecycle.
- * @since xxx
+ * @since 14125
  */
 public final class Lifecycle {
 

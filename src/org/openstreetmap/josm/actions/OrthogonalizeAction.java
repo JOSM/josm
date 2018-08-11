@@ -24,6 +24,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.Node;
@@ -31,7 +32,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -119,7 +119,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     }
                 }
                 if (!commands.isEmpty()) {
-                    MainApplication.undoRedo.add(new SequenceCommand(tr("Orthogonalize / Undo"), commands));
+                    UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Orthogonalize / Undo"), commands));
                 } else {
                     throw new InvalidUserInputException("Commands are empty");
                 }
@@ -167,7 +167,7 @@ public final class OrthogonalizeAction extends JosmAction {
         final Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
 
         try {
-            MainApplication.undoRedo.add(orthogonalize(sel));
+            UndoRedoHandler.getInstance().add(orthogonalize(sel));
         } catch (InvalidUserInputException ex) {
             Logging.debug(ex);
             String msg;

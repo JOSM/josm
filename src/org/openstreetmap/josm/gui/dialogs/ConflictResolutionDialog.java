@@ -17,10 +17,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -203,7 +203,7 @@ public class ConflictResolutionDialog extends ExtendedDialog implements Property
                     return;
                 }
             }
-            MainApplication.undoRedo.add(resolver.buildResolveCommand());
+            UndoRedoHandler.getInstance().add(resolver.buildResolveCommand());
             buttonAction(1, evt);
         }
 
