@@ -274,10 +274,10 @@ public class Preferences extends AbstractPreferences {
      * Returns a set of all existing directories where resources could be stored.
      * @return A set of all existing directories where resources could be stored.
      */
-    public Collection<String> getAllPossiblePreferenceDirs() {
+    public static Collection<String> getAllPossiblePreferenceDirs() {
         Set<String> locations = new HashSet<>();
-        addPossibleResourceDir(locations, dirs.getPreferencesDirectory(false).getPath());
-        addPossibleResourceDir(locations, dirs.getUserDataDirectory(false).getPath());
+        addPossibleResourceDir(locations, Config.getDirs().getPreferencesDirectory(false).getPath());
+        addPossibleResourceDir(locations, Config.getDirs().getUserDataDirectory(false).getPath());
         addPossibleResourceDir(locations, getSystemEnv("JOSM_RESOURCES"));
         addPossibleResourceDir(locations, getSystemProperty("josm.resources"));
         locations.addAll(PlatformManager.getPlatform().getPossiblePreferenceDirs());

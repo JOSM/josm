@@ -25,7 +25,7 @@ import java.util.jar.Manifest;
 
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -415,7 +415,7 @@ public class PluginInformation {
      * @return all possible plugin locations.
      */
     public static Collection<String> getPluginLocations() {
-        Collection<String> locations = Main.pref.getAllPossiblePreferenceDirs();
+        Collection<String> locations = Preferences.getAllPossiblePreferenceDirs();
         Collection<String> all = new ArrayList<>(locations.size());
         for (String s : locations) {
             all.add(s+"plugins");

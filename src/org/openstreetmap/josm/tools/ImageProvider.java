@@ -60,7 +60,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.swing.ImageIcon;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -1243,15 +1243,13 @@ public class ImageProvider {
             return u;
 
         // Try all other resource directories
-        if (Main.pref != null) {
-            for (String location : Main.pref.getAllPossiblePreferenceDirs()) {
-                u = getImageUrl(location + "images", imageName);
-                if (u != null)
-                    return u;
-                u = getImageUrl(location, imageName);
-                if (u != null)
-                    return u;
-            }
+        for (String location : Preferences.getAllPossiblePreferenceDirs()) {
+            u = getImageUrl(location + "images", imageName);
+            if (u != null)
+                return u;
+            u = getImageUrl(location, imageName);
+            if (u != null)
+                return u;
         }
 
         return null;
