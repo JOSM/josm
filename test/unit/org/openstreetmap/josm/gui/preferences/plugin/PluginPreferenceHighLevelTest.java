@@ -22,6 +22,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -96,7 +97,7 @@ public class PluginPreferenceHighLevelTest {
         this.referenceDummyJarNew = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31772.jar");
         this.referenceBazJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.v6.jar");
         this.referenceBazJarNew = new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.v7.jar");
-        this.pluginDir = Main.pref.getPluginsDirectory();
+        this.pluginDir = Preferences.main().getPluginsDirectory();
         this.targetDummyJar = new File(this.pluginDir, "dummy_plugin.jar");
         this.targetDummyJarNew = new File(this.pluginDir, "dummy_plugin.jar.new");
         this.targetBazJar = new File(this.pluginDir, "baz_plugin.jar");

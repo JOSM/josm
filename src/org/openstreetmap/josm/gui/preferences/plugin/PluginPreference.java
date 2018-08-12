@@ -44,6 +44,7 @@ import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -299,7 +300,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 );
         if (answer != 0 /* OK */)
             return;
-        Main.pref.setPluginSites(pnl.getUpdateSites());
+        Preferences.main().setPluginSites(pnl.getUpdateSites());
     }
 
     /**
@@ -375,7 +376,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Collection<String> pluginSites = Main.pref.getOnlinePluginSites();
+            Collection<String> pluginSites = Preferences.main().getOnlinePluginSites();
             if (pluginSites.isEmpty()) {
                 return;
             }
@@ -429,7 +430,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     );
             // the async task for downloading plugin information
             final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(
-                    Main.pref.getOnlinePluginSites());
+                    Preferences.main().getOnlinePluginSites());
 
             // to be run asynchronously after the plugin download
             //
@@ -600,7 +601,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         PluginConfigurationSitesPanel() {
             super(new GridBagLayout());
             add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
-            for (String s : Main.pref.getPluginSites()) {
+            for (String s : Preferences.main().getPluginSites()) {
                 model.addElement(s);
             }
             final JList<String> list = new JList<>(model);

@@ -20,9 +20,9 @@ import javax.imageio.ImageIO
 import javax.json.Json
 import javax.json.stream.JsonGenerator
 
-import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.actions.DeleteAction
 import org.openstreetmap.josm.command.DeleteCommand
+import org.openstreetmap.josm.data.Preferences
 import org.openstreetmap.josm.data.Version
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.Node
@@ -412,10 +412,9 @@ class TagInfoExtract {
      * Initialize the script.
      */
     def init() {
-        Main.determinePlatformHook()
         Logging.setLogLevel(Logging.LEVEL_INFO)
-        Main.pref.enableSaveOnPut(false)
-        Config.setPreferencesInstance(Main.pref)
+        Preferences.main().enableSaveOnPut(false)
+        Config.setPreferencesInstance(Preferences.main())
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance())
         Config.setUrlsProvider(JosmUrls.getInstance())
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"))

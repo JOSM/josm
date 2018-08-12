@@ -10,7 +10,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
@@ -166,7 +166,7 @@ public abstract class Plugin implements MapFrameListener {
      * @return a class loader for loading resources from the plugin jar
      */
     public ClassLoader getPluginResourceClassLoader() {
-        File pluginDir = Main.pref.getPluginsDirectory();
+        File pluginDir = Preferences.main().getPluginsDirectory();
         File pluginJar = new File(pluginDir, info.name + ".jar");
         final URL pluginJarUrl = Utils.fileToURL(pluginJar);
         return AccessController.doPrivileged((PrivilegedAction<ClassLoader>)

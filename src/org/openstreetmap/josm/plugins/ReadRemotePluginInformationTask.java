@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -244,7 +244,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      * @param list the downloaded list
      */
     protected void cachePluginList(String site, String list) {
-        File pluginDir = Main.pref.getPluginsDirectory();
+        File pluginDir = Preferences.main().getPluginsDirectory();
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
             Logging.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.",
                     pluginDir.toString(), site));
@@ -317,7 +317,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             }
         }
 
-        File pluginDir = Main.pref.getPluginsDirectory();
+        File pluginDir = Preferences.main().getPluginsDirectory();
         for (String site: sites) {
             String printsite = site.replaceAll("%<(.*)>", "");
             getProgressMonitor().subTask(tr("Processing plugin list from site ''{0}''", printsite));

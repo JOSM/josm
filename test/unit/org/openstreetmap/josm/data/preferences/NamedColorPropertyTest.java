@@ -10,14 +10,14 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Test {@link ColorProperty}
+ * Test {@link NamedColorProperty}
  * @author Michael Zangl
  */
 public class NamedColorPropertyTest {
@@ -38,7 +38,7 @@ public class NamedColorPropertyTest {
     }
 
     /**
-     * Test {@link ColorProperty#get()}
+     * Test {@link NamedColorProperty#get()}
      */
     @Test
     public void testGet() {
@@ -46,7 +46,7 @@ public class NamedColorPropertyTest {
     }
 
     /**
-     * Test {@link ColorProperty#put}
+     * Test {@link NamedColorProperty#put}
      */
     @Test
     public void testPut() {
@@ -66,7 +66,7 @@ public class NamedColorPropertyTest {
     @Test
     public void testColorAlpha() {
         assertEquals(0x12, new NamedColorProperty("foo", new Color(0x12345678, true)).get().getAlpha());
-        assertTrue(Main.pref.putList("clr.general.bar", Arrays.asList("#34567812", "general", "", "bar")));
+        assertTrue(Preferences.main().putList("clr.general.bar", Arrays.asList("#34567812", "general", "", "bar")));
         assertEquals(0x12, new NamedColorProperty("bar", Color.RED).get().getAlpha());
     }
 
@@ -79,7 +79,7 @@ public class NamedColorPropertyTest {
     }
 
     /**
-     * Test {@link ColorProperty#getChildColor(String)}
+     * Test {@link NamedColorProperty#getChildColor(String)}
      */
     @Test
     public void testGetChildColor() {

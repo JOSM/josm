@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -92,7 +92,7 @@ public class PluginHandlerTestIT {
     public static void loadAllPlugins() {
         // Download complete list of plugins
         ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(
-                Main.pref.getOnlinePluginSites());
+                Preferences.main().getOnlinePluginSites());
         pluginInfoDownloadTask.run();
         List<PluginInformation> plugins = pluginInfoDownloadTask.getAvailablePlugins();
         System.out.println("Original plugin list contains " + plugins.size() + " plugins");

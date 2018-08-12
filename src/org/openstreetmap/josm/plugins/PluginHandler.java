@@ -54,6 +54,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RestartAction;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -534,7 +535,7 @@ public final class PluginHandler {
             return false;
         }
         if (NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE)) {
-            for (String updateSite : Main.pref.getPluginSites()) {
+            for (String updateSite : Preferences.main().getPluginSites()) {
                 try {
                     OnlineResource.JOSM_WEBSITE.checkOfflineAccess(updateSite, Config.getUrls().getJOSMWebsite());
                 } catch (OfflineAccessException e) {
@@ -597,7 +598,7 @@ public final class PluginHandler {
     private static void downloadRequiredPluginsAndRestart(final Component parent, final Set<String> missingRequiredPlugin) {
         // Update plugin list
         final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(
-                Main.pref.getOnlinePluginSites());
+                Preferences.main().getOnlinePluginSites());
         MainApplication.worker.submit(pluginInfoDownloadTask);
 
         // Continuation
@@ -742,7 +743,7 @@ public final class PluginHandler {
      */
     private static void extendJoinedPluginResourceCL(Collection<PluginInformation> plugins) {
         // iterate all plugins and collect all libraries of all plugins:
-        File pluginDir = Main.pref.getPluginsDirectory();
+        File pluginDir = Preferences.main().getPluginsDirectory();
         DynamicURLClassLoader cl = getJoinedPluginResourceCL();
 
         for (PluginInformation info : plugins) {
@@ -1075,7 +1076,7 @@ public final class PluginHandler {
             // try to download the plugin lists
             ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
                     monitor.createSubTaskMonitor(1, false),
-                    Main.pref.getOnlinePluginSites(), displayErrMsg
+                    Preferences.main().getOnlinePluginSites(), displayErrMsg
             );
             task1.run();
             List<PluginInformation> allPlugins = task1.getAvailablePlugins();
@@ -1247,7 +1248,7 @@ public final class PluginHandler {
      * @since 13294
      */
     public static void installDownloadedPlugins(Collection<PluginInformation> pluginsToLoad, boolean dowarn) {
-        File pluginDir = Main.pref.getPluginsDirectory();
+        File pluginDir = Preferences.main().getPluginsDirectory();
         if (!pluginDir.exists() || !pluginDir.isDirectory() || !pluginDir.canWrite())
             return;
 
@@ -1325,7 +1326,7 @@ public final class PluginHandler {
      * @since 5601
      */
     public static File findUpdatedJar(String name) {
-        File pluginDir = Main.pref.getPluginsDirectory();
+        File pluginDir = Preferences.main().getPluginsDirectory();
         // Find the downloaded file. We have tried to install the downloaded plugins
         // (PluginHandler.installDownloadedPlugins). This succeeds depending on the platform.
         File downloadedPluginFile = new File(pluginDir, name + ".jar.new");

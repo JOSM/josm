@@ -82,6 +82,7 @@ import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SplitWayCommand;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.Version;
@@ -818,7 +819,8 @@ public class MainApplication extends Main {
         // call the really early hook before we do anything else
         PlatformManager.getPlatform().preStartupHook();
 
-        Config.setPreferencesInstance(Main.pref);
+        Preferences prefs = Preferences.main();
+        Config.setPreferencesInstance(prefs);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         Config.setUrlsProvider(JosmUrls.getInstance());
 
@@ -842,18 +844,18 @@ public class MainApplication extends Main {
         }
 
         try {
-            Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
+            Preferences.main().init(args.hasOption(Option.RESET_PREFERENCES));
         } catch (SecurityException e) {
             Logging.log(Logging.LEVEL_ERROR, "Unable to initialize preferences", e);
         }
 
-        args.getPreferencesToSet().forEach(Main.pref::put);
+        args.getPreferencesToSet().forEach(prefs::put);
 
         if (!language.isPresent()) {
             I18n.set(Config.getPref().get("language", null));
         }
         updateSystemProperties();
-        Main.pref.addPreferenceChangeListener(new PreferenceChangedListener() {
+        Preferences.main().addPreferenceChangeListener(new PreferenceChangedListener() {
             @Override
             public void preferenceChanged(PreferenceChangeEvent e) {
                 updateSystemProperties();
@@ -886,7 +888,7 @@ public class MainApplication extends Main {
         Main.parent = mainFrame;
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
-            XMLCommandProcessor config = new XMLCommandProcessor(Main.pref);
+            XMLCommandProcessor config = new XMLCommandProcessor(prefs);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 try {
                     URL url = i.contains(":/") ? new URL(i) : Paths.get(i).toUri().toURL();

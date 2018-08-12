@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
@@ -276,7 +277,7 @@ public final class ShowStatusReportAction extends JosmAction {
         StringBuilder text = new StringBuilder();
         String reportHeader = getReportHeader();
         text.append(reportHeader);
-        Map<String, Setting<?>> settings = Main.pref.getAllSettings();
+        Map<String, Setting<?>> settings = Preferences.main().getAllSettings();
         Set<String> keys = new HashSet<>(settings.keySet());
         for (String key : keys) {
             // Remove sensitive information from status report

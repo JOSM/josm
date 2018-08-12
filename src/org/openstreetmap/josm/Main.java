@@ -42,7 +42,9 @@ public abstract class Main implements IOsmDataManager {
 
     /**
      * Global application preferences
+     * @deprecated Use {@link Config#getPref()} or {@link Preferences#main()}
      */
+    @Deprecated
     public static final Preferences pref = new Preferences(JosmBaseDirectories.getInstance());
 
     /**
