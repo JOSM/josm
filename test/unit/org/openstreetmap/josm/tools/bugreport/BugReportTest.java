@@ -26,7 +26,7 @@ public class BugReportTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform();
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Test {@link BugReport#getReportText}

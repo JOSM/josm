@@ -44,6 +44,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -134,7 +135,7 @@ public class OpenFileAction extends DiskAccessAction {
             this.files = new ArrayList<>(files.size());
             for (final File file : files) {
                 if (file.exists()) {
-                    this.files.add(Main.platform.resolveFileLink(file));
+                    this.files.add(PlatformManager.getPlatform().resolveFileLink(file));
                 } else if (file.getParentFile() != null) {
                     // try to guess an extension using the specified fileFilter
                     final File[] matchingFiles = file.getParentFile().listFiles((dir, name) ->

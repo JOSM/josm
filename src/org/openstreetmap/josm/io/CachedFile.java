@@ -33,6 +33,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -520,7 +521,7 @@ public class CachedFile implements Closeable {
             }
             activeConnection = null;
             localFile = new File(destDir, localPath);
-            if (Main.platform.rename(destDirFile, localFile)) {
+            if (PlatformManager.getPlatform().rename(destDirFile, localFile)) {
                 Config.getPref().putList(prefKey,
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localFile.toString()));
             } else {
@@ -548,7 +549,7 @@ public class CachedFile implements Closeable {
         if (directory.length() + fileName.length() > 255) {
             // Windows doesn't support paths longer than 260, leave 5 chars as safe buffer, 4 will be used by ".tmp"
             // TODO: what about filename size on other systems? 255?
-            if (directory.length() > 191 && Main.isPlatformWindows()) {
+            if (directory.length() > 191 && PlatformManager.isPlatformWindows()) {
                 // digest length + name prefix == 64
                 // 255 - 64 = 191
                 // TODO: use this check only on Windows?

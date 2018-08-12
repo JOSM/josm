@@ -34,13 +34,13 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -89,7 +89,7 @@ public class ProjectionRefTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().projectionNadGrids().timeout(90_000);
+    public JOSMTestRules test = new JOSMTestRules().projectionNadGrids().timeout(90_000);
 
     /**
      * Program entry point.
@@ -103,7 +103,6 @@ public class ProjectionRefTest {
                 forcedCodes = Arrays.asList(args[args.length - 1].split(","));
             }
         }
-        Main.determinePlatformHook();
         Collection<RefEntry> refs = readData();
         refs = updateData(refs);
         writeData(refs);
@@ -285,7 +284,7 @@ public class ProjectionRefTest {
         // little endian file shipped with proj.4.
         // see http://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NT111_V1_HARMEL_TransfoNTF-RGF93_FormatGrilleNTV2.pdf
         def = def.replace("ntf_r93_b.gsb", "ntf_r93.gsb");
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             def = def.replace("'", "\\'").replace("\"", "\\\"");
         }
         args.addAll(Arrays.asList(def.split(" ")));

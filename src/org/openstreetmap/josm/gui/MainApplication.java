@@ -177,6 +177,7 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.PlatformHook.NativeOsCallback;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Territories;
@@ -385,7 +386,7 @@ public class MainApplication extends Main {
             ed.setIcon(JOptionPane.WARNING_MESSAGE);
             StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.",
                     "<b>"+getSystemProperty("java.version")+"</b>")).append("<br><br>");
-            if ("Sun Microsystems Inc.".equals(getSystemProperty("java.vendor")) && !platform.isOpenJDK()) {
+            if ("Sun Microsystems Inc.".equals(getSystemProperty("java.vendor")) && !PlatformManager.getPlatform().isOpenJDK()) {
                 content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
                         "Oracle", eolDate)).append("</b><br><br>");
             }
@@ -399,7 +400,7 @@ public class MainApplication extends Main {
 
             if (ed.showDialog().getValue() == 2) {
                 try {
-                    platform.openUrl(url);
+                    PlatformManager.getPlatform().openUrl(url);
                 } catch (IOException e) {
                     Logging.warn(e);
                 }
@@ -411,7 +412,8 @@ public class MainApplication extends Main {
     protected List<InitializationTask> beforeInitializationTasks() {
         return Arrays.asList(
             new InitializationTask(tr("Starting file watcher"), FileWatcher.getDefaultInstance()::start),
-            new InitializationTask(tr("Executing platform startup hook"), () -> platform.startupHook(MainApplication::askUpdateJava)),
+            new InitializationTask(tr("Executing platform startup hook"),
+                    () -> PlatformManager.getPlatform().startupHook(MainApplication::askUpdateJava)),
             new InitializationTask(tr("Building main menu"), this::initializeMainWindow),
             new InitializationTask(tr("Updating user interface"), () -> {
                 UndoRedoHandler.getInstance().addCommandQueueListener(redoUndoListener);
@@ -830,11 +832,11 @@ public class MainApplication extends Main {
                 tr("options provided as Java system properties")+":\n"+
                 align("\t-Djosm.dir.name=JOSM") + tr("Change the JOSM directory name") + "\n\n" +
                 align("\t-Djosm.pref=" + tr("/PATH/TO/JOSM/PREF    ")) + tr("Set the preferences directory") + "\n" +
-                align("\t") + tr("Default: {0}", platform.getDefaultPrefDirectory()) + "\n\n" +
+                align("\t") + tr("Default: {0}", PlatformManager.getPlatform().getDefaultPrefDirectory()) + "\n\n" +
                 align("\t-Djosm.userdata=" + tr("/PATH/TO/JOSM/USERDATA")) + tr("Set the user data directory") + "\n" +
-                align("\t") + tr("Default: {0}", platform.getDefaultUserDataDirectory()) + "\n\n" +
+                align("\t") + tr("Default: {0}", PlatformManager.getPlatform().getDefaultUserDataDirectory()) + "\n\n" +
                 align("\t-Djosm.cache=" + tr("/PATH/TO/JOSM/CACHE   ")) + tr("Set the cache directory") + "\n" +
-                align("\t") + tr("Default: {0}", platform.getDefaultCacheDirectory()) + "\n\n" +
+                align("\t") + tr("Default: {0}", PlatformManager.getPlatform().getDefaultCacheDirectory()) + "\n\n" +
                 align("\t-Djosm.home=" + tr("/PATH/TO/JOSM/HOMEDIR ")) +
                 tr("Set the preferences+data+cache directory (cache directory will be josm.home/cache)")+"\n\n"+
                 tr("-Djosm.home has lower precedence, i.e. the specific setting overrides the general one")+"\n\n"+
@@ -926,10 +928,9 @@ public class MainApplication extends Main {
         }
 
         // initialize the platform hook, and
-        Main.determinePlatformHook();
-        Main.platform.setNativeOsCallback(new DefaultNativeOsCallback());
+        PlatformManager.getPlatform().setNativeOsCallback(new DefaultNativeOsCallback());
         // call the really early hook before we do anything else
-        Main.platform.preStartupHook();
+        PlatformManager.getPlatform().preStartupHook();
 
         Config.setPreferencesInstance(Main.pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
@@ -977,7 +978,7 @@ public class MainApplication extends Main {
 
         processOffline(args);
 
-        Main.platform.afterPrefStartupHook();
+        PlatformManager.getPlatform().afterPrefStartupHook();
 
         applyWorkarounds();
 
@@ -1110,7 +1111,7 @@ public class MainApplication extends Main {
 
         SwingUtilities.invokeLater(new GuiFinalizationWorker(args, proxySelector));
 
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             try {
                 // Check for insecure certificates to remove.
                 // This is Windows-dependant code but it can't go to preStartupHook (need i18n)
@@ -1186,7 +1187,7 @@ public class MainApplication extends Main {
         // Workaround for JDK-8180379: crash on Windows 10 1703 with Windows L&F and java < 8u141 / 9+172
         // To remove during Java 9 migration
         if (getSystemProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
-                platform.getDefaultStyle().equals(LafPreference.LAF.get())) {
+                PlatformManager.getPlatform().getDefaultStyle().equals(LafPreference.LAF.get())) {
             try {
                 String build = PlatformHookWindows.getCurrentBuild();
                 if (build != null) {
@@ -1228,7 +1229,7 @@ public class MainApplication extends Main {
     }
 
     static void setupUIManager() {
-        String defaultlaf = platform.getDefaultStyle();
+        String defaultlaf = PlatformManager.getPlatform().getDefaultStyle();
         String laf = LafPreference.LAF.get();
         try {
             UIManager.setLookAndFeel(laf);

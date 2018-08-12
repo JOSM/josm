@@ -29,7 +29,7 @@ public class DownloadWmsAlongTrackActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().main().projection().fakeImagery().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().main().projection().fakeImagery().timeout(20000);
 
     /**
      * Test action without layer.

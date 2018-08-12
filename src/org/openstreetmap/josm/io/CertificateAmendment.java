@@ -26,9 +26,9 @@ import java.util.Objects;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -226,7 +226,7 @@ public final class CertificateAmendment {
         try {
             // Try to add platform certificates. Do not exit in case of error (embedded certificates may be OK)
             for (NativeCertAmend certAmend : PLATFORM_CERT_AMEND) {
-                X509Certificate cert = Main.platform.getX509Certificate(certAmend);
+                X509Certificate cert = PlatformManager.getPlatform().getX509Certificate(certAmend);
                 if (checkAndAddCertificate(md, cert, certAmend, keyStore)) {
                     certificateAdded = true;
                 }

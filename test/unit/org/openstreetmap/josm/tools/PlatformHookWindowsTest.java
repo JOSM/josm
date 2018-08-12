@@ -18,7 +18,6 @@ import java.util.Collection;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlTest;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -53,7 +52,7 @@ public class PlatformHookWindowsTest {
      */
     @Test
     public void testGetRootKeystore() throws Exception {
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             assertNotNull(PlatformHookWindows.getRootKeystore());
         } else {
             try {
@@ -71,7 +70,7 @@ public class PlatformHookWindowsTest {
      */
     @Test
     public void testRemoveInsecureCertificates() throws Exception {
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             PlatformHookWindows.removeInsecureCertificates();
         } else {
             try {
@@ -92,7 +91,7 @@ public class PlatformHookWindowsTest {
         RemoteControlTest.deleteKeystore();
         KeyStore ks = RemoteControlHttpsServer.loadJosmKeystore();
         TrustedCertificateEntry trustedCert = new KeyStore.TrustedCertificateEntry(ks.getCertificate(ks.aliases().nextElement()));
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             hook.setupHttpsCertificate(RemoteControlHttpsServer.ENTRY_ALIAS, trustedCert);
         } else {
             try {
@@ -118,7 +117,7 @@ public class PlatformHookWindowsTest {
      */
     @Test
     public void testOpenUrl() throws IOException {
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             hook.openUrl(Config.getUrls().getJOSMWebsite());
         } else {
             try {
@@ -145,7 +144,7 @@ public class PlatformHookWindowsTest {
     public void testGetDefaultCacheDirectory() {
         File cache = hook.getDefaultCacheDirectory();
         assertNotNull(cache);
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             assertTrue(cache.toString().contains(":"));
         }
     }
@@ -157,7 +156,7 @@ public class PlatformHookWindowsTest {
     public void testGetDefaultPrefDirectory() {
         File cache = hook.getDefaultPrefDirectory();
         assertNotNull(cache);
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             assertTrue(cache.toString().contains(":"));
         }
     }
@@ -176,7 +175,7 @@ public class PlatformHookWindowsTest {
     @Test
     public void testGetInstalledFonts() {
         Collection<String> fonts = hook.getInstalledFonts();
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             assertFalse(fonts.isEmpty());
         } else {
             assertNull(fonts);
@@ -189,7 +188,7 @@ public class PlatformHookWindowsTest {
     @Test
     public void testGetOSDescription() {
         String os = hook.getOSDescription();
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             assertTrue(os.contains("Windows"));
         } else {
             assertFalse(os.contains("Windows"));

@@ -41,7 +41,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
@@ -82,6 +81,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -228,8 +228,8 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         layerList.getColumnModel().getColumn(4).setCellEditor(new LayerNameCellEditor(new DisableShortcutsOnFocusGainedTextField()));
         // Disable some default JTable shortcuts to use JOSM ones (see #5678, #10458)
         for (KeyStroke ks : new KeyStroke[] {
-                KeyStroke.getKeyStroke(KeyEvent.VK_C, Main.platform.getMenuShortcutKeyMaskEx()),
-                KeyStroke.getKeyStroke(KeyEvent.VK_V, Main.platform.getMenuShortcutKeyMaskEx()),
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()),
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()),
                 KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_DOWN_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_DOWN_MASK),

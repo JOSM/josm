@@ -30,6 +30,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -107,9 +108,8 @@ public class JOSMFixture {
         Main.pref.enableSaveOnPut(false);
         I18n.init();
         // initialize the plaform hook, and
-        Main.determinePlatformHook();
         // call the really early hook before we anything else
-        Main.platform.preStartupHook();
+        PlatformManager.getPlatform().preStartupHook();
 
         Logging.setLogLevel(Logging.LEVEL_INFO);
         Main.pref.init(false);

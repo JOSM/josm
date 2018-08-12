@@ -7,10 +7,10 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -30,7 +30,7 @@ public class DownloadIncompleteMembersAction extends AbstractRelationEditorActio
         Shortcut sc = Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
             KeyEvent.VK_HOME, Shortcut.ALT);
         sc.setAccelerator(this);
-        putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tr("Download all incomplete members"), sc));
+        putValue(SHORT_DESCRIPTION, PlatformManager.getPlatform().makeTooltip(tr("Download all incomplete members"), sc));
         new ImageProvider("dialogs/relation", "downloadincomplete").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Download members"));
         updateEnabledState();

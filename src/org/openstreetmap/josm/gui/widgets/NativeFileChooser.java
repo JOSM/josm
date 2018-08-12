@@ -13,6 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -137,7 +138,7 @@ public class NativeFileChooser extends AbstractFileChooser {
 
     @Override
     public int showOpenDialog(Component parent) {
-        boolean appleProperty = Main.isPlatformOsx() && selectionMode == JFileChooser.DIRECTORIES_ONLY;
+        boolean appleProperty = PlatformManager.isPlatformOsx() && selectionMode == JFileChooser.DIRECTORIES_ONLY;
         if (appleProperty) {
             Utils.updateSystemProperty("apple.awt.fileDialogForDirectories", "true");
         }
@@ -175,7 +176,7 @@ public class NativeFileChooser extends AbstractFileChooser {
         case JFileChooser.DIRECTORIES_ONLY:
             // http://stackoverflow.com/questions/1224714/how-can-i-make-a-java-filedialog-accept-directories-as-its-filetype-in-os-x/1224744#1224744
             // CHECKSTYLE.ON: LineLength
-            return Main.isPlatformOsx();
+            return PlatformManager.isPlatformOsx();
         case JFileChooser.FILES_ONLY:
         default:
             return true;

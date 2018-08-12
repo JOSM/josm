@@ -25,7 +25,7 @@ public class NetworkManagerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().https().devAPI().main().projection();
+    public JOSMTestRules test = new JOSMTestRules().https().devAPI().main().projection();
 
     /**
      * Unit test of {@link NetworkManager#addNetworkError},

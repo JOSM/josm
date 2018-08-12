@@ -51,7 +51,7 @@ public class StyleCacheTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection().mapStyles().timeout(60000);
+    public JOSMTestRules test = new JOSMTestRules().preferences().projection().mapStyles().timeout(60000);
 
     /**
      * Load the test data that is required.

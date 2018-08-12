@@ -20,7 +20,7 @@ public class PreferencesTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().preferences().fakeAPI();
+    public JOSMTestRules test = new JOSMTestRules().preferences().fakeAPI();
 
     /**
      * Test {@link Preferences#toXML}.

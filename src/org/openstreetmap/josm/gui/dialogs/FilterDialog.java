@@ -24,7 +24,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.Filter;
@@ -49,6 +48,7 @@ import org.openstreetmap.josm.gui.util.MultikeyShortcutAction;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -102,8 +102,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             KeyEvent.VK_H, Shortcut.ALT_CTRL);
 
     private static final String[] COLUMN_TOOLTIPS = {
-            Main.platform.makeTooltip(tr("Enable filter"), ENABLE_FILTER_SHORTCUT),
-            Main.platform.makeTooltip(tr("Hiding filter"), HIDING_FILTER_SHORTCUT),
+            PlatformManager.getPlatform().makeTooltip(tr("Enable filter"), ENABLE_FILTER_SHORTCUT),
+            PlatformManager.getPlatform().makeTooltip(tr("Hiding filter"), HIDING_FILTER_SHORTCUT),
             null,
             tr("Inverse filter"),
             tr("Filter mode")

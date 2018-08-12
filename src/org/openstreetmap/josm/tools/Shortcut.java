@@ -370,7 +370,7 @@ public final class Shortcut {
     private static void doInit() {
         if (initdone) return;
         initdone = true;
-        int commandDownMask = Main.platform.getMenuShortcutKeyMaskEx();
+        int commandDownMask = PlatformManager.getPlatform().getMenuShortcutKeyMaskEx();
         groups.put(NONE, -1);
         groups.put(MNEMONIC, KeyEvent.ALT_DOWN_MASK);
         groups.put(DIRECT, 0);
@@ -383,7 +383,7 @@ public final class Shortcut {
         groups.put(ALT_CTRL_SHIFT, KeyEvent.ALT_DOWN_MASK | commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
 
         // (1) System reserved shortcuts
-        Main.platform.initSystemShortcuts();
+        PlatformManager.getPlatform().initSystemShortcuts();
         // (2) User defined shortcuts
         Main.pref.getAllPrefixCollectionKeys("shortcut.entry.").stream()
                 .map(Shortcut::new)
@@ -506,7 +506,7 @@ public final class Shortcut {
             return sc;
         } else if (existing.isPresent()) {
             final Shortcut conflict = existing.get();
-            if (Main.isPlatformOsx()) {
+            if (PlatformManager.isPlatformOsx()) {
                 // Try to reassign Meta to Ctrl
                 int newmodifier = findNewOsxModifier(requestedGroup);
                 if (!findShortcut(requestedKey, newmodifier).isPresent()) {

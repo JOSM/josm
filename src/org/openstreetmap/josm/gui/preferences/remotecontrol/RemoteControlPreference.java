@@ -26,7 +26,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
@@ -42,6 +41,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * Preference settings for Remote Control.
@@ -113,7 +113,7 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
         wrapper.add(enableHttpsSupport, GBC.eol().fill(GBC.HORIZONTAL));
 
         // Certificate installation only available on Windows for now, see #10033
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             installCertificate = new JButton(tr("Install..."));
             uninstallCertificate = new JButton(tr("Uninstall..."));
             installCertificate.setToolTipText(tr("Install JOSM localhost certificate to system/browser root keystores"));

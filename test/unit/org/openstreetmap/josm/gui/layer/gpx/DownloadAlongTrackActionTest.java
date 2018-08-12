@@ -31,7 +31,7 @@ public class DownloadAlongTrackActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform();
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     private static PleaseWaitRunnable createTask(String file) throws Exception {
         // click "Download" when presented with the appropriate HelpAwareOptionPane

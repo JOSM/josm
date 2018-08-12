@@ -20,7 +20,7 @@ public class OverpassServerPreferenceTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform();
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Unit test of {@link OverpassServerPreference#OverpassServerPreference}.

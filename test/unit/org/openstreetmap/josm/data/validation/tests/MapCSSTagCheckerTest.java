@@ -51,7 +51,7 @@ public class MapCSSTagCheckerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().platform();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     static MapCSSTagChecker buildTagChecker(String css) throws ParseException {
         final MapCSSTagChecker test = new MapCSSTagChecker();

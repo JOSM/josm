@@ -51,6 +51,7 @@ import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -279,7 +280,7 @@ public class Preferences extends AbstractPreferences {
         addPossibleResourceDir(locations, dirs.getUserDataDirectory(false).getPath());
         addPossibleResourceDir(locations, getSystemEnv("JOSM_RESOURCES"));
         addPossibleResourceDir(locations, getSystemProperty("josm.resources"));
-        if (Main.isPlatformWindows()) {
+        if (PlatformManager.isPlatformWindows()) {
             String appdata = getSystemEnv("APPDATA");
             if (appdata != null && getSystemEnv("ALLUSERSPROFILE") != null
                     && appdata.lastIndexOf(File.separator) != -1) {
@@ -520,7 +521,7 @@ public class Preferences extends AbstractPreferences {
                 save();
             } else if (reset) {
                 File backupFile = new File(prefDir, "preferences.xml.bak");
-                Main.platform.rename(preferenceFile, backupFile);
+                PlatformManager.getPlatform().rename(preferenceFile, backupFile);
                 Logging.warn(tr("Replacing existing preference file ''{0}'' with default preference file.", preferenceFile.getAbsoluteFile()));
                 resetToDefault();
                 save();
@@ -554,7 +555,7 @@ public class Preferences extends AbstractPreferences {
                         JOptionPane.ERROR_MESSAGE
                 );
             }
-            Main.platform.rename(preferenceFile, backupFile);
+            PlatformManager.getPlatform().rename(preferenceFile, backupFile);
             try {
                 resetToDefault();
                 save();

@@ -40,10 +40,8 @@ import org.openstreetmap.josm.spi.preferences.IUrls;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Platform;
 import org.openstreetmap.josm.tools.PlatformHook;
-import org.openstreetmap.josm.tools.PlatformHookOsx;
-import org.openstreetmap.josm.tools.PlatformHookWindows;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -87,8 +85,10 @@ public abstract class Main {
      * Plugins may replace it, however, some hooks will be called before any plugins have been loaded.
      * So if you need to hook into those early ones, split your class and send the one with the early hooks
      * to the JOSM team for inclusion.
+     * @deprecated Use {@link PlatformManager#getPlatform}
      */
-    public static volatile PlatformHook platform;
+    @Deprecated
+    public static final PlatformHook platform = PlatformManager.getPlatform();
 
     /**
      * Constructs new {@code Main} object.
@@ -290,9 +290,11 @@ public abstract class Main {
     /**
      * Identifies the current operating system family and initializes the platform hook accordingly.
      * @since 1849
+     * @deprecated Not needed anymore
      */
+    @Deprecated
     public static void determinePlatformHook() {
-        platform = Platform.determinePlatform().accept(PlatformHook.CONSTRUCT_FROM_PLATFORM);
+        // Do nothing
     }
 
     /**
@@ -460,18 +462,22 @@ public abstract class Main {
      * Determines if we are currently running on OSX.
      * @return {@code true} if we are currently running on OSX
      * @since 6957
+     * @deprecated Use {@link PlatformManager#isPlatformOsx}
      */
+    @Deprecated
     public static boolean isPlatformOsx() {
-        return Main.platform instanceof PlatformHookOsx;
+        return PlatformManager.isPlatformOsx();
     }
 
     /**
      * Determines if we are currently running on Windows.
      * @return {@code true} if we are currently running on Windows
      * @since 7335
+     * @deprecated Use {@link PlatformManager#isPlatformWindows}
      */
+    @Deprecated
     public static boolean isPlatformWindows() {
-        return Main.platform instanceof PlatformHookWindows;
+        return PlatformManager.isPlatformWindows();
     }
 
     /**

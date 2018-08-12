@@ -24,9 +24,9 @@ public final class OpenBrowser {
     }
 
     private static void displayUrlFallback(URI uri) throws IOException {
-        if (Main.platform == null)
+        if (PlatformManager.getPlatform() == null)
             throw new IllegalStateException(tr("Failed to open URL. There is currently no platform set. Please set a platform first."));
-        Main.platform.openUrl(uri.toString());
+        PlatformManager.getPlatform().openUrl(uri.toString());
     }
 
     /**
@@ -44,12 +44,12 @@ public final class OpenBrowser {
 
         if (Desktop.isDesktopSupported()) {
             try {
-                if (Main.isPlatformWindows()) {
+                if (PlatformManager.isPlatformWindows()) {
                     // Desktop API works fine under Windows, so we don't try any fallback in case of I/O exceptions because it's not API's fault
                     Desktop.getDesktop().browse(uri);
-                } else if (Main.platform instanceof PlatformHookUnixoid || Main.platform instanceof PlatformHookOsx) {
+                } else if (PlatformManager.isPlatformUnixoid() || PlatformManager.isPlatformOsx()) {
                     // see #5629 #5108 #9568
-                    Main.platform.openUrl(uri.toString());
+                    PlatformManager.getPlatform().openUrl(uri.toString());
                 } else {
                     // This is not the case with some Linux environments (see below),
                     // and not sure about Mac OS X, so we need to handle API failure

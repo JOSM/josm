@@ -57,7 +57,7 @@ public class MinimapDialogTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules josmTestRules = new JOSMTestRules().main().platform().projection().fakeImagery();
+    public JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().fakeImagery();
 
     /**
      * Unit test of {@link MinimapDialog} class.

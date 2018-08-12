@@ -93,6 +93,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -816,7 +817,7 @@ public class TagEditHelper {
 
         @Override
         public void setContentPane(Container contentPane) {
-            final int commandDownMask = Main.platform.getMenuShortcutKeyMaskEx();
+            final int commandDownMask = PlatformManager.getPlatform().getMenuShortcutKeyMaskEx();
             List<String> lines = new ArrayList<>();
             Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask).ifPresent(sc ->
                     lines.add(sc.getKeyText() + ' ' + tr("to apply first suggestion"))

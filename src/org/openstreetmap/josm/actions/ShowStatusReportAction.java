@@ -42,6 +42,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportSender;
@@ -88,7 +89,7 @@ public final class ShowStatusReportAction extends JosmAction {
         String runtimeVersion = getSystemProperty("java.runtime.version");
         text.append(Version.getInstance().getReleaseAttributes())
             .append("\nIdentification: ").append(Version.getInstance().getAgentString());
-        String buildNumber = Main.platform.getOSBuildNumber();
+        String buildNumber = PlatformManager.getPlatform().getOSBuildNumber();
         if (!buildNumber.isEmpty()) {
             text.append("\nOS Build number: ").append(buildNumber);
         }
@@ -118,9 +119,10 @@ public final class ShowStatusReportAction extends JosmAction {
             .append((int) maxScreenSize.getWidth()).append('x')
             .append((int) maxScreenSize.getHeight()).append('\n');
 
-        if (Main.platform instanceof PlatformHookUnixoid) {
+        if (PlatformManager.isPlatformUnixoid()) {
+            PlatformHookUnixoid platform = (PlatformHookUnixoid) PlatformManager.getPlatform();
             // Add Java package details
-            String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
+            String packageDetails = platform.getJavaPackageDetails();
             if (packageDetails != null) {
                 text.append("Java package: ")
                     .append(packageDetails)
@@ -128,7 +130,7 @@ public final class ShowStatusReportAction extends JosmAction {
             }
             // Add WebStart package details if run from JNLP
             if (isRunningJavaWebStart()) {
-                String webStartDetails = ((PlatformHookUnixoid) Main.platform).getWebStartPackageDetails();
+                String webStartDetails = platform.getWebStartPackageDetails();
                 if (webStartDetails != null) {
                     text.append("WebStart package: ")
                         .append(webStartDetails)
@@ -136,7 +138,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
             // Add Gnome Atk wrapper details if found
-            String atkWrapperDetails = ((PlatformHookUnixoid) Main.platform).getAtkWrapperPackageDetails();
+            String atkWrapperDetails = platform.getAtkWrapperPackageDetails();
             if (atkWrapperDetails != null) {
                 text.append("Java ATK Wrapper package: ")
                     .append(atkWrapperDetails)
@@ -229,7 +231,7 @@ public final class ShowStatusReportAction extends JosmAction {
      */
     private static String paramCleanup(String param) {
         final String envJavaHome = getSystemEnv("JAVA_HOME");
-        final String envJavaHomeAlt = Main.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
+        final String envJavaHomeAlt = PlatformManager.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
         final String propJavaHome = getSystemProperty("java.home");
         final String propJavaHomeAlt = "<java.home>";
         final String prefDir = Config.getDirs().getPreferencesDirectory(false).toString();
@@ -239,7 +241,7 @@ public final class ShowStatusReportAction extends JosmAction {
         final String userCacheDir = Config.getDirs().getCacheDirectory(false).toString();
         final String userCacheDirAlt = "<josm.cache>";
         final String userHomeDir = getSystemProperty("user.home");
-        final String userHomeDirAlt = Main.isPlatformWindows() ? "%UserProfile%" : "${HOME}";
+        final String userHomeDirAlt = PlatformManager.isPlatformWindows() ? "%UserProfile%" : "${HOME}";
         final String userName = getSystemProperty("user.name");
         final String userNameAlt = "<user.name>";
 

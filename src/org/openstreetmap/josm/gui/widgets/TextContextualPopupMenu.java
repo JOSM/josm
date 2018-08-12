@@ -23,10 +23,10 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * A popup menu designed for text components. It displays the following actions:
@@ -94,9 +94,9 @@ public class TextContextualPopupMenu extends JPopupMenu {
                 component.getDocument().addUndoableEditListener(undoEditListener);
                 if (!GraphicsEnvironment.isHeadless()) {
                     component.getInputMap().put(
-                            KeyStroke.getKeyStroke(KeyEvent.VK_Z, Main.platform.getMenuShortcutKeyMaskEx()), undoAction);
+                            KeyStroke.getKeyStroke(KeyEvent.VK_Z, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), undoAction);
                     component.getInputMap().put(
-                            KeyStroke.getKeyStroke(KeyEvent.VK_Y, Main.platform.getMenuShortcutKeyMaskEx()), redoAction);
+                            KeyStroke.getKeyStroke(KeyEvent.VK_Y, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), redoAction);
                 }
             }
             addMenuEntries();

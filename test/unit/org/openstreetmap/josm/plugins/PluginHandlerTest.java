@@ -33,7 +33,7 @@ public class PluginHandlerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Unit test of methods {@link DeprecatedPlugin#equals} and {@link DeprecatedPlugin#hashCode}.

@@ -38,10 +38,10 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 import sun.security.util.ObjectIdentifier;
 import sun.security.x509.AlgorithmId;
@@ -300,7 +300,7 @@ public class RemoteControlHttpsServer extends Thread {
     public static boolean setupPlatform(KeyStore josmKs) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         Enumeration<String> aliases = josmKs.aliases();
         if (aliases.hasMoreElements()) {
-            return Main.platform.setupHttpsCertificate(ENTRY_ALIAS,
+            return PlatformManager.getPlatform().setupHttpsCertificate(ENTRY_ALIAS,
                     new KeyStore.TrustedCertificateEntry(josmKs.getCertificate(aliases.nextElement())));
         }
         return false;

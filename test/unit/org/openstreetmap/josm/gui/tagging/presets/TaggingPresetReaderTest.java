@@ -32,7 +32,7 @@ public class TaggingPresetReaderTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * #8954 - last checkbox in the preset is not added

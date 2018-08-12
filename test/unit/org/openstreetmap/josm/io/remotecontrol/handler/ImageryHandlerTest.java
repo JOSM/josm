@@ -25,7 +25,7 @@ public class ImageryHandlerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules();
 
     private static ImageryHandler newHandler(String url) throws RequestHandlerBadRequestException {
         ImageryHandler req = new ImageryHandler();

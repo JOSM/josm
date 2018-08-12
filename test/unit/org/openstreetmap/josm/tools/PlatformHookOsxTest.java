@@ -13,7 +13,6 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -63,7 +62,7 @@ public class PlatformHookOsxTest {
      */
     @Test
     public void testOpenUrl() throws IOException {
-        if (!Main.isPlatformWindows()) {
+        if (!PlatformManager.isPlatformWindows()) {
             hook.openUrl(Config.getUrls().getJOSMWebsite());
         } else {
             try {
@@ -82,7 +81,7 @@ public class PlatformHookOsxTest {
     public void testGetDefaultCacheDirectory() {
         File cache = hook.getDefaultCacheDirectory();
         assertNotNull(cache);
-        if (Main.isPlatformOsx()) {
+        if (PlatformManager.isPlatformOsx()) {
             assertTrue(cache.toString().contains("/Library/"));
         }
     }
@@ -94,7 +93,7 @@ public class PlatformHookOsxTest {
     public void testGetDefaultPrefDirectory() {
         File cache = hook.getDefaultPrefDirectory();
         assertNotNull(cache);
-        if (Main.isPlatformOsx()) {
+        if (PlatformManager.isPlatformOsx()) {
             assertTrue(cache.toString().contains("/Library/"));
         }
     }
@@ -113,7 +112,7 @@ public class PlatformHookOsxTest {
     @Test
     public void testGetOSDescription() {
         String os = hook.getOSDescription();
-        if (Main.isPlatformOsx()) {
+        if (PlatformManager.isPlatformOsx()) {
             assertTrue(os.contains("Mac"));
         } else {
             assertFalse(os.contains("Mac"));

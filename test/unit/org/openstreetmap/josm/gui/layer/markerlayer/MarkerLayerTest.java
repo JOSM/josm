@@ -32,7 +32,7 @@ public class MarkerLayerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().platform().preferences().projection();
+    public JOSMTestRules test = new JOSMTestRules().main().preferences().projection();
 
     /**
      * Setup tests

@@ -57,6 +57,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -342,7 +343,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             if (lassoMode) {
                 c = "lasso";
             } else {
-                c = "rect" + (shift ? "_add" : (ctrl && !Main.isPlatformOsx() ? "_rm" : ""));
+                c = "rect" + (shift ? "_add" : (ctrl && !PlatformManager.isPlatformOsx() ? "_rm" : ""));
             }
             break;
         }
@@ -445,7 +446,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             break;
         case SELECT:
         default:
-            if (!(ctrl && Main.isPlatformOsx())) {
+            if (!(ctrl && PlatformManager.isPlatformOsx())) {
                 // start working with rectangle or lasso
                 selectionManager.register(mv, lassoMode);
                 selectionManager.mousePressed(e);
@@ -461,7 +462,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     @Override
     public void mouseMoved(MouseEvent e) {
         // Mac OSX simulates with ctrl + mouse 1 the second mouse button hence no dragging events get fired.
-        if (Main.isPlatformOsx() && (mode == Mode.ROTATE || mode == Mode.SCALE)) {
+        if (PlatformManager.isPlatformOsx() && (mode == Mode.ROTATE || mode == Mode.SCALE)) {
             mouseDragged(e);
             return;
         }
@@ -489,7 +490,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         cancelDrawMode = true;
         if (mode == Mode.SELECT) {
             // Unregisters selectionManager if ctrl has been pressed after mouse click on Mac OS X in order to move the map
-            if (ctrl && Main.isPlatformOsx()) {
+            if (ctrl && PlatformManager.isPlatformOsx()) {
                 selectionManager.unregister(mv);
                 // Make sure correct cursor is displayed
                 mv.setNewCursor(Cursor.MOVE_CURSOR, this);

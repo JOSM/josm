@@ -33,7 +33,7 @@ public class PluginPreferenceTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().assertionsInEDT().platform();
+    public JOSMTestRules test = new JOSMTestRules().preferences().assertionsInEDT();
 
     /**
      * Unit test of {@link PluginPreference#PluginPreference}.

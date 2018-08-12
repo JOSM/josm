@@ -28,7 +28,7 @@ public class OsmTransferHandlerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection().main().platform();
+    public JOSMTestRules test = new JOSMTestRules().preferences().projection().main();
 
     private final OsmTransferHandler transferHandler = new OsmTransferHandler();
 
