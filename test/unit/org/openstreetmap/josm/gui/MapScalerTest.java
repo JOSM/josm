@@ -27,7 +27,7 @@ public class MapScalerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().platform().projection();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Unit test of {@link MapScaler#MapScaler}.

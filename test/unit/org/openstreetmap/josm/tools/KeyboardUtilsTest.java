@@ -25,7 +25,7 @@ public class KeyboardUtilsTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().platform();
+    public JOSMTestRules rules = new JOSMTestRules();
 
     /**
      * Checks that definition of extended characters is correct

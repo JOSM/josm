@@ -32,7 +32,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.IPrimitiveAction;
 import org.openstreetmap.josm.actions.relation.AddSelectionToRelations;
@@ -87,6 +86,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
@@ -201,7 +201,7 @@ public class RelationListDialog extends ToggleDialog
 
         // Do not hide copy action because of default JList override (fix #9815)
         displaylist.getActionMap().put("copy", MainApplication.getMenu().copy);
-        displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, Main.platform.getMenuShortcutKeyMaskEx()), "copy");
+        displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), "copy");
 
         updateActionsRelationLists();
     }

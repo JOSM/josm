@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -91,7 +91,7 @@ public class RestartAction extends JosmAction {
         if (isRestartSupported() && !MainApplication.exitJosm(false, 0, SaveLayersDialog.Reason.RESTART)) return;
         final List<String> cmd;
         // special handling for OSX .app package
-        if (Main.isPlatformOsx() && getSystemProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
+        if (PlatformManager.isPlatformOsx() && getSystemProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
             cmd = getAppleCommands();
         } else {
             cmd = getCommands();
@@ -176,7 +176,7 @@ public class RestartAction extends JosmAction {
 
     private static String getJavaRuntime() throws IOException {
         final String java = getSystemProperty("java.home") + File.separator + "bin" + File.separator +
-                (Main.isPlatformWindows() ? "java.exe" : "java");
+                (PlatformManager.isPlatformWindows() ? "java.exe" : "java");
         if (!new File(java).isFile()) {
             throw new IOException("Unable to find suitable java runtime at "+java);
         }

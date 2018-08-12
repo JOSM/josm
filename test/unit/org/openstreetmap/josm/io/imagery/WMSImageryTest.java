@@ -31,7 +31,7 @@ public class WMSImageryTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().projection();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     @Rule
     public WireMockRule tileServer = new WireMockRule(WireMockConfiguration.options()

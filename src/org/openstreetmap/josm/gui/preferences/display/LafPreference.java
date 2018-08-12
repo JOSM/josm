@@ -23,7 +23,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -41,6 +40,7 @@ import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -52,7 +52,7 @@ public class LafPreference implements SubPreferenceSetting {
      * Look-and-feel property.
      * @since 11713
      */
-    public static final StringProperty LAF = new StringProperty("laf", Main.platform.getDefaultStyle());
+    public static final StringProperty LAF = new StringProperty("laf", PlatformManager.getPlatform().getDefaultStyle());
 
     static final class LafListCellRenderer implements ListCellRenderer<LookAndFeelInfo> {
         private final DefaultListCellRenderer def = new DefaultListCellRenderer();
@@ -96,7 +96,7 @@ public class LafPreference implements SubPreferenceSetting {
         lafCombo = new JosmComboBox<>(UIManager.getInstalledLookAndFeels());
 
         // let's try to load additional LookAndFeels and put them into the list
-        if (Main.isPlatformOsx()) {
+        if (PlatformManager.isPlatformOsx()) {
             try {
                 Class<?> cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
                 Object oquaqua = cquaqua.getConstructor((Class[]) null).newInstance((Object[]) null);

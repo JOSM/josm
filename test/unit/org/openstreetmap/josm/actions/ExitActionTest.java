@@ -28,7 +28,7 @@ public final class ExitActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().main();
+    public JOSMTestRules test = new JOSMTestRules().main();
 
     /**
      * System.exit rule

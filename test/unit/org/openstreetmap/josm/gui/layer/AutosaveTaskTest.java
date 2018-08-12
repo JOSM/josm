@@ -40,7 +40,7 @@ public class AutosaveTaskTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection();
+    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
     private AutosaveTask task;
 

@@ -22,6 +22,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -97,7 +98,7 @@ public class FullscreenToggleAction extends ToggleAction {
         // since windows (or java?) draws the undecorated window full-
         // screen by default (it's a simulated mode, but should be ok)
         String exclusive = Config.getPref().get("draw.fullscreen.exclusive-mode", "auto");
-        if (("true".equals(exclusive) || ("auto".equals(exclusive) && !Main.isPlatformWindows())) && gd != null) {
+        if (("true".equals(exclusive) || ("auto".equals(exclusive) && !PlatformManager.isPlatformWindows())) && gd != null) {
             gd.setFullScreenWindow(selected ? frame : null);
         }
 

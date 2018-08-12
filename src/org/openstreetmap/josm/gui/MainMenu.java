@@ -24,7 +24,6 @@ import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AddNodeAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
@@ -124,6 +123,7 @@ import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -733,7 +733,7 @@ public class MainMenu extends JMenuBar {
         vft.setAccelerator(viewportFollowToggleAction.getShortcut().getKeyStroke());
         viewportFollowToggleAction.addButtonModel(vft.getModel());
 
-        if (Main.platform.canFullscreen()) {
+        if (PlatformManager.getPlatform().canFullscreen()) {
             // -- fullscreen toggle action
             fullscreenToggleAction = new FullscreenToggleAction();
             final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(fullscreenToggleAction);

@@ -21,15 +21,18 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainApplicationTest;
+import org.openstreetmap.josm.gui.MainInitialization;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -107,9 +110,8 @@ public class JOSMFixture {
         Main.pref.enableSaveOnPut(false);
         I18n.init();
         // initialize the plaform hook, and
-        Main.determinePlatformHook();
         // call the really early hook before we anything else
-        Main.platform.preStartupHook();
+        PlatformManager.getPlatform().preStartupHook();
 
         Logging.setLogLevel(Logging.LEVEL_INFO);
         Main.pref.init(false);
@@ -160,7 +162,7 @@ public class JOSMFixture {
         initMainPanel(false);
         initToolbar();
         if (Main.main == null) {
-            new MainApplication().initialize();
+            Lifecycle.initialize(new MainInitialization(new MainApplication()));
         }
         // Add a test layer to the layer manager to get the MapFrame
         MainApplication.getLayerManager().addLayer(new TestLayer());

@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -36,7 +37,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         // CHECKSTYLE.OFF: LineLength
         Shortcut sc = Shortcut.registerShortcut("relationeditor:refresh", tr("Relation Editor: Refresh"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
         // CHECKSTYLE.ON: LineLength
-        putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tr("Refresh relation from data layer"), sc));
+        putValue(SHORT_DESCRIPTION, PlatformManager.getPlatform().makeTooltip(tr("Refresh relation from data layer"), sc));
         new ImageProvider("dialogs/refresh").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Refresh"));
         IRelationEditor editor = editorAccess.getEditor();

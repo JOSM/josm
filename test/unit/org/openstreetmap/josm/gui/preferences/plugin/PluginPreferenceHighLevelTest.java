@@ -51,7 +51,7 @@ public class PluginPreferenceHighLevelTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().assumeRevision(
         "Revision: 10000\n"
-    ).preferences().main().assertionsInEDT().platform();
+    ).preferences().main().assertionsInEDT();
 
     /**
      * Plugin server mock.

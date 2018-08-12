@@ -16,7 +16,6 @@ import java.util.Optional;
 import javax.swing.AbstractAction;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -27,6 +26,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -144,7 +144,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
                 Shortcut.registerShortcut("system:movefocusdown", tr("Map: {0}", tr("Move down")), KeyEvent.VK_DOWN, Shortcut.CTRL));
 
         // see #10592 - Disable these alternate shortcuts on OS X because of conflict with system shortcut
-        if (!Main.isPlatformOsx()) {
+        if (!PlatformManager.isPlatformOsx()) {
             registerActionShortcut(new ZoomerAction(",", "MapMover.Zoomer.in"),
                     Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom In")), KeyEvent.VK_COMMA, Shortcut.CTRL));
 
@@ -174,7 +174,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
     public void mouseDragged(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         boolean allowMovement = (e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK;
-        if (Main.isPlatformOsx()) {
+        if (PlatformManager.isPlatformOsx()) {
             MapFrame map = MainApplication.getMap();
             int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
             boolean macMovement = e.getModifiersEx() == macMouseMask;
@@ -206,7 +206,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
         if ((e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0) ||
-                (Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask)) {
+                (PlatformManager.isPlatformOsx() && e.getModifiersEx() == macMouseMask)) {
             startMovement(e);
         }
     }
@@ -216,7 +216,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3 || (Main.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1)) {
+        if (e.getButton() == MouseEvent.BUTTON3 || (PlatformManager.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1)) {
             endMovement();
         }
     }
@@ -266,7 +266,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
         }
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         // Is only the selected mouse button pressed?
-        if (Main.isPlatformOsx()) {
+        if (PlatformManager.isPlatformOsx()) {
             if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK) {
                 doMoveForDrag(e);
             } else {

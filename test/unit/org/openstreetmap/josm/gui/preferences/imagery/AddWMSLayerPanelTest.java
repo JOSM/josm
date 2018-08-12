@@ -19,7 +19,7 @@ public class AddWMSLayerPanelTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().preferences();
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Unit test of {@link AddWMSLayerPanel}.

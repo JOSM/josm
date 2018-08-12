@@ -25,7 +25,7 @@ public class HelpBrowserTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().https();
+    public JOSMTestRules test = new JOSMTestRules().preferences().https();
 
     static IHelpBrowser newHelpBrowser() {
         return new IHelpBrowser() {

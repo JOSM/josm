@@ -15,6 +15,7 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * A chained utility class used to create and open {@link AbstractFileChooser} dialogs.<br>
@@ -32,7 +33,7 @@ public class FileChooserManager {
      */
     public static final BooleanProperty PROP_USE_NATIVE_FILE_DIALOG = new BooleanProperty("use.native.file.dialog",
             // Native dialogs do not support file filters, so do not set them as default, except for OS X where they never worked
-            Main.isPlatformOsx());
+            PlatformManager.isPlatformOsx());
 
     private final boolean open;
     private final String lastDirProperty;

@@ -20,7 +20,7 @@ public class TerritoriesTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().platform().projection().territories();
+    public JOSMTestRules rules = new JOSMTestRules().projection().territories();
 
     /**
      * Tests that {@code Territories} satisfies utility class criterias.

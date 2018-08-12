@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * Keyboard utils.
  * @since 14012
@@ -292,7 +290,7 @@ public final class KeyboardUtils {
 
             // UK Apple, https://en.wikipedia.org/wiki/QWERTY#UK_Apple_keyboard
             // International English Apple, https://en.wikipedia.org/wiki/QWERTY#Apple_International_English_Keyboard
-            if (Main.isPlatformOsx()) {
+            if (PlatformManager.isPlatformOsx()) {
                 result.add('§'); // https://en.wikipedia.org/wiki/Section_sign
             }
 

@@ -9,9 +9,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -186,8 +186,8 @@ public class Version {
             s += " SVN";
         }
         String result = "JOSM/1.5 ("+ s+' '+LanguageInfo.getJOSMLocaleCode()+')';
-        if (includeOsDetails && Main.platform != null) {
-            result += ' ' + Main.platform.getOSDescription();
+        if (includeOsDetails) {
+            result += ' ' + PlatformManager.getPlatform().getOSDescription();
         }
         return result;
     }

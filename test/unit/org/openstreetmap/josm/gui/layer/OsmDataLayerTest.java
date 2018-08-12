@@ -48,7 +48,7 @@ public class OsmDataLayerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().projection().main();
+    public JOSMTestRules test = new JOSMTestRules().projection().main();
 
     private DataSet ds;
     private OsmDataLayer layer;

@@ -32,7 +32,7 @@ public final class AddImageryLayerActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().fakeAPI();
+    public JOSMTestRules test = new JOSMTestRules().preferences().fakeAPI();
 
     /**
      * HTTP mock.

@@ -9,14 +9,8 @@ import java.net.URL;
 import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -34,18 +28,12 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.spi.lifecycle.InitializationTask;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IUrls;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Platform;
 import org.openstreetmap.josm.tools.PlatformHook;
-import org.openstreetmap.josm.tools.PlatformHookOsx;
-import org.openstreetmap.josm.tools.PlatformHookWindows;
-import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.bugreport.BugReport;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * Abstract class holding various static global variables and methods used in large parts of JOSM application.
@@ -87,12 +75,13 @@ public abstract class Main {
      * Plugins may replace it, however, some hooks will be called before any plugins have been loaded.
      * So if you need to hook into those early ones, split your class and send the one with the early hooks
      * to the JOSM team for inclusion.
+     * @deprecated Use {@link PlatformManager#getPlatform}
      */
-    public static volatile PlatformHook platform;
+    @Deprecated
+    public static final PlatformHook platform = PlatformManager.getPlatform();
 
     /**
      * Constructs new {@code Main} object.
-     * @see #initialize()
      */
     protected Main() {
         setInstance(this);
@@ -100,93 +89,6 @@ public abstract class Main {
 
     private static void setInstance(Main instance) {
         main = instance;
-    }
-
-    /**
-     * Initializes the main object. A lot of global variables are initialized here.
-     * @since 10340
-     */
-    public void initialize() {
-        // Initializes tasks that must be run before parallel tasks
-        runInitializationTasks(beforeInitializationTasks());
-
-        // Initializes tasks to be executed (in parallel) by a ExecutorService
-        try {
-            ExecutorService service = Executors.newFixedThreadPool(
-                    Runtime.getRuntime().availableProcessors(), Utils.newThreadFactory("main-init-%d", Thread.NORM_PRIORITY));
-            for (Future<Void> i : service.invokeAll(parallelInitializationTasks())) {
-                i.get();
-            }
-            // asynchronous initializations to be completed eventually
-            asynchronousRunnableTasks().forEach(service::submit);
-            asynchronousCallableTasks().forEach(service::submit);
-            try {
-                service.shutdown();
-            } catch (SecurityException e) {
-                Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown executor service", e);
-            }
-        } catch (InterruptedException | ExecutionException ex) {
-            throw new JosmRuntimeException(ex);
-        }
-
-        // Initializes tasks that must be run after parallel tasks
-        runInitializationTasks(afterInitializationTasks());
-    }
-
-    private static void runInitializationTasks(List<InitializationTask> tasks) {
-        for (InitializationTask task : tasks) {
-            try {
-                task.call();
-            } catch (JosmRuntimeException e) {
-                // Can happen if the current projection needs NTV2 grid which is not available
-                // In this case we want the user be able to change his projection
-                BugReport.intercept(e).warn();
-            }
-        }
-    }
-
-    /**
-     * Returns tasks that must be run before parallel tasks.
-     * @return tasks that must be run before parallel tasks
-     * @see #afterInitializationTasks
-     * @see #parallelInitializationTasks
-     */
-    protected List<InitializationTask> beforeInitializationTasks() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Returns tasks to be executed (in parallel) by a ExecutorService.
-     * @return tasks to be executed (in parallel) by a ExecutorService
-     */
-    protected Collection<InitializationTask> parallelInitializationTasks() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Returns asynchronous callable initializations to be completed eventually
-     * @return asynchronous callable initializations to be completed eventually
-     */
-    protected List<Callable<?>> asynchronousCallableTasks() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Returns asynchronous runnable initializations to be completed eventually
-     * @return asynchronous runnable initializations to be completed eventually
-     */
-    protected List<Runnable> asynchronousRunnableTasks() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Returns tasks that must be run after parallel tasks.
-     * @return tasks that must be run after parallel tasks
-     * @see #beforeInitializationTasks
-     * @see #parallelInitializationTasks
-     */
-    protected List<InitializationTask> afterInitializationTasks() {
-        return Collections.emptyList();
     }
 
     /**
@@ -290,9 +192,11 @@ public abstract class Main {
     /**
      * Identifies the current operating system family and initializes the platform hook accordingly.
      * @since 1849
+     * @deprecated Not needed anymore
      */
+    @Deprecated
     public static void determinePlatformHook() {
-        platform = Platform.determinePlatform().accept(PlatformHook.CONSTRUCT_FROM_PLATFORM);
+        // Do nothing
     }
 
     /**
@@ -460,18 +364,22 @@ public abstract class Main {
      * Determines if we are currently running on OSX.
      * @return {@code true} if we are currently running on OSX
      * @since 6957
+     * @deprecated Use {@link PlatformManager#isPlatformOsx}
      */
+    @Deprecated
     public static boolean isPlatformOsx() {
-        return Main.platform instanceof PlatformHookOsx;
+        return PlatformManager.isPlatformOsx();
     }
 
     /**
      * Determines if we are currently running on Windows.
      * @return {@code true} if we are currently running on Windows
      * @since 7335
+     * @deprecated Use {@link PlatformManager#isPlatformWindows}
      */
+    @Deprecated
     public static boolean isPlatformWindows() {
-        return Main.platform instanceof PlatformHookWindows;
+        return PlatformManager.isPlatformWindows();
     }
 
     /**

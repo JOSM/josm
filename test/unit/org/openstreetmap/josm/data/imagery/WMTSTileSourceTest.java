@@ -46,7 +46,7 @@ public class WMTSTileSourceTest {
      */
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().preferences().platform().projection().timeout((int) TimeUnit.MINUTES.toMillis(5));
+    public static JOSMTestRules test = new JOSMTestRules().preferences().projection().timeout((int) TimeUnit.MINUTES.toMillis(5));
 
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")

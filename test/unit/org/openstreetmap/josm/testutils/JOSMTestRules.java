@@ -78,7 +78,6 @@ public class JOSMTestRules implements TestRule {
     private Runnable mapViewStateMockingRunnable;
     private Runnable navigableComponentMockingRunnable;
     private Runnable edtAssertionMockingRunnable;
-    private boolean platform;
     private boolean useProjection;
     private boolean useProjectionNadGrids;
     private boolean commands;
@@ -149,9 +148,10 @@ public class JOSMTestRules implements TestRule {
     /**
      * Enable {@link Main#platform} global variable.
      * @return this instance, for easy chaining
+     * @deprecated Not needed anymore
      */
+    @Deprecated
     public JOSMTestRules platform() {
-        platform = true;
         return this;
     }
 
@@ -208,7 +208,6 @@ public class JOSMTestRules implements TestRule {
      */
     public JOSMTestRules https() {
         useHttps = true;
-        platform = true;
         return this;
     }
 
@@ -458,11 +457,6 @@ public class JOSMTestRules implements TestRule {
             Config.getPref().put("osm-server.url", "http://invalid");
         }
 
-        // Set Platform
-        if (platform) {
-            Main.determinePlatformHook();
-        }
-
         if (useHttps) {
             try {
                 CertificateAmendment.addMissingCertificates();
@@ -549,7 +543,6 @@ public class JOSMTestRules implements TestRule {
         MemoryManagerTest.resetState(true);
         cleanLayerEnvironment();
         Main.pref.resetToInitialState();
-        Main.platform = null;
         System.gc();
     }
 
@@ -591,7 +584,6 @@ public class JOSMTestRules implements TestRule {
         // TODO: Remove global listeners and other global state.
         ProjectionRegistry.clearProjectionChangeListeners();
         Main.pref.resetToInitialState();
-        Main.platform = null;
 
         if (this.assumeRevisionString != null && this.originalVersion != null) {
             TestUtils.setPrivateStaticField(Version.class, "instance", this.originalVersion);

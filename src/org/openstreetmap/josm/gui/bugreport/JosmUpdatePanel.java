@@ -11,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
@@ -20,6 +19,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * This is a panel that displays the current JOSM version and the ability to update JOSM.
@@ -99,7 +99,7 @@ public class JosmUpdatePanel extends JPanel {
 
     private static void openJosmUpdateSite() {
         try {
-            Main.platform.openUrl(Config.getUrls().getJOSMWebsite());
+            PlatformManager.getPlatform().openUrl(Config.getUrls().getJOSMWebsite());
         } catch (IOException ex) {
             Logging.log(Logging.LEVEL_WARN, "Unable to access JOSM website:", ex);
         }

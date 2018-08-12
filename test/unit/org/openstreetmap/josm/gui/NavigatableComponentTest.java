@@ -55,7 +55,7 @@ public class NavigatableComponentTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection();
+    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
     /**
      * Create a new, fresh {@link NavigatableComponent}

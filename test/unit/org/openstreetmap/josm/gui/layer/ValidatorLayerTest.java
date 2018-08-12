@@ -24,7 +24,7 @@ public class ValidatorLayerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().projection().main();
+    public JOSMTestRules test = new JOSMTestRules().projection().main();
 
     /**
      * Unit test of {@link ValidatorLayer#ValidatorLayer}.
