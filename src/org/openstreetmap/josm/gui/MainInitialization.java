@@ -13,6 +13,9 @@ import java.util.concurrent.Callable;
 
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
+import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -27,6 +30,7 @@ import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.lifecycle.InitializationSequence;
 import org.openstreetmap.josm.spi.lifecycle.InitializationTask;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -56,6 +60,13 @@ public class MainInitialization implements InitializationSequence {
     @Override
     public List<InitializationTask> beforeInitializationTasks() {
         return Arrays.asList(
+            new InitializationTask(tr("Initializing coordinate format"), () -> {
+                ICoordinateFormat fmt = CoordinateFormatManager.getCoordinateFormat(Config.getPref().get("coordinates"));
+                if (fmt == null) {
+                    fmt = DecimalDegreesCoordinateFormat.INSTANCE;
+                }
+                CoordinateFormatManager.setCoordinateFormat(fmt);
+            }),
             new InitializationTask(tr("Starting file watcher"), FileWatcher.getDefaultInstance()::start),
             new InitializationTask(tr("Executing platform startup hook"),
                     () -> PlatformManager.getPlatform().startupHook(MainApplication::askUpdateJava)),

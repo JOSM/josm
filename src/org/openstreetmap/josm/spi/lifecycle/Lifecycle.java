@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -19,6 +20,8 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 public final class Lifecycle {
 
     private static volatile InitStatusListener initStatusListener;
+
+    private static volatile Runnable shutdownSequence;
 
     private Lifecycle() {
         // Hide constructor
@@ -38,6 +41,24 @@ public final class Lifecycle {
      */
     public static void setInitStatusListener(InitStatusListener listener) {
         initStatusListener = Objects.requireNonNull(listener);
+    }
+
+    /**
+     * Gets shutdown sequence.
+     * @return shutdown sequence
+     * @since 14140
+     */
+    public static Runnable getShutdownSequence() {
+        return shutdownSequence;
+    }
+
+    /**
+     * Sets shutdown sequence.
+     * @param sequence shutdown sequence. Must not be null
+     * @since 14140
+     */
+    public static void setShutdownSequence(Runnable sequence) {
+        shutdownSequence = Objects.requireNonNull(sequence);
     }
 
     /**
@@ -65,7 +86,7 @@ public final class Lifecycle {
                 Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown executor service", e);
             }
         } catch (InterruptedException | ExecutionException ex) {
-            throw new RuntimeException(ex);
+            throw new JosmRuntimeException(ex);
         }
 
         // Initializes tasks that must be run after parallel tasks
@@ -76,11 +97,29 @@ public final class Lifecycle {
         for (InitializationTask task : tasks) {
             try {
                 task.call();
-            } catch (RuntimeException e) {
+            } catch (JosmRuntimeException e) {
                 // Can happen if the current projection needs NTV2 grid which is not available
                 // In this case we want the user be able to change his projection
                 BugReport.intercept(e).warn();
             }
         }
+    }
+
+    /**
+     * Closes JOSM and optionally terminates the Java Virtual Machine (JVM).
+     * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a given return code.
+     * @param exitCode The return code
+     * @return {@code true}
+     * @since 14140
+     */
+    public static boolean exitJosm(boolean exit, int exitCode) {
+        if (shutdownSequence != null) {
+            shutdownSequence.run();
+        }
+
+        if (exit) {
+            System.exit(exitCode);
+        }
+        return true;
     }
 }

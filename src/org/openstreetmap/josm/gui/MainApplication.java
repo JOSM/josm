@@ -86,7 +86,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -346,6 +345,7 @@ public class MainApplication extends Main {
         this.mainFrame = mainFrame;
         getLayerManager().addLayerChangeListener(undoRedoCleaner);
         ProjectionRegistry.setboundsProvider(mainBoundsProvider);
+        Lifecycle.setShutdownSequence(new MainTermination(this));
     }
 
     /**
@@ -408,31 +408,13 @@ public class MainApplication extends Main {
         mainPanel.reAddListeners();
     }
 
-    @Override
-    protected void shutdown() {
-        try {
-            worker.shutdown();
-        } catch (SecurityException e) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
-        }
-        JCSCacheManager.shutdown();
-
-        if (mainFrame != null) {
-            mainFrame.storeState();
-        }
-        if (map != null) {
-            map.rememberToggleDialogWidth();
-        }
-        // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
-        layerManager.resetState();
-        super.shutdown();
-
-        try {
-            // in case the current task still hasn't finished
-            worker.shutdownNow();
-        } catch (SecurityException e) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown worker", e);
-        }
+    /**
+     * Returns the JOSM main frame.
+     * @return the JOSM main frame
+     * @since 14140
+     */
+    public final MainFrame getMainFrame() {
+        return mainFrame;
     }
 
     @Override
@@ -565,7 +547,7 @@ public class MainApplication extends Main {
                 SaveLayersDialog.saveUnsavedModifications(layerManager.getLayers(),
                         reason != null ? reason : SaveLayersDialog.Reason.EXIT)));
         if (proceed) {
-            return Main.exitJosm(exit, exitCode);
+            return Lifecycle.exitJosm(exit, exitCode);
         }
         return false;
     }
@@ -979,7 +961,6 @@ public class MainApplication extends Main {
         ProjectionPreference.setProjection();
         setupNadGridSources();
         GuiHelper.translateJavaInternalMessages();
-        preConstructorInit();
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         Lifecycle.initialize(new MainInitialization(new MainApplication(mainFrame)));
