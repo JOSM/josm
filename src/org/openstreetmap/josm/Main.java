@@ -1,12 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Component;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -14,9 +10,6 @@ import java.util.Set;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
-import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
-import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
@@ -28,10 +21,9 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IUrls;
-import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformManager;
 
@@ -147,46 +139,16 @@ public abstract class Main {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Should be called before the main constructor to setup some parameter stuff
-     */
-    public static void preConstructorInit() {
-        // init default coordinate format
-        ICoordinateFormat fmt = CoordinateFormatManager.getCoordinateFormat(Config.getPref().get("coordinates"));
-        if (fmt == null) {
-            fmt = DecimalDegreesCoordinateFormat.INSTANCE;
-        }
-        CoordinateFormatManager.setCoordinateFormat(fmt);
-    }
-
-    /**
      * Closes JOSM and optionally terminates the Java Virtual Machine (JVM).
      * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a given return code.
      * @param exitCode The return code
      * @return {@code true}
      * @since 12636
+     * @deprecated Use {@link Lifecycle#exitJosm}
      */
+    @Deprecated
     public static boolean exitJosm(boolean exit, int exitCode) {
-        if (Main.main != null) {
-            Main.main.shutdown();
-        }
-
-        if (exit) {
-            System.exit(exitCode);
-        }
-        return true;
-    }
-
-    /**
-     * Shutdown JOSM.
-     */
-    protected void shutdown() {
-        ImageProvider.shutdown(false);
-        try {
-            pref.saveDefaults();
-        } catch (IOException | InvalidPathException ex) {
-            Logging.log(Logging.LEVEL_WARN, tr("Failed to save default preferences."), ex);
-        }
-        ImageProvider.shutdown(true);
+        return Lifecycle.exitJosm(exit, exitCode);
     }
 
     /**
