@@ -22,7 +22,6 @@ import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ReverseWayAction.ReverseWayResult;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -832,7 +831,7 @@ public class JoinAreasAction extends JosmAction {
     }
 
     private void commitCommand(Command c) {
-        if (Main.main != null && addUndoRedo) {
+        if (addUndoRedo) {
             UndoRedoHandler.getInstance().add(c);
         } else {
             c.executeCommand();
@@ -1599,7 +1598,7 @@ public class JoinAreasAction extends JosmAction {
      */
     private void makeCommitsOneAction(String message) {
         cmds.clear();
-        if (Main.main != null && addUndoRedo) {
+        if (addUndoRedo) {
             UndoRedoHandler ur = UndoRedoHandler.getInstance();
             int i = Math.max(ur.commands.size() - cmdsCount, 0);
             for (; i < ur.commands.size(); i++) {

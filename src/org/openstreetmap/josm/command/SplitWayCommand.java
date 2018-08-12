@@ -218,7 +218,7 @@ public class SplitWayCommand extends SequenceCommand {
      * the result of this process in an instance of {@link SplitWayCommand}.
      *
      * Note that changes are not applied to the data yet. You have to
-     * submit the command first, i.e. {@code Main.main.undoredo.add(result)}.
+     * submit the command first, i.e. {@code UndoRedoHandler.getInstance().add(result)}.
      *
      * @param way the way to split. Must not be null.
      * @param wayChunks the list of way chunks into the way is split. Must not be null.
@@ -236,7 +236,7 @@ public class SplitWayCommand extends SequenceCommand {
      * way chunk should reuse the old id and its history.
      *
      * Note that changes are not applied to the data yet. You have to
-     * submit the command first, i.e. {@code Main.main.undoredo.add(result)}.
+     * submit the command first, i.e. {@code UndoRedoHandler.getInstance().add(result)}.
      *
      * @param way the way to split. Must not be null.
      * @param wayChunks the list of way chunks into the way is split. Must not be null.
@@ -463,7 +463,7 @@ public class SplitWayCommand extends SequenceCommand {
      * the result of this process in an instance of {@link SplitWayCommand}.
      *
      * Note that changes are not applied to the data yet. You have to
-     * submit the command first, i.e. {@code Main.main.undoredo.add(result)}.
+     * submit the command first, i.e. {@code UndoRedoHandler.getInstance().add(result)}.
      *
      * Replies null if the way couldn't be split at the given nodes.
      *

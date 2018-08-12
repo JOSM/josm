@@ -5,11 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -62,17 +62,15 @@ public abstract class ConflictResolveCommand extends Command {
         super.undoCommand();
 
         DataSet ds = getAffectedDataSet();
-        if (Main.main != null) {
-            if (!Main.main.containsDataSet(ds)) {
-                Logging.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
-                        this.toString(),
-                        ds.getName()
-                ));
-                return;
-            }
-
-            Main.main.setActiveDataSet(ds);
+        if (!OsmDataManager.getInstance().containsDataSet(ds)) {
+            Logging.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
+                    this.toString(),
+                    ds.getName()
+            ));
+            return;
         }
+
+        OsmDataManager.getInstance().setActiveDataSet(ds);
         reconstituteConflicts();
     }
 

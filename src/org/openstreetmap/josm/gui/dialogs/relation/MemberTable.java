@@ -20,7 +20,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ZoomToAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -248,8 +247,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         }
 
         private void updateEnabledState() {
-            setEnabled(Main.main != null
-                    && MainApplication.getLayerManager().getEditLayer() == getLayer()
+            setEnabled(MainApplication.getLayerManager().getEditLayer() == getLayer()
                     && getSelectedRowCount() == 1
                     && hasGap());
         }

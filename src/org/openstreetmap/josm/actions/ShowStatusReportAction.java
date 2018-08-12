@@ -180,15 +180,13 @@ public final class ShowStatusReportAction extends JosmAction {
         if (!commandLineArgs.isEmpty()) {
             text.append("Program arguments: ").append(Arrays.toString(paramCleanup(commandLineArgs).toArray())).append('\n');
         }
-        if (Main.main != null) {
-            DataSet dataset = MainApplication.getLayerManager().getActiveDataSet();
-            if (dataset != null) {
-                String result = DatasetConsistencyTest.runTests(dataset);
-                if (result.isEmpty()) {
-                    text.append("Dataset consistency test: No problems found\n");
-                } else {
-                    text.append("\nDataset consistency test:\n").append(result).append('\n');
-                }
+        DataSet dataset = MainApplication.getLayerManager().getActiveDataSet();
+        if (dataset != null) {
+            String result = DatasetConsistencyTest.runTests(dataset);
+            if (result.isEmpty()) {
+                text.append("Dataset consistency test: No problems found\n");
+            } else {
+                text.append("\nDataset consistency test:\n").append(result).append('\n');
             }
         }
         text.append('\n');

@@ -13,12 +13,12 @@ import java.util.Map;
 
 import javax.swing.TransferHandler.TransferSupport;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.I18n;
@@ -48,7 +48,7 @@ public abstract class AbstractTagPaster extends AbstractOsmDataPaster {
     @Override
     public boolean importTagsOn(TransferSupport support, Collection<? extends OsmPrimitive> selection)
             throws UnsupportedFlavorException, IOException {
-        ChangePropertyCommand command = new ChangePropertyCommand(Main.main.getEditDataSet(), selection, getTags(support));
+        ChangePropertyCommand command = new ChangePropertyCommand(OsmDataManager.getInstance().getEditDataSet(), selection, getTags(support));
         commitCommands(selection, Collections.singletonList(command));
         return true;
     }

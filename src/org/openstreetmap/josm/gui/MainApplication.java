@@ -77,7 +77,6 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
-import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -89,7 +88,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.OsmData;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
@@ -417,47 +416,55 @@ public class MainApplication extends Main {
         return mainFrame;
     }
 
+    /**
+     * @deprecated Use {@code OsmDataManager.getInstance().getInProgressSelection()}
+     */
+    @Deprecated
     @Override
     public Collection<OsmPrimitive> getInProgressSelection() {
-        if (map != null && map.mapMode instanceof DrawAction) {
-            return ((DrawAction) map.mapMode).getInProgressSelection();
-        } else {
-            DataSet ds = layerManager.getActiveDataSet();
-            if (ds == null) return Collections.emptyList();
-            return ds.getSelected();
-        }
+        return OsmDataManager.getInstance().getInProgressSelection();
     }
 
+    /**
+     * @deprecated Use {@code OsmDataManager.getInstance().getInProgressSelection()}
+     */
+    @Deprecated
     @Override
     public Collection<? extends IPrimitive> getInProgressISelection() {
-        if (map != null && map.mapMode instanceof DrawAction) {
-            return ((DrawAction) map.mapMode).getInProgressSelection();
-        } else {
-            OsmData<?, ?, ?, ?> ds = layerManager.getActiveData();
-            if (ds == null) return Collections.emptyList();
-            return ds.getSelected();
-        }
+        return OsmDataManager.getInstance().getInProgressSelection();
     }
 
+    /**
+     * @deprecated Use {@code OsmDataManager.getInstance().getEditDataSet()}
+     */
+    @Deprecated
     @Override
     public DataSet getEditDataSet() {
-        return getLayerManager().getEditDataSet();
+        return OsmDataManager.getInstance().getEditDataSet();
     }
 
+    /**
+     * @deprecated Use {@code OsmDataManager.getInstance().getActiveDataSet()}
+     */
+    @Deprecated
     @Override
     public DataSet getActiveDataSet() {
-        return getLayerManager().getActiveDataSet();
+        return OsmDataManager.getInstance().getActiveDataSet();
     }
 
+    /**
+     * @deprecated Use {@code OsmDataManager.getInstance().setActiveDataSet}
+     */
+    @Deprecated
     @Override
     public void setActiveDataSet(DataSet ds) {
-        Optional<OsmDataLayer> layer = getLayerManager().getLayersOfType(OsmDataLayer.class).stream()
-                .filter(l -> l.data.equals(ds)).findFirst();
-        if (layer.isPresent()) {
-            getLayerManager().setActiveLayer(layer.get());
-        }
+        OsmDataManager.getInstance().setActiveDataSet(ds);
     }
 
+    /**
+     * @deprecated Use {@code OsmDataManager.getInstance().containsDataSet}
+     */
+    @Deprecated
     @Override
     public boolean containsDataSet(DataSet ds) {
         return getLayerManager().getLayersOfType(OsmDataLayer.class).stream().anyMatch(l -> l.data.equals(ds));
@@ -487,7 +494,7 @@ public class MainApplication extends Main {
      * There should be no need to access this to access any map data. Use {@link #layerManager} instead.
      * @return the MapFrame
      * @see MainPanel
-     * @since 12630 (as a replacement to {@code Main.map})
+     * @since 12630
      */
     public static MapFrame getMap() {
         return map;
@@ -496,7 +503,7 @@ public class MainApplication extends Main {
     /**
      * Returns the main panel.
      * @return the main panel
-     * @since 12642 (as a replacement to {@code Main.main.panel})
+     * @since 12642
      */
     public static MainPanel getMainPanel() {
         return mainPanel;
@@ -514,7 +521,7 @@ public class MainApplication extends Main {
     /**
      * Returns the toolbar preference control to register new actions.
      * @return the toolbar preference control
-     * @since 12637 (as a replacement to {@code Main.toolbar})
+     * @since 12637
      */
     public static ToolbarPreferences getToolbar() {
         return toolbar;

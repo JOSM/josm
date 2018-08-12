@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -382,10 +383,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (Main.main == null) {
-            return;
-        }
-        DataSet ds = Main.main.getEditDataSet();
+        DataSet ds = OsmDataManager.getInstance().getEditDataSet();
         Collection<OsmPrimitive> participants = Collections.emptyList();
         if (ds != null) {
             participants = ds.getSelected();
@@ -564,7 +562,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     }
 
     protected final void updateEnabledState() {
-        setEnabled(Main.main != null && Main.main.getEditDataSet() != null);
+        setEnabled(OsmDataManager.getInstance().getEditDataSet() != null);
     }
 
     @Override
