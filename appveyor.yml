@@ -1,15 +1,12 @@
 version: '{build}'
-branches:
-  only:
-    - mirror
 image: Visual Studio 2017
 install:
   - cinst ant
   - refreshenv
 build_script:
-  - ant compile javadoc dist distmac checkstyle pmd spotbugs
+  - ant compile dist distmac checkstyle pmd spotbugs
 test_script:
-  - ant test
+  - ant test-unit-hardfail
 after_test:
   - ps: |
         $wc = New-Object 'System.Net.WebClient'
