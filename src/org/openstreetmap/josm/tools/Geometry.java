@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -1045,7 +1044,7 @@ public final class Geometry {
      * Calculate area and perimeter length of a polygon in the given projection.
      *
      * @param nodes the list of nodes representing the polygon
-     * @param projection the projection to use for the calculation, {@code null} defaults to {@link Main#getProjection()}
+     * @param projection the projection to use for the calculation, {@code null} defaults to {@link ProjectionRegistry#getProjection()}
      * @return area and perimeter
      * @since 13638 (signature)
      */

@@ -280,20 +280,7 @@ public class Preferences extends AbstractPreferences {
         addPossibleResourceDir(locations, dirs.getUserDataDirectory(false).getPath());
         addPossibleResourceDir(locations, getSystemEnv("JOSM_RESOURCES"));
         addPossibleResourceDir(locations, getSystemProperty("josm.resources"));
-        if (PlatformManager.isPlatformWindows()) {
-            String appdata = getSystemEnv("APPDATA");
-            if (appdata != null && getSystemEnv("ALLUSERSPROFILE") != null
-                    && appdata.lastIndexOf(File.separator) != -1) {
-                appdata = appdata.substring(appdata.lastIndexOf(File.separator));
-                locations.add(new File(new File(getSystemEnv("ALLUSERSPROFILE"),
-                        appdata), "JOSM").getPath());
-            }
-        } else {
-            locations.add("/usr/local/share/josm/");
-            locations.add("/usr/local/lib/josm/");
-            locations.add("/usr/share/josm/");
-            locations.add("/usr/lib/josm/");
-        }
+        locations.addAll(PlatformManager.getPlatform().getPossiblePreferenceDirs());
         return locations;
     }
 
