@@ -21,10 +21,12 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainApplicationTest;
+import org.openstreetmap.josm.gui.MainInitialization;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.I18n;
@@ -160,7 +162,7 @@ public class JOSMFixture {
         initMainPanel(false);
         initToolbar();
         if (Main.main == null) {
-            new MainApplication().initialize();
+            Lifecycle.initialize(new MainInitialization(new MainApplication()));
         }
         // Add a test layer to the layer manager to get the MapFrame
         MainApplication.getLayerManager().addLayer(new TestLayer());

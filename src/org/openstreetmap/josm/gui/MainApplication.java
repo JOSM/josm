@@ -5,14 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +43,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -68,7 +65,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
-import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -107,7 +103,6 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileSource;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
-import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
@@ -117,7 +112,6 @@ import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
-import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -125,18 +119,14 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.mappaint.RenderingCLI;
 import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
-import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
-import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
@@ -148,10 +138,7 @@ import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmConnection;
-import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.AbstractCredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
@@ -161,7 +148,6 @@ import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.spi.lifecycle.InitStatusListener;
-import org.openstreetmap.josm.spi.lifecycle.InitializationTask;
 import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
@@ -172,15 +158,11 @@ import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
-import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.PlatformHook.NativeOsCallback;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.PlatformManager;
-import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.bugreport.BugReportQueue;
@@ -311,7 +293,7 @@ public class MainApplication extends Main {
     /**
      * Listener that sets the enabled state of undo/redo menu entries.
      */
-    private final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
+    final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
             menu.undo.setEnabled(queueSize > 0);
             menu.redo.setEnabled(redoSize > 0);
         };
@@ -406,91 +388,6 @@ public class MainApplication extends Main {
                 }
             }
         }
-    }
-
-    @Override
-    protected List<InitializationTask> beforeInitializationTasks() {
-        return Arrays.asList(
-            new InitializationTask(tr("Starting file watcher"), FileWatcher.getDefaultInstance()::start),
-            new InitializationTask(tr("Executing platform startup hook"),
-                    () -> PlatformManager.getPlatform().startupHook(MainApplication::askUpdateJava)),
-            new InitializationTask(tr("Building main menu"), this::initializeMainWindow),
-            new InitializationTask(tr("Updating user interface"), () -> {
-                UndoRedoHandler.getInstance().addCommandQueueListener(redoUndoListener);
-                // creating toolbar
-                GuiHelper.runInEDTAndWait(() -> contentPanePrivate.add(toolbar.control, BorderLayout.NORTH));
-                // help shortcut
-                registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
-                        KeyEvent.VK_F1, Shortcut.DIRECT));
-            }),
-            // This needs to be done before RightAndLefthandTraffic::initialize is called
-            new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize)
-        );
-    }
-
-    @Override
-    protected Collection<InitializationTask> parallelInitializationTasks() {
-        return Arrays.asList(
-            new InitializationTask(tr("Initializing OSM API"), () -> {
-                    OsmApi.addOsmApiInitializationListener(api -> {
-                        // This checks if there are any layers currently displayed that are now on the blacklist, and removes them.
-                        // This is a rare situation - probably only occurs if the user changes the API URL in the preferences menu.
-                        // Otherwise they would not have been able to load the layers in the first place because they would have been disabled
-                        if (isDisplayingMapView()) {
-                            for (Layer l : getLayerManager().getLayersOfType(ImageryLayer.class)) {
-                                if (((ImageryLayer) l).getInfo().isBlacklisted()) {
-                                    Logging.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
-                                    getLayerManager().removeLayer(l);
-                                }
-                            }
-                        }
-                    });
-                    // We try to establish an API connection early, so that any API
-                    // capabilities are already known to the editor instance. However
-                    // if it goes wrong that's not critical at this stage.
-                    try {
-                        OsmApi.getOsmApi().initialize(null, true);
-                    } catch (OsmTransferCanceledException | OsmApiInitializationException | SecurityException e) {
-                        Logging.warn(Logging.getErrorMessage(Utils.getRootCause(e)));
-                    }
-                }),
-            new InitializationTask(tr("Initializing internal traffic data"), RightAndLefthandTraffic::initialize),
-            new InitializationTask(tr("Initializing validator"), OsmValidator::initialize),
-            new InitializationTask(tr("Initializing presets"), TaggingPresets::initialize),
-            new InitializationTask(tr("Initializing map styles"), MapPaintPreference::initialize),
-            new InitializationTask(tr("Loading imagery preferences"), ImageryPreference::initialize)
-        );
-    }
-
-    @Override
-    protected List<Callable<?>> asynchronousCallableTasks() {
-        return Arrays.asList(
-                OverpassTurboQueryWizard::getInstance
-            );
-    }
-
-    @Override
-    protected List<Runnable> asynchronousRunnableTasks() {
-        return Arrays.asList(
-                TMSLayer::getCache,
-                OsmValidator::initializeTests
-            );
-    }
-
-    @Override
-    protected List<InitializationTask> afterInitializationTasks() {
-        return Arrays.asList(
-            new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
-                // hooks for the jmapviewer component
-                FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
-                FeatureAdapter.registerTranslationAdapter(I18n::tr);
-                FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
-                // UI update
-                toolbar.refreshToolbarControl();
-                toolbar.control.updateUI();
-                contentPanePrivate.updateUI();
-            }))
-        );
     }
 
     /**
@@ -1085,8 +982,7 @@ public class MainApplication extends Main {
         preConstructorInit();
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
-        final Main main = new MainApplication(mainFrame);
-        main.initialize();
+        Lifecycle.initialize(new MainInitialization(new MainApplication(mainFrame)));
 
         if (!skipLoadingPlugins) {
             loadLatePlugins(splash, monitor, pluginsToLoad);
