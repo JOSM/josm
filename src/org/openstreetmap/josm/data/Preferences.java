@@ -218,7 +218,7 @@ public class Preferences extends AbstractPreferences {
      * Default value is "JOSM", unless overridden by system property "josm.dir.name".
      * @return the base name of the JOSM directories for preferences, cache and user data
      */
-    public String getJOSMDirectoryBaseName() {
+    public static String getJOSMDirectoryBaseName() {
         String name = getSystemProperty("josm.dir.name");
         if (name != null)
             return name;

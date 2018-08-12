@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 
 /**
@@ -422,19 +423,19 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     @Override
     public File getDefaultCacheDirectory() {
         return new File(getSystemProperty("user.home")+"/Library/Caches",
-                Main.pref.getJOSMDirectoryBaseName());
+                Preferences.getJOSMDirectoryBaseName());
     }
 
     @Override
     public File getDefaultPrefDirectory() {
         return new File(getSystemProperty("user.home")+"/Library/Preferences",
-                Main.pref.getJOSMDirectoryBaseName());
+                Preferences.getJOSMDirectoryBaseName());
     }
 
     @Override
     public File getDefaultUserDataDirectory() {
         return new File(getSystemProperty("user.home")+"/Library",
-                Main.pref.getJOSMDirectoryBaseName());
+                Preferences.getJOSMDirectoryBaseName());
     }
 
     @Override

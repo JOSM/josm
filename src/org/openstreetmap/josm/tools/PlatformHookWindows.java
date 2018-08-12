@@ -77,6 +77,7 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
@@ -483,12 +484,12 @@ public class PlatformHookWindows implements PlatformHook {
             // Fallback for Windows OS earlier than Windows Vista, where the variable is not defined
             p = getSystemEnv("APPDATA");
         }
-        return new File(new File(p, Main.pref.getJOSMDirectoryBaseName()), "cache");
+        return new File(new File(p, Preferences.getJOSMDirectoryBaseName()), "cache");
     }
 
     @Override
     public File getDefaultPrefDirectory() {
-        return new File(getSystemEnv("APPDATA"), Main.pref.getJOSMDirectoryBaseName());
+        return new File(getSystemEnv("APPDATA"), Preferences.getJOSMDirectoryBaseName());
     }
 
     @Override
