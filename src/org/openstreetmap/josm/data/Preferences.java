@@ -35,6 +35,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ColorInfo;
+import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
@@ -115,6 +116,8 @@ public class Preferences extends AbstractPreferences {
 
     private final HashMap<String, ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener>> keyListeners = new HashMap<>();
 
+    private static final Preferences defaultInstance = new Preferences(JosmBaseDirectories.getInstance());
+
     /**
      * Constructs a new {@code Preferences}.
      */
@@ -140,6 +143,15 @@ public class Preferences extends AbstractPreferences {
         this(pref.dirs);
         settingsMap.putAll(pref.settingsMap);
         defaultsMap.putAll(pref.defaultsMap);
+    }
+
+    /**
+     * Returns the main (default) preferences instance.
+     * @return the main (default) preferences instance
+     * @since 14149
+     */
+    public static Preferences main() {
+        return defaultInstance;
     }
 
     /**
@@ -273,8 +285,8 @@ public class Preferences extends AbstractPreferences {
      */
     public static Collection<String> getAllPossiblePreferenceDirs() {
         Set<String> locations = new HashSet<>();
-        addPossibleResourceDir(locations, Config.getDirs().getPreferencesDirectory(false).getPath());
-        addPossibleResourceDir(locations, Config.getDirs().getUserDataDirectory(false).getPath());
+        addPossibleResourceDir(locations, defaultInstance.dirs.getPreferencesDirectory(false).getPath());
+        addPossibleResourceDir(locations, defaultInstance.dirs.getUserDataDirectory(false).getPath());
         addPossibleResourceDir(locations, getSystemEnv("JOSM_RESOURCES"));
         addPossibleResourceDir(locations, getSystemProperty("josm.resources"));
         locations.addAll(PlatformManager.getPlatform().getPossiblePreferenceDirs());

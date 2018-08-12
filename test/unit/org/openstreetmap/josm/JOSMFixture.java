@@ -15,6 +15,7 @@ import java.util.TimeZone;
 
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -103,18 +104,19 @@ public class JOSMFixture {
         }
         System.setProperty("josm.home", josmHome);
         TimeZone.setDefault(DateUtils.UTC);
-        Config.setPreferencesInstance(Main.pref);
+        Preferences pref = Preferences.main();
+        Config.setPreferencesInstance(pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         Config.setUrlsProvider(JosmUrls.getInstance());
-        Main.pref.resetToInitialState();
-        Main.pref.enableSaveOnPut(false);
+        pref.resetToInitialState();
+        pref.enableSaveOnPut(false);
         I18n.init();
         // initialize the plaform hook, and
         // call the really early hook before we anything else
         PlatformManager.getPlatform().preStartupHook();
 
         Logging.setLogLevel(Logging.LEVEL_INFO);
-        Main.pref.init(false);
+        pref.init(false);
         String url = Config.getPref().get("osm-server.url");
         if (url == null || url.isEmpty() || isProductionApiUrl(url)) {
             Config.getPref().put("osm-server.url", "https://api06.dev.openstreetmap.org/api");

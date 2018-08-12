@@ -35,7 +35,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
@@ -268,7 +268,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
         fixColorPrefixes();
-        setColors(Main.pref.getAllNamedColors());
+        setColors(Preferences.main().getAllNamedColors());
 
         colorEdit = new JButton(tr("Choose"));
         colorEdit.addActionListener(e -> {

@@ -17,7 +17,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -233,7 +233,7 @@ class DrawSnapHelper {
         absoluteFix = false;
 
         computeSnapAngles();
-        Main.pref.addWeakKeyPreferenceChangeListener(DRAW_ANGLESNAP_ANGLES, e -> this.computeSnapAngles());
+        Preferences.main().addWeakKeyPreferenceChangeListener(DRAW_ANGLESNAP_ANGLES, e -> this.computeSnapAngles());
     }
 
     private void computeSnapAngles() {

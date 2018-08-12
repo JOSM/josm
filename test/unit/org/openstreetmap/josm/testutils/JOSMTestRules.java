@@ -25,6 +25,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.User;
@@ -417,7 +418,8 @@ public class JOSMTestRules implements TestRule {
             }
         }
 
-        Config.setPreferencesInstance(Main.pref);
+        Preferences pref = Preferences.main();
+        Config.setPreferencesInstance(pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         Config.setUrlsProvider(JosmUrls.getInstance());
         // All tests use the same timezone.
@@ -448,10 +450,10 @@ public class JOSMTestRules implements TestRule {
         // Add preferences
         if (usePreferences) {
             @SuppressWarnings("unchecked")
-            final Map<String, Setting<?>> defaultsMap = (Map<String, Setting<?>>) TestUtils.getPrivateField(Main.pref, "defaultsMap");
+            final Map<String, Setting<?>> defaultsMap = (Map<String, Setting<?>>) TestUtils.getPrivateField(pref, "defaultsMap");
             defaultsMap.clear();
-            Main.pref.resetToInitialState();
-            Main.pref.enableSaveOnPut(false);
+            pref.resetToInitialState();
+            pref.enableSaveOnPut(false);
             // No pref init -> that would only create the preferences file.
             // We force the use of a wrong API server, just in case anyone attempts an upload
             Config.getPref().put("osm-server.url", "http://invalid");
@@ -542,7 +544,7 @@ public class JOSMTestRules implements TestRule {
     private void cleanUpFromJosmFixture() {
         MemoryManagerTest.resetState(true);
         cleanLayerEnvironment();
-        Main.pref.resetToInitialState();
+        Preferences.main().resetToInitialState();
         System.gc();
     }
 
@@ -583,7 +585,7 @@ public class JOSMTestRules implements TestRule {
 
         // TODO: Remove global listeners and other global state.
         ProjectionRegistry.clearProjectionChangeListeners();
-        Main.pref.resetToInitialState();
+        Preferences.main().resetToInitialState();
 
         if (this.assumeRevisionString != null && this.originalVersion != null) {
             TestUtils.setPrivateStaticField(Version.class, "instance", this.originalVersion);

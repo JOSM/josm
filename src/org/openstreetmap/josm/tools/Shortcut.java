@@ -21,7 +21,7 @@ import javax.swing.JMenu;
 import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -385,7 +385,7 @@ public final class Shortcut {
         // (1) System reserved shortcuts
         PlatformManager.getPlatform().initSystemShortcuts();
         // (2) User defined shortcuts
-        Main.pref.getAllPrefixCollectionKeys("shortcut.entry.").stream()
+        Preferences.main().getAllPrefixCollectionKeys("shortcut.entry.").stream()
                 .map(Shortcut::new)
                 .filter(sc -> !findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()).isPresent())
                 .sorted(Comparator.comparing(sc -> sc.isAssignedUser() ? 1 : sc.isAssignedDefault() ? 2 : 3))

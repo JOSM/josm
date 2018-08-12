@@ -129,7 +129,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                 applyFilter();
             }
         });
-        readPreferences(Main.pref);
+        readPreferences(Preferences.main());
 
         applyFilter();
         table = new PreferencesTable(displayData);
@@ -180,11 +180,11 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
     private void readPreferences(Preferences tmpPrefs) {
         Map<String, Setting<?>> loaded;
-        Map<String, Setting<?>> orig = Main.pref.getAllSettings();
+        Map<String, Setting<?>> orig = Preferences.main().getAllSettings();
         Map<String, Setting<?>> defaults = tmpPrefs.getAllDefaults();
         orig.remove("osm-server.password");
         defaults.remove("osm-server.password");
-        if (tmpPrefs != Main.pref) {
+        if (tmpPrefs != Preferences.main()) {
             loaded = tmpPrefs.getAllSettings();
             // plugins preference keys may be changed directly later, after plugins are downloaded
             // so we do not want to show it in the table as "changed" now
@@ -261,7 +261,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         if (files.length == 0)
             return;
 
-        Preferences tmpPrefs = new Preferences(Main.pref);
+        Preferences tmpPrefs = new Preferences(Preferences.main());
 
         StringBuilder log = new StringBuilder();
         log.append("<html>");
@@ -323,7 +323,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         profileTypes.put(marktr("imagery"), "imagery.*");
 
         for (Entry<String, String> e: profileTypes.entrySet()) {
-            menu.add(new ExportProfileAction(Main.pref, e.getKey(), e.getValue()));
+            menu.add(new ExportProfileAction(Preferences.main(), e.getKey(), e.getValue()));
         }
 
         menu.addSeparator();
@@ -338,13 +338,13 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                         "All your settings will be deleted: plugins, imagery, filters, toolbar buttons, keyboard, etc. <br />"+
                         "Are you sure you want to continue?")
                         +"</html>", null, "")) {
-                    Main.pref.resetToDefault();
+                    Preferences.main().resetToDefault();
                     try {
-                        Main.pref.save();
+                        Preferences.main().save();
                     } catch (IOException | InvalidPathException e) {
                         Logging.log(Logging.LEVEL_WARN, "Exception while saving preferences:", e);
                     }
-                    readPreferences(Main.pref);
+                    readPreferences(Preferences.main());
                     applyFilter();
                 }
             }
@@ -411,7 +411,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            Preferences tmpPrefs = new Preferences(Main.pref);
+            Preferences tmpPrefs = new Preferences(Preferences.main());
             CustomConfigurator.readXML(file, tmpPrefs);
             readPreferences(tmpPrefs);
             String prefRegex = profileTypes.get(type);
@@ -459,7 +459,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     public boolean ok() {
         for (PrefEntry e : allData) {
             if (e.isChanged()) {
-                Main.pref.putSetting(e.getKey(), e.getValue().getValue() == null ? null : e.getValue());
+                Preferences.main().putSetting(e.getKey(), e.getValue().getValue() == null ? null : e.getValue());
             }
         }
         return false;

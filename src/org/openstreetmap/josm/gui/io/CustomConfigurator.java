@@ -99,7 +99,7 @@ public final class CustomConfigurator {
      * @param file - file to open for reading XML
      */
     public static void readXML(File file) {
-        readXML(file, Main.pref);
+        readXML(file, Preferences.main());
     }
 
     /**
@@ -205,7 +205,7 @@ public final class CustomConfigurator {
      */
     public static void exportPreferencesKeysByPatternToFile(String fileName, boolean append, String pattern) {
         List<String> keySet = new ArrayList<>();
-        Map<String, Setting<?>> allSettings = Main.pref.getAllSettings();
+        Map<String, Setting<?>> allSettings = Preferences.main().getAllSettings();
         for (String key: allSettings.keySet()) {
             if (key.matches(pattern))
                 keySet.add(key);
@@ -226,7 +226,7 @@ public final class CustomConfigurator {
         Document exportDocument = null;
 
         try {
-            String toXML = Main.pref.toXML(true);
+            String toXML = Preferences.main().toXML(true);
             DocumentBuilder builder = XmlUtils.newSafeDOMBuilder();
             document = builder.parse(new ByteArrayInputStream(toXML.getBytes(StandardCharsets.UTF_8)));
             exportDocument = builder.newDocument();
@@ -357,7 +357,7 @@ public final class CustomConfigurator {
                     }
                     for (PluginInformation pi4: toDeletePlugins) {
                         pls.remove(pi4.name);
-                        new File(Main.pref.getPluginsDirectory(), pi4.name+".jar").deleteOnExit();
+                        new File(Preferences.main().getPluginsDirectory(), pi4.name+".jar").deleteOnExit();
                     }
                     Config.getPref().putList("plugins", pls);
                 });
@@ -374,7 +374,7 @@ public final class CustomConfigurator {
         } else if ("cache".equals(base)) {
             dir = Config.getDirs().getCacheDirectory(false).getAbsolutePath();
         } else if ("plugins".equals(base)) {
-            dir = Main.pref.getPluginsDirectory().getAbsolutePath();
+            dir = Preferences.main().getPluginsDirectory().getAbsolutePath();
         } else {
             dir = null;
         }

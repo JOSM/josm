@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -47,7 +47,7 @@ public class MainTermination implements Runnable {
         MainApplication.getLayerManager().resetState();
         ImageProvider.shutdown(false);
         try {
-            Main.pref.saveDefaults();
+            Preferences.main().saveDefaults();
         } catch (IOException | InvalidPathException ex) {
             Logging.log(Logging.LEVEL_WARN, tr("Failed to save default preferences."), ex);
         }

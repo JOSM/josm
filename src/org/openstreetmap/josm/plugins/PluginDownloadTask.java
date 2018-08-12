@@ -14,7 +14,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -154,7 +154,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
 
     @Override
     protected void realRun() throws SAXException, IOException {
-        File pluginDir = Main.pref.getPluginsDirectory();
+        File pluginDir = Preferences.main().getPluginsDirectory();
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
             String message = tr("Failed to create plugin directory ''{0}''", pluginDir.toString());
             lastException = new PluginDownloadException(message);

@@ -25,7 +25,6 @@ import javax.swing.JPopupMenu;
 import org.awaitility.Awaitility;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
@@ -216,7 +215,7 @@ public class MinimapDialogTest {
 
         assertEquals(0xff00ff00, paintedSlippyMap.getRGB(0, 0));
 
-        assertEquals("Green Tiles", Main.pref.get("slippy_map_chooser.mapstyle", "Fail"));
+        assertEquals("Green Tiles", Config.getPref().get("slippy_map_chooser.mapstyle", "Fail"));
     }
 
     /**
@@ -243,7 +242,7 @@ public class MinimapDialogTest {
         this.clickSourceMenuItemByLabel("Magenta Tiles");
         this.assertSingleSelectedSourceLabel("Magenta Tiles");
 
-        assertEquals("Magenta Tiles", Main.pref.get("slippy_map_chooser.mapstyle", "Fail"));
+        assertEquals("Magenta Tiles", Config.getPref().get("slippy_map_chooser.mapstyle", "Fail"));
     }
 
     /**

@@ -12,8 +12,8 @@ import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -61,7 +61,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
         final File srcPluginFile = new File(
             new File(TestUtils.getTestDataRoot()), "__files/" + this.pluginPath
         );
-        final File pluginDir = Main.pref.getPluginsDirectory();
+        final File pluginDir = Preferences.main().getPluginsDirectory();
         final File pluginFile = new File(pluginDir, "dummy_plugin.jar");
         final File pluginFileNew = new File(pluginDir, "dummy_plugin.jar.new");
 
@@ -103,7 +103,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
         final File srcPluginFile = new File(
             new File(TestUtils.getTestDataRoot()), "__files/" + this.pluginPath
         );
-        final File pluginDir = Main.pref.getPluginsDirectory();
+        final File pluginDir = Preferences.main().getPluginsDirectory();
         final File pluginFile = new File(pluginDir, "corrupted_plugin.jar");
         final File pluginFileNew = new File(pluginDir, "corrupted_plugin.jar.new");
         // have to store this manifest externally as it clearly can't be read from our corrupted plugin

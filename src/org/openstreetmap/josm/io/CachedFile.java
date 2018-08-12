@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -297,7 +297,7 @@ public class CachedFile implements Closeable {
             } else if (name.startsWith("josmdir://")) {
                 cacheFile = new File(Config.getDirs().getUserDataDirectory(false), name.substring("josmdir://".length()));
             } else if (name.startsWith("josmplugindir://")) {
-                cacheFile = new File(Main.pref.getPluginsDirectory(), name.substring("josmplugindir://".length()));
+                cacheFile = new File(Preferences.main().getPluginsDirectory(), name.substring("josmplugindir://".length()));
             } else {
                 cacheFile = new File(name);
             }
