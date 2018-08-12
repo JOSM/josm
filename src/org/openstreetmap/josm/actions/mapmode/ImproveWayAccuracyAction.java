@@ -511,13 +511,13 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                     }
                 }
 
-
             } else if (candidateNode != null) {
                 // Moving the highlighted node
                 EastNorth nodeEN = candidateNode.getEastNorth();
                 EastNorth cursorEN = mv.getEastNorth(mousePos.x, mousePos.y);
 
-                UndoRedoHandler.getInstance().add(new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
+                UndoRedoHandler.getInstance().add(
+                        new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
             }
         }
 
