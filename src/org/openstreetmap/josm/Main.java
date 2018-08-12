@@ -9,7 +9,6 @@ import java.util.Set;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.IOsmDataManager;
-import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -45,7 +44,7 @@ public abstract class Main implements IOsmDataManager {
      * @deprecated Use {@link Config#getPref()} or {@link Preferences#main()}
      */
     @Deprecated
-    public static final Preferences pref = new Preferences(JosmBaseDirectories.getInstance());
+    public static final Preferences pref = Preferences.main();
 
     /**
      * The commands undo/redo handler.
