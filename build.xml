@@ -506,7 +506,7 @@ Build-Date: ${build.tstamp}
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
             <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="${jacoco.includes}"
                 inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}">
-                <junit printsummary="yes" fork="true" forkmode="once">
+                <junit printsummary="yes" fork="true" forkmode="once" failureproperty="test.@{testfamily}@{testITsuffix}.failed">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
                     <jvmarg value="-javaagent:${test.dir}/lib/jmockit-1.41.jar"/>
                     <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
@@ -558,14 +558,44 @@ Build-Date: ${build.tstamp}
         <call-junit testfamily="unit"/>
         <call-junit testfamily="functional"/>
     </target>
+    <target name="test-hardfail" depends="test" description="Run 'test' target but abort if tests failed">
+        <fail message="'test' failed">
+            <condition>
+                <or>
+                    <isset property="test.unit.failed"/>
+                    <isset property="test.functional.failed"/>
+                </or>
+            </condition>
+        </fail>
+    </target>
+    <target name="test-unit" depends="test-compile" unless="test-unit.notRequired"
+        description="Run unit tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
+        <call-junit testfamily="unit"/>
+    </target>
+    <target name="test-unit-hardfail" depends="test-unit" description="Run 'test-unit' target but abort if tests failed">
+        <fail message="'test-unit' failed" if="test.unit.failed"/>
+    </target>
     <target name="test-it" depends="test-compile" unless="test-it.notRequired"
         description="Run integration tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <call-junit testfamily="unit" testITsuffix="IT"/>
         <call-junit testfamily="functional" testITsuffix="IT"/>
     </target>
+    <target name="test-it-hardfail" depends="test-it" description="Run 'test-it' target but abort if tests failed">
+        <fail message="'test-it' failed">
+            <condition>
+                <or>
+                    <isset property="test.unitIT.failed"/>
+                    <isset property="test.functionalIT.failed"/>
+                </or>
+            </condition>
+        </fail>
+    </target>
     <target name="test-perf" depends="test-compile" unless="test-perf.notRequired"
         description="Run performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <call-junit testfamily="performance" coverage="false"/>
+    </target>
+    <target name="test-perf-hardfail" depends="test-perf" description="Run 'test-perf' target but abort if tests failed">
+        <fail message="'test-perf' failed" if="test.performance.failed"/>
     </target>
     <target name="test-html" depends="test, test-it, test-perf" description="Generate HTML test reports">
         <!-- May require additional ant dependencies like ant-trax package -->
