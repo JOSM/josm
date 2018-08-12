@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
@@ -168,7 +168,7 @@ public abstract class UnconnectedWays extends Test {
         othernodes = new HashSet<>();
         mindist = Config.getPref().getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Config.getPref().getDouble(PREFIX + ".way_way_distance", 0.0);
-        DataSet dataSet = Main.main != null ? Main.main.getEditDataSet() : null;
+        DataSet dataSet = OsmDataManager.getInstance().getEditDataSet();
         dsArea = dataSet == null ? null : dataSet.getDataSourceArea();
     }
 

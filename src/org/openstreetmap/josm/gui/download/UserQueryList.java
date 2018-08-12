@@ -41,7 +41,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
@@ -244,7 +243,7 @@ public final class UserQueryList extends SearchTextResultListPanel<UserQueryList
     }
 
     /**
-     * Saves all elements from the list to {@link Main#pref}.
+     * Saves all elements from the list to {@link Config#getPref}.
      */
     private void savePreferences() {
         List<Map<String, String>> toSave = new ArrayList<>(this.items.size());
@@ -261,7 +260,7 @@ public final class UserQueryList extends SearchTextResultListPanel<UserQueryList
     }
 
     /**
-     * Loads the user saved items from {@link Main#pref}.
+     * Loads the user saved items from {@link Config#getPref}.
      * @return A set of the user saved items.
      */
     private Map<String, SelectorItem> restorePreferences() {

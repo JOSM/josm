@@ -18,6 +18,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Tag;
@@ -52,7 +53,7 @@ public class PrimitiveTagTransferPaster extends AbstractTagPaster {
         for (Tag tag : tagPaster.execute()) {
             Map<String, String> tags = new HashMap<>(1);
             tags.put(tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue());
-            ChangePropertyCommand cmd = new ChangePropertyCommand(Main.main.getEditDataSet(), selection, tags);
+            ChangePropertyCommand cmd = new ChangePropertyCommand(OsmDataManager.getInstance().getEditDataSet(), selection, tags);
             if (cmd.getObjectsNumber() > 0) {
                 commands.add(cmd);
             }

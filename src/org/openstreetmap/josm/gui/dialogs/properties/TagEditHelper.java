@@ -68,6 +68,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
@@ -231,7 +232,7 @@ public class TagEditHelper {
      */
     public void addTag() {
         changedKey = null;
-        sel = Main.main.getInProgressSelection();
+        sel = OsmDataManager.getInstance().getInProgressSelection();
         if (sel == null || sel.isEmpty())
             return;
 
@@ -262,7 +263,7 @@ public class TagEditHelper {
     */
     public void editTag(final int row, boolean focusOnKey) {
         changedKey = null;
-        sel = Main.main.getInProgressSelection();
+        sel = OsmDataManager.getInstance().getInProgressSelection();
         if (sel == null || sel.isEmpty())
             return;
 
@@ -447,7 +448,7 @@ public class TagEditHelper {
             JPanel p = new JPanel(new GridBagLayout());
             mainPanel.add(p, BorderLayout.CENTER);
 
-            AutoCompletionManager autocomplete = AutoCompletionManager.of(Main.main.getActiveDataSet());
+            AutoCompletionManager autocomplete = AutoCompletionManager.of(OsmDataManager.getInstance().getActiveDataSet());
             List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
 
             keys = new AutoCompletingComboBox(key);
@@ -564,7 +565,7 @@ public class TagEditHelper {
         @Override
         public void setupDialog() {
             super.setupDialog();
-            buttons.get(0).setEnabled(!Main.main.getActiveDataSet().isLocked());
+            buttons.get(0).setEnabled(!OsmDataManager.getInstance().getActiveDataSet().isLocked());
             final Dimension size = getSize();
             // Set resizable only in width
             setMinimumSize(size);
@@ -700,7 +701,7 @@ public class TagEditHelper {
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
 
             cacheRecentTags();
-            AutoCompletionManager autocomplete = AutoCompletionManager.of(Main.main.getActiveDataSet());
+            AutoCompletionManager autocomplete = AutoCompletionManager.of(OsmDataManager.getInstance().getActiveDataSet());
             List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
 
             // remove the object's tag keys from the list

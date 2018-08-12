@@ -16,8 +16,8 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -42,8 +42,7 @@ public abstract class TaggingPresetItem {
     }
 
     protected void initAutoCompletionField(AutoCompletingTextField field, List<String> keys) {
-        if (Main.main == null) return;
-        DataSet data = Main.main.getEditDataSet();
+        DataSet data = OsmDataManager.getInstance().getEditDataSet();
         if (data == null) {
             return;
         }

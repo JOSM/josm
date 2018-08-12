@@ -23,7 +23,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.openstreetmap.josm.Main;
@@ -417,5 +420,15 @@ public class PlatformHookUnixoid implements PlatformHook {
             }
         }
         return null;
+    }
+
+    @Override
+    public Collection<String> getPossiblePreferenceDirs() {
+        Set<String> locations = new HashSet<>();
+        locations.add("/usr/local/share/josm/");
+        locations.add("/usr/local/lib/josm/");
+        locations.add("/usr/share/josm/");
+        locations.add("/usr/lib/josm/");
+        return locations;
     }
 }

@@ -9,9 +9,9 @@ import java.util.Objects;
 
 import javax.swing.Icon;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -72,7 +72,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
     @Override
     public void undoCommand() {
         DataSet ds = getAffectedDataSet();
-        if (!Main.main.containsDataSet(ds)) {
+        if (!OsmDataManager.getInstance().containsDataSet(ds)) {
             Logging.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     ds.getName()
@@ -80,7 +80,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
             return;
         }
 
-        Main.main.setActiveDataSet(ds);
+        OsmDataManager.getInstance().setActiveDataSet(ds);
 
         // restore the former state
         //

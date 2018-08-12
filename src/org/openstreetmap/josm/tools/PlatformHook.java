@@ -15,6 +15,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -367,5 +369,14 @@ public interface PlatformHook {
     default File resolveFileLink(File file) {
         // Override if needed
         return file;
+    }
+
+    /**
+     * Returns a set of possible platform specific directories where resources could be stored.
+     * @return A set of possible platform specific directories where resources could be stored.
+     * @since 14144
+     */
+    default Collection<String> getPossiblePreferenceDirs() {
+        return Collections.emptyList();
     }
 }

@@ -3,17 +3,12 @@ package org.openstreetmap.josm;
 
 import java.awt.Component;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.OsmData;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IOsmDataManager;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
@@ -31,7 +26,7 @@ import org.openstreetmap.josm.tools.PlatformManager;
  * Abstract class holding various static global variables and methods used in large parts of JOSM application.
  * @since 98
  */
-public abstract class Main {
+public abstract class Main implements IOsmDataManager {
 
     /**
      * Global parent component for all dialogs and message boxes
@@ -40,7 +35,9 @@ public abstract class Main {
 
     /**
      * Global application.
+     * @deprecated Not needed anymore
      */
+    @Deprecated
     public static volatile Main main;
 
     /**
@@ -82,57 +79,6 @@ public abstract class Main {
     private static void setInstance(Main instance) {
         main = instance;
     }
-
-    /**
-     * Replies the current selected OSM primitives, from a end-user point of view.
-     * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
-     * @return The current selected OSM primitives, from a end-user point of view. Can be {@code null}.
-     * @since 6546
-     */
-    public Collection<OsmPrimitive> getInProgressSelection() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Replies the current selected primitives, from a end-user point of view.
-     * It is not always technically the same collection of primitives than {@link OsmData#getSelected()}.
-     * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
-     * @since 13926
-     */
-    public Collection<? extends IPrimitive> getInProgressISelection() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Gets the active edit data set (not read-only).
-     * @return That data set, <code>null</code>.
-     * @see #getActiveDataSet
-     * @since 12691
-     */
-    public abstract DataSet getEditDataSet();
-
-    /**
-     * Gets the active data set (can be read-only).
-     * @return That data set, <code>null</code>.
-     * @see #getEditDataSet
-     * @since 13434
-     */
-    public abstract DataSet getActiveDataSet();
-
-    /**
-     * Sets the active data set (and also edit data set if not read-only).
-     * @param ds New data set, or <code>null</code>
-     * @since 13434
-     */
-    public abstract void setActiveDataSet(DataSet ds);
-
-    /**
-     * Determines if the list of data sets managed by JOSM contains {@code ds}.
-     * @param ds the data set to look for
-     * @return {@code true} if the list of data sets managed by JOSM contains {@code ds}
-     * @since 12718
-     */
-    public abstract boolean containsDataSet(DataSet ds);
 
     ///////////////////////////////////////////////////////////////////////////
     //  Implementation part

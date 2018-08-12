@@ -64,9 +64,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -779,5 +781,17 @@ public class PlatformHookWindows implements PlatformHook {
             }
         }
         return file;
+    }
+
+    @Override
+    public Collection<String> getPossiblePreferenceDirs() {
+        Set<String> locations = new HashSet<>();
+        String appdata = getSystemEnv("APPDATA");
+        if (appdata != null && getSystemEnv("ALLUSERSPROFILE") != null
+                && appdata.lastIndexOf(File.separator) != -1) {
+            appdata = appdata.substring(appdata.lastIndexOf(File.separator));
+            locations.add(new File(new File(getSystemEnv("ALLUSERSPROFILE"), appdata), "JOSM").getPath());
+        }
+        return locations;
     }
 }

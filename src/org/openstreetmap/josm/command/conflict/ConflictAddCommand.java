@@ -14,6 +14,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -65,7 +66,7 @@ public class ConflictAddCommand extends Command {
     @Override
     public void undoCommand() {
         DataSet ds = getAffectedDataSet();
-        if (Main.main != null && !Main.main.containsDataSet(ds)) {
+        if (!OsmDataManager.getInstance().containsDataSet(ds)) {
             Logging.warn(tr("Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
                     ds.getName(),
                     conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())

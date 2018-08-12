@@ -274,26 +274,13 @@ public class Preferences extends AbstractPreferences {
      * Returns a set of all existing directories where resources could be stored.
      * @return A set of all existing directories where resources could be stored.
      */
-    public Collection<String> getAllPossiblePreferenceDirs() {
+    public static Collection<String> getAllPossiblePreferenceDirs() {
         Set<String> locations = new HashSet<>();
-        addPossibleResourceDir(locations, dirs.getPreferencesDirectory(false).getPath());
-        addPossibleResourceDir(locations, dirs.getUserDataDirectory(false).getPath());
+        addPossibleResourceDir(locations, Config.getDirs().getPreferencesDirectory(false).getPath());
+        addPossibleResourceDir(locations, Config.getDirs().getUserDataDirectory(false).getPath());
         addPossibleResourceDir(locations, getSystemEnv("JOSM_RESOURCES"));
         addPossibleResourceDir(locations, getSystemProperty("josm.resources"));
-        if (PlatformManager.isPlatformWindows()) {
-            String appdata = getSystemEnv("APPDATA");
-            if (appdata != null && getSystemEnv("ALLUSERSPROFILE") != null
-                    && appdata.lastIndexOf(File.separator) != -1) {
-                appdata = appdata.substring(appdata.lastIndexOf(File.separator));
-                locations.add(new File(new File(getSystemEnv("ALLUSERSPROFILE"),
-                        appdata), "JOSM").getPath());
-            }
-        } else {
-            locations.add("/usr/local/share/josm/");
-            locations.add("/usr/local/lib/josm/");
-            locations.add("/usr/share/josm/");
-            locations.add("/usr/lib/josm/");
-        }
+        locations.addAll(PlatformManager.getPlatform().getPossiblePreferenceDirs());
         return locations;
     }
 

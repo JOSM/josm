@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -101,11 +100,9 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         currentRelationMemberTableModel = new DiffTableModel();
         referenceRelationMemberTableModel = new DiffTableModel();
 
-        if (Main.main != null) {
-            DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-            if (ds != null) {
-                ds.addDataSetListener(this);
-            }
+        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+        if (ds != null) {
+            ds.addDataSetListener(this);
         }
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
     }

@@ -33,9 +33,9 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -239,7 +239,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
-        DataSet ds = Main.main.getEditDataSet();
+        DataSet ds = OsmDataManager.getInstance().getEditDataSet();
         Collection<OsmPrimitive> selected = (ds == null) ? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
                 text, onlyApplicable, inTags, getTypesInSelection(), selected);
@@ -359,8 +359,8 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             synchronized (typesInSelection) {
                 typesInSelectionDirty = false;
                 typesInSelection.clear();
-                if (Main.main == null || Main.main.getEditDataSet() == null) return typesInSelection;
-                for (OsmPrimitive primitive : Main.main.getEditDataSet().getSelected()) {
+                if (OsmDataManager.getInstance().getEditDataSet() == null) return typesInSelection;
+                for (OsmPrimitive primitive : OsmDataManager.getInstance().getEditDataSet().getSelected()) {
                     typesInSelection.add(TaggingPresetType.forPrimitive(primitive));
                 }
             }
