@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.io.StringReader;
-import java.net.URL;
 import java.util.List;
 
 import org.junit.Rule;
@@ -53,12 +52,6 @@ public class MapCSSParserTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
-
-    @Test
-    public void testKothicStylesheets() throws Exception {
-        new MapCSSParser(new URL("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/default.mapcss").openStream(), "UTF-8");
-        new MapCSSParser(new URL("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/mapink.mapcss").openStream(), "UTF-8");
-    }
 
     @Test
     public void testDeclarations() throws Exception {
