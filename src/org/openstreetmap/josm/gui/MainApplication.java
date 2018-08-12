@@ -547,7 +547,7 @@ public class MainApplication extends Main {
      * @param exitCode The return code
      * @param reason the reason for exiting
      * @return {@code true} if JOSM has been closed, {@code false} if the user has cancelled the operation.
-     * @since 12636 (specialized version of {@link Main#exitJosm})
+     * @since 12636 (specialized version of {@link Lifecycle#exitJosm})
      */
     public static boolean exitJosm(boolean exit, int exitCode, SaveLayersDialog.Reason reason) {
         final boolean proceed = Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->

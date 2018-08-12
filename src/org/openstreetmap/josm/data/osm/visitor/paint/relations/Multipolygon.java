@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -25,6 +24,7 @@ import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
@@ -483,7 +483,7 @@ public class Multipolygon {
         /**
          * Calculate area and perimeter length in the given projection.
          *
-         * @param projection the projection to use for the calculation, {@code null} defaults to {@link Main#getProjection()}
+         * @param projection the projection to use for the calculation, {@code null} defaults to {@link ProjectionRegistry#getProjection()}
          * @return area and perimeter
          */
         public AreaAndPerimeter getAreaAndPerimeter(Projection projection) {

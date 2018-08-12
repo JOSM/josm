@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * Helper to open platform web browser on different platforms
  *
@@ -35,7 +33,7 @@ public final class OpenBrowser {
      * @param uri The URI to display
      * @return <code>null</code> for success or a string in case of an error.
      * @throws IllegalStateException if no platform is set to which opening the URL can be dispatched,
-     * {@link Main#platform}
+     * {@link PlatformManager#getPlatform}
      */
     public static String displayUrl(URI uri) {
         CheckParameterUtil.ensureParameterNotNull(uri, "uri");
@@ -84,7 +82,7 @@ public final class OpenBrowser {
      * @param url The URL to display
      * @return <code>null</code> for success or a string in case of an error.
      * @throws IllegalStateException if no platform is set to which opening the URL can be dispatched,
-     * {@link Main#platform}
+     * {@link PlatformManager#getPlatform}
      */
     public static String displayUrl(String url) {
         try {
