@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -47,7 +45,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.spi.preferences.Setting;
-import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
@@ -282,36 +279,6 @@ public class Preferences extends AbstractPreferences {
         addPossibleResourceDir(locations, getSystemProperty("josm.resources"));
         locations.addAll(PlatformManager.getPlatform().getPossiblePreferenceDirs());
         return locations;
-    }
-
-    /**
-     * Gets all normal (string) settings that have a key starting with the prefix
-     * @param prefix The start of the key
-     * @return The key names of the settings
-     */
-    public synchronized Map<String, String> getAllPrefix(final String prefix) {
-        final Map<String, String> all = new TreeMap<>();
-        for (final Entry<String, Setting<?>> e : settingsMap.entrySet()) {
-            if (e.getKey().startsWith(prefix) && (e.getValue() instanceof StringSetting)) {
-                all.put(e.getKey(), ((StringSetting) e.getValue()).getValue());
-            }
-        }
-        return all;
-    }
-
-    /**
-     * Gets all list settings that have a key starting with the prefix
-     * @param prefix The start of the key
-     * @return The key names of the list settings
-     */
-    public synchronized List<String> getAllPrefixCollectionKeys(final String prefix) {
-        final List<String> all = new LinkedList<>();
-        for (Map.Entry<String, Setting<?>> entry : settingsMap.entrySet()) {
-            if (entry.getKey().startsWith(prefix) && entry.getValue() instanceof ListSetting) {
-                all.add(entry.getKey());
-            }
-        }
-        return all;
     }
 
     /**
