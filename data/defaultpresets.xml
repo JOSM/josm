@@ -5077,6 +5077,8 @@
             <combo key="artwork_type" text="Type" values="mural,sculpture,statue" />
             <text key="name" text="Name" />
             <text key="artist_name" text="Artist Name" />
+            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+            <text key="start_date" text="Start date" />
         </item> <!-- Artwork -->
         <item name="Studio" icon="presets/service/studio.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:amenity=studio"

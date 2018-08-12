@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.preferences;
 
 import java.awt.Color;
 import java.util.List;
+
 import org.openstreetmap.josm.tools.ColorHelper;
 
 /**
@@ -148,4 +149,11 @@ public class ColorInfo {
         return info;
     }
 
+    @Override
+    public String toString() {
+        return "ColorInfo [" + (category != null ? "category=" + category + ", " : "")
+                + (source != null ? "source=" + source + ", " : "") + (name != null ? "name=" + name + ", " : "")
+                + (value != null ? "value=" + value + ", " : "")
+                + (defaultValue != null ? "defaultValue=" + defaultValue : "") + "]";
+    }
 }

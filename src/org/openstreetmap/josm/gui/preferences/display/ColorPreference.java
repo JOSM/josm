@@ -235,8 +235,8 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
                 .map(e -> new ColorEntry(e.getKey(), e.getValue()))
                 .sorted((e1, e2) -> {
                     int cat = Integer.compare(
-                            getCategroyPriority(e1.info.getCategory()),
-                            getCategroyPriority(e2.info.getCategory()));
+                            getCategoryPriority(e1.info.getCategory()),
+                            getCategoryPriority(e2.info.getCategory()));
                     if (cat != 0) return cat;
                     return Collator.getInstance().compare(e1.getDisplay(), e2.getDisplay());
                 })
@@ -245,10 +245,9 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         if (this.colors != null) {
             this.colors.repaint();
         }
-
     }
 
-    private static int getCategroyPriority(String category) {
+    private static int getCategoryPriority(String category) {
         switch (category) {
             case NamedColorProperty.COLOR_CATEGORY_GENERAL: return 1;
             case NamedColorProperty.COLOR_CATEGORY_MAPPAINT: return 2;
@@ -408,7 +407,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         for (ColorEntry e : tableModel.getData()) {
             if (e.info.getValue() != null) {
                 if (e.toProperty().put(e.info.getValue())
-                        && e.key.startsWith("mappaint.")) {
+                        && NamedColorProperty.COLOR_CATEGORY_MAPPAINT.equals(e.info.getCategory())) {
                     ret = true;
                 }
             }
