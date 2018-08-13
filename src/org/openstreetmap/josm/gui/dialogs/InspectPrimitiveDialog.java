@@ -20,7 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SingleSelectionModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
@@ -62,10 +61,10 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
      * @since 12672 (signature)
      */
     public InspectPrimitiveDialog(final Collection<? extends IPrimitive> primitives, OsmData<?, ?, ?, ?> data) {
-        super(Main.parent, tr("Advanced object info"), tr("Close"));
+        super(MainApplication.getMainFrame(), tr("Advanced object info"), tr("Close"));
         this.primitives = new ArrayList<>(primitives);
         setRememberWindowGeometry(getClass().getName() + ".geometry",
-                WindowGeometry.centerInWindow(Main.parent, new Dimension(750, 550)));
+                WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(750, 550)));
 
         setButtonIcons("ok");
         final JTabbedPane tabs = new JTabbedPane();

@@ -12,12 +12,12 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetQuery;
@@ -80,7 +80,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
         if (changesets.isEmpty()) {
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("There are no open changesets"),
                         tr("No open changesets"),
                         JOptionPane.INFORMATION_MESSAGE

@@ -36,10 +36,10 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileFilter;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LogShowDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CustomConfigurator;
@@ -236,7 +236,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         }
 
         if (keys.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent,
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                     tr("Please select some preference keys not marked as default"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -249,7 +249,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         int answer = 0;
         if (hasLists) {
             answer = JOptionPane.showOptionDialog(
-                    Main.parent, tr("What to do with preference lists when this file is to be imported?"), tr("Question"),
+                    MainApplication.getMainFrame(), tr("What to do with preference lists when this file is to be imported?"), tr("Question"),
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                     new String[]{tr("Append preferences from file to existing values"), tr("Replace existing values")}, 0);
         }

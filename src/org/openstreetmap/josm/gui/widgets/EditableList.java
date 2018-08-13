@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -60,7 +60,7 @@ public class EditableList extends JPanel {
 
         addSrcButton.addActionListener(e -> {
             String source = JOptionPane.showInputDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     title,
                     title,
                     JOptionPane.QUESTION_MESSAGE);
@@ -78,20 +78,20 @@ public class EditableList extends JPanel {
             }
             if (row == -1) {
                 if (sourcesList.getModel().getSize() == 0) {
-                    String source1 = JOptionPane.showInputDialog(Main.parent, title, title, JOptionPane.QUESTION_MESSAGE);
+                    String source1 = JOptionPane.showInputDialog(MainApplication.getMainFrame(), title, title, JOptionPane.QUESTION_MESSAGE);
                     if (source1 != null && !source1.isEmpty()) {
                         ((DefaultListModel<String>) sourcesList.getModel()).addElement(source1);
                     }
                 } else {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Please select the row to edit."),
                             tr("Information"),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 }
             } else {
-                String source2 = (String) JOptionPane.showInputDialog(Main.parent,
+                String source2 = (String) JOptionPane.showInputDialog(MainApplication.getMainFrame(),
                         title,
                         title,
                         JOptionPane.QUESTION_MESSAGE, null, null,
@@ -105,7 +105,7 @@ public class EditableList extends JPanel {
 
         deleteSrcButton.addActionListener(e -> {
             if (sourcesList.getSelectedIndex() == -1) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."), tr("Information"),
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("Please select the row to delete."), tr("Information"),
                         JOptionPane.QUESTION_MESSAGE);
             } else {
                 ((DefaultListModel<String>) sourcesList.getModel()).remove(sourcesList.getSelectedIndex());

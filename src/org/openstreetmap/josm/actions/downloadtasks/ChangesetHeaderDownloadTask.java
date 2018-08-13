@@ -10,10 +10,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
@@ -79,7 +79,7 @@ public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
      * @param ids the collection of ids. Empty collection assumed if null.
      */
     public ChangesetHeaderDownloadTask(Collection<Integer> ids) {
-        this(Main.parent, ids, false);
+        this(MainApplication.getMainFrame(), ids, false);
     }
 
     /**
@@ -121,7 +121,7 @@ public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
      * @return the download task
      */
     public static ChangesetHeaderDownloadTask buildTaskForChangesets(Collection<Changeset> changesets) {
-        return buildTaskForChangesets(Main.parent, changesets);
+        return buildTaskForChangesets(MainApplication.getMainFrame(), changesets);
     }
 
     /**

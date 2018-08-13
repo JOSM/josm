@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -293,13 +292,13 @@ public final class ShowStatusReportAction extends JosmAction {
 
         DebugTextDisplay ta = new DebugTextDisplay(text.toString());
 
-        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Status Report"),
                 tr("Copy to clipboard and close"), tr("Report bug"), tr("Close"));
         ed.setButtonIcons("copy", "bug", "cancel");
         ed.setContent(ta, false);
         ed.setMinimumSize(new Dimension(380, 200));
-        ed.setPreferredSize(new Dimension(700, Main.parent.getHeight()-50));
+        ed.setPreferredSize(new Dimension(700, MainApplication.getMainFrame().getHeight()-50));
 
         switch (ed.showDialog().getValue()) {
             case 1: ta.copyToClipboard(); break;

@@ -20,7 +20,6 @@ import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -248,7 +247,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
          * Constructs a new {@code ImageryOffsetDialog}.
          */
         ImageryOffsetDialog() {
-            super(Main.parent,
+            super(MainApplication.getMainFrame(),
                     tr("Adjust imagery offset"),
                     new String[] {tr("OK"), tr("Cancel")},
                     false, false); // Do not dispose on close, so HIDE_ON_CLOSE remains the default behaviour and setVisible is called
@@ -268,7 +267,8 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             tOffset.addFocusListener(this);
             setContent(pnl);
             setupDialog();
-            setRememberWindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(Main.parent, getSize()));
+            setRememberWindowGeometry(getClass().getName() + ".geometry",
+                    WindowGeometry.centerInWindow(MainApplication.getMainFrame(), getSize()));
         }
 
         private boolean areFieldsInFocus() {
@@ -326,7 +326,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
 
         private boolean confirmOverwriteBookmark() {
             ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Overwrite"),
                     tr("Overwrite"), tr("Cancel")
             ) { {

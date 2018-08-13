@@ -71,7 +71,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
@@ -1111,7 +1110,7 @@ public abstract class SourceEditor extends JPanel {
                     }
                 }
                 if (!messages.isEmpty()) {
-                    ExtendedDialog dlg = new ExtendedDialog(Main.parent, tr("Warning"), tr("Cancel"), tr("Continue anyway"));
+                    ExtendedDialog dlg = new ExtendedDialog(MainApplication.getMainFrame(), tr("Warning"), tr("Cancel"), tr("Continue anyway"));
                     dlg.setButtonIcons(
                         ImageProvider.get("cancel"),
                         new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).addOverlay(
@@ -1413,7 +1412,7 @@ public abstract class SourceEditor extends JPanel {
             final String msg = tr(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM), url, emsg);
 
             GuiHelper.runInEDT(() -> HelpAwareOptionPane.showOptionDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     msg,
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE,

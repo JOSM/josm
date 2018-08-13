@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.SplitWayCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -164,7 +163,7 @@ public class SplitWayAction extends JosmAction {
         final transient Way wayToKeep;
 
         SegmentToKeepSelectionDialog(Way selectedWay, List<Way> newWays, Way wayToKeep, List<OsmPrimitive> selection) {
-            super(Main.parent, tr("Which way segment should reuse the history of {0}?", selectedWay.getId()),
+            super(MainApplication.getMainFrame(), tr("Which way segment should reuse the history of {0}?", selectedWay.getId()),
                     new String[]{tr("Ok"), tr("Cancel")}, true);
 
             this.selectedWay = selectedWay;

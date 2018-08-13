@@ -34,7 +34,6 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -80,7 +79,7 @@ public class DownloadDialog extends JDialog {
      */
     public static synchronized DownloadDialog getInstance() {
         if (instance == null) {
-            instance = new DownloadDialog(Main.parent);
+            instance = new DownloadDialog(MainApplication.getMainFrame());
         }
         return instance;
     }

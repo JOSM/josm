@@ -13,7 +13,7 @@ import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -72,7 +72,7 @@ public class GpxExportAction extends DiskAccessAction {
         Layer layer = getLayer();
         if (layer == null) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Nothing to export. Get some data first."),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE

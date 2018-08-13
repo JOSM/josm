@@ -17,7 +17,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -99,7 +98,7 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
             // to fit on screen 800x600
             scrollpane.setPreferredSize(new Dimension(panel.getPreferredSize().width, Math.min(panel.getPreferredSize().height, 450)));
         }
-        int answer = JOptionPane.showConfirmDialog(Main.parent, scrollpane, tr("Customize track drawing"),
+        int answer = JOptionPane.showConfirmDialog(MainApplication.getMainFrame(), scrollpane, tr("Customize track drawing"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) {
             return;

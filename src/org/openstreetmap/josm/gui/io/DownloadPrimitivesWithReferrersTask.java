@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadReferrersTask;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -224,7 +223,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         p.add(scroll, GBC.eop().weight(1.0, 0.0).fill(GBC.HORIZONTAL));
 
         return new ExtendedDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 title,
                 tr("Ok"))
         .setButtonIcons("ok")

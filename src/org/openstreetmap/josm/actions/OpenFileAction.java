@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -208,7 +207,7 @@ public class OpenFileAction extends DiskAccessAction {
             msg.append("</ul></html>");
 
             HelpAwareOptionPane.showMessageDialogInEDT(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     msg.toString(),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE,
@@ -232,7 +231,7 @@ public class OpenFileAction extends DiskAccessAction {
             msg.append("</ul></html>");
 
             HelpAwareOptionPane.showMessageDialogInEDT(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     msg.toString(),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE,
@@ -271,7 +270,7 @@ public class OpenFileAction extends DiskAccessAction {
                 for (final File f : files) {
                     if (!chosenImporter.acceptFile(f)) {
                         if (f.isDirectory()) {
-                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Main.parent, tr(
+                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr(
                                     "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>",
                                     f.getAbsolutePath()), tr("Open file"), JOptionPane.ERROR_MESSAGE));
                             // TODO when changing to Java 6: Don't cancel the task here but use different modality. (Currently 2 dialogs

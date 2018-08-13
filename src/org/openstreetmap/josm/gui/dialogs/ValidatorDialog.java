@@ -28,7 +28,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ValidateAction;
@@ -250,7 +249,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                 // ask if the whole set should be ignored
                 if (asked == JOptionPane.DEFAULT_OPTION) {
                     String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
-                    asked = JOptionPane.showOptionDialog(Main.parent, tr("Ignore whole group or individual elements?"),
+                    asked = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), tr("Ignore whole group or individual elements?"),
                             tr("Ignoring elements"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
                             a, a[1]);
                 }

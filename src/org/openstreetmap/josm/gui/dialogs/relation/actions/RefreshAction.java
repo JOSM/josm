@@ -10,12 +10,12 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.PlatformManager;
@@ -93,7 +93,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         };
 
         return HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("<html>You have unsaved changes in this editor window.<br>"+
                    "<br>Do you want to discard these changes and reload data from layer?</html>"),
                         tr("Unsaved changes"),
@@ -122,7 +122,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         };
 
         return HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("<html>Relation has been deleted outside editor.<br><br>Do you want to close this window?</html>"),
                         tr("Deleted relation"),
                         JOptionPane.WARNING_MESSAGE,

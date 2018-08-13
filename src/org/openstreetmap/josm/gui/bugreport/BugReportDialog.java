@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.bugreport;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -21,8 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -77,7 +76,7 @@ public class BugReportDialog extends JDialog {
                 errorPanel.add(new UrlLabel(Config.getUrls().getJOSMWebsite() + "/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
                 errorPanel.add(new DebugTextDisplay(statusText));
 
-                JOptionPane.showMessageDialog(Main.parent, errorPanel, tr("You have encountered a bug in JOSM"),
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), errorPanel, tr("You have encountered a bug in JOSM"),
                         JOptionPane.ERROR_MESSAGE);
             });
         }
@@ -88,7 +87,7 @@ public class BugReportDialog extends JDialog {
      * @param report The report to display the dialog for.
      */
     public BugReportDialog(BugReport report) {
-        super(findParent(), tr("You have encountered a bug in JOSM"));
+        super(MainApplication.getMainFrame(), tr("You have encountered a bug in JOSM"));
         this.report = report;
         textPanel = new DebugTextDisplay(report);
         setContentPane(content);
@@ -242,14 +241,6 @@ public class BugReportDialog extends JDialog {
     }
 
     /**
-     * A safe way to find a matching parent frame.
-     * @return The parent frame.
-     */
-    private static Frame findParent() {
-        return (Frame) (Main.parent instanceof Frame ? Main.parent : SwingUtilities.getAncestorOfClass(Frame.class, Main.parent));
-    }
-
-    /**
      * Show the bug report for a given exception
      * @param e The exception to display
      * @param exceptionCounter A counter of how many exceptions have already been worked on
@@ -259,7 +250,7 @@ public class BugReportDialog extends JDialog {
     public static SuppressionMode showFor(ReportedException e, int exceptionCounter) {
         if (e.isOutOfMemory()) {
             // do not translate the string, as translation may raise an exception
-            JOptionPane.showMessageDialog(Main.parent, "JOSM is out of memory. " +
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), "JOSM is out of memory. " +
                     "Strange things may happen.\nPlease restart JOSM with the -Xmx###M option,\n" +
                     "where ### is the number of MB assigned to JOSM (e.g. 256).\n" +
                     "Currently, " + Runtime.getRuntime().maxMemory()/1024/1024 + " MB are available to JOSM.",
@@ -273,7 +264,7 @@ public class BugReportDialog extends JDialog {
                 if (downloadTask != null) {
                     // Ask for restart to install new plugin
                     PluginPreference.notifyDownloadResults(
-                            Main.parent, downloadTask, !downloadTask.getDownloadedPlugins().isEmpty());
+                            MainApplication.getMainFrame(), downloadTask, !downloadTask.getDownloadedPlugins().isEmpty());
                     return SuppressionMode.NONE;
                 }
 

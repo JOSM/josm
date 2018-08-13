@@ -13,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -57,7 +56,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
                         + "If you want to upload traces, look here:</html>")),
                 GBC.eol());
         msg.add(new UrlLabel(Config.getUrls().getOSMWebsite() + "/traces", 2), GBC.eop());
-        if (!ConditionalOptionPaneUtil.showConfirmationDialog("convert_to_data", Main.parent, msg, tr("Warning"),
+        if (!ConditionalOptionPaneUtil.showConfirmationDialog("convert_to_data", MainApplication.getMainFrame(), msg, tr("Warning"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, JOptionPane.OK_OPTION)) {
             return;
         }

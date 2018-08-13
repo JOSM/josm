@@ -28,7 +28,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -138,7 +137,8 @@ public class AddTagsDialog extends ExtendedDialog {
      * @param primitives OSM objects that will be modified
      */
     public AddTagsDialog(String[][] tags, String senderName, Collection<? extends OsmPrimitive> primitives) {
-        super(Main.parent, tr("Add tags to selected objects"), new String[] {tr("Add selected tags"), tr("Add all tags"), tr("Cancel")},
+        super(MainApplication.getMainFrame(), tr("Add tags to selected objects"),
+                new String[] {tr("Add selected tags"), tr("Add all tags"), tr("Cancel")},
                 false,
                 true);
         setToolTipTexts(tr("Add checked tags to selected objects"), tr("Shift+Enter: Add all tags to selected objects"), "");

@@ -15,8 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.TransferHandler.TransferSupport;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
@@ -84,7 +84,7 @@ public final class TextTagPaster extends AbstractTagPaster {
      */
     public static int warning(String text, String data, String code) {
         ExtendedDialog ed = new ExtendedDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Do you want to paste these tags?"),
                     tr("Ok"), tr("Cancel"), tr("Clear buffer"), tr("Ignore warnings"));
         ed.setButtonIcons("ok", "cancel", "dialogs/delete", "pastetags");
@@ -117,7 +117,7 @@ public final class TextTagPaster extends AbstractTagPaster {
         }
 
         ExtendedDialog ed = new ExtendedDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Warning"),
                     tr("Ok"), tr("Clear buffer"))
             .setButtonIcons("ok", "dialogs/delete")

@@ -31,7 +31,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -530,7 +529,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         if (newNode) {
             if (n.getCoor().isOutSideWorld()) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("Cannot add a node outside of the world."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE

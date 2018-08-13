@@ -39,7 +39,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -399,7 +398,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         p.add(selector, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
 
         ExtendedDialog dialog = new ExtendedDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 initialValues instanceof Filter ? tr("Filter") : tr("Search"),
                 initialValues instanceof Filter ? tr("Submit filter") : tr("Start Search"),
                 tr("Cancel")
@@ -418,7 +417,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     } catch (SearchParseError | MapCSSException e) {
                         Logging.debug(e);
                         JOptionPane.showMessageDialog(
-                                Main.parent,
+                                MainApplication.getMainFrame(),
                                 "<html>" + tr("Search expression is not valid: \n\n {0}",
                                         e.getMessage().replace("<html>", "").replace("</html>", "")).replace("\n", "<br>") +
                                 "</html>",
@@ -834,7 +833,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             } catch (SearchParseError e) {
                 Logging.debug(e);
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         e.getMessage(),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE

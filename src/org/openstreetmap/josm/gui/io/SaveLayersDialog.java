@@ -41,10 +41,10 @@ import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -110,7 +110,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
      */
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, Reason reason) {
         if (!GraphicsEnvironment.isHeadless()) {
-            SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
+            SaveLayersDialog dialog = new SaveLayersDialog(MainApplication.getMainFrame());
             List<AbstractModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
             for (Layer l: selectedLayers) {
                 if (!(l instanceof AbstractModifiableLayer)) {
@@ -277,7 +277,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         JPanel panel = new LayerListWarningMessagePanel(msg, infos);
         // For unit test coverage in headless mode
         if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showConfirmDialog(Main.parent, panel, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showConfirmDialog(MainApplication.getMainFrame(), panel, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -664,7 +664,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     numProblems
             );
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     msg,
                     tr("Incomplete upload and/or save"),
                     JOptionPane.WARNING_MESSAGE

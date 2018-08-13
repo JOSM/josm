@@ -10,7 +10,6 @@ import java.awt.event.WindowListener;
 
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapStatus.BackgroundProgressMonitor;
@@ -170,7 +169,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
      * @param windowTitle window title
      */
     public PleaseWaitProgressMonitor(String windowTitle) {
-        this(Main.parent);
+        this(MainApplication.getMainFrame());
         this.windowTitle = windowTitle;
     }
 
@@ -400,7 +399,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     public Component getWindowParent() {
         Component parent = dialog;
         if (isInBackground || parent == null)
-            return Main.parent;
+            return MainApplication.getMainFrame();
         else
             return parent;
     }

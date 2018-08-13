@@ -39,7 +39,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -101,7 +100,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
                 } catch (IllegalArgumentException ex) {
                     Logging.warn(ex);
                     if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-                        JOptionPane.showMessageDialog(Main.parent,
+                        JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                                 ex.getMessage(), tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE);
                     }

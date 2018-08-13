@@ -28,7 +28,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.actions.RestartAction;
@@ -118,7 +117,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             if (requiresRestart) {
                 final ButtonSpec[] options = RestartAction.getButtonSpecs();
                 if (0 == HelpAwareOptionPane.showOptionDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         sb.toString(),
                         tr("Restart"),
                         JOptionPane.INFORMATION_MESSAGE,
@@ -131,7 +130,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 }
             } else if (task != null && !task.isCanceled()) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         sb.toString(),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
@@ -174,8 +173,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 }
             }
 
-            if (Main.parent != null) {
-                Main.parent.repaint();
+            if (MainApplication.getMainFrame() != null) {
+                MainApplication.getMainFrame().repaint();
             }
         }
     }

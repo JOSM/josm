@@ -10,7 +10,6 @@ import java.util.Collection;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -156,7 +155,7 @@ public class MoveAction extends JosmAction {
                 // Revert move
                 ((MoveCommand) c).moveAgain(-distx, -disty);
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("Cannot move objects outside of the world."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE

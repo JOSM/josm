@@ -30,7 +30,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -265,7 +264,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         int v = 1;
         if (!GraphicsEnvironment.isHeadless()) {
             // build dialog
-            ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Set track visibility for {0}", layer.getName()),
+            ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), tr("Set track visibility for {0}", layer.getName()),
                     tr("Show all"), tr("Show selected only"), tr("Cancel"));
             ed.setButtonIcons("eye", "dialogs/filter", "cancel");
             ed.setContent(msg, false);
@@ -273,7 +272,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             ed.setCancelButton(3);
             ed.configureContextsensitiveHelp("/Action/ChooseTrackVisibility", true);
             ed.setRememberWindowGeometry(getClass().getName() + ".geometry",
-                    WindowGeometry.centerInWindow(Main.parent, new Dimension(1000, 500)));
+                    WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(1000, 500)));
             ed.showDialog();
             dateFilter.saveInPrefs();
             v = ed.getValue();

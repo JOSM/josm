@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -39,7 +38,7 @@ public final class MoveNodeAction extends JosmAction {
         if (!isEnabled() || selNodes.size() != 1)
             return;
 
-        LatLonDialog dialog = new LatLonDialog(Main.parent, tr("Move Node..."), ht("/Action/MoveNode"));
+        LatLonDialog dialog = new LatLonDialog(MainApplication.getMainFrame(), tr("Move Node..."), ht("/Action/MoveNode"));
         Node n = (Node) selNodes.toArray()[0];
         dialog.setCoordinates(n.getCoor());
         dialog.showDialog();

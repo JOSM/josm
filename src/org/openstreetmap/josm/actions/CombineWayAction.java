@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -34,6 +33,7 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -60,7 +60,7 @@ public class CombineWayAction extends JosmAction {
     }
 
     protected static boolean confirmChangeDirectionOfWays() {
-        return new ExtendedDialog(Main.parent,
+        return new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Change directions?"),
                 tr("Reverse and Combine"), tr("Cancel"))
             .setButtonIcons("wayflip", "cancel")

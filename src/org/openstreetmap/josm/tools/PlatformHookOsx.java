@@ -28,8 +28,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 
 /**
@@ -84,7 +84,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             // to do it manually if run with `java -jar``
             eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
             // enable full screen
-            enableOSXFullscreen((Window) Main.parent);
+            enableOSXFullscreen(MainApplication.getMainFrame());
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Logging.warn("Failed to register with OSX: " + ex);

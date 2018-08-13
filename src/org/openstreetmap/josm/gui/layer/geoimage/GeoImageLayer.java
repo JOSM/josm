@@ -38,7 +38,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.LassoModeAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -284,7 +283,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         @Override protected void finish() {
             if (!errorMessages.isEmpty()) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         formatErrorMessages(),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
@@ -715,7 +714,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             toDelete = data.get(currentPhoto);
 
             int result = new ExtendedDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Delete image file from disk"),
                     tr("Cancel"), tr("Delete"))
             .setButtonIcons("cancel", "dialogs/delete")
@@ -737,7 +736,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                     Logging.info("File "+toDelete.getFile()+" deleted. ");
                 } else {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Image file could not be deleted."),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE

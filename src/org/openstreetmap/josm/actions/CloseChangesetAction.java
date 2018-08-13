@@ -13,7 +13,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.UserInfo;
@@ -65,7 +64,7 @@ public class CloseChangesetAction extends JosmAction {
         List<Changeset> openChangesets = ChangesetCache.getInstance().getOpenChangesetsForCurrentUser();
         if (openChangesets.isEmpty()) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("There are no open changesets"),
                     tr("No open changesets"),
                     JOptionPane.INFORMATION_MESSAGE

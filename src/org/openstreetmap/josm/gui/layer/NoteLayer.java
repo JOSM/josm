@@ -33,7 +33,6 @@ import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.View;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.notes.Note;
@@ -43,7 +42,6 @@ import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.osm.NoteData.NoteDataUpdateListener;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -235,7 +233,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             displayedPanel.setBorder(BorderFactory.createLineBorder(Color.black));
             displayedPanel.enableClickableHyperlinks();
             pTooltip = fixPanelSizeAndLocation(mv, text, xl, xr, yt, yb);
-            displayedWindow = new JWindow((MainFrame) Main.parent);
+            displayedWindow = new JWindow(MainApplication.getMainFrame());
             displayedWindow.setAutoRequestFocus(false);
             displayedWindow.add(displayedPanel);
             // Forward mouse wheel scroll event to MapMover

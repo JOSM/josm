@@ -8,10 +8,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import javax.swing.RootPaneContainer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -82,7 +82,7 @@ public class CancelAction extends SavingAction {
         };
 
         return HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("<html>The relation has been changed.<br><br>Do you want to save your changes?</html>"),
                         tr("Unsaved changes"),
                         JOptionPane.WARNING_MESSAGE,

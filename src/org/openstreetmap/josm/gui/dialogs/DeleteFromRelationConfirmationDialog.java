@@ -31,11 +31,11 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -131,7 +131,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
      * Constructs a new {@code DeleteFromRelationConfirmationDialog}.
      */
     public DeleteFromRelationConfirmationDialog() {
-        super(GuiHelper.getFrameForComponent(Main.parent), "", ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(MainApplication.getMainFrame()), "", ModalityType.DOCUMENT_MODAL);
         build();
     }
 
@@ -163,7 +163,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             new Dimension(400, 200)
                     )
             ).applySafe(this);

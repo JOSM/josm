@@ -10,7 +10,6 @@ import java.io.InputStream;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -85,7 +84,7 @@ public class NMEAImporter extends FileImporter {
                     .show());
         } else {
             HelpAwareOptionPane.showMessageDialogInEDT(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     msg.toString(),
                     tr("NMEA import failure!"),
                     JOptionPane.ERROR_MESSAGE, null);

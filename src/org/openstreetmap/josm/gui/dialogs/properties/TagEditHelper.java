@@ -61,7 +61,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -82,6 +81,7 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.IExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
@@ -350,7 +350,7 @@ public class TagEditHelper {
     private static void warnAboutParseError(SearchParseError parseError) {
         Logging.warn(parseError);
         JOptionPane.showMessageDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 parseError.getMessage(),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE
@@ -382,7 +382,7 @@ public class TagEditHelper {
      */
     private static boolean warnOverwriteKey(String action, String togglePref) {
         return new ExtendedDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("Overwrite key"),
                 tr("Replace"), tr("Cancel"))
             .setButtonIcons("purge", "cancel")
@@ -419,7 +419,7 @@ public class TagEditHelper {
         };
 
         protected EditTagDialog(String key, Map<String, Integer> map, final boolean initialFocusOnKey) {
-            super(Main.parent, trn("Change value?", "Change values?", map.size()), tr("OK"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), trn("Change value?", "Change values?", map.size()), tr("OK"), tr("Cancel"));
             setButtonIcons("ok", "cancel");
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/EditValue", true /* show help button */);
@@ -575,7 +575,7 @@ public class TagEditHelper {
             // https://bugs.openjdk.java.net/browse/JDK-6464548
 
             setRememberWindowGeometry(getClass().getName() + ".geometry",
-                WindowGeometry.centerInWindow(Main.parent, size));
+                WindowGeometry.centerInWindow(MainApplication.getMainFrame(), size));
         }
 
         @Override
@@ -687,7 +687,7 @@ public class TagEditHelper {
         private int commandCount;
 
         protected AddTagsDialog() {
-            super(Main.parent, tr("Add value?"), tr("OK"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), tr("Add value?"), tr("OK"), tr("Cancel"));
             setButtonIcons("ok", "cancel");
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);

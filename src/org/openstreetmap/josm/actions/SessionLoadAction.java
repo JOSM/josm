@@ -18,7 +18,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -203,7 +202,7 @@ public class SessionLoadAction extends DiskAccessAction {
         private void handleException(String dialogTitle, Exception e) {
             Logging.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>",
                             uri != null ? uri : file.getName(), Utils.escapeReservedCharactersHTML(e.getMessage())),
                     dialogTitle,

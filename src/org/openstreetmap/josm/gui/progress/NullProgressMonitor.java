@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.progress;
 
 import java.awt.Component;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -126,6 +126,6 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public Component getWindowParent() {
-        return Main.parent;
+        return MainApplication.getMainFrame();
     }
 }

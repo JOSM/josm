@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.progress.swing;
 
 import java.awt.Component;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.AbstractProgressMonitor;
 import org.openstreetmap.josm.gui.progress.CancelHandler;
 import org.openstreetmap.josm.gui.progress.ProgressRenderer;
@@ -84,6 +84,6 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     public Component getWindowParent() {
-        return Main.parent;
+        return MainApplication.getMainFrame();
     }
 }

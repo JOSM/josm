@@ -29,7 +29,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -334,7 +333,7 @@ public class ChildRelationBrowser extends JPanel {
 
             if (conflictsCount > 0) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         trn("There was {0} conflict during import.",
                                 "There were {0} conflicts during import.",
                                 conflictsCount, conflictsCount),
@@ -373,7 +372,7 @@ public class ChildRelationBrowser extends JPanel {
             );
 
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     message,
                     tr("Relation is deleted"),
                     JOptionPane.WARNING_MESSAGE

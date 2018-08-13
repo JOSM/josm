@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.IOsmDataManager;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
@@ -24,12 +25,16 @@ import org.openstreetmap.josm.tools.PlatformManager;
 /**
  * Abstract class holding various static global variables and methods used in large parts of JOSM application.
  * @since 98
+ * @deprecated Not needed anymore
  */
+@Deprecated
 public abstract class Main implements IOsmDataManager {
 
     /**
      * Global parent component for all dialogs and message boxes
+     * @deprecated Use {@link MainApplication#getMainFrame}
      */
+    @Deprecated
     public static Component parent;
 
     /**

@@ -20,7 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -84,7 +83,7 @@ public class AutoScaleAction extends JosmAction {
         Collection<? extends IPrimitive> sel = dataSet.getSelected();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Nothing selected to zoom to."),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE);
@@ -302,7 +301,7 @@ public class AutoScaleAction extends JosmAction {
         }
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     "selection".equals(mode) ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE);

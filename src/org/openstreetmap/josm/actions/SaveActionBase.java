@@ -14,9 +14,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -106,7 +106,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             }
             if (!exported) {
                 GuiHelper.runInEDT(() ->
-                    JOptionPane.showMessageDialog(Main.parent, tr("No Exporter found! Nothing saved."), tr("Warning"),
+                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("No Exporter found! Nothing saved."), tr("Warning"),
                         JOptionPane.WARNING_MESSAGE));
                 return false;
             } else if (canceled) {
@@ -119,7 +119,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             if (layer instanceof OsmDataLayer) {
                 ((OsmDataLayer) layer).onPostSaveToFile();
             }
-            Main.parent.repaint();
+            MainApplication.getMainFrame().repaint();
         } catch (IOException e) {
             Logging.error(e);
             return false;
@@ -212,7 +212,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
     public static boolean confirmOverwrite(File file) {
         if (file == null || file.exists()) {
             return new ExtendedDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Overwrite"),
                     tr("Overwrite"), tr("Cancel"))
                 .setContent(tr("File exists. Overwrite?"))

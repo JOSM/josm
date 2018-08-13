@@ -19,11 +19,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JViewport;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -65,7 +65,7 @@ public class ImageMarker extends ButtonMarker {
         scale.setSelected(true);
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);
         if (!GraphicsEnvironment.isHeadless()) {
-            JDialog dlg = pane.createDialog(Main.parent, imageUrl.toString());
+            JDialog dlg = pane.createDialog(MainApplication.getMainFrame(), imageUrl.toString());
             dlg.setModal(false);
             dlg.toFront();
             dlg.setVisible(true);

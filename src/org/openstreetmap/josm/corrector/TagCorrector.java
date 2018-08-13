@@ -19,7 +19,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeRelationMemberRoleCommand;
 import org.openstreetmap.josm.command.Command;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.correction.RoleCorrectionTable;
 import org.openstreetmap.josm.gui.correction.TagCorrectionTable;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -149,7 +149,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             }
 
             int answer = JOptionPane.showOptionDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     p,
                     tr("Automatic tag correction"),
                     JOptionPane.YES_NO_CANCEL_OPTION,

@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
@@ -208,7 +207,7 @@ public class UnGlueAction extends JosmAction {
         final transient ExistingBothNewChoice memberships;
 
         private PropertiesMembershipDialog(boolean preselectNew, boolean queryTags, boolean queryMemberships) {
-            super(Main.parent, tr("Tags/Memberships"), tr("Unglue"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), tr("Tags/Memberships"), tr("Unglue"), tr("Cancel"));
             setButtonIcons("unglueways", "cancel");
 
             final JPanel content = new JPanel(new GridBagLayout());

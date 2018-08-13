@@ -9,9 +9,9 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -114,7 +114,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     private static void displayError(File f, Exception e) {
         Logging.error(e);
         HelpAwareOptionPane.showMessageDialogInEDT(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>",
                         f.getName(), Utils.escapeReservedCharactersHTML(e.getMessage())),
                 tr("Error"),
@@ -145,7 +145,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
         } catch (IOException | IllegalDataException e) {
             Logging.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("<html>Could not read files.<br>Error is:<br>{0}</html>", Utils.escapeReservedCharactersHTML(e.getMessage())),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE, null

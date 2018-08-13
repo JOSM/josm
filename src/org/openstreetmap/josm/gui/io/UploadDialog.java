@@ -35,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -43,6 +42,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -104,7 +104,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      * Constructs a new {@code UploadDialog}.
      */
     public UploadDialog() {
-        super(GuiHelper.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(MainApplication.getMainFrame()), ModalityType.DOCUMENT_MODAL);
         build();
         pack();
     }
@@ -383,7 +383,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             new Dimension(400, 600)
                     )
             ).applySafe(this);
@@ -544,7 +544,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 }
             }
             if (!emptyChangesetTags.isEmpty() && JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     trn(
                             "<html>The following changeset tag contains an empty key/value:<br>{0}<br>Continue?</html>",
                             "<html>The following changeset tags contain an empty key/value:<br>{0}<br>Continue?</html>",

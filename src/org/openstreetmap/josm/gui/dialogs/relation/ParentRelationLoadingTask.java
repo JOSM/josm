@@ -11,10 +11,10 @@ import java.util.Optional;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
@@ -130,7 +130,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
 
     protected void showLastException() {
         JOptionPane.showMessageDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 Optional.ofNullable(lastException.getMessage()).orElseGet(lastException::toString),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE
@@ -173,7 +173,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
                     return;
                 getLayer().getConflicts().add(visitor.getConflicts());
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("There were {0} conflicts during import.",
                                 visitor.getConflicts().size()),
                                 tr("Warning"),

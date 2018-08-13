@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -65,7 +64,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
     }
 
     TaggingPresetSearchPrimitiveDialog() {
-        super(Main.parent, tr("Search for objects by preset"), tr("Search"), tr("Cancel"));
+        super(MainApplication.getMainFrame(), tr("Search for objects by preset"), tr("Search"), tr("Cancel"));
         selector = new TaggingPresetSelector(false, false);
         setContent(selector, false);
         selector.setDblClickListener(e -> buttonAction(0, null));

@@ -16,7 +16,6 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Node;
@@ -126,7 +125,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             return;
         targetLayer.getConflicts().add(visitor.getConflicts());
         JOptionPane.showMessageDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 trn("There was {0} conflict during import.",
                     "There were {0} conflicts during import.",
                     visitor.getConflicts().size(),

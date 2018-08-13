@@ -27,7 +27,7 @@ public class NoteSortDialog extends ExtendedDialog {
 
     /**
      * Construct a new dialog. The constructor automatically adds a "Cancel" button.
-     * @param parent - Parent component. Usually Main.parent
+     * @param parent - Parent component. Usually MainApplication.getMainFrame()
      * @param title - Translated text to display in the title bar of the dialog
      * @param buttonText - Translated text to be shown on the action button
      */

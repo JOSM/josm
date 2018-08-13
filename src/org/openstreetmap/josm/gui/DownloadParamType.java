@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -39,7 +38,7 @@ public enum DownloadParamType {
             final Bounds b = OsmUrlToBounds.parse(s);
             if (b == null) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("Ignoring malformed URL: \"{0}\"", s),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
@@ -59,7 +58,7 @@ public enum DownloadParamType {
             } catch (URISyntaxException e) {
                 Logging.warn(e);
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("Ignoring malformed file URL: \"{0}\"", s),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
@@ -126,7 +125,7 @@ public enum DownloadParamType {
     public List<Future<?>> downloadGps(String param) {
         if (!GraphicsEnvironment.isHeadless()) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE

@@ -17,7 +17,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -47,7 +46,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
      * @param history the history to be displayed
      */
     public HistoryBrowserDialog(History history) {
-        super(GuiHelper.getFrameForComponent(Main.parent), false);
+        super(GuiHelper.getFrameForComponent(MainApplication.getMainFrame()), false);
         build();
         setHistory(history);
         setTitle(buildTitle(history));

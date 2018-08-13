@@ -73,7 +73,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ImageryAdjustAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -419,7 +418,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         @Override
         public void actionPerformed(ActionEvent ae) {
             if (tile != null) {
-                ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), tr("OK"));
+                ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), tr("Tile Info"), tr("OK"));
                 JPanel panel = new JPanel(new GridBagLayout());
                 Rectangle2D displaySize = layer.coordinateConverter.getRectangleForTile(tile);
                 String url = "";

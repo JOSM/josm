@@ -21,7 +21,6 @@ import org.junit.runner.Description;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;

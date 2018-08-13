@@ -14,7 +14,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -72,7 +72,7 @@ public class RenameLayerAction extends AbstractAction {
         }
 
         final JOptionPane optionPane = new InitialValueOptionPane(panel, name);
-        final JDialog dlg = optionPane.createDialog(Main.parent, tr("Rename layer"));
+        final JDialog dlg = optionPane.createDialog(MainApplication.getMainFrame(), tr("Rename layer"));
         dlg.setModalityType(ModalityType.DOCUMENT_MODAL);
         dlg.setVisible(true);
 
@@ -103,7 +103,7 @@ public class RenameLayerAction extends AbstractAction {
                     }
                 } else {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Could not rename file ''{0}''", file.getPath()),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
@@ -113,6 +113,6 @@ public class RenameLayerAction extends AbstractAction {
             }
         }
         layer.rename(nameText);
-        Main.parent.repaint();
+        MainApplication.getMainFrame().repaint();
     }
 }

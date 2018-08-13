@@ -14,8 +14,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
@@ -113,7 +113,7 @@ public abstract class AbstractMergeAction extends JosmAction {
             // return first layer in headless mode, for unit tests
             return targetLayers[0];
         }
-        ExtendedDialog ed = new ExtendedDialog(Main.parent, title, buttonText, tr("Cancel"));
+        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), title, buttonText, tr("Cancel"));
         ed.setButtonIcons(buttonIcon, "cancel");
         ed.setContent(pnl);
         ed.showDialog();
@@ -131,7 +131,7 @@ public abstract class AbstractMergeAction extends JosmAction {
         String message = tr("<html>There are no layers the source layer<br>''{0}''<br>could be merged to.</html>",
                 Utils.escapeReservedCharactersHTML(sourceLayer.getName()));
         if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(Main.parent, message, tr("No target layers"), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), message, tr("No target layers"), JOptionPane.WARNING_MESSAGE);
         }
     }
 }

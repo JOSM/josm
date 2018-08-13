@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.ApiPreconditionCheckerHook;
 import org.openstreetmap.josm.actions.upload.DiscardTagsHook;
 import org.openstreetmap.josm.actions.upload.FixDataHook;
@@ -162,7 +161,7 @@ public class UploadAction extends JosmAction {
 
     protected static void alertUnresolvedConflicts(OsmDataLayer layer) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("<html>The data to be uploaded participates in unresolved conflicts of layer ''{0}''.<br>"
                         + "You have to resolve them first.</html>", Utils.escapeReservedCharactersHTML(layer.getName())
                 ),
@@ -231,7 +230,7 @@ public class UploadAction extends JosmAction {
     public void uploadData(final OsmDataLayer layer, APIDataSet apiData) {
         if (apiData.isEmpty()) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("No changes to upload."),
                     tr("Warning"),
                     JOptionPane.INFORMATION_MESSAGE
@@ -290,7 +289,7 @@ public class UploadAction extends JosmAction {
             return;
         if (MainApplication.getMap() == null) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Nothing to upload. Get some data first."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE

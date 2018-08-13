@@ -14,7 +14,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -65,7 +65,7 @@ public final class AudioUtil {
             msg = tr(msg);
         Logging.error(msg);
         if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(Main.parent,
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                     "<html><p>" + msg + "</p></html>",
                     tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
         }

@@ -24,8 +24,8 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
@@ -96,7 +96,7 @@ public class CloseChangesetDialog extends JDialog {
         if (visible) {
             new WindowGeometry(
                     getClass().getName() + ".geometry",
-                    WindowGeometry.centerInWindow(Main.parent, new Dimension(300, 300))
+                    WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(300, 300))
             ).applySafe(this);
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
@@ -108,7 +108,7 @@ public class CloseChangesetDialog extends JDialog {
      * Constructs a new {@code CloseChangesetDialog}.
      */
     public CloseChangesetDialog() {
-        super(GuiHelper.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(MainApplication.getMainFrame()), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

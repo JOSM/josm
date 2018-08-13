@@ -26,7 +26,7 @@ class SearchBasedRowFilter extends RowFilter<TableModel, Integer> {
     }
 
     @Override
-    public boolean include(Entry entry) {
+    public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
         final String key = entry.getStringValue(0);
         final String value = entry.getStringValue(1);
         return filter.match(new Tag(key, value));

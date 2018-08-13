@@ -18,8 +18,8 @@ import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
@@ -76,7 +76,7 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
         JColorChooser c = new JColorChooser(cl);
         Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
         int answer = JOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 c,
                 tr("Choose a color"),
                 JOptionPane.OK_CANCEL_OPTION,

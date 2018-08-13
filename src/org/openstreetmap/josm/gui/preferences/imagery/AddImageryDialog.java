@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.imagery.AddImageryPanel.ContentValidationListener;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 
@@ -32,7 +32,7 @@ public class AddImageryDialog extends ExtendedDialog implements ContentValidatio
         panel.addContentValidationListener(this);
         setRememberWindowGeometry(
                 panel.getClass().getName() + ".geometry",
-                WindowGeometry.centerInWindow(Main.parent, new Dimension(400, 600))
+                WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(400, 600))
                 );
     }
 

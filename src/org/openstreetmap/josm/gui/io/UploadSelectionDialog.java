@@ -31,10 +31,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -60,7 +60,7 @@ public class UploadSelectionDialog extends JDialog {
      * Constructs a new {@code UploadSelectionDialog}.
      */
     public UploadSelectionDialog() {
-        super(GuiHelper.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(MainApplication.getMainFrame()), ModalityType.DOCUMENT_MODAL);
         build();
     }
 
@@ -173,7 +173,7 @@ public class UploadSelectionDialog extends JDialog {
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             new Dimension(200, 400)
                     )
             ).applySafe(this);

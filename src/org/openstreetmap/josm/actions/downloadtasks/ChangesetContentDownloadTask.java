@@ -11,11 +11,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Logging;
@@ -102,7 +102,7 @@ public class ChangesetContentDownloadTask extends AbstractChangesetDownloadTask 
      * @throws IllegalArgumentException if changesetId &lt;= 0
      */
     public ChangesetContentDownloadTask(int changesetId) {
-        this(Main.parent, changesetId);
+        this(MainApplication.getMainFrame(), changesetId);
     }
 
     /**
@@ -112,7 +112,7 @@ public class ChangesetContentDownloadTask extends AbstractChangesetDownloadTask 
      * @param changesetIds the changeset ids. Empty collection assumed, if null.
      */
     public ChangesetContentDownloadTask(Collection<Integer> changesetIds) {
-        this(Main.parent, changesetIds);
+        this(MainApplication.getMainFrame(), changesetIds);
     }
 
     /**

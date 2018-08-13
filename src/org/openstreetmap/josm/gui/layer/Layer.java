@@ -19,7 +19,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListe
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -604,7 +604,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
                     tr("Change the projection again or remove the layer.");
 
             // run later to not block loading the UI.
-            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Main.parent,
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                     message,
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE));

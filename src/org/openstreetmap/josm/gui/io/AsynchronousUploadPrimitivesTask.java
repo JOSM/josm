@@ -86,7 +86,7 @@ public final class AsynchronousUploadPrimitivesTask extends UploadPrimitivesTask
         synchronized (AsynchronousUploadPrimitivesTask.class) {
             if (asynchronousUploadPrimitivesTask != null) {
                 GuiHelper.runInEDTAndWait(() ->
-                        JOptionPane.showMessageDialog(MainApplication.parent,
+                        JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                                 tr("A background upload is already in progress. " +
                                         "Kindly wait for it to finish before uploading new changes")));
                 return Optional.empty();

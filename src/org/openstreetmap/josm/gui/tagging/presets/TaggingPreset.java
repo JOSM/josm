@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AdaptableAction;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -431,7 +430,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
          * @param showNewRelation whether to display "New relation" button
          */
         PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply, boolean showNewRelation) {
-            super(Main.parent, title,
+            super(MainApplication.getMainFrame(), title,
                     showNewRelation ?
                             (new String[] {tr("Apply Preset"), tr("New relation"), tr("Cancel")}) :
                             (new String[] {tr("Apply Preset"), tr("Cancel")}),

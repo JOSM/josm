@@ -27,7 +27,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadNotesInViewAction;
 import org.openstreetmap.josm.actions.UploadNotesAction;
 import org.openstreetmap.josm.actions.mapmode.AddNoteAction;
@@ -319,7 +318,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Comment on note"), tr("Add comment"));
+            NoteInputDialog dialog = new NoteInputDialog(MainApplication.getMainFrame(), tr("Comment on note"), tr("Add comment"));
             dialog.showNoteDialog(tr("Add comment to note:"), ImageProvider.get("dialogs/notes", "note_comment"));
             if (dialog.getValue() != 1) {
                 return;
@@ -343,7 +342,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Close note"), tr("Close note"));
+            NoteInputDialog dialog = new NoteInputDialog(MainApplication.getMainFrame(), tr("Close note"), tr("Close note"));
             dialog.showNoteDialog(tr("Close note with message:"), ImageProvider.get("dialogs/notes", "note_closed"));
             if (dialog.getValue() != 1) {
                 return;
@@ -388,7 +387,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Reopen note"), tr("Reopen note"));
+            NoteInputDialog dialog = new NoteInputDialog(MainApplication.getMainFrame(), tr("Reopen note"), tr("Reopen note"));
             dialog.showNoteDialog(tr("Reopen note with message:"), ImageProvider.get("dialogs/notes", "note_open"));
             if (dialog.getValue() != 1) {
                 return;
@@ -414,7 +413,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            NoteSortDialog sortDialog = new NoteSortDialog(Main.parent, tr("Sort notes"), tr("Apply"));
+            NoteSortDialog sortDialog = new NoteSortDialog(MainApplication.getMainFrame(), tr("Sort notes"), tr("Apply"));
             sortDialog.showSortDialog(noteData.getCurrentSortMethod());
             if (sortDialog.getValue() == 1) {
                 noteData.setSortMethod(sortDialog.getSelectedComparator());

@@ -10,7 +10,6 @@ import java.io.InputStream;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.NoteData;
@@ -77,7 +76,7 @@ public class OsmChangeImporter extends FileImporter {
             // FIXME: remove UI stuff from IO subsystem
             GuiHelper.runInEDT(() ->
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("No data found in file {0}.", associatedFile.getPath()),
                         tr("Open OsmChange file"),
                         JOptionPane.INFORMATION_MESSAGE)

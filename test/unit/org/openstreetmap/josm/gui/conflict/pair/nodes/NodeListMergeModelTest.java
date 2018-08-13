@@ -658,7 +658,6 @@ public class NodeListMergeModelTest {
     /* ----------------------------------------------------------------------------- */
     /* PropertyChangeListener                                                        */
     /* ----------------------------------------------------------------------------- */
-    @SuppressWarnings("unchecked")
     @Test
     public void testAddPropertyChangeListener() throws ReflectiveOperationException {
         NodeListMergeModel model = new NodeListMergeModel();
@@ -674,7 +673,6 @@ public class NodeListMergeModelTest {
         assertEquals(listener, listeners.iterator().next());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testRemovePropertyChangeListener() throws ReflectiveOperationException {
         NodeListMergeModel model = new NodeListMergeModel();
@@ -710,6 +708,7 @@ public class NodeListMergeModelTest {
         class MyListener implements PropertyChangeListener {
             public ArrayList<PropertyChangeEvent> events = new ArrayList<>();
 
+            @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 events.add(evt);
             }

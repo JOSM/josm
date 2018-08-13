@@ -47,7 +47,6 @@ import javax.swing.JToggleButton;
 import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ParametrizedEnumProperty;
@@ -568,7 +567,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 pref.setToolTipText(tr("Open preferences for this panel"));
                 pref.setBorder(BorderFactory.createEmptyBorder());
                 pref.addActionListener(e -> {
-                    final PreferenceDialog p = new PreferenceDialog(Main.parent);
+                    final PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
                     if (TabPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
                         p.selectPreferencesTabByClass((Class<? extends TabPreferenceSetting>) preferenceClass);
                     } else if (SubPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
@@ -676,7 +675,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      */
     private class DetachedDialog extends JDialog {
         DetachedDialog() {
-            super(GuiHelper.getFrameForComponent(Main.parent));
+            super(GuiHelper.getFrameForComponent(MainApplication.getMainFrame()));
             getContentPane().add(ToggleDialog.this);
             addWindowListener(new WindowAdapter() {
                 @Override public void windowClosing(WindowEvent e) {
@@ -713,7 +712,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 Logging.debug(e);
                 ToggleDialog.this.setPreferredSize(ToggleDialog.this.getDefaultDetachedSize());
                 pack();
-                setLocationRelativeTo(Main.parent);
+                setLocationRelativeTo(MainApplication.getMainFrame());
             }
             super.setTitle(titleBar.getTitle());
             HelpUtil.setHelpContext(getRootPane(), helpTopic());

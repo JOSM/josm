@@ -48,7 +48,6 @@ import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -181,7 +180,7 @@ public class GenericRelationEditor extends RelationEditor {
         super(layer, relation);
 
         setRememberWindowGeometry(getClass().getName() + ".geometry",
-                WindowGeometry.centerInWindow(Main.parent, new Dimension(700, 650)));
+                WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(700, 650)));
 
         final TaggingPresetHandler presetHandler = new TaggingPresetHandler() {
 
@@ -779,7 +778,7 @@ public class GenericRelationEditor extends RelationEditor {
         if (memberTableModel.hasMembersReferringTo(toCheck)) {
             int ret = ConditionalOptionPaneUtil.showOptionDialog(
                     "clean_relation_self_references",
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("<html>There is at least one member in this relation referring<br>"
                             + "to the relation itself.<br>"
                             + "This creates circular dependencies and is discouraged.<br>"
@@ -852,7 +851,7 @@ public class GenericRelationEditor extends RelationEditor {
             );
         int ret = ConditionalOptionPaneUtil.showOptionDialog(
                 "add_primitive_to_relation",
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Multiple members referring to same object."),
                 JOptionPane.YES_NO_CANCEL_OPTION,
@@ -884,7 +883,7 @@ public class GenericRelationEditor extends RelationEditor {
                 + "Skipping relation ''{0}''.</html>",
                 Utils.escapeReservedCharactersHTML(primitive.getDisplayName(DefaultNameFormatter.getInstance())));
         JOptionPane.showMessageDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE);

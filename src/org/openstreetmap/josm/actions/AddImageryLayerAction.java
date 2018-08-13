@@ -20,7 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.Layer;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -51,7 +51,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
     static class SelectWmsLayersDialog extends ExtendedDialog {
         SelectWmsLayersDialog(WMSLayerTree tree, JComboBox<String> formats) {
-            super(Main.parent, tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
             final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
             scrollPane.setPreferredSize(new Dimension(400, 400));
             final JPanel panel = new JPanel(new GridBagLayout());
@@ -154,7 +154,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 throw ex;
             } else {
                 Logging.error(ex);
-                JOptionPane.showMessageDialog(Main.parent, ex.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), ex.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
                 if (layer != null) {
                     getLayerManager().removeLayer(layer);
                 }
@@ -183,7 +183,8 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             formats.setToolTipText(tr("Select image format for WMS layer"));
 
             if (!GraphicsEnvironment.isHeadless()) {
-                ExtendedDialog dialog = new ExtendedDialog(Main.parent, tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
+                ExtendedDialog dialog = new ExtendedDialog(MainApplication.getMainFrame(),
+                        tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
                 final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
                 scrollPane.setPreferredSize(new Dimension(400, 400));
                 final JPanel panel = new JPanel(new GridBagLayout());
@@ -226,7 +227,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
     private static void handleException(Exception ex, String uiMessage, String uiTitle, String logMessage) {
         if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(Main.parent, uiMessage, uiTitle, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), uiMessage, uiTitle, JOptionPane.ERROR_MESSAGE);
         }
         Logging.log(Logging.LEVEL_ERROR, logMessage, ex);
     }

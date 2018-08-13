@@ -10,8 +10,8 @@ import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -60,7 +60,7 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
         };
         int ret = ConditionalOptionPaneUtil.showOptionDialog(
                 "relation_editor.confirm_applying_empty_role",
-                Main.parent,
+                MainApplication.getMainFrame(),
                 message,
                 tr("Confirm empty role"),
                 JOptionPane.YES_NO_OPTION,

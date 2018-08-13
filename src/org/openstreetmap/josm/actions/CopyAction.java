@@ -12,7 +12,6 @@ import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -75,7 +74,7 @@ public class CopyAction extends JosmAction {
 
     protected void showEmptySelectionWarning() {
         JOptionPane.showMessageDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("Please select something to copy."),
                 tr("Information"),
                 JOptionPane.INFORMATION_MESSAGE

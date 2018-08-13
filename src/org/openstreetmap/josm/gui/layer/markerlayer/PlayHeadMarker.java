@@ -13,7 +13,6 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.PlayHeadDragMode;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -178,7 +177,7 @@ public final class PlayHeadMarker extends Marker {
         if (ca == null) {
             /* Not close enough to track, or no audio marker found for some other reason */
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("You need to drag the play head near to the GPX track " +
                        "whose associated sound track you were playing (after the first marker)."),
                     tr("Warning"),
@@ -237,7 +236,7 @@ public final class PlayHeadMarker extends Marker {
             WayPoint cw = recent.parentLayer.fromLayer.data.nearestPointOnTrack(en, enPlus25px.east() - en.east());
             if (cw == null) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("You need to SHIFT-drag the play head onto an audio marker or onto the track point where you want to synchronize."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
@@ -251,7 +250,7 @@ public final class PlayHeadMarker extends Marker {
         /* Actually do the synchronization */
         if (ca == null) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Unable to create new audio marker."),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
@@ -259,7 +258,7 @@ public final class PlayHeadMarker extends Marker {
             endDrag(true);
         } else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Audio synchronized at point {0}.", recent.parentLayer.syncAudioMarker.getText()),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE
@@ -268,7 +267,7 @@ public final class PlayHeadMarker extends Marker {
             endDrag(false);
         } else {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Unable to synchronize in layer being played."),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE

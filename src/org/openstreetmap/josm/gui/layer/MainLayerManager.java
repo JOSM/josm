@@ -231,7 +231,7 @@ public class MainLayerManager extends LayerManager {
         if (layer instanceof OsmDataLayer && ((OsmDataLayer) layer).isUploadInProgress()) {
             GuiHelper.runInEDT(() ->
                     JOptionPane.showMessageDialog(
-                            MainApplication.parent,
+                            MainApplication.getMainFrame(),
                             tr("Trying to set a read only data layer as edit layer"),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE));
@@ -288,7 +288,7 @@ public class MainLayerManager extends LayerManager {
     @Override
     protected Collection<Layer> realRemoveSingleLayer(Layer layer) {
         if ((layer instanceof OsmDataLayer) && (((OsmDataLayer) layer).isUploadInProgress())) {
-            GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.parent,
+            GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                     tr("Trying to delete the layer with background upload. Please wait until the upload is finished.")));
 
             // Return an empty collection for allowing to delete other layers
@@ -494,7 +494,7 @@ public class MainLayerManager extends LayerManager {
             String msg = tr("A background upload is already in progress. Cannot reset state until the upload is finished.");
             Logging.warn(msg);
             if (!GraphicsEnvironment.isHeadless()) {
-                GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.parent, msg));
+                GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.getMainFrame(), msg));
             }
         }
     }
