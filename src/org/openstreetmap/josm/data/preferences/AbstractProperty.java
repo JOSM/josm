@@ -162,7 +162,7 @@ public abstract class AbstractProperty<T> {
      * @since 5464
      */
     public AbstractProperty(String key, T defaultValue) {
-        // Main.pref should not change in production but may change during tests.
+        // Config.getPref() should not change in production but may change during tests.
         preferences = Config.getPref();
         this.key = key;
         this.defaultValue = defaultValue;
@@ -187,7 +187,7 @@ public abstract class AbstractProperty<T> {
 
     /**
      * Determines if this property is currently set in JOSM preferences.
-     * @return true if {@code Main.pref} contains this property.
+     * @return true if {@code getPreferences()} contains this property.
      */
     public boolean isSet() {
         return getPreferences().getKeySet().contains(key);

@@ -99,7 +99,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
         } else {
             /*
              *  Chicken-and-egg problem. We want to create tile source, but supported projections we can get only
-             *  from this tile source. So create tilesource first with dummy Main.getProjection(), and then update
+             *  from this tile source. So create tilesource first with dummy ProjectionRegistry.getProjection(), and then update
              *  once we update server projections.
              *
              *  Thus:
