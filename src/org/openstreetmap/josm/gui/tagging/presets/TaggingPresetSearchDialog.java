@@ -5,9 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 
 /**
  * The tagging presets search dialog (F3).
@@ -31,7 +31,7 @@ public final class TaggingPresetSearchDialog extends ExtendedDialog {
     }
 
     private TaggingPresetSearchDialog() {
-        super(Main.parent, tr("Search presets"), tr("Select"), tr("Cancel"));
+        super(MainApplication.getMainFrame(), tr("Search presets"), tr("Select"), tr("Cancel"));
         selector = new TaggingPresetSelector(true, true);
         setContent(selector, false);
         SelectionEventManager.getInstance().addSelectionListener(selector);

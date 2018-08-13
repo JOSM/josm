@@ -18,7 +18,6 @@ import java.util.function.Predicate;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -224,7 +223,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(realPrimitives, notNewPredicate);
         if (notNewPrimitives.isEmpty()) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Please select at least one already uploaded node, way, or relation."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE);

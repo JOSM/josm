@@ -15,9 +15,9 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -180,7 +180,7 @@ public class DownloadAlongPanel extends JPanel {
 
         addChangeListener(e -> options[0].setEnabled(isDownloadOsmData() || isDownloadGpxData()));
 
-        int ret = HelpAwareOptionPane.showOptionDialog(Main.parent, this, title,
+        int ret = HelpAwareOptionPane.showOptionDialog(MainApplication.getMainFrame(), this, title,
                     JOptionPane.QUESTION_MESSAGE, null, options, options[0], helpTopic);
         if (0 == ret) {
             rememberSettings();

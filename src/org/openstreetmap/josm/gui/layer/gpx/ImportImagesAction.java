@@ -13,8 +13,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -45,7 +45,7 @@ public class ImportImagesAction extends AbstractAction {
         String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"+
                 "Because its way points do not include a timestamp we cannot correlate them with images.</html>",
                 Utils.escapeReservedCharactersHTML(layer.getName()));
-        HelpAwareOptionPane.showOptionDialog(Main.parent, msg, tr("Import not possible"),
+        HelpAwareOptionPane.showOptionDialog(MainApplication.getMainFrame(), msg, tr("Import not possible"),
                 JOptionPane.WARNING_MESSAGE, ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer"));
     }
 

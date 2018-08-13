@@ -15,7 +15,6 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
@@ -55,7 +54,7 @@ public class FilterModel {
             } catch (SearchParseError e) {
                 Logging.error(e);
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("<html>Error in filter <code>{0}</code>:<br>{1}",
                                 Utils.escapeReservedCharactersHTML(Utils.shortenString(filter.text, 80)),
                                 Utils.escapeReservedCharactersHTML(e.getMessage())),

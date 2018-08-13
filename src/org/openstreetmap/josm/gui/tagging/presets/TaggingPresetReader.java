@@ -23,8 +23,8 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.sources.PresetPrefHelper;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.presets.items.Check;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.Combo;
@@ -390,7 +390,7 @@ public final class TaggingPresetReader {
                 }
                 if (displayErrMsg) {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Could not read tagging preset source: {0}", source),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
@@ -401,7 +401,7 @@ public final class TaggingPresetReader {
                 Logging.error(source);
                 if (displayErrMsg) {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             "<html>" + tr("Error parsing {0}: ", source) + "<br><br><table width=600>" +
                                     Utils.escapeReservedCharactersHTML(e.getMessage()) + "</table></html>",
                             tr("Error"),

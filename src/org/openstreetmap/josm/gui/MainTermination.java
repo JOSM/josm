@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
-import java.util.Objects;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
@@ -18,16 +17,6 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class MainTermination implements Runnable {
 
-    private final MainApplication application;
-
-    /**
-     * Constructs a new {@code MainTermination}
-     * @param application Main application. Must not be null
-     */
-    public MainTermination(MainApplication application) {
-        this.application = Objects.requireNonNull(application);
-    }
-
     @Override
     public void run() {
         try {
@@ -37,8 +26,8 @@ public class MainTermination implements Runnable {
         }
         JCSCacheManager.shutdown();
 
-        if (application.getMainFrame() != null) {
-            application.getMainFrame().storeState();
+        if (MainApplication.getMainFrame() != null) {
+            MainApplication.getMainFrame().storeState();
         }
         if (MainApplication.getMap() != null) {
             MainApplication.getMap().rememberToggleDialogWidth();

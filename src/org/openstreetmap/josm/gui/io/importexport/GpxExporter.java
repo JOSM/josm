@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -151,7 +150,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         keywords.setText(gpxData.getString(META_KEYWORDS));
         p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
 
-        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Export options"),
                 tr("Export and Save"), tr("Cancel"))
             .setButtonIcons("exportgpx", "cancel")
@@ -211,7 +210,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             fo.flush();
         } catch (IOException | InvalidPathException ex) {
             Logging.error(ex);
-            JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, ex.getMessage()),
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("Error while exporting {0}:\n{1}", fn, ex.getMessage()),
                     tr("Error"), JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -308,7 +307,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             l.setVisibleRowCount(LICENSES.length);
             l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             int answer = JOptionPane.showConfirmDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     new JScrollPane(l),
                     tr("Choose a predefined license"),
                     JOptionPane.OK_CANCEL_OPTION,

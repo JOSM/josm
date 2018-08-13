@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.conflict.ConflictAddCommand;
@@ -61,7 +60,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
             newRelation.setMembers(newMembers);
             String msg = tr("One or more members of this new relation have been deleted while the relation editor\n" +
             "was open. They have been removed from the relation members list.");
-            JOptionPane.showMessageDialog(Main.parent, msg, tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), msg, tr("Warning"), JOptionPane.WARNING_MESSAGE);
         }
         // If the user wanted to create a new relation, but hasn't added any members or
         // tags, don't add an empty relation
@@ -123,7 +122,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         };
 
         int ret = HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("<html>This relation has been changed outside of the editor.<br>"
                         + "You cannot apply your changes and continue editing.<br>"
                         + "<br>"
@@ -143,7 +142,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
 
     protected void warnDoubleConflict() {
         JOptionPane.showMessageDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("<html>Layer ''{0}'' already has a conflict for object<br>"
                         + "''{1}''.<br>"
                         + "Please resolve this conflict first, then try again.</html>",

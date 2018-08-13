@@ -15,10 +15,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OsmApi;
@@ -55,7 +55,7 @@ public class SearchNotesDownloadAction extends JosmAction {
         gc.gridy = 1;
         contentPanel.add(searchTermBox, gc);
 
-        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Search for notes"), tr("Search for notes"), tr("Cancel"))
+        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), tr("Search for notes"), tr("Search for notes"), tr("Cancel"))
             .setContent(contentPanel)
             .setButtonIcons("note_search", "cancel");
         if (ed.showDialog().getValue() != 1) {

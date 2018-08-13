@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.ChangesetClosedException;
@@ -49,7 +48,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainOsmApiInitializationException(OsmApiInitializationException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainOsmApiInitializationException(e),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE,
@@ -64,7 +63,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainChangesetClosedException(ChangesetClosedException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainChangesetClosedException(e),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE,
@@ -79,7 +78,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainPreconditionFailed(OsmApiException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainPreconditionFailed(e),
                 tr("Precondition violation"),
                 JOptionPane.ERROR_MESSAGE,
@@ -107,7 +106,7 @@ public final class ExceptionDialogUtil {
 
     public static void explainSecurityException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainSecurityException(e),
                 tr("Security exception"),
                 JOptionPane.ERROR_MESSAGE,
@@ -125,7 +124,7 @@ public final class ExceptionDialogUtil {
 
     public static void explainNestedSocketException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainNestedSocketException(e),
                 tr("Network exception"),
                 JOptionPane.ERROR_MESSAGE,
@@ -143,7 +142,7 @@ public final class ExceptionDialogUtil {
 
     public static void explainNestedIOException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainNestedIOException(e),
                 tr("IO Exception"),
                 JOptionPane.ERROR_MESSAGE,
@@ -159,7 +158,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainNestedIllegalDataException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainNestedIllegalDataException(e),
                 tr("Illegal Data"),
                 JOptionPane.ERROR_MESSAGE,
@@ -176,7 +175,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainNestedOfflineAccessException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainOfflineAccessException(e),
                 tr("Offline mode"),
                 JOptionPane.ERROR_MESSAGE,
@@ -206,7 +205,7 @@ public final class ExceptionDialogUtil {
 
     public static void explainInternalServerError(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainInternalServerError(e),
                 tr("Internal Server Error"),
                 JOptionPane.ERROR_MESSAGE,
@@ -222,7 +221,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainBadRequest(OsmApiException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainBadRequest(e),
                 tr("Bad Request"),
                 JOptionPane.ERROR_MESSAGE,
@@ -238,7 +237,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainNotFound(OsmApiException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainNotFound(e),
                 tr("Not Found"),
                 JOptionPane.ERROR_MESSAGE,
@@ -253,7 +252,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainConflict(OsmApiException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainConflict(e),
                 tr("Conflict"),
                 JOptionPane.ERROR_MESSAGE,
@@ -276,7 +275,7 @@ public final class ExceptionDialogUtil {
         }
 
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Authentication failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -313,7 +312,7 @@ public final class ExceptionDialogUtil {
         }
 
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Authorisation Failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -329,7 +328,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainClientTimeout(OsmApiException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainClientTimeout(e),
                 tr("Client Time Out"),
                 JOptionPane.ERROR_MESSAGE,
@@ -345,7 +344,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainBandwidthLimitExceeded(OsmApiException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainBandwidthLimitExceeded(e),
                 tr("Bandwidth Limit Exceeded"),
                 JOptionPane.ERROR_MESSAGE,
@@ -367,7 +366,7 @@ public final class ExceptionDialogUtil {
             msg = ExceptionUtil.explainGeneric(e);
         }
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Communication with OSM server failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -383,7 +382,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainMissingOAuthAccessTokenException(e),
                 tr("Authentication failed"),
                 JOptionPane.ERROR_MESSAGE,
@@ -400,7 +399,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainNestedUnkonwnHostException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainNestedUnknownHostException(e),
                 tr("Unknown host"),
                 JOptionPane.ERROR_MESSAGE,
@@ -503,7 +502,7 @@ public final class ExceptionDialogUtil {
      */
     public static void explainGoneForUnknownPrimitive(OsmApiException e) {
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 ExceptionUtil.explainGoneForUnknownPrimitive(e),
                 tr("Object deleted"),
                 JOptionPane.ERROR_MESSAGE,

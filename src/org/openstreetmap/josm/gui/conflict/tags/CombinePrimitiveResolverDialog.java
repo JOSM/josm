@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -40,6 +39,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -65,7 +65,7 @@ import org.openstreetmap.josm.tools.UserCancelException;
  *
  * Models have to be <strong>populated</strong> before the dialog is launched. Example:
  * <pre>
- *    CombinePrimitiveResolverDialog dialog = new CombinePrimitiveResolverDialog(Main.parent);
+ *    CombinePrimitiveResolverDialog dialog = new CombinePrimitiveResolverDialog(MainApplication.getMainFrame());
  *    dialog.getTagConflictResolverModel().populate(aTagCollection);
  *    dialog.getRelationMemberConflictResolverModel().populate(aRelationLinkCollection);
  *    dialog.prepareDefaultDecisions();
@@ -369,7 +369,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         if (visible) {
             prepareGUIBeforeConflictResolutionStarts();
             setMinimumSize(new Dimension(400, 400));
-            new WindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(Main.parent,
+            new WindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(MainApplication.getMainFrame(),
                     new Dimension(800, 600))).applySafe(this);
             setApplied(false);
             btnApply.requestFocusInWindow();
@@ -520,7 +520,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         } else if (!GraphicsEnvironment.isHeadless()) {
             UserCancelException canceled = GuiHelper.runInEDTAndWaitAndReturn(() -> {
                 // Build conflict resolution dialog
-                final CombinePrimitiveResolverDialog dialog = new CombinePrimitiveResolverDialog(Main.parent, tagModel, relModel);
+                final CombinePrimitiveResolverDialog dialog = new CombinePrimitiveResolverDialog(
+                        MainApplication.getMainFrame(), tagModel, relModel);
 
                 // Ensure a proper title is displayed instead of a previous target (fix #7925)
                 if (targetPrimitives.size() == 1) {
@@ -579,7 +580,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                 "combine_tags",
-                Main.parent,
+                MainApplication.getMainFrame(),
                 "<html>" + msg + "</html>",
                 tr("Combine confirmation"),
                 JOptionPane.YES_NO_OPTION,
@@ -613,7 +614,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                 "combine_tags",
-                Main.parent,
+                MainApplication.getMainFrame(),
                 "<html>" + msg + "</html>",
                 tr("Combine confirmation"),
                 JOptionPane.YES_NO_OPTION,

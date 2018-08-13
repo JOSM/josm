@@ -11,7 +11,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -77,7 +76,7 @@ public class EditRelationAction extends AbstractRelationAction {
         if (!isEnabled() || filteredRelations.isEmpty()) return;
         if (filteredRelations.size() > Config.getPref().getInt("warn.open.maxrelations", 5) &&
             /* I18N english text for value 1 makes no real sense, never called for values <= maxrel (usually 5) */
-            JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent,
+            JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
                     "<html>"+trn("You are about to open <b>{0}</b> different relation editor simultaneously.<br/>Do you want to continue?",
                             "You are about to open <b>{0}</b> different relation editors simultaneously.<br/>Do you want to continue?",
                             filteredRelations.size(), filteredRelations.size())+"</html>",

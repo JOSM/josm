@@ -18,8 +18,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
@@ -54,7 +54,7 @@ public class LayerListPopup extends JPopupMenu {
             Object object = layer.getInfoComponent();
             if (object instanceof Component) {
                 ExtendedDialog ed = new ExtendedDialog(
-                        Main.parent, tr("Information about layer"),
+                        MainApplication.getMainFrame(), tr("Information about layer"),
                         tr("OK"));
                 ed.setButtonIcons("ok");
                 ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
@@ -64,7 +64,7 @@ public class LayerListPopup extends JPopupMenu {
                 ed.showDialog();
             } else {
                 JOptionPane.showMessageDialog(
-                        Main.parent, object,
+                        MainApplication.getMainFrame(), object,
                         tr("Information about layer"),
                         JOptionPane.INFORMATION_MESSAGE
                         );

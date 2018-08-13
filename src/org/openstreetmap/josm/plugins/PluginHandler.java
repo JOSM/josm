@@ -52,7 +52,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
@@ -185,7 +184,7 @@ public final class PluginHandler {
             a.setText(text);
             a.setCaretPosition(0);
             if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a), tr("Plugin information"),
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), new JScrollPane(a), tr("Plugin information"),
                         JOptionPane.INFORMATION_MESSAGE);
             }
         }
@@ -1396,7 +1395,7 @@ public final class PluginHandler {
 
         try {
             FutureTask<Integer> task = new FutureTask<>(() -> HelpAwareOptionPane.showOptionDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     msg.toString(),
                     tr("Update plugins"),
                     JOptionPane.QUESTION_MESSAGE,
@@ -1479,14 +1478,14 @@ public final class PluginHandler {
         switch (askUpdateDisableKeepPluginAfterException(plugin)) {
         case 0:
             // update the plugin
-            updatePlugins(Main.parent, Collections.singleton(pluginInfo), null, true);
+            updatePlugins(MainApplication.getMainFrame(), Collections.singleton(pluginInfo), null, true);
             return pluginDownloadTask;
         case 1:
             // deactivate the plugin
             plugins.remove(plugin.getPluginInformation().name);
             Config.getPref().putList("plugins", new ArrayList<>(plugins));
             GuiHelper.runInEDTAndWait(() -> JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE

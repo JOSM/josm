@@ -20,8 +20,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -104,7 +104,8 @@ public class TaggingPresetMenu extends TaggingPreset {
                 PointerInfo pointerInfo = MouseInfo.getPointerInfo();
                 if (pointerInfo != null) {
                     Point p = pointerInfo.getLocation();
-                    pm.show(Main.parent, p.x-Main.parent.getX(), p.y-Main.parent.getY());
+                    MainFrame parent = MainApplication.getMainFrame();
+                    pm.show(parent, p.x-parent.getX(), p.y-parent.getY());
                 }
             } catch (SecurityException ex) {
                 Logging.log(Logging.LEVEL_ERROR, "Unable to get mouse pointer info", ex);

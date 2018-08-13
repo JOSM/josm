@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
@@ -56,7 +55,7 @@ public class JumpToAction extends JosmAction {
 
     static class JumpToPositionDialog extends ExtendedDialog {
         JumpToPositionDialog(String[] buttons, JPanel panel) {
-            super(Main.parent, tr("Jump to Position"), buttons);
+            super(MainApplication.getMainFrame(), tr("Jump to Position"), buttons);
             setContent(panel);
             setCancelButton(2);
         }
@@ -164,7 +163,7 @@ public class JumpToAction extends JosmAction {
                 try {
                     ll = LatLonParser.parse(lat.getText() + "; " + lon.getText());
                 } catch (IllegalArgumentException ex2) {
-                    JOptionPane.showMessageDialog(Main.parent,
+                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                             tr("Could not parse Latitude, Longitude or Zoom. Please check."),
                             tr("Unable to parse Lon/Lat"), JOptionPane.ERROR_MESSAGE);
                 }

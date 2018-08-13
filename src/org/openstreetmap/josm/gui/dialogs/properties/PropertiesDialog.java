@@ -47,7 +47,6 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
@@ -1028,7 +1027,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                 nextRelation = (Relation) membershipData.getValueAt(row + 1 < rowCount ? row + 1 : row - 1, 0);
             }
 
-            ExtendedDialog ed = new ExtendedDialog(Main.parent,
+            ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
                     tr("Change relation"),
                     tr("Delete from relation"), tr("Cancel"));
             ed.setButtonIcons("dialogs/delete", "cancel");

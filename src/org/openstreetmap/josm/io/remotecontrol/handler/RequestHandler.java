@@ -20,10 +20,10 @@ import java.util.regex.Pattern;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
@@ -180,7 +180,7 @@ public abstract class RequestHandler {
          */
         if (Config.getPref().getBoolean(globalConfirmationKey, globalConfirmationDefault)) {
             // Ensure dialog box does not exceed main window size
-            Integer maxWidth = (int) Math.max(200, Main.parent.getWidth()*0.6);
+            Integer maxWidth = (int) Math.max(200, MainApplication.getMainFrame().getWidth()*0.6);
             String message = "<html><div>" + getPermissionMessage() +
                     "<br/>" + tr("Do you want to allow this?") + "</div></html>";
             JLabel label = new JLabel(message);
@@ -188,7 +188,7 @@ public abstract class RequestHandler {
                 label.setText(message.replaceFirst("<div>", "<div style=\"width:" + maxWidth + "px;\">"));
             }
             Object[] choices = new Object[] {tr("Yes, always"), tr("Yes, once"), tr("No")};
-            int choice = JOptionPane.showOptionDialog(Main.parent, label, tr("Confirm Remote Control action"),
+            int choice = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), label, tr("Confirm Remote Control action"),
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
             if (choice != JOptionPane.YES_OPTION && choice != JOptionPane.NO_OPTION) { // Yes/no refer to always/once
                 String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by user''s choice", myCommand);

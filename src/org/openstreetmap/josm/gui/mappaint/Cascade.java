@@ -200,7 +200,7 @@ public final class Cascade {
         if (o instanceof Number)
             return ((Number) o).floatValue() != 0;
         if (o instanceof List)
-            return !((List) o).isEmpty();
+            return !((List<?>) o).isEmpty();
         if (o instanceof float[])
             return ((float[]) o).length != 0;
 

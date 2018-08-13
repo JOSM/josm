@@ -42,7 +42,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -271,7 +270,7 @@ public class PlaceSelection implements DownloadSelection {
                     // Nominatim sometimes returns garbage, see #5934, #10643
                     Logging.log(Logging.LEVEL_WARN, tr("Error occured with query ''{0}'': ''{1}''", urlString, e.getMessage()), e);
                     GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Name server returned invalid data. Please try again."),
                             tr("Bad response"),
                             JOptionPane.WARNING_MESSAGE, null

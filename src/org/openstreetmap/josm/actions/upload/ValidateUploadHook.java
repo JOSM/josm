@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
@@ -143,7 +142,7 @@ public class ValidateUploadHook implements UploadHook {
         p.add(pnlMessage, GBC.eol().fill(GBC.HORIZONTAL));
         p.add(new JScrollPane(errorPanel), GBC.eol().fill(GBC.BOTH));
 
-        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Suspicious data found. Upload anyway?"),
                 tr("Continue upload"), tr("Cancel"))
             .setButtonIcons("ok", "cancel")

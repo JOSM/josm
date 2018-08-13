@@ -14,9 +14,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
@@ -114,7 +114,7 @@ public class PluginHandlerJOSMTooOldTest {
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
 
         final List<PluginInformation> updatedPlugins = PluginHandler.updatePlugins(
-            Main.parent,
+            MainApplication.getMainFrame(),
             null,
             null,
             false
@@ -182,7 +182,7 @@ public class PluginHandlerJOSMTooOldTest {
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
 
         final List<PluginInformation> updatedPlugins = PluginHandler.updatePlugins(
-            Main.parent,
+            MainApplication.getMainFrame(),
             null,
             null,
             false
@@ -256,7 +256,7 @@ public class PluginHandlerJOSMTooOldTest {
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
 
         final List<PluginInformation> updatedPlugins = ImmutableList.copyOf(PluginHandler.updatePlugins(
-            Main.parent,
+            MainApplication.getMainFrame(),
             null,
             null,
             false

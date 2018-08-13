@@ -35,7 +35,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -108,7 +107,7 @@ class NotificationManager {
             currentNotificationPanel.validate();
 
             int margin = 5;
-            JFrame parentWindow = (JFrame) Main.parent;
+            JFrame parentWindow = MainApplication.getMainFrame();
             Dimension size = currentNotificationPanel.getPreferredSize();
             if (parentWindow != null) {
                 int x;
@@ -116,7 +115,7 @@ class NotificationManager {
                 MapFrame map = MainApplication.getMap();
                 if (MainApplication.isDisplayingMapView() && map.mapView.getHeight() > 0) {
                     MapView mv = map.mapView;
-                    Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), Main.parent);
+                    Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), MainApplication.getMainFrame());
                     x = mapViewPos.x + margin;
                     y = mapViewPos.y + mv.getHeight() - map.statusLine.getHeight() - size.height - margin;
                 } else {
@@ -151,7 +150,7 @@ class NotificationManager {
         hideTimer.stop();
         if (currentNotificationPanel != null) {
             currentNotificationPanel.setVisible(false);
-            JFrame parent = (JFrame) Main.parent;
+            JFrame parent = MainApplication.getMainFrame();
             if (parent != null) {
                 parent.getLayeredPane().remove(currentNotificationPanel);
             }

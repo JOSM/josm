@@ -20,7 +20,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -208,7 +208,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
         rList.addActionListener(enabler);
         rNone.addActionListener(disabler);
 
-        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Options"),
+        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), tr("Options"),
                 tr("Convert"), tr("Convert and remember selection"), tr("Cancel"))
                 .setButtonIcons("exportgpx", "exportgpx", "cancel").setContent(p);
         int ret = ed.showDialog().getValue();

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -409,8 +409,8 @@ public class WindowGeometry {
         // Compute max dimension of current screen
         Dimension result = new Dimension();
         GraphicsConfiguration gc = component.getGraphicsConfiguration();
-        if (gc == null && Main.parent != null) {
-            gc = Main.parent.getGraphicsConfiguration();
+        if (gc == null && MainApplication.getMainFrame() != null) {
+            gc = MainApplication.getMainFrame().getGraphicsConfiguration();
         }
         if (gc != null) {
             // Max displayable dimension (max screen dimension - insets)

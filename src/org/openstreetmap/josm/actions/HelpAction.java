@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.NetworkManager;
@@ -60,8 +60,9 @@ public class HelpAction extends JosmAction {
                     topic = null;
                 }
             } else {
-                Point mouse = Main.parent.getMousePosition();
-                topic = HelpUtil.getContextSpecificHelpTopic(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
+                Point mouse = MainApplication.getMainFrame().getMousePosition();
+                topic = HelpUtil.getContextSpecificHelpTopic(
+                        SwingUtilities.getDeepestComponentAt(MainApplication.getMainFrame(), mouse.x, mouse.y));
             }
             HelpBrowser.setUrlForHelpTopic(Optional.ofNullable(topic).orElse("/"));
         } else {

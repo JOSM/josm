@@ -21,7 +21,6 @@ import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -189,7 +188,7 @@ public class DownloadTaskList {
                 + tr("Click <strong>{0}</strong> to ignore." + "</html>", options[1].text);
 
         int ret = HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 message,
                 tr("Deleted or moved objects"),
                 JOptionPane.WARNING_MESSAGE,
@@ -265,7 +264,7 @@ public class DownloadTaskList {
                     if (items.size() == 1 && tr("No data found in this area.").equals(items.iterator().next())) {
                         new Notification(items.iterator().next()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                     } else {
-                        JOptionPane.showMessageDialog(Main.parent, "<html>"
+                        JOptionPane.showMessageDialog(MainApplication.getMainFrame(), "<html>"
                                 + tr("The following errors occurred during mass download: {0}",
                                         Utils.joinAsHtmlUnorderedList(items)) + "</html>",
                                 tr("Errors during download"), JOptionPane.ERROR_MESSAGE);

@@ -16,13 +16,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.PresetPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceProvider;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -58,7 +58,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             canLoad = true;
                         } catch (IOException e) {
                             Logging.log(Logging.LEVEL_WARN, tr("Could not read tagging preset source: {0}", source), e);
-                            ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Error"),
+                            ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), tr("Error"),
                                     tr("Yes"), tr("No"), tr("Cancel"));
                             ed.setContent(tr("Could not read tagging preset source: {0}\nDo you want to keep it?", source));
                             switch (ed.showDialog().getValue()) {
@@ -83,7 +83,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             // Should not happen, but at least show message
                             String msg = tr("Could not read tagging preset source: {0}", source);
                             Logging.log(Logging.LEVEL_ERROR, msg, e);
-                            JOptionPane.showMessageDialog(Main.parent, msg);
+                            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), msg);
                             return false;
                         } catch (SAXParseException e) {
                             if (canLoad) {
@@ -111,7 +111,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
                         if (errorMessage != null) {
                             Logging.error(errorMessage);
-                            int result = JOptionPane.showConfirmDialog(Main.parent, new JLabel(errorMessage), tr("Error"),
+                            int result = JOptionPane.showConfirmDialog(MainApplication.getMainFrame(), new JLabel(errorMessage), tr("Error"),
                                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
                             switch (result) {

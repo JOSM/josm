@@ -20,7 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -165,7 +164,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
         panel.add(new JLabel(tr("WMS URL or Image ID:")), GBC.eol());
         panel.add(tfWmsUrl, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
-        ExtendedDialog diag = new ExtendedDialog(Main.parent,
+        ExtendedDialog diag = new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Add Rectified Image"),
                 tr("Add Rectified Image"), tr("Cancel"))
             .setContent(panel)
@@ -222,7 +221,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
             }
 
             // and display an error message. The while loop ensures that the dialog pops up again
-            JOptionPane.showMessageDialog(Main.parent,
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                     tr("Couldn''t match the entered link or id to the selected service. Please try again."),
                     tr("No valid WMS URL or id"),
                     JOptionPane.ERROR_MESSAGE);
@@ -243,7 +242,8 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 info = AddImageryLayerAction.getWMSLayerInfo(info);
             } catch (IOException | WMSGetCapabilitiesException e) {
                 Logging.error(e);
-                JOptionPane.showMessageDialog(Main.parent, e.getMessage(), tr("No valid WMS URL or id"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                        e.getMessage(), tr("No valid WMS URL or id"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }

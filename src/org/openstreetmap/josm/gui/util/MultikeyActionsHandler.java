@@ -22,7 +22,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction.MultikeyInfo;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -101,9 +100,9 @@ public final class MultikeyActionsHandler {
                 }
             }
             layers.addPopupMenuListener(new StatusLinePopupMenuListener());
-            layers.show(Main.parent, Integer.MAX_VALUE, Integer.MAX_VALUE);
-            layers.setLocation(Main.parent.getX() + Main.parent.getWidth() - layers.getWidth(),
-                               Main.parent.getY() + Main.parent.getHeight() - layers.getHeight());
+            layers.show(MainApplication.getMainFrame(), Integer.MAX_VALUE, Integer.MAX_VALUE);
+            layers.setLocation(MainApplication.getMainFrame().getX() + MainApplication.getMainFrame().getWidth() - layers.getWidth(),
+                               MainApplication.getMainFrame().getY() + MainApplication.getMainFrame().getHeight() - layers.getHeight());
         }
     }
 

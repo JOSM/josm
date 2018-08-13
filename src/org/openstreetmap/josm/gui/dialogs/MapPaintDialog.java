@@ -51,7 +51,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
@@ -538,7 +537,7 @@ public class MapPaintDialog extends ToggleDialog {
             if (sel < 0 || sel >= model.getRowCount())
                 return;
             final StyleSource s = model.getRow(sel);
-            ExtendedDialog info = new ExtendedDialog(Main.parent, tr("Map Style info"), tr("Close"));
+            ExtendedDialog info = new ExtendedDialog(MainApplication.getMainFrame(), tr("Map Style info"), tr("Close"));
             info.setPreferredSize(new Dimension(600, 400));
             info.setButtonIcons("ok");
 

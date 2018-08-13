@@ -13,7 +13,6 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.DeleteCommand.DeletionCallback;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -131,7 +130,7 @@ public final class DeleteAction extends JosmAction {
                 + "</html>"));
         return ConditionalOptionPaneUtil.showConfirmationDialog(
                 "delete_relations",
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Delete relation?"),
                 JOptionPane.YES_NO_OPTION,

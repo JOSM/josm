@@ -43,7 +43,6 @@ import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -383,7 +382,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
             } catch (HelpContentReaderException e) {
                 Logging.warn(e);
                 HelpAwareOptionPane.showOptionDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr(
                                 "<html>Failed to open help page for url {0}.<br>"
                                 + "This is most likely due to a network problem, please check<br>"
@@ -468,7 +467,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
                 );
                 if (!GraphicsEnvironment.isHeadless()) {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             message,
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE

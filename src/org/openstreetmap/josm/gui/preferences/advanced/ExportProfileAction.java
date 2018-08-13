@@ -16,12 +16,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.CustomConfigurator;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -55,7 +55,7 @@ public class ExportProfileAction extends AbstractAction {
             }
         }
         if (keys.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent,
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                     tr("All the preferences of this group are default, nothing to save"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
             return;
         }

@@ -21,7 +21,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -730,7 +729,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                         }
                         // TODO: We might use a simple notification in the lower left corner.
                         JOptionPane.showMessageDialog(
-                                Main.parent,
+                                MainApplication.getMainFrame(),
                                 tr("Cannot move objects outside of the world."),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE);
@@ -872,7 +871,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
     static class ConfirmMoveDialog extends ExtendedDialog {
         ConfirmMoveDialog() {
-            super(Main.parent,
+            super(MainApplication.getMainFrame(),
                     tr("Move elements"),
                     tr("Move them"), tr("Undo move"));
             setButtonIcons("reorder", "cancel");

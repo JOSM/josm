@@ -17,7 +17,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.spi.preferences.ListListSetting;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
@@ -269,7 +269,7 @@ public final class PreferencesUtils {
     private static void defaultUnknownWarning(String key) {
         log("Warning: Unknown default value of %s , skipped\n", key);
         JOptionPane.showMessageDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("<html>Settings file asks to append preferences to <b>{0}</b>,<br/> "+
                         "but its default value is unknown at this moment.<br/> " +
                         "Please activate corresponding function manually and retry importing.", key),

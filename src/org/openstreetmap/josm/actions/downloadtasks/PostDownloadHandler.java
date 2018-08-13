@@ -16,8 +16,8 @@ import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExceptionUtil;
@@ -90,7 +90,7 @@ public class PostDownloadHandler implements Runnable {
                         new Notification(error.toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                     } else {
                         JOptionPane.showMessageDialog(
-                                Main.parent,
+                                MainApplication.getMainFrame(),
                                 error.toString(),
                                 tr("Error during download"),
                                 JOptionPane.ERROR_MESSAGE);
@@ -114,7 +114,7 @@ public class PostDownloadHandler implements Runnable {
 
             if (!GraphicsEnvironment.isHeadless()) {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         "<html>"+Utils.joinAsHtmlUnorderedList(items)+"</html>",
                         tr("Errors during download"),
                         JOptionPane.ERROR_MESSAGE));

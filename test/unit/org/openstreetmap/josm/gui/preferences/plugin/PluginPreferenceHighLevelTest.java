@@ -8,7 +8,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Component;
-import java.awt.Window;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Collection;
@@ -20,7 +19,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -68,10 +66,6 @@ public class PluginPreferenceHighLevelTest {
      */
     @Before
     public void setUp() throws ReflectiveOperationException {
-        if (!java.awt.GraphicsEnvironment.isHeadless()) {
-            originalMainParent = Main.parent;
-            Main.parent = new Window(null);
-        }
 
         // some other tests actually go ahead and load plugins (notably at time of writing,
         // MainApplicationTest$testUpdateAndLoadPlugins), which really isn't a reversible operation.
@@ -119,15 +113,9 @@ public class PluginPreferenceHighLevelTest {
         );
         pluginList.clear();
         pluginList.addAll(this.originalPluginList);
-
-        if (!java.awt.GraphicsEnvironment.isHeadless()) {
-            Main.parent = originalMainParent;
-        }
     }
 
     private Collection<PluginProxy> originalPluginList;
-
-    private Component originalMainParent;
 
     private File pluginDir;
     private File referenceDummyJarOld;

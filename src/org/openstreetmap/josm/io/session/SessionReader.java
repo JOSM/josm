@@ -31,12 +31,12 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -674,7 +674,7 @@ public class SessionReader {
             try {
                 SwingUtilities.invokeAndWait(() -> {
                     ExtendedDialog dlg = new ExtendedDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             title,
                             tr("Cancel"), tr("Skip layer and continue"))
                         .setButtonIcons("cancel", "dialogs/next")

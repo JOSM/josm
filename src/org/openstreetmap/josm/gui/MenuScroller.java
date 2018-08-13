@@ -27,7 +27,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -57,7 +56,7 @@ public class MenuScroller {
         int result = 15;
         if (menu != null) {
             // Compute max height of current screen
-            int maxHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame) Main.parent).getInsets().top;
+            int maxHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame) MainApplication.getMainFrame()).getInsets().top;
 
             // Remove top fixed part height
             if (topFixedCount > 0) {
@@ -312,7 +311,7 @@ public class MenuScroller {
                 allItemsHeight += item.getPreferredSize().height;
             }
 
-            int allowedHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame) Main.parent).getInsets().top;
+            int allowedHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame) MainApplication.getMainFrame()).getInsets().top;
 
             boolean mustSCroll = allItemsHeight > allowedHeight;
 

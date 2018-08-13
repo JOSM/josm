@@ -9,13 +9,13 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -90,7 +90,7 @@ public final class ReverseWayNoTagCorrector {
             );
         int ret = ConditionalOptionPaneUtil.showOptionDialog(
                 "reverse_directional_way",
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Reverse directional way."),
                 JOptionPane.YES_NO_CANCEL_OPTION,

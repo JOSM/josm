@@ -31,7 +31,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileFilter;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -170,7 +169,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         } catch (IOException ex) {
             Logging.error(ex);
             HelpAwareOptionPane.showMessageDialogInEDT(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("<html>Could not save session file ''{0}''.<br>Error is:<br>{1}</html>",
                             file.getName(), Utils.escapeReservedCharactersHTML(ex.getMessage())),
                     tr("IO Error"),
@@ -189,12 +188,12 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
          * Constructs a new {@code SessionSaveAsDialog}.
          */
         public SessionSaveAsDialog() {
-            super(Main.parent, tr("Save Session"), tr("Save As"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), tr("Save Session"), tr("Save As"), tr("Cancel"));
             initialize();
             setButtonIcons("save_as", "cancel");
             setDefaultButton(1);
             setRememberWindowGeometry(getClass().getName() + ".geometry",
-                    WindowGeometry.centerInWindow(Main.parent, new Dimension(350, 450)));
+                    WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(350, 450)));
             setContent(build(), false);
         }
 

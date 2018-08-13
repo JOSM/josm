@@ -26,13 +26,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.PurgeCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -94,7 +94,7 @@ public class PurgeAction extends JosmAction {
 
         if (!GraphicsEnvironment.isHeadless()) {
             final boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
-                    "purge", Main.parent, buildPanel(modified), tr("Confirm Purging"),
+                    "purge", MainApplication.getMainFrame(), buildPanel(modified), tr("Confirm Purging"),
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_OPTION);
             if (!answer)
                 return;

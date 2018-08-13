@@ -13,7 +13,6 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.ListCellRenderer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -30,7 +29,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
     private static final MenuItemSearchDialog INSTANCE = new MenuItemSearchDialog(MainApplication.getMenu());
 
     private MenuItemSearchDialog(MainMenu menu) {
-        super(Main.parent, tr("Search menu items"), tr("Select"), tr("Cancel"));
+        super(MainApplication.getMainFrame(), tr("Search menu items"), tr("Select"), tr("Cancel"));
         this.selector = new MenuItemSelector(menu);
         this.selector.setDblClickListener(e -> buttonAction(0, null));
         setContent(selector, false);

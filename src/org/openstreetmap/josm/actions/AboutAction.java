@@ -23,7 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -135,7 +134,7 @@ public final class AboutAction extends JosmAction {
         panel.add(about, GBC.std().fill());
 
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
-        int ret = new ExtendedDialog(Main.parent, tr("About JOSM..."), tr("OK"), tr("Report bug"))
+        int ret = new ExtendedDialog(MainApplication.getMainFrame(), tr("About JOSM..."), tr("OK"), tr("Report bug"))
             .setButtonIcons("ok", "bug")
             .setContent(panel, false)
             .showDialog().getValue();

@@ -59,7 +59,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
@@ -132,7 +131,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             try {
                 timezone = Timezone.parseTimezone(tfTimezone.getText().trim());
             } catch (ParseException e) {
-                JOptionPane.showMessageDialog(Main.parent, e.getMessage(),
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), e.getMessage(),
                         tr("Invalid timezone"), JOptionPane.ERROR_MESSAGE);
                 return AGAIN;
             }
@@ -140,13 +139,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
             try {
                 delta = Offset.parseOffset(tfOffset.getText().trim());
             } catch (ParseException e) {
-                JOptionPane.showMessageDialog(Main.parent, e.getMessage(),
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), e.getMessage(),
                         tr("Invalid offset"), JOptionPane.ERROR_MESSAGE);
                 return AGAIN;
             }
 
             if (lastNumMatched == 0 && new ExtendedDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("Correlate images with GPX track"),
                         tr("OK"), tr("Try Again")).
                         setContent(tr("No images could be matched!")).
@@ -271,7 +270,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         cbGpx.setSelectedIndex(i);
                         if (!sel.getName().equals(wrapper.name)) {
                             JOptionPane.showMessageDialog(
-                                    Main.parent,
+                                    MainApplication.getMainFrame(),
                                     tr("File {0} is loaded yet under the name \"{1}\"", sel.getName(), wrapper.name),
                                     tr("Error"),
                                     JOptionPane.ERROR_MESSAGE
@@ -290,7 +289,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 } catch (SAXException ex) {
                     Logging.error(ex);
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Error while parsing {0}", sel.getName())+": "+ex.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
@@ -299,7 +298,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 } catch (IOException ex) {
                     Logging.error(ex);
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Could not read \"{0}\"", sel.getName())+'\n'+ex.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
@@ -489,7 +488,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             boolean isOk = false;
             while (!isOk) {
                 int answer = JOptionPane.showConfirmDialog(
-                        Main.parent, panel,
+                        MainApplication.getMainFrame(), panel,
                         tr("Synchronize time from a photo of the GPS receiver"),
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE
@@ -503,7 +502,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     delta = dateFormat.parse(lbExifTime.getText()).getTime()
                     - dateFormat.parse(tfGpsTime.getText()).getTime();
                 } catch (ParseException e) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Error while parsing the date.\n"
+                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("Error while parsing the date.\n"
                             + "Please use the requested format"),
                             tr("Invalid date"), JOptionPane.ERROR_MESSAGE);
                     continue;
@@ -722,7 +721,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         if (!GraphicsEnvironment.isHeadless()) {
             syncDialog = new ExtendedDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Correlate images with GPX track"),
                     new String[] {tr("Correlate"), tr("Cancel")},
                     false
@@ -931,7 +930,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 sldSeconds.setValue((int) (deciSeconds % 60));
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 Logging.warn(e);
-                JOptionPane.showMessageDialog(Main.parent,
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                         tr("An error occurred while trying to match the photos to the GPX track."
                                 +" You can adjust the sliders to manually match the photos."),
                                 tr("Matching photos to track failed"),
@@ -949,7 +948,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // There is no way to cancel this dialog, all changes get applied
             // immediately. Therefore "Close" is marked with an "OK" icon.
             // Settings are only saved temporarily to the layer.
-            new ExtendedDialog(Main.parent,
+            new ExtendedDialog(MainApplication.getMainFrame(),
                     tr("Adjust timezone and offset"),
                     tr("Close")).
                     setContent(p).setButtonIcons("ok").showDialog();
@@ -1011,13 +1010,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 delta = r.b;
             } catch (IndexOutOfBoundsException ex) {
                 Logging.debug(ex);
-                JOptionPane.showMessageDialog(Main.parent,
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                         tr("The selected photos do not contain time information."),
                         tr("Photos do not contain time information"), JOptionPane.WARNING_MESSAGE);
                 return;
             } catch (NoGpxTimestamps ex) {
                 Logging.debug(ex);
-                JOptionPane.showMessageDialog(Main.parent,
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                         tr("The selected GPX track does not contain timestamps. Please select another one."),
                         tr("GPX Track has no time information"), JOptionPane.WARNING_MESSAGE);
                 return;
@@ -1080,7 +1079,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         if (item == null || ((GpxDataWrapper) item).file == null) {
             if (complain) {
-                JOptionPane.showMessageDialog(Main.parent, tr("You should select a GPX track"),
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("You should select a GPX track"),
                         tr("No selected GPX track"), JOptionPane.ERROR_MESSAGE);
             }
             return null;

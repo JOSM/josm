@@ -18,7 +18,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -69,7 +68,7 @@ public class FullscreenToggleAction extends ToggleAction {
     }
 
     protected void setMode() {
-        JFrame frame = (JFrame) Main.parent;
+        JFrame frame = MainApplication.getMainFrame();
 
         List<Window> visibleWindows = new ArrayList<>();
         visibleWindows.add(frame);

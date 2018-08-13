@@ -53,7 +53,6 @@ import org.openstreetmap.gui.jmapviewer.MapRectangleImpl;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
@@ -545,7 +544,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                         if (ex.getMessage() == null || ex.getMessage().isEmpty())
                             throw ex;
                         else {
-                            JOptionPane.showMessageDialog(Main.parent,
+                            JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                                     ex.getMessage(), tr("Error"),
                                     JOptionPane.ERROR_MESSAGE);
                         }
@@ -814,7 +813,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 JScrollPane scrollPane = new JScrollPane(htmlPane);
                 scrollPane.setPreferredSize(new Dimension(400, 400));
                 box.add(scrollPane);
-                int option = JOptionPane.showConfirmDialog(Main.parent, box, tr("Please abort if you are not sure"),
+                int option = JOptionPane.showConfirmDialog(MainApplication.getMainFrame(), box, tr("Please abort if you are not sure"),
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (option == JOptionPane.YES_OPTION)
                     return true;

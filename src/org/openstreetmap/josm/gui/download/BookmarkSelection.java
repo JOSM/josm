@@ -21,9 +21,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.BookmarkList.Bookmark;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -187,7 +187,7 @@ public class BookmarkSelection implements DownloadSelection {
         public void actionPerformed(ActionEvent e) {
             if (currentArea == null) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("Currently, there is no download area selected. Please select an area first."),
                         tr("Information"),
                         JOptionPane.INFORMATION_MESSAGE
@@ -197,7 +197,7 @@ public class BookmarkSelection implements DownloadSelection {
             Bookmark b = new Bookmark();
             b.setName(
                     JOptionPane.showInputDialog(
-                            Main.parent, tr("Please enter a name for the bookmarked download area."),
+                            MainApplication.getMainFrame(), tr("Please enter a name for the bookmarked download area."),
                             tr("Name of location"),
                             JOptionPane.QUESTION_MESSAGE)
             );
@@ -258,7 +258,7 @@ public class BookmarkSelection implements DownloadSelection {
             Bookmark b = sels.get(0);
             Object value =
                 JOptionPane.showInputDialog(
-                        Main.parent, tr("Please enter a name for the bookmarked download area."),
+                        MainApplication.getMainFrame(), tr("Please enter a name for the bookmarked download area."),
                         tr("Name of location"),
                         JOptionPane.QUESTION_MESSAGE,
                         null,

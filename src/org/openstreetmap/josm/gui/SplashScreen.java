@@ -31,7 +31,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
@@ -369,7 +368,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public Component getWindowParent() {
-            return Main.parent;
+            return MainApplication.getMainFrame();
         }
     }
 

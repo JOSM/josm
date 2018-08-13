@@ -173,6 +173,7 @@ import org.xml.sax.SAXException;
  *
  * @author imi
  */
+@SuppressWarnings("deprecation")
 public class MainApplication extends Main {
 
     /**
@@ -205,7 +206,7 @@ public class MainApplication extends Main {
      */
     static volatile ToolbarPreferences toolbar;
 
-    private final MainFrame mainFrame;
+    private static MainFrame mainFrame;
 
     /**
      * The worker thread slave. This is for executing all long and intensive
@@ -342,10 +343,10 @@ public class MainApplication extends Main {
      * @since 10340
      */
     public MainApplication(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+        MainApplication.mainFrame = mainFrame;
         getLayerManager().addLayerChangeListener(undoRedoCleaner);
         ProjectionRegistry.setboundsProvider(mainBoundsProvider);
-        Lifecycle.setShutdownSequence(new MainTermination(this));
+        Lifecycle.setShutdownSequence(new MainTermination());
     }
 
     /**
@@ -358,7 +359,7 @@ public class MainApplication extends Main {
      */
     public static void askUpdateJava(String updVersion, String url, String eolDate, boolean major) {
         ExtendedDialog ed = new ExtendedDialog(
-                Main.parent,
+                mainFrame,
                 tr("Outdated Java version"),
                 tr("OK"), tr("Update Java"), tr("Cancel"));
         // Check if the dialog has not already been permanently hidden by user
@@ -413,7 +414,7 @@ public class MainApplication extends Main {
      * @return the JOSM main frame
      * @since 14140
      */
-    public final MainFrame getMainFrame() {
+    public static MainFrame getMainFrame() {
         return mainFrame;
     }
 
@@ -1349,7 +1350,7 @@ public class MainApplication extends Main {
                 List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
                 if (!unsavedLayerFiles.isEmpty()) {
                     ExtendedDialog dialog = new ExtendedDialog(
-                            Main.parent,
+                            mainFrame,
                             tr("Unsaved osm data"),
                             tr("Restore"), tr("Cancel"), tr("Discard")
                             );
@@ -1376,7 +1377,7 @@ public class MainApplication extends Main {
         private static boolean handleNetworkOrProxyErrors(boolean hasErrors, String title, String message) {
             if (hasErrors) {
                 ExtendedDialog ed = new ExtendedDialog(
-                        Main.parent, title,
+                        mainFrame, title,
                         tr("Change proxy settings"), tr("Cancel"));
                 ed.setButtonIcons("dialogs/settings", "cancel").setCancelButton(2);
                 ed.setMinimumSize(new Dimension(460, 260));
@@ -1434,7 +1435,7 @@ public class MainApplication extends Main {
                 @Override
                 protected void realRun() throws SAXException, IOException, OsmTransferException {
                     // Wait for JOSM startup is advanced enough to load a file
-                    while (Main.parent == null || !Main.parent.isVisible()) {
+                    while (mainFrame == null || !mainFrame.isVisible()) {
                         try {
                             Thread.sleep(25);
                         } catch (InterruptedException e) {

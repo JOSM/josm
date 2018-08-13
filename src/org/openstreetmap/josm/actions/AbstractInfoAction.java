@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
@@ -87,7 +86,7 @@ public abstract class AbstractInfoAction extends JosmAction {
                 )
         };
         return 0 == HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 new StringBuilder(msg).insert(0, "<html>").append("</html>").toString(),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
@@ -113,7 +112,7 @@ public abstract class AbstractInfoAction extends JosmAction {
 
         if (primitivesToShow.isEmpty() && noteToShow == null) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Please select at least one already uploaded node, way, or relation."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE

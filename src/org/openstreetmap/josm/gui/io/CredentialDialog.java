@@ -29,7 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -119,7 +119,7 @@ public class CredentialDialog extends JDialog {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            WindowGeometry.centerInWindow(Main.parent, new Dimension(350, 300)).applySafe(this);
+            WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(350, 300)).applySafe(this);
         }
         super.setVisible(visible);
     }

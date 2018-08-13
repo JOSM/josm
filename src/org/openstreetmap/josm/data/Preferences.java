@@ -33,12 +33,12 @@ import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ColorInfo;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
@@ -453,7 +453,7 @@ public class Preferences extends AbstractPreferences {
                         prefDir.getAbsoluteFile()));
                 if (!GraphicsEnvironment.isHeadless()) {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' is not a directory.</html>",
                                     prefDir.getAbsoluteFile()),
                             tr("Error"),
@@ -468,7 +468,7 @@ public class Preferences extends AbstractPreferences {
                         prefDir.getAbsoluteFile()));
                 if (!GraphicsEnvironment.isHeadless()) {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("<html>Failed to initialize preferences.<br>Failed to create missing preference directory: {0}</html>",
                                     prefDir.getAbsoluteFile()),
                             tr("Error"),
@@ -496,7 +496,7 @@ public class Preferences extends AbstractPreferences {
             Logging.error(e);
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("<html>Failed to initialize preferences.<br>Failed to reset preference file to default: {0}</html>",
                                 getPreferenceFile().getAbsoluteFile()),
                         tr("Error"),
@@ -513,7 +513,7 @@ public class Preferences extends AbstractPreferences {
             File backupFile = new File(prefDir, "preferences.xml.bak");
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> " +
                                 "and creating a new default preference file.</html>",
                                 backupFile.getAbsoluteFile()),

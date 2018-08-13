@@ -27,7 +27,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.conflict.ConflictResolveCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
@@ -381,7 +381,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
           .append(Utils.joinAsHtmlUnorderedList(items))
           .append("</html>");
         HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 sb.toString(),
                 tr("Merging deleted objects failed"),
                 JOptionPane.WARNING_MESSAGE,

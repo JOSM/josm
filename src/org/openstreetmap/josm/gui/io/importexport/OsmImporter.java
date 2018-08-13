@@ -11,7 +11,6 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -145,7 +144,7 @@ public class OsmImporter extends FileImporter {
                     msg = tr("No data found in file ''{0}''.", associatedFile.getPath());
                 }
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         msg,
                         tr("Open OSM file"),
                         JOptionPane.INFORMATION_MESSAGE);

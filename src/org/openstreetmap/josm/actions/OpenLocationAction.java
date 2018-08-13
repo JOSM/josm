@@ -23,7 +23,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesUrlBoundsTask;
@@ -72,7 +71,7 @@ public class OpenLocationAction extends JosmAction {
 
     static class WhichTasksToPerformDialog extends ExtendedDialog {
         WhichTasksToPerformDialog(JList<DownloadTask> list) {
-            super(Main.parent, tr("Which tasks to perform?"), new String[]{tr("Ok"), tr("Cancel")}, true);
+            super(MainApplication.getMainFrame(), tr("Which tasks to perform?"), new String[]{tr("Ok"), tr("Cancel")}, true);
             setButtonIcons("ok", "cancel");
             final JPanel pane = new JPanel(new GridLayout(2, 1));
             pane.add(new JLabel(tr("Which tasks to perform?")));
@@ -152,7 +151,7 @@ public class OpenLocationAction extends JosmAction {
 
         ExpertToggleAction.addVisibilitySwitcher(zoom);
 
-        ExtendedDialog dialog = new ExtendedDialog(Main.parent,
+        ExtendedDialog dialog = new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Download Location"),
                 tr("Download URL"), tr("Cancel"))
             .setContent(all, false /* don't embedded content in JScrollpane  */)
@@ -164,7 +163,7 @@ public class OpenLocationAction extends JosmAction {
         dialog.setupDialog();
         dialog.pack();
         dialog.setRememberWindowGeometry(getClass().getName() + ".geometry",
-                    WindowGeometry.centerInWindow(Main.parent, dialog.getPreferredSize()));
+                    WindowGeometry.centerInWindow(MainApplication.getMainFrame(), dialog.getPreferredSize()));
         if (dialog.showDialog().getValue() == 1) {
             USE_NEW_LAYER.put(layer.isSelected());
             DOWNLOAD_ZOOMTODATA.put(zoom.isSelected());
@@ -312,7 +311,7 @@ public class OpenLocationAction extends JosmAction {
      */
     protected void warnNoSuitableTasks(final String url) {
         final String details = findSummaryDocumentation();    // Explain what patterns are supported
-        HelpAwareOptionPane.showMessageDialogInEDT(Main.parent, "<html><p>" + tr(
+        HelpAwareOptionPane.showMessageDialogInEDT(MainApplication.getMainFrame(), "<html><p>" + tr(
                 "Cannot open URL ''{0}''<br>The following download tasks accept the URL patterns shown:<br>{1}",
                 url, details) + "</p></html>", tr("Download Location"), JOptionPane.ERROR_MESSAGE, ht("/Action/OpenLocation"));
     }

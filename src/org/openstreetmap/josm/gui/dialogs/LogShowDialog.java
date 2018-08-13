@@ -10,8 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -29,7 +29,7 @@ public class LogShowDialog extends ExtendedDialog {
      * @param log Multi-line log
      */
     public LogShowDialog(String title, String msg, String log) {
-        super(Main.parent, title, tr("OK"));
+        super(MainApplication.getMainFrame(), title, tr("OK"));
         setButtonIcons("ok");
         setContent(build(msg, log));
     }

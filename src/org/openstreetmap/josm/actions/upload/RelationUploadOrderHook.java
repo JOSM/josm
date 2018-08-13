@@ -15,11 +15,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 
@@ -79,7 +79,7 @@ public class RelationUploadOrderHook implements UploadHook {
         }
         JPanel pnl = buildWarningPanel(dep);
         ExtendedDialog dialog = new ExtendedDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 tr("Cycling dependencies"),
                 tr("OK")
         );
@@ -87,7 +87,7 @@ public class RelationUploadOrderHook implements UploadHook {
         dialog.setButtonIcons("ok");
         dialog.setRememberWindowGeometry(
                 getClass().getName() + ".geometry",
-                WindowGeometry.centerInWindow(Main.parent, new Dimension(300, 300))
+                WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(300, 300))
         );
         dialog.showDialog();
     }

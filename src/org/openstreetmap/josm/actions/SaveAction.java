@@ -7,8 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -48,7 +48,7 @@ public final class SaveAction extends SaveActionBase {
         // and modifying is an error most of the time.
         if (f != null && layer instanceof GpxLayer) {
             ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("Overwrite"),
                     tr("Overwrite"), tr("Cancel"))
                 .setButtonIcons("save_as", "cancel")

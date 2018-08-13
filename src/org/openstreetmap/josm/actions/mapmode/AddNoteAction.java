@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -71,7 +70,7 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
         MapFrame map = MainApplication.getMap();
         map.selectMapMode(map.mapModeSelect);
 
-        NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Create a new note"), tr("Create note"));
+        NoteInputDialog dialog = new NoteInputDialog(MainApplication.getMainFrame(), tr("Create a new note"), tr("Create note"));
         dialog.showNoteDialog(tr("Enter a detailed comment to create a note"), ImageProvider.get("dialogs/notes", "note_new"));
 
         if (dialog.getValue() != 1) {

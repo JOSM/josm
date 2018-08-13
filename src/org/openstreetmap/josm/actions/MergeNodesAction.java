@@ -19,7 +19,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
@@ -228,7 +227,7 @@ public class MergeNodesAction extends JosmAction {
                             )
                     };
                     HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Cannot merge nodes: Would have to delete way {0} which is still used by {1}",
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(w),
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(w.getReferrers(), 20)),

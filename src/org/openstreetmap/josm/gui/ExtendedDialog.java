@@ -63,7 +63,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Simple example:
  * <pre>
  *  ExtendedDialog ed = new ExtendedDialog(
- *          Main.parent, tr("Dialog Title"),
+ *          MainApplication.getMainFrame(), tr("Dialog Title"),
  *          new String[] {tr("Ok"), tr("Cancel")});
  *  ed.setButtonIcons(new String[] {"ok", "cancel"});   // optional
  *  ed.setIcon(JOptionPane.WARNING_MESSAGE);            // optional

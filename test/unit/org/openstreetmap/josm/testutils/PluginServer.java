@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.testutils;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,22 +13,18 @@ import java.util.Objects;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.tools.Logging;
 
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-
-import com.google.common.collect.ImmutableList;
-
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.github.tomakehurst.wiremock.WireMockServer;
-
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import com.google.common.collect.ImmutableList;
 
 public class PluginServer {
     public static class RemotePlugin {
@@ -74,7 +72,7 @@ public class PluginServer {
         }
 
         public String getRemotePluginsListManifestSection() {
-            final Map<String, String> attrs = new HashMap<String, String>();
+            final Map<String, String> attrs = new HashMap<>();
             JarFile jarFile = null;
 
             if (srcJar != null) {
@@ -238,7 +236,6 @@ public class PluginServer {
         public Statement apply(Statement base, Description description) {
             return super.apply(new Statement() {
                 @Override
-                @SuppressWarnings("unchecked")
                 public void evaluate() throws Throwable {
                     PluginServer.this.applyToWireMockServer(PluginServerRule.this);
                     base.evaluate();

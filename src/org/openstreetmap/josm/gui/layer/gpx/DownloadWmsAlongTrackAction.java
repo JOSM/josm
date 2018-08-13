@@ -13,7 +13,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractMergeAction;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -130,6 +129,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
     }
 
     protected void warnNoImageryLayers() {
-        JOptionPane.showMessageDialog(Main.parent, tr("There are no imagery layers."), tr("No imagery layers"), JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                tr("There are no imagery layers."), tr("No imagery layers"), JOptionPane.WARNING_MESSAGE);
     }
 }

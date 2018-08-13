@@ -58,7 +58,6 @@ import javax.swing.UIManager;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -251,7 +250,8 @@ public final class MapStatus extends JPanel implements
     private final ImageLabel distText = new ImageLabel("dist",
             tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel nameText = new ImageLabel("name",
-            tr("The name of the object at the mouse pointer."), getNameLabelCharacterCount(Main.parent), PROP_BACKGROUND_COLOR.get());
+            tr("The name of the object at the mouse pointer."),
+            getNameLabelCharacterCount(MainApplication.getMainFrame()), PROP_BACKGROUND_COLOR.get());
     private final JosmTextField helpText = new JosmTextField();
     private final JProgressBar progressBar = new JProgressBar();
     private final transient ComponentAdapter mvComponentAdapter;
@@ -956,7 +956,7 @@ public final class MapStatus extends JPanel implements
         mvComponentAdapter = new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                nameText.setCharCount(getNameLabelCharacterCount(Main.parent));
+                nameText.setCharCount(getNameLabelCharacterCount(MainApplication.getMainFrame()));
                 revalidate();
             }
         };

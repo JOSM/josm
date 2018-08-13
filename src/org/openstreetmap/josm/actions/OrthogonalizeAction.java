@@ -20,7 +20,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -32,6 +31,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -155,7 +155,7 @@ public final class OrthogonalizeAction extends JosmAction {
             "Do you want to continue?</html>");
             if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                     "align_rectangular_4326",
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     msg,
                     tr("Warning"),
                     JOptionPane.YES_NO_OPTION,

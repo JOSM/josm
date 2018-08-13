@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadReferrersAction;
 import org.openstreetmap.josm.actions.UpdateDataAction;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
@@ -154,7 +153,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 spec[0].text, spec[1].text, spec[2].text
         );
         int ret = HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Conflicts detected"),
                 JOptionPane.ERROR_MESSAGE,
@@ -194,7 +193,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 spec[0].text, spec[1].text
         );
         int ret = HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Conflicts detected"),
                 JOptionPane.ERROR_MESSAGE,
@@ -221,7 +220,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 changesetId, DateUtils.formatDateTime(d, DateFormat.SHORT, DateFormat.SHORT)
         );
         JOptionPane.showMessageDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Changeset closed"),
                 JOptionPane.ERROR_MESSAGE
@@ -254,7 +253,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 + "If necessary JOSM will create conflicts which you can resolve in the Conflict Resolution Dialog.",
                 options[0].text)) + "</html>";
         int ret = HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
+                MainApplication.getMainFrame(),
                 msg,
                 tr("Object still in use"),
                 JOptionPane.ERROR_MESSAGE,

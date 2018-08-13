@@ -35,7 +35,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.command.Command;
@@ -204,7 +203,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             }
 
             Conflict<? extends OsmPrimitive> c = conflicts.get(index);
-            ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
+            ConflictResolutionDialog dialog = new ConflictResolutionDialog(MainApplication.getMainFrame());
             dialog.getConflictResolver().populate(c);
             dialog.showDialog();
 
@@ -626,7 +625,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             };
             GuiHelper.runInEDT(() -> {
                 HelpAwareOptionPane.showOptionDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         sb.toString(),
                         tr("Conflicts detected"),
                         JOptionPane.WARNING_MESSAGE,

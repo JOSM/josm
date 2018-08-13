@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.OsmIdSelectionDialog;
@@ -59,7 +58,7 @@ public class HistoryInfoAction extends JosmAction {
          * Constructs a new {@code HistoryObjectIDDialog}.
          */
         public HistoryObjectIDDialog() {
-            super(Main.parent, tr("Show history"), tr("Show history"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), tr("Show history"), tr("Show history"), tr("Cancel"));
             setButtonIcons("dialogs/history", "cancel");
             init();
         }

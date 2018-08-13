@@ -50,7 +50,6 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -295,7 +294,7 @@ public final class GuiHelper {
      * @return true if the user wants to cancel, false if they want to continue
      */
     public static boolean warnUser(String title, String content, ImageIcon baseActionIcon, String continueToolTip) {
-        ExtendedDialog dlg = new ExtendedDialog(Main.parent,
+        ExtendedDialog dlg = new ExtendedDialog(MainApplication.getMainFrame(),
                 title, tr("Cancel"), tr("Continue"));
         dlg.setContent(content);
         dlg.setButtonIcons(

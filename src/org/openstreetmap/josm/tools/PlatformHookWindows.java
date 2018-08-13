@@ -76,11 +76,11 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 import org.openstreetmap.josm.spi.preferences.Config;
 
@@ -402,7 +402,7 @@ public class PlatformHookWindows implements PlatformHook {
                     "You are now going to be prompted by Windows to remove this insecure certificate.<br>"+
                     "For your own safety, <b>please click Yes</b> in next dialog."))
                    .append("</html>");
-            JOptionPane.showMessageDialog(Main.parent, message.toString(), tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), message.toString(), tr("Warning"), JOptionPane.WARNING_MESSAGE);
             for (String alias : insecureCertificates) {
                 Logging.warn(tr("Removing insecure certificate from {0} keystore: {1}", WINDOWS_ROOT, alias));
                 try {
@@ -440,7 +440,7 @@ public class PlatformHookWindows implements PlatformHook {
                     "To enable proper HTTPS support, <b>please click Yes</b> in next dialog.<br><br>"+
                     "If unsure, you can also click No then disable HTTPS support in Remote Control preferences."))
                    .append("</html>");
-            JOptionPane.showMessageDialog(Main.parent, message.toString(),
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), message.toString(),
                     tr("HTTPS support in Remote Control"), JOptionPane.INFORMATION_MESSAGE);
         }
         // install it to Windows-ROOT keystore, used by IE, Chrome and Safari, but not by Firefox

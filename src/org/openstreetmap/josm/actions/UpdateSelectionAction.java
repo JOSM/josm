@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -136,7 +135,7 @@ public class UpdateSelectionAction extends JosmAction {
         Collection<OsmPrimitive> toUpdate = getData();
         if (toUpdate.isEmpty()) {
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("There are no selected objects to update."),
                     tr("Selection empty"),
                     JOptionPane.INFORMATION_MESSAGE

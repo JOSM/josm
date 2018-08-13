@@ -8,9 +8,9 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
@@ -90,7 +90,7 @@ public class ChangesetQueryTask extends AbstractChangesetDownloadTask {
                     @Override
                     public void run() {
                         JOptionPane.showMessageDialog(
-                                parent != null ? parent : Main.parent,
+                                parent != null ? parent : MainApplication.getMainFrame(),
                                 ExceptionUtil.explainException(lastException),
                                 tr("Errors during download"),
                                 JOptionPane.ERROR_MESSAGE);
@@ -119,7 +119,7 @@ public class ChangesetQueryTask extends AbstractChangesetDownloadTask {
      * @throws IllegalArgumentException if query is null.
      */
     public ChangesetQueryTask(ChangesetQuery query) {
-        this(Main.parent, query);
+        this(MainApplication.getMainFrame(), query);
     }
 
     /**

@@ -12,7 +12,6 @@ import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.ViewportData;
@@ -174,7 +173,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             } catch (MoreNotesException e) {
                 Logging.debug(e);
                 notesData = e.notes;
-                JOptionPane.showMessageDialog(Main.parent, "<html>"
+                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), "<html>"
                                 + trn("{0} note has been downloaded.", "{0} notes have been downloaded.", e.limit, e.limit)
                                 + "<br>"
                                 + tr("Since the download limit was {0}, there might be more notes to download.", e.limit)

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.validation.tests.Addresses;
@@ -406,7 +405,7 @@ public final class OsmValidator {
                 Logging.error(message);
                 if (!GraphicsEnvironment.isHeadless()) {
                     GuiHelper.runInEDT(() ->
-                        JOptionPane.showMessageDialog(Main.parent, message, tr("Error"), JOptionPane.ERROR_MESSAGE)
+                        JOptionPane.showMessageDialog(MainApplication.getMainFrame(), message, tr("Error"), JOptionPane.ERROR_MESSAGE)
                     );
                 }
             }

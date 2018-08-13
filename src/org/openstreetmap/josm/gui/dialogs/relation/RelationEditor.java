@@ -7,10 +7,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -51,7 +51,7 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
      * @throws IllegalArgumentException if layer is null
      */
     protected RelationEditor(OsmDataLayer layer, Relation relation) {
-        super(Main.parent,
+        super(MainApplication.getMainFrame(),
                 "",
                 new String[] {tr("Apply Changes"), tr("Cancel")},
                 false,

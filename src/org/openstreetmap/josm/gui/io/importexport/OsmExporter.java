@@ -15,8 +15,8 @@ import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.Compression;
@@ -98,7 +98,7 @@ public class OsmExporter extends FileExporter {
         } catch (IOException | InvalidPathException e) {
             Logging.error(e);
             JOptionPane.showMessageDialog(
-                    Main.parent,
+                    MainApplication.getMainFrame(),
                     tr("<html>An error occurred while saving.<br>Error is:<br>{0}</html>",
                             Utils.escapeReservedCharactersHTML(e.getMessage())),
                     tr("Error"),
@@ -113,7 +113,7 @@ public class OsmExporter extends FileExporter {
             } catch (IOException | InvalidPathException e2) {
                 Logging.error(e2);
                 JOptionPane.showMessageDialog(
-                        Main.parent,
+                        MainApplication.getMainFrame(),
                         tr("<html>An error occurred while restoring backup file.<br>Error is:<br>{0}</html>",
                                 Utils.escapeReservedCharactersHTML(e2.getMessage())),
                         tr("Error"),

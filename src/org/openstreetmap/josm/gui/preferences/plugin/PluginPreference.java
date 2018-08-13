@@ -42,7 +42,6 @@ import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
@@ -634,7 +633,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                         return;
                     }
                     String s = (String) JOptionPane.showInputDialog(
-                            Main.parent,
+                            MainApplication.getMainFrame(),
                             tr("Edit JOSM Plugin description URL."),
                             tr("JOSM Plugin description URL"),
                             JOptionPane.QUESTION_MESSAGE,
