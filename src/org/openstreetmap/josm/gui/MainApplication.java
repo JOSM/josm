@@ -65,7 +65,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
@@ -149,8 +148,6 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.spi.lifecycle.InitStatusListener;
 import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
@@ -174,7 +171,7 @@ import org.xml.sax.SAXException;
  * @author imi
  */
 @SuppressWarnings("deprecation")
-public class MainApplication extends Main {
+public class MainApplication extends org.openstreetmap.josm.Main {
 
     /**
      * Command-line arguments used to run the application.
@@ -856,12 +853,7 @@ public class MainApplication extends Main {
             I18n.set(Config.getPref().get("language", null));
         }
         updateSystemProperties();
-        Preferences.main().addPreferenceChangeListener(new PreferenceChangedListener() {
-            @Override
-            public void preferenceChanged(PreferenceChangeEvent e) {
-                updateSystemProperties();
-            }
-        });
+        Preferences.main().addPreferenceChangeListener(e -> updateSystemProperties());
 
         checkIPv6();
 
@@ -886,7 +878,7 @@ public class MainApplication extends Main {
             contentPanePrivate = (JComponent) contentPane;
         }
         mainPanel = mainFrame.getPanel();
-        Main.parent = mainFrame;
+        org.openstreetmap.josm.Main.parent = mainFrame;
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
             XMLCommandProcessor config = new XMLCommandProcessor(prefs);
