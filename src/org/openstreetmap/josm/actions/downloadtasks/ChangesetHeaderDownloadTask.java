@@ -72,7 +72,7 @@ public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
 
     /**
      * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
-     * whose parent is {@link Main#parent}.
+     * whose parent is {@link MainApplication#getMainFrame}.
      *
      * Null ids or or ids &lt;= 0 in the id collection are ignored.
      *

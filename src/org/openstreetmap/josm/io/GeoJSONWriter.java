@@ -164,9 +164,8 @@ public class GeoJSONWriter {
     }
 
     protected void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {
-        if (p.isIncomplete()) {
-            return;
-        } else if (SKIP_EMPTY_NODES.get() && p instanceof Node && p.getKeys().isEmpty()) {
+        if (p.isIncomplete() ||
+            (SKIP_EMPTY_NODES.get() && p instanceof Node && p.getKeys().isEmpty())) {
             return;
         }
 

@@ -16,7 +16,6 @@ import java.awt.event.MouseWheelListener;
 import java.util.Arrays;
 
 import javax.swing.Icon;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -56,7 +55,7 @@ public class MenuScroller {
         int result = 15;
         if (menu != null) {
             // Compute max height of current screen
-            int maxHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame) MainApplication.getMainFrame()).getInsets().top;
+            int maxHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - MainApplication.getMainFrame().getInsets().top;
 
             // Remove top fixed part height
             if (topFixedCount > 0) {
@@ -311,7 +310,7 @@ public class MenuScroller {
                 allItemsHeight += item.getPreferredSize().height;
             }
 
-            int allowedHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame) MainApplication.getMainFrame()).getInsets().top;
+            int allowedHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - MainApplication.getMainFrame().getInsets().top;
 
             boolean mustSCroll = allItemsHeight > allowedHeight;
 
