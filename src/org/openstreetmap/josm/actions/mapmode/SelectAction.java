@@ -221,6 +221,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     @Override
     public void exitMode() {
         super.exitMode();
+        cycleManager.cycleStart = null;
+        cycleManager.cycleList = asColl(null);
         selectionManager.unregister(mv);
         mv.removeMouseListener(this);
         mv.removeMouseMotionListener(this);
