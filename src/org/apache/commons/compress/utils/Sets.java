@@ -41,7 +41,8 @@ public class Sets {
      * @param <E> type of elements contained in new set
      * @return A new HasSet
      */
-    public static <E> HashSet<E> newHashSet(@SuppressWarnings("unchecked") E... elements) {
+    @SafeVarargs
+    public static <E> HashSet<E> newHashSet(E... elements) {
         final HashSet<E> set = new HashSet<>(elements.length);
         Collections.addAll(set, elements);
         return set;
