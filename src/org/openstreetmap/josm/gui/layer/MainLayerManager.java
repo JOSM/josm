@@ -250,7 +250,9 @@ public class MainLayerManager extends LayerManager {
         ActiveLayerChangeEvent event = new ActiveLayerChangeEvent(this, osmDataLayer, activeLayer);
         activeLayer = layer;
         if (activeLayer instanceof AbstractOsmDataLayer) {
-            dataLayer = (AbstractOsmDataLayer) layer;
+            dataLayer = (AbstractOsmDataLayer) activeLayer;
+        } else if (forceEditLayerUpdate) {
+            dataLayer = null;
         }
         if (activeLayer instanceof OsmDataLayer) {
             osmDataLayer = (OsmDataLayer) activeLayer;
