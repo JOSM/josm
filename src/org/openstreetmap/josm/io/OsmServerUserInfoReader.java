@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.time.DateTimeException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.w3c.dom.Document;
@@ -128,7 +130,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             }
 
             return userInfo;
-        } catch (XPathException e) {
+        } catch (XPathException | UncheckedParseException | DateTimeException e) {
             throw new XmlParsingException(e);
         }
     }
