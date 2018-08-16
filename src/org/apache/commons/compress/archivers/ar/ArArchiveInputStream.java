@@ -264,13 +264,11 @@ public class ArArchiveInputStream extends ArchiveInputStream {
         if (currentEntry == null) {
             throw new IllegalStateException("No current ar entry");
         }
-        int toRead = len;
         final long entryEnd = entryOffset + currentEntry.getLength();
-        if (len > 0 && entryEnd > offset) {
-            toRead = (int) Math.min(len, entryEnd - offset);
-        } else {
+        if (len < 0 || offset >= entryEnd) {
             return -1;
         }
+        final int toRead = (int) Math.min(len, entryEnd - offset);
         final int ret = this.input.read(b, off, toRead);
         trackReadBytes(ret);
         return ret;

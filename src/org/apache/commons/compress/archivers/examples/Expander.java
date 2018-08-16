@@ -222,11 +222,9 @@ public class Expander {
             @Override
             public void writeEntryDataTo(ArchiveEntry entry, OutputStream out) throws IOException {
                 final byte[] buffer = new byte[8024];
-                int n = 0;
-                long count = 0;
+                int n;
                 while (-1 != (n = archive.read(buffer))) {
                     out.write(buffer, 0, n);
-                    count += n;
                 }
             }
         }, targetDirectory);
@@ -240,7 +238,7 @@ public class Expander {
         throws IOException {
         String targetDirPath = targetDirectory.getCanonicalPath();
         if (!targetDirPath.endsWith(File.separator)) {
-            targetDirPath += File.separatorChar;
+            targetDirPath += File.separator;
         }
         ArchiveEntry nextEntry = supplier.getNextReadableEntry();
         while (nextEntry != null) {

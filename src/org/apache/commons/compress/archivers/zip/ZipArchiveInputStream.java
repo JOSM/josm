@@ -246,7 +246,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream implements InputSt
             } else {
                 readFully(lfhBuf);
             }
-        } catch (final EOFException e) {
+        } catch (final EOFException e) { //NOSONAR
             return null;
         }
 
@@ -1120,7 +1120,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream implements InputSt
         // LFH has already been read and all but the first eight bytes contain (part of) the APK signing block,
         // also subtract 16 bytes in order to position us at the magic string
         BigInteger toSkip = len.add(BigInteger.valueOf(DWORD - suspectLocalFileHeader.length
-            - APK_SIGNING_BLOCK_MAGIC.length));
+            - (long) APK_SIGNING_BLOCK_MAGIC.length));
         byte[] magic = new byte[APK_SIGNING_BLOCK_MAGIC.length];
 
         try {
@@ -1144,7 +1144,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream implements InputSt
                 realSkip(toSkip.longValue());
                 readFully(magic);
             }
-        } catch (EOFException ex) {
+        } catch (EOFException ex) { //NOSONAR
             // length was invalid
             return false;
         }
