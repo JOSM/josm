@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.awt.Color;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -165,7 +166,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
                 final Date date = obj instanceof Date ? (Date) obj : DateUtils.fromString(obj.toString());
                 time = date.getTime() / 1000.;
                 return date;
-            } catch (UncheckedParseException e) {
+            } catch (UncheckedParseException | DateTimeException e) {
                 Logging.warn(e);
                 time = 0;
             }

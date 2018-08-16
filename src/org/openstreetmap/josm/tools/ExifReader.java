@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
+import java.time.DateTimeException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -116,7 +117,7 @@ public final class ExifReader {
                 }
                 return date;
             }
-        } catch (UncheckedParseException e) {
+        } catch (UncheckedParseException | DateTimeException e) {
             Logging.error(e);
         }
         return null;

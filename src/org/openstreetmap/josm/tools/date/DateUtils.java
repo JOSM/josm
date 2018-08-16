@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools.date;
 import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -67,6 +68,7 @@ public final class DateUtils {
      * @param str The XML date as string
      * @return The date
      * @throws UncheckedParseException if the date does not match any of the supported date formats
+     * @throws DateTimeException if the value of any field is out of range, or if the day-of-month is invalid for the month-year
      */
     public static synchronized Date fromString(String str) {
         return new Date(tsFromString(str));
@@ -77,6 +79,7 @@ public final class DateUtils {
      * @param str The XML date as string
      * @return The date in milliseconds since epoch
      * @throws UncheckedParseException if the date does not match any of the supported date formats
+     * @throws DateTimeException if the value of any field is out of range, or if the day-of-month is invalid for the month-year
      */
     public static synchronized long tsFromString(String str) {
         // "2007-07-25T09:26:24{Z|{+|-}01[:00]}"
