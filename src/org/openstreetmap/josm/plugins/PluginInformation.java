@@ -261,7 +261,7 @@ public class PluginInformation {
                     int i = v.indexOf(';');
                     if (i <= 0) {
                         invalidManifestEntries.add(key);
-                    } else if (oldcheck && mainversion > Version.getInstance().getVersion() &&
+                    } else if (oldcheck &&
                         mv <= myv && (mv > mainversion || mainversion > myv)) {
                         downloadlink = v.substring(i+1);
                         mainversion = mv;
