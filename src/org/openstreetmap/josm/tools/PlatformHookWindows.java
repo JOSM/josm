@@ -40,6 +40,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -628,7 +629,7 @@ public class PlatformHookWindows implements PlatformHook {
                 }
             }
             fontsAvail.add(""); // for devanagari
-        } catch (IOException ex) {
+        } catch (IOException | DirectoryIteratorException ex) {
             Logging.log(Logging.LEVEL_ERROR, ex);
             Logging.warn("extended font config - failed to load available Fonts");
             fontsAvail = null;
