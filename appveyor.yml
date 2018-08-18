@@ -7,7 +7,7 @@ build_script:
   - ant compile dist distmac checkstyle pmd spotbugs
 test_script:
   - ant test-unit-hardfail
-after_test:
+on_finish:
   - ps: |
         $wc = New-Object 'System.Net.WebClient'
         Get-ChildItem . -Name -Recurse 'TEST-*.xml'  |
