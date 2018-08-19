@@ -4,12 +4,13 @@ package org.openstreetmap.josm.data.validation.util;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
+import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -22,7 +23,7 @@ public class MultipleNameVisitor extends NameVisitor {
     /**
      * Maximum displayed length, in characters.
      */
-    public static final int MULTIPLE_NAME_MAX_LENGTH = 80;
+    public static final IntegerProperty MULTIPLE_NAME_MAX_LENGTH = new IntegerProperty("multiple.name.max.length", 140);
 
     /** The class name of the combined primitives */
     private String multipleClassname;
@@ -42,8 +43,8 @@ public class MultipleNameVisitor extends NameVisitor {
 
         multipleClassname = null;
         for (OsmPrimitive osm : data) {
-            String name = Optional.ofNullable(osm.get("name")).orElseGet(() -> osm.get("ref"));
-            if (name != null && !name.isEmpty() && multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
+            String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
+            if (name != null && !name.isEmpty() && multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH.get()) {
                 if (multipleName.length() > 0) {
                     multipleName.append(", ");
                 }
@@ -66,10 +67,10 @@ public class MultipleNameVisitor extends NameVisitor {
             StringBuilder sb = new StringBuilder().append(size).append(' ').append(trn(multipleClassname, multiplePluralClassname, size));
             if (multipleName.length() > 0) {
                 sb.append(": ");
-                if (multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
+                if (multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH.get()) {
                     sb.append(multipleName);
                 } else {
-                    sb.append(multipleName.substring(0, MULTIPLE_NAME_MAX_LENGTH)).append("...");
+                    sb.append(multipleName.substring(0, MULTIPLE_NAME_MAX_LENGTH.get())).append("...");
                 }
             }
             displayName = sb.toString();
