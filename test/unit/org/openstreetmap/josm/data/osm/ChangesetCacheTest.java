@@ -81,10 +81,8 @@ public class ChangesetCacheTest {
         // should work
         cache.addChangesetCacheListener(null);
 
-        // should work
-        ChangesetCacheListener listener = new ChangesetCacheListener() {
-            @Override
-            public void changesetCacheUpdated(ChangesetCacheEvent event) {}
+        ChangesetCacheListener listener = event -> {
+            // should work
         };
         cache.addChangesetCacheListener(listener);
         // adding a second time - should work too
