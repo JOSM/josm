@@ -65,14 +65,18 @@
         <condition property="isJava11">
             <matches string="${ant.java.version}" pattern="1[1-9]" />
         </condition>
+        <!-- For Java12-specific stuff -->
+        <condition property="isJava12">
+            <matches string="${ant.java.version}" pattern="1[2-9]" />
+        </condition>
         <!-- error_prone works differently on Java 10+, see https://github.com/google/error-prone/issues/860 -->
         <condition property="javac.compiler" value="modern" else="com.google.errorprone.ErrorProneAntCompilerAdapter">
             <isset property="isJava10"/>
         </condition>
-        <!-- Disable jacoco on Java 11+, see https://github.com/jacoco/jacoco/issues/629 -->
+        <!-- Disable jacoco on Java 12+ -->
         <condition property="coverageByDefault">
             <not>
-                <isset property="isJava11"/>
+                <isset property="isJava12"/>
             </not>
         </condition>
         <path id="groovy.classpath">
