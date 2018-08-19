@@ -771,6 +771,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="groovy.*"/>
             <ignore classname="io.*"/>
             <ignore classname="it.*"/>
+            <ignore classname="java.lang.invoke.MethodHandle"/>
             <ignore classname="javax.*"/>
             <ignore classname="jogamp.*"/>
             <ignore classname="junit.*"/>
