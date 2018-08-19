@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -88,6 +89,9 @@ public class PlatformHookWindowsTest {
      */
     @Test
     public void testSetupHttpsCertificate() throws Exception {
+        // appveyor doesn't like us tinkering with the root keystore
+        assumeFalse(PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR")));
+
         RemoteControlTest.deleteKeystore();
         KeyStore ks = RemoteControlHttpsServer.loadJosmKeystore();
         TrustedCertificateEntry trustedCert = new KeyStore.TrustedCertificateEntry(ks.getCertificate(ks.aliases().nextElement()));

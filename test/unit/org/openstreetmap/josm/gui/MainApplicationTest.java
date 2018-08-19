@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
@@ -194,6 +195,7 @@ public class MainApplicationTest {
      */
     @Test
     public void testSetupUIManager() {
+        assumeFalse(PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR")));
         MainApplication.setupUIManager();
         assertEquals(Config.getPref().get("laf", PlatformManager.getPlatform().getDefaultStyle()),
                 UIManager.getLookAndFeel().getClass().getCanonicalName());
