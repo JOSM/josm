@@ -228,7 +228,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
 
     /**
      * Sets the download policy.
-     * @param downloadPolicy the download policy
+     * @param downloadPolicy the download policy. Must not be null
      * @see #getUploadPolicy()
      * @since 13453
      */
@@ -243,7 +243,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
 
     /**
      * Sets the upload policy.
-     * @param uploadPolicy the upload policy
+     * @param uploadPolicy the upload policy. Must not be null
      * @see #getUploadPolicy()
      */
     void setUploadPolicy(UploadPolicy uploadPolicy);

@@ -133,8 +133,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<>();
 
     private String name;
-    private DownloadPolicy downloadPolicy;
-    private UploadPolicy uploadPolicy;
+    private DownloadPolicy downloadPolicy = DownloadPolicy.NORMAL;
+    private UploadPolicy uploadPolicy = UploadPolicy.NORMAL;
     /** Flag used to know if the dataset should not be editable */
     private final AtomicBoolean isReadOnly = new AtomicBoolean(false);
 
@@ -328,7 +328,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
 
     @Override
     public void setDownloadPolicy(DownloadPolicy downloadPolicy) {
-        this.downloadPolicy = downloadPolicy;
+        this.downloadPolicy = Objects.requireNonNull(downloadPolicy);
     }
 
     @Override
@@ -338,7 +338,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
 
     @Override
     public void setUploadPolicy(UploadPolicy uploadPolicy) {
-        this.uploadPolicy = uploadPolicy;
+        this.uploadPolicy = Objects.requireNonNull(uploadPolicy);
     }
 
     /**
