@@ -1,16 +1,13 @@
 version: '{build}'
-branches:
-  only:
-    - mirror
 image: Visual Studio 2017
 install:
   - cinst ant
   - refreshenv
 build_script:
-  - ant compile javadoc dist distmac checkstyle pmd spotbugs
+  - ant compile dist distmac checkstyle pmd spotbugs
 test_script:
-  - ant test
-after_test:
+  - ant test-unit-hardfail
+on_finish:
   - ps: |
         $wc = New-Object 'System.Net.WebClient'
         Get-ChildItem . -Name -Recurse 'TEST-*.xml'  |

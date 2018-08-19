@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 
@@ -26,8 +27,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformHookWindows;
+import org.openstreetmap.josm.tools.PlatformManager;
+
+import mockit.Mock;
+import mockit.MockUp;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -48,6 +55,20 @@ public class RemoteControlTest {
         JOSMFixture.createUnitTestFixture().init();
         RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.put(true);
         deleteKeystore();
+
+        if (PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR"))) {
+            // appveyor doesn't like us tinkering with the root keystore, so mock this out
+            TestUtils.assumeWorkingJMockit();
+            new MockUp<PlatformHookWindows>() {
+                @Mock
+                public boolean setupHttpsCertificate(
+                    String entryAlias,
+                    KeyStore.TrustedCertificateEntry trustedCert
+                ) {
+                    return true;
+                }
+            };
+        }
 
         RemoteControl.start();
         disableCertificateValidation();
