@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
@@ -108,7 +109,9 @@ public class UploadNotesTask {
             } catch (OsmTransferException e) {
                 Logging.error("Failed to upload note to server: {0}", note.getId());
                 Logging.error(e);
-                failedNotes.put(note, e);
+                if (!(e instanceof OsmTransferCanceledException)) {
+                    failedNotes.put(note, e);
+                }
             }
         }
 
