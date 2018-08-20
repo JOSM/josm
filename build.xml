@@ -53,30 +53,20 @@
         <condition property="clevel" value="${clevel}" else="9">
             <isset property="clevel"/>
         </condition>
-        <!-- For Java9-specific stuff -->
-        <condition property="isJava9">
-            <matches string="${ant.java.version}" pattern="(1.)?(9|1[0-9])" />
-        </condition>
-        <!-- For Java10-specific stuff -->
-        <condition property="isJava10">
-            <matches string="${ant.java.version}" pattern="1[0-9]" />
-        </condition>
-        <!-- For Java11-specific stuff -->
-        <condition property="isJava11">
-            <matches string="${ant.java.version}" pattern="1[1-9]" />
-        </condition>
-        <!-- For Java12-specific stuff -->
-        <condition property="isJava12">
-            <matches string="${ant.java.version}" pattern="1[2-9]" />
-        </condition>
+        <!-- For Java specific stuff by version -->
+        <condition property="isJava9"><matches string="${ant.java.version}" pattern="(1.)?(9|1[0-9])" /></condition>
+        <condition property="isJava10"><matches string="${ant.java.version}" pattern="1[0-9]" /></condition>
+        <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]" /></condition>
+        <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]" /></condition>
+        <condition property="isJava13"><matches string="${ant.java.version}" pattern="1[3-9]" /></condition>
         <!-- error_prone works differently on Java 10+, see https://github.com/google/error-prone/issues/860 -->
         <condition property="javac.compiler" value="modern" else="com.google.errorprone.ErrorProneAntCompilerAdapter">
             <isset property="isJava10"/>
         </condition>
-        <!-- Disable jacoco on Java 12+ -->
+        <!-- Disable jacoco on Java 13+, see https://github.com/jacoco/jacoco/pull/738 -->
         <condition property="coverageByDefault">
             <not>
-                <isset property="isJava12"/>
+                <isset property="isJava13"/>
             </not>
         </condition>
         <path id="groovy.classpath">
