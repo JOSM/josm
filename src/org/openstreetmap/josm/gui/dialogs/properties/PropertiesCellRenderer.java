@@ -9,10 +9,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -39,6 +42,9 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
     private static final CachingProperty<Color> NORMAL_BG;
     private static final CachingProperty<Boolean> DISCARDABLE
             = new BooleanProperty("display.discardable-keys", false).cached();
+
+    // Matches ISO-639 two and three letters language codes
+    private static final Pattern LANGUAGE_NAMES = Pattern.compile("name:(\\p{Lower}{2,3})");
 
     static {
         SELECTED_BG = new NamedColorProperty(marktr("Discardable key: selection Background"),
@@ -108,6 +114,16 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                 } else {                // One value: display the value
                     final Map.Entry<?, ?> entry = v.entrySet().iterator().next();
                     str = (String) entry.getKey();
+                }
+            }
+            if (column == 0 && str != null) {
+                Matcher m = LANGUAGE_NAMES.matcher(str);
+                if (m.matches()) {
+                    String code = m.group(1);
+                    String label = new Locale(code).getDisplayLanguage();
+                    if (!code.equals(label)) {
+                        str = new StringBuilder(str).append(" <").append(label).append('>').toString();
+                    }
                 }
             }
             ((JLabel) c).putClientProperty("html.disable", Boolean.TRUE); // Fix #8730
