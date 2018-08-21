@@ -181,8 +181,11 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 info.setServerProjections(wms.getServerProjections(tree.getSelectedLayers()));
             }
         } else {
-            info = wms.toImageryInfo(getImageryName(), tree.getSelectedLayers(), (List<String>) null, true); // TODO: ask user about transparency
-            info.setUrl(getWmsUrl());
+            if (wms != null && wms.buildRootUrl() != null) {
+                info = wms.toImageryInfo(getImageryName(), tree.getSelectedLayers(), (List<String>) null, true); // TODO: ask user about transparency
+            } else {
+                info = new ImageryInfo(getImageryName(), getWmsUrl());
+            }
             info.setImageryType(ImageryType.WMS);
         }
         info.setGeoreferenceValid(getCommonIsValidGeoreference());
