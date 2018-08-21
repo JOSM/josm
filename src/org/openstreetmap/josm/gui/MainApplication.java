@@ -105,6 +105,7 @@ import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.gui.bugreport.BugReportDialog;
+import org.openstreetmap.josm.gui.bugreport.DefaultBugReportSendingHandler;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
@@ -775,7 +776,7 @@ public class MainApplication extends org.openstreetmap.josm.Main {
 
         if (!GraphicsEnvironment.isHeadless()) {
             BugReportQueue.getInstance().setBugReportHandler(BugReportDialog::showFor);
-            BugReportSender.setBugReportSendingHandler(BugReportDialog.bugReportSendingHandler);
+            BugReportSender.setBugReportSendingHandler(new DefaultBugReportSendingHandler());
         }
 
         Level logLevel = args.getLogLevel();
