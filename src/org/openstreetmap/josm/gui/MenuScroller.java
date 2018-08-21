@@ -315,7 +315,7 @@ public class MenuScroller {
             boolean mustSCroll = allItemsHeight > allowedHeight;
 
             if (mustSCroll) {
-                firstIndex = Math.max(topFixedCount, firstIndex);
+                firstIndex = Math.min(menuItems.length-1, Math.max(topFixedCount, firstIndex));
                 int scrollCount = computeScrollCount(firstIndex);
                 firstIndex = Math.min(menuItems.length - scrollCount, firstIndex);
 
