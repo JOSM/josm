@@ -14,11 +14,12 @@ on_finish:
         Foreach-Object {
             $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $_))
         }
+  # we want to push test result artifact even if the tests fail, so uploading manually
+  - 7z a test-results.zip test\report\TEST*.xml
+  - ps: Push-AppveyorArtifact test-results.zip
 artifacts:
   - path: dist\josm-custom.*
   - path: checkstyle-josm.xml
   - path: pmd-josm.xml
   - path: spotbugs-josm.xml
-  - path: test\report
-    type: zip
   - path: hs_err_pid*.log

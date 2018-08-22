@@ -25,6 +25,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Streams;
 
 public class PluginServer {
     public static class RemotePlugin {
@@ -117,7 +118,8 @@ public class PluginServer {
                 final Path filesRootPath = new File(TestUtils.getTestDataRoot()).toPath().toAbsolutePath().resolve("__files").normalize();
 
                 if (jarPath.startsWith(filesRootPath)) {
-                    return filesRootPath.relativize(jarPath).toString();
+                    // would just use .toString() but need to force use of *forward slash* path separators on all platforms
+                    return Streams.stream(filesRootPath.relativize(jarPath)).map(p -> p.toString()).collect(Collectors.joining("/"));
                 }
             }
             return null;
