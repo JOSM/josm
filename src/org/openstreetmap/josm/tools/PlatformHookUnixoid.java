@@ -48,9 +48,17 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void preStartupHook() {
-        // See #12022 - Disable GNOME ATK Java wrapper as it causes a lot of serious trouble
-        if ("org.GNOME.Accessibility.AtkWrapper".equals(getSystemProperty("assistive_technologies"))) {
-            System.clearProperty("assistive_technologies");
+        // See #12022, #16666 - Disable GNOME ATK Java wrapper as it causes a lot of serious trouble
+        if (isDebianOrUbuntu()) {
+            if (Utils.getJavaVersion() >= 9) {
+                // TODO: find a way to disable ATK wrapper on Java >= 9
+                // We should probably be able to do that by embedding a no-op AccessibilityProvider in our jar
+                // so that it is loaded by ServiceLoader without error
+                // But this require to compile at least one class with Java 9
+            } else {
+                // Java 8 does a simple Class.newInstance() from system classloader
+                Utils.updateSystemProperty("javax.accessibility.assistive_technologies", "java.lang.Object");
+            }
         }
     }
 
