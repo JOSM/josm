@@ -1297,7 +1297,6 @@ public final class DomainValidator extends AbstractValidator {
         "tech", // tech Dot Tech LLC
         "technology", // technology Auburn Falls, LLC
         "tel", // tel Telnic Ltd.
-        "telecity", // telecity TelecityGroup International Limited
         "telefonica", // telefonica Telefónica S.A.
         "temasek", // temasek Temasek Holdings (Private) Limited
         "tennis", // tennis Cotton Bloom, LLC
