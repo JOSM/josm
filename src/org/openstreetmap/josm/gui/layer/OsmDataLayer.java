@@ -498,7 +498,12 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             if (hatched != null) {
                 g.setPaint(new TexturePaint(hatched, anchorRect));
             }
-            g.fill(a);
+            try {
+                g.fill(a);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // #16686 - AIOOBE in java.awt.TexturePaintContext$Int.setRaster
+                Logging.error(e);
+            }
         }
 
         AbstractMapRenderer painter = MapRendererFactory.getInstance().createActiveRenderer(g, mv, inactive);
