@@ -4692,6 +4692,12 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Zoo -->
+        <item name="Animal enclosure" icon="presets/attraction/animal.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="https://wiki.openstreetmap.org/wiki/Tag:attraction=animal" />
+            <space />
+            <key key="attraction" value="animal" />
+            <text key="name" text="Name" />
+        </item> <!-- Animal enclosure -->
         <item name="Dog Park" icon="presets/leisure/dogpark.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:leisure=dog_park"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:leisure=dog_park"
