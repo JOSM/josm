@@ -3169,6 +3169,19 @@ node[tourism=museum] {
 }
 
 /********************/
+/* attraction tags */
+/********************/
+
+area[attraction=animal] {
+    fill-color: attraction#ffbfd3;
+    color: attraction#ffbfd3; /* color explizitly needed here to overwrite the color already set by (a lot of wrongly tagged) tourism=attraction */
+}
+node[attraction=animal] {
+    icon-image: "presets/attraction/animal.svg";
+    set icon_z17;
+}
+
+/********************/
 /* information tags */
 /********************/
 
