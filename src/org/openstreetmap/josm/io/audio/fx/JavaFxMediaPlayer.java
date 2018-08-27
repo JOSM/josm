@@ -33,7 +33,9 @@ import javafx.util.Duration;
  * <li>MPEG-4 multimedia container with Advanced Audio Coding (AAC) audio</li>
  * </ul>
  * @since 12328
+ * @deprecated MP3 support moved to openjfx plugin as JavaFX is gone with Java 11.
  */
+@Deprecated
 public class JavaFxMediaPlayer implements SoundPlayer {
 
     private final ListenerList<AudioListener> listeners = ListenerList.create();
