@@ -111,22 +111,24 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                     str = sb.toString();
                     c.setFont(c.getFont().deriveFont(Font.ITALIC));
 
-                } else {                // One value: display the value
-                    final Map.Entry<?, ?> entry = v.entrySet().iterator().next();
-                    str = (String) entry.getKey();
+                } else { // One value: display the value
+                    str = (String) v.entrySet().iterator().next().getKey();
                 }
             }
+            boolean knownNameKey = false;
             if (column == 0 && str != null) {
                 Matcher m = LANGUAGE_NAMES.matcher(str);
                 if (m.matches()) {
                     String code = m.group(1);
                     String label = new Locale(code).getDisplayLanguage();
-                    if (!code.equals(label)) {
-                        str = new StringBuilder(str).append(" <").append(label).append('>').toString();
+                    knownNameKey = !code.equals(label);
+                    if (knownNameKey) {
+                        str = new StringBuilder("<html><body>").append(str)
+                                .append(" <i>&lt;").append(label).append("&gt;</i></body></html>").toString();
                     }
                 }
             }
-            ((JLabel) c).putClientProperty("html.disable", Boolean.TRUE); // Fix #8730
+            ((JLabel) c).putClientProperty("html.disable", knownNameKey ? null : Boolean.TRUE); // Fix #8730
             ((JLabel) c).setText(str);
             if (DISCARDABLE.get()) {
                 String key = null;
