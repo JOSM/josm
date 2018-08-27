@@ -49,6 +49,10 @@ public class PluginInformation {
     public int mainversion;
     /** The lowest JOSM version required by this plugin (from locally available jar). **/
     public int localmainversion;
+    /** The lowest Java version required by this plugin (from plugin list). **/
+    public int minjavaversion;
+    /** The lowest Java version required by this plugin (from locally available jar). **/
+    public int localminjavaversion;
     /** The plugin class name. */
     public String className;
     /** Determines if the plugin is an old version loaded for incompatibility with latest JOSM (from plugin list) */
@@ -161,6 +165,7 @@ public class PluginInformation {
      */
     public void updateFromPluginSite(PluginInformation other) {
         this.mainversion = other.mainversion;
+        this.minjavaversion = other.minjavaversion;
         this.className = other.className;
         this.requires = other.requires;
         this.link = other.link;
@@ -236,9 +241,19 @@ public class PluginInformation {
                 mainversion = Integer.parseInt(s);
             } catch (NumberFormatException e) {
                 Logging.warn(tr("Invalid plugin main version ''{0}'' in plugin {1}", s, name));
+                Logging.trace(e);
             }
         } else {
             Logging.warn(tr("Missing plugin main version in plugin {0}", name));
+        }
+        s = attr.getValue("Minimum-Java-Version");
+        if (s != null) {
+            try {
+                minjavaversion = Integer.parseInt(s);
+            } catch (NumberFormatException e) {
+                Logging.warn(tr("Invalid Java version ''{0}'' in plugin {1}", s, name));
+                Logging.trace(e);
+            }
         }
         author = attr.getValue("Author");
         iconPath = attr.getValue("Plugin-Icon");
@@ -542,8 +557,10 @@ public class PluginInformation {
     }
 
     /**
-     * Updates the local fields ({@link #localversion}, {@link #localmainversion}, {@link #localrequires})
-     * to values contained in the up-to-date fields ({@link #version}, {@link #mainversion}, {@link #requires})
+     * Updates the local fields
+     * ({@link #localversion}, {@link #localmainversion}, {@link #localminjavaversion}, {@link #localrequires})
+     * to values contained in the up-to-date fields
+     * ({@link #version}, {@link #mainversion}, {@link #minjavaversion}, {@link #requires})
      * of the given PluginInformation.
      * @param info The plugin information to get the data from.
      * @since 5601
@@ -552,6 +569,7 @@ public class PluginInformation {
         if (info != null) {
             this.localversion = info.version;
             this.localmainversion = info.mainversion;
+            this.localminjavaversion = info.minjavaversion;
             this.localrequires = info.requires;
         }
     }
