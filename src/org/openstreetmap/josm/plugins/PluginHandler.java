@@ -635,6 +635,14 @@ public final class PluginHandler {
         });
     }
 
+    private static void logJavaUpdateRequired(String plugin, int requiredVersion) {
+        Logging.warn(
+                tr("Plugin {0} requires Java version {1}. The current Java version is {2}. "
+                        +"You have to update Java in order to use this plugin.",
+                        plugin, Integer.toString(requiredVersion), Utils.getJavaVersion()
+                ));
+    }
+
     private static void alertJOSMUpdateRequired(Component parent, String plugin, int requiredVersion) {
         HelpAwareOptionPane.showOptionDialog(
                 parent,
@@ -650,7 +658,7 @@ public final class PluginHandler {
 
     /**
      * Checks whether all preconditions for loading the plugin <code>plugin</code> are met. The
-     * current JOSM version must be compatible with the plugin and no other plugins this plugin
+     * current Java and JOSM versions must be compatible with the plugin and no other plugins this plugin
      * depends on should be missing.
      *
      * @param parent The parent Component used to display error popup
@@ -660,8 +668,14 @@ public final class PluginHandler {
      */
     public static boolean checkLoadPreconditions(Component parent, Collection<PluginInformation> plugins, PluginInformation plugin) {
 
+        // make sure the plugin is compatible with the current Java version
+        if (plugin.localminjavaversion > Utils.getJavaVersion()) {
+            // Just log a warning until we switch to Java 11 so that openjfx plugin does not trigger a popup
+            logJavaUpdateRequired(plugin.name, plugin.localminjavaversion);
+            return false;
+        }
+
         // make sure the plugin is compatible with the current JOSM version
-        //
         int josmVersion = Version.getInstance().getVersion();
         if (plugin.localmainversion > josmVersion && josmVersion != Version.JOSM_UNKNOWN_VERSION) {
             alertJOSMUpdateRequired(parent, plugin.name, plugin.localmainversion);
