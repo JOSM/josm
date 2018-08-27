@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io.audio;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -46,6 +47,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
     public enum Result { /** In progress */ WAITING, /** Success */ OK, /** Failure */ FAILED }
 
     private State state;
+    private static Class<? extends SoundPlayer> soundPlayerClass;
     private SoundPlayer soundPlayer;
     private URL playingUrl;
 
@@ -265,6 +267,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private AudioPlayer() {
         state = State.INITIALIZING;
         command = new Execute();
@@ -272,8 +275,12 @@ public final class AudioPlayer extends Thread implements AudioListener {
         double leadIn = Config.getPref().getDouble("audio.leadin", 1.0 /* default, seconds */);
         double calibration = Config.getPref().getDouble("audio.calibration", 1.0 /* default, ratio */);
         try {
-            soundPlayer = (SoundPlayer) Class.forName("org.openstreetmap.josm.io.audio.fx.JavaFxMediaPlayer")
-                    .getDeclaredConstructor().newInstance();
+            if (soundPlayerClass == null) {
+                // To remove when switching to Java 11
+                soundPlayerClass = (Class<? extends SoundPlayer>) Class.forName(
+                        "org.openstreetmap.josm.io.audio.fx.JavaFxMediaPlayer");
+            }
+            soundPlayer = soundPlayerClass.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
             Logging.debug(e);
             Logging.warn("JOSM compiled without Java FX support. Falling back to Java Sound API");
@@ -353,5 +360,27 @@ public final class AudioPlayer extends Thread implements AudioListener {
     @Override
     public void playing(URL playingUrl) {
         this.playingUrl = playingUrl;
+    }
+
+    /**
+     * Returns the custom sound player class, if any.
+     * @return the custom sound player class, or {@code null}
+     * @since 14183
+     */
+    public static Class<? extends SoundPlayer> getSoundPlayerClass() {
+        return soundPlayerClass;
+    }
+
+    /**
+     * Sets the custom sound player class to override default core player.
+     * Must be called before the first audio method invocation.
+     * @param playerClass custom sound player class to override default core player
+     * @since 14183
+     */
+    public static void setSoundPlayerClass(Class<? extends SoundPlayer> playerClass) {
+        if (audioPlayer != null) {
+            throw new IllegalStateException("Audio player already initialized");
+        }
+        soundPlayerClass = Objects.requireNonNull(playerClass);
     }
 }
