@@ -38,6 +38,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class HttpClientTest {
 
+    /**
+     * Setup test
+     */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().timeout(15000);
@@ -72,6 +75,10 @@ public class HttpClientTest {
         Logging.getLogger().setLevel(Logging.LEVEL_DEBUG);
     }
 
+    /**
+     * Test constructor, getters and setters
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testConstructorGetterSetter() throws IOException {
         final HttpClient client = HttpClient.create(new URL("https://httpbin.org/"));
@@ -89,6 +96,10 @@ public class HttpClientTest {
         assertThat(client.getRequestHeader("foo"), nullValue());
     }
 
+    /**
+     * Test HTTP GET
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testGet() throws IOException {
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/get?foo=bar")).connect(progress);
@@ -108,6 +119,10 @@ public class HttpClientTest {
         }
     }
 
+    /**
+     * Test JOSM User-Agent
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testUserAgent() throws IOException {
         try (InputStream in = HttpClient.create(new URL("https://httpbin.org/user-agent")).connect(progress).getContent();
@@ -116,6 +131,10 @@ public class HttpClientTest {
         }
     }
 
+    /**
+     * Test UTF-8 encoded content
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testFetchUtf8Content() throws IOException {
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/encoding/utf8")).connect(progress);
@@ -125,6 +144,10 @@ public class HttpClientTest {
         assertThat(content, containsString("\u2200x\u2208\u211d:"));
     }
 
+    /**
+     * Test HTTP POST
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testPost() throws IOException {
         final String text = "Hello World!\nGeetings from JOSM, the Java OpenStreetMap Editor";
@@ -168,11 +191,19 @@ public class HttpClientTest {
         assertThat(response.getContentLength() > 100, is(true));
     }
 
+    /**
+     * Test maximum number of redirections.
+     * @throws IOException if an I/O error occurs
+     */
     @Test(expected = IOException.class)
     public void testTooMuchRedirects() throws IOException {
         HttpClient.create(new URL("https://httpbin.org/redirect/3")).setMaxRedirects(2).connect(progress);
     }
 
+    /**
+     * Test HTTP error 418
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testHttp418() throws IOException {
         // https://tools.ietf.org/html/rfc2324
@@ -185,6 +216,10 @@ public class HttpClientTest {
         assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
 
+    /**
+     * Test HTTP error 401
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testHttp401() throws IOException {
         // https://tools.ietf.org/html/rfc2324
@@ -197,6 +232,10 @@ public class HttpClientTest {
         assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
 
+    /**
+     * Test HTTP error 402
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testHttp402() throws IOException {
         // https://tools.ietf.org/html/rfc2324
@@ -209,6 +248,10 @@ public class HttpClientTest {
         assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
 
+    /**
+     * Test HTTP error 403
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testHttp403() throws IOException {
         // https://tools.ietf.org/html/rfc2324
@@ -221,6 +264,10 @@ public class HttpClientTest {
         assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
 
+    /**
+     * Test HTTP error 404
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testHttp404() throws IOException {
         // https://tools.ietf.org/html/rfc2324
@@ -233,6 +280,10 @@ public class HttpClientTest {
         assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
 
+    /**
+     * Test HTTP error 500
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testHttp500() throws IOException {
         // https://tools.ietf.org/html/rfc2324
