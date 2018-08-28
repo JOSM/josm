@@ -5,11 +5,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -62,16 +62,8 @@ public class PlatformHookOsxTest {
      */
     @Test
     public void testOpenUrl() throws IOException {
-        if (!PlatformManager.isPlatformWindows()) {
-            hook.openUrl(Config.getUrls().getJOSMWebsite());
-        } else {
-            try {
-                hook.openUrl(Config.getUrls().getJOSMWebsite());
-                fail("Expected IOException");
-            } catch (IOException e) {
-                Logging.info(e.getMessage());
-            }
-        }
+        Assume.assumeTrue(PlatformManager.isPlatformOsx());
+        hook.openUrl(Config.getUrls().getJOSMWebsite());
     }
 
     /**

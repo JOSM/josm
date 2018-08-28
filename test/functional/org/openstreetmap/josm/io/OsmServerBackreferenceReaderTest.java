@@ -21,10 +21,12 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -157,6 +159,10 @@ public class OsmServerBackreferenceReaderTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws OsmTransferException, CyclicUploadDependencyException, IOException {
+        if (!TestUtils.areCredentialsProvided()) {
+            logger.severe("OSM DEV API credentials not provided. Please define them with -Dosm.username and -Dosm.password");
+            return;
+        }
         logger.info("initializing ...");
 
         JOSMFixture.createFunctionalTestFixture().init();
@@ -212,6 +218,9 @@ public class OsmServerBackreferenceReaderTest {
      */
     @Before
     public void setUp() throws IOException, IllegalDataException, FileNotFoundException {
+        if (!TestUtils.areCredentialsProvided()) {
+            return;
+        }
         File f = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
@@ -226,6 +235,7 @@ public class OsmServerBackreferenceReaderTest {
      */
     @Test
     public void testBackreferenceForNode() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         Node n = lookupNode(ds, 0);
         assertNotNull(n);
         Way w = lookupWay(ds, 0);
@@ -283,6 +293,7 @@ public class OsmServerBackreferenceReaderTest {
      */
     @Test
     public void testBackreferenceForNodeFull() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         Node n = lookupNode(ds, 0);
         assertNotNull(n);
 
@@ -331,6 +342,7 @@ public class OsmServerBackreferenceReaderTest {
      */
     @Test
     public void testBackreferenceForWay() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         Way w = lookupWay(ds, 1);
         assertNotNull(w);
         // way with name "way-1" is referred to by two relations
@@ -375,6 +387,7 @@ public class OsmServerBackreferenceReaderTest {
      */
     @Test
     public void testBackreferenceForWayFull() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         Way w = lookupWay(ds, 1);
         assertNotNull(w);
         // way with name "way-1" is referred to by two relations
@@ -413,6 +426,7 @@ public class OsmServerBackreferenceReaderTest {
      */
     @Test
     public void testBackreferenceForRelation() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         Relation r = lookupRelation(ds, 1);
         assertNotNull(r);
         // way with name "relation-1" is referred to by four relations:
@@ -532,6 +546,7 @@ public class OsmServerBackreferenceReaderTest {
      */
     @Test
     public void testBackreferenceForRelationFull() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         Relation r = lookupRelation(ds, 1);
         assertNotNull(r);
         // way with name "relation-1" is referred to by four relations:
