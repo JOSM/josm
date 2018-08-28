@@ -261,7 +261,7 @@ public final class KeyboardUtils {
             switch (l.getCountry()) {
             case "LU": // Luxembourg
                 result.add('²');
-                // Fall-through
+                // fall-through
             case "CH": // Swiss
             case "LI": // Liechenstein
             case "FI": // Finland
