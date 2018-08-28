@@ -42,7 +42,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         putValue(NAME, tr("Refresh"));
         IRelationEditor editor = editorAccess.getEditor();
         if (editor instanceof JComponent) {
-            JRootPane rootPane = ((JComponent) editorAccess.getEditor()).getRootPane();
+            JRootPane rootPane = ((JComponent) editor).getRootPane();
             rootPane.getActionMap().put("refresh", this);
             rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "refresh");
         }
