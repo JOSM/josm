@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -294,6 +295,7 @@ public class Highways extends Test {
             if (testContextHighway) {
                 // TODO: Check coherence of context against maxspeed
                 // TODO: Check coherence of context against highway
+                Logging.trace("TODO: test context highway - https://josm.openstreetmap.de/ticket/9400");
             }
         }
     }
