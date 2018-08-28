@@ -21,12 +21,14 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -149,6 +151,10 @@ public class MultiFetchServerObjectReaderTest {
      */
     @BeforeClass
     public static void init() throws Exception {
+        if (!TestUtils.areCredentialsProvided()) {
+            logger.severe("OSM DEV API credentials not provided. Please define them with -Dosm.username and -Dosm.password");
+            return;
+        }
         logger.info("initializing ...");
         JOSMFixture.createFunctionalTestFixture().init();
 
@@ -199,6 +205,9 @@ public class MultiFetchServerObjectReaderTest {
      */
     @Before
     public void setUp() throws IOException, IllegalDataException, FileNotFoundException {
+        if (!TestUtils.areCredentialsProvided()) {
+            return;
+        }
         File f = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
@@ -213,6 +222,7 @@ public class MultiFetchServerObjectReaderTest {
      */
     @Test
     public void testMultiGet10Nodes() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 10; i++) {
@@ -234,6 +244,7 @@ public class MultiFetchServerObjectReaderTest {
      */
     @Test
     public void testMultiGet10Ways() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Way> ways = new ArrayList<>(ds.getWays());
         for (int i = 0; i < 10; i++) {
@@ -256,6 +267,7 @@ public class MultiFetchServerObjectReaderTest {
      */
     @Test
     public void testMultiGet10Relations() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Relation> relations = new ArrayList<>(ds.getRelations());
         for (int i = 0; i < 10; i++) {
@@ -278,6 +290,7 @@ public class MultiFetchServerObjectReaderTest {
      */
     @Test
     public void testMultiGet800Nodes() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 812; i++) {
@@ -299,6 +312,7 @@ public class MultiFetchServerObjectReaderTest {
      */
     @Test
     public void testMultiGetWithNonExistingNode() throws OsmTransferException {
+        Assume.assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 10; i++) {
