@@ -19,7 +19,6 @@ my %known = map {$_ => 1} qw(
   tms.cadastre.openstreetmap.fr
   wms.openstreetmap.de
   www.jgoodies.com
-  www.muenchen.de
   www.osm-tools.org
   www.webatlasde.de
   zibi.openstreetmap.org.pl
