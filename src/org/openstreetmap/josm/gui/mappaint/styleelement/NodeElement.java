@@ -19,8 +19,6 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
-import org.openstreetmap.josm.gui.mappaint.MultiCascade;
-import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.SimpleBoxProvider;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -48,33 +46,6 @@ public class NodeElement extends StyleElement {
 
     private static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
 
-    /**
-     * The style used for simple nodes
-     */
-    public static final NodeElement SIMPLE_NODE_ELEMSTYLE;
-    /**
-     * A box provider that provides the size of a simple node
-     */
-    public static final BoxProvider SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER;
-    static {
-        MultiCascade mc = new MultiCascade();
-        mc.getOrCreateCascade("default");
-        SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), 4.1f, true);
-        if (SIMPLE_NODE_ELEMSTYLE == null) throw new AssertionError();
-        SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER = SIMPLE_NODE_ELEMSTYLE.getBoxProvider();
-    }
-
-    /**
-     * The default styles that are used for nodes.
-     * @see #SIMPLE_NODE_ELEMSTYLE
-     */
-    public static final StyleElementList DEFAULT_NODE_STYLELIST = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE);
-    /**
-     * The default styles that are used for nodes with text.
-     */
-    public static final StyleElementList DEFAULT_NODE_STYLELIST_TEXT = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE,
-            BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
-
     protected NodeElement(Cascade c, MapImage mapImage, Symbol symbol, float defaultMajorZindex, RotationAngle rotationAngle) {
         super(c, defaultMajorZindex);
         this.mapImage = mapImage;
@@ -91,7 +62,7 @@ public class NodeElement extends StyleElement {
         return create(env, 4f, false);
     }
 
-    private static NodeElement create(Environment env, float defaultMajorZindex, boolean allowDefault) {
+    static NodeElement create(Environment env, float defaultMajorZindex, boolean allowDefault) {
         MapImage mapImage = createIcon(env);
         Symbol symbol = null;
         if (mapImage == null) {

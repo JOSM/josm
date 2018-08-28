@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaIconElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.DefaultStyles;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.RepeatImageElement;
@@ -160,9 +161,9 @@ public class ElemStyles implements PreferenceChangedListener {
         if (osm instanceof INode && isDefaultNodes()) {
             if (p.a.isEmpty()) {
                 if (TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
-                    p.a = NodeElement.DEFAULT_NODE_STYLELIST_TEXT;
+                    p.a = DefaultStyles.DEFAULT_NODE_STYLELIST_TEXT;
                 } else {
-                    p.a = NodeElement.DEFAULT_NODE_STYLELIST;
+                    p.a = DefaultStyles.DEFAULT_NODE_STYLELIST;
                 }
             } else {
                 boolean hasNonModifier = false;
@@ -177,9 +178,9 @@ public class ElemStyles implements PreferenceChangedListener {
                     }
                 }
                 if (!hasNonModifier) {
-                    p.a = new StyleElementList(p.a, NodeElement.SIMPLE_NODE_ELEMSTYLE);
+                    p.a = new StyleElementList(p.a, DefaultStyles.SIMPLE_NODE_ELEMSTYLE);
                     if (!hasText && TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
-                        p.a = new StyleElementList(p.a, BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
+                        p.a = new StyleElementList(p.a, DefaultStyles.SIMPLE_NODE_TEXT_ELEMSTYLE);
                     }
                 }
             }
@@ -403,7 +404,7 @@ public class ElemStyles implements PreferenceChangedListener {
                     sl.add(nodeStyle);
                     addIfNotNull(sl, BoxTextElement.create(env, nodeStyle.getBoxProvider()));
                 } else {
-                    addIfNotNull(sl, BoxTextElement.create(env, NodeElement.SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER));
+                    addIfNotNull(sl, BoxTextElement.create(env, DefaultStyles.SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER));
                 }
             } else if (osm instanceof IRelation) {
                 if (((IRelation<?>) osm).isMultipolygon()) {
