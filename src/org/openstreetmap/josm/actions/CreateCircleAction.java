@@ -186,7 +186,7 @@ public final class CreateCircleAction extends JosmAction {
 
         int numberOfNodesInCircle = (int) Math.ceil(6.0 * Math.pow(radiusInMeters, 0.5));
         // an odd number of nodes makes the distribution uneven
-        if ((numberOfNodesInCircle % 2) == 1) {
+        if ((numberOfNodesInCircle % 2) != 0) {
             // add 1 to make it even
             numberOfNodesInCircle += 1;
         }
