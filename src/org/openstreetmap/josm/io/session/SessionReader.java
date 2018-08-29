@@ -652,7 +652,8 @@ public class SessionReader {
         if (parametersEl == null) return null;
         Collection<String> parameters = new ArrayList<>();
         NodeList paramNl = parametersEl.getElementsByTagName("param");
-        for (int i = 0; i < paramNl.getLength(); i++) {
+        int length = paramNl.getLength();
+        for (int i = 0; i < length; i++) {
             Element paramEl = (Element) paramNl.item(i);
             parameters.add(paramEl.getTextContent());
         }

@@ -11,6 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -114,8 +115,10 @@ public class AutosaveTaskTest {
             }
         }
         // cleanup
-        for (Path entry : Files.newDirectoryStream(task.getAutosaveDir(), "*.{osm,pid}")) {
-            Files.delete(entry);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(task.getAutosaveDir(), "*.{osm,pid}")) {
+            for (Path entry : stream) {
+                Files.delete(entry);
+            }
         }
     }
 

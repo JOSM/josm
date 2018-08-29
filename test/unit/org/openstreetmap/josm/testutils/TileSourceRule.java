@@ -46,7 +46,7 @@ public class TileSourceRule extends WireMockRule {
      * allocation is expensive and many tests may be wanting to set up the same tile sources one after the other, hence
      * this cache
      */
-    public static HashMap<ConstSource, ByteArrayWrapper> constPayloadCache = new HashMap<>();
+    public static final HashMap<ConstSource, ByteArrayWrapper> constPayloadCache = new HashMap<>();
 
     /**
      * Class defining a tile source for TileSourceRule to mock. Due to the way WireMock is designed, it is far more

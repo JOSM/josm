@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.conflict.tags;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -81,7 +80,7 @@ public class TagConflictResolutionUtilTest {
         Tag otherSource = new Tag("source", "other");
         tc.add(otherSource); // other source should prevent resolution
         TagConflictResolutionUtil.applyAutomaticTagConflictResolution(tc);
-        assertSame(18, tc.getValues("source").size());
+        assertEquals(18, tc.getValues("source").size());
         tc.remove(otherSource);
         TagConflictResolutionUtil.applyAutomaticTagConflictResolution(tc);
         assertEquals(Sets.newHashSet("cadastre-dgi-fr source : Direction Generale des Finances Publiques - Cadastre. Mise a jour : 2015"),
@@ -372,14 +371,14 @@ public class TagConflictResolutionUtilTest {
         @Test
         public void testGroupChoices() {
             Collection<AutomaticChoiceGroup> groups = AutomaticChoiceGroup.groupChoices(Arrays.asList(choiceKey1Group1, choiceKey1Group2));
-            assertSame(2, groups.size());
+            assertEquals(2, groups.size());
 
             groups = AutomaticChoiceGroup.groupChoices(Arrays.asList(
                 choiceKey1Group1, choiceKey1Group2, choiceKey2Group1, choiceKey2Group2, choiceEmpty));
-            assertSame(5, groups.size());
+            assertEquals(5, groups.size());
 
             groups = AutomaticChoiceGroup.groupChoices(Arrays.asList(choiceKey1Group1, choiceKey1Group1bis));
-            assertSame(1, groups.size());
+            assertEquals(1, groups.size());
             AutomaticChoiceGroup group1 = groups.iterator().next();
             assertEquals(group1.key, choiceKey1Group1.key);
             assertEquals(group1.group, choiceKey1Group1.group);
@@ -388,7 +387,7 @@ public class TagConflictResolutionUtilTest {
             groups = AutomaticChoiceGroup.groupChoices(Arrays.asList(
                 choiceKey1Group1, choiceKey1Group1bis, choiceKey1Group2, choiceKey1Group2bis,
                 choiceKey2Group1, choiceKey2Group1bis, choiceKey2Group2, choiceKey2Group2bis));
-            assertSame(4, groups.size());
+            assertEquals(4, groups.size());
             for (AutomaticChoiceGroup group: groups) {
                 for (AutomaticChoice choice: group.choices) {
                     assertEquals(choice.key, group.key);

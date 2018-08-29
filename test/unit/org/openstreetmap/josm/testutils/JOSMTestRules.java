@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -359,7 +360,7 @@ public class JOSMTestRules implements TestRule {
     private static class MockVersion extends Version {
         MockVersion(final String propertiesString) {
             super.initFromRevisionInfo(
-                new ByteArrayInputStream(propertiesString.getBytes())
+                new ByteArrayInputStream(propertiesString.getBytes(StandardCharsets.UTF_8))
             );
         }
     }

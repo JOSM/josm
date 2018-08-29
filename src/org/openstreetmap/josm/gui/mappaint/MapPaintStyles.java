@@ -424,7 +424,7 @@ public final class MapPaintStyles {
     /**
      * Add a new map paint style.
      * @param entry map paint style
-     * @return loaded style source, or {@code null}
+     * @return loaded style source
      */
     public static StyleSource addStyle(SourceEntry entry) {
         StyleSource source = fromSourceEntry(entry);

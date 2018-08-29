@@ -156,6 +156,7 @@ public class KeyValuePerformanceTest {
      * Measure the speed of {@link OsmPrimitive#get(String)}
      */
     @Test
+    @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public void testKeyValueGet() {
         for (double tagNodeRatio : TAG_NODE_RATIOS) {
             KeyValueDataGenerator generator = OsmDataGenerator.getKeyValue(tagNodeRatio);

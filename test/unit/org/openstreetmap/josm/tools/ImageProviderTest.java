@@ -22,6 +22,8 @@ import org.openstreetmap.josm.TestUtils;
 
 import com.kitfox.svg.SVGConst;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of {@link ImageProvider} class.
  */
@@ -84,6 +86,7 @@ public class ImageProviderTest {
      * @throws IOException if an error occurs during reading
      */
     @Test
+    @SuppressFBWarnings(value = "LG_LOST_LOGGER_DUE_TO_WEAK_REFERENCE")
     public void testTicket14319() throws IOException {
         LogHandler14319 handler = new LogHandler14319();
         Logger.getLogger(SVGConst.SVG_LOGGER).addHandler(handler);

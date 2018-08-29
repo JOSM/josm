@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import org.junit.BeforeClass;
@@ -38,14 +37,12 @@ public class OsmJsonReaderTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    private static final SimpleDateFormat iso8601 = DateUtils.newIsoDateTimeFormat();
-
     /**
      * Setup test
      */
     @BeforeClass
     public static void setUp() {
-        iso8601.setTimeZone(DateUtils.UTC);
+        DateUtils.newIsoDateTimeFormat().setTimeZone(DateUtils.UTC);
     }
 
     /**
@@ -121,7 +118,7 @@ public class OsmJsonReaderTest {
         Node n = ds.getNodes().iterator().next();
         assertEquals(1, n.getUniqueId());
         assertEquals(new LatLon(2.0, -3.0), n.getCoor());
-        assertEquals("2018-01-01T00:00:00Z", iso8601.format(n.getTimestamp()));
+        assertEquals("2018-01-01T00:00:00Z", DateUtils.newIsoDateTimeFormat().format(n.getTimestamp()));
         assertEquals(4, n.getVersion());
         assertEquals(5, n.getChangesetId());
         assertEquals(6, n.getUser().getId());
