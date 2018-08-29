@@ -45,6 +45,13 @@ public class RemoteControlTest {
     private String httpBase;
     private String httpsBase;
 
+    private static class PlatformHookWindowsMock extends MockUp<PlatformHookWindows> {
+        @Mock
+        public boolean setupHttpsCertificate(String entryAlias, TrustedCertificateEntry trustedCert) {
+            return true;
+        }
+    }
+
     /**
      * Starts Remote control before testing requests.
      * @throws GeneralSecurityException if a security error occurs
@@ -58,12 +65,7 @@ public class RemoteControlTest {
         if (PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR"))) {
             // appveyor doesn't like us tinkering with the root keystore, so mock this out
             TestUtils.assumeWorkingJMockit();
-            new MockUp<PlatformHookWindows>() {
-                @Mock
-                public boolean setupHttpsCertificate(String entryAlias, TrustedCertificateEntry trustedCert) {
-                    return true;
-                }
-            };
+            new PlatformHookWindowsMock();
         }
 
         RemoteControl.start();

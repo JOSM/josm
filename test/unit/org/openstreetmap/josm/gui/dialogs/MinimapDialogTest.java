@@ -15,6 +15,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 
@@ -112,7 +113,7 @@ public class MinimapDialogTest {
                     if (JPopupMenu.Separator.class.isInstance(c)) {
                         // sources should all come before any separators
                         break;
-                    } else if (((JMenuItem) c).getText() == label) {
+                    } else if (Objects.equals(((JMenuItem) c).getText(), label)) {
                         ((JMenuItem) c).doClick();
                         return;
                     }
@@ -126,12 +127,12 @@ public class MinimapDialogTest {
         }
     }
 
-    protected MinimapDialog minimap;
-    protected SlippyMapBBoxChooser slippyMap;
-    protected SourceButton sourceButton;
-    protected Callable<Boolean> slippyMapTasksFinished;
+    private MinimapDialog minimap;
+    private SlippyMapBBoxChooser slippyMap;
+    private SourceButton sourceButton;
+    private Callable<Boolean> slippyMapTasksFinished;
 
-    protected static BufferedImage paintedSlippyMap;
+    private static BufferedImage paintedSlippyMap;
 
     protected void setUpMiniMap() {
         GuiHelper.runInEDTAndWaitWithException(uncheckExceptions(() -> {

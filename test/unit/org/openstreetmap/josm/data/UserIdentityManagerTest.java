@@ -101,6 +101,7 @@ public class UserIdentityManagerTest {
      * Unit test of {@link UserIdentityManager#setPartiallyIdentified} - null case.
      */
     @Test(expected = IllegalArgumentException.class)
+    @SuppressFBWarnings(value = "NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS")
     public void testSetPartiallyIdentifiedNull() {
         UserIdentityManager.getInstance().setPartiallyIdentified(null);
     }
@@ -148,6 +149,7 @@ public class UserIdentityManagerTest {
      * Unit test of {@link UserIdentityManager#setFullyIdentified} - null name case.
      */
     @Test(expected = IllegalArgumentException.class)
+    @SuppressFBWarnings(value = "NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS")
     public void testSetFullyIdentifiedNullName() {
         UserIdentityManager.getInstance().setFullyIdentified(null, newUserInfo());
     }

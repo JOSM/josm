@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,18 +82,14 @@ public class MapPaintPreferenceTestIT {
                         }
                     }
                 }
-                if (style != null) {
-                    System.out.println(style.isValid() ? " => OK" : " => KO");
-                    Collection<Throwable> errors = style.getErrors();
-                    Collection<String> warnings = style.getWarnings();
-                    if (!errors.isEmpty()) {
-                        allErrors.put(source.url, errors);
-                    }
-                    if (!warnings.isEmpty()) {
-                        allWarnings.put(source.url, warnings);
-                    }
-                } else {
-                    allWarnings.put(source.url, Collections.singleton("MapPaintStyles.addStyle() returned null"));
+                System.out.println(style.isValid() ? " => OK" : " => KO");
+                Collection<Throwable> errors = style.getErrors();
+                Collection<String> warnings = style.getWarnings();
+                if (!errors.isEmpty()) {
+                    allErrors.put(source.url, errors);
+                }
+                if (!warnings.isEmpty()) {
+                    allWarnings.put(source.url, warnings);
                 }
             }
         }

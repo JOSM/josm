@@ -6,7 +6,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,8 +16,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
-import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.NodeData;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
 
 /**
  * Unit tests of {@link OsmWriter} class.
@@ -59,7 +61,7 @@ public class OsmWriterTest {
 
     private static void doTestHeader(DownloadPolicy download, UploadPolicy upload, String expected) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (PrintWriter out = new PrintWriter(baos);
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8));
              OsmWriter writer = OsmWriterFactory.createOsmWriter(out, true, OsmWriter.DEFAULT_API_VERSION)) {
             writer.header(download, upload);
         }

@@ -319,11 +319,12 @@ public class OpenFileAction extends DiskAccessAction {
                     importData(importer, new ArrayList<>(importerMap.get(importer)));
                 }
 
+                Pattern urlPattern = Pattern.compile(".*(https?://.*)");
                 for (File urlFile: urlFiles) {
                     try (BufferedReader reader = Files.newBufferedReader(urlFile.toPath(), StandardCharsets.UTF_8)) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            Matcher m = Pattern.compile(".*(https?://.*)").matcher(line);
+                            Matcher m = urlPattern.matcher(line);
                             if (m.matches()) {
                                 String url = m.group(1);
                                 MainApplication.getMenu().openLocation.openUrl(false, url);

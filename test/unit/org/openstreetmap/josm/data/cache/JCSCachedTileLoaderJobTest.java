@@ -544,7 +544,7 @@ public class JCSCachedTileLoaderJobTest {
         tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
         assertArrayEquals("cached dummy".getBytes(StandardCharsets.UTF_8), listener.data);
         assertTrue(testStart + expires <= listener.attributes.getExpirationTime());
-        listener = submitJob(job, false);
+        submitJob(job, false);
         tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test"))); // no more requests were made
     }
 

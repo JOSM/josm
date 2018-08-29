@@ -6,6 +6,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,8 +35,7 @@ public class LatLonTest {
     /**
      * Lat/Lon sample values for unit tests
      */
-    @SuppressFBWarnings(value = "MS_PKGPROTECT")
-    public static final double[] SAMPLE_VALUES = new double[]{
+    public static final List<Double> SAMPLE_VALUES = Arrays.asList(
             // CHECKSTYLE.OFF: SingleSpaceSeparator
             -180.0, -179.9, -179.6, -179.5, -179.4, -179.1, -179.0, -100.0, -99.9, -10.0, -9.9, -1.0, -0.1,
              180.0,  179.9,  179.6,  179.5,  179.4,  179.1,  179.0,  100.0,  99.9,  10.0,  9.9,  1.0,  0.1,
@@ -43,7 +44,7 @@ public class LatLonTest {
             10.12, 10.123, 10.1234, 10.12345, 10.123456, 10.1234567,
             100.12, 100.123, 100.1234, 100.12345, 100.123456, 100.1234567
             // CHECKSTYLE.ON: SingleSpaceSeparator
-           };
+            );
 
     /**
      * Test of {@link LatLon#roundToOsmPrecision}

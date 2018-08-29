@@ -59,7 +59,7 @@ public class ChangesetCacheTest {
 
         protected final void await() {
             try {
-                latch.await(2, TimeUnit.SECONDS);
+                Logging.trace(Boolean.toString(latch.await(2, TimeUnit.SECONDS)));
             } catch (InterruptedException e) {
                 Logging.error(e);
             }

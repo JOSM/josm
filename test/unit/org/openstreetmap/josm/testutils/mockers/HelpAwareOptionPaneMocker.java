@@ -164,7 +164,7 @@ public class HelpAwareOptionPaneMocker extends BaseDialogMockUp<HelpAwareOptionP
                 fail(String.format(
                     "Invalid result for HelpAwareOptionPane: %s (in call with options = %s)",
                     retval,
-                    options
+                    Arrays.asList(options)
                 ));
             }
 

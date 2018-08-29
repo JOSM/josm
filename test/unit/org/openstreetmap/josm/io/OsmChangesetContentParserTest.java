@@ -52,10 +52,11 @@ public class OsmChangesetContentParserTest {
      * Test various constructor invocations
      */
     @Test
+    @SuppressFBWarnings(value = "NP_NULL_PARAM_DEREF_NONVIRTUAL")
     public void test_Constructor() {
 
         // should be OK
-        new OsmChangesetContentParser(new ByteArrayInputStream("".getBytes()));
+        new OsmChangesetContentParser(new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)));
 
         shouldFail(() -> {
             new OsmChangesetContentParser((String) null);

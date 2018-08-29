@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import org.junit.Rule;
@@ -34,7 +35,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().assumeRevision(
+    public JOSMTestRules testRule = new JOSMTestRules().https().assumeRevision(
         "Revision: 8000\n"
     ).preferences();
 
@@ -67,7 +68,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
 
         // put existing "plugin file" in place
         pluginFile.getParentFile().mkdirs();
-        final byte[] existingPluginContents = "Existing plugin contents 123".getBytes();
+        final byte[] existingPluginContents = "Existing plugin contents 123".getBytes(StandardCharsets.UTF_8);
         try (FileOutputStream existingPluginOutputStream = new FileOutputStream(pluginFile)) {
             existingPluginOutputStream.write(existingPluginContents);
         }
@@ -110,7 +111,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
         final File pluginManifest = new File(TestUtils.getTestDataRoot(), "plugin/corrupted_plugin.MANIFEST.MF");
 
         pluginFile.getParentFile().mkdirs();
-        final byte[] existingPluginContents = "Existing plugin contents 123".getBytes();
+        final byte[] existingPluginContents = "Existing plugin contents 123".getBytes(StandardCharsets.UTF_8);
         try (FileOutputStream existingPluginOutputStream = new FileOutputStream(pluginFile)) {
             existingPluginOutputStream.write(existingPluginContents);
         }

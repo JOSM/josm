@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -73,8 +74,9 @@ public class BuildProjectionDefinitions {
     }
 
     static List<String> initList(String baseDir, String ext) {
-        return Arrays.asList(new File(baseDir + File.separator + PROJ_DIR)
-                .list((dir, name) -> !name.contains(".") || name.toLowerCase(Locale.ENGLISH).endsWith(ext)));
+        String[] result = new File(baseDir + File.separator + PROJ_DIR)
+                .list((dir, name) -> !name.contains(".") || name.toLowerCase(Locale.ENGLISH).endsWith(ext));
+        return result != null ? Arrays.asList(result) : Collections.emptyList();
     }
 
     static void initMap(String baseDir, String file, Map<String, ProjectionDefinition> map) throws IOException {
