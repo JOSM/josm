@@ -47,8 +47,12 @@
         <Class name="org.openstreetmap.josm.Main" />
     </Match>
     <Match>
-        <Bug pattern=" SF_SWITCH_FALLTHROUGH" />
+        <Bug pattern="SF_SWITCH_FALLTHROUGH" />
         <Class name="org.openstreetmap.josm.data.projection.proj.AzimuthalEquidistant" />
+    </Match>
+    <Match>
+        <Bug pattern="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" />
+        <Class name="org.openstreetmap.josm.gui.tagging.presets.items.TextItem" />
     </Match>
 
     <Match>

@@ -47,7 +47,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
     public enum Result { /** In progress */ WAITING, /** Success */ OK, /** Failure */ FAILED }
 
     private State state;
-    private static Class<? extends SoundPlayer> soundPlayerClass;
+    private static volatile Class<? extends SoundPlayer> soundPlayerClass;
     private SoundPlayer soundPlayer;
     private URL playingUrl;
 

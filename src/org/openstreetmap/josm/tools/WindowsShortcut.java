@@ -146,7 +146,7 @@ public class WindowsShortcut {
             final int fileAttsOffset = 0x18;
             byte fileAtts = link[fileAttsOffset];
             byte isDirMask = (byte) 0x10;
-            if ((fileAtts & isDirMask) > 0) {
+            if ((fileAtts & isDirMask) != 0) {
                 isDirectory = true;
             } else {
                 isDirectory = false;
@@ -156,7 +156,7 @@ public class WindowsShortcut {
             final int shellOffset = 0x4c;
             final byte hasShellMask = (byte) 0x01;
             int shellLen = 0;
-            if ((flags & hasShellMask) > 0) {
+            if ((flags & hasShellMask) != 0) {
                 // the plus 2 accounts for the length marker itself
                 shellLen = bytesToWord(link, shellOffset) + 2;
             }

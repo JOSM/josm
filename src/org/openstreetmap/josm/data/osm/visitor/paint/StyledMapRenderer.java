@@ -71,8 +71,8 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.VerticalTextAlignment;
+import org.openstreetmap.josm.gui.mappaint.styleelement.DefaultStyles;
 import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
-import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.RepeatImageElement.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.Symbol;
@@ -139,7 +139,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             order <<= 1;
             // simple node on top of icons and shapes
-            if (NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style)) {
+            if (DefaultStyles.SIMPLE_NODE_ELEMSTYLE.equals(this.style)) {
                 order |= 1;
             }
 

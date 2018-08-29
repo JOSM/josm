@@ -84,8 +84,8 @@ public class DownloadDialog extends JDialog {
         return instance;
     }
 
-    protected static final ListenerList<DownloadSourceListener> downloadSourcesListeners = ListenerList.create();
-    protected static final List<DownloadSource<?>> downloadSources = new ArrayList<>();
+    private static final ListenerList<DownloadSourceListener> downloadSourcesListeners = ListenerList.create();
+    private static final List<DownloadSource<?>> downloadSources = new ArrayList<>();
     static {
         // add default download sources
         addDownloadSource(new OSMDownloadSource());
