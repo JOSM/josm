@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -187,6 +188,24 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return -1;
 
             return Float.compare(this.style.objectZIndex, other.style.objectZIndex);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(order, osm, style, flags);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            StyleRecord other = (StyleRecord) obj;
+            return flags == other.flags
+                && order == other.order
+                && Objects.equals(osm, other.osm)
+                && Objects.equals(style, other.style);
         }
 
         /**

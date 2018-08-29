@@ -35,6 +35,7 @@ public class LatLonTest {
     /**
      * Lat/Lon sample values for unit tests
      */
+    @SuppressFBWarnings(value = "MS_MUTABLE_COLLECTION")
     public static final List<Double> SAMPLE_VALUES = Arrays.asList(
             // CHECKSTYLE.OFF: SingleSpaceSeparator
             -180.0, -179.9, -179.6, -179.5, -179.4, -179.1, -179.0, -100.0, -99.9, -10.0, -9.9, -1.0, -0.1,
