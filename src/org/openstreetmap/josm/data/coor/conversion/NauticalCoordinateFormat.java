@@ -13,7 +13,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
  * @since 12735
  */
 public class NauticalCoordinateFormat extends AbstractCoordinateFormat {
-    private static final DecimalFormat DM_MINUTE_FORMATTER = new DecimalFormat(
+    private static final DecimalFormat DM_MINUTE_FORMATTER = newUnlocalizedDecimalFormat(
             Config.getPref() == null ? "00.000" : Config.getPref().get("latlon.dm.decimal-format", "00.000"));
     private static final String DM60 = DM_MINUTE_FORMATTER.format(60.0);
     private static final String DM00 = DM_MINUTE_FORMATTER.format(0.0);

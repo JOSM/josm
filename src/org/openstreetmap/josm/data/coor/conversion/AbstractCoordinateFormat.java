@@ -16,17 +16,8 @@ public abstract class AbstractCoordinateFormat implements ICoordinateFormat {
     protected final String id;
     protected final String displayName;
 
-    /**
-     * The normal number format for server precision coordinates
-     */
-    protected static final DecimalFormat cDdFormatter;
-    static {
-        // Don't use the localized decimal separator. This way we can present
-        // a comma separated list of coordinates.
-        cDdFormatter = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
-        cDdFormatter.applyPattern("###0.0######");
-    }
-
+    /** The normal number format for server precision coordinates */
+    protected static final DecimalFormat cDdFormatter = newUnlocalizedDecimalFormat("###0.0######");
     /** Character denoting South, as string */
     protected static final String SOUTH = trc("compass", "S");
     /** Character denoting North, as string */
@@ -39,6 +30,20 @@ public abstract class AbstractCoordinateFormat implements ICoordinateFormat {
     protected AbstractCoordinateFormat(String id, String displayName) {
         this.id = id;
         this.displayName = displayName;
+    }
+
+    /**
+     * Creates a new unlocalized {@link DecimalFormat}.
+     * By not using the localized decimal separator, we can present a comma separated list of coordinates.
+     * @param pattern decimal format pattern
+     * @return {@code DecimalFormat} using dot as decimal separator
+     * @see DecimalFormat#applyPattern
+     * @since 14203
+     */
+    public static DecimalFormat newUnlocalizedDecimalFormat(String pattern) {
+        DecimalFormat format = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
+        format.applyPattern(pattern);
+        return format;
     }
 
     @Override
