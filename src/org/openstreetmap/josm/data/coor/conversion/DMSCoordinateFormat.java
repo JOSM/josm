@@ -14,8 +14,8 @@ import org.openstreetmap.josm.spi.preferences.Config;
  */
 public class DMSCoordinateFormat extends AbstractCoordinateFormat {
 
-    private static final DecimalFormat DMS_MINUTE_FORMATTER = new DecimalFormat("00");
-    private static final DecimalFormat DMS_SECOND_FORMATTER = new DecimalFormat(
+    private static final DecimalFormat DMS_MINUTE_FORMATTER = newUnlocalizedDecimalFormat("00");
+    private static final DecimalFormat DMS_SECOND_FORMATTER = newUnlocalizedDecimalFormat(
             Config.getPref() == null ? "00.0" : Config.getPref().get("latlon.dms.decimal-format", "00.0"));
     private static final String DMS60 = DMS_SECOND_FORMATTER.format(60.0);
     private static final String DMS00 = DMS_SECOND_FORMATTER.format(0.0);
