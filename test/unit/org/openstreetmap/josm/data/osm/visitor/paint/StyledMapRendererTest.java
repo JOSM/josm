@@ -7,6 +7,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+
 /**
  * Test the {@link StyledMapRenderer}
  * @author Michael Zangl
@@ -69,11 +72,20 @@ public class StyledMapRendererTest {
         floatToFixedCheckBits(Float.NaN, 24);
     }
 
-    private long floatToFixedCheckBits(float number, int totalBits) {
+    private static long floatToFixedCheckBits(float number, int totalBits) {
         long result = StyleRecord.floatToFixed(number, totalBits);
         long shouldBeZero = result >> totalBits;
         assertEquals(0, shouldBeZero);
         return result;
     }
 
+    /**
+     * Unit test of methods {@link StyleRecord#equals} and {@link StyleRecord#hashCode}.
+     */
+    @Test
+    public void testEqualsContract() {
+        EqualsVerifier.forClass(StyleRecord.class).usingGetClass()
+            .suppress(Warning.NONFINAL_FIELDS)
+            .verify();
+    }
 }
