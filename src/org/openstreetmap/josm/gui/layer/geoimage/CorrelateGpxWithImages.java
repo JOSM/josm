@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -34,6 +35,7 @@ import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +45,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -51,9 +54,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.ListSelectionModel;
 import javax.swing.MutableComboBoxModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -61,8 +67,10 @@ import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
-import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
+import org.openstreetmap.josm.data.gpx.GpxTimeOffset;
+import org.openstreetmap.josm.data.gpx.GpxTimezone;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -74,6 +82,10 @@ import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
 import org.openstreetmap.josm.gui.io.importexport.NMEAImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
@@ -83,6 +95,7 @@ import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.io.IGpxReader;
 import org.openstreetmap.josm.io.nmea.NmeaReader;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -100,8 +113,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private static List<GpxData> loadedGpxData = new ArrayList<>();
 
     private final transient GeoImageLayer yLayer;
-    private transient Timezone timezone;
-    private transient Offset delta;
+    private transient GpxTimezone timezone;
+    private transient GpxTimeOffset delta;
+    private static boolean forceTags = false;
 
     /**
      * Constructs a new {@code CorrelateGpxWithImages} action.
@@ -111,6 +125,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         super(tr("Correlate to GPX"));
         new ImageProvider("dialogs/geoimage/gpx2img").getResource().attachImageIcon(this, true);
         this.yLayer = layer;
+        MainApplication.getLayerManager().addLayerChangeListener(new GpxLayerAddedListener());
     }
 
     private final class SyncDialogWindowListener extends WindowAdapter {
@@ -129,7 +144,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             // Parse values again, to display an error if the format is not recognized
             try {
-                timezone = Timezone.parseTimezone(tfTimezone.getText().trim());
+                timezone = GpxTimezone.parseTimezone(tfTimezone.getText().trim());
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(MainApplication.getMainFrame(), e.getMessage(),
                         tr("Invalid timezone"), JOptionPane.ERROR_MESSAGE);
@@ -137,7 +152,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
 
             try {
-                delta = Offset.parseOffset(tfOffset.getText().trim());
+                delta = GpxTimeOffset.parseOffset(tfOffset.getText().trim());
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(MainApplication.getMainFrame(), e.getMessage(),
                         tr("Invalid offset"), JOptionPane.ERROR_MESSAGE);
@@ -322,6 +337,204 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
+    private class AdvancedSettingsActionListener implements ActionListener {
+
+        private class CheckBoxActionListener implements ActionListener {
+            private final JComponent[] comps;
+
+            CheckBoxActionListener(JComponent... c) {
+                comps = Objects.requireNonNull(c);
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEnabled((JCheckBox) e.getSource());
+            }
+
+            public void setEnabled(JCheckBox cb) {
+                for (JComponent comp : comps) {
+                    if (comp instanceof JSpinner) {
+                        comp.setEnabled(cb.isSelected());
+                    } else if (comp instanceof JPanel) {
+                        boolean en = cb.isSelected();
+                        for (Component c : comp.getComponents()) {
+                            if (c instanceof JSpinner) {
+                                c.setEnabled(en);
+                            } else {
+                                c.setEnabled(cb.isSelected());
+                                if (en && c instanceof JCheckBox) {
+                                    en = ((JCheckBox) c).isSelected();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void addCheckBoxActionListener(JCheckBox cb, JComponent... c) {
+            CheckBoxActionListener listener = new CheckBoxActionListener(c);
+            cb.addActionListener(listener);
+            listener.setEnabled(cb);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            IPreferences s = Config.getPref();
+            JPanel p = new JPanel(new GridBagLayout());
+
+            Border border1 = BorderFactory.createEmptyBorder(0, 20, 0, 0);
+            Border border2 = BorderFactory.createEmptyBorder(10, 0, 5, 0);
+            Border border = BorderFactory.createEmptyBorder(0, 40, 0, 0);
+            FlowLayout layout = new FlowLayout();
+
+            JLabel l = new JLabel(tr("Segment settings"));
+            l.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            p.add(l, GBC.eol());
+            JCheckBox cInterpolSeg = new JCheckBox(tr("Interpolate between segments"), s.getBoolean("geoimage.seg.int", true));
+            cInterpolSeg.setBorder(border1);
+            p.add(cInterpolSeg, GBC.eol());
+
+            JCheckBox cInterpolSegTime = new JCheckBox(tr("only when the segments are less than # minutes apart:"),
+                    s.getBoolean("geoimage.seg.int.time", true));
+            JSpinner sInterpolSegTime = new JSpinner(
+                    new SpinnerNumberModel(s.getInt("geoimage.seg.int.time.val", 60), 0, Integer.MAX_VALUE, 1));
+            ((JSpinner.DefaultEditor) sInterpolSegTime.getEditor()).getTextField().setColumns(3);
+            JPanel pInterpolSegTime = new JPanel(layout);
+            pInterpolSegTime.add(cInterpolSegTime);
+            pInterpolSegTime.add(sInterpolSegTime);
+            pInterpolSegTime.setBorder(border);
+            p.add(pInterpolSegTime, GBC.eol());
+
+            JCheckBox cInterpolSegDist = new JCheckBox(tr("only when the segments are less than # meters apart:"),
+                    s.getBoolean("geoimage.seg.int.dist", true));
+            JSpinner sInterpolSegDist = new JSpinner(
+                    new SpinnerNumberModel(s.getInt("geoimage.seg.int.dist.val", 50), 0, Integer.MAX_VALUE, 1));
+            ((JSpinner.DefaultEditor) sInterpolSegDist.getEditor()).getTextField().setColumns(3);
+            JPanel pInterpolSegDist = new JPanel(layout);
+            pInterpolSegDist.add(cInterpolSegDist);
+            pInterpolSegDist.add(sInterpolSegDist);
+            pInterpolSegDist.setBorder(border);
+            p.add(pInterpolSegDist, GBC.eol());
+
+            JCheckBox cTagSeg = new JCheckBox(tr("Tag images at the closest end of a segment, when not interpolated"),
+                    s.getBoolean("geoimage.seg.tag", true));
+            cTagSeg.setBorder(border1);
+            p.add(cTagSeg, GBC.eol());
+
+            JCheckBox cTagSegTime = new JCheckBox(tr("only within # minutes of the closest trackpoint:"),
+                    s.getBoolean("geoimage.seg.tag.time", true));
+            JSpinner sTagSegTime = new JSpinner(
+                    new SpinnerNumberModel(s.getInt("geoimage.seg.tag.time.val", 2), 0, Integer.MAX_VALUE, 1));
+            ((JSpinner.DefaultEditor) sTagSegTime.getEditor()).getTextField().setColumns(3);
+            JPanel pTagSegTime = new JPanel(layout);
+            pTagSegTime.add(cTagSegTime);
+            pTagSegTime.add(sTagSegTime);
+            pTagSegTime.setBorder(border);
+            p.add(pTagSegTime, GBC.eol());
+
+            l = new JLabel(tr("Track settings (note that multiple tracks can be in one GPX file)"));
+            l.setBorder(border2);
+            p.add(l, GBC.eol());
+            JCheckBox cInterpolTrack = new JCheckBox(tr("Interpolate between tracks"), s.getBoolean("geoimage.trk.int", false));
+            cInterpolTrack.setBorder(border1);
+            p.add(cInterpolTrack, GBC.eol());
+
+            JCheckBox cInterpolTrackTime = new JCheckBox(tr("only when the tracks are less than # minutes apart:"),
+                    s.getBoolean("geoimage.trk.int.time", false));
+            JSpinner sInterpolTrackTime = new JSpinner(
+                    new SpinnerNumberModel(s.getInt("geoimage.trk.int.time.val", 60), 0, Integer.MAX_VALUE, 1));
+            ((JSpinner.DefaultEditor) sInterpolTrackTime.getEditor()).getTextField().setColumns(3);
+            JPanel pInterpolTrackTime = new JPanel(layout);
+            pInterpolTrackTime.add(cInterpolTrackTime);
+            pInterpolTrackTime.add(sInterpolTrackTime);
+            pInterpolTrackTime.setBorder(border);
+            p.add(pInterpolTrackTime, GBC.eol());
+
+            JCheckBox cInterpolTrackDist = new JCheckBox(tr("only when the tracks are less than # meters apart:"),
+                    s.getBoolean("geoimage.trk.int.dist", false));
+            JSpinner sInterpolTrackDist = new JSpinner(
+                    new SpinnerNumberModel(s.getInt("geoimage.trk.int.dist.val", 50), 0, Integer.MAX_VALUE, 1));
+            ((JSpinner.DefaultEditor) sInterpolTrackDist.getEditor()).getTextField().setColumns(3);
+            JPanel pInterpolTrackDist = new JPanel(layout);
+            pInterpolTrackDist.add(cInterpolTrackDist);
+            pInterpolTrackDist.add(sInterpolTrackDist);
+            pInterpolTrackDist.setBorder(border);
+            p.add(pInterpolTrackDist, GBC.eol());
+
+            JCheckBox cTagTrack = new JCheckBox("<html>" +
+                    tr("Tag images at the closest end of a track, when not interpolated<br>" +
+                    "(also applies before the first and after the last track)") + "</html>",
+                    s.getBoolean("geoimage.trk.tag", true));
+            cTagTrack.setBorder(border1);
+            p.add(cTagTrack, GBC.eol());
+
+            JCheckBox cTagTrackTime = new JCheckBox(tr("only within # minutes of the closest trackpoint:"),
+                    s.getBoolean("geoimage.trk.tag.time", true));
+            JSpinner sTagTrackTime = new JSpinner(
+                    new SpinnerNumberModel(s.getInt("geoimage.trk.tag.time.val", 2), 0, Integer.MAX_VALUE, 1));
+            ((JSpinner.DefaultEditor) sTagTrackTime.getEditor()).getTextField().setColumns(3);
+            JPanel pTagTrackTime = new JPanel(layout);
+            pTagTrackTime.add(cTagTrackTime);
+            pTagTrackTime.add(sTagTrackTime);
+            pTagTrackTime.setBorder(border);
+            p.add(pTagTrackTime, GBC.eol());
+
+            l = new JLabel(tr("Advanced"));
+            l.setBorder(border2);
+            p.add(l, GBC.eol());
+            JCheckBox cForce = new JCheckBox("<html>" +
+                    tr("Force tagging of all pictures (temporarily overrides the settings above).") + "<br>" +
+                    tr("This option will not be saved permanently.") + "</html>", forceTags);
+            cForce.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 0));
+            p.add(cForce, GBC.eol());
+
+            addCheckBoxActionListener(cInterpolSegTime, sInterpolSegTime);
+            addCheckBoxActionListener(cInterpolSegDist, sInterpolSegDist);
+            addCheckBoxActionListener(cInterpolSeg, pInterpolSegTime, pInterpolSegDist);
+
+            addCheckBoxActionListener(cTagSegTime, sTagSegTime);
+            addCheckBoxActionListener(cTagSeg, pTagSegTime);
+
+            addCheckBoxActionListener(cInterpolTrackTime, sInterpolTrackTime);
+            addCheckBoxActionListener(cInterpolTrackDist, sInterpolTrackDist);
+            addCheckBoxActionListener(cInterpolTrack, pInterpolTrackTime, pInterpolTrackDist);
+
+            addCheckBoxActionListener(cTagTrackTime, sTagTrackTime);
+            addCheckBoxActionListener(cTagTrack, pTagTrackTime);
+
+
+            ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), tr("Advanced settings"), tr("OK"), tr("Cancel"))
+                            .setButtonIcons("ok", "cancel").setContent(p);
+            if (ed.showDialog().getValue() == 1) {
+
+                s.putBoolean("geoimage.seg.int", cInterpolSeg.isSelected());
+                s.putBoolean("geoimage.seg.int.dist", cInterpolSegDist.isSelected());
+                s.putInt("geoimage.seg.int.dist.val", (int) sInterpolSegDist.getValue());
+                s.putBoolean("geoimage.seg.int.time", cInterpolSegTime.isSelected());
+                s.putInt("geoimage.seg.int.time.val", (int) sInterpolSegTime.getValue());
+                s.putBoolean("geoimage.seg.tag", cTagSeg.isSelected());
+                s.putBoolean("geoimage.seg.tag.time", cTagSegTime.isSelected());
+                s.putInt("geoimage.seg.tag.time.val", (int) sTagSegTime.getValue());
+
+                s.putBoolean("geoimage.trk.int", cInterpolTrack.isSelected());
+                s.putBoolean("geoimage.trk.int.dist", cInterpolTrackDist.isSelected());
+                s.putInt("geoimage.trk.int.dist.val", (int) sInterpolTrackDist.getValue());
+                s.putBoolean("geoimage.trk.int.time", cInterpolTrackTime.isSelected());
+                s.putInt("geoimage.trk.int.time.val", (int) sInterpolTrackTime.getValue());
+                s.putBoolean("geoimage.trk.tag", cTagTrack.isSelected());
+                s.putBoolean("geoimage.trk.tag.time", cTagTrackTime.isSelected());
+                s.putInt("geoimage.trk.tag.time.val", (int) sTagTrackTime.getValue());
+
+                forceTags = cForce.isSelected(); // This setting is not supposed to be saved permanently
+
+                statusBarUpdater.updateStatusBar();
+                yLayer.updateBufferAndRepaint();
+            }
+        }
+    }
+
     /**
      * This action listener is called when the user has a photo of the time of his GPS receiver. It
      * displays the list of photos of the layer, and upon selection displays the selected photo.
@@ -398,7 +611,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 TimeZone tz = TimeZone.getTimeZone(tzStr);
 
                 String tzDesc = tzStr + " (" +
-                        new Timezone(((double) tz.getRawOffset()) / TimeUnit.HOURS.toMillis(1)).formatTimezone() +
+                        new GpxTimezone(((double) tz.getRawOffset()) / TimeUnit.HOURS.toMillis(1)).formatTimezone() +
                         ')';
                 vtTimezones.add(tzDesc);
             }
@@ -416,7 +629,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
 
             cbTimezones.setSelectedItem(defaultTz.getID() + " (" +
-                    new Timezone(((double) defaultTz.getRawOffset()) / TimeUnit.HOURS.toMillis(1)).formatTimezone() +
+                    new GpxTimezone(((double) defaultTz.getRawOffset()) / TimeUnit.HOURS.toMillis(1)).formatTimezone() +
                     ')');
 
             gc.gridx = 1;
@@ -514,7 +727,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 String tzValue = selectedTz.substring(pos + 1, selectedTz.length() - 1);
 
                 Config.getPref().put("geoimage.timezoneid", tzId);
-                tfOffset.setText(Offset.milliseconds(delta).formatOffset());
+                tfOffset.setText(GpxTimeOffset.milliseconds(delta).formatOffset());
                 tfTimezone.setText(tzValue);
 
                 isOk = true;
@@ -523,6 +736,32 @@ public class CorrelateGpxWithImages extends AbstractAction {
             statusBarUpdater.updateStatusBar();
             yLayer.updateBufferAndRepaint();
         }
+    }
+
+    private class GpxLayerAddedListener implements LayerChangeListener {
+        @Override
+        public void layerAdded(LayerAddEvent e) {
+            if (syncDialog != null && syncDialog.isVisible()) {
+                Layer layer = e.getAddedLayer();
+                if (layer instanceof GpxLayer) {
+                    GpxLayer gpx = (GpxLayer) layer;
+                    GpxDataWrapper gdw = new GpxDataWrapper(gpx.getName(), gpx.data, gpx.data.storageFile);
+                    gpxLst.add(gdw);
+                    MutableComboBoxModel<GpxDataWrapper> model = (MutableComboBoxModel<GpxDataWrapper>) cbGpx.getModel();
+                    if (gpxLst.get(0).file == null) {
+                        gpxLst.remove(0);
+                        model.removeElementAt(0);
+                    }
+                    model.addElement(gdw);
+                }
+            }
+        }
+
+        @Override
+        public void layerRemoving(LayerRemoveEvent e) {}
+
+        @Override
+        public void layerOrderChanged(LayerOrderChangeEvent e) {}
     }
 
     @Override
@@ -577,18 +816,20 @@ public class CorrelateGpxWithImages extends AbstractAction {
         JPanel panelTf = new JPanel(new GridBagLayout());
 
         try {
-            timezone = Timezone.parseTimezone(Optional.ofNullable(Config.getPref().get("geoimage.timezone", "0:00")).orElse("0:00"));
+            timezone = GpxTimezone.parseTimezone(Optional.ofNullable(Config.getPref().get("geoimage.timezone", "0:00")).orElse("0:00"));
         } catch (ParseException e) {
-            timezone = Timezone.ZERO;
+            timezone = GpxTimezone.ZERO;
+            Logging.trace(e);
         }
 
         tfTimezone = new JosmTextField(10);
         tfTimezone.setText(timezone.formatTimezone());
 
         try {
-            delta = Offset.parseOffset(Config.getPref().get("geoimage.delta", "0"));
+            delta = GpxTimeOffset.parseOffset(Config.getPref().get("geoimage.delta", "0"));
         } catch (ParseException e) {
-            delta = Offset.ZERO;
+            delta = GpxTimeOffset.ZERO;
+            Logging.trace(e);
         }
 
         tfOffset = new JosmTextField(10);
@@ -605,6 +846,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         JButton buttonAdjust = new JButton(tr("Manual adjust"));
         buttonAdjust.addActionListener(new AdjustActionListener());
+
+        JButton buttonAdvanced = new JButton(tr("Advanced settings..."));
+        buttonAdvanced.addActionListener(new AdvancedSettingsActionListener());
 
         JLabel labelPosition = new JLabel(tr("Override position for: "));
 
@@ -667,9 +911,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
         panelTf.add(buttonViewGpsPhoto, gbc);
 
         gbc = GBC.std().fill(GBC.BOTH).insets(5, 5, 5, 5);
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = y++;
         gbc.weightx = 0.5;
+        panelTf.add(buttonAdvanced, gbc);
+
+        gbc.gridx = 2;
         panelTf.add(buttonAutoGuess, gbc);
 
         gbc.gridx = 3;
@@ -715,6 +962,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         cbTaggedImg.addItemListener(statusBarUpdaterWithRepaint);
 
         statusBarUpdater.updateStatusBar();
+        yLayer.updateBufferAndRepaint();
 
         outerPanel = new JPanel(new BorderLayout());
         outerPanel.add(statusBar, BorderLayout.PAGE_END);
@@ -781,8 +1029,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         private String statusText() {
             try {
-                timezone = Timezone.parseTimezone(tfTimezone.getText().trim());
-                delta = Offset.parseOffset(tfOffset.getText().trim());
+                timezone = GpxTimezone.parseTimezone(tfTimezone.getText().trim());
+                delta = GpxTimeOffset.parseOffset(tfOffset.getText().trim());
             } catch (ParseException e) {
                 return e.getMessage();
             }
@@ -800,15 +1048,15 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // Create a temporary copy for each image
             for (ImageEntry ie : dateImgLst) {
                 ie.createTmp();
-                ie.tmp.setPos(null);
+                ie.getTmp().setPos(null);
             }
 
             GpxDataWrapper selGpx = selectedGPX(false);
             if (selGpx == null)
                 return tr("No gpx selected");
 
-            final long offsetMs = ((long) (timezone.getHours() * TimeUnit.HOURS.toMillis(1))) + delta.getMilliseconds(); // in milliseconds
-            lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, offsetMs);
+            final long offsetMs = ((long) (timezone.getHours() * TimeUnit.HOURS.toMillis(-1))) + delta.getMilliseconds(); // in milliseconds
+            lastNumMatched = GpxImageCorrelation.matchGpxTrack(dateImgLst, selGpx.data, offsetMs, forceTags);
 
             return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
                     "<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>",
@@ -837,10 +1085,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent arg0) {
 
-            final Offset offset = Offset.milliseconds(
+            final GpxTimeOffset offset = GpxTimeOffset.milliseconds(
                     delta.getMilliseconds() + Math.round(timezone.getHours() * TimeUnit.HOURS.toMillis(1)));
             final int dayOffset = offset.getDayOffset();
-            final Pair<Timezone, Offset> timezoneOffsetPair = offset.withoutDayOffset().splitOutTimezone();
+            final Pair<GpxTimezone, GpxTimeOffset> timezoneOffsetPair = offset.withoutDayOffset().splitOutTimezone();
 
             // Info Labels
             final JLabel lblMatches = new JLabel();
@@ -853,7 +1101,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             Dictionary<Integer, JLabel> labelTable = new Hashtable<>();
             // CHECKSTYLE.OFF: ParenPad
             for (int i = -12; i <= 12; i += 6) {
-                labelTable.put(i * 2, new JLabel(new Timezone(i).formatTimezone()));
+                labelTable.put(i * 2, new JLabel(new GpxTimezone(i).formatTimezone()));
             }
             // CHECKSTYLE.ON: ParenPad
             sldTimezone.setLabelTable(labelTable);
@@ -871,7 +1119,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             labelTable = new Hashtable<>();
             // CHECKSTYLE.OFF: ParenPad
             for (int i = -60; i <= 60; i += 30) {
-                labelTable.put(i * 10, new JLabel(Offset.seconds(i).formatOffset()));
+                labelTable.put(i * 10, new JLabel(GpxTimeOffset.seconds(i).formatOffset()));
             }
             // CHECKSTYLE.ON: ParenPad
             sldSeconds.setLabelTable(labelTable);
@@ -882,13 +1130,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
             class SliderListener implements ChangeListener {
                 @Override
                 public void stateChanged(ChangeEvent e) {
-                    timezone = new Timezone(sldTimezone.getValue() / 2.);
+                    timezone = new GpxTimezone(sldTimezone.getValue() / 2.);
 
                     lblTimezone.setText(tr("Timezone: {0}", timezone.formatTimezone()));
                     lblMinutes.setText(tr("Minutes: {0}", sldMinutes.getValue()));
-                    lblSeconds.setText(tr("Seconds: {0}", Offset.milliseconds(100L * sldSeconds.getValue()).formatOffset()));
+                    lblSeconds.setText(tr("Seconds: {0}", GpxTimeOffset.milliseconds(100L * sldSeconds.getValue()).formatOffset()));
 
-                    delta = Offset.milliseconds(100L * sldSeconds.getValue()
+                    delta = GpxTimeOffset.milliseconds(100L * sldSeconds.getValue()
                             + TimeUnit.MINUTES.toMillis(sldMinutes.getValue())
                             + TimeUnit.DAYS.toMillis(dayOffset));
 
@@ -967,7 +1215,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @throws IndexOutOfBoundsException when there are no images
      * @throws NoGpxTimestamps when the gpx track does not contain a timestamp
      */
-    static Pair<Timezone, Offset> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws NoGpxTimestamps {
+    static Pair<GpxTimezone, GpxTimeOffset> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws NoGpxTimestamps {
 
         // Init variables
         long firstExifDate = imgs.get(0).getExifTime().getTime();
@@ -990,7 +1238,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             throw new NoGpxTimestamps();
         }
 
-        return Offset.milliseconds(firstExifDate - firstGPXDate).splitOutTimezone();
+        return GpxTimeOffset.milliseconds(firstExifDate - firstGPXDate).splitOutTimezone();
     }
 
     private class AutoGuessActionListener implements ActionListener {
@@ -1005,7 +1253,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             List<ImageEntry> imgs = getSortedImgList();
 
             try {
-                final Pair<Timezone, Offset> r = autoGuess(imgs, gpx);
+                final Pair<GpxTimezone, GpxTimeOffset> r = autoGuess(imgs, gpx);
                 timezone = r.a;
                 delta = r.b;
             } catch (IndexOutOfBoundsException ex) {
@@ -1087,161 +1335,4 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return (GpxDataWrapper) item;
     }
 
-    /**
-     * Match a list of photos to a gpx track with a given offset.
-     * All images need a exifTime attribute and the List must be sorted according to these times.
-     * @param images images to match
-     * @param selectedGpx selected GPX data
-     * @param offset offset
-     * @return number of matched points
-     */
-    static int matchGpxTrack(List<ImageEntry> images, GpxData selectedGpx, long offset) {
-        int ret = 0;
-
-        for (GpxTrack trk : selectedGpx.tracks) {
-            for (GpxTrackSegment segment : trk.getSegments()) {
-
-                long prevWpTime = 0;
-                WayPoint prevWp = null;
-
-                for (WayPoint curWp : segment.getWayPoints()) {
-                    final Date parsedTime = curWp.setTimeFromAttribute();
-                    if (parsedTime != null) {
-                        final long curWpTime = parsedTime.getTime() + offset;
-                        ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset);
-
-                        prevWp = curWp;
-                        prevWpTime = curWpTime;
-                        continue;
-                    }
-                    prevWp = null;
-                    prevWpTime = 0;
-                }
-            }
-        }
-        return ret;
-    }
-
-    private static Double getElevation(WayPoint wp) {
-        String value = wp.getString(GpxConstants.PT_ELE);
-        if (value != null && !value.isEmpty()) {
-            try {
-                return Double.valueOf(value);
-            } catch (NumberFormatException e) {
-                Logging.warn(e);
-            }
-        }
-        return null;
-    }
-
-    static int matchPoints(List<ImageEntry> images, WayPoint prevWp, long prevWpTime,
-            WayPoint curWp, long curWpTime, long offset) {
-        // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
-        // 5 sec before the first track point can be assumed to be take at the starting position
-        long interval = prevWpTime > 0 ? Math.abs(curWpTime - prevWpTime) : TimeUnit.SECONDS.toMillis(5);
-        int ret = 0;
-
-        // i is the index of the timewise last photo that has the same or earlier EXIF time
-        int i = getLastIndexOfListBefore(images, curWpTime);
-
-        // no photos match
-        if (i < 0)
-            return 0;
-
-        Double speed = null;
-        Double prevElevation = null;
-
-        if (prevWp != null) {
-            double distance = prevWp.getCoor().greatCircleDistance(curWp.getCoor());
-            // This is in km/h, 3.6 * m/s
-            if (curWpTime > prevWpTime) {
-                speed = 3600 * distance / (curWpTime - prevWpTime);
-            }
-            prevElevation = getElevation(prevWp);
-        }
-
-        Double curElevation = getElevation(curWp);
-
-        // First trackpoint, then interval is set to five seconds, i.e. photos up to five seconds
-        // before the first point will be geotagged with the starting point
-        if (prevWpTime == 0 || curWpTime <= prevWpTime) {
-            while (i >= 0) {
-                final ImageEntry curImg = images.get(i);
-                long time = curImg.getExifTime().getTime();
-                if (time > curWpTime || time < curWpTime - interval) {
-                    break;
-                }
-                if (curImg.tmp.getPos() == null) {
-                    curImg.tmp.setPos(curWp.getCoor());
-                    curImg.tmp.setSpeed(speed);
-                    curImg.tmp.setElevation(curElevation);
-                    curImg.tmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
-                    curImg.tmp.flagNewGpsData();
-                    ret++;
-                }
-                i--;
-            }
-            return ret;
-        }
-
-        // This code gives a simple linear interpolation of the coordinates between current and
-        // previous track point assuming a constant speed in between
-        while (i >= 0) {
-            ImageEntry curImg = images.get(i);
-            long imgTime = curImg.getExifTime().getTime();
-            if (imgTime < prevWpTime) {
-                break;
-            }
-
-            if (prevWp != null && curImg.tmp.getPos() == null) {
-                // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless variable
-                double timeDiff = (double) (imgTime - prevWpTime) / interval;
-                curImg.tmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
-                curImg.tmp.setSpeed(speed);
-                if (curElevation != null && prevElevation != null) {
-                    curImg.tmp.setElevation(prevElevation + (curElevation - prevElevation) * timeDiff);
-                }
-                curImg.tmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
-                curImg.tmp.flagNewGpsData();
-
-                ret++;
-            }
-            i--;
-        }
-        return ret;
-    }
-
-    private static int getLastIndexOfListBefore(List<ImageEntry> images, long searchedTime) {
-        int lstSize = images.size();
-
-        // No photos or the first photo taken is later than the search period
-        if (lstSize == 0 || searchedTime < images.get(0).getExifTime().getTime())
-            return -1;
-
-        // The search period is later than the last photo
-        if (searchedTime > images.get(lstSize - 1).getExifTime().getTime())
-            return lstSize-1;
-
-        // The searched index is somewhere in the middle, do a binary search from the beginning
-        int curIndex;
-        int startIndex = 0;
-        int endIndex = lstSize-1;
-        while (endIndex - startIndex > 1) {
-            curIndex = (endIndex + startIndex) / 2;
-            if (searchedTime > images.get(curIndex).getExifTime().getTime()) {
-                startIndex = curIndex;
-            } else {
-                endIndex = curIndex;
-            }
-        }
-        if (searchedTime < images.get(endIndex).getExifTime().getTime())
-            return startIndex;
-
-        // This final loop is to check if photos with the exact same EXIF time follows
-        while ((endIndex < (lstSize-1)) && (images.get(endIndex).getExifTime().getTime()
-                == images.get(endIndex + 1).getExifTime().getTime())) {
-            endIndex++;
-        }
-        return endIndex;
-    }
 }

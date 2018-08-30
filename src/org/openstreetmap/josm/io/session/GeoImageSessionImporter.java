@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
@@ -70,7 +71,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
         return new GeoImageLayer(entries, gpxLayer, useThumbs);
     }
 
-    private static void handleElement(ImageEntry entry, Element attrElem) {
+    private static void handleElement(GpxImageEntry entry, Element attrElem) {
         try {
             switch(attrElem.getTagName()) {
             case "file":
