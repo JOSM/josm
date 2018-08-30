@@ -49,6 +49,10 @@ public abstract class AbstractDatasetChangedEvent {
          */
         CHANGESET_ID_CHANGED,
         /**
+         * The filtered state changed for a list of primitives
+         */
+        FILTERS_CHANGED,
+        /**
          * The flags changed for a primitive and have not been covered in an other event
          */
         PRIMITIVE_FLAGS_CHANGED,

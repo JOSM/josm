@@ -29,6 +29,7 @@ import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.FilterModel;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent.DatasetEventType;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
@@ -82,7 +83,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapFrame.addMapModeChangeListener(this);
-        filterModel.executeFilters();
+        filterModel.executeFilters(true);
     }
 
     @Override
@@ -325,7 +326,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-        filterModel.executeFilters();
+        if (!DatasetEventType.FILTERS_CHANGED.equals(event.getType())) {
+            filterModel.executeFilters();
+        }
     }
 
     @Override

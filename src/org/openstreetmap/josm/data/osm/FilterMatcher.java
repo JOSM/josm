@@ -113,6 +113,15 @@ public class FilterMatcher {
     }
 
     /**
+     * Determines if at least one filter is enabled.
+     * @return {@code true} if at least one filter is enabled
+     * @since 14206
+     */
+    public boolean hasFilters() {
+        return !hiddenFilters.isEmpty() || !disabledFilters.isEmpty();
+    }
+
+    /**
      * Adds a filter to the currently used filters
      * @param filter the filter to add
      * @throws SearchParseError if the search expression in the filter cannot be parsed

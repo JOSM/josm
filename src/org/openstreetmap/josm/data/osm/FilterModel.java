@@ -372,6 +372,15 @@ public class FilterModel {
     }
 
     /**
+     * Determines if at least one filter is enabled.
+     * @return {@code true} if at least one filter is enabled
+     * @since 14206
+     */
+    public boolean hasFilters() {
+        return filterMatcher.hasFilters();
+    }
+
+    /**
      * Returns the list of primitives whose filtering can be affected by change in primitive
      * @param primitives list of primitives to check
      * @return List of primitives whose filtering can be affected by change in source primitives

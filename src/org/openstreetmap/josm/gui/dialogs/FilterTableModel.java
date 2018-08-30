@@ -62,25 +62,44 @@ public class FilterTableModel extends AbstractTableModel {
 
     private void updateFilters() {
         AutoFilterManager.getInstance().setCurrentAutoFilter(null);
-        executeFilters();
+        executeFilters(true);
     }
 
     /**
-     * Runs the filters on the current edit data set.
+     * Runs the filters on the current edit data set, if any. Does nothing if no filter is enabled.
      */
     public void executeFilters() {
-        if (AutoFilterManager.getInstance().getCurrentAutoFilter() == null) {
+        executeFilters(false);
+    }
+
+    /**
+     * Runs the filter on a list of primitives that are part of the edit data set, if any. Does nothing if no filter is enabled.
+     * @param primitives The primitives
+     */
+    public void executeFilters(Collection<? extends OsmPrimitive> primitives) {
+        executeFilters(primitives, false);
+    }
+
+    /**
+     * Runs the filters on the current edit data set, if any.
+     * @param force force execution of filters even if no filter is enabled. Useful to reset state after change of filters
+     * @since 14206
+     */
+    public void executeFilters(boolean force) {
+        if (AutoFilterManager.getInstance().getCurrentAutoFilter() == null && (force || model.hasFilters())) {
             model.executeFilters();
             updateMap();
         }
     }
 
     /**
-     * Runs the filter on a list of primitives that are part of the edit data set.
+     * Runs the filter on a list of primitives that are part of the edit data set, if any.
+     * @param force force execution of filters even if no filter is enabled. Useful to reset state after change of filters
      * @param primitives The primitives
+     * @since 14206
      */
-    public void executeFilters(Collection<? extends OsmPrimitive> primitives) {
-        if (AutoFilterManager.getInstance().getCurrentAutoFilter() == null) {
+    public void executeFilters(Collection<? extends OsmPrimitive> primitives, boolean force) {
+        if (AutoFilterManager.getInstance().getCurrentAutoFilter() == null && (force || model.hasFilters())) {
             model.executeFilters(primitives);
             updateMap();
         }
