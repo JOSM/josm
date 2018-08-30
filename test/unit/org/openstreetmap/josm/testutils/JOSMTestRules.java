@@ -7,6 +7,11 @@ import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
@@ -367,6 +372,17 @@ public class JOSMTestRules implements TestRule {
 
     @Override
     public Statement apply(Statement base, Description description) {
+        // First process any Override* annotations for per-test overrides.
+        // The following only work because "option" methods modify JOSMTestRules in-place
+        final OverrideAssumeRevision overrideAssumeRevision = description.getAnnotation(OverrideAssumeRevision.class);
+        if (overrideAssumeRevision != null) {
+            this.assumeRevision(overrideAssumeRevision.value());
+        }
+        final OverrideTimeout overrideTimeout = description.getAnnotation(OverrideTimeout.class);
+        if (overrideTimeout != null) {
+            this.timeout(overrideTimeout.value());
+        }
+
         Statement statement = base;
         // counter-intuitively, Statements which need to have their setup routines performed *after* another one need to
         // be added into the chain *before* that one, so that it ends up on the "inside".
@@ -693,5 +709,19 @@ public class JOSMTestRules implements TestRule {
     private boolean isDebugMode() {
         return java.lang.management.ManagementFactory.getRuntimeMXBean().
                 getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface OverrideAssumeRevision {
+        String value();
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface OverrideTimeout {
+        int value();
     }
 }
