@@ -41,6 +41,7 @@ import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.FilterChangedEvent;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitiveFlagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
@@ -1029,7 +1030,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     void fireFilterChanged() {
-        fireEvent(new DataChangedEvent(this));
+        fireEvent(new FilterChangedEvent(this));
     }
 
     void fireHighlightingChanged() {

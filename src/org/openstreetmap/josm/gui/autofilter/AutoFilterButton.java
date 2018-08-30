@@ -35,7 +35,7 @@ public class AutoFilterButton extends JButton {
                 AutoFilterManager afm = AutoFilterManager.getInstance();
                 if (filter.equals(afm.getCurrentAutoFilter())) {
                     afm.setCurrentAutoFilter(null);
-                    MainApplication.getMap().filterDialog.getFilterModel().executeFilters();
+                    MainApplication.getMap().filterDialog.getFilterModel().executeFilters(true);
                 } else {
                     afm.setCurrentAutoFilter(filter);
                 }

@@ -393,7 +393,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         removeAllButtons();
         MapFrame map = MainApplication.getMap();
         if (map != null) {
-            map.filterDialog.getFilterModel().executeFilters();
+            map.filterDialog.getFilterModel().executeFilters(true);
         }
     }
 
