@@ -6,18 +6,24 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -28,6 +34,10 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Launch browser with wiki help for selected object.
@@ -73,137 +83,113 @@ public class HelpAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        try {
-            String base = Config.getPref().get("url.openstreetmap-wiki", "https://wiki.openstreetmap.org/wiki/");
-            String lang = LanguageInfo.getWikiLanguagePrefix();
-            final List<URI> uris = new ArrayList<>();
-            if (tagTable.getSelectedRowCount() == 1) {
-                int row = tagTable.getSelectedRow();
-                String key = Utils.encodeUrl(tagKeySupplier.apply(row));
-                Map<String, Integer> m = tagValuesSupplier.apply(row);
-                if (!m.isEmpty()) {
-                    String val = Utils.encodeUrl(m.entrySet().iterator().next().getKey());
-                    uris.addAll(getTagURIs(base, lang, key, val));
-                }
-            } else if (membershipTable != null && membershipTable.getSelectedRowCount() == 1) {
-                int row = membershipTable.getSelectedRow();
-                uris.addAll(getRelationURIs(base, lang, memberValueSupplier.apply(row)));
-            } else {
-                // give the generic help page, if more than one element is selected
-                uris.addAll(getGenericURIs(base, lang));
+        if (tagTable.getSelectedRowCount() == 1) {
+            int row = tagTable.getSelectedRow();
+            String key = Utils.encodeUrl(tagKeySupplier.apply(row));
+            Map<String, Integer> m = tagValuesSupplier.apply(row);
+            if (!m.isEmpty()) {
+                String val = Utils.encodeUrl(m.entrySet().iterator().next().getKey());
+                MainApplication.worker.execute(() -> displayTagHelp(key, val));
             }
-
-            MainApplication.worker.execute(() -> displayHelp(uris));
-        } catch (URISyntaxException e1) {
-            Logging.error(e1);
+        } else if (membershipTable != null && membershipTable.getSelectedRowCount() == 1) {
+            int row = membershipTable.getSelectedRow();
+            final IRelation<?> relation = memberValueSupplier.apply(row);
+            MainApplication.worker.execute(() -> displayRelationHelp(relation));
+        } else {
+            // give the generic help page, if more than one element is selected
+            MainApplication.worker.execute(HelpAction::displayGenericHelp);
         }
     }
 
     /**
-     * Returns a list of URIs for the given key/value.
-     * @param base OSM wiki base URL
-     * @param lang Language prefix
+     * Displays the most specific wiki page for the given key/value.
      * @param key Key
      * @param val Value
-     * @return a list of URIs for the given key/value by order of relevance
-     * @throws URISyntaxException in case of internal error
-     * @since 13522
+     * @since 14208
      */
-    public static List<URI> getTagURIs(String base, String lang, String key, String val) throws URISyntaxException {
-        return Arrays.asList(
-            new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)),
-            new URI(String.format("%sTag:%s=%s", base, key, val)),
-            new URI(String.format("%s%sKey:%s", base, lang, key)),
-            new URI(String.format("%sKey:%s", base, key)),
-            new URI(String.format("%s%sMap_Features", base, lang)),
-            new URI(String.format("%sMap_Features", base))
+    public static void displayTagHelp(String key, String val) {
+        final String lang = LanguageInfo.getWikiLanguagePrefix();
+        final List<String> pages = Arrays.asList(
+                String.format("%sTag:%s=%s", lang, key, val),
+                String.format("Tag:%s=%s", key, val),
+                String.format("%sKey:%s", lang, key),
+                String.format("Key:%s", key),
+                String.format("%sMap_Features", lang),
+                "Map_Features"
         );
+        displayHelp(pages);
     }
 
     /**
-     * Returns a list of URIs for the given relation.
-     * @param base OSM wiki base URL
-     * @param lang Language prefix
+     * Displays the most specific wiki page for the given relation.
      * @param rel Relation
-     * @return a list of URIs for the given relation by order of relevance
-     * @throws URISyntaxException in case of internal error
-     * @since 13522
-     * @since 13959 (signature)
+     * @since 14208
      */
-    public static List<URI> getRelationURIs(String base, String lang, IRelation<?> rel) throws URISyntaxException {
-        List<URI> uris = new ArrayList<>();
+    public static void displayRelationHelp(IRelation<?> rel) {
+        final String lang = LanguageInfo.getWikiLanguagePrefix();
+        final List<String> pages = new ArrayList<>();
         String type = rel.get("type");
         if (type != null) {
             type = Utils.encodeUrl(type);
         }
 
         if (type != null && !type.isEmpty()) {
-            uris.add(new URI(String.format("%s%sRelation:%s", base, lang, type)));
-            uris.add(new URI(String.format("%sRelation:%s", base, type)));
+            pages.add(String.format("%sRelation:%s", lang, type));
+            pages.add(String.format("Relation:%s", type));
         }
 
-        uris.add(new URI(String.format("%s%sRelations", base, lang)));
-        uris.add(new URI(String.format("%sRelations", base)));
-        return uris;
+        pages.add(String.format("%sRelations", lang));
+        pages.add("Relations");
+        displayHelp(pages);
     }
 
     /**
-     * Returns a list of generic URIs (Map Features).
-     * @param base OSM wiki base URL
-     * @param lang Language prefix
-     * @return a list of generic URIs (Map Features)
-     * @throws URISyntaxException in case of internal error
-     * @since 13522
+     * Displays the localized Map Features.
+     * @since 14208
      */
-    public static List<URI> getGenericURIs(String base, String lang) throws URISyntaxException {
-        return Arrays.asList(
-            new URI(String.format("%s%sMap_Features", base, lang)),
-            new URI(String.format("%sMap_Features", base))
+    public static void displayGenericHelp() {
+        final String lang = LanguageInfo.getWikiLanguagePrefix();
+        final List<String> pages = Arrays.asList(
+                String.format("%sMap_Features", lang),
+                "Map_Features"
         );
+        displayHelp(pages);
     }
 
     /**
-     * Display help by searching the forst valid URI in the given list.
-     * @param uris list of URIs to test
-     * @since 13522
+     * Display help by opening the first existing wiki page in the given list.
+     * @param pages list of wiki page names to test
+     * @since 14208
      */
-    public static void displayHelp(final List<URI> uris) {
+    public static void displayHelp(final List<String> pages) {
         try {
             // find a page that actually exists in the wiki
-            HttpClient.Response conn;
-            for (URI u : uris) {
-                conn = HttpClient.create(u.toURL(), "HEAD").connect();
-
-                if (conn.getResponseCode() != 200) {
-                    conn.disconnect();
-                } else {
-                    long osize = conn.getContentLength();
-                    if (osize > -1) {
-                        conn.disconnect();
-
-                        final URI newURI = new URI(u.toString()
-                                .replace("=", "%3D") /* do not URLencode whole string! */
-                                .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                        );
-                        conn = HttpClient.create(newURI.toURL(), "HEAD").connect();
-                    }
-
-                    /* redirect pages have different content length, but retrieving a "nonredirect"
-                     *  page using index.php and the direct-link method gives slightly different
-                     *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
-                     */
-                    if (osize > -1 && conn.getContentLength() != -1 && Math.abs(conn.getContentLength() - osize) > 200) {
-                        Logging.info("{0} is a mediawiki redirect", u);
-                        conn.disconnect();
-                    } else {
-                        conn.disconnect();
-
-                        OpenBrowser.displayUrl(u.toString());
-                        break;
-                    }
+            // API documentation: https://wiki.openstreetmap.org/w/api.php?action=help&modules=query
+            final URL url = new URL(Config.getUrls().getOSMWiki() + "/w/api.php?action=query&format=xml&titles=" + pages.stream()
+                    .map(Utils::encodeUrl)
+                    .collect(Collectors.joining("|"))
+            );
+            final HttpClient.Response conn = HttpClient.create(url).connect();
+            final Document document;
+            try (InputStream content = conn.getContent()) {
+                document = XmlUtils.parseSafeDOM(content);
+            }
+            conn.disconnect();
+            final XPath xPath = XPathFactory.newInstance().newXPath();
+            for (String page : pages) {
+                String normalized = xPath.evaluate("/api/query/normalized/n[@from='" + page + "']/@to", document);
+                if (normalized == null || normalized.isEmpty()) {
+                    normalized = page;
+                }
+                final Node node = (Node) xPath.evaluate("/api/query/pages/page[@title='" + normalized + "']", document, XPathConstants.NODE);
+                if (node != null
+                        && node.getAttributes().getNamedItem("missing") == null
+                        && node.getAttributes().getNamedItem("invalid") == null) {
+                    OpenBrowser.displayUrl(Config.getUrls().getOSMWiki() + "/wiki/" + page);
+                    break;
                 }
             }
-        } catch (URISyntaxException | IOException e1) {
+        } catch (IOException | ParserConfigurationException | XPathExpressionException | SAXException e1) {
             Logging.error(e1);
         }
     }
