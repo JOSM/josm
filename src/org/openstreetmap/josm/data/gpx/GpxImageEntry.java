@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.gpx;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -329,6 +330,36 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
             return -1;
         else
             return 1;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(height, width, isNewGpsData,
+            elevation, exifCoor, exifGpsTime, exifImgDir, exifOrientation, exifTime,
+            file, gpsTime, pos, speed, tmp);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        GpxImageEntry other = (GpxImageEntry) obj;
+        return height == other.height
+            && width == other.width
+            && isNewGpsData == other.isNewGpsData
+            && Objects.equals(elevation, other.elevation)
+            && Objects.equals(exifCoor, other.exifCoor)
+            && Objects.equals(exifGpsTime, other.exifGpsTime)
+            && Objects.equals(exifImgDir, other.exifImgDir)
+            && Objects.equals(exifOrientation, other.exifOrientation)
+            && Objects.equals(exifTime, other.exifTime)
+            && Objects.equals(file, other.file)
+            && Objects.equals(gpsTime, other.gpsTime)
+            && Objects.equals(pos, other.pos)
+            && Objects.equals(speed, other.speed)
+            && Objects.equals(tmp, other.tmp);
     }
 
     /**

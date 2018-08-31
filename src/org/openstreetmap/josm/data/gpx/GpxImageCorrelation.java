@@ -61,10 +61,10 @@ public final class GpxImageCorrelation {
             if (!segs.isEmpty()) {
                 segs.sort(new Comparator<List<WayPoint>>() {
                     @Override
-                    public int compare(List<WayPoint> arg0, List<WayPoint> arg1) {
-                        if (arg0.isEmpty() || arg1.isEmpty() || arg0.get(0).time == arg1.get(0).time)
+                    public int compare(List<WayPoint> o1, List<WayPoint> o2) {
+                        if (o1.isEmpty() || o2.isEmpty())
                             return 0;
-                        return arg0.get(0).time < arg1.get(0).time ? -1 : 1;
+                        return Double.compare(o1.get(0).time, o2.get(0).time);
                     }
                 });
                 trks.add(segs);
@@ -73,12 +73,11 @@ public final class GpxImageCorrelation {
         //sort tracks by first waypoint of first segment
         trks.sort(new Comparator<List<List<WayPoint>>>() {
             @Override
-            public int compare(List<List<WayPoint>> arg0, List<List<WayPoint>> arg1) {
-                if (arg0.isEmpty() || arg0.get(0).isEmpty()
-                        || arg1.isEmpty() || arg1.get(0).isEmpty()
-                        || arg0.get(0).get(0).time == arg1.get(0).get(0).time)
+            public int compare(List<List<WayPoint>> o1, List<List<WayPoint>> o2) {
+                if (o1.isEmpty() || o1.get(0).isEmpty()
+                 || o2.isEmpty() || o2.get(0).isEmpty())
                     return 0;
-                return arg0.get(0).get(0).time < arg1.get(0).get(0).time ? -1 : 1;
+                return Double.compare(o1.get(0).get(0).time, o2.get(0).get(0).time);
             }
         });
 
