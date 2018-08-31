@@ -44,6 +44,13 @@ public interface IUrls {
     String getOSMWebsite();
 
     /**
+     * Returns the OSM wiki URL.
+     * @return the OSM wiki URL
+     * @since 14208
+     */
+    String getOSMWiki();
+
+    /**
      * Returns the default OSM API URL.
      * @return the default OSM API URL
      */

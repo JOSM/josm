@@ -22,6 +22,11 @@ public final class JosmUrls implements IUrls {
     private static final String OSM_WEBSITE = "https://www.openstreetmap.org";
 
     /**
+     * The OSM wiki URL.
+     */
+    private static final String OSM_WIKI = "https://wiki.openstreetmap.org";
+
+    /**
      * public URL of the standard OSM API.
      */
     private static final String DEFAULT_API_URL = "https://api.openstreetmap.org/api";
@@ -84,6 +89,13 @@ public final class JosmUrls implements IUrls {
         if (Config.getPref() != null)
             return Config.getPref().get("osm.url", OSM_WEBSITE);
         return OSM_WEBSITE;
+    }
+
+    @Override
+    public String getOSMWiki() {
+        if (Config.getPref() != null)
+            return Config.getPref().get("url.openstreetmap-wiki", OSM_WIKI);
+        return OSM_WIKI;
     }
 
     @Override
