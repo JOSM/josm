@@ -7,6 +7,11 @@ import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
@@ -147,7 +152,7 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
-     * Enable {@link Main#platform} global variable.
+     * Enable {@code Main#platform} global variable.
      * @return this instance, for easy chaining
      * @deprecated Not needed anymore
      */
@@ -213,7 +218,7 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
-     * Allow the execution of commands using {@link Main#undoRedo}
+     * Allow the execution of commands using {@code UndoRedoHandler}
      * @return this instance, for easy chaining
      */
     public JOSMTestRules commands() {
@@ -324,7 +329,7 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
-     * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
+     * Use the {@code Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
      *         global variables in this test.
      * @return this instance, for easy chaining
      * @since 12557
@@ -337,7 +342,7 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
-     * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
+     * Use the {@code Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
      *         global variables in this test.
      * @param mapViewStateMockingRunnable Runnable to use for mocking out any required parts of
      *        {@link org.openstreetmap.josm.gui.MapViewState}, null to skip.
@@ -367,6 +372,16 @@ public class JOSMTestRules implements TestRule {
 
     @Override
     public Statement apply(Statement base, Description description) {
+        // First process any Override* annotations for per-test overrides.
+        // The following only work because "option" methods modify JOSMTestRules in-place
+        final OverrideAssumeRevision overrideAssumeRevision = description.getAnnotation(OverrideAssumeRevision.class);
+        if (overrideAssumeRevision != null) {
+            this.assumeRevision(overrideAssumeRevision.value());
+        }
+        final OverrideTimeout overrideTimeout = description.getAnnotation(OverrideTimeout.class);
+        if (overrideTimeout != null) {
+            this.timeout(overrideTimeout.value());
+        }
         Statement statement = base;
         // counter-intuitively, Statements which need to have their setup routines performed *after* another one need to
         // be added into the chain *before* that one, so that it ends up on the "inside".
@@ -693,5 +708,35 @@ public class JOSMTestRules implements TestRule {
     private boolean isDebugMode() {
         return java.lang.management.ManagementFactory.getRuntimeMXBean().
                 getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
+    }
+
+    /**
+     * Override this test's assumed JOSM version (as reported by {@link Version}).
+     * @see JOSMTestRules#assumeRevision(String)
+     */
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface OverrideAssumeRevision {
+        /**
+         * Returns overriden assumed JOSM version.
+         * @return overriden assumed JOSM version
+         */
+        String value();
+    }
+
+    /**
+     * Override this test's timeout.
+     * @see JOSMTestRules#timeout(int)
+     */
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface OverrideTimeout {
+        /**
+         * Returns overriden timeout value.
+         * @return overriden timeout value
+         */
+        int value();
     }
 }
