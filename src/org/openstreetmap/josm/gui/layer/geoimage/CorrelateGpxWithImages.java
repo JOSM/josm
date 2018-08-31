@@ -758,10 +758,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
 
         @Override
-        public void layerRemoving(LayerRemoveEvent e) {}
+        public void layerRemoving(LayerRemoveEvent e) {
+            // Not used
+        }
 
         @Override
-        public void layerOrderChanged(LayerOrderChangeEvent e) {}
+        public void layerOrderChanged(LayerOrderChangeEvent e) {
+            // Not used
+        }
     }
 
     @Override

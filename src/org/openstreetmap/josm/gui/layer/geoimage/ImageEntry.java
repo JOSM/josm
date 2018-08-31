@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import java.awt.Image;
 import java.io.File;
 import java.util.Collections;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 
@@ -61,5 +62,20 @@ public final class ImageEntry extends GpxImageEntry {
         if (thumbnail == null) {
             new ThumbsLoader(Collections.singleton(this)).run();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + ((thumbnail == null) ? 0 : thumbnail.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj) || getClass() != obj.getClass())
+            return false;
+        ImageEntry other = (ImageEntry) obj;
+        return Objects.equals(thumbnail, other.thumbnail);
     }
 }
