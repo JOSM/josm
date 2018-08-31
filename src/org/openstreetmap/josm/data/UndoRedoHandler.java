@@ -291,31 +291,27 @@ public final class UndoRedoHandler {
     public synchronized void undo(int num) {
         if (commands.isEmpty())
             return;
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                DataSet ds = OsmDataManager.getInstance().getEditDataSet();
-                if (ds != null) {
-                    ds.beginUpdate();
-                }
-                try {
-                    for (int i = 1; i <= num; ++i) {
-                        final Command c = commands.removeLast();
-                        c.undoCommand();
-                        redoCommands.addFirst(c);
-                        fireEvent(new CommandUndoneEvent(UndoRedoHandler.this, c));
-                        if (commands.isEmpty()) {
-                            break;
-                        }
-                    }
-                } finally {
-                    if (ds != null) {
-                        ds.endUpdate();
-                    }
-                }
-                fireCommandsChanged();
+        GuiHelper.runInEDTAndWait(() -> {
+            DataSet ds = OsmDataManager.getInstance().getEditDataSet();
+            if (ds != null) {
+                ds.beginUpdate();
             }
-
+            try {
+                for (int i = 1; i <= num; ++i) {
+                    final Command c = commands.removeLast();
+                    c.undoCommand();
+                    redoCommands.addFirst(c);
+                    fireEvent(new CommandUndoneEvent(UndoRedoHandler.this, c));
+                    if (commands.isEmpty()) {
+                        break;
+                    }
+                }
+            } finally {
+                if (ds != null) {
+                    ds.endUpdate();
+                }
+            }
+            fireCommandsChanged();
         });
     }
 

@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -59,26 +58,20 @@ public final class GpxImageCorrelation {
             }
             //sort segments by first waypoint
             if (!segs.isEmpty()) {
-                segs.sort(new Comparator<List<WayPoint>>() {
-                    @Override
-                    public int compare(List<WayPoint> o1, List<WayPoint> o2) {
-                        if (o1.isEmpty() || o2.isEmpty())
-                            return 0;
-                        return Double.compare(o1.get(0).time, o2.get(0).time);
-                    }
+                segs.sort((o1, o2) -> {
+                    if (o1.isEmpty() || o2.isEmpty())
+                        return 0;
+                    return Double.compare(o1.get(0).time, o2.get(0).time);
                 });
                 trks.add(segs);
             }
         }
         //sort tracks by first waypoint of first segment
-        trks.sort(new Comparator<List<List<WayPoint>>>() {
-            @Override
-            public int compare(List<List<WayPoint>> o1, List<List<WayPoint>> o2) {
-                if (o1.isEmpty() || o1.get(0).isEmpty()
-                 || o2.isEmpty() || o2.get(0).isEmpty())
-                    return 0;
-                return Double.compare(o1.get(0).get(0).time, o2.get(0).get(0).time);
-            }
+        trks.sort((o1, o2) -> {
+            if (o1.isEmpty() || o1.get(0).isEmpty()
+             || o2.isEmpty() || o2.get(0).isEmpty())
+                return 0;
+            return Double.compare(o1.get(0).get(0).time, o2.get(0).get(0).time);
         });
 
         boolean trkInt, trkTag, segInt, segTag;

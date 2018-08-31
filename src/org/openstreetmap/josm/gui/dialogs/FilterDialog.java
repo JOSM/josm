@@ -326,7 +326,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
     @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-        if (!DatasetEventType.FILTERS_CHANGED.equals(event.getType())) {
+        if (DatasetEventType.FILTERS_CHANGED != event.getType()) {
             filterModel.executeFilters();
         }
     }

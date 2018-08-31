@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -500,8 +501,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
 
         try {
             if (dirExif != null) {
-                int orientation = dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-                setExifOrientation(orientation);
+                setExifOrientation(dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION));
             }
         } catch (MetadataException ex) {
             Logging.debug(ex);
@@ -510,10 +510,8 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
         try {
             if (dir != null) {
                 // there are cases where these do not match width and height stored in dirExif
-                int width = dir.getInt(JpegDirectory.TAG_IMAGE_WIDTH);
-                int height = dir.getInt(JpegDirectory.TAG_IMAGE_HEIGHT);
-                setWidth(width);
-                setHeight(height);
+                setWidth(dir.getInt(JpegDirectory.TAG_IMAGE_WIDTH));
+                setHeight(dir.getInt(JpegDirectory.TAG_IMAGE_HEIGHT));
             }
         } catch (MetadataException ex) {
             Logging.debug(ex);
@@ -525,19 +523,11 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
             return;
         }
 
-        final Double speed = ExifReader.readSpeed(dirGps);
-        if (speed != null) {
-            setSpeed(speed);
-        }
-
-        final Double ele = ExifReader.readElevation(dirGps);
-        if (ele != null) {
-            setElevation(ele);
-        }
+        ifNotNull(ExifReader.readSpeed(dirGps), this::setSpeed);
+        ifNotNull(ExifReader.readElevation(dirGps), this::setElevation);
 
         try {
-            final LatLon latlon = ExifReader.readLatLon(dirGps);
-            setExifCoor(latlon);
+            setExifCoor(ExifReader.readLatLon(dirGps));
             setPos(getExifCoor());
         } catch (MetadataException | IndexOutOfBoundsException ex) { // (other exceptions, e.g. #5271)
             Logging.error("Error reading EXIF from file: " + ex);
@@ -546,17 +536,17 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
         }
 
         try {
-            final Double direction = ExifReader.readDirection(dirGps);
-            if (direction != null) {
-                setExifImgDir(direction);
-            }
+            ifNotNull(ExifReader.readDirection(dirGps), this::setExifImgDir);
         } catch (IndexOutOfBoundsException ex) { // (other exceptions, e.g. #5271)
             Logging.debug(ex);
         }
 
-        final Date gpsDate = dirGps.getGpsDate();
-        if (gpsDate != null) {
-            setExifGpsTime(gpsDate);
+        ifNotNull(dirGps.getGpsDate(), this::setExifGpsTime);
+    }
+
+    private static <T> void ifNotNull(T value, Consumer<T> setter) {
+        if (value != null) {
+            setter.accept(value);
         }
     }
 }

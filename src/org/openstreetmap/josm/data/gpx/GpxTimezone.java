@@ -44,15 +44,15 @@ public final class GpxTimezone {
     public String formatTimezone() {
         StringBuilder ret = new StringBuilder();
 
-        double timezone = this.timezone;
-        if (timezone < 0) {
+        double tz = this.timezone;
+        if (tz < 0) {
             ret.append('-');
-            timezone = -timezone;
+            tz = -tz;
         } else {
             ret.append('+');
         }
-        ret.append((long) timezone).append(':');
-        int minutes = (int) ((timezone % 1) * 60);
+        ret.append((long) tz).append(':');
+        int minutes = (int) ((tz % 1) * 60);
         if (minutes < 10) {
             ret.append('0');
         }
