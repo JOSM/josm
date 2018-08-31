@@ -110,12 +110,12 @@ import org.xml.sax.SAXException;
  */
 public class CorrelateGpxWithImages extends AbstractAction {
 
-    private static List<GpxData> loadedGpxData = new ArrayList<>();
+    private static final List<GpxData> loadedGpxData = new ArrayList<>();
 
     private final transient GeoImageLayer yLayer;
     private transient GpxTimezone timezone;
     private transient GpxTimeOffset delta;
-    private static boolean forceTags = false;
+    private static boolean forceTags;
 
     /**
      * Constructs a new {@code CorrelateGpxWithImages} action.

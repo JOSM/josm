@@ -155,6 +155,7 @@
     <exclude name="AvoidInstanceofChecksInCatchClause"/>
     <exclude name="AvoidLiteralsInIfCondition"/>
     <exclude name="BeanMembersShouldSerialize"/>
+    <exclude name="CloneThrowsCloneNotSupportedException"/>
     <exclude name="CompareObjectsWithEquals"/>
     <exclude name="ConstructorCallsOverridableMethod"/>
     <exclude name="DataflowAnomalyAnalysis"/>
