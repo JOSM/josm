@@ -803,7 +803,6 @@ public class PluginPreferenceHighLevelTest {
         TestUtils.syncEDTAndWorkerThreads();
 
         assertEquals(1, jopsMocker.getInvocationLog().size());
-        org.openstreetmap.josm.tools.Logging.error(jopsMocker.getInvocationLog().get(0)[0].toString());
         Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
         assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
         assertEquals("Warning", invocationLogEntry[2]);
@@ -817,11 +816,136 @@ public class PluginPreferenceHighLevelTest {
         // dummy_plugin was fetched
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/dummy_plugin.v31772.jar")));
 
+        // the dummy_plugin jar has been installed
+        TestUtils.assertFileContentsEqual(this.referenceDummyJarNew, this.targetDummyJar);
+        // the baz_plugin jar has not
+        assertFalse(this.targetBazJar.exists());
+
         // loadPlugins(...) was called (with expected parameters)
         assertTrue(loadPluginsCalled[0]);
 
         // pluginmanager.version has been set to the current version
         assertEquals(10000, Config.getPref().getInt("pluginmanager.version", 111));
+        // pluginmanager.lastupdate hasn't been updated
+        // questionably correct
+        assertEquals("999", Config.getPref().get("pluginmanager.lastupdate", "111"));
+    }
+
+    /**
+     * Tests installing a single plugin which has multiple versions advertised, with our JOSM version
+     * preventing us from using the latest version
+     * @throws Exception on failure
+     */
+    @JOSMTestRules.OverrideAssumeRevision("Revision: 7000\n")
+    @Test
+    public void testInstallMultiVersion() throws Exception {
+        TestUtils.assumeWorkingJMockit();
+
+        final String bazOldServePath = "/baz/old.jar";
+        final PluginServer pluginServer = new PluginServer(
+            new PluginServer.RemotePlugin(this.referenceDummyJarNew),
+            new PluginServer.RemotePlugin(this.referenceBazJarNew, ImmutableMap.of(
+                "6800_Plugin-Url", "6;http://localhost:" + this.pluginServerRule.port() + bazOldServePath
+            ))
+        );
+        pluginServer.applyToWireMockServer(this.pluginServerRule);
+        // need to actually serve this older jar from somewhere
+        this.pluginServerRule.stubFor(
+            WireMock.get(WireMock.urlEqualTo(bazOldServePath)).willReturn(
+                WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/java-archive").withBodyFile(
+                    "plugin/baz_plugin.v6.jar"
+                )
+            )
+        );
+        Config.getPref().putList("plugins", ImmutableList.of());
+
+        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(ImmutableMap.of(
+            "<html>The following plugin has been downloaded <strong>successfully</strong>:"
+            + "<ul><li>baz_plugin (6)</li></ul>"
+            + "You have to restart JOSM for some settings to take effect.<br/><br/>"
+            + "Would you like to restart now?</html>",
+            "Cancel"
+        ));
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker();
+
+        final PreferenceTabbedPane tabbedPane = new PreferenceTabbedPane();
+
+        tabbedPane.buildGui();
+        // PluginPreference is already added to PreferenceTabbedPane by default
+        tabbedPane.selectTabByPref(PluginPreference.class);
+
+        GuiHelper.runInEDTAndWait(
+            () -> ((javax.swing.JButton) TestUtils.getComponentByName(tabbedPane, "downloadListButton")).doClick()
+        );
+
+        TestUtils.syncEDTAndWorkerThreads();
+
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
+        WireMock.resetAllRequests();
+
+        final PluginPreferencesModel model = (PluginPreferencesModel) TestUtils.getPrivateField(
+            tabbedPane.getPluginPreference(),
+            "model"
+        );
+
+        assertTrue(model.getNewlyActivatedPlugins().isEmpty());
+        assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
+        assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
+        assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
+
+        assertEquals(
+            ImmutableList.of("baz_plugin", "dummy_plugin"),
+            model.getAvailablePlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+        );
+        assertTrue(model.getSelectedPlugins().isEmpty());
+        assertEquals(
+            ImmutableList.of("(null)", "(null)"),
+            model.getAvailablePlugins().stream().map(
+                (pi) -> pi.localversion == null ? "(null)" : pi.localversion
+            ).collect(ImmutableList.toImmutableList())
+        );
+        assertEquals(
+            ImmutableList.of("6", "31772"),
+            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(ImmutableList.toImmutableList())
+        );
+
+        // now we select dummy_plugin
+        model.setPluginSelected("baz_plugin", true);
+
+        // model should now reflect this
+        assertEquals(
+            ImmutableList.of("baz_plugin"),
+            model.getNewlyActivatedPlugins().stream().map(
+                pi -> pi.getName()
+            ).collect(ImmutableList.toImmutableList())
+        );
+        assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
+
+        tabbedPane.savePreferences();
+
+        TestUtils.syncEDTAndWorkerThreads();
+
+        assertEquals(1, haMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = haMocker.getInvocationLog().get(0);
+        assertEquals(1, (int) invocationLogEntry[0]);
+        assertEquals("Restart", invocationLogEntry[2]);
+
+        assertTrue(jopsMocker.getInvocationLog().isEmpty());
+
+        // any .jar.new files should have been deleted
+        assertFalse(targetDummyJarNew.exists());
+        assertFalse(targetBazJarNew.exists());
+
+        // dummy_plugin was fetched
+        this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(bazOldServePath)));
+
+        // the "old" baz_plugin jar has been installed
+        TestUtils.assertFileContentsEqual(this.referenceBazJarOld, this.targetBazJar);
+        // the dummy_plugin jar has not
+        assertFalse(this.targetDummyJar.exists());
+
+        // pluginmanager.version has been set to the current version
+        assertEquals(7000, Config.getPref().getInt("pluginmanager.version", 111));
         // pluginmanager.lastupdate hasn't been updated
         // questionably correct
         assertEquals("999", Config.getPref().get("pluginmanager.lastupdate", "111"));
