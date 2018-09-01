@@ -42,6 +42,7 @@ public abstract class OsmServerReader extends OsmConnection {
     private final OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate;
     protected boolean gpxParsedProperly;
+    protected String contentType;
 
     /**
      * Constructs a new {@code OsmServerReader}.
@@ -189,6 +190,7 @@ public abstract class OsmServerReader extends OsmConnection {
             final HttpClient.Response response;
             try {
                 response = client.connect(progressMonitor);
+                contentType = response.getContentType();
             } catch (IOException e) {
                 Logging.error(e);
                 OsmTransferException ote = new OsmTransferException(
@@ -209,7 +211,7 @@ public abstract class OsmServerReader extends OsmConnection {
                     String errorHeader = response.getHeaderField("Error");
                     String errorBody = fetchResponseText(response);
                     throw new OsmApiException(response.getResponseCode(), errorHeader, errorBody, url.toString(), null,
-                            response.getContentType());
+                            contentType);
                 }
 
                 response.uncompressAccordingToContentDisposition(uncompressAccordingToContentDisposition);
