@@ -123,7 +123,7 @@ public class UpdateSelectionAction extends JosmAction {
             setEnabled(false);
         } else {
             DataSet ds = selection.iterator().next().getDataSet();
-            setEnabled(!ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy())
+            setEnabled(!ds.isLocked() && DownloadPolicy.BLOCKED != ds.getDownloadPolicy()
                     && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
     }

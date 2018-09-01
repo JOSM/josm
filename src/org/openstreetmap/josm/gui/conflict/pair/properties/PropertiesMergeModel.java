@@ -85,7 +85,7 @@ public class PropertiesMergeModel extends ChangeNotifier {
      * @return true if there is a coordinate conflict and if this conflict is resolved; false, otherwise
      */
     public boolean isDecidedCoord() {
-        return !coordMergeDecision.equals(UNDECIDED);
+        return coordMergeDecision != UNDECIDED;
     }
 
     /**
@@ -95,7 +95,7 @@ public class PropertiesMergeModel extends ChangeNotifier {
      * resolved; false, otherwise
      */
     public boolean isDecidedDeletedState() {
-        return !deletedMergeDecision.equals(UNDECIDED);
+        return deletedMergeDecision != UNDECIDED;
     }
 
     /**
@@ -106,7 +106,7 @@ public class PropertiesMergeModel extends ChangeNotifier {
      *  false, otherwise
      */
     public boolean isCoordMergeDecision(MergeDecisionType decision) {
-        return coordMergeDecision.equals(decision);
+        return coordMergeDecision == decision;
     }
 
     /**
@@ -117,7 +117,7 @@ public class PropertiesMergeModel extends ChangeNotifier {
      *  false, otherwise
      */
     public boolean isDeletedStateDecision(MergeDecisionType decision) {
-        return deletedMergeDecision.equals(decision);
+        return deletedMergeDecision == decision;
     }
 
     /**
@@ -309,10 +309,10 @@ public class PropertiesMergeModel extends ChangeNotifier {
     public boolean isResolvedCompletely() {
         boolean ret = true;
         if (hasCoordConflict()) {
-            ret = ret && !coordMergeDecision.equals(UNDECIDED);
+            ret = ret && coordMergeDecision != UNDECIDED;
         }
         if (hasDeletedStateConflict()) {
-            ret = ret && !deletedMergeDecision.equals(UNDECIDED);
+            ret = ret && deletedMergeDecision != UNDECIDED;
         }
         return ret;
     }

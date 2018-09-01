@@ -255,7 +255,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             return;
         rbStrategy.get(strategy.getStrategy()).setSelected(true);
         tfChunkSize.setEnabled(strategy.getStrategy() == UploadStrategy.CHUNKED_DATASET_STRATEGY);
-        if (strategy.getStrategy().equals(UploadStrategy.CHUNKED_DATASET_STRATEGY)) {
+        if (strategy.getStrategy() == UploadStrategy.CHUNKED_DATASET_STRATEGY) {
             if (strategy.getChunkSize() != UploadStrategySpecification.UNSPECIFIED_CHUNK_SIZE) {
                 tfChunkSize.setText(Integer.toString(strategy.getChunkSize()));
             } else {

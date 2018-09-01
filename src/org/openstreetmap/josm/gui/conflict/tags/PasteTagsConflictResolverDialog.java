@@ -299,7 +299,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
         void updateEnabledState() {
             if (mode == null) {
                 setEnabled(false);
-            } else if (mode.equals(Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY)) {
+            } else if (mode == Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY) {
                 setEnabled(model.isResolvedCompletely());
             } else {
                 setEnabled(resolvers.values().stream().allMatch(val -> val.getModel().isResolvedCompletely()));

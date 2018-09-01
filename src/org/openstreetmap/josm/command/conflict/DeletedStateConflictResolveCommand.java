@@ -53,13 +53,13 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
         // remember the current state of modified primitives, i.e. of OSM primitive 'my'
         super.executeCommand();
 
-        if (decision.equals(MergeDecisionType.KEEP_MINE)) {
+        if (decision == MergeDecisionType.KEEP_MINE) {
             if (conflict.getMy().isDeleted() || conflict.isMyDeleted()) {
                 // because my was involved in a conflict it my still be referred
                 // to from a way or a relation. Fix this now.
                 deleteMy();
             }
-        } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
+        } else if (decision == MergeDecisionType.KEEP_THEIR) {
             if (conflict.getTheir().isDeleted()) {
                 deleteMy();
             } else {

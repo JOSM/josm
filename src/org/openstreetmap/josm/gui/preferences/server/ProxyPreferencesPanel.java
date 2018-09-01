@@ -271,7 +271,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         tfProxySocksHost.setText(Config.getPref().get(DefaultProxySelector.PROXY_SOCKS_HOST, ""));
         tfProxySocksPort.setText(Config.getPref().get(DefaultProxySelector.PROXY_SOCKS_PORT, ""));
 
-        if (pp.equals(ProxyPolicy.USE_SYSTEM_SETTINGS) && !DefaultProxySelector.willJvmRetrieveSystemProxies()) {
+        if (pp == ProxyPolicy.USE_SYSTEM_SETTINGS && !DefaultProxySelector.willJvmRetrieveSystemProxies()) {
             Logging.warn(tr("JOSM is configured to use proxies from the system setting, but the JVM is not configured to retrieve them. " +
                          "Resetting preferences to ''No proxy''"));
             pp = ProxyPolicy.NO_PROXY;

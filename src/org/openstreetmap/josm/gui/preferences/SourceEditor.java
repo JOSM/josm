@@ -142,7 +142,7 @@ public abstract class SourceEditor extends JPanel {
     public SourceEditor(SourceType sourceType, String availableSourcesUrl, List<SourceProvider> sourceProviders, boolean handleIcons) {
 
         this.sourceType = sourceType;
-        this.canEnable = sourceType.equals(SourceType.MAP_PAINT_STYLE) || sourceType.equals(SourceType.TAGCHECKER_RULE);
+        this.canEnable = sourceType == SourceType.MAP_PAINT_STYLE || sourceType == SourceType.TAGCHECKER_RULE;
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         this.availableSourcesModel = new AvailableSourcesListModel(selectionModel);
@@ -210,7 +210,7 @@ public abstract class SourceEditor extends JPanel {
 
         MoveUpDownAction moveUp = null;
         MoveUpDownAction moveDown = null;
-        if (sourceType.equals(SourceType.MAP_PAINT_STYLE)) {
+        if (sourceType == SourceType.MAP_PAINT_STYLE) {
             moveUp = new MoveUpDownAction(false);
             moveDown = new MoveUpDownAction(true);
             tblActiveSources.getSelectionModel().addListSelectionListener(moveUp);
@@ -287,7 +287,7 @@ public abstract class SourceEditor extends JPanel {
         sideButtonTB.add(editActiveSourceAction);
         sideButtonTB.add(removeActiveSourcesAction);
         sideButtonTB.addSeparator(new Dimension(12, 30));
-        if (sourceType.equals(SourceType.MAP_PAINT_STYLE)) {
+        if (sourceType == SourceType.MAP_PAINT_STYLE) {
             sideButtonTB.add(moveUp);
             sideButtonTB.add(moveDown);
         }

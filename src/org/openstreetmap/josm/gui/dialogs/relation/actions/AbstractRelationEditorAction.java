@@ -93,7 +93,7 @@ public abstract class AbstractRelationEditorAction extends AbstractAction
             return false;
         DataSet ds = editorAccess.getEditor().getRelation().getDataSet();
         return !NetworkManager.isOffline(OnlineResource.OSM_API) && ds != null && !ds.isLocked()
-                && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
+                && DownloadPolicy.BLOCKED != ds.getDownloadPolicy();
     }
 
     protected MemberTable getMemberTable() {

@@ -294,7 +294,7 @@ public class CoordinateInfoViewer extends JPanel {
          */
         LatLonViewer(HistoryBrowserModel model, PointInTimeType role) {
             this.updater = new Updater(model, role);
-            this.modifiedColor = PointInTimeType.CURRENT_POINT_IN_TIME.equals(role)
+            this.modifiedColor = PointInTimeType.CURRENT_POINT_IN_TIME == role
                     ? TwoColumnDiff.Item.DiffItemType.INSERTED.getColor()
                     : TwoColumnDiff.Item.DiffItemType.DELETED.getColor();
             build();

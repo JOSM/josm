@@ -128,7 +128,7 @@ public final class TagTableModel extends AbstractTableModel {
      * @return {@code true} if this is the current point in time
      */
     public boolean isCurrentPointInTime() {
-        return pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME);
+        return pointInTimeType == PointInTimeType.CURRENT_POINT_IN_TIME;
     }
 
     /**
@@ -136,7 +136,7 @@ public final class TagTableModel extends AbstractTableModel {
      * @return {@code true} if this is the reference point in time
      */
     public boolean isReferencePointInTime() {
-        return pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME);
+        return pointInTimeType == PointInTimeType.REFERENCE_POINT_IN_TIME;
     }
 
     @Override

@@ -225,7 +225,7 @@ public class RelationChecker extends Test {
                         }
                     }
                 }
-            } else if (OsmPrimitiveType.RELATION.equals(member.getType()) && !member.getMember().isUsable()
+            } else if (OsmPrimitiveType.RELATION == member.getType() && !member.getMember().isUsable()
                     && r.types.contains(TaggingPresetType.MULTIPOLYGON)) {
                 // if relation is incomplete we cannot verify if it's a multipolygon - so we just skip it
                 return true;
@@ -244,7 +244,7 @@ public class RelationChecker extends Test {
             // it could also fail at memberExpression, but we can't guess at which
 
             // Do not raise an error for incomplete ways for which we expect them to be closed, as we cannot know
-            boolean ignored = member.getMember().isIncomplete() && OsmPrimitiveType.WAY.equals(member.getType())
+            boolean ignored = member.getMember().isIncomplete() && OsmPrimitiveType.WAY == member.getType()
                     && !types.contains(TaggingPresetType.WAY) && types.contains(TaggingPresetType.CLOSEDWAY);
             if (!ignored) {
                 // convert in localization friendly way to string of accepted types

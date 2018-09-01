@@ -54,7 +54,7 @@ public enum ComparePairType {
      */
     public boolean isParticipatingIn(ListRole role) {
         for (ListRole r: participatingRoles) {
-            if (r.equals(role)) return true;
+            if (r == role) return true;
         }
         return false;
     }
@@ -78,7 +78,7 @@ public enum ComparePairType {
     public ListRole getOppositeRole(ListRole role) {
         if (!isParticipatingIn(role))
             throw new IllegalStateException(tr("Role {0} is not participating in compare pair {1}.", role.toString(), this.toString()));
-        if (participatingRoles[0].equals(role))
+        if (participatingRoles[0] == role)
             return participatingRoles[1];
         else
             return participatingRoles[0];

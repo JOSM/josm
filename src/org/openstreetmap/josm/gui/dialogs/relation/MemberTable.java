@@ -236,11 +236,11 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             WayConnectionType connectionType = getConnectionType();
             Way way = (Way) getMemberTableModel().getReferredPrimitive(getSelectedRows()[0]);
             if (!connectionType.linkPrev) {
-                getLayer().data.setSelected(WayConnectionType.Direction.FORWARD.equals(connectionType.direction)
+                getLayer().data.setSelected(WayConnectionType.Direction.FORWARD == connectionType.direction
                         ? way.firstNode() : way.lastNode());
                 AutoScaleAction.autoScale("selection");
             } else if (!connectionType.linkNext) {
-                getLayer().data.setSelected(WayConnectionType.Direction.FORWARD.equals(connectionType.direction)
+                getLayer().data.setSelected(WayConnectionType.Direction.FORWARD == connectionType.direction
                         ? way.lastNode() : way.firstNode());
                 AutoScaleAction.autoScale("selection");
             }

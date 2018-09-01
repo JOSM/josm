@@ -57,6 +57,6 @@ public abstract class AbstractRelationAction extends AbstractAction implements I
         }
         OsmData<?, ?, ?, ?> ds = relations.iterator().next().getDataSet();
         return !NetworkManager.isOffline(OnlineResource.OSM_API)
-            && ds != null && !ds.isLocked() && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy());
+            && ds != null && !ds.isLocked() && DownloadPolicy.BLOCKED != ds.getDownloadPolicy();
     }
 }

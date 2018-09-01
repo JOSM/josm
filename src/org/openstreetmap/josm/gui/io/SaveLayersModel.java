@@ -212,9 +212,9 @@ public class SaveLayersModel extends DefaultTableModel {
 
     public boolean hasUnsavedData() {
         for (SaveLayerInfo info: layerInfo) {
-            if (info.isDoUploadToServer() && !UploadOrSaveState.OK.equals(info.getUploadState()))
+            if (info.isDoUploadToServer() && UploadOrSaveState.OK != info.getUploadState())
                 return true;
-            if (info.isDoSaveToFile() && !UploadOrSaveState.OK.equals(info.getSaveState()))
+            if (info.isDoSaveToFile() && UploadOrSaveState.OK != info.getSaveState())
                 return true;
         }
         return false;
@@ -223,8 +223,8 @@ public class SaveLayersModel extends DefaultTableModel {
     public int getNumCancel() {
         int ret = 0;
         for (SaveLayerInfo info: layerInfo) {
-            if (UploadOrSaveState.CANCELED.equals(info.getSaveState())
-                    || UploadOrSaveState.CANCELED.equals(info.getUploadState())) {
+            if (UploadOrSaveState.CANCELED == info.getSaveState()
+                    || UploadOrSaveState.CANCELED == info.getUploadState()) {
                 ret++;
             }
         }
@@ -234,8 +234,8 @@ public class SaveLayersModel extends DefaultTableModel {
     public int getNumFailed() {
         int ret = 0;
         for (SaveLayerInfo info: layerInfo) {
-            if (UploadOrSaveState.FAILED.equals(info.getSaveState())
-                    || UploadOrSaveState.FAILED.equals(info.getUploadState())) {
+            if (UploadOrSaveState.FAILED == info.getSaveState()
+                    || UploadOrSaveState.FAILED == info.getUploadState()) {
                 ret++;
             }
         }

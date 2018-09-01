@@ -108,7 +108,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> 
     public boolean canReload() {
         return relation != null && !relation.isNew()
                 && !relation.getDataSet().isLocked()
-                && !DownloadPolicy.BLOCKED.equals(relation.getDataSet().getDownloadPolicy());
+                && DownloadPolicy.BLOCKED != relation.getDataSet().getDownloadPolicy();
     }
 
     /**

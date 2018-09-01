@@ -73,7 +73,7 @@ public class Check extends KeyedItem {
         }
 
         final List<QuadStateCheckBox.State> allowedStates = new ArrayList<>(4);
-        if (QuadStateCheckBox.State.PARTIAL.equals(initialState))
+        if (QuadStateCheckBox.State.PARTIAL == initialState)
             allowedStates.add(QuadStateCheckBox.State.PARTIAL);
         allowedStates.add(QuadStateCheckBox.State.SELECTED);
         if (!disable_off || value_off.equals(oneValue))

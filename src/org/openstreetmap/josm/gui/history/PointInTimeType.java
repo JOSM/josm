@@ -18,7 +18,7 @@ public enum PointInTimeType {
      * @return the opposite point in time
      */
     public PointInTimeType opposite() {
-        if (this.equals(REFERENCE_POINT_IN_TIME))
+        if (this == REFERENCE_POINT_IN_TIME)
             return CURRENT_POINT_IN_TIME;
         else
             return REFERENCE_POINT_IN_TIME;

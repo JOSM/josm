@@ -47,7 +47,7 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
     @Override
     protected void updateEnabledState() {
         DataSet ds = getLayerManager().getEditDataSet();
-        setEnabled(ds != null && !DownloadPolicy.BLOCKED.equals(ds.getDownloadPolicy())
+        setEnabled(ds != null && DownloadPolicy.BLOCKED != ds.getDownloadPolicy()
                 && !NetworkManager.isOffline(OnlineResource.OSM_API));
     }
 

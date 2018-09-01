@@ -291,7 +291,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
     static SearchResult searchName(List<SearchResult> results) {
         return results.stream().filter(
-                x -> !OsmPrimitiveType.NODE.equals(x.getOsmId().getType())).iterator().next();
+                x -> OsmPrimitiveType.NODE != x.getOsmId().getType()).iterator().next();
     }
 
     static String geocodeArea(String area) throws IOException {

@@ -85,7 +85,7 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
-            setVisible(Mode.UPLOADING_AND_SAVING.equals(evt.getNewValue()));
+            setVisible(Mode.UPLOADING_AND_SAVING == evt.getNewValue());
         }
         getParent().validate();
     }

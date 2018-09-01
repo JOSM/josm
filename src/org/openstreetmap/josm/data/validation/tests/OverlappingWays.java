@@ -156,7 +156,7 @@ public class OverlappingWays extends Test {
 
         // see ticket #9598 - only report if at least 3 segments are shared, except for overlapping ways, i.e warnings (see #9820)
         for (TestError error : preliminaryErrors) {
-            if (error.getSeverity().equals(Severity.WARNING) || error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
+            if (error.getSeverity() == Severity.WARNING || error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
                 boolean ignore = false;
                 for (String ignoredKey : IGNORED_KEYS.get()) {
                     if (error.getPrimitives().stream().anyMatch(p -> p.hasKey(ignoredKey))) {

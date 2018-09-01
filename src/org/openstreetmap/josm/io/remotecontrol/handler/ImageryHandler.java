@@ -49,7 +49,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
 
     protected static ImageryInfo findBingEntry() {
         for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
-            if (ImageryType.BING.equals(i.getImageryType())) {
+            if (ImageryType.BING == i.getImageryType()) {
                 return i;
             }
         }

@@ -82,7 +82,7 @@ final class JsonValueImpl implements JsonValue, Serializable {
             return true;
         }
         if (obj instanceof JsonValue) {
-            return getValueType().equals(((JsonValue) obj).getValueType());
+            return getValueType() == ((JsonValue) obj).getValueType();
         }
         return false;
     }

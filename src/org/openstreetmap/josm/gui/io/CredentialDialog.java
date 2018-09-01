@@ -88,7 +88,7 @@ public class CredentialDialog extends JDialog {
             String username, String password, String host) {
         GuiHelper.runInEDTAndWait(() -> {
             CredentialDialog dialog;
-            if (requestorType.equals(RequestorType.PROXY))
+            if (requestorType == RequestorType.PROXY)
                 dialog = getHttpProxyCredentialDialog(
                         username, password, host, agent.getSaveUsernameAndPasswordCheckboxText());
             else

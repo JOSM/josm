@@ -313,7 +313,7 @@ public final class HttpClient {
                 Logging.debug("Uncompressing input stream according to Content-Type header: {0}", contentType);
                 compression = Compression.forContentType(contentType);
             }
-            if (uncompressAccordingToContentDisposition && Compression.NONE.equals(compression)) {
+            if (uncompressAccordingToContentDisposition && Compression.NONE == compression) {
                 final String contentDisposition = getHeaderField("Content-Disposition");
                 final Matcher matcher = Pattern.compile("filename=\"([^\"]+)\"").matcher(
                         contentDisposition != null ? contentDisposition : "");

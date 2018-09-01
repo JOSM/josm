@@ -96,7 +96,7 @@ public class ChangesetDataSet {
      */
     public boolean isCreated(PrimitiveId id) {
         if (!contains(id)) return false;
-        return ChangesetModificationType.CREATED.equals(getModificationType(id));
+        return ChangesetModificationType.CREATED == getModificationType(id);
     }
 
     /**
@@ -109,7 +109,7 @@ public class ChangesetDataSet {
      */
     public boolean isUpdated(PrimitiveId id) {
         if (!contains(id)) return false;
-        return ChangesetModificationType.UPDATED.equals(getModificationType(id));
+        return ChangesetModificationType.UPDATED == getModificationType(id);
     }
 
     /**
@@ -122,7 +122,7 @@ public class ChangesetDataSet {
      */
     public boolean isDeleted(PrimitiveId id) {
         if (!contains(id)) return false;
-        return ChangesetModificationType.DELETED.equals(getModificationType(id));
+        return ChangesetModificationType.DELETED == getModificationType(id);
     }
 
     /**
@@ -135,7 +135,7 @@ public class ChangesetDataSet {
     public Set<HistoryOsmPrimitive> getPrimitivesByModificationType(ChangesetModificationType cmt) {
         CheckParameterUtil.ensureParameterNotNull(cmt, "cmt");
         return modificationTypes.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(cmt))
+                .filter(entry -> entry.getValue() == cmt)
                 .map(entry -> primitives.get(entry.getKey()))
                 .collect(Collectors.toSet());
     }

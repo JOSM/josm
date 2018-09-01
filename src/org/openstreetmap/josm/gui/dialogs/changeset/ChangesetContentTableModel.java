@@ -94,7 +94,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
      */
     protected void sort() {
         data.sort((c1, c2) -> {
-                if (c1.getModificationType().equals(c2.getModificationType())) {
+                if (c1.getModificationType() == c2.getModificationType()) {
                     long id1 = c1.getPrimitive().getId();
                     long id2 = c2.getPrimitive().getId();
 
