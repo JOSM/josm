@@ -98,16 +98,6 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     /**
-     * Writes OSM header with normal download policy and given upload policy.
-     * @deprecated Use {@link #header(DownloadPolicy, UploadPolicy)} instead
-     * @param upload upload policy
-     */
-    @Deprecated
-    public void header(UploadPolicy upload) {
-        header(DownloadPolicy.NORMAL, upload);
-    }
-
-    /**
      * Writes OSM header with given download upload policies.
      * @param download download policy
      * @param upload upload policy

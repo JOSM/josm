@@ -260,16 +260,6 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             return MainApplication.getLayerManager().getEditLayer();
         }
 
-        /**
-         * Returns the number of modifiable data layers
-         * @return number of modifiable data layers
-         * @deprecated Use {@link #getNumModifiableDataLayers}
-         */
-        @Deprecated
-        protected int getNumDataLayers() {
-            return (int) getNumModifiableDataLayers();
-        }
-
         private static Stream<OsmDataLayer> getModifiableDataLayers() {
             return MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class)
                     .stream().filter(OsmDataLayer::isDownloadable);
