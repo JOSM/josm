@@ -199,7 +199,13 @@ public class OsmServerLocationReader extends OsmServerReader {
             if (in == null)
                 return null;
             progressMonitor.subTask(tr("Downloading OSM data..."));
-            return OsmReader.parseDataSet(compression.getUncompressedInputStream(in), progressMonitor.createSubTaskMonitor(1, false));
+            InputStream uncompressedInputStream = compression.getUncompressedInputStream(in);
+            ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(1, false);
+            if ("application/json".equals(contentType)) {
+                return OsmJsonReader.parseDataSet(uncompressedInputStream, subTaskMonitor);
+            } else {
+                return OsmReader.parseDataSet(uncompressedInputStream, subTaskMonitor);
+            }
         }
     }
 
