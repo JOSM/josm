@@ -244,7 +244,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      */
     public TagTableModel getTagTableModel(PointInTimeType pointInTimeType) {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
-        if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
+        if (pointInTimeType == PointInTimeType.CURRENT_POINT_IN_TIME)
             return currentTagTableModel;
         else // REFERENCE_POINT_IN_TIME
             return referenceTagTableModel;
@@ -259,7 +259,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      */
     public DiffTableModel getNodeListTableModel(PointInTimeType pointInTimeType) {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
-        if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
+        if (pointInTimeType == PointInTimeType.CURRENT_POINT_IN_TIME)
             return currentNodeListTableModel;
         else // REFERENCE_POINT_IN_TIME
             return referenceNodeListTableModel;
@@ -274,7 +274,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      */
     public DiffTableModel getRelationMemberTableModel(PointInTimeType pointInTimeType) {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
-        if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
+        if (pointInTimeType == PointInTimeType.CURRENT_POINT_IN_TIME)
             return currentRelationMemberTableModel;
         else // REFERENCE_POINT_IN_TIME
             return referenceRelationMemberTableModel;
@@ -366,9 +366,9 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      */
     public HistoryOsmPrimitive getPointInTime(PointInTimeType type) {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
-        if (type.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
+        if (type == PointInTimeType.CURRENT_POINT_IN_TIME)
             return current;
-        else if (type.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
+        else if (type == PointInTimeType.REFERENCE_POINT_IN_TIME)
             return reference;
 
         // should not happen

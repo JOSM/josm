@@ -53,9 +53,9 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
         // remember the current state of modified primitives, i.e. of OSM primitive 'my'
         super.executeCommand();
 
-        if (decision.equals(MergeDecisionType.KEEP_MINE)) {
+        if (decision == MergeDecisionType.KEEP_MINE) {
             // do nothing
-        } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
+        } else if (decision == MergeDecisionType.KEEP_THEIR) {
             Node my = (Node) conflict.getMy();
             Node their = (Node) conflict.getTheir();
             my.setCoor(their.getCoor());

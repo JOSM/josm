@@ -65,7 +65,7 @@ public class RelationMemberConflictDecision {
     }
 
     public boolean isDecided() {
-        return !UNDECIDED.equals(decision);
+        return UNDECIDED != decision;
     }
 
     public boolean matches(Relation relation, int pos) {

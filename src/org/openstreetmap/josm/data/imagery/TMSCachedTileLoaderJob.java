@@ -163,7 +163,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         synchronized (inProgress) {
             listeners = inProgress.remove(getCacheKey());
         }
-        boolean status = result.equals(LoadResult.SUCCESS);
+        boolean status = result == LoadResult.SUCCESS;
 
         try {
             tile.finishLoading(); // whatever happened set that loading has finished

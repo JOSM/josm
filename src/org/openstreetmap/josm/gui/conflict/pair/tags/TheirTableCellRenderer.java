@@ -18,21 +18,21 @@ public class TheirTableCellRenderer extends TagMergeTableCellRenderer {
             setBackground(ConflictColors.BGCOLOR_SELECTED.get());
             return;
         }
-        if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
+        if (MergeDecisionType.KEEP_MINE == item.getMergeDecision()) {
             setBackground(ConflictColors.BGCOLOR_DROP.get());
-        } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
+        } else if (MergeDecisionType.KEEP_THEIR == item.getMergeDecision()) {
             setBackground(ConflictColors.BGCOLOR_KEEP.get());
-        } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
+        } else if (MergeDecisionType.UNDECIDED == item.getMergeDecision()) {
             setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
         }
     }
 
     protected void setTextColor(TagMergeItem item) {
-        if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
+        if (MergeDecisionType.KEEP_MINE == item.getMergeDecision()) {
             setForeground(ConflictColors.FGCOLOR_DROP.get());
-        } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
+        } else if (MergeDecisionType.KEEP_THEIR == item.getMergeDecision()) {
             setForeground(ConflictColors.FGCOLOR_KEEP.get());
-        } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
+        } else if (MergeDecisionType.UNDECIDED == item.getMergeDecision()) {
             setForeground(ConflictColors.FGCOLOR_UNDECIDED.get());
         }
     }

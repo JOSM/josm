@@ -229,7 +229,7 @@ public class Environment {
      * @return {@code true} if the context of this environment is {@code Context#LINK}, {@code false} otherwise
      */
     public boolean isLinkContext() {
-        return Context.LINK.equals(context);
+        return Context.LINK == context;
     }
 
     /**
@@ -255,7 +255,7 @@ public class Environment {
      * @return The role
      */
     public String getRole() {
-        if (getContext().equals(Context.PRIMITIVE))
+        if (getContext() == Context.PRIMITIVE)
             return null;
 
         if (parent instanceof Relation)

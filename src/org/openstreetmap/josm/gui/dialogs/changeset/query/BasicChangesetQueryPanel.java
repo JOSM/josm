@@ -223,7 +223,7 @@ public class BasicChangesetQueryPanel extends JPanel {
         }
         rbQueries.get(q).setSelected(true);
         boolean mineOnly = Config.getPref().getBoolean("changeset-query.basic.my-changesets-only", false);
-        mineOnly = mineOnly || q.equals(BasicQuery.MY_OPEN_CHANGESETS);
+        mineOnly = mineOnly || q == BasicQuery.MY_OPEN_CHANGESETS;
         cbMyChangesetsOnly.setSelected(mineOnly);
     }
 
@@ -279,7 +279,7 @@ public class BasicChangesetQueryPanel extends JPanel {
         public void itemStateChanged(ItemEvent e) {
             BasicQuery q = getSelectedQuery();
             if (q == null) return;
-            if (q.equals(BasicQuery.MY_OPEN_CHANGESETS)) {
+            if (q == BasicQuery.MY_OPEN_CHANGESETS) {
                 cbMyChangesetsOnly.setSelected(true);
                 cbMyChangesetsOnly.setEnabled(false);
             } else {

@@ -932,7 +932,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     @Override
     public void decideRemaining(MergeDecisionType decision) {
         if (!model.isFrozen()) {
-            model.copyAll(MergeDecisionType.KEEP_MINE.equals(decision) ? ListRole.MY_ENTRIES : ListRole.THEIR_ENTRIES);
+            model.copyAll(MergeDecisionType.KEEP_MINE == decision ? ListRole.MY_ENTRIES : ListRole.THEIR_ENTRIES);
             model.setFrozen(true);
         }
     }

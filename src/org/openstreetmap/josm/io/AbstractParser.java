@@ -128,15 +128,15 @@ public abstract class AbstractParser extends DefaultHandler {
         String v = getMandatoryAttributeString(atts, "timestamp");
         Date timestamp = DateUtils.fromString(v);
         HistoryOsmPrimitive primitive = null;
-        if (type.equals(OsmPrimitiveType.NODE)) {
+        if (type == OsmPrimitiveType.NODE) {
             Double lat = getAttributeDouble(atts, "lat");
             Double lon = getAttributeDouble(atts, "lon");
             LatLon coor = (lat != null && lon != null) ? new LatLon(lat, lon) : null;
             primitive = new HistoryNode(id, version, visible, user, changesetId, timestamp, coor, changeset != null);
 
-        } else if (type.equals(OsmPrimitiveType.WAY)) {
+        } else if (type == OsmPrimitiveType.WAY) {
             primitive = new HistoryWay(id, version, visible, user, changesetId, timestamp, changeset != null);
-        } else if (type.equals(OsmPrimitiveType.RELATION)) {
+        } else if (type == OsmPrimitiveType.RELATION) {
             primitive = new HistoryRelation(id, version, visible, user, changesetId, timestamp, changeset != null);
         }
         return primitive;

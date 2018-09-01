@@ -63,7 +63,7 @@ public final class ConditionFactory {
                     throw new MapCSSException(e);
                 }
             }
-            if (!considerValAsKey && op.equals(Op.EQ))
+            if (!considerValAsKey && op == Op.EQ)
                 return new SimpleKeyValueCondition(k, v);
             return new KeyValueCondition(k, v, op, considerValAsKey);
         case LINK:
@@ -361,9 +361,9 @@ public final class ConditionFactory {
 
         @Override
         public boolean applies(Environment env) {
-            if (Op.REGEX.equals(op)) {
+            if (Op.REGEX == op) {
                 return matches(env);
-            } else if (Op.NREGEX.equals(op)) {
+            } else if (Op.NREGEX == op) {
                 return !matches(env);
             } else {
                 throw new IllegalStateException();
@@ -526,7 +526,7 @@ public final class ConditionFactory {
             this.label = label;
             this.negateResult = negateResult;
             this.matchType = matchType == null ? KeyMatchType.EQ : matchType;
-            this.containsPattern = KeyMatchType.REGEX.equals(matchType)
+            this.containsPattern = KeyMatchType.REGEX == matchType
                     ? Pattern.compile(label).asPredicate()
                     : null;
         }
@@ -564,7 +564,7 @@ public final class ConditionFactory {
         @Override
         public Tag asTag(OsmPrimitive p) {
             String key = label;
-            if (KeyMatchType.REGEX.equals(matchType)) {
+            if (KeyMatchType.REGEX == matchType) {
                 key = p.keySet().stream().filter(containsPattern).findAny().orElse(key);
             }
             return new Tag(key, p.get(key));
@@ -800,7 +800,7 @@ public final class ConditionFactory {
          * @return The new condition
          */
         public static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
-            CheckParameterUtil.ensureThat(!"sameTags".equals(id) || Context.LINK.equals(context), "sameTags only supported in LINK context");
+            CheckParameterUtil.ensureThat(!"sameTags".equals(id) || Context.LINK == context, "sameTags only supported in LINK context");
             if ("open_end".equals(id)) {
                 return new OpenEndPseudoClassCondition(not);
             }

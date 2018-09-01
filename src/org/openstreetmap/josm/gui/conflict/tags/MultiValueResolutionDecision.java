@@ -215,7 +215,7 @@ public class MultiValueResolutionDecision {
      * @return true if this resolution is decided
      */
     public boolean isDecided() {
-        return !type.equals(MultiValueDecisionType.UNDECIDED);
+        return type != MultiValueDecisionType.UNDECIDED;
     }
 
     /**
@@ -239,7 +239,7 @@ public class MultiValueResolutionDecision {
         if (!isDecided())
             throw new IllegalStateException(tr("Not decided yet"));
         String key = tags.getKeys().iterator().next();
-        if (type.equals(MultiValueDecisionType.KEEP_NONE)) {
+        if (type == MultiValueDecisionType.KEEP_NONE) {
             primitive.remove(key);
         } else {
             primitive.put(key, getChosenValue());

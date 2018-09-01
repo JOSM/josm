@@ -17,11 +17,11 @@ public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
             setBackground(ConflictColors.BGCOLOR_SELECTED.get());
             return;
         }
-        if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
+        if (MergeDecisionType.KEEP_MINE == item.getMergeDecision()) {
             setBackground(ConflictColors.BGCOLOR_COMBINED.get());
-        } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
+        } else if (MergeDecisionType.KEEP_THEIR == item.getMergeDecision()) {
             setBackground(ConflictColors.BGCOLOR_COMBINED.get());
-        } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
+        } else if (MergeDecisionType.UNDECIDED == item.getMergeDecision()) {
             setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
         }
     }
@@ -29,13 +29,13 @@ public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
     @Override
     protected void renderKey(TagMergeItem item, boolean isSelected) {
         setBackgroundColor(item, isSelected);
-        if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision()) && item.getMyTagValue() == null) {
+        if (MergeDecisionType.KEEP_MINE == item.getMergeDecision() && item.getMyTagValue() == null) {
             setText(tr("<undefined>"));
             setToolTipText(tr("The merged dataset will not include a tag with key {0}", item.getKey()));
-        } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision()) && item.getTheirTagValue() == null) {
+        } else if (MergeDecisionType.KEEP_THEIR == item.getMergeDecision() && item.getTheirTagValue() == null) {
             setText(tr("<undefined>"));
             setToolTipText(tr("The merged dataset will not include a tag with key {0}", item.getKey()));
-        } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
+        } else if (MergeDecisionType.UNDECIDED == item.getMergeDecision()) {
             setText("");
         } else {
             setText(item.getKey());
@@ -46,19 +46,19 @@ public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
     @Override
     protected void renderValue(TagMergeItem item, boolean isSelected) {
         setBackgroundColor(item, isSelected);
-        if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision()) && item.getMyTagValue() == null) {
+        if (MergeDecisionType.KEEP_MINE == item.getMergeDecision() && item.getMyTagValue() == null) {
             setText(tr("<undefined>"));
             setToolTipText(tr("The merged dataset will not include a tag with key {0}", item.getKey()));
-        } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision()) && item.getTheirTagValue() == null) {
+        } else if (MergeDecisionType.KEEP_THEIR == item.getMergeDecision() && item.getTheirTagValue() == null) {
             setText(tr("<undefined>"));
             setToolTipText(tr("The merged dataset will not include a tag with key {0}", item.getKey()));
-        } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
+        } else if (MergeDecisionType.UNDECIDED == item.getMergeDecision()) {
             setText("");
         } else {
-            if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
+            if (MergeDecisionType.KEEP_MINE == item.getMergeDecision()) {
                 setText(item.getMyTagValue());
                 setToolTipText(item.getMyTagValue());
-            } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
+            } else if (MergeDecisionType.KEEP_THEIR == item.getMergeDecision()) {
                 setText(item.getTheirTagValue());
                 setToolTipText(item.getTheirTagValue());
             }

@@ -43,7 +43,7 @@ public final class DefaultAuthenticator extends Authenticator {
         try {
             if (OsmApi.isUsingOAuth()
                     && Objects.equals(OsmApi.getOsmApi().getHost(), getRequestingHost())
-                    && RequestorType.SERVER.equals(getRequestorType())) {
+                    && RequestorType.SERVER == getRequestorType()) {
                 // if we are working with OAuth we don't prompt for a password
                 return null;
             }
@@ -54,7 +54,7 @@ public final class DefaultAuthenticator extends Authenticator {
             if (response == null || response.isCanceled()) {
                 return null;
             }
-            if (RequestorType.PROXY.equals(getRequestorType())) {
+            if (RequestorType.PROXY == getRequestorType()) {
                 // Query user in case this authenticator is called (indicating that the authentication failed) the next time.
                 failedCredentials.add(hostTypePair);
             } else {

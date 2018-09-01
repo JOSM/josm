@@ -160,7 +160,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
             strategy.setPolicy(MaxChangesetSizeExceededPolicy.ABORT);
             return false;
         }
-        if (strategy.getPolicy() == null || strategy.getPolicy().equals(MaxChangesetSizeExceededPolicy.ABORT)) {
+        if (strategy.getPolicy() == null || strategy.getPolicy() == MaxChangesetSizeExceededPolicy.ABORT) {
             strategy.setPolicy(askMaxChangesetSizeExceedsPolicy());
         }
         switch(strategy.getPolicy()) {
@@ -354,14 +354,14 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
             }
             if (lastException instanceof ChangesetClosedException) {
                 ChangesetClosedException e = (ChangesetClosedException) lastException;
-                if (e.getSource().equals(ChangesetClosedException.Source.UPDATE_CHANGESET)) {
+                if (e.getSource() == ChangesetClosedException.Source.UPDATE_CHANGESET) {
                     handleFailedUpload(lastException);
                     return;
                 }
                 if (strategy.getPolicy() == null)
                     /* do nothing if unknown policy */
                     return;
-                if (e.getSource().equals(ChangesetClosedException.Source.UPLOAD_DATA)) {
+                if (e.getSource() == ChangesetClosedException.Source.UPLOAD_DATA) {
                     switch(strategy.getPolicy()) {
                     case ABORT:
                         break; /* do nothing - we return to map editing */

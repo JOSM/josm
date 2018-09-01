@@ -1588,7 +1588,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 13890
      */
     public String getSourceName() {
-        if (ImageryType.BING.equals(getImageryType())) {
+        if (ImageryType.BING == getImageryType()) {
             return "Bing";
         } else {
             if (id != null) {

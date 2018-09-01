@@ -1177,7 +1177,7 @@ public class SearchCompiler {
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            return type.equals(osm.getType());
+            return type == osm.getType();
         }
 
         @Override

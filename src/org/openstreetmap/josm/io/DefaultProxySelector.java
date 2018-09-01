@@ -140,7 +140,7 @@ public class DefaultProxySelector extends ProxySelector {
         String host = Config.getPref().get(PROXY_HTTP_HOST, null);
         int port = parseProxyPortValue(PROXY_HTTP_PORT, Config.getPref().get(PROXY_HTTP_PORT, null));
         httpProxySocketAddress = null;
-        if (proxyPolicy.equals(ProxyPolicy.USE_HTTP_PROXY)) {
+        if (proxyPolicy == ProxyPolicy.USE_HTTP_PROXY) {
             if (host != null && !host.trim().isEmpty() && port > 0) {
                 httpProxySocketAddress = new InetSocketAddress(host, port);
             } else {
@@ -152,7 +152,7 @@ public class DefaultProxySelector extends ProxySelector {
         host = Config.getPref().get(PROXY_SOCKS_HOST, null);
         port = parseProxyPortValue(PROXY_SOCKS_PORT, Config.getPref().get(PROXY_SOCKS_PORT, null));
         socksProxySocketAddress = null;
-        if (proxyPolicy.equals(ProxyPolicy.USE_SOCKS_PROXY)) {
+        if (proxyPolicy == ProxyPolicy.USE_SOCKS_PROXY) {
             if (host != null && !host.trim().isEmpty() && port > 0) {
                 socksProxySocketAddress = new InetSocketAddress(host, port);
             } else {

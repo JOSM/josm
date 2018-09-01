@@ -171,7 +171,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      */
     protected static ImageryInfo getWMSLayerInfo(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
         try {
-            CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT.equals(info.getImageryType()), "wms_endpoint imagery type expected");
+            CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT == info.getImageryType(), "wms_endpoint imagery type expected");
             final WMSImagery wms = new WMSImagery(info.getUrl(), info.getCustomHttpHeaders());
 
             final WMSLayerTree tree = new WMSLayerTree();

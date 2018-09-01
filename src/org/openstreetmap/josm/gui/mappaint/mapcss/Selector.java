@@ -316,7 +316,7 @@ public interface Selector {
             if (!right.matches(e))
                 return false;
 
-            if (ChildOrParentSelectorType.ELEMENT_OF.equals(type)) {
+            if (ChildOrParentSelectorType.ELEMENT_OF == type) {
 
                 if (e.osm instanceof INode || e.osm.getDataSet() == null) {
                     // nodes cannot contain elements
@@ -363,7 +363,7 @@ public interface Selector {
 
                 return e.child != null;
 
-            } else if (ChildOrParentSelectorType.CROSSING.equals(type) && e.osm instanceof IWay) {
+            } else if (ChildOrParentSelectorType.CROSSING == type && e.osm instanceof IWay) {
                 e.parent = e.osm;
                 final CrossingFinder crossingFinder = new CrossingFinder(e);
                 if (right instanceof OptimizedGeneralSelector
@@ -371,7 +371,7 @@ public interface Selector {
                     crossingFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                 }
                 return e.child != null;
-            } else if (ChildOrParentSelectorType.SIBLING.equals(type)) {
+            } else if (ChildOrParentSelectorType.SIBLING == type) {
                 if (e.osm instanceof INode) {
                     for (IPrimitive ref : e.osm.getReferrers(true)) {
                         if (ref instanceof IWay) {
@@ -391,19 +391,19 @@ public interface Selector {
                         }
                     }
                 }
-            } else if (ChildOrParentSelectorType.CHILD.equals(type)
+            } else if (ChildOrParentSelectorType.CHILD == type
                     && link.conds != null && !link.conds.isEmpty()
                     && link.conds.get(0) instanceof OpenEndPseudoClassCondition) {
                 if (e.osm instanceof INode) {
                     e.osm.visitReferrers(new MultipolygonOpenEndFinder(e));
                     return e.parent != null;
                 }
-            } else if (ChildOrParentSelectorType.CHILD.equals(type)) {
+            } else if (ChildOrParentSelectorType.CHILD == type) {
                 MatchingReferrerFinder collector = new MatchingReferrerFinder(e);
                 e.osm.visitReferrers(collector);
                 if (e.parent != null)
                     return true;
-            } else if (ChildOrParentSelectorType.PARENT.equals(type)) {
+            } else if (ChildOrParentSelectorType.PARENT == type) {
                 if (e.osm instanceof IWay) {
                     List<? extends INode> wayNodes = ((IWay<?>) e.osm).getNodes();
                     for (int i = 0; i < wayNodes.size(); i++) {
@@ -450,7 +450,7 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return left.toString() + ' ' + (ChildOrParentSelectorType.PARENT.equals(type) ? '<' : '>') + link + ' ' + right;
+            return left.toString() + ' ' + (ChildOrParentSelectorType.PARENT == type ? '<' : '>') + link + ' ' + right;
         }
     }
 
@@ -618,11 +618,11 @@ public interface Selector {
         public boolean matchesBase(OsmPrimitiveType type) {
             if ("*".equals(base)) {
                 return true;
-            } else if (OsmPrimitiveType.NODE.equals(type)) {
+            } else if (OsmPrimitiveType.NODE == type) {
                 return "node".equals(base);
-            } else if (OsmPrimitiveType.WAY.equals(type)) {
+            } else if (OsmPrimitiveType.WAY == type) {
                 return "way".equals(base) || "area".equals(base);
-            } else if (OsmPrimitiveType.RELATION.equals(type)) {
+            } else if (OsmPrimitiveType.RELATION == type) {
                 return "area".equals(base) || "relation".equals(base) || "canvas".equals(base);
             }
             return false;

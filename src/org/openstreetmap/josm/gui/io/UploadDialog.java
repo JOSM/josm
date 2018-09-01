@@ -558,7 +558,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             }
 
             UploadStrategySpecification strategy = dialog.getUploadStrategySpecification();
-            if (strategy.getStrategy().equals(UploadStrategy.CHUNKED_DATASET_STRATEGY)
+            if (strategy.getStrategy() == UploadStrategy.CHUNKED_DATASET_STRATEGY
                     && strategy.getChunkSize() == UploadStrategySpecification.UNSPECIFIED_CHUNK_SIZE) {
                 warnIllegalChunkSize();
                 dialog.handleIllegalChunkSize();

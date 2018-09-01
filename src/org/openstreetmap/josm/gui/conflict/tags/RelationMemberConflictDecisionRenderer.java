@@ -76,7 +76,7 @@ implements TableCellRenderer, ListCellRenderer<RelationMemberConflictDecisionTyp
             setForeground(UIManager.getColor("ComboBox.selectionForeground"));
         }
         RelationMemberConflictDecisionType.prepareLabel(decision, this);
-        if (RelationMemberConflictDecisionType.UNDECIDED.equals(decision)) {
+        if (RelationMemberConflictDecisionType.UNDECIDED == decision) {
             setFont(getFont().deriveFont(Font.ITALIC));
         }
         return this;

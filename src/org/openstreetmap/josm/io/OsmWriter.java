@@ -179,7 +179,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
      * @param ds The dataset to write
      */
     public void writeContent(DataSet ds) {
-        setWithVisible(UploadPolicy.NORMAL.equals(ds.getUploadPolicy()));
+        setWithVisible(UploadPolicy.NORMAL == ds.getUploadPolicy());
         writeNodes(ds.getNodes());
         writeWays(ds.getWays());
         writeRelations(ds.getRelations());

@@ -119,13 +119,13 @@ public class HistoryBrowser extends JPanel {
         tpViewers.add(tagInfoViewer);
         tpViewers.setTitleAt(0, tr("Tags"));
 
-        if (history.getEarliest().getType().equals(OsmPrimitiveType.NODE)) {
+        if (history.getEarliest().getType() == OsmPrimitiveType.NODE) {
             tpViewers.add(coordinateInfoViewer);
             tpViewers.setTitleAt(1, tr("Coordinates"));
-        } else if (history.getEarliest().getType().equals(OsmPrimitiveType.WAY)) {
+        } else if (history.getEarliest().getType() == OsmPrimitiveType.WAY) {
             tpViewers.add(nodeListViewer);
             tpViewers.setTitleAt(1, tr("Nodes"));
-        } else if (history.getEarliest().getType().equals(OsmPrimitiveType.RELATION)) {
+        } else if (history.getEarliest().getType() == OsmPrimitiveType.RELATION) {
             tpViewers.add(relationMemberListViewer);
             tpViewers.setTitleAt(1, tr("Members"));
         }

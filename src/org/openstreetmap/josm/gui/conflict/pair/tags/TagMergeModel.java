@@ -86,14 +86,13 @@ public class TagMergeModel extends DefaultTableModel {
     protected void refreshNumUndecidedTags() {
         int newValue = 0;
         for (TagMergeItem item: tagMergeItems) {
-            if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
+            if (MergeDecisionType.UNDECIDED == item.getMergeDecision()) {
                 newValue++;
             }
         }
         int oldValue = numUndecidedTags;
         numUndecidedTags = newValue;
         fireNumUndecidedTagsChanged(oldValue, numUndecidedTags);
-
     }
 
     /**
@@ -195,7 +194,7 @@ public class TagMergeModel extends DefaultTableModel {
 
     public boolean isResolvedCompletely() {
         for (TagMergeItem item: tagMergeItems) {
-            if (item.getMergeDecision().equals(MergeDecisionType.UNDECIDED))
+            if (item.getMergeDecision() == MergeDecisionType.UNDECIDED)
                 return false;
         }
         return true;
@@ -203,7 +202,7 @@ public class TagMergeModel extends DefaultTableModel {
 
     public void decideRemaining(MergeDecisionType decision) {
         for (TagMergeItem item: tagMergeItems) {
-            if (item.getMergeDecision().equals(MergeDecisionType.UNDECIDED))
+            if (item.getMergeDecision() == MergeDecisionType.UNDECIDED)
                 item.decide(decision);
         }
     }
@@ -211,7 +210,7 @@ public class TagMergeModel extends DefaultTableModel {
     public int getNumResolvedConflicts() {
         int n = 0;
         for (TagMergeItem item: tagMergeItems) {
-            if (!item.getMergeDecision().equals(MergeDecisionType.UNDECIDED)) {
+            if (item.getMergeDecision() != MergeDecisionType.UNDECIDED) {
                 n++;
             }
         }

@@ -1535,7 +1535,7 @@ public class ImageProvider {
         }
 
         // Check if the presets have icons for nodes/relations.
-        if (!OsmPrimitiveType.WAY.equals(primitive.getType())) {
+        if (OsmPrimitiveType.WAY != primitive.getType()) {
             final Collection<TaggingPreset> presets = new TreeSet<>((o1, o2) -> {
                 final int o1TypesSize = o1.types == null || o1.types.isEmpty() ? Integer.MAX_VALUE : o1.types.size();
                 final int o2TypesSize = o2.types == null || o2.types.isEmpty() ? Integer.MAX_VALUE : o2.types.size();
