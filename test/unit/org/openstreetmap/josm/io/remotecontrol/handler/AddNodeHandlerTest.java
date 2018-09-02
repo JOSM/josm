@@ -28,7 +28,7 @@ public class AddNodeHandlerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().main().assertionsInEDT().projection();
 
     private static AddNodeHandler newHandler(String url) throws RequestHandlerBadRequestException {
         AddNodeHandler req = new AddNodeHandler();
@@ -57,12 +57,8 @@ public class AddNodeHandlerTest {
         thrown.expect(RequestHandlerBadRequestException.class);
         thrown.expectMessage("NumberFormatException (empty String)");
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            newHandler(null).handle();
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        MainApplication.getLayerManager().addLayer(layer);
+        newHandler(null).handle();
     }
 
     /**
@@ -94,11 +90,7 @@ public class AddNodeHandlerTest {
     @Test
     public void testNominalRequest() throws Exception {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            newHandler("https://localhost?lat=0&lon=0").handle();
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        MainApplication.getLayerManager().addLayer(layer);
+        newHandler("https://localhost?lat=0&lon=0").handle();
     }
 }

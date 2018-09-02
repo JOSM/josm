@@ -25,10 +25,11 @@ import javax.net.ssl.X509TrustManager;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.PlatformManager;
@@ -53,12 +54,18 @@ public class RemoteControlTest {
     }
 
     /**
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().https().assertionsInEDT();
+
+    /**
      * Starts Remote control before testing requests.
      * @throws GeneralSecurityException if a security error occurs
      */
     @Before
     public void setUp() throws GeneralSecurityException {
-        JOSMFixture.createUnitTestFixture().init();
         RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.put(true);
         deleteKeystore();
 
