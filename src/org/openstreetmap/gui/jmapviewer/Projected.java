@@ -52,21 +52,16 @@ public class Projected implements IProjected {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 61 * hash + Objects.hashCode(this.data);
-        return hash;
+        return Objects.hashCode(data);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (this == obj)
+            return true;
+        if (obj == null || !(obj instanceof Projected))
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
         final Projected other = (Projected) obj;
-        return Objects.equals(this.data, other.data);
+        return Objects.equals(data, other.data);
     }
 }
-

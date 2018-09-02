@@ -19,6 +19,11 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 public class Coordinate implements ICoordinate {
     private transient Point2D.Double data;
 
+    /**
+     * Constructs a new {@code Coordinate}.
+     * @param lat latitude in degrees
+     * @param lon longitude in degrees
+     */
     public Coordinate(double lat, double lon) {
         data = new Point2D.Double(lon, lat);
     }
@@ -61,20 +66,16 @@ public class Coordinate implements ICoordinate {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 61 * hash + Objects.hashCode(this.data);
-        return hash;
+        return Objects.hashCode(data);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (this == obj)
+            return true;
+        if (obj == null || !(obj instanceof Coordinate))
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
         final Coordinate other = (Coordinate) obj;
-        return Objects.equals(this.data, other.data);
+        return Objects.equals(data, other.data);
     }
 }

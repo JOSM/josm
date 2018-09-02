@@ -189,7 +189,7 @@ public class ScanexTileSource extends TMSTileSource {
         double f = Math.tan(Math.PI/4+lat/2) -
             ec * Math.pow(Math.tan(Math.PI/4 + Math.asin(E * sinl)/2), E);
         double df = 1/(1 - sinl) - ec * E * cosl/((1 - E * sinl) *
-            (Math.sqrt(1 - E * E * sinl * sinl)));
+            Math.sqrt(1 - E * E * sinl * sinl));
 
         return f/df;
     }

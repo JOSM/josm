@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
@@ -339,18 +340,13 @@ public class Tile {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (obj == null || !(obj instanceof Tile))
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Tile other = (Tile) obj;
-        if (xtile != other.xtile)
-            return false;
-        if (ytile != other.ytile)
-            return false;
-        if (zoom != other.zoom)
-            return false;
-        return getTileSource().equals(other.getTileSource());
+        final Tile other = (Tile) obj;
+        return xtile == other.xtile
+            && ytile == other.ytile
+            && zoom == other.zoom
+            && Objects.equals(source, other.source);
     }
 
     public static String getTileKey(TileSource source, int xtile, int ytile, int zoom) {
@@ -459,5 +455,4 @@ public class Tile {
         loading = false;
         loaded = false;
     }
-
 }
