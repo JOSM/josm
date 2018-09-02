@@ -416,6 +416,9 @@ public class RemoteControlHttpsServer extends Thread {
             } catch (SocketException e) {
                 if (!server.isClosed()) {
                     Logging.error(e);
+                } else {
+                    // stop the thread automatically if server is stopped
+                    return;
                 }
             } catch (IOException ioe) {
                 Logging.error(ioe);
