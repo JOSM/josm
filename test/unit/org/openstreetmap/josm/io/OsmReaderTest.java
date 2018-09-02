@@ -114,12 +114,13 @@ public class OsmReaderTest {
     /**
      * Test valid data.
      * @param osm OSM data without XML prefix
+     * @return parsed data set
      * @throws Exception if any error occurs
      */
-    private static void testValidData(String osm) throws Exception {
+    private static DataSet testValidData(String osm) throws Exception {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+            return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
         }
     }
 
@@ -339,5 +340,20 @@ public class OsmReaderTest {
                     " Got 'nan', 'nan'." +
                     " (at line 4, column 151). 336 bytes have been read", e.getMessage());
         }
+    }
+
+    /**
+     * Test reading remark from Overpass API.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testRemark() throws Exception {
+        DataSet ds = testValidData(
+                "<osm version=\"0.6\" generator=\"Overpass API 0.7.55.4 3079d8ea\">\r\n" +
+                "<note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>\r\n" +
+                "<meta osm_base=\"2018-08-30T12:46:02Z\" areas=\"2018-08-30T12:40:02Z\"/>\r\n" +
+                "<remark>runtime error: Query ran out of memory in \"query\" at line 5.</remark>\r\n" +
+                "</osm>");
+        assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
     }
 }

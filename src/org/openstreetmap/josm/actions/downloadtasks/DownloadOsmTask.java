@@ -470,6 +470,10 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 if (warnAboutEmptyArea) {
                     rememberErrorMessage(tr("No data found in this area."));
                 }
+                String remark = dataSet.getRemark();
+                if (remark != null && !remark.isEmpty()) {
+                    rememberErrorMessage(remark);
+                }
                 // need to synthesize a download bounds lest the visual indication of downloaded area doesn't work
                 dataSet.addDataSource(new DataSource(currentBounds != null ? currentBounds :
                     new Bounds(LatLon.ZERO), "OpenStreetMap server"));
