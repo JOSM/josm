@@ -66,6 +66,11 @@ public class OsmJsonReader extends AbstractReader {
         parseUploadPolicy("upload", object.getString("upload", null));
         parseLocked(object.getString("locked", null));
         parseElements(object.getJsonArray("elements"));
+        parseRemark(object.getString("remark", null));
+    }
+
+    private void parseRemark(String remark) {
+        ds.setRemark(remark);
     }
 
     private void parseElements(JsonArray jsonArray) throws IllegalDataException {

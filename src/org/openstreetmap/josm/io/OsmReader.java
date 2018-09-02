@@ -102,7 +102,7 @@ public class OsmReader extends AbstractReader {
         if (parser.getAttributeValue(null, "upload-changeset") != null) {
             uploadChangesetId = getLong("upload-changeset");
         }
-        while (true) {
+        while (parser.hasNext()) {
             int event = parser.next();
 
             if (cancel) {
@@ -127,6 +127,9 @@ public class OsmReader extends AbstractReader {
                 case "changeset":
                     parseChangeset(uploadChangesetId);
                     break;
+                case "remark": // Used by Overpass API
+                    parseRemark();
+                    break;
                 default:
                     parseUnknown();
                 }
@@ -142,6 +145,17 @@ public class OsmReader extends AbstractReader {
             throw (XMLStreamException) cause;
         } else {
             throwException(e);
+        }
+    }
+
+    private void parseRemark() throws XMLStreamException {
+        while (parser.hasNext()) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.CHARACTERS) {
+                ds.setRemark(parser.getText());
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                return;
+            }
         }
     }
 

@@ -52,6 +52,17 @@ public class OsmJsonReaderTest {
      * @throws Exception if any error occurs
      */
     private static DataSet parse(String osm) throws Exception {
+        return parse(osm, "");
+    }
+
+    /**
+     * Parse JSON.
+     * @param osm OSM data in JSON format, without header/footer
+     * @param extraContent extra content added after OSM elements
+     * @return data set
+     * @throws Exception if any error occurs
+     */
+    private static DataSet parse(String osm, String extraContent) throws Exception {
         try (InputStream in = new ByteArrayInputStream((
                 "{\n" +
                 "  \"version\": 0.6,\n" +
@@ -64,6 +75,7 @@ public class OsmJsonReaderTest {
                                      "http://www.openstreetmap.org/api/0.6/[node|way|relation]/#id/history\"\n" +
                 "  },\n" +
                 "  \"elements\": [" + osm + "]\n" +
+                extraContent +
                 "}")
                 .getBytes(StandardCharsets.UTF_8))) {
             return OsmJsonReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
@@ -223,5 +235,16 @@ public class OsmJsonReaderTest {
         assertFalse(it.hasNext());
         assertTrue(r.isTagged());
         assertEquals("route", r.get("type"));
+    }
+
+    /**
+     * Test reading remark from Overpass API.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testRemark() throws Exception {
+        DataSet ds = parse("", "," +
+                "  \"remark\": \"runtime error: Query ran out of memory in \\\"query\\\" at line 5.\"\n");
+        assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
     }
 }

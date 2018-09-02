@@ -168,6 +168,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     private final ConflictCollection conflicts = new ConflictCollection();
 
     private short mappaintCacheIdx = 1;
+    private String remark;
 
     /**
      * Constructs a new {@code DataSet}.
@@ -1229,5 +1230,23 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
         if (isLocked()) {
             throw new IllegalStateException("DataSet is read-only");
         }
+    }
+
+    /**
+     * Returns an optional remark about this data set (used by Overpass API).
+     * @return a remark about this data set, or {@code null}
+     * @since 14219
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * Sets an optional remark about this data set (used by Overpass API).
+     * @param remark a remark about this data set, or {@code null}
+     * @since 14219
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }
