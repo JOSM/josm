@@ -301,7 +301,7 @@ public final class UndoRedoHandler {
                     final Command c = commands.removeLast();
                     c.undoCommand();
                     redoCommands.addFirst(c);
-                    fireEvent(new CommandUndoneEvent(UndoRedoHandler.this, c));
+                    fireEvent(new CommandUndoneEvent(this, c));
                     if (commands.isEmpty()) {
                         break;
                     }
