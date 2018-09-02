@@ -379,7 +379,11 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xep:ShortCircuitBoolean:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:StringSplitter:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:JdkObsolete:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
-            <compilerarg value="-Xplugin:ErrorProne -Xep:ReferenceEquality:OFF -Xep:ImmutableEnumChecker:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:FloatingPointLiteralPrecision:OFF -Xep:ShortCircuitBoolean:OFF -Xep:StringSplitter:OFF -Xep:JdkObsolete:OFF" compiler="modern"/>
+            <compilerarg value="-Xep:UnnecessaryParentheses:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xep:EqualsGetClass:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xep:ThreadPriorityCheck:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xep:UndefinedEquals:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xplugin:ErrorProne -Xep:ReferenceEquality:OFF -Xep:ImmutableEnumChecker:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:FloatingPointLiteralPrecision:OFF -Xep:ShortCircuitBoolean:OFF -Xep:StringSplitter:OFF -Xep:JdkObsolete:OFF -Xep:UnnecessaryParentheses:OFF -Xep:EqualsGetClass:OFF -Xep:ThreadPriorityCheck:OFF -Xep:UndefinedEquals:OFF" compiler="modern"/>
             <compilerarg line="-Xmaxwarns 1000"/>
             <exclude name="org/openstreetmap/josm/io/audio/fx/*.java" if:set="noJavaFX"/>
         </javac>
