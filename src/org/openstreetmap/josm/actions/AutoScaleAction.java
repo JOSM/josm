@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
@@ -44,12 +45,75 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Toggles the autoScale feature of the mapView
  * @author imi
+ * @since 17
  */
 public class AutoScaleAction extends JosmAction {
 
     /**
      * A list of things we can zoom to. The zoom target is given depending on the mode.
+     * @since 14221
      */
+    public enum AutoScaleMode {
+        /** Zoom the window so that all the data fills the window area */
+        DATA(marktr(/* ICON(dialogs/autoscale/) */ "data")),
+        /** Zoom the window so that all the data on the currently selected layer fills the window area */
+        LAYER(marktr(/* ICON(dialogs/autoscale/) */ "layer")),
+        /** Zoom the window so that only data which is currently selected fills the window area */
+        SELECTION(marktr(/* ICON(dialogs/autoscale/) */ "selection")),
+        /** Zoom to the first selected conflict */
+        CONFLICT(marktr(/* ICON(dialogs/autoscale/) */ "conflict")),
+        /** Zoom the view to last downloaded data */
+        DOWNLOAD(marktr(/* ICON(dialogs/autoscale/) */ "download")),
+        /** Zoom the view to problem */
+        PROBLEM(marktr(/* ICON(dialogs/autoscale/) */ "problem")),
+        /** Zoom to the previous zoomed to scale and location (zoom undo) */
+        PREVIOUS(marktr(/* ICON(dialogs/autoscale/) */ "previous")),
+        /** Zoom to the next zoomed to scale and location (zoom redo) */
+        NEXT(marktr(/* ICON(dialogs/autoscale/) */ "next"));
+
+        private final String label;
+
+        AutoScaleMode(String label) {
+            this.label = label;
+        }
+
+        /**
+         * Returns the English label. Used for retrieving icons.
+         * @return the English label
+         */
+        public String getEnglishLabel() {
+            return label;
+        }
+
+        /**
+         * Returns the localized label. Used for display
+         * @return the localized label
+         */
+        public String getLocalizedLabel() {
+            return tr(label);
+        }
+
+        /**
+         * Returns {@code AutoScaleMode} for a given English label
+         * @param englishLabel English label
+         * @return {@code AutoScaleMode} for given English label
+         * @throws IllegalArgumentException if Engligh label is unknown
+         */
+        public static AutoScaleMode of(String englishLabel) {
+            for (AutoScaleMode v : values()) {
+                if (Objects.equals(v.label, englishLabel)) {
+                    return v;
+                }
+            }
+            throw new IllegalArgumentException(englishLabel);
+        }
+    }
+
+    /**
+     * A list of things we can zoom to. The zoom target is given depending on the mode.
+     * @deprecated Use {@link AutoScaleMode} enum instead
+     */
+    @Deprecated
     public static final Collection<String> MODES = Collections.unmodifiableList(Arrays.asList(
         marktr(/* ICON(dialogs/autoscale/) */ "data"),
         marktr(/* ICON(dialogs/autoscale/) */ "layer"),
@@ -61,9 +125,9 @@ public class AutoScaleAction extends JosmAction {
         marktr(/* ICON(dialogs/autoscale/) */ "next")));
 
     /**
-     * One of {@link #MODES}. Defines what we are zooming to.
+     * One of {@link AutoScaleMode}. Defines what we are zooming to.
      */
-    private final String mode;
+    private final AutoScaleMode mode;
 
     /** Time of last zoom to bounds action */
     protected long lastZoomTime = -1;
@@ -111,9 +175,20 @@ public class AutoScaleAction extends JosmAction {
     /**
      * Performs the auto scale operation of the given mode without the need to create a new action.
      * @param mode One of {@link #MODES}.
+     * @since 14221
      */
-    public static void autoScale(String mode) {
+    public static void autoScale(AutoScaleMode mode) {
         new AutoScaleAction(mode, false).autoScale();
+    }
+
+    /**
+     * Performs the auto scale operation of the given mode without the need to create a new action.
+     * @param mode One of {@link #MODES}.
+     * @deprecated Use {@link #autoScale(AutoScaleMode)} instead
+     */
+    @Deprecated
+    public static void autoScale(String mode) {
+        autoScale(AutoScaleMode.of(mode));
     }
 
     private static int getModeShortcut(String mode) {
@@ -139,10 +214,10 @@ public class AutoScaleAction extends JosmAction {
 
     /**
      * Constructs a new {@code AutoScaleAction}.
-     * @param mode The autoscale mode (one of {@link AutoScaleAction#MODES})
+     * @param mode The autoscale mode (one of {@link AutoScaleMode})
      * @param marker Must be set to false. Used only to differentiate from default constructor
      */
-    private AutoScaleAction(String mode, boolean marker) {
+    private AutoScaleAction(AutoScaleMode mode, boolean marker) {
         super(marker);
         this.mode = mode;
     }
@@ -150,37 +225,51 @@ public class AutoScaleAction extends JosmAction {
     /**
      * Constructs a new {@code AutoScaleAction}.
      * @param mode The autoscale mode (one of {@link AutoScaleAction#MODES})
+     * @deprecated Use {@link #AutoScaleAction(AutoScaleMode)} instead
      */
+    @Deprecated
     public AutoScaleAction(final String mode) {
-        super(tr("Zoom to {0}", tr(mode)), "dialogs/autoscale/" + mode, tr("Zoom the view to {0}.", tr(mode)),
-                Shortcut.registerShortcut("view:zoom" + mode, tr("View: {0}", tr("Zoom to {0}", tr(mode))),
-                        getModeShortcut(mode), Shortcut.DIRECT), true, null, false);
-        String modeHelp = Character.toUpperCase(mode.charAt(0)) + mode.substring(1);
+        this(AutoScaleMode.of(mode));
+    }
+
+    /**
+     * Constructs a new {@code AutoScaleAction}.
+     * @param mode The autoscale mode (one of {@link AutoScaleAction#MODES})
+     * @since 14221
+     */
+    public AutoScaleAction(final AutoScaleMode mode) {
+        super(tr("Zoom to {0}", mode.getLocalizedLabel()), "dialogs/autoscale/" + mode.getEnglishLabel(),
+              tr("Zoom the view to {0}.", mode.getLocalizedLabel()),
+              Shortcut.registerShortcut("view:zoom" + mode.getEnglishLabel(),
+                        tr("View: {0}", tr("Zoom to {0}", mode.getLocalizedLabel())),
+                        getModeShortcut(mode.getEnglishLabel()), Shortcut.DIRECT), true, null, false);
+        String label = mode.getEnglishLabel();
+        String modeHelp = Character.toUpperCase(label.charAt(0)) + label.substring(1);
         putValue("help", "Action/AutoScale/" + modeHelp);
         this.mode = mode;
         switch (mode) {
-        case "data":
+        case DATA:
             putValue("help", ht("/Action/ZoomToData"));
             break;
-        case "layer":
+        case LAYER:
             putValue("help", ht("/Action/ZoomToLayer"));
             break;
-        case "selection":
+        case SELECTION:
             putValue("help", ht("/Action/ZoomToSelection"));
             break;
-        case "conflict":
+        case CONFLICT:
             putValue("help", ht("/Action/ZoomToConflict"));
             break;
-        case "problem":
+        case PROBLEM:
             putValue("help", ht("/Action/ZoomToProblem"));
             break;
-        case "download":
+        case DOWNLOAD:
             putValue("help", ht("/Action/ZoomToDownload"));
             break;
-        case "previous":
+        case PREVIOUS:
             putValue("help", ht("/Action/ZoomToPrevious"));
             break;
-        case "next":
+        case NEXT:
             putValue("help", ht("/Action/ZoomToNext"));
             break;
         default:
@@ -196,10 +285,10 @@ public class AutoScaleAction extends JosmAction {
         if (MainApplication.isDisplayingMapView()) {
             MapView mapView = MainApplication.getMap().mapView;
             switch (mode) {
-            case "previous":
+            case PREVIOUS:
                 mapView.zoomPrevious();
                 break;
-            case "next":
+            case NEXT:
                 mapView.zoomNext();
                 break;
             default:
@@ -240,16 +329,16 @@ public class AutoScaleAction extends JosmAction {
 
     private BoundingXYVisitor getBoundingBox() {
         switch (mode) {
-        case "problem":
+        case PROBLEM:
             return modeProblem(new ValidatorBoundingXYVisitor());
-        case "data":
+        case DATA:
             return modeData(new BoundingXYVisitor());
-        case "layer":
+        case LAYER:
             return modeLayer(new BoundingXYVisitor());
-        case "selection":
-        case "conflict":
+        case SELECTION:
+        case CONFLICT:
             return modeSelectionOrConflict(new BoundingXYVisitor());
-        case "download":
+        case DOWNLOAD:
             return modeDownload(new BoundingXYVisitor());
         default:
             return new BoundingXYVisitor();
@@ -285,7 +374,7 @@ public class AutoScaleAction extends JosmAction {
 
     private BoundingXYVisitor modeSelectionOrConflict(BoundingXYVisitor v) {
         Collection<IPrimitive> sel = new HashSet<>();
-        if ("selection".equals(mode)) {
+        if (AutoScaleMode.SELECTION == mode) {
             OsmData<?, ?, ?, ?> dataSet = getLayerManager().getActiveData();
             if (dataSet != null) {
                 sel.addAll(dataSet.getSelected());
@@ -302,7 +391,7 @@ public class AutoScaleAction extends JosmAction {
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
                     MainApplication.getMainFrame(),
-                    "selection".equals(mode) ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"),
+                    AutoScaleMode.SELECTION == mode ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE);
             return null;
@@ -356,25 +445,25 @@ public class AutoScaleAction extends JosmAction {
         OsmData<?, ?, ?, ?> ds = getLayerManager().getActiveData();
         MapFrame map = MainApplication.getMap();
         switch (mode) {
-        case "selection":
+        case SELECTION:
             setEnabled(ds != null && !ds.selectionEmpty());
             break;
-        case "layer":
+        case LAYER:
             setEnabled(getFirstSelectedLayer() != null);
             break;
-        case "conflict":
+        case CONFLICT:
             setEnabled(map != null && map.conflictDialog.getSelectedConflict() != null);
             break;
-        case "download":
+        case DOWNLOAD:
             setEnabled(ds != null && !ds.getDataSources().isEmpty());
             break;
-        case "problem":
+        case PROBLEM:
             setEnabled(map != null && map.validatorDialog.getSelectedError() != null);
             break;
-        case "previous":
+        case PREVIOUS:
             setEnabled(MainApplication.isDisplayingMapView() && map.mapView.hasZoomUndoEntries());
             break;
-        case "next":
+        case NEXT:
             setEnabled(MainApplication.isDisplayingMapView() && map.mapView.hasZoomRedoEntries());
             break;
         default:
@@ -384,7 +473,7 @@ public class AutoScaleAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if ("selection".equals(mode)) {
+        if (AutoScaleMode.SELECTION == mode) {
             setEnabled(selection != null && !selection.isEmpty());
         }
     }
@@ -417,9 +506,9 @@ public class AutoScaleAction extends JosmAction {
         private TreeSelectionListener validatorSelectionListener;
 
         MapFrameAdapter() {
-            if ("conflict".equals(mode)) {
+            if (AutoScaleMode.CONFLICT == mode) {
                 conflictSelectionListener = e -> updateEnabledState();
-            } else if ("problem".equals(mode)) {
+            } else if (AutoScaleMode.PROBLEM == mode) {
                 validatorSelectionListener = e -> updateEnabledState();
             }
         }

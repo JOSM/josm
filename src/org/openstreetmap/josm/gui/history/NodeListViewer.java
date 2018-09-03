@@ -21,6 +21,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -252,7 +253,7 @@ public class NodeListViewer extends JPanel {
                 OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
                 if (ds != null) {
                     ds.setSelected(p.getPrimitiveId());
-                    AutoScaleAction.autoScale("selection");
+                    AutoScaleAction.autoScale(AutoScaleMode.SELECTION);
                 }
             }
         }
