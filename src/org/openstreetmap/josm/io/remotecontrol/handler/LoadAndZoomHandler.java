@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
@@ -263,7 +264,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         }
         // zoom_mode=(download|selection), defaults to selection
         if (!"download".equals(args.get("zoom_mode")) && !primitives.isEmpty()) {
-            AutoScaleAction.autoScale("selection");
+            AutoScaleAction.autoScale(AutoScaleMode.SELECTION);
         } else if (MainApplication.isDisplayingMapView()) {
             // make sure this isn't called unless there *is* a MapView
             GuiHelper.executeByMainWorkerInEDT(() -> {

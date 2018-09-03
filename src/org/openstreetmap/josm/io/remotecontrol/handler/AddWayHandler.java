@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -173,7 +174,7 @@ public class AddWayHandler extends RequestHandler {
         UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Add way"), commands));
         ds.setSelected(way);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
-            AutoScaleAction.autoScale("selection");
+            AutoScaleAction.autoScale(AutoScaleMode.SELECTION);
         } else {
             MainApplication.getMap().mapView.repaint();
         }

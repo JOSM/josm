@@ -9,6 +9,7 @@ import javax.swing.AbstractAction;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListTable;
@@ -98,7 +99,7 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
         OsmPrimitive primitive = this.table.getPrimitiveInLayer(row, layer);
         if (layer != null && primitive != null) {
             layer.data.setSelected(primitive);
-            AutoScaleAction.autoScale("selection");
+            AutoScaleAction.autoScale(AutoScaleMode.SELECTION);
         }
     }
 

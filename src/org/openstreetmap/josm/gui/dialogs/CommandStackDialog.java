@@ -37,6 +37,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -452,7 +453,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         @Override
         public void actionPerformed(ActionEvent e) {
             super.actionPerformed(e);
-            AutoScaleAction.autoScale("selection");
+            AutoScaleAction.autoScale(AutoScaleMode.SELECTION);
         }
     }
 

@@ -29,6 +29,7 @@ import org.openstreetmap.josm.actions.AddNodeAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.actions.ChangesetManagerToggleAction;
 import org.openstreetmap.josm.actions.CloseChangesetAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
@@ -719,9 +720,9 @@ public class MainMenu extends JMenuBar {
         add(viewMenu, new ZoomInAction());
         add(viewMenu, new ZoomOutAction());
         viewMenu.addSeparator();
-        for (String mode : AutoScaleAction.MODES) {
+        for (AutoScaleMode mode : AutoScaleMode.values()) {
             AutoScaleAction autoScaleAction = new AutoScaleAction(mode);
-            autoScaleActions.put(mode, autoScaleAction);
+            autoScaleActions.put(mode.getEnglishLabel(), autoScaleAction);
             add(viewMenu, autoScaleAction);
         }
 

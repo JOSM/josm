@@ -38,6 +38,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
@@ -392,7 +393,7 @@ public class SelectionListDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            AutoScaleAction.autoScale("selection");
+            AutoScaleAction.autoScale(AutoScaleMode.SELECTION);
         }
 
         public void updateEnabledState() {
