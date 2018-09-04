@@ -956,8 +956,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
 
             if (!eventsToFire.isEmpty()) {
                 lock.readLock().lock();
-                lock.writeLock().unlock();
                 try {
+                    lock.writeLock().unlock();
                     if (eventsToFire.size() < MAX_SINGLE_EVENTS) {
                         for (AbstractDatasetChangedEvent event : eventsToFire) {
                             fireEventToListeners(event);
