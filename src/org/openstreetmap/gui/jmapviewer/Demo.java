@@ -149,7 +149,7 @@ public class Demo extends JFrame implements JMapViewerEventListener {
         showZoomControls.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                map().setZoomContolsVisible(showZoomControls.isSelected());
+                map().setZoomControlsVisible(showZoomControls.isSelected());
             }
         });
         panelBottom.add(showZoomControls);
