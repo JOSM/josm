@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -61,6 +62,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.PresetLink;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.gui.tagging.presets.items.Space;
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
@@ -126,6 +128,12 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * True whenever the original selection given into createSelection was empty
      */
     private boolean originalSelectionEmpty;
+
+    /**
+     * Allows to build a string representation of this preset for searching.
+     */
+    private static final TaggingPresetSearchQueryGenerator QUERY_GENERATOR =
+            new TaggingPresetSearchQueryGenerator();
 
     /**
      * Create an empty tagging preset. This will not have any items and
@@ -645,5 +653,126 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     public String getToolbarString() {
         ToolbarPreferences.ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
         return actionParser.saveAction(new ToolbarPreferences.ActionDefinition(this));
+    }
+
+    /**
+     * Get a string representing this preset as the search query that can
+     * be used in {@link SearchCompiler}.
+     * @return A query to search for {@link OsmPrimitive} that match this preset.
+     */
+    public String getSearchQuery() {
+        return QUERY_GENERATOR.buildPresetSearchQuery(this);
+    }
+
+    /**
+     * This class encapsulates logic to convert any preset to a string that can be
+     * fed to {@link SearchCompiler} to search for OSM primitives.
+     */
+    private static class TaggingPresetSearchQueryGenerator {
+
+        /**
+         * keywords used to build the query.
+         */
+        private static final String TYPE = "type:";
+        private static final String WILD_CARD = "*";
+        private static final String OR = " | ";
+        private static final String AND = " ";
+        private static final String OPENING_PAR = "(";
+        private static final String CLOSING_PAR = ")";
+
+        /**
+         * types used to search for OSM objects.
+         */
+        private static final String WAY = "WAY";
+        private static final String NODE = "NODE";
+        private static final String RELATION = "RELATION";
+
+        /**
+         * Build the query for the preset that can be used in {@link SearchCompiler}.
+         * @param p preset for which the query is needed.
+         * @return the search query for the preset.
+         */
+        public String buildPresetSearchQuery(TaggingPreset p) {
+            final StringBuilder sb = new StringBuilder("");
+
+            final String types = this.buildTypeQuery(p.types == null
+                    ? Collections.EMPTY_SET
+                    : p.types);
+            if (!types.isEmpty()) {
+                sb.append(OPENING_PAR)
+                        .append(types)
+                        .append(CLOSING_PAR)
+                        .append(AND);
+            }
+
+            final String attrs = this.buildAttributeQuery(p.data);
+            if (!attrs.isEmpty()) {
+                sb.append(OPENING_PAR)
+                        .append(attrs)
+                        .append(CLOSING_PAR);
+            }
+
+            return sb.toString().trim();
+        }
+
+        /**
+         * Returns a string containing disjunction of the type names as a valid query for {@link SearchCompiler}.
+         * For example, (type:WAY | type:NODE | type: RELATION) is returned by this method for the
+         * preset containing types : {@link TaggingPresetType#WAY}, {@link TaggingPresetType#NODE} and
+         * {@link TaggingPresetType#RELATION}.
+         * It is worth noting, that {@link TaggingPresetType#CLOSEDWAY} and {@link TaggingPresetType#MULTIPOLYGON}
+         * are display types and do not play a role in searching. So, they are simply converted to one of the
+         * standard types, namely CLOSEDWAY -> WAY, MULTIPOLYGON -> RELATION.
+         * @param ts types of the preset to be converted to the search query.
+         * @return a closed string of types combined with '|' character.
+         */
+        private String buildTypeQuery(Collection<TaggingPresetType> ts) {
+            return ts.stream()
+                    .map(t -> {
+                        switch (t) {
+                            case NODE:
+                                return NODE;
+                            case WAY: case CLOSEDWAY:
+                                return WAY;
+                            case RELATION: case MULTIPOLYGON:
+                                return RELATION;
+                            default:
+                                throw new AssertionError("unkown preset type");
+                        }
+                    })
+                    .map(TYPE::concat)
+                    .collect(Collectors.joining(OR));
+        }
+
+        /**
+         * Returns a string containing disjunction of the preset attributes as a valid query
+         * for {@link SearchCompiler}. For example, ("amenity"="hotel") is returned for the
+         * hotel preset.
+         * @param its a set of preset fields
+         * @return a closed string of attributes of type "key"="value" combined with '|' character.
+         */
+        private String buildAttributeQuery(Collection<TaggingPresetItem> its) {
+            return its.stream()
+                    .filter(e -> e instanceof KeyedItem)
+                    .map(e -> (KeyedItem) e)
+                    .filter(e -> !e.match.equals("none"))
+                    .map(e -> e.match.equals("key") || e.match.equals("key!")
+                            ? this.buildKeyValueTemplate(e.key, WILD_CARD)
+                            : e.getValues().stream()
+                                .map(x -> this.buildKeyValueTemplate(e.key, x))
+                                .collect(Collectors.joining(OR)))
+                    .collect(Collectors.joining(OR));
+        }
+
+        private String buildKeyValueTemplate(String key, String val) {
+            return new StringBuilder("\"")
+                    .append(key)
+                    .append("\"")
+                    .append("=")
+                    .append("\"")
+                    .append(val)
+                    .append("\"")
+                    .toString();
+        }
     }
 }
