@@ -8671,6 +8671,7 @@
             <reference ref="name_oh_wheelchair" />
             <combo key="second_hand" text="Second hand" values="only,yes,no" />
             <combo key="organic" text="Organic" values="only,yes,no" />
+            <check key="shoes:repair" text="Offers repairs" text_context="shoes" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Shoes -->
         <item name="Outdoor" icon="presets/shop/outdoor.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -8727,6 +8728,8 @@
             <space />
             <key key="shop" value="laundry" />
             <reference ref="name_oh_wheelchair" />
+            <check key="self_service" text="Self Service" />
+            <check key="laundry_service" text="Laundry Service" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Laundry -->
         <item name="Tailor" icon="presets/shop/tailor.svg" type="node,closedway,multipolygon" preset_name_label="true">
