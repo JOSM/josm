@@ -46,8 +46,11 @@ public class ChangesetCacheTableColumnModel extends DefaultTableColumnModel {
         // column 5 - Closed at
         createColumn(5, tr("Closed at"), 100, -1);
 
-        // column 6 - Discussions
-        createColumn(6, tr("Discussions"), 25, -1);
+        // column 6 - Changes
+        createColumn(6, tr("Changes"), 25, -1);
+
+        // column 7 - Discussions
+        createColumn(7, tr("Discussions"), 25, -1);
     }
 
     /**

@@ -38,6 +38,11 @@ public class ChangesetCacheTableCellRenderer extends AbstractCellRenderer {
         setToolTipText(null);
     }
 
+    protected void renderChanges(Changeset cs) {
+        setText(Integer.toString(cs.getChangesCount()));
+        setToolTipText(null);
+    }
+
     protected void renderDiscussions(Changeset cs) {
         setText(Integer.toString(cs.getCommentsCount()));
         setToolTipText(null);
@@ -58,7 +63,8 @@ public class ChangesetCacheTableCellRenderer extends AbstractCellRenderer {
         case 3: /* user */ renderUser(cs.getUser()); break;
         case 4: /* created at */ renderDate(cs.getCreatedAt()); break;
         case 5: /* closed at */ renderDate(cs.getClosedAt()); break;
-        case 6: /* discussions */ renderDiscussions(cs); break;
+        case 6: /* changes */ renderChanges(cs); break;
+        case 7: /* discussions */ renderDiscussions(cs); break;
         default: // Do nothing
         }
         return this;

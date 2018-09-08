@@ -42,6 +42,8 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     private LatLon max;
     /** the number of comments for this changeset */
     private int commentsCount;
+    /** the number of changes for this changeset */
+    private int changesCount;
     /** the map of tags */
     private Map<String, String> tags;
     /** indicates whether this changeset is incomplete. For an incomplete changeset we only know its id */
@@ -282,6 +284,24 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
         this.commentsCount = commentsCount;
     }
 
+    /**
+     * Replies the number of changes for this changeset.
+     * @return the number of changes for this changeset
+     * @since 14231
+     */
+    public int getChangesCount() {
+        return changesCount;
+    }
+
+    /**
+     * Sets the number of changes for this changeset.
+     * @param changesCount the number of changes for this changeset
+     * @since 14231
+     */
+    public void setChangesCount(int changesCount) {
+        this.changesCount = changesCount;
+    }
+
     @Override
     public Map<String, String> getKeys() {
         return tags;
@@ -345,40 +365,17 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
      * @return {@code true} if this changeset has equals semantic attributes with other changeset
      */
     public boolean hasEqualSemanticAttributes(Changeset other) {
-        if (other == null)
-            return false;
-        if (closedAt == null) {
-            if (other.closedAt != null)
-                return false;
-        } else if (!closedAt.equals(other.closedAt))
-            return false;
-        if (createdAt == null) {
-            if (other.createdAt != null)
-                return false;
-        } else if (!createdAt.equals(other.createdAt))
-            return false;
-        if (id != other.id)
-            return false;
-        if (max == null) {
-            if (other.max != null)
-                return false;
-        } else if (!max.equals(other.max))
-            return false;
-        if (min == null) {
-            if (other.min != null)
-                return false;
-        } else if (!min.equals(other.min))
-            return false;
-        if (open != other.open)
-            return false;
-        if (!tags.equals(other.tags))
-            return false;
-        if (user == null) {
-            if (other.user != null)
-                return false;
-        } else if (!user.equals(other.user))
-            return false;
-        return commentsCount == other.commentsCount;
+        return other != null
+            && id == other.id
+            && open == other.open
+            && commentsCount == other.commentsCount
+            && changesCount == other.changesCount
+            && Objects.equals(closedAt, other.closedAt)
+            && Objects.equals(createdAt, other.createdAt)
+            && Objects.equals(min, other.min)
+            && Objects.equals(max, other.max)
+            && Objects.equals(tags, other.tags)
+            && Objects.equals(user, other.user);
     }
 
     @Override
@@ -433,6 +430,7 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
         this.min = other.min;
         this.max = other.max;
         this.commentsCount = other.commentsCount;
+        this.changesCount = other.changesCount;
         this.tags = new HashMap<>(other.tags);
         this.incomplete = other.incomplete;
         this.discussion = other.discussion != null ? new ArrayList<>(other.discussion) : null;
