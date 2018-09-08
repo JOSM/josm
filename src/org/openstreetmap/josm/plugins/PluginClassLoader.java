@@ -80,6 +80,20 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     @Override
+    public URL findResource(String name) {
+        URL resource = super.findResource(name);
+        if (resource == null) {
+            for (PluginClassLoader dep : dependencies) {
+                resource = dep.findResource(name);
+                if (resource != null) {
+                    break;
+                }
+            }
+        }
+        return resource;
+    }
+
+    @Override
     public String toString() {
         return "PluginClassLoader [urls=" + Arrays.toString(getURLs()) +
                 (dependencies.isEmpty() ? "" : ", dependencies=" + dependencies) + ']';
