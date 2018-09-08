@@ -26,7 +26,7 @@ public class OsmChangesetParserTest {
                 "attribution=\"http://www.openstreetmap.org/copyright\" license=\"http://opendatacommons.org/licenses/odbl/1-0/\">" +
             "<changeset id=\"36749147\" user=\"kesler\" uid=\"13908\" created_at=\"2016-01-22T21:55:37Z\" "+
                 "closed_at=\"2016-01-22T21:56:39Z\"  open=\"false\" min_lat=\"36.6649211\" min_lon=\"55.377015\" max_lat=\"38.1490357\" " +
-                "max_lon=\"60.3766983\" comments_count=\"2\">" +
+                "max_lon=\"60.3766983\" comments_count=\"2\" changes_count=\"9\">" +
             "<tag k=\"created_by\" v=\"JOSM/1.5 (9329 en)\"/>" +
             "<tag k=\"comment\" v=\"Fixing errors in North Khorasan\"/>";
 
@@ -74,6 +74,7 @@ public class OsmChangesetParserTest {
         // http://api.openstreetmap.org/api/0.6/changeset/36749147
         Changeset cs = parse(BEGIN + END).iterator().next();
         assertEquals(2, cs.getCommentsCount());
+        assertEquals(9, cs.getChangesCount());
         assertTrue(cs.getDiscussion().isEmpty());
     }
 
@@ -86,6 +87,7 @@ public class OsmChangesetParserTest {
         // http://api.openstreetmap.org/api/0.6/changeset/36749147?include_discussion=true
         Changeset cs = parse(BEGIN + DISCUSSION + END).iterator().next();
         assertEquals(2, cs.getCommentsCount());
+        assertEquals(9, cs.getChangesCount());
         assertEquals(2, cs.getDiscussion().size());
     }
 }

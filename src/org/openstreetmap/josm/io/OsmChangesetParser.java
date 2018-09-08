@@ -160,6 +160,12 @@ public final class OsmChangesetParser {
             if (commentsCount != null) {
                 current.setCommentsCount(parseNumericAttribute(commentsCount, 0));
             }
+
+            // -- changes_count
+            String changesCount = atts.getValue("changes_count");
+            if (changesCount != null) {
+                current.setChangesCount(parseNumericAttribute(changesCount, 0));
+            }
         }
 
         private void parseCommentAttributes(Attributes atts) throws XmlParsingException {
