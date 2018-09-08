@@ -344,8 +344,13 @@ public class PluginInformation {
     public PluginProxy load(Class<?> klass, PluginClassLoader classLoader) throws PluginException {
         try {
             Constructor<?> c = klass.getConstructor(PluginInformation.class);
-            Object plugin = c.newInstance(this);
-            return new PluginProxy(plugin, this, classLoader);
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
+            try {
+                return new PluginProxy(c.newInstance(this), this, classLoader);
+            } finally {
+                Thread.currentThread().setContextClassLoader(contextClassLoader);
+            }
         } catch (ReflectiveOperationException e) {
             throw new PluginException(name, e);
         }
