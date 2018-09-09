@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -268,6 +269,9 @@ public class ImageProvider {
             Logging.log(Logging.LEVEL_ERROR, "Unable to get application classloader", e);
         }
     }
+
+    /** small cache of critical images used in many parts of the application */
+    private static final Map<OsmPrimitiveType, ImageIcon> osmPrimitiveTypeCache = Collections.synchronizedMap(new HashMap<>());
 
     /** directories in which images are searched */
     protected Collection<String> dirs;
@@ -1473,7 +1477,7 @@ public class ImageProvider {
      */
     public static ImageIcon get(OsmPrimitiveType type) {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
-        return get("data", type.getAPIName());
+        return osmPrimitiveTypeCache.computeIfAbsent(type, t -> get("data", t.getAPIName()));
     }
 
     /**
