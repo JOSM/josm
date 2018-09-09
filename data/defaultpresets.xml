@@ -623,6 +623,7 @@
                 <reference ref="highway_base" />
                 <check key="motorroad" text="Motorroad" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <check key="narrow" text="Narrow" disable_off="true" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
@@ -666,6 +667,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <check key="narrow" text="Narrow" disable_off="true" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
@@ -710,6 +712,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <check key="narrow" text="Narrow" disable_off="true" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
@@ -752,6 +755,7 @@
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <check key="narrow" text="Narrow" disable_off="true" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <check key="passing_places" text="Passing Places" />
@@ -780,6 +784,7 @@
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <check key="narrow" text="Narrow" disable_off="true" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
@@ -832,6 +837,7 @@
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <check key="narrow" text="Narrow" disable_off="true" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
