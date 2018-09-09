@@ -17,7 +17,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -244,28 +243,6 @@ public final class PluginHandler {
             if (d == 0)
                 d = reason.compareTo(o.reason);
             return d;
-        }
-    }
-
-    /**
-     * ClassLoader that makes the addURL method of URLClassLoader public.
-     *
-     * Like URLClassLoader, but allows to add more URLs after construction.
-     */
-    public static class DynamicURLClassLoader extends URLClassLoader {
-
-        /**
-         * Constructs a new {@code DynamicURLClassLoader}.
-         * @param urls the URLs from which to load classes and resources
-         * @param parent the parent class loader for delegation
-         */
-        public DynamicURLClassLoader(URL[] urls, ClassLoader parent) {
-            super(urls, parent);
-        }
-
-        @Override
-        public void addURL(URL url) {
-            super.addURL(url);
         }
     }
 
