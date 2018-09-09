@@ -149,13 +149,10 @@ public class RemoteCacheServerFactory
             remoteCacheServer.setCacheEventLogger( cacheEventLogger );
 
             // START THE REGISTRY
-            if (rcsa.isStartRegistry())
-            {
-            	registry = RemoteUtils.createRegistry(port);
-            }
+        	registry = RemoteUtils.createRegistry(port);
 
             // REGISTER THE SERVER
-            registerServer( RemoteUtils.getNamingURL(host, port, serviceName), remoteCacheServer );
+            registerServer( serviceName, remoteCacheServer );
 
             // KEEP THE REGISTRY ALIVE
             if ( rcsa.isUseRegistryKeepAlive() )
@@ -227,11 +224,11 @@ public class RemoteCacheServerFactory
      * Registers the server with the registry. I broke this off because we might want to have code
      * that will restart a dead registry. It will need to rebind the server.
      * <p>
-     * @param namingURL
-     * @param server
+     * @param serviceName the name of the service
+     * @param server the server object to bind
      * @throws RemoteException
      */
-    protected static void registerServer( String namingURL, Remote server )
+    protected static void registerServer(String serviceName, Remote server )
         throws RemoteException
     {
         if ( server == null )
@@ -239,20 +236,17 @@ public class RemoteCacheServerFactory
             throw new RemoteException( "Cannot register the server until it is created." );
         }
 
-        if ( log.isInfoEnabled() )
+        if ( registry == null )
         {
-            log.info( "Binding server to " + namingURL );
+            throw new RemoteException( "Cannot register the server: Registry is null." );
         }
 
-        try
+        if ( log.isInfoEnabled() )
         {
-            Naming.rebind( namingURL, server );
+            log.info( "Binding server to " + serviceName );
         }
-        catch ( MalformedURLException ex )
-        {
-            // impossible case.
-            throw new IllegalArgumentException( ex.getMessage() + "; url=" + namingURL );
-        }
+
+        registry.rebind( serviceName, server );
     }
 
     /**

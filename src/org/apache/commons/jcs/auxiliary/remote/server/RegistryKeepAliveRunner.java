@@ -20,6 +20,7 @@ package org.apache.commons.jcs.auxiliary.remote.server;
  */
 
 import java.rmi.Naming;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 
@@ -41,11 +42,17 @@ public class RegistryKeepAliveRunner
     /** The URL of the service to look for. */
     private String namingURL;
 
+    /** The service name. */
+    private String serviceName;
+
     /** the port on which to start the registry */
     private int registryPort;
 
     /** An optional event logger */
     private ICacheEventLogger cacheEventLogger;
+
+    /** the registry */
+    private Registry registry;
 
     /**
      * @param registryHost - Hostname of the registry
@@ -55,6 +62,7 @@ public class RegistryKeepAliveRunner
     public RegistryKeepAliveRunner( String registryHost, int registryPort, String serviceName )
     {
         this.namingURL = RemoteUtils.getNamingURL(registryHost, registryPort, serviceName);
+        this.serviceName = serviceName;
         this.registryPort = registryPort;
     }
 
@@ -104,41 +112,42 @@ public class RegistryKeepAliveRunner
             {
                 cacheEventLogger.logError( "RegistryKeepAliveRunner", "Naming.lookup", message + ":" + ex.getMessage() );
             }
-            createAndRegister( namingURL );
+            createAndRegister( serviceName );
         }
     }
 
     /**
      * Creates the registry and registers the server.
      * <p>
-     * @param registry
+     * @param serviceName the service name
      */
-    protected void createAndRegister( String registry )
+    protected void createAndRegister( String serviceName )
     {
-        createReqistry( registry );
-        registerServer( registry );
+        createReqistry( serviceName );
+        registerServer( serviceName );
     }
 
     /**
      * Try to create the registry. Log errors
      * <p>
-     * @param registry
+     * @param serviceName the service name
      */
-    protected void createReqistry( String registry )
+    protected void createReqistry( String serviceName )
     {
-        Registry reg = RemoteUtils.createRegistry(registryPort);
+        // TODO: Refactor method signature. This is ugly but required to keep the binary API compatibility
+        this.registry = RemoteUtils.createRegistry(registryPort);
 
         if ( cacheEventLogger != null )
         {
-            if (reg != null)
+            if (this.registry != null)
             {
                 cacheEventLogger.logApplicationEvent( "RegistryKeepAliveRunner", "createRegistry",
-                        "Successfully created registry [" + registry + "]." );
+                        "Successfully created registry [" + serviceName + "]." );
             }
             else
             {
                 cacheEventLogger.logError( "RegistryKeepAliveRunner", "createRegistry",
-                        "Could not start registry [" + registry + "]." );
+                        "Could not start registry [" + serviceName + "]." );
             }
         }
     }
@@ -146,15 +155,22 @@ public class RegistryKeepAliveRunner
     /**
      * Try to rebind the server.
      * <p>
-     * @param registry
+     * @param serviceName the service name
      */
-    protected void registerServer( String registry )
+    protected void registerServer( String serviceName )
     {
         try
         {
             // try to rebind anyway
-            RemoteCacheServerFactory.registerServer( registry, RemoteCacheServerFactory.getRemoteCacheServer() );
-            String message = "Successfully rebound server to registry [" + registry + "].";
+            Remote server = RemoteCacheServerFactory.getRemoteCacheServer();
+
+            if ( server == null )
+            {
+                throw new RemoteException( "Cannot register the server until it is created." );
+            }
+
+            this.registry.rebind( serviceName, server );
+            String message = "Successfully rebound server to registry [" + serviceName + "].";
             if ( cacheEventLogger != null )
             {
                 cacheEventLogger.logApplicationEvent( "RegistryKeepAliveRunner", "registerServer", message );
@@ -166,7 +182,7 @@ public class RegistryKeepAliveRunner
         }
         catch ( RemoteException e )
         {
-            String message = "Could not rebind server to registry [" + registry + "].";
+            String message = "Could not rebind server to registry [" + serviceName + "].";
             log.error( message, e );
             if ( cacheEventLogger != null )
             {

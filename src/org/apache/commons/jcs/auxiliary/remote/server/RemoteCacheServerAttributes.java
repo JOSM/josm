@@ -143,6 +143,7 @@ public class RemoteCacheServerAttributes
      * Should we start the registry
      * <p>
      * @param startRegistry the startRegistry to set
+     * @deprecated Always true, to be removed
      */
     @Override
     public void setStartRegistry( boolean startRegistry )
@@ -154,6 +155,7 @@ public class RemoteCacheServerAttributes
      * Should we start the registry
      * <p>
      * @return the startRegistry
+     * @deprecated Always true, to be removed
      */
     @Override
     public boolean isStartRegistry()
@@ -201,7 +203,6 @@ public class RemoteCacheServerAttributes
         buf.append( "\n allowClusterGet = [" + this.isAllowClusterGet() + "]" );
         buf.append( "\n configFileName = [" + this.getConfigFileName() + "]" );
         buf.append( "\n rmiSocketFactoryTimeoutMillis = [" + this.getRmiSocketFactoryTimeoutMillis() + "]" );
-        buf.append( "\n startRegistry = [" + this.isStartRegistry() + "]" );
         buf.append( "\n useRegistryKeepAlive = [" + this.isUseRegistryKeepAlive() + "]" );
         buf.append( "\n registryKeepAliveDelayMillis = [" + this.getRegistryKeepAliveDelayMillis() + "]" );
         buf.append( "\n eventQueueType = [" + this.getEventQueueType() + "]" );

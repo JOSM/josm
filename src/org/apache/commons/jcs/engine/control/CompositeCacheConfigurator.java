@@ -202,10 +202,10 @@ public class CompositeCacheConfigurator
         IElementAttributes ea = parseElementAttributes( props, regName,
                 ccm.getDefaultElementAttributes(), regionPrefix );
 
-        CompositeCache<K, V> cache = ( cca == null )
-            ? new CompositeCache<K, V>( parseCompositeCacheAttributes( props, regName,
-                    ccm.getDefaultCacheAttributes(), regionPrefix ), ea )
-            : new CompositeCache<K, V>( cca, ea );
+        ICompositeCacheAttributes instantiationCca = cca == null
+                ? parseCompositeCacheAttributes(props, regName, ccm.getDefaultCacheAttributes(), regionPrefix)
+                : cca;
+        CompositeCache<K, V> cache = newCache(instantiationCca, ea);
 
         // Inject cache manager
         cache.setCompositeCacheManager(ccm);
@@ -280,6 +280,12 @@ public class CompositeCacheConfigurator
 
         // Return the new cache
         return cache;
+    }
+
+    protected <K, V> CompositeCache<K, V> newCache(
+            ICompositeCacheAttributes cca, IElementAttributes ea)
+    {
+        return new CompositeCache<K, V>( cca, ea );
     }
 
     /**
