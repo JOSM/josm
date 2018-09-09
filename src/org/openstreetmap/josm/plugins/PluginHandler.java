@@ -250,7 +250,6 @@ public final class PluginHandler {
      * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not maintained after a few months, sadly...
      */
     static final List<String> UNMAINTAINED_PLUGINS = Collections.unmodifiableList(Arrays.asList(
-        "NanoLog", // See https://trac.openstreetmap.org/changeset/29404/subversion
         "irsrectify", // See https://trac.openstreetmap.org/changeset/29404/subversion
         "surveyor2", // See https://trac.openstreetmap.org/changeset/29404/subversion
         "gpsbabelgui",

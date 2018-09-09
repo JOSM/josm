@@ -46,7 +46,9 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -57,6 +59,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @version $Revision: 1723861 $
  */
 public class DomainValidatorTestIT {
+
+    /**
+     * Setup rule
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().https();
 
     /**
      * Download and process local copy of http://data.iana.org/TLD/tlds-alpha-by-domain.txt

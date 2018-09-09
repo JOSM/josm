@@ -11,15 +11,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
@@ -32,19 +30,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class TaggingPresetPreferenceTestIT {
 
     /**
-     * Global timeout applied to all test methods.
+     * Setup rule
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public Timeout globalTimeout = Timeout.seconds(10*60);
-
-    /**
-     * Setup test.
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    public JOSMTestRules test = new JOSMTestRules().https().timeout(10000*60);
 
     /**
      * Test that available tagging presets are valid.
