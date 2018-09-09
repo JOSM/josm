@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.GraphicsEnvironment;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -111,6 +113,19 @@ public class PluginHandlerTestIT {
                 it.remove();
             }
         }
+
+        // On Java 9/10 and headless mode, filter plugins requiring JavaFX as Monocle is not available
+        int javaVersion = Utils.getJavaVersion();
+        if (GraphicsEnvironment.isHeadless() && javaVersion >= 9 && javaVersion <= 10) {
+            for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
+                PluginInformation pi = it.next();
+                if (pi.getRequiredPlugins().contains("openjfx")) {
+                    System.out.println("Ignoring " + pi.name + " (requiring JavaFX and we're using Java 9/10 in headless mode)");
+                    it.remove();
+                }
+            }
+        }
+
         System.out.println("Filtered plugin list contains " + plugins.size() + " plugins");
 
         // Download plugins
