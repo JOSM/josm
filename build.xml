@@ -514,6 +514,8 @@ Build-Date: ${build.tstamp}
                     <jvmarg value="--add-opens" if:set="isJava9" />
                     <jvmarg value="java.base/java.util=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
+                    <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" if:set="isJava9" />
+                    <jvmarg value="--add-opens" if:set="isJava9" />
                     <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" if:set="isJava9" />
                     <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
                     <sysproperty key="josm.test.data" value="${test.dir}/data"/>
