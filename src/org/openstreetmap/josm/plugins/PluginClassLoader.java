@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.plugins;
 
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,7 +16,7 @@ import org.openstreetmap.josm.tools.Logging;
  * plugins. The JOSM core classes should be provided by the parent class loader.
  * @since 12322
  */
-public class PluginClassLoader extends URLClassLoader {
+public class PluginClassLoader extends DynamicURLClassLoader {
 
     private final Collection<PluginClassLoader> dependencies;
 
