@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -164,7 +163,11 @@ public final class OsmUtils {
      * @since 13957 (signature)
      */
     public static boolean isOsmCollectionEditable(Collection<? extends IPrimitive> collection) {
-        return collection != null && !collection.isEmpty()
-            && collection.stream().map(IPrimitive::getDataSet).filter(Objects::nonNull).noneMatch(OsmData::isLocked);
+        if (collection == null || collection.isEmpty()) {
+            return false;
+        }
+        // see #16510: optimization: only consider the first primitive, as collection always refer to the same dataset
+        OsmData<?, ?, ?, ?> ds = collection.iterator().next().getDataSet();
+        return ds == null || !ds.isLocked();
     }
 }
