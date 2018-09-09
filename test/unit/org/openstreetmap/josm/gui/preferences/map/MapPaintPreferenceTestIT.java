@@ -8,11 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
@@ -22,6 +19,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -32,19 +30,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class MapPaintPreferenceTestIT {
 
     /**
-     * Global timeout applied to all test methods.
+     * Setup rule
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public Timeout globalTimeout = Timeout.seconds(15*60);
-
-    /**
-     * Setup test.
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    public JOSMTestRules test = new JOSMTestRules().https().timeout(15000*60);
 
     /**
      * Test that available map paint styles are valid.

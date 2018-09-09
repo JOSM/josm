@@ -21,7 +21,7 @@ public class MapCSSParserTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
+    public JOSMTestRules test = new JOSMTestRules().https().projection();
 
     /**
      * Checks Kothic stylesheets
