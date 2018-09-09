@@ -51,11 +51,14 @@ public class DuplicateRelationAction extends AbstractRelationAction {
         }
     }
 
+    private static boolean isEditableRelation(IRelation<?> r) {
+        return r instanceof Relation && r.getDataSet() != null && !r.getDataSet().isLocked();
+    }
+
     @Override
     protected void updateEnabledState() {
         // only one selected relation can be edited
         setEnabled(relations.size() == 1
-                && relations.iterator().next() instanceof Relation
-                && !relations.iterator().next().getDataSet().isLocked());
+                && isEditableRelation(relations.iterator().next()));
     }
 }
