@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.IWithAttributes;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -120,6 +121,10 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                     Object val = obj.get(key);
                     if (val instanceof Date) {
                         simpleTag(key, gpxFormat.format(val));
+                    } else if (val instanceof Number) {
+                        simpleTag(key, val.toString());
+                    } else if (val != null) {
+                        Logging.warn("GPX attribute '"+key+"' not managed: " + val);
                     }
                 }
             }
