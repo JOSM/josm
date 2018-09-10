@@ -9784,7 +9784,7 @@
         <space />
         <key key="office" value="government" />
         <text key="name" text="Name" />
-        <combo key="government" text="Type" values="ministry,prosecutor,tax,register_office" />
+        <combo key="government" text="Type" values="administrative,cadaster,customs,education,healthcare,legislative,migration,ministry,pension_fund,prosecutor,public_service,register_office,social_security,social_services,tax,transportation" />
         <reference ref="oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Government -->
