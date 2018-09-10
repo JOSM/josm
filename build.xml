@@ -766,6 +766,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="it.*"/>
             <ignore classname="java.lang.invoke.MethodHandle"/>
             <ignore classname="javax.*"/>
+            <ignore classname="jdk.swing.interop.*"/>
             <ignore classname="jogamp.*"/>
             <ignore classname="junit.*"/>
             <ignore classname="kdu_jni.*"/>
