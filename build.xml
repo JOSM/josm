@@ -67,6 +67,9 @@
                 <isset property="isJava13"/>
             </not>
         </condition>
+        <condition property="java.library.dir" value="jmods" else="lib">
+            <isset property="isJava9"/>
+        </condition>
         <path id="groovy.classpath">
             <fileset dir="${tools.dir}/groovy">
                 <include name="*.jar"/>
@@ -612,7 +615,7 @@ Build-Date: ${build.tstamp}
         -injars ${dist.jar}
         -outjars ${dist-optimized.jar}
 
-        -libraryjars ${java.home}/lib
+        -libraryjars ${java.home}/${java.library.dir}
 
         -dontoptimize
         -dontobfuscate
@@ -658,8 +661,7 @@ Build-Date: ${build.tstamp}
         -dontnote
         </proguard>
     </target>
-    <!-- Proguard does not support Java 9 : http://sourceforge.net/p/proguard/bugs/551/ -->
-    <target name="dist-optimized-report" depends="dist-optimized" unless="isJava9">
+    <target name="dist-optimized-report" depends="dist-optimized">
         <!-- generate difference report between optimized jar and normal one -->
         <exec executable="perl" dir="${basedir}">
             <arg value="${tools.dir}/japicc/japi-compliance-checker.pl"/>
@@ -706,6 +708,10 @@ Build-Date: ${build.tstamp}
                 <linecontainsregexp negate="true">
                     <regexp pattern="${deprecated-plugins}"/>
                 </linecontainsregexp>
+                <linecontainsregexp negate="true" unless:set="isJava10">
+                    <!-- Skip openjfx on Java 8/9, built for Java 10+ only -->
+                    <regexp pattern="openjfx"/>
+                </linecontainsregexp>
                 <tokenfilter>
                     <replaceregex pattern="^.*;" replace="" flags="gi"/>
                 </tokenfilter>
@@ -742,9 +748,10 @@ Build-Date: ${build.tstamp}
         <as:build-signatures destfile="${dir}/api.sig">
             <path>
                 <fileset file="${dist-optimized.jar}"/>
-                <fileset file="${java.home}/lib/rt.jar"/>
-                <fileset file="${java.home}/lib/jce.jar"/>
-                <fileset file="${java.home}/lib/ext/jfxrt.jar"/>
+                <fileset file="${java.home}/lib/rt.jar" unless:set="isJava9"/>
+                <fileset file="${java.home}/lib/jce.jar" unless:set="isJava9"/>
+                <fileset file="${java.home}/lib/ext/jfxrt.jar" unless:set="isJava9"/>
+                <fileset dir="${java.home}/jmods" if:set="isJava9"/>
             </path>
         </as:build-signatures>
         <as:check-signature signature="${dir}/api.sig" failonerror="false">
@@ -805,9 +812,11 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.zeromq.*"/>
             <!-- plugins used by another ones -->
             <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.jaxb.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jna.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jts.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.log4j.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.openjfx.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.utilsplugin2.*"/>
             <ignore classname="sun.*"/>
             <path path="${dir}"/>
