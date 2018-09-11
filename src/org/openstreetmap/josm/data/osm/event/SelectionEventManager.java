@@ -8,11 +8,9 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -45,41 +43,6 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
 
     private interface ListenerInfo {
         void fire(SelectionChangeEvent event);
-    }
-
-    /**
-     * @deprecated to be removed
-     */
-    @Deprecated
-    private static class OldListenerInfo implements ListenerInfo {
-        private final SelectionChangedListener listener;
-
-        OldListenerInfo(SelectionChangedListener listener) {
-            this.listener = listener;
-        }
-
-        @Override
-        public void fire(SelectionChangeEvent event) {
-            listener.selectionChanged(event.getSelection());
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(listener);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            OldListenerInfo that = (OldListenerInfo) o;
-            return Objects.equals(listener, that.listener);
-        }
-
-        @Override
-        public String toString() {
-            return "OldListenerInfo [listener=" + listener + ']';
-        }
     }
 
     private static class DataListenerInfo implements ListenerInfo {
@@ -127,26 +90,6 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
     }
 
     /**
-     * Registers a new {@code SelectionChangedListener}.
-     *
-     * It is preferred to add a DataSelectionListener - that listener will receive more information about the event.
-     * @param listener listener to add
-     * @param fireMode Set this to IN_EDT_CONSOLIDATED if you want the event to be fired in the EDT thread.
-     *                 Set it to IMMEDIATELY if you want the event to fire in the thread that caused the selection update.
-     * @deprecated Use {@link #addSelectionListener(DataSelectionListener)} or {@link #addSelectionListenerForEdt(DataSelectionListener)}
-     */
-    @Deprecated
-    public void addSelectionListener(SelectionChangedListener listener, FireMode fireMode) {
-        if (fireMode == FireMode.IN_EDT) {
-            throw new UnsupportedOperationException("IN_EDT mode not supported, you probably want to use IN_EDT_CONSOLIDATED.");
-        } else if (fireMode == FireMode.IN_EDT_CONSOLIDATED) {
-            inEDTListeners.addIfAbsent(new OldListenerInfo(listener));
-        } else {
-            immedatelyListeners.addIfAbsent(new OldListenerInfo(listener));
-        }
-    }
-
-    /**
      * Adds a selection listener that gets notified for selections immediately.
      * @param listener The listener to add.
      * @since 12098
@@ -163,16 +106,6 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      */
     public void addSelectionListenerForEdt(DataSelectionListener listener) {
         inEDTListeners.addIfAbsent(new DataListenerInfo(listener));
-    }
-
-    /**
-     * Unregisters a {@code SelectionChangedListener}.
-     * @param listener listener to remove
-     * @deprecated use {@link #removeSelectionListener(DataSelectionListener)}
-     */
-    @Deprecated
-    public void removeSelectionListener(SelectionChangedListener listener) {
-        remove(new OldListenerInfo(listener));
     }
 
     /**

@@ -66,16 +66,8 @@ import java.util.zip.ZipFile;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.validation.SchemaFactory;
 
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -1329,76 +1321,6 @@ public final class Utils {
             }
         }
         return null;
-    }
-
-    /**
-     * Returns the W3C XML Schema factory implementation. Robust method dealing with ContextClassLoader problems.
-     * @return the W3C XML Schema factory implementation
-     * @deprecated Use {@link XmlUtils#newXmlSchemaFactory}
-     * @since 13715
-     */
-    @Deprecated
-    public static SchemaFactory newXmlSchemaFactory() {
-        return XmlUtils.newXmlSchemaFactory();
-    }
-
-    /**
-     * Returns a new secure DOM builder, supporting XML namespaces.
-     * @return a new secure DOM builder, supporting XML namespaces
-     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
-     * @deprecated Use {@link XmlUtils#newSafeDOMBuilder}
-     * @since 10404
-     */
-    @Deprecated
-    public static DocumentBuilder newSafeDOMBuilder() throws ParserConfigurationException {
-        return XmlUtils.newSafeDOMBuilder();
-    }
-
-    /**
-     * Parse the content given {@link InputStream} as XML.
-     * This method uses a secure DOM builder, supporting XML namespaces.
-     *
-     * @param is The InputStream containing the content to be parsed.
-     * @return the result DOM document
-     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
-     * @throws IOException if any IO errors occur.
-     * @throws SAXException for SAX errors.
-     * @deprecated Use {@link XmlUtils#parseSafeDOM}
-     * @since 10404
-     */
-    @Deprecated
-    public static Document parseSafeDOM(InputStream is) throws ParserConfigurationException, IOException, SAXException {
-        return XmlUtils.parseSafeDOM(is);
-    }
-
-    /**
-     * Returns a new secure SAX parser, supporting XML namespaces.
-     * @return a new secure SAX parser, supporting XML namespaces
-     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
-     * @throws SAXException for SAX errors.
-     * @deprecated Use {@link XmlUtils#newSafeSAXParser}
-     * @since 8287
-     */
-    @Deprecated
-    public static SAXParser newSafeSAXParser() throws ParserConfigurationException, SAXException {
-        return XmlUtils.newSafeSAXParser();
-    }
-
-    /**
-     * Parse the content given {@link org.xml.sax.InputSource} as XML using the specified {@link org.xml.sax.helpers.DefaultHandler}.
-     * This method uses a secure SAX parser, supporting XML namespaces.
-     *
-     * @param is The InputSource containing the content to be parsed.
-     * @param dh The SAX DefaultHandler to use.
-     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
-     * @throws SAXException for SAX errors.
-     * @throws IOException if any IO errors occur.
-     * @deprecated Use {@link XmlUtils#parseSafeSAX}
-     * @since 8347
-     */
-    @Deprecated
-    public static void parseSafeSAX(InputSource is, DefaultHandler dh) throws ParserConfigurationException, SAXException, IOException {
-        XmlUtils.parseSafeSAX(is, dh);
     }
 
     /**

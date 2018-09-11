@@ -11,10 +11,8 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -26,19 +24,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Michael Zangl
  * @since 12048
  */
-@SuppressWarnings("deprecation")
 public class SelectionEventManagerTest {
-    private final class SelectionListener implements SelectionChangedListener, DataSelectionListener {
+    private final class SelectionListener implements DataSelectionListener {
         private Collection<? extends OsmPrimitive> newSelection;
         private final String name;
 
         SelectionListener(String name) {
             this.name = name;
-        }
-
-        @Override
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            this.newSelection = newSelection;
         }
 
         @Override
@@ -64,16 +56,12 @@ public class SelectionEventManagerTest {
         MainApplication.getLayerManager().setActiveLayer(testData1.layer);
         assertEquals(testData1.layer, MainApplication.getLayerManager().getEditLayer());
 
-        SelectionListener listener1 = new SelectionListener("IMMEDIATELY");
-        SelectionListener listener2 = new SelectionListener("IN_EDT_CONSOLIDATED");
         SelectionListener listener3 = new SelectionListener("normal");
         SelectionListener listener4 = new SelectionListener("edt");
         SelectionEventManager instance = SelectionEventManager.getInstance();
-        instance.addSelectionListener(listener1, FireMode.IMMEDIATELY);
-        instance.addSelectionListener(listener2, FireMode.IN_EDT_CONSOLIDATED);
         instance.addSelectionListener(listener3);
         instance.addSelectionListenerForEdt(listener4);
-        List<SelectionListener> listeners = Arrays.asList(listener1, listener2, listener3, listener4);
+        List<SelectionListener> listeners = Arrays.asList(listener3, listener4);
         assertSelectionEquals(listeners, null);
 
         // active layer, should change
@@ -98,10 +86,8 @@ public class SelectionEventManagerTest {
         assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList(testData2.existingNode)));
 
         // removal
-        instance.removeSelectionListener((SelectionChangedListener) listener1);
-        instance.removeSelectionListener((SelectionChangedListener) listener2);
-        instance.removeSelectionListener((DataSelectionListener) listener3);
-        instance.removeSelectionListener((DataSelectionListener) listener4);
+        instance.removeSelectionListener(listener3);
+        instance.removeSelectionListener(listener4);
 
         // no event triggered now
         testData2.layer.getDataSet().setSelected(testData2.existingNode2.getPrimitiveId());
