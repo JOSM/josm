@@ -966,7 +966,10 @@ public class TagEditHelper {
                         public void mouseClicked(MouseEvent e) {
                             action.actionPerformed(null);
                             if (SwingUtilities.isRightMouseButton(e)) {
-                                new TagPopupMenu(t).show(e.getComponent(), e.getX(), e.getY());
+                                Component component = e.getComponent();
+                                if (component.isShowing()) {
+                                    new TagPopupMenu(t).show(component, e.getX(), e.getY());
+                                }
                             } else if (e.isShiftDown()) {
                                 // add tags on Shift-Click
                                 performTagAdding();

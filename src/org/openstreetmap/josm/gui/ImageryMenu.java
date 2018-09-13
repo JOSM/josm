@@ -71,7 +71,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
                 if (c instanceof JMenuItem) {
                     ((JMenuItem) c).getAction().actionPerformed(e);
                 } else {
-                    if (source == null) return;
+                    if (source == null || !source.isShowing()) return;
                     popup.show(source, source.getWidth()/2, source.getHeight()/2);
                 }
                 return;

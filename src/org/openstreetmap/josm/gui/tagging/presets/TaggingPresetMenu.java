@@ -105,7 +105,9 @@ public class TaggingPresetMenu extends TaggingPreset {
                 if (pointerInfo != null) {
                     Point p = pointerInfo.getLocation();
                     MainFrame parent = MainApplication.getMainFrame();
-                    pm.show(parent, p.x-parent.getX(), p.y-parent.getY());
+                    if (parent.isShowing()) {
+                        pm.show(parent, p.x-parent.getX(), p.y-parent.getY());
+                    }
                 }
             } catch (SecurityException ex) {
                 Logging.log(Logging.LEVEL_ERROR, "Unable to get mouse pointer info", ex);

@@ -143,12 +143,14 @@ public class PopupMenuButton extends JButton implements ActionListener {
      * @param m Menu to show when button is triggered
      */
     public void setPopupMenu(JPopupMenu m) {
-        this.menu = m;
+        menu = m;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        this.menu.show(this, 0, this.getHeight());
+        if (isShowing()) {
+            menu.show(this, 0, this.getHeight());
+        }
     }
 
     @Override
