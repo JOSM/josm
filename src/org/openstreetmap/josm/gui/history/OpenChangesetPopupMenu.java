@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
@@ -45,8 +46,11 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
      * @param parent the parent component to use for positioning this menu
      */
     public void show(final JComponent parent) {
-        final Rectangle r = parent.getBounds();
-        show(parent.getParent(), r.x, r.y + r.height);
+        Container parentParent = parent.getParent();
+        if (parentParent.isShowing()) {
+            final Rectangle r = parent.getBounds();
+            show(parentParent, r.x, r.y + r.height);
+        }
     }
 
     private static final List<ChangesetViewerEntry> DEFAULT_ENTRIES = Arrays.asList(

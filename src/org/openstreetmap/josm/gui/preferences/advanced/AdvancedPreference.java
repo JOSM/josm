@@ -172,8 +172,11 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         p.add(more, GBC.std().insets(5, 5, 0, 0));
         more.addActionListener(new ActionListener() {
             private JPopupMenu menu = buildPopupMenu();
-            @Override public void actionPerformed(ActionEvent ev) {
-                menu.show(more, 0, 0);
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                if (more.isShowing()) {
+                    menu.show(more, 0, 0);
+                }
             }
         });
     }

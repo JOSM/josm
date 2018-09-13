@@ -158,8 +158,10 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
         }
 
         static void launch(Component parent, KeyStroke keystroke) {
-            Rectangle r = parent.getBounds();
-            new RecentRelationsPopupMenu(getRecentRelationsOnActiveLayer(), keystroke).show(parent, r.x, r.y + r.height);
+            if (parent.isShowing()) {
+                Rectangle r = parent.getBounds();
+                new RecentRelationsPopupMenu(getRecentRelationsOnActiveLayer(), keystroke).show(parent, r.x, r.y + r.height);
+            }
         }
     }
 

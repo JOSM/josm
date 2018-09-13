@@ -322,11 +322,15 @@ public final class UserQueryList extends SearchTextResultListPanel<UserQueryList
 
                 if (model.getSize() == 0 || index == -1) {
                     list.clearSelection();
-                    emptySelectionPopup.show(list, e.getX(), e.getY());
+                    if (list.isShowing()) {
+                        emptySelectionPopup.show(list, e.getX(), e.getY());
+                    }
                 } else {
                     list.setSelectedIndex(index);
                     list.ensureIndexIsVisible(index);
-                    elementPopup.show(list, e.getX(), e.getY());
+                    if (list.isShowing()) {
+                        elementPopup.show(list, e.getX(), e.getY());
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -190,7 +191,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         public void mouseClicked(MouseEvent e) {
             if (!isVisible()) return;
             if (e.getButton() == MouseEvent.BUTTON3) {
-                new TileSourceLayerPopup(e.getX(), e.getY()).show(e.getComponent(), e.getX(), e.getY());
+                Component component = e.getComponent();
+                if (component.isShowing()) {
+                    new TileSourceLayerPopup(e.getX(), e.getY()).show(component, e.getX(), e.getY());
+                }
             } else if (e.getButton() == MouseEvent.BUTTON1) {
                 attribution.handleAttribution(e.getPoint(), true);
             }

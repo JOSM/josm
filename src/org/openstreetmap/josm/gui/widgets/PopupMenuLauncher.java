@@ -108,7 +108,10 @@ public class PopupMenuLauncher extends MouseAdapter {
 
     protected void showMenu(MouseEvent evt) {
         if (menu != null && evt != null) {
-            menu.show(evt.getComponent(), evt.getX(), evt.getY());
+            Component component = evt.getComponent();
+            if (component.isShowing()) {
+                menu.show(component, evt.getX(), evt.getY());
+            }
         }
     }
 

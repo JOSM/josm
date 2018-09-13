@@ -34,6 +34,7 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.IEnabledStateUpdating;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
@@ -112,13 +113,16 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
     public void actionPerformed(ActionEvent e) {
         updateValues();
         if (e.getSource() == sideButton) {
-            popup.show(sideButton, 0, sideButton.getHeight());
+            if (sideButton.isShowing()) {
+                popup.show(sideButton, 0, sideButton.getHeight());
+            }
         } else {
             // Action can be trigger either by opacity button or by popup menu (in case toggle buttons are hidden).
             // In that case, show it in the middle of screen (because opacityButton is not visible)
-            popup.show(MainApplication.getMainFrame(),
-                    MainApplication.getMainFrame().getWidth() / 2,
-                    (MainApplication.getMainFrame().getHeight() - popup.getHeight()) / 2);
+            MainFrame mainFrame = MainApplication.getMainFrame();
+            if (mainFrame.isShowing()) {
+                popup.show(mainFrame, mainFrame.getWidth() / 2, (mainFrame.getHeight() - popup.getHeight()) / 2);
+            }
         }
     }
 
