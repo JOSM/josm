@@ -408,6 +408,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
 
     @Override
     public void destroy() {
+        DatasetEventManager.getInstance().removeDatasetListener(this);
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (ds != null) {
             ds.removeDataSetListener(this);

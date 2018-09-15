@@ -538,6 +538,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 });
                 dialog.setVisible(true);
                 if (!dialog.isApplied()) {
+                    dialog.dispose();
                     return new UserCancelException();
                 }
 
@@ -546,6 +547,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                     dialog.setTargetPrimitive(i, false);
                     cmds.addAll(dialog.buildResolutionCommands());
                 }
+                dialog.dispose();
                 return null;
             });
             if (canceled != null) {
@@ -630,5 +632,11 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 .map(x -> (x == null || x.isEmpty()) ? tr("<i>missing</i>") : x)
                 .collect(Collectors.joining(tr(", ")));
         return tr("{0} ({1})", key, values);
+    }
+
+    @Override
+    public void dispose() {
+        setTargetPrimitive(null, false);
+        super.dispose();
     }
 }
