@@ -760,9 +760,11 @@ public class SelectionListDialog extends ToggleDialog {
         public static void launch(Component parent) {
             if (org.openstreetmap.josm.actions.search.SearchAction.getSearchHistory().isEmpty())
                 return;
-            JPopupMenu menu = new SearchPopupMenu();
-            Rectangle r = parent.getBounds();
-            menu.show(parent, r.x, r.y + r.height);
+            if (parent.isShowing()) {
+                JPopupMenu menu = new SearchPopupMenu();
+                Rectangle r = parent.getBounds();
+                menu.show(parent, r.x, r.y + r.height);
+            }
         }
 
         /**
@@ -840,9 +842,11 @@ public class SelectionListDialog extends ToggleDialog {
     protected static class SelectionHistoryPopup extends JPopupMenu {
         public static void launch(Component parent, Collection<Collection<? extends OsmPrimitive>> history) {
             if (history == null || history.isEmpty()) return;
-            JPopupMenu menu = new SelectionHistoryPopup(history);
-            Rectangle r = parent.getBounds();
-            menu.show(parent, r.x, r.y + r.height);
+            if (parent.isShowing()) {
+                JPopupMenu menu = new SelectionHistoryPopup(history);
+                Rectangle r = parent.getBounds();
+                menu.show(parent, r.x, r.y + r.height);
+            }
         }
 
         public SelectionHistoryPopup(Collection<Collection<? extends OsmPrimitive>> history) {
