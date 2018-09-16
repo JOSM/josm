@@ -998,7 +998,6 @@ Build-Date: ${build.tstamp}
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-actions.jar" includes="org/openstreetmap/josm/actions/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-cli.jar" includes="org/openstreetmap/josm/cli/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-command.jar" includes="org/openstreetmap/josm/command/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-corrector.jar" includes="org/openstreetmap/josm/corrector/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-data.jar" includes="org/openstreetmap/josm/data/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-gui.jar" includes="org/openstreetmap/josm/gui/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-io.jar" includes="org/openstreetmap/josm/io/**/*.class"/>
