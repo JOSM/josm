@@ -609,7 +609,7 @@ Build-Date: ${build.tstamp}
             <html destdir="${test.dir}/report/jacoco"/>
         </jacoco:report>
     </target>
-    <target name="dist-optimized" depends="dist">
+    <target name="dist-optimized" depends="dist" unless="isJava11">
         <taskdef resource="proguard/ant/task.properties" classpath="${tools.dir}/proguard.jar"/>
         <proguard>
         -injars ${dist.jar}
@@ -674,7 +674,7 @@ Build-Date: ${build.tstamp}
             <arg value="${dist-optimized.jar}"/>
         </exec>
     </target>
-    <target name="check-plugins" depends="dist-optimized" description="Check of plugins binary compatibility">
+    <target name="check-plugins" depends="dist-optimized" description="Check of plugins binary compatibility" unless="isJava11">
         <local name="dir"/>
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
