@@ -705,13 +705,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      */
     public void clean() {
         setUploadedPrimitives(null);
-        pnlBasicUploadSettings = null;
-        pnlChangesetManagement = null;
-        pnlTagSettings = null;
-        pnlUploadedObjects = null;
-        pnlUploadStrategySelectionPanel = null;
-        tpConfigPanels = null;
-        btnUpload = null;
         dataSet = null;
     }
 }
