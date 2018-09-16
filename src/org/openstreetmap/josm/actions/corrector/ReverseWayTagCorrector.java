@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.corrector;
+package org.openstreetmap.josm.actions.corrector;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
