@@ -258,8 +258,10 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      */
     public void setUploadedPrimitives(APIDataSet toUpload) {
         if (toUpload == null) {
-            List<OsmPrimitive> emptyList = Collections.emptyList();
-            pnlUploadedObjects.setUploadedPrimitives(emptyList, emptyList, emptyList);
+            if (pnlUploadedObjects != null) {
+                List<OsmPrimitive> emptyList = Collections.emptyList();
+                pnlUploadedObjects.setUploadedPrimitives(emptyList, emptyList, emptyList);
+            }
             return;
         }
         pnlUploadedObjects.setUploadedPrimitives(
@@ -697,4 +699,19 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         tpConfigPanels.setSelectedIndex(0);
     }
 
+    /**
+     * Clean dialog state and release resources.
+     * @since 14251
+     */
+    public void clean() {
+        setUploadedPrimitives(null);
+        pnlBasicUploadSettings = null;
+        pnlChangesetManagement = null;
+        pnlTagSettings = null;
+        pnlUploadedObjects = null;
+        pnlUploadStrategySelectionPanel = null;
+        tpConfigPanels = null;
+        btnUpload = null;
+        dataSet = null;
+    }
 }

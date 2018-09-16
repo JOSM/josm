@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -245,16 +246,20 @@ public class UploadAction extends JosmAction {
         dialog.setUploadedPrimitives(apiData);
         dialog.setVisible(true);
         dialog.rememberUserInput();
-        if (dialog.isCanceled())
+        if (dialog.isCanceled()) {
+            dialog.clean();
             return;
+        }
 
         for (UploadHook hook : LATE_UPLOAD_HOOKS) {
-            if (!hook.checkUpload(apiData))
+            if (!hook.checkUpload(apiData)) {
+                dialog.clean();
                 return;
+            }
         }
 
         // Any hooks want to change the changeset tags?
-        Changeset cs = UploadDialog.getUploadDialog().getChangeset();
+        Changeset cs = dialog.getChangeset();
         Map<String, String> changesetTags = cs.getKeys();
         for (UploadHook hook : UPLOAD_HOOKS) {
             hook.modifyChangesetTags(changesetTags);
@@ -263,23 +268,18 @@ public class UploadAction extends JosmAction {
             hook.modifyChangesetTags(changesetTags);
         }
 
+        UploadStrategySpecification uploadStrategySpecification = dialog.getUploadStrategySpecification();
+        dialog.clean();
+
         if (Config.getPref().getBoolean(IS_ASYNC_UPLOAD_ENABLED, true)) {
             Optional<AsynchronousUploadPrimitivesTask> asyncUploadTask = AsynchronousUploadPrimitivesTask.createAsynchronousUploadTask(
-                    UploadDialog.getUploadDialog().getUploadStrategySpecification(),
-                    layer,
-                    apiData,
-                    cs);
+                    uploadStrategySpecification, layer, apiData, cs);
 
             if (asyncUploadTask.isPresent()) {
                 MainApplication.worker.execute(asyncUploadTask.get());
             }
         } else {
-            MainApplication.worker.execute(
-                    new UploadPrimitivesTask(
-                            UploadDialog.getUploadDialog().getUploadStrategySpecification(),
-                            layer,
-                            apiData,
-                            cs));
+            MainApplication.worker.execute(new UploadPrimitivesTask(uploadStrategySpecification, layer, apiData, cs));
         }
     }
 
