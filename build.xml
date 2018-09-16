@@ -995,7 +995,6 @@ Build-Date: ${build.tstamp}
         <delete dir="${modules.dir}"/>
         <mkdir dir="${modules.dir}"/>
         <!-- JOSM only -->
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-main.jar" includes="org/openstreetmap/josm/Main.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-actions.jar" includes="org/openstreetmap/josm/actions/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-cli.jar" includes="org/openstreetmap/josm/cli/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-command.jar" includes="org/openstreetmap/josm/command/**/*.class"/>
