@@ -154,7 +154,6 @@ public class JOSMFixture {
             || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org");
     }
 
-    @SuppressWarnings("deprecation")
     private void setupGUI() {
         JOSMTestRules.cleanLayerEnvironment();
         assertTrue(MainApplication.getLayerManager().getLayers().isEmpty());
@@ -164,7 +163,7 @@ public class JOSMFixture {
         initContentPane();
         initMainPanel(false);
         initToolbar();
-        if (Main.main == null) {
+        if (MainApplication.getMenu() == null) {
             Lifecycle.initialize(new MainInitialization(new MainApplication()));
         }
         // Add a test layer to the layer manager to get the MapFrame

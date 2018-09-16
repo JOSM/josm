@@ -87,10 +87,6 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.OsmDataManager;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
@@ -172,8 +168,7 @@ import org.xml.sax.SAXException;
  *
  * @author imi
  */
-@SuppressWarnings("deprecation")
-public class MainApplication extends org.openstreetmap.josm.Main {
+public class MainApplication {
 
     /**
      * Command-line arguments used to run the application.
@@ -415,60 +410,6 @@ public class MainApplication extends org.openstreetmap.josm.Main {
      */
     public static MainFrame getMainFrame() {
         return mainFrame;
-    }
-
-    /**
-     * @deprecated Use {@code OsmDataManager.getInstance().getInProgressSelection()}
-     */
-    @Deprecated
-    @Override
-    public Collection<OsmPrimitive> getInProgressSelection() {
-        return OsmDataManager.getInstance().getInProgressSelection();
-    }
-
-    /**
-     * @deprecated Use {@code OsmDataManager.getInstance().getInProgressSelection()}
-     */
-    @Deprecated
-    @Override
-    public Collection<? extends IPrimitive> getInProgressISelection() {
-        return OsmDataManager.getInstance().getInProgressSelection();
-    }
-
-    /**
-     * @deprecated Use {@code OsmDataManager.getInstance().getEditDataSet()}
-     */
-    @Deprecated
-    @Override
-    public DataSet getEditDataSet() {
-        return OsmDataManager.getInstance().getEditDataSet();
-    }
-
-    /**
-     * @deprecated Use {@code OsmDataManager.getInstance().getActiveDataSet()}
-     */
-    @Deprecated
-    @Override
-    public DataSet getActiveDataSet() {
-        return OsmDataManager.getInstance().getActiveDataSet();
-    }
-
-    /**
-     * @deprecated Use {@code OsmDataManager.getInstance().setActiveDataSet}
-     */
-    @Deprecated
-    @Override
-    public void setActiveDataSet(DataSet ds) {
-        OsmDataManager.getInstance().setActiveDataSet(ds);
-    }
-
-    /**
-     * @deprecated Use {@code OsmDataManager.getInstance().containsDataSet}
-     */
-    @Deprecated
-    @Override
-    public boolean containsDataSet(DataSet ds) {
-        return getLayerManager().getLayersOfType(OsmDataLayer.class).stream().anyMatch(l -> l.data.equals(ds));
     }
 
     /**
@@ -880,7 +821,6 @@ public class MainApplication extends org.openstreetmap.josm.Main {
             contentPanePrivate = (JComponent) contentPane;
         }
         mainPanel = mainFrame.getPanel();
-        org.openstreetmap.josm.Main.parent = mainFrame;
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
             XMLCommandProcessor config = new XMLCommandProcessor(prefs);
