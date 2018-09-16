@@ -39,14 +39,6 @@
         <Class name="org.openstreetmap.josm.tools.CopyList" />
     </Match>
     <Match>
-        <Bug pattern="MS_CANNOT_BE_FINAL" />
-        <Class name="org.openstreetmap.josm.Main" />
-    </Match>
-    <Match>
-        <Bug pattern="MS_SHOULD_BE_FINAL" />
-        <Class name="org.openstreetmap.josm.Main" />
-    </Match>
-    <Match>
         <Bug pattern="SF_SWITCH_FALLTHROUGH" />
         <Class name="org.openstreetmap.josm.data.projection.proj.AzimuthalEquidistant" />
     </Match>
