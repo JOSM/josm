@@ -65,7 +65,6 @@ public class FeaturesPanel extends JPanel {
         intervalLabel.setEnabled(enabled);
         notifierInterval.setEnabled(enabled);
         notifierInterval.setEditable(enabled);
-        notesDaysClosed.setEditable(enabled);
     }
 
     /**
