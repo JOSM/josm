@@ -23,7 +23,7 @@ public class WMSCachedTileLoader extends TMSCachedTileLoader {
     public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.wms.loader.maxjobs", 3);
 
     /**
-     * Creates a TileLoader with separate WMS downloader.
+     * Creates a TileLoader with separate WMS download thread pool.
      *
      * @param listener that will be notified when tile is loaded
      * @param cache reference
