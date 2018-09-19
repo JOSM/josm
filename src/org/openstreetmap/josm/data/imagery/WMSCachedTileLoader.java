@@ -33,7 +33,9 @@ public class WMSCachedTileLoader extends TMSCachedTileLoader {
             TileJobOptions options) {
 
         super(listener, cache, options);
-        setDownloadExecutor(TMSCachedTileLoader.getNewThreadPoolExecutor("WMS-downloader-%d", THREAD_LIMIT.get()));
+        // use WMS specific maximum number of download threads and use the same value for concurrent downloads per host
+        // for each layer use separate thread pool so the limit set in preferences is per imagery
+        setDownloadExecutor(TMSCachedTileLoader.getNewThreadPoolExecutor("WMS-downloader-%d", THREAD_LIMIT.get(), THREAD_LIMIT.get()));
     }
 
     @Override
