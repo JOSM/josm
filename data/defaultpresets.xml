@@ -5093,7 +5093,7 @@
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:tourism=artwork" />
             <space />
             <key key="tourism" value="artwork" />
-            <combo key="artwork_type" text="Type" values="architecture,mural,painting,sculpture,statue,bust,stone,installation,graffiti" />
+            <combo key="artwork_type" text="Type" values="architecture,mural,painting,sculpture,statue,bust,stone,installation,graffiti" values_searchable="true" />
             <text key="name" text="Name" />
             <text key="artwork_subject" text="Subject" />
             <text key="artist_name" text="Artist Name" />
