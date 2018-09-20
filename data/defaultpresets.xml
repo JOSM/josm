@@ -6028,7 +6028,7 @@
                 <combo key="display" text="Display" values="analog,digital,sundial,unorthodox" />
                 <reference ref="support" />
                 <combo key="faces" text="Faces" text_context="clock" values="1,2,3,4" />
-                <combo key="visibility" text="Visibility/readability" values="house,street,area" display_values="house (up to 5m),street (up to 20m),area (more than 20m)" />
+                <combo key="visibility" text="Visibility/readability" values="house,street,area" display_values="house (up to 5m),street (up to 20m),area (more than 20m)" values_sort="false" />
                 <check key="date" text="Shows current date" />
                 <check key="thermometer" text="Shows temperature" />
                 <check key="barometer" text="Shows barometric pressure" />
