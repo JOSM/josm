@@ -365,7 +365,7 @@ public class OsmReader extends AbstractReader {
      * @param printWarning if {@code true}, a warning message will be printed if an unknown element is met
      * @throws XMLStreamException if there is an error processing the underlying XML source
      */
-    private void jumpToEnd(boolean printWarning) throws XMLStreamException {
+    protected final void jumpToEnd(boolean printWarning) throws XMLStreamException {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -375,7 +375,7 @@ public class OsmReader extends AbstractReader {
         }
     }
 
-    private void jumpToEnd() throws XMLStreamException {
+    protected final void jumpToEnd() throws XMLStreamException {
         jumpToEnd(true);
     }
 
