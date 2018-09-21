@@ -23,7 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Enumeration;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 /**
  * Simple command line application that lists the contents of an archive.
@@ -49,6 +52,8 @@ public final class Lister {
         String format = args.length > 1 ? args[1] : detectFormat(f);
         if (ArchiveStreamFactory.SEVEN_Z.equalsIgnoreCase(format)) {
             list7z(f);
+        } else if ("zipfile".equals(format)) {
+            listZipUsingZipFile(f);
         } else {
             listStream(f, args);
         }
@@ -89,8 +94,18 @@ public final class Lister {
         }
     }
 
+    private static void listZipUsingZipFile(File f) throws ArchiveException, IOException {
+        try (ZipFile z = new ZipFile(f)) {
+            System.out.println("Created " + z.toString());
+            for (Enumeration<ZipArchiveEntry> en = z.getEntries(); en.hasMoreElements(); ) {
+                System.out.println(en.nextElement().getName());
+            }
+        }
+    }
+
     private static void usage() {
-        System.out.println("Parameters: archive-name [archive-type]");
+        System.out.println("Parameters: archive-name [archive-type]\n");
+        System.out.println("the magic archive-type 'zipfile' prefers ZipFile over ZipArchiveInputStream");
     }
 
 }
