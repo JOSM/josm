@@ -112,6 +112,7 @@ public class OsmChangeReader extends OsmReader {
                 switch (parser.getLocalName()) {
                 case "comment":
                     text = parser.getAttributeValue(null, "text");
+                    jumpToEnd();
                     break;
                 default:
                     parseUnknown();
