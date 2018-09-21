@@ -302,7 +302,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             success = false;
             tile.setImage(null);
         }
-        tile.setLoaded(success);
         invalidateLater();
         Logging.debug("tileLoadingFinished() tile: {0} success: {1}", tile, success);
     }
@@ -460,6 +459,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
                     }
                 }
+                content.add(Arrays.asList(tr("Status:"), tr(tile.getStatus())));
+                content.add(Arrays.asList(tr("Loaded:"), tr(Boolean.toString(tile.isLoaded()))));
+                content.add(Arrays.asList(tr("Loading:"), tr(Boolean.toString(tile.isLoading()))));
+                content.add(Arrays.asList(tr("Error:"), tr(Boolean.toString(tile.hasError()))));
                 for (List<String> entry: content) {
                     panel.add(new JLabel(entry.get(0) + ':'), GBC.std());
                     panel.add(GBC.glue(5, 0), GBC.std());
@@ -888,7 +891,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private boolean loadTile(Tile tile, boolean force) {
         if (tile == null)
             return false;
-        if (!force && (tile.isLoaded() || tile.hasError()))
+        if (!force && tile.isLoaded())
             return false;
         if (tile.isLoading())
             return false;

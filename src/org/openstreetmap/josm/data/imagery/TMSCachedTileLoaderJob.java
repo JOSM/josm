@@ -180,18 +180,14 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 if (attributes != null) {
                     int httpStatusCode = attributes.getResponseCode();
                     if (httpStatusCode >= 400 && !isNoTileAtZoom()) {
-                        if (attributes.getErrorMessage() == null) {
-                            tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
-                        } else {
-                            tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
-                        }
                         status = false;
+                        handleError(attributes);
                     }
                 }
                 status &= tryLoadTileImage(object); //try to keep returned image as background
                 break;
             case FAILURE:
-                tile.setError("Problem loading tile");
+                handleError(attributes);
                 tryLoadTileImage(object);
                 break;
             case CANCELED:
@@ -214,6 +210,24 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                     l.tileLoadingFinished(tile, false);
                 }
             }
+        }
+    }
+
+    private void handleError(CacheEntryAttributes attributes) {
+        if (attributes != null) {
+            int httpStatusCode = attributes.getResponseCode();
+            if (attributes.getErrorMessage() == null) {
+                tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
+            } else {
+                tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
+            }
+            if (httpStatusCode >= 500 && httpStatusCode != 599) {
+                // httpStatusCode = 599 is set by JCSCachedTileLoaderJob on IOException
+                tile.setLoaded(false); // treat 500 errors as temporary and try to load it again
+            }
+        } else {
+            tile.setError(tr("Problem loading tile"));
+            // treat unknown errors as permanent and do not try to load tile again
         }
     }
 
