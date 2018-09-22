@@ -391,6 +391,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             Logging.debug("JCS - Caching empty object as server returned 404 for: {0}", getUrlNoException());
             attributes.setResponseCode(404);
             attributes.setError(e);
+            attributes.setException(e);
             boolean doCache = isResponseLoadable(null, 404, null) || cacheAsEmpty();
             if (doCache) {
                 cacheData = createCacheEntry(new byte[]{});
@@ -403,12 +404,14 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return true;
             } else {
                 attributes.setError(e);
+                attributes.setException(e);
                 attributes.setResponseCode(599); // set dummy error code, greater than 500 so it will be not cached
                 return false;
             }
 
         } catch (InterruptedException e) {
             attributes.setError(e);
+            attributes.setException(e);
             Logging.logWithStackTrace(Logging.LEVEL_WARN, e, "JCS - Exception during download {0}", getUrlNoException());
             Thread.currentThread().interrupt();
         }

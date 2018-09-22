@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,6 +29,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     private static final String EXPIRATION_TIME = "expirationTime";
     private static final String HTTP_RESPONSE_CODE = "httpResponseCode";
     private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String EXCEPTION = "exception";
     // this contains all of the above
     private static final Set<String> RESERVED_KEYS = new HashSet<>(Arrays.asList(
         NO_TILE_AT_ZOOM,
@@ -35,7 +37,8 @@ public class CacheEntryAttributes extends ElementAttributes {
         LAST_MODIFICATION,
         EXPIRATION_TIME,
         HTTP_RESPONSE_CODE,
-        ERROR_MESSAGE
+        ERROR_MESSAGE,
+        EXCEPTION
     ));
 
     /**
@@ -193,5 +196,33 @@ public class CacheEntryAttributes extends ElementAttributes {
      */
     public void setErrorMessage(String message) {
         attrs.put(ERROR_MESSAGE, message);
+    }
+
+    /**
+     * @param e exception that caused error
+     *
+     */
+    public void setException(Exception e) {
+        attrs.put(EXCEPTION, e.getClass().getCanonicalName());
+    }
+
+    /**
+     * @return Optional exception that was thrown when fetching resource
+     *
+     */
+    public Optional<Class<? extends Exception>> getException() {
+        String className = attrs.get(EXCEPTION);
+        if (className == null) {
+            return Optional.empty();
+        }
+        try {
+            Class<?> klass = Class.forName(className);
+            if (Exception.class.isAssignableFrom(klass)) {
+                return Optional.of(klass.asSubclass(Exception.class));
+            }
+        } catch (ClassNotFoundException | ClassCastException ex) {
+            // NOOP
+        }
+        return Optional.empty();
     }
 }
