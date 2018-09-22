@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -225,6 +226,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 // httpStatusCode = 599 is set by JCSCachedTileLoaderJob on IOException
                 tile.setLoaded(false); // treat 500 errors as temporary and try to load it again
             }
+            // treat SocketTimeoutException as transient error
+            attributes.getException()
+            .filter(x -> x.isAssignableFrom(SocketTimeoutException.class))
+            .ifPresent(x -> tile.setLoaded(false));
         } else {
             tile.setError(tr("Problem loading tile"));
             // treat unknown errors as permanent and do not try to load tile again
