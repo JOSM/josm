@@ -221,7 +221,7 @@ public class CacheEntryAttributes extends ElementAttributes {
                 return Optional.of(klass.asSubclass(Exception.class));
             }
         } catch (ClassNotFoundException | ClassCastException ex) {
-            // NOOP
+            Logging.trace(ex);
         }
         return Optional.empty();
     }
