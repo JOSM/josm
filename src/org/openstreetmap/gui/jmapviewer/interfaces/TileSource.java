@@ -82,7 +82,6 @@ public interface TileSource extends Attributed {
 
     /**
      * @return default tile size, for this tile source
-     * TODO: @since
      */
     int getDefaultTileSize();
 
