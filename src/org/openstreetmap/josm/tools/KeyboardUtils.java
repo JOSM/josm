@@ -22,7 +22,7 @@ public final class KeyboardUtils {
 
     private static final Map<Integer, Integer> regularKeyCodesMap = new LinkedHashMap<>();
     static {
-        // http://hg.openjdk.java.net/jdk/jdk/file/fa2f93f99dbc/src/java.desktop/share/classes/sun/awt/ExtendedKeyCodes.java#l67
+        // https://hg.openjdk.java.net/jdk/jdk/file/fa2f93f99dbc/src/java.desktop/share/classes/sun/awt/ExtendedKeyCodes.java#l67
         regularKeyCodesMap.put(0x08, KeyEvent.VK_BACK_SPACE);
         regularKeyCodesMap.put(0x09, KeyEvent.VK_TAB);
         regularKeyCodesMap.put(0x0a, KeyEvent.VK_ENTER);
@@ -310,7 +310,7 @@ public final class KeyboardUtils {
      */
     public static Map<Integer, Character> getExtendedKeyCodes(Locale locale) {
         // Last update: 2017-09-12
-        // http://hg.openjdk.java.net/jdk/jdk/file/fa2f93f99dbc/src/java.desktop/share/classes/sun/awt/ExtendedKeyCodes.java#l166
+        // https://hg.openjdk.java.net/jdk/jdk/file/fa2f93f99dbc/src/java.desktop/share/classes/sun/awt/ExtendedKeyCodes.java#l166
         // Characters found at least on one keyboard layout
         Map<Integer, Character> map = new LinkedHashMap<>();
         // Add latin characters and symbols for everyone
