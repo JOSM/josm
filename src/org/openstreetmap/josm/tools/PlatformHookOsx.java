@@ -60,9 +60,9 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     @Override
     public void startupHook(JavaExpirationCallback callback) {
         // Here we register callbacks for the menu entries in the system menu and file opening through double-click
-        // http://openjdk.java.net/jeps/272
+        // https://openjdk.java.net/jeps/272
         // https://bugs.openjdk.java.net/browse/JDK-8048731
-        // http://cr.openjdk.java.net/~azvegint/jdk/9/8143227/10/jdk/
+        // https://cr.openjdk.java.net/~azvegint/jdk/9/8143227/10/jdk/
         // This method must be cleaned up after we switch to Java 9
         try {
             Class<?> eawtApplication = Class.forName("com.apple.eawt.Application");
