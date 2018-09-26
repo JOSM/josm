@@ -410,7 +410,7 @@ public class JOSMTestRules implements TestRule {
 
     /**
      * Set up before running a test
-     * @throws InitializationError If an error occured while creating the required environment.
+     * @throws InitializationError If an error occurred while creating the required environment.
      * @throws ReflectiveOperationException if a reflective access error occurs
      */
     protected void before() throws InitializationError, ReflectiveOperationException {

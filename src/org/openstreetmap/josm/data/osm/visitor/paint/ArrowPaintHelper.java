@@ -30,7 +30,7 @@ public class ArrowPaintHelper {
      * Paint the arrow
      * @param path The path to append the arrow to.
      * @param point The point to paint the tip at
-     * @param fromDirection The direction the line is comming from.
+     * @param fromDirection The direction the line is coming from.
      */
     public void paintArrowAt(MapPath2D path, MapViewPoint point, MapViewPoint fromDirection) {
         double x = point.getInViewX();

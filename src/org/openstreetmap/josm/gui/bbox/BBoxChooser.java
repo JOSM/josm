@@ -26,7 +26,7 @@ public interface BBoxChooser {
 
     /**
      * Replies the currently selected bounding box in this BBoxChooser.
-     * Replies null, if currently there isn't a bbox choosen in this
+     * Replies null, if currently there isn't a bbox chosen in this
      * BBoxChooser.
      *
      * @return the currently selected bounding box

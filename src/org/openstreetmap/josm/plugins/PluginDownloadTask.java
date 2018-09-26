@@ -212,8 +212,8 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Replies the last exception that occured during download, or {@code null}.
-     * @return the last exception that occured during download, or {@code null}
+     * Replies the last exception that occurred during download, or {@code null}.
+     * @return the last exception that occurred during download, or {@code null}
      * @since 9621
      */
     public Exception getLastException() {

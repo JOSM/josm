@@ -98,7 +98,7 @@ public abstract class AbstractMergeAction extends JosmAction {
      * @param title title of dialog
      * @param buttonText text of button used to select target layer
      * @param buttonIcon icon name of button used to select target layer
-     * @return choosen target layer
+     * @return chosen target layer
      */
     @SuppressWarnings("unchecked")
     public static <T extends Layer> T askTargetLayer(T[] targetLayers, String label, String title, String buttonText, String buttonIcon) {

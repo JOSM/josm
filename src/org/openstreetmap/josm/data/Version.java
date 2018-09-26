@@ -154,9 +154,9 @@ public class Version {
     }
 
     /**
-     * Replies true if this is a local build, i.e. an inofficial development build.
+     * Replies true if this is a local build, i.e. an unofficial development build.
      *
-     * @return true if this is a local build, i.e. an inofficial development build.
+     * @return true if this is a local build, i.e. an unofficial development build.
      */
     public boolean isLocalBuild() {
         return isLocalBuild;

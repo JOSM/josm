@@ -161,7 +161,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             boolean negative = (value & 0x80000000L) != 0;
             // Invert the sign bit, so that negative numbers are lower
             value ^= 0x80000000L;
-            // Now do the shift. Do it before accounting for negative numbers (symetry)
+            // Now do the shift. Do it before accounting for negative numbers (symmetry)
             if (totalBits < 32) {
                 value >>= (32 - totalBits);
             }

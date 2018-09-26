@@ -75,7 +75,7 @@ public class JosmUpdatePanel extends JPanel {
      * Display that there was an error while checking the current version.
      */
     private void displayError() {
-        testedVersionField.setText(tr("An error occured while checking if your JOSM instance is up to date."));
+        testedVersionField.setText(tr("An error occurred while checking if your JOSM instance is up to date."));
         showUpdateButton();
     }
 

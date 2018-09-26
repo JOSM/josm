@@ -247,13 +247,13 @@ public class MapCSSTagChecker extends Test.TagTest {
     public static class ParseResult {
         /** Checks successfully parsed */
         public final List<TagCheck> parseChecks;
-        /** Errors that occured during parsing */
+        /** Errors that occurred during parsing */
         public final Collection<Throwable> parseErrors;
 
         /**
          * Constructs a new {@code ParseResult}.
          * @param parseChecks Checks successfully parsed
-         * @param parseErrors Errors that occured during parsing
+         * @param parseErrors Errors that occurred during parsing
          */
         public ParseResult(List<TagCheck> parseChecks, Collection<Throwable> parseErrors) {
             this.parseChecks = parseChecks;

@@ -736,7 +736,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
             }
 
             // If ALT is pressed, a new way should be created and that new way should get
-            // selected. This works everytime unless the ways the nodes get inserted into
+            // selected. This works every time unless the ways the nodes get inserted into
             // are already selected. This is the case when creating a self-overlapping way
             // but pressing ALT prevents this. Therefore we must de-select the way manually
             // here so /only/ the new way will be selected after this method finishes.

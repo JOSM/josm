@@ -227,7 +227,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     }
 
     /**
-     * Overwrite this if {@link #updateEnabledState()} should be called when the active / availabe layers change. Default is true.
+     * Overwrite this if {@link #updateEnabledState()} should be called when the active / available layers change. Default is true.
      * @return <code>true</code> if a {@link LayerChangeListener} and a {@link ActiveLayerChangeListener} should be registered.
      * @since 10353
      */

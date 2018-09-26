@@ -204,8 +204,8 @@ public class DefaultProxySelector extends ProxySelector {
     }
 
     /**
-     * Determines if proxy errors have occured.
-     * @return {@code true} if errors have occured, {@code false} otherwise.
+     * Determines if proxy errors have occurred.
+     * @return {@code true} if errors have occurred, {@code false} otherwise.
      * @since 6523
      */
     public final boolean hasErrors() {

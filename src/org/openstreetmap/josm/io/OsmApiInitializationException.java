@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.io;
 
 /**
- * Exception thrown when a communication error occured with the OSM server during API initialization.
+ * Exception thrown when a communication error occurred with the OSM server during API initialization.
  * @see OsmApi#initialize
  */
 public class OsmApiInitializationException extends OsmTransferException {

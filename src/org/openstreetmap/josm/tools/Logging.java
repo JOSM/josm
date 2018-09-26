@@ -460,7 +460,7 @@ public final class Logging {
     }
 
     /**
-     * Provides direct access to the logger used. Use of methods like {@link #warn(String)} is prefered.
+     * Provides direct access to the logger used. Use of methods like {@link #warn(String)} is preferred.
      * @return The logger
      */
     public static Logger getLogger() {

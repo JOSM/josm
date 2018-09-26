@@ -34,7 +34,7 @@ public class DebugTextDisplay extends JScrollPane {
     }
 
     /**
-     * Creates a new text area with an inital text to display
+     * Creates a new text area with an initial text to display
      * @param textToDisplay The text to display.
      */
     public DebugTextDisplay(String textToDisplay) {

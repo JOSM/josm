@@ -106,9 +106,9 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             // have the respective privileges or if he didn't or he can't authenticate with
             // a username/password-pair.
             //
-            // Downgrade your knowlege about its identity if we've assumed that he was fully
+            // Downgrade your knowledge about its identity if we've assumed that he was fully
             // identified. Otherwise, if he is anonymous or partially identified, keep our level
-            // of knowlege.
+            // of knowledge.
             //
             if (im.isFullyIdentified()) {
                 im.setPartiallyIdentified(im.getUserName());

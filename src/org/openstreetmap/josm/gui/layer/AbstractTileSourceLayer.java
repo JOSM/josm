@@ -839,7 +839,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     /**
      * Zoom out from map.
      *
-     * @return    true, if zoom increasing was successfull, false othervise
+     * @return    true, if zoom increasing was successful, false othervise
      */
     public boolean decreaseZoomLevel() {
         if (zoomDecreaseAllowed()) {

@@ -29,7 +29,7 @@
 }
 
 *[building:levels][building:levels !~ /^(([0-9]|[1-9][0-9]*)(\.5)?)$/],
-*[level][level !~ /^((((-*[1-9]|[0-9])|-*[1-9][0-9]*)(\.5)?)|-0\.5)(;((((-*[1-9]|[0-9])|-*[1-9][0-9]*)(\.5)?)|-0\.5))*$/] { /* all numbers from -∞ to ∞ in 0.5 steps, optional multiple values seperated by a ; */
+*[level][level !~ /^((((-*[1-9]|[0-9])|-*[1-9][0-9]*)(\.5)?)|-0\.5)(;((((-*[1-9]|[0-9])|-*[1-9][0-9]*)(\.5)?)|-0\.5))*$/] { /* all numbers from -∞ to ∞ in 0.5 steps, optional multiple values separated by a ; */
   throwWarning: tr("{0} should have numbers only with optional .5 increments", "{0.key}");
   assertMatch: "node level=one";
   assertMatch: "node level=01";

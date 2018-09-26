@@ -61,7 +61,7 @@ public class MainFrame extends JFrame {
 
     /**
      * Create a new main window. The parameter will be removed in the future.
-     * @param geometry The inital geometry to use.
+     * @param geometry The initial geometry to use.
      * @since 12127
      */
     public MainFrame(WindowGeometry geometry) {

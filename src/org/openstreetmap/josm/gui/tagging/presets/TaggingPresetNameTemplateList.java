@@ -47,9 +47,9 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
     }
 
     /**
-     * Finds and returns the first occurence of preset with template name matching the given primitive
+     * Finds and returns the first occurrence of preset with template name matching the given primitive
      * @param primitive The primitive to match
-     * @return the first occurence of preset with template name matching the primitive
+     * @return the first occurrence of preset with template name matching the primitive
      */
     public TaggingPreset findPresetTemplate(IPrimitive primitive) {
         synchronized (this) {

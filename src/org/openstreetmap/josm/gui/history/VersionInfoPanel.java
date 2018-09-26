@@ -229,7 +229,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
     /**
      * Updates the content of this panel based on the changeset information given by {@code primitive}.
      * @param primitive the primitive to extract the changeset information from
-     * @param isLatest whether this relates to a not yet commited changeset
+     * @param isLatest whether this relates to a not yet committed changeset
      */
     public void update(final OsmPrimitive primitive, final boolean isLatest) {
         update(Changeset.fromPrimitive(primitive), isLatest, primitive.getTimestamp(), primitive.getVersion());
@@ -238,7 +238,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
     /**
      * Updates the content of this panel based on the changeset information given by {@code cs}.
      * @param cs the changeset information
-     * @param isLatest whether this relates to a not yet commited changeset
+     * @param isLatest whether this relates to a not yet committed changeset
      * @param timestamp the timestamp
      * @param version the version of the primitive
      */

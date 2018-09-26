@@ -429,7 +429,7 @@ public class PlatformHookWindows implements PlatformHook {
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             // catch error of JDK-8172244 as bug seems to not be fixed anytime soon
-            Logging.log(Logging.LEVEL_ERROR, "JDK-8172244 occured. Abort HTTPS setup", e);
+            Logging.log(Logging.LEVEL_ERROR, "JDK-8172244 occurred. Abort HTTPS setup", e);
             return false;
         }
         if (!GraphicsEnvironment.isHeadless()) {

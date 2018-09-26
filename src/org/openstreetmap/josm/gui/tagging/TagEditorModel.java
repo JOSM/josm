@@ -711,7 +711,7 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     /**
-     * A listener that is called whenever the cells may be updated from outside the editor and the editor should thus be commited.
+     * A listener that is called whenever the cells may be updated from outside the editor and the editor should thus be committed.
      * @since 10604
      */
     @FunctionalInterface

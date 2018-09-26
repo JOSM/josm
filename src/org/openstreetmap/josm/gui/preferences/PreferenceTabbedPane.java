@@ -419,7 +419,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
             if (task != null) {
                 // if we have to launch a plugin download task we do it asynchronously, followed
-                // by the remaining "save preferences" activites run on the Swing EDT.
+                // by the remaining "save preferences" activities run on the Swing EDT.
                 MainApplication.worker.submit(task);
                 MainApplication.worker.submit(() -> GuiHelper.runInEDT(continuation));
             } else {

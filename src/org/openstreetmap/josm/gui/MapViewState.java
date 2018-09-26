@@ -361,13 +361,13 @@ public final class MapViewState implements Serializable {
      * Creates a new state that is the same as the current state except for that it is using the location of the given component.
      * <p>
      * The view is moved so that the center is the same as the old center.
-     * @param positon The new location to use.
+     * @param position The new location to use.
      * @return The new state.
      * @since 10375
      */
-    public MapViewState usingLocation(JComponent positon) {
+    public MapViewState usingLocation(JComponent position) {
         EastNorth center = this.getCenter().getEastNorth();
-        return new MapViewState(positon, this).usingCenter(center);
+        return new MapViewState(position, this).usingCenter(center);
     }
 
     /**
@@ -540,7 +540,7 @@ public final class MapViewState implements Serializable {
 
         /**
          * Gets the direction in which this point is outside of the given view rectangle.
-         * @param rect The rectangle to check agains.
+         * @param rect The rectangle to check against.
          * @return The direction in which it is outside of the view, as OUTSIDE_... flags.
          * @since 10827
          */

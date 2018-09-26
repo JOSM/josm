@@ -13,7 +13,7 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
 /**
- * Combo box that lets the user choose one of the avaliable {@link AuthorizationProcedure}s.
+ * Combo box that lets the user choose one of the available {@link AuthorizationProcedure}s.
  */
 public class AuthorizationProcedureComboBox extends JosmComboBox<AuthorizationProcedure> {
 

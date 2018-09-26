@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.tools.CompositeList;
 
 /**
- * A list of primitives that are transfered. The list allows you to implicitly add primitives.
+ * A list of primitives that are transferred. The list allows you to implicitly add primitives.
  * It distinguishes between primitives that were directly added and implicitly added ones.
  * @author Michael Zangl
  * @since 10604

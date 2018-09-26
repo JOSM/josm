@@ -58,8 +58,8 @@ public final class NetworkManager {
     }
 
     /**
-     * Returns the network errors that occured until now.
-     * @return the network errors that occured until now, indexed by URL
+     * Returns the network errors that occurred until now.
+     * @return the network errors that occurred until now, indexed by URL
      */
     public static Map<String, Throwable> getNetworkErrors() {
         return new HashMap<>(NETWORK_ERRORS);

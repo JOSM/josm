@@ -265,7 +265,7 @@ public class RelationChecker extends Test {
      *
      * @param n relation to validate
      * @param allroles contains presets for specified relation
-     * @param map contains statistics of occurances of specified role types in relation
+     * @param map contains statistics of occurrences of specified role types in relation
      */
     private void checkRoles(Relation n, Map<Role, String> allroles, Map<String, RoleInfo> map) {
         // go through all members of relation

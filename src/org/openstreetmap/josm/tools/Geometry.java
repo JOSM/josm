@@ -365,7 +365,7 @@ public final class Geometry {
         // Basically, the formula from wikipedia is used:
         //  https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
         // However, large numbers lead to rounding errors (see #10286).
-        // To avoid this, p1 is first substracted from each of the points:
+        // To avoid this, p1 is first subtracted from each of the points:
         //  p1' = 0
         //  p2' = p2 - p1
         //  p3' = p3 - p1

@@ -210,7 +210,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
     }
 
     /**
-     * Should be called everytime either reference of current changes to update the diff.
+     * Should be called every time either reference of current changes to update the diff.
      * TODO: Maybe rename to reflect this? eg. updateNodeListTableModels
      */
     private void initNodeListTableModels() {

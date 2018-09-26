@@ -268,7 +268,7 @@ public class PlaceSelection implements DownloadSelection {
             } catch (SAXParseException e) {
                 if (!canceled) {
                     // Nominatim sometimes returns garbage, see #5934, #10643
-                    Logging.log(Logging.LEVEL_WARN, tr("Error occured with query ''{0}'': ''{1}''", urlString, e.getMessage()), e);
+                    Logging.log(Logging.LEVEL_WARN, tr("Error occurred with query ''{0}'': ''{1}''", urlString, e.getMessage()), e);
                     GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
                             MainApplication.getMainFrame(),
                             tr("Name server returned invalid data. Please try again."),

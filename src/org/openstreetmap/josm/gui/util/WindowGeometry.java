@@ -365,7 +365,7 @@ public class WindowGeometry {
     }
 
     /**
-     * Determines if the bug affecting getMaximumWindowBounds() occured.
+     * Determines if the bug affecting getMaximumWindowBounds() occurred.
      *
      * @param maxbounds result of getMaximumWindowBounds()
      * @return {@code true} if the bug happened, {@code false otherwise}

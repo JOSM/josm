@@ -36,7 +36,7 @@ public class EquidistantCylindrical extends AbstractProj {
 
     @Override
     public String getName() {
-        return tr("Equidistant Cylindrical (Plate Caree)");
+        return tr("Equidistant Cylindrical (Plate Carrée)");
     }
 
     @Override

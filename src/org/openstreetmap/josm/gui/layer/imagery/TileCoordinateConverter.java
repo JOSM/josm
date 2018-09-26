@@ -112,7 +112,7 @@ public class TileCoordinateConverter {
     /**
      * Gets the position of the tile inside the map view.
      * @param tile The tile
-     * @return The positon as a rectangle in screen coordinates
+     * @return The position as a rectangle in screen coordinates
      */
     public Rectangle2D getRectangleForTile(Tile tile) {
         ICoordinate c1 = tile.getTileSource().tileXYToLatLon(tile);

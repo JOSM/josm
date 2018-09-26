@@ -383,7 +383,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     Logging.debug("JCS - Caching empty object {0}", getUrl());
                     return true;
                 } else {
-                    Logging.debug("JCS - failure during load - reponse is not loadable nor cached as empty");
+                    Logging.debug("JCS - failure during load - response is not loadable nor cached as empty");
                     return false;
                 }
             }

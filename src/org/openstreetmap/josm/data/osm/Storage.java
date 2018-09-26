@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A Set-like class that allows looking up equivalent preexising instance.
- * It is useful whereever one would use self-mapping construct like
+ * It is useful wherever one would use self-mapping construct like
  * <code>Map&lt;T,T&gt;.put(t,t)</code>, that is, for caches, uniqueness filters or similar.
  *
  * The semantics of equivalency can be external to the object, using the

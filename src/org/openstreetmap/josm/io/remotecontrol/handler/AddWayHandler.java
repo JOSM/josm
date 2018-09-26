@@ -46,7 +46,7 @@ public class AddWayHandler extends RequestHandler {
     private Way way;
 
     /**
-     * The place to remeber already added nodes (they are reused if needed @since 5845
+     * The place to remember already added nodes (they are reused if needed @since 5845
      */
     private Map<LatLon, Node> addedNodes;
 

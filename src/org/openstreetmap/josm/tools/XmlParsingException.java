@@ -40,8 +40,8 @@ public class XmlParsingException extends SAXException {
     }
 
     /**
-     * Sets the location (line/column) where the exception occured.
-     * @param locator object giving the location (line/column) where the exception occured
+     * Sets the location (line/column) where the exception occurred.
+     * @param locator object giving the location (line/column) where the exception occurred
      * @return {@code this}
      */
     public XmlParsingException rememberLocation(Locator locator) {
@@ -64,16 +64,16 @@ public class XmlParsingException extends SAXException {
     }
 
     /**
-     * Returns the column number where the exception occured.
-     * @return the column number where the exception occured
+     * Returns the column number where the exception occurred.
+     * @return the column number where the exception occurred
      */
     public int getColumnNumber() {
         return columnNumber;
     }
 
     /**
-     * Returns the line number where the exception occured.
-     * @return the line number where the exception occured
+     * Returns the line number where the exception occurred.
+     * @return the line number where the exception occurred
      */
     public int getLineNumber() {
         return lineNumber;

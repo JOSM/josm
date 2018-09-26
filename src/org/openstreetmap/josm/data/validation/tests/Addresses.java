@@ -262,7 +262,7 @@ public class Addresses extends Test {
         checkHouseNumbersWithoutStreet(r);
         checkForDuplicate(r);
         if (r.hasTag("type", ASSOCIATED_STREET)) {
-            // Used to count occurences of each house number in order to find duplicates
+            // Used to count occurrences of each house number in order to find duplicates
             Map<String, List<OsmPrimitive>> map = new HashMap<>();
             // Used to detect different street names
             String relationName = r.get("name");

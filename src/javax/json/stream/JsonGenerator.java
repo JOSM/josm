@@ -99,7 +99,7 @@ import java.math.BigInteger;
  *
  * <p>
  * Other JSON values (that are not JSON objects or arrays) can be created
- * by calling the appropiate {@code write} methods.
+ * by calling the appropriate {@code write} methods.
  * <p>
  * The following example shows how to generate a JSON string:
  * <pre><code>
