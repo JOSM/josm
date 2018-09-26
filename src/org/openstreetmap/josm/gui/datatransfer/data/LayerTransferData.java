@@ -40,7 +40,7 @@ public class LayerTransferData extends LayerTransferable.Data {
     }
 
     /**
-     * Gets the layer to be transfered.
+     * Gets the layer to be transferred.
      * @return The layer
      */
     public Layer getLayer() {

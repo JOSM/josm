@@ -151,8 +151,8 @@ public class CloseChangesetAction extends JosmAction {
         }
 
         /**
-         * Returns the last exception that occured.
-         * @return the last exception that occured, or {@code null}
+         * Returns the last exception that occurred.
+         * @return the last exception that occurred, or {@code null}
          */
         public Exception getLastException() {
             return lastException;

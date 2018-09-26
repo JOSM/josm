@@ -140,7 +140,7 @@ public abstract class StyleSource extends SourceEntry {
     }
 
     /**
-     * Log an error that occured with this style.
+     * Log an error that occurred with this style.
      * @param e error
      */
     public void logError(Throwable e) {
@@ -148,7 +148,7 @@ public abstract class StyleSource extends SourceEntry {
     }
 
     /**
-     * Log a warning that occured with this style.
+     * Log a warning that occurred with this style.
      * @param w warnings
      */
     public void logWarning(String w) {
@@ -156,7 +156,7 @@ public abstract class StyleSource extends SourceEntry {
     }
 
     /**
-     * Replies the collection of errors that occured with this style.
+     * Replies the collection of errors that occurred with this style.
      * @return collection of errors
      */
     public Collection<Throwable> getErrors() {
@@ -164,7 +164,7 @@ public abstract class StyleSource extends SourceEntry {
     }
 
     /**
-     * Replies the collection of warnings that occured with this style.
+     * Replies the collection of warnings that occurred with this style.
      * @return collection of warnings
      */
     public Collection<String> getWarnings() {

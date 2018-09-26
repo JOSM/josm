@@ -234,8 +234,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Returns the last exception that occured during loading, if any.
-     * @return the last exception that occured during loading, or {@code null}
+     * Returns the last exception that occurred during loading, if any.
+     * @return the last exception that occurred during loading, or {@code null}
      */
     public Exception getLastException() {
         return lastException;

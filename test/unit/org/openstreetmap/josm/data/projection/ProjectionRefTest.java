@@ -116,7 +116,7 @@ public class ProjectionRefTest {
     private static Collection<RefEntry> readData() throws IOException {
         Collection<RefEntry> result = new ArrayList<>();
         if (!new File(REFERENCE_DATA_FILE).exists()) {
-            System.err.println("Warning: refrence file does not exist.");
+            System.err.println("Warning: reference file does not exist.");
             return result;
         }
         try (BufferedReader in = new BufferedReader(new InputStreamReader(

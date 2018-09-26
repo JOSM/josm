@@ -111,7 +111,7 @@ public abstract class AbstractProj implements Proj {
     /**
      * Calculates the meridian distance. This is the distance along the central
      * meridian from the equator to {@code phi}. Accurate to &lt; 1e-5 meters
-     * when used in conjuction with typical major axis values.
+     * when used in conjunction with typical major axis values.
      *
      * @param phi latitude to calculate meridian distance for.
      * @param sphi sin(phi).
@@ -132,7 +132,7 @@ public abstract class AbstractProj implements Proj {
      * Calculates the latitude ({@code phi}) from a meridian distance.
      * Determines phi to TOL (1e-11) radians, about 1e-6 seconds.
      *
-     * @param arg meridian distance to calulate latitude for.
+     * @param arg meridian distance to calculate latitude for.
      * @return the latitude of the meridian distance.
      * @throws RuntimeException if the itteration does not converge.
      */

@@ -141,7 +141,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
     //////
 
     /**
-     * The azimuth of the central line passing throught the centre of the projection, in radians.
+     * The azimuth of the central line passing through the centre of the projection, in radians.
      */
     protected double azimuth;
 

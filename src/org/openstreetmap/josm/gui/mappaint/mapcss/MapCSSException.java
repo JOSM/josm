@@ -6,9 +6,9 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
  */
 public class MapCSSException extends RuntimeException {
 
-    /** line number at which the parse error occured */
+    /** line number at which the parse error occurred */
     protected Integer line;
-    /** column number at which the parse error occured */
+    /** column number at which the parse error occurred */
     protected Integer column;
 
     /**
@@ -29,16 +29,16 @@ public class MapCSSException extends RuntimeException {
     }
 
     /**
-     * Sets the column number at which the parse error occured.
-     * @param column the column number at which the parse error occured
+     * Sets the column number at which the parse error occurred.
+     * @param column the column number at which the parse error occurred
      */
     public void setColumn(int column) {
         this.column = column;
     }
 
     /**
-     * Sets the line number at which the parse error occured.
-     * @param line the line number at which the parse error occured
+     * Sets the line number at which the parse error occurred.
+     * @param line the line number at which the parse error occurred
      */
     public void setLine(int line) {
         this.line = line;

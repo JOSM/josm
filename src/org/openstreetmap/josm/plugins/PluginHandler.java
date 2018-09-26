@@ -270,7 +270,7 @@ public final class PluginHandler {
     static final Collection<PluginProxy> pluginList = new LinkedList<>();
 
     /**
-     * All exceptions that occured during plugin loading
+     * All exceptions that occurred during plugin loading
      */
     static final Map<String, Throwable> pluginLoadingExceptions = new HashMap<>();
 
@@ -1418,7 +1418,7 @@ public final class PluginHandler {
             stack.addAll(Arrays.asList(current.getStackTrace()));
             Throwable cause = current.getCause();
             if (cause != null && seen.contains(cause)) {
-                break; // circular refernce
+                break; // circular reference
             }
             current = cause;
         }

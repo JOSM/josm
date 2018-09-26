@@ -23,7 +23,7 @@ public class OsmApiException extends OsmTransferException {
      * See {@link java.net.HttpURLConnection HttpURLConnection} for predefined HTTP response code values
      * @param errorHeader The error header, as transmitted in the {@code Error} field of the HTTP response header
      * @param errorBody The error body, as transmitted in the HTTP response body
-     * @param accessedUrl The complete URL accessed when this error occured
+     * @param accessedUrl The complete URL accessed when this error occurred
      * @param login the login used to connect to OSM API (can be null)
      * @param contentType the response content-type
      * @since 13499
@@ -43,7 +43,7 @@ public class OsmApiException extends OsmTransferException {
      * See {@link java.net.HttpURLConnection HttpURLConnection} for predefined HTTP response code values
      * @param errorHeader The error header, as transmitted in the {@code Error} field of the HTTP response header
      * @param errorBody The error body, as transmitted in the HTTP response body
-     * @param accessedUrl The complete URL accessed when this error occured
+     * @param accessedUrl The complete URL accessed when this error occurred
      * @param login the login used to connect to OSM API (can be null)
      * @since 12992
      */
@@ -57,7 +57,7 @@ public class OsmApiException extends OsmTransferException {
      * See {@link java.net.HttpURLConnection HttpURLConnection} for predefined HTTP response code values
      * @param errorHeader The error header, as transmitted in the {@code Error} field of the HTTP response header
      * @param errorBody The error body, as transmitted in the HTTP response body
-     * @param accessedUrl The complete URL accessed when this error occured
+     * @param accessedUrl The complete URL accessed when this error occurred
      * @since 5584
      */
     public OsmApiException(int responseCode, String errorHeader, String errorBody, String accessedUrl) {
@@ -215,18 +215,18 @@ public class OsmApiException extends OsmTransferException {
     }
 
     /**
-     * Sets the complete URL accessed when this error occured.
+     * Sets the complete URL accessed when this error occurred.
      * This is distinct from the one set with {@link #setUrl}, which is generally only the base URL of the server.
-     * @param url the complete URL accessed when this error occured.
+     * @param url the complete URL accessed when this error occurred.
      */
     public void setAccessedUrl(String url) {
         this.accessedUrl = url;
     }
 
     /**
-     * Replies the complete URL accessed when this error occured.
+     * Replies the complete URL accessed when this error occurred.
      * This is distinct from the one returned by {@link #getUrl}, which is generally only the base URL of the server.
-     * @return the complete URL accessed when this error occured.
+     * @return the complete URL accessed when this error occurred.
      */
     public String getAccessedUrl() {
         return accessedUrl;

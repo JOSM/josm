@@ -34,7 +34,7 @@ public class RotateCommand extends TransformNodesCommand {
 
     /**
      * Creates a RotateCommand.
-     * Assign the initial object set, compute pivot point and inital rotation angle.
+     * Assign the initial object set, compute pivot point and initial rotation angle.
      * @param objects objects to fetch nodes from
      * @param currentEN cuurent eats/north
      */

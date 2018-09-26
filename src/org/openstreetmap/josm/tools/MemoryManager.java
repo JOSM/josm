@@ -115,7 +115,7 @@ public class MemoryManager {
         /**
          * Gets the content of this memory area.
          * <p>
-         * This method should be the prefered access to the memory since it will do error checking when {@link #free()} was called.
+         * This method should be the preferred access to the memory since it will do error checking when {@link #free()} was called.
          * @return The memory area content.
          */
         T get();

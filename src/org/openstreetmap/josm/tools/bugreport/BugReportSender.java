@@ -160,7 +160,7 @@ public class BugReportSender extends Thread {
     }
 
     /**
-     * Returns the error message that could have occured during bug sending.
+     * Returns the error message that could have occurred during bug sending.
      * @return the error message, or {@code null} if successful
      */
     public final String getErrorMessage() {

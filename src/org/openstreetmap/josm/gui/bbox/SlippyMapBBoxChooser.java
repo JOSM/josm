@@ -370,7 +370,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
 
     /**
      * Sets the current bounding box in this bbox chooser without
-     * emiting a property change event.
+     * emitting a property change event.
      *
      * @param bbox the bounding box. null to reset the bounding box
      */

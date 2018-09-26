@@ -109,8 +109,8 @@ public class DownloadAlongPanel extends JPanel {
     }
 
     /**
-     * Gets the "download near" choosen value
-     * @return the "download near" choosen value (0: track only, 1: waypoints only, 2: both)
+     * Gets the "download near" chosen value
+     * @return the "download near" chosen value (0: track only, 1: waypoints only, 2: both)
      */
     public final int getNear() {
         return downloadNear.getSelectedIndex();

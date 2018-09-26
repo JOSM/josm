@@ -138,7 +138,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
     }
 
     /**
-     * Test if {@link MainLayerManager#addActiveLayerChangeListener(ActiveLayerChangeListener)} prevents listener from beeing added twice.
+     * Test if {@link MainLayerManager#addActiveLayerChangeListener(ActiveLayerChangeListener)} prevents listener from being added twice.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testAddActiveLayerChangeListenerTwice() {

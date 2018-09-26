@@ -558,7 +558,7 @@ public class SelectionListDialog extends ToggleDialog {
         /**
          * Replies the collection of OSM primitives currently selected in the view of this model
          *
-         * @return choosen elements in the view
+         * @return chosen elements in the view
          */
         public synchronized Collection<OsmPrimitive> getSelected() {
             Set<OsmPrimitive> sel = new HashSet<>();

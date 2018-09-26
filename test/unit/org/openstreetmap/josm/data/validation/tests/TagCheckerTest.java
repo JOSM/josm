@@ -41,7 +41,7 @@ public class TagCheckerTest {
     }
 
     /**
-     * Check for mispelled key.
+     * Check for misspelled key.
      * @throws IOException if any I/O error occurs
      */
     @Test
@@ -54,7 +54,7 @@ public class TagCheckerTest {
     }
 
     /**
-     * Check for mispelled key.
+     * Check for misspelled key.
      * @throws IOException if any I/O error occurs
      */
     @Test
@@ -67,7 +67,7 @@ public class TagCheckerTest {
     }
 
     /**
-     * Check for mispelled key where the suggested alternative is in use. The error should not be fixable.
+     * Check for misspelled key where the suggested alternative is in use. The error should not be fixable.
      * @throws IOException if any I/O error occurs
      */
     @Test
@@ -93,7 +93,7 @@ public class TagCheckerTest {
     }
 
     /**
-     * Check for mispelled value.
+     * Check for misspelled value.
      * @throws IOException if any I/O error occurs
      */
     @Test

@@ -59,7 +59,7 @@ public interface PlatformHook {
     Platform getPlatform();
 
     /**
-      * The preStartupHook will be called extremly early. It is
+      * The preStartupHook will be called extremely early. It is
       * guaranteed to be called before the GUI setup has started.
       *
       * Reason: On OSX we need to inform the Swing libraries

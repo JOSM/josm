@@ -654,7 +654,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             int numProblems = model.getNumCancel() + model.getNumFailed();
             if (numProblems == 0)
                 return;
-            Logging.warn(numProblems + " problems occured during upload/save");
+            Logging.warn(numProblems + " problems occurred during upload/save");
             String msg = trn(
                     "<html>An upload and/or save operation of one layer with modifications<br>"
                     + "was canceled or has failed.</html>",

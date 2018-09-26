@@ -591,7 +591,7 @@ public class MultiSplitLayout implements LayoutManager {
     /* First pass of the layout algorithm.
      *
      * If the Dividers are "floating" then set the bounds of each
-     * node to accomodate the preferred size of all of the
+     * node to accommodate the preferred size of all of the
      * Leaf's java.awt.Components.  Otherwise, just set the bounds
      * of each Leaf/Split node so that it's to the left of (for
      * Split.isRowLayout() Split children) or directly above

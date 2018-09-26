@@ -15,8 +15,8 @@ import org.openstreetmap.josm.tools.Utils;
  * is a cylindrical projection, in which the cylinder has been rotated 90°.
  * Instead of being tangent to the equator (or to an other standard latitude),
  * it is tangent to a central meridian. Deformation are more important as we
- * are going futher from the central meridian. The Transverse Mercator
- * projection is appropriate for region wich have a greater extent north-south
+ * are going further from the central meridian. The Transverse Mercator
+ * projection is appropriate for region which have a greater extent north-south
  * than east-west.
  * <p>
  *

@@ -133,7 +133,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
             }
         });
 
-        // find the segment with the best quality. If there are several with best quality, the one close to the center is prefered.
+        // find the segment with the best quality. If there are several with best quality, the one close to the center is preferred.
         return longHalfSegment.stream().max(
                 Comparator.comparingDouble(segment -> segment.quality - 1e-5 * Math.abs(segment.offset - length / 2)));
     }
