@@ -120,7 +120,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.print(upload.getXmlFlag());
         }
         if (locked) {
-            out.print("' locked=true");
+            out.print("' locked='true");
         }
         out.println("' generator='JOSM'>");
     }

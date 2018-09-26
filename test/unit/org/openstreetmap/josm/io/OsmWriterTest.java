@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
@@ -66,6 +67,23 @@ public class OsmWriterTest {
             writer.header(download, upload);
         }
         assertEquals("<?xml version='1.0' encoding='UTF-8'?>" + expected,
+                baos.toString("UTF-8").replaceAll("\r", "").replaceAll("\n", ""));
+    }
+
+    /**
+     * Unit test of {@link OsmWriter#write} with dataset locked.
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void testWriteLock() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8));
+             OsmWriter writer = OsmWriterFactory.createOsmWriter(out, true, OsmWriter.DEFAULT_API_VERSION)) {
+            DataSet ds = new DataSet();
+            ds.lock();
+            writer.write(ds);
+        }
+        assertEquals("<?xml version='1.0' encoding='UTF-8'?><osm version='0.6' locked='true' generator='JOSM'></osm>",
                 baos.toString("UTF-8").replaceAll("\r", "").replaceAll("\n", ""));
     }
 }
