@@ -253,7 +253,7 @@ public class FilterModel {
      * @return true if the filter has been moved up
      */
     public boolean moveUpFilter(int rowIndex) {
-        if (rowIndex == 0)
+        if (rowIndex <= 0 || rowIndex >= filters.size())
             return false;
         filters.add(rowIndex - 1, filters.remove(rowIndex));
         updateFilterMatcher();
