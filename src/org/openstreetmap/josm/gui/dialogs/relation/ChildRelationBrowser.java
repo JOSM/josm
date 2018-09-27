@@ -96,7 +96,7 @@ public class ChildRelationBrowser extends JPanel {
                     && !e.isAltDown() && !e.isAltGraphDown() && !e.isControlDown() && !e.isMetaDown() && !e.isShiftDown()
                     && childTree.getRowForLocation(e.getX(), e.getY()) == childTree.getMinSelectionRow()) {
                     Relation r = (Relation) childTree.getLastSelectedPathComponent();
-                    if (r.isIncomplete()) {
+                    if (r != null && r.isIncomplete()) {
                         childTree.expandPath(childTree.getSelectionPath());
                     } else {
                         editAction.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, null));
