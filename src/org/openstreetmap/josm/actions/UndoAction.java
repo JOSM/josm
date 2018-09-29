@@ -41,18 +41,18 @@ public class UndoAction extends JosmAction implements CommandQueueListener {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(!UndoRedoHandler.getInstance().commands.isEmpty());
+        setEnabled(UndoRedoHandler.getInstance().hasUndoCommands());
     }
 
     @Override
     public void commandChanged(int queueSize, int redoSize) {
-        if (UndoRedoHandler.getInstance().commands.isEmpty()) {
+        if (!UndoRedoHandler.getInstance().hasUndoCommands()) {
             putValue(NAME, tr("Undo"));
             setTooltip(tr("Undo the last action."));
         } else {
             putValue(NAME, tr("Undo ..."));
             setTooltip(tr("Undo {0}",
-                    UndoRedoHandler.getInstance().commands.getLast().getDescriptionText()));
+                    UndoRedoHandler.getInstance().getLastCommand().getDescriptionText()));
         }
     }
 }

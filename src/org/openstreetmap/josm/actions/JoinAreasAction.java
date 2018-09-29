@@ -568,7 +568,7 @@ public class JoinAreasAction extends JosmAction {
             makeCommitsOneAction(tr("Reverting changes"));
             if (addUndoRedo) {
                 UndoRedoHandler.getInstance().undo();
-                UndoRedoHandler.getInstance().redoCommands.clear();
+                UndoRedoHandler.getInstance().getRedoCommands().clear();
             }
         }
     }
@@ -1600,9 +1600,10 @@ public class JoinAreasAction extends JosmAction {
         cmds.clear();
         if (addUndoRedo) {
             UndoRedoHandler ur = UndoRedoHandler.getInstance();
-            int i = Math.max(ur.commands.size() - cmdsCount, 0);
-            for (; i < ur.commands.size(); i++) {
-                cmds.add(ur.commands.get(i));
+            List<Command> commands = ur.getUndoCommands();
+            int i = Math.max(commands.size() - cmdsCount, 0);
+            for (; i < commands.size(); i++) {
+                cmds.add(commands.get(i));
             }
 
             for (i = 0; i < cmds.size(); i++) {

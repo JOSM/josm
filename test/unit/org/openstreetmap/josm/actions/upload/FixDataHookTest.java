@@ -41,9 +41,9 @@ public class FixDataHookTest {
     @Test
     public void testCheckUpload() {
         // Empty data set
-        UndoRedoHandler.getInstance().commands.clear();
+        UndoRedoHandler.getInstance().getUndoCommands().clear();
         new FixDataHook().checkUpload(new APIDataSet());
-        assertTrue(UndoRedoHandler.getInstance().commands.isEmpty());
+        assertTrue(UndoRedoHandler.getInstance().getUndoCommands().isEmpty());
 
         // Complete data set (except empty node which cannot be tested anymore)
         Way emptyWay = new Way();
@@ -75,11 +75,11 @@ public class FixDataHookTest {
         APIDataSet ads = new APIDataSet();
         ads.init(new DataSet(emptyWay, emptyRelation, w1, w2, w3, w4, w5, w6, w7, r1, r2));
 
-        UndoRedoHandler.getInstance().commands.clear();
+        UndoRedoHandler.getInstance().getUndoCommands().clear();
         new FixDataHook().checkUpload(ads);
-        assertEquals(1, UndoRedoHandler.getInstance().commands.size());
+        assertEquals(1, UndoRedoHandler.getInstance().getUndoCommands().size());
 
-        SequenceCommand seq = (SequenceCommand) UndoRedoHandler.getInstance().commands.iterator().next();
+        SequenceCommand seq = (SequenceCommand) UndoRedoHandler.getInstance().getUndoCommands().iterator().next();
         Collection<? extends OsmPrimitive> prims = seq.getParticipatingPrimitives();
         assertNotNull(prims);
         assertEquals(9, prims.size());

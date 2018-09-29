@@ -271,7 +271,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     }
 
     private void buildUndoTree() {
-        List<Command> undoCommands = UndoRedoHandler.getInstance().commands;
+        List<Command> undoCommands = UndoRedoHandler.getInstance().getUndoCommands();
         undoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < undoCommands.size(); ++i) {
             undoRoot.add(getNodeForCommand(undoCommands.get(i)));
@@ -280,7 +280,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     }
 
     private void buildRedoTree() {
-        List<Command> redoCommands = UndoRedoHandler.getInstance().redoCommands;
+        List<Command> redoCommands = UndoRedoHandler.getInstance().getRedoCommands();
         redoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < redoCommands.size(); ++i) {
             redoRoot.add(getNodeForCommand(redoCommands.get(i)));
@@ -289,8 +289,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     }
 
     private void ensureTreesConsistency() {
-        List<Command> undoCommands = UndoRedoHandler.getInstance().commands;
-        List<Command> redoCommands = UndoRedoHandler.getInstance().redoCommands;
+        List<Command> undoCommands = UndoRedoHandler.getInstance().getUndoCommands();
+        List<Command> redoCommands = UndoRedoHandler.getInstance().getRedoCommands();
         if (redoTreeModel.getChildCount(redoRoot) > 0) {
             redoTree.scrollRowToVisible(0);
             scrollPane.getHorizontalScrollBar().setValue(0);
