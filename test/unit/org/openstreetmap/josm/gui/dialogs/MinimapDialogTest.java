@@ -220,6 +220,43 @@ public class MinimapDialogTest {
     }
 
     /**
+     * Tests that the apparently-selected TileSource survives the tile sources being refreshed.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testRefreshSourcesRetainsSelection() throws Exception {
+        // relevant prefs starting out empty, should choose the first source and have shown download area enabled
+        // (not that there's a data layer for it to use)
+
+        this.setUpMiniMap();
+
+        this.clickSourceMenuItemByLabel("Magenta Tiles");
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+
+        this.slippyMap.refreshTileSources();
+
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+    }
+
+    /**
      * Tests minimap obeys a saved "mapstyle" preference on startup.
      * @throws Exception if any error occurs
      */
