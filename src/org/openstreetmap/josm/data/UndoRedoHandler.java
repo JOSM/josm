@@ -24,10 +24,14 @@ public final class UndoRedoHandler {
      * All commands that were made on the dataset. Don't write from outside!
      *
      * @see #getLastCommand()
+     * @see #getUndoCommands()
      */
     public final LinkedList<Command> commands = new LinkedList<>();
+
     /**
      * The stack for redoing commands
+
+     * @see #getRedoCommands()
      */
     public final LinkedList<Command> redoCommands = new LinkedList<>();
 
@@ -231,12 +235,48 @@ public final class UndoRedoHandler {
     }
 
     /**
+     * Returns all commands that were made on the dataset, that can be undone.
+     * @return all commands that were made on the dataset, that can be undone
+     * @since 14281
+     */
+    public LinkedList<Command> getUndoCommands() {
+        return new LinkedList<>(commands);
+    }
+
+    /**
+     * Returns all commands that were made and undone on the dataset, that can be redone.
+     * @return all commands that were made and undone on the dataset, that can be redone.
+     * @since 14281
+     */
+    public LinkedList<Command> getRedoCommands() {
+        return new LinkedList<>(redoCommands);
+    }
+
+    /**
      * Gets the last command that was executed on the command stack.
      * @return That command or <code>null</code> if there is no such command.
      * @since #12316
      */
     public Command getLastCommand() {
         return commands.peekLast();
+    }
+
+    /**
+     * Determines if commands can be undone.
+     * @return {14281 true} if at least a command can be undone
+     * @since xxx
+     */
+    public boolean hasUndoCommands() {
+        return !commands.isEmpty();
+    }
+
+    /**
+     * Determines if commands can be redone.
+     * @return {@code true} if at least a command can be redone
+     * @since 14281
+     */
+    public boolean hasRedoCommands() {
+        return !redoCommands.isEmpty();
     }
 
     /**

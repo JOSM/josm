@@ -56,8 +56,8 @@ public class CommandStackDialogTest {
             UndoRedoHandler.getInstance().add(cmd2);
             UndoRedoHandler.getInstance().undo(1);
 
-            assertFalse(UndoRedoHandler.getInstance().commands.isEmpty());
-            assertFalse(UndoRedoHandler.getInstance().redoCommands.isEmpty());
+            assertTrue(UndoRedoHandler.getInstance().hasUndoCommands());
+            assertTrue(UndoRedoHandler.getInstance().hasRedoCommands());
 
             MapFrame map = MainApplication.getMap();
             CommandStackDialog dlg = new CommandStackDialog();
