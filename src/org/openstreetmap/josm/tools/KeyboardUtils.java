@@ -182,6 +182,10 @@ public final class KeyboardUtils {
                 }
                 // BÉPO, https://en.wikipedia.org/wiki/Keyboard_layout#B%C3%89PO
                 result.add('$');
+                if (PlatformManager.isPlatformUnixoid()) {
+                    // X11 fr-latin9
+                    result.add('œ');
+                }
                 break;
             case "sq": // Albanian
             case "it": // Italian
@@ -296,8 +300,8 @@ public final class KeyboardUtils {
 
             // Add default US QWERTY keys, https://en.wikipedia.org/wiki/QWERTY
             // Works also for Dvorak, https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
-            result.add('`'); // On US QWERTY, this is not a dead key
-            result.add((char) KeyEvent.VK_DEAD_GRAVE); // On International QWERTY, this is a dead key
+            result.add('`'); // U+0060: On US QWERTY, this is not a dead key
+            result.add('ˋ'); // U+02CB: On International QWERTY, this is a dead key
             return result;
         }
         throw new UnsupportedOperationException();
