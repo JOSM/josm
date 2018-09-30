@@ -16,11 +16,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.ButtonModel;
 import javax.swing.JOptionPane;
@@ -78,20 +80,12 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
      * TMS TileSource provider for the slippymap chooser
      */
     public static class TMSTileSourceProvider implements TileSourceProvider {
-        private static final Set<String> existingSlippyMapUrls = new HashSet<>();
-        static {
-            // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
-            existingSlippyMapUrls.add("https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
-        }
 
         @Override
         public List<TileSource> getTileSources() {
             if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
             List<TileSource> sources = new ArrayList<>();
             for (ImageryInfo info : ImageryLayerInfo.instance.getLayers()) {
-                if (existingSlippyMapUrls.contains(info.getUrl())) {
-                    continue;
-                }
                 try {
                     TileSource source = TMSLayer.getTileSourceStatic(info);
                     if (source != null) {
@@ -177,7 +171,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         }
         setMaxTilesInMemory(Config.getPref().getInt("slippy_map_chooser.max_tiles", 1000));
 
-        List<TileSource> tileSources = getAllTileSources();
+        List<TileSource> tileSources = new ArrayList<>(getAllTileSources().values());
 
         this.showDownloadAreaButtonModel = new JToggleButton.ToggleButtonModel();
         this.showDownloadAreaButtonModel.setSelected(PROP_SHOWDLAREA.get());
@@ -210,12 +204,16 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         new SlippyMapControler(this, this);
     }
 
-    private static List<TileSource> getAllTileSources() {
-        List<TileSource> tileSources = new ArrayList<>();
-        for (TileSourceProvider provider: providers) {
-            tileSources.addAll(provider.getTileSources());
-        }
-        return tileSources;
+    private static LinkedHashMap<String, TileSource> getAllTileSources() {
+        // using a LinkedHashMap of <id, TileSource> to retain ordering but provide deduplication
+        return providers.stream().flatMap(
+            provider -> provider.getTileSources().stream()
+        ).collect(Collectors.toMap(
+            TileSource::getId,
+            ts -> ts,
+            (old, _new) -> old,
+            () -> new LinkedHashMap<String, TileSource>()
+        ));
     }
 
     /**
@@ -358,9 +356,12 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         this.tileController.setTileCache(new MemoryTileCache());
         this.setTileSource(tileSource);
         PROP_MAPSTYLE.put(tileSource.getName()); // TODO Is name really unique?
-        if (this.iSourceButton.getCurrentSource() != tileSource) { // prevent infinite recursion
-            this.iSourceButton.setCurrentMap(tileSource);
-        }
+
+        // we need to refresh the tile sources in case the deselected source should no longer be present
+        // (and only remained there because its removal was deferred while the source was still the
+        // selected one). this should also have the effect of propagating the new selection to the
+        // iSourceButton & menu: it attempts to re-select the current source when rebuilding its menu.
+        this.refreshTileSources();
     }
 
     @Override
@@ -416,6 +417,12 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
      * @since 6364
      */
     public final void refreshTileSources() {
-        iSourceButton.setSources(getAllTileSources());
+        final LinkedHashMap<String, TileSource> newTileSources = getAllTileSources();
+        final TileSource currentTileSource = this.getTileController().getTileSource();
+
+        // re-add the currently active TileSource to prevent inconsistent display of menu
+        newTileSources.putIfAbsent(currentTileSource.getId(), currentTileSource);
+
+        this.iSourceButton.setSources(new ArrayList<>(newTileSources.values()));
     }
 }

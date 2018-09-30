@@ -30,6 +30,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -254,6 +255,40 @@ public class MinimapDialogTest {
         this.paintSlippyMap();
 
         assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+    }
+
+    /**
+     * Tests that the currently selected source being removed from ImageryLayerInfo will remain present and
+     * selected in the source menu even after the tile sources have been refreshed.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testRemovedSourceStillSelected() throws Exception {
+        // relevant prefs starting out empty, should choose the first source and have shown download area enabled
+        // (not that there's a data layer for it to use)
+
+        this.setUpMiniMap();
+
+        this.clickSourceMenuItemByLabel("Green Tiles");
+
+        ImageryLayerInfo.instance.remove(
+            ImageryLayerInfo.instance.getLayers().stream().filter(i -> i.getName().equals("Green Tiles")).findAny().get()
+        );
+
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+
+        this.slippyMap.refreshTileSources();
+
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xff00ff00, paintedSlippyMap.getRGB(0, 0));
     }
 
     /**
