@@ -41,7 +41,7 @@ public class FixDataHookTest {
     @Test
     public void testCheckUpload() {
         // Empty data set
-        UndoRedoHandler.getInstance().getUndoCommands().clear();
+        UndoRedoHandler.getInstance().clean();
         new FixDataHook().checkUpload(new APIDataSet());
         assertTrue(UndoRedoHandler.getInstance().getUndoCommands().isEmpty());
 
