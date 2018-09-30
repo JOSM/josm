@@ -204,6 +204,7 @@ public final class KeyboardUtils {
             case "de": // German
                 // https://en.wikipedia.org/wiki/German_keyboard_layout
                 result.add((char) KeyEvent.VK_DEAD_CIRCUMFLEX);
+                result.add('ˆ'); // U+02C6 : dead/modifier circumflex
                 break;
             case "cs": // Czech
             case "he": // Hebrew
@@ -239,6 +240,7 @@ public final class KeyboardUtils {
             case "et": // Estonian
                 // https://en.wikipedia.org/wiki/QWERTY#Estonian
                 result.add((char) KeyEvent.VK_DEAD_CARON); // https://en.wikipedia.org/wiki/Caron
+                result.add('ˇ'); // U+02C7 : dead key/modifier
                 break;
             case "is": // Icelandic
                 // https://en.wikipedia.org/wiki/Icelandic_keyboard_layout
@@ -301,6 +303,7 @@ public final class KeyboardUtils {
             // Add default US QWERTY keys, https://en.wikipedia.org/wiki/QWERTY
             // Works also for Dvorak, https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
             result.add('`'); // U+0060: On US QWERTY, this is not a dead key
+            result.add((char) KeyEvent.VK_DEAD_GRAVE);
             result.add('ˋ'); // U+02CB: On International QWERTY, this is a dead key
             return result;
         }

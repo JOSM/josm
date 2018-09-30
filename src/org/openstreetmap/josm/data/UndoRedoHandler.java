@@ -263,8 +263,8 @@ public final class UndoRedoHandler {
 
     /**
      * Determines if commands can be undone.
-     * @return {14281 true} if at least a command can be undone
-     * @since xxx
+     * @return {@code true} if at least a command can be undone
+     * @since 14281
      */
     public boolean hasUndoCommands() {
         return !commands.isEmpty();
