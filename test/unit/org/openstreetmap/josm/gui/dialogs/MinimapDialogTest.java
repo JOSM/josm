@@ -30,6 +30,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -37,6 +38,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.bbox.SourceButton;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -279,6 +281,38 @@ public class MinimapDialogTest {
 
         this.slippyMap.refreshTileSources();
 
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xff00ff00, paintedSlippyMap.getRGB(0, 0));
+    }
+
+    /**
+     * Tests the tile source list includes sources only present in the LayerManager
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testTileSourcesFromCurrentLayers() throws Exception {
+        // relevant prefs starting out empty, should choose the first (ImageryLayerInfo) source and have shown download area enabled
+        // (not that there's a data layer for it to use)
+
+        // first we will remove "Green Tiles" from ImageryLayerInfo
+        final ImageryInfo greenTilesInfo = ImageryLayerInfo.instance.getLayers().stream().filter(
+            i -> i.getName().equals("Green Tiles")
+        ).findAny().get();
+        ImageryLayerInfo.instance.remove(greenTilesInfo);
+
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().addLayer(ImageryLayer.create(greenTilesInfo)));
+
+        this.setUpMiniMap();
+
+        this.clickSourceMenuItemByLabel("Green Tiles");
         this.assertSingleSelectedSourceLabel("Green Tiles");
 
         // call paint to trigger new tile fetch

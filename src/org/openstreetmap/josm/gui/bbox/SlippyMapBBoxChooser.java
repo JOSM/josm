@@ -54,6 +54,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -76,16 +77,14 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         List<TileSource> getTileSources();
     }
 
-    /**
-     * TMS TileSource provider for the slippymap chooser
-     */
-    public static class TMSTileSourceProvider implements TileSourceProvider {
+    public abstract static class AbstractImageryInfoBasedTileSourceProvider implements TileSourceProvider {
+        public abstract List<ImageryInfo> getImageryInfos();
 
         @Override
         public List<TileSource> getTileSources() {
             if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
             List<TileSource> sources = new ArrayList<>();
-            for (ImageryInfo info : ImageryLayerInfo.instance.getLayers()) {
+            for (ImageryInfo info : this.getImageryInfos()) {
                 try {
                     TileSource source = TMSLayer.getTileSourceStatic(info);
                     if (source != null) {
@@ -105,6 +104,30 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
     }
 
     /**
+     * TileSource provider for the slippymap chooser - providing sources from imagery sources menu
+     */
+    public static class TMSTileSourceProvider extends AbstractImageryInfoBasedTileSourceProvider {
+        @Override
+        public List<ImageryInfo> getImageryInfos() {
+            return ImageryLayerInfo.instance.getLayers();
+        }
+    }
+
+    /**
+     * TileSource provider for the slippymap chooser - providing sources from current layers
+     */
+    public static class CurrentLayersTileSourceProvider extends AbstractImageryInfoBasedTileSourceProvider {
+        @Override
+        public List<ImageryInfo> getImageryInfos() {
+            return MainApplication.getLayerManager().getLayers().stream().filter(
+                layer -> layer instanceof ImageryLayer
+            ).map(
+                layer -> ((ImageryLayer) layer).getInfo()
+            ).collect(Collectors.toList());
+        }
+    }
+
+    /**
      * Plugins that wish to add custom tile sources to slippy map choose should call this method
      * @param tileSourceProvider new tile source provider
      */
@@ -116,6 +139,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
     static {
         addTileSourceProvider(() -> Arrays.<TileSource>asList(new OsmTileSource.Mapnik()));
         addTileSourceProvider(new TMSTileSourceProvider());
+        addTileSourceProvider(new CurrentLayersTileSourceProvider());
     }
 
     private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");
