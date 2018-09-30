@@ -60,7 +60,11 @@ public class KeyboardUtilsTest {
         char deadGrave2 = 0x2CB;
         char deadCaron2 = 0x2C7;
         testgetCharactersForKeyE00("ar", 'ذ', '>', '`', deadGrave, deadGrave2);
-        testgetCharactersForKeyE00("fr_FR", '²', '$', '`', deadGrave, deadGrave2);
+        if (PlatformManager.isPlatformUnixoid()) {
+            testgetCharactersForKeyE00("fr_FR", '²', '$', 'œ', '`', deadGrave, deadGrave2);
+        } else {
+            testgetCharactersForKeyE00("fr_FR", '²', '$', '`', deadGrave, deadGrave2);
+        }
         testgetCharactersForKeyE00("fr_CA", '#', '$', '/', '`', deadGrave, deadGrave2);
         testgetCharactersForKeyE00("sq", '\\', '`', deadGrave, deadGrave2);
         testgetCharactersForKeyE00("it", '\\', '`', deadGrave, deadGrave2);
