@@ -102,16 +102,17 @@ public class SequenceCommand extends Command {
         }
     }
 
-    @Override public void undoCommand() {
-        // We probably aborted this halfway though the
-        // execution sequence because of a sub-command
-        // error.  We already undid the sub-commands.
+    @Override
+    public void undoCommand() {
+        // We probably aborted this halfway though the execution sequence because of a sub-command error.
+        // We already undid the sub-commands.
         if (!sequenceComplete)
             return;
         undoCommands(sequence.length-1);
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         for (Command c : sequence) {
             c.fillModifiedData(modified, deleted, added);
         }
@@ -120,6 +121,15 @@ public class SequenceCommand extends Command {
     @Override
     public String getDescriptionText() {
         return tr("Sequence: {0}", name);
+    }
+
+    /**
+     * Returns the command name used in description text.
+     * @return the command name
+     * @since 14283
+     */
+    public final String getName() {
+        return name;
     }
 
     @Override

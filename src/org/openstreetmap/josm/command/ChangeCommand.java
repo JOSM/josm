@@ -89,6 +89,24 @@ public class ChangeCommand extends Command {
         return ImageProvider.get(osm.getDisplayType());
     }
 
+    /**
+     * Returns the original OSM primitive to modify. It belongs to a dataset.
+     * @return the original OSM primitive to modify
+     * @since 14283
+     */
+    public final OsmPrimitive getOsmPrimitive() {
+        return osm;
+    }
+
+    /**
+     * Returns the new OSM primitive.
+     * @return the new OSM primitive
+     * @since 14283
+     */
+    public final OsmPrimitive getNewOsmPrimitive() {
+        return newOsm;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), osm, newOsm);
