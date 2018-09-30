@@ -49,15 +49,12 @@ public class StandardSerializer
         throws IOException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream( baos );
-        try
+
+        try (ObjectOutputStream oos = new ObjectOutputStream( baos ))
         {
             oos.writeObject( obj );
         }
-        finally
-        {
-            oos.close();
-        }
+
         return baos.toByteArray();
     }
 
@@ -75,17 +72,12 @@ public class StandardSerializer
         throws IOException, ClassNotFoundException
     {
         ByteArrayInputStream bais = new ByteArrayInputStream( data );
-        BufferedInputStream bis = new BufferedInputStream( bais );
-        ObjectInputStream ois = new ObjectInputStreamClassLoaderAware( bis, loader );
-        try
+
+        try (ObjectInputStream ois = new ObjectInputStreamClassLoaderAware( bais, loader ))
         {
             @SuppressWarnings("unchecked") // Need to cast from Object
             T readObject = (T) ois.readObject();
             return readObject;
-        }
-        finally
-        {
-            ois.close();
         }
     }
 }

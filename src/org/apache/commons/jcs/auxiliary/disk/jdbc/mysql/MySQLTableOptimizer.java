@@ -133,25 +133,12 @@ public class MySQLTableOptimizer
                 log.info( "Optimizing table [" + this.getTableName() + "]" );
             }
 
-            Connection con;
-            try
-            {
-                con = dataSource.getConnection();
-            }
-            catch ( SQLException e )
-            {
-                log.error( "Problem getting connection.", e );
-                return false;
-            }
-
-            try
+            try (Connection con = dataSource.getConnection())
             {
                 // TEST
-                Statement sStatement = null;
-                try
-                {
-                    sStatement = con.createStatement();
 
+                try (Statement sStatement = con.createStatement())
+                {
                     ResultSet rs = sStatement.executeQuery( "optimize table " + this.getTableName() );
 
                     // first row is error, then status
@@ -195,31 +182,10 @@ public class MySQLTableOptimizer
                     log.error( "Problem optimizing table [" + this.getTableName() + "]", e );
                     return false;
                 }
-                finally
-                {
-                    if (sStatement != null)
-                    {
-                        try
-                        {
-                            sStatement.close();
-                        }
-                        catch ( SQLException e )
-                        {
-                            log.error( "Problem closing statement.", e );
-                        }
-                    }
-                }
             }
-            finally
+            catch ( SQLException e )
             {
-                try
-                {
-                    con.close();
-                }
-                catch ( SQLException e )
-                {
-                    log.error( "Problem closing connection.", e );
-                }
+                log.error( "Problem getting connection.", e );
             }
         }
         finally

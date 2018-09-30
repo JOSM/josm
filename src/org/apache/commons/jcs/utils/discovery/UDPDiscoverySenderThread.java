@@ -1,5 +1,8 @@
 package org.apache.commons.jcs.utils.discovery;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,8 +24,6 @@ package org.apache.commons.jcs.utils.discovery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
 
 /**
  * Used to periodically broadcast our location to other caches that might be listening.
@@ -81,11 +82,10 @@ public class UDPDiscoverySenderThread
                 + attributes.getServiceAddress() + "] and port = [" + attributes.getServicePort() + "]" );
         }
 
-        UDPDiscoverySender sender = null;
-        try
+        try (UDPDiscoverySender sender = new UDPDiscoverySender( attributes.getUdpDiscoveryAddr(),
+                attributes.getUdpDiscoveryPort() ))
         {
             // move this to the run method and determine how often to call it.
-            sender = new UDPDiscoverySender( attributes.getUdpDiscoveryAddr(), attributes.getUdpDiscoveryPort() );
             sender.requestBroadcast();
 
             if ( log.isDebugEnabled() )
@@ -93,23 +93,9 @@ public class UDPDiscoverySenderThread
                 log.debug( "Sent a request broadcast to the group" );
             }
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             log.error( "Problem sending a Request Broadcast", e );
-        }
-        finally
-        {
-            try
-            {
-                if ( sender != null )
-                {
-                    sender.destroy();
-                }
-            }
-            catch ( Exception e )
-            {
-                log.error( "Problem closing Request Broadcast sender", e );
-            }
         }
     }
 
@@ -119,13 +105,11 @@ public class UDPDiscoverySenderThread
     @Override
     public void run()
     {
-        UDPDiscoverySender sender = null;
-        try
+        // create this connection each time.
+        // more robust
+        try (UDPDiscoverySender sender = new UDPDiscoverySender( attributes.getUdpDiscoveryAddr(),
+                attributes.getUdpDiscoveryPort() ))
         {
-            // create this connection each time.
-            // more robust
-            sender = new UDPDiscoverySender( attributes.getUdpDiscoveryAddr(), attributes.getUdpDiscoveryPort() );
-
             sender.passiveBroadcast( attributes.getServiceAddress(), attributes.getServicePort(), cacheNames );
 
             // todo we should consider sending a request broadcast every so
@@ -135,26 +119,11 @@ public class UDPDiscoverySenderThread
             {
                 log.debug( "Called sender to issue a passive broadcast" );
             }
-
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             log.error( "Problem calling the UDP Discovery Sender [" + attributes.getUdpDiscoveryAddr() + ":"
                 + attributes.getUdpDiscoveryPort() + "]", e );
-        }
-        finally
-        {
-            if (sender != null)
-            {
-                try
-                {
-                    sender.destroy();
-                }
-                catch ( Exception e )
-                {
-                    log.error( "Problem closing Passive Broadcast sender", e );
-                }
-            }
         }
     }
 
@@ -163,13 +132,11 @@ public class UDPDiscoverySenderThread
      */
     protected void shutdown()
     {
-        UDPDiscoverySender sender = null;
-        try
+        // create this connection each time.
+        // more robust
+        try (UDPDiscoverySender sender = new UDPDiscoverySender( attributes.getUdpDiscoveryAddr(),
+                attributes.getUdpDiscoveryPort() ))
         {
-            // create this connection each time.
-            // more robust
-            sender = new UDPDiscoverySender( attributes.getUdpDiscoveryAddr(), attributes.getUdpDiscoveryPort() );
-
             sender.removeBroadcast( attributes.getServiceAddress(), attributes.getServicePort(), cacheNames );
 
             if ( log.isDebugEnabled() )
@@ -177,23 +144,9 @@ public class UDPDiscoverySenderThread
                 log.debug( "Called sender to issue a remove broadcast in shudown." );
             }
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             log.error( "Problem calling the UDP Discovery Sender", e );
-        }
-        finally
-        {
-            try
-            {
-                if ( sender != null )
-                {
-                    sender.destroy();
-                }
-            }
-            catch ( Exception e )
-            {
-                log.error( "Problem closing Remote Broadcast sender", e );
-            }
         }
     }
 }

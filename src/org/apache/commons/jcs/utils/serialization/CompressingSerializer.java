@@ -63,17 +63,13 @@ public class CompressingSerializer
         throws IOException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream( baos );
-        try
+
+        try (ObjectOutputStream oos = new ObjectOutputStream( baos ))
         {
             oos.writeObject( obj );
         }
-        finally
-        {
-            oos.close();
-        }
-        byte[] uncompressed = baos.toByteArray();
-        return uncompressed;
+
+        return baos.toByteArray();
     }
 
     /**
@@ -109,18 +105,12 @@ public class CompressingSerializer
         throws IOException, ClassNotFoundException
     {
         ByteArrayInputStream bais = new ByteArrayInputStream( decompressedByteArray );
-        BufferedInputStream bis = new BufferedInputStream( bais );
-        ObjectInputStream ois = new ObjectInputStreamClassLoaderAware( bis, null );
 
-        try
+        try (ObjectInputStream ois = new ObjectInputStreamClassLoaderAware( bais, null ))
         {
             @SuppressWarnings("unchecked") // Need to cast from Object
             T readObject = (T) ois.readObject();
             return readObject;
-        }
-        finally
-        {
-            ois.close();
         }
     }
 }

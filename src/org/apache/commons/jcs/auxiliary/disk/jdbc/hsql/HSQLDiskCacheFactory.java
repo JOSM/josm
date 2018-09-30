@@ -161,9 +161,7 @@ public class HSQLDiskCacheFactory
         createSql.append( "PRIMARY KEY (CACHE_KEY, REGION) " );
         createSql.append( ");" );
 
-        Statement sStatement = cConn.createStatement();
-
-        try
+        try (Statement sStatement = cConn.createStatement())
         {
             sStatement.execute( createSql.toString() );
         }
@@ -173,10 +171,6 @@ public class HSQLDiskCacheFactory
             {
                 throw e;
             }
-        }
-        finally
-        {
-            sStatement.close();
         }
     }
 }

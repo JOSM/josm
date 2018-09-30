@@ -1,5 +1,7 @@
 package org.apache.commons.jcs.utils.props;
 
+import java.io.IOException;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -83,7 +85,9 @@ public abstract class PropertyLoader
         boolean isCCFSuffix = true;
 
         if ( name == null )
+        {
             throw new IllegalArgumentException( "null input: name" );
+        }
 
         ClassLoader classLoader = ( loader == null ) ? ClassLoader.getSystemClassLoader() : loader;
 
@@ -100,45 +104,27 @@ public abstract class PropertyLoader
             isCCFSuffix = false;
         }
 
+        fileName = fileName.replace( '.', '/' );
+
+        if ( !fileName.endsWith( SUFFIX ) && isCCFSuffix )
+        {
+            fileName = fileName.concat( SUFFIX );
+        }
+        else if ( !fileName.endsWith( SUFFIX_PROPERTIES ) && !isCCFSuffix )
+        {
+            fileName = fileName.concat( SUFFIX_PROPERTIES );
+        }
+
         Properties result = null;
 
-        InputStream in = null;
-        try
+        try (InputStream in = classLoader.getResourceAsStream( fileName ))
         {
-            fileName = fileName.replace( '.', '/' );
-
-            if ( !fileName.endsWith( SUFFIX ) && isCCFSuffix )
-            {
-                fileName = fileName.concat( SUFFIX );
-            }
-            else if ( !fileName.endsWith( SUFFIX_PROPERTIES ) && !isCCFSuffix )
-            {
-                fileName = fileName.concat( SUFFIX_PROPERTIES );
-            }
-
-            // returns null on lookup failures:
-            in = classLoader.getResourceAsStream( fileName );
-            if ( in != null )
-            {
-                result = new Properties();
-                result.load( in ); // can throw IOException
-            }
+            result = new Properties();
+            result.load( in ); // can throw IOException
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             result = null;
-        }
-        finally
-        {
-            if ( in != null )
-                try
-                {
-                    in.close();
-                }
-                catch ( Throwable ignore )
-                {
-                    // swallow
-                }
         }
 
         if ( THROW_ON_LOAD_FAILURE && result == null )

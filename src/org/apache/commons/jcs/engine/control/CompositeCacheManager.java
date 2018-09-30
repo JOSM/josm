@@ -325,38 +325,18 @@ public class CompositeCacheManager
 
         Properties props = new Properties();
 
-        InputStream is = getClass().getResourceAsStream( propFile );
-
-        if ( is != null )
+        try (InputStream is = getClass().getResourceAsStream( propFile ))
         {
-            try
-            {
-                props.load( is );
+            props.load( is );
 
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "File [" + propFile + "] contained " + props.size() + " properties" );
-                }
-            }
-            catch ( IOException ex )
+            if ( log.isDebugEnabled() )
             {
-                throw new CacheException("Failed to load properties for name [" + propFile + "]", ex);
-            }
-            finally
-            {
-                try
-                {
-                    is.close();
-                }
-                catch ( IOException ignore )
-                {
-                    // Ignored
-                }
+                log.debug( "File [" + propFile + "] contained " + props.size() + " properties" );
             }
         }
-        else
+        catch ( IOException ex )
         {
-            throw new CacheException( "Failed to read configuration file [" + propFile + "]" );
+            throw new CacheException("Failed to load properties for name [" + propFile + "]", ex);
         }
 
         configure( props );
@@ -460,7 +440,7 @@ public class CompositeCacheManager
         }
 
         // configure the cache
-        CompositeCacheConfigurator configurator = new CompositeCacheConfigurator();
+        CompositeCacheConfigurator configurator = newConfigurator();
 
         long start = System.currentTimeMillis();
 
@@ -604,7 +584,7 @@ public class CompositeCacheManager
 
                 if ( cache == null )
                 {
-                    CompositeCacheConfigurator configurator = new CompositeCacheConfigurator();
+                    CompositeCacheConfigurator configurator = newConfigurator();
 
                     cache = configurator.parseRegion( this.getConfigurationProperties(), this, cattr.getCacheName(),
                                                       this.defaultAuxValues, cattr );
@@ -619,6 +599,10 @@ public class CompositeCacheManager
         }
 
         return cache;
+    }
+
+    protected CompositeCacheConfigurator newConfigurator() {
+        return new CompositeCacheConfigurator();
     }
 
     /**

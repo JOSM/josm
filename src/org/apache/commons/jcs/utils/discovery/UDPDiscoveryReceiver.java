@@ -93,7 +93,7 @@ public class UDPDiscoveryReceiver
 
         // create a small thread pool to handle a barrage
         pooledExecutor = ThreadPoolManager.getInstance().createPool(
-        		new PoolConfiguration(false, 0, maxPoolSize, maxPoolSize, 0, WhenBlockedPolicy.DISCARDOLDEST, maxPoolSize), 
+        		new PoolConfiguration(false, 0, maxPoolSize, maxPoolSize, 0, WhenBlockedPolicy.DISCARDOLDEST, maxPoolSize),
         		"JCS-UDPDiscoveryReceiver-", Thread.MIN_PRIORITY);
 
         if ( log.isInfoEnabled() )
@@ -150,7 +150,6 @@ public class UDPDiscoveryReceiver
         throws IOException
     {
         final DatagramPacket packet = new DatagramPacket( mBuffer, mBuffer.length );
-        ObjectInputStream objectStream = null;
         Object obj = null;
         try
         {
@@ -167,8 +166,11 @@ public class UDPDiscoveryReceiver
             }
 
             final ByteArrayInputStream byteStream = new ByteArrayInputStream( mBuffer, 0, packet.getLength() );
-            objectStream = new ObjectInputStreamClassLoaderAware( byteStream, null );
-            obj = objectStream.readObject();
+
+            try (ObjectInputStream objectStream = new ObjectInputStreamClassLoaderAware( byteStream, null ))
+            {
+                obj = objectStream.readObject();
+            }
 
             if ( obj instanceof UDPDiscoveryMessage )
             {
@@ -188,20 +190,7 @@ public class UDPDiscoveryReceiver
         {
             log.error( "Error receiving multicast packet", e );
         }
-        finally
-        {
-            if (objectStream != null)
-            {
-                try
-                {
-                    objectStream.close();
-                }
-                catch (IOException e)
-                {
-                    log.error( "Error closing object stream", e );
-                }
-            }
-        }
+
         return obj;
     }
 

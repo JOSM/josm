@@ -79,7 +79,7 @@ public class UDPDiscoveryService
      */
     public UDPDiscoveryService( UDPDiscoveryAttributes attributes)
     {
-        udpDiscoveryAttributes = (UDPDiscoveryAttributes) attributes.clone();
+        udpDiscoveryAttributes = attributes.clone();
 
         try
         {
@@ -135,15 +135,13 @@ public class UDPDiscoveryService
      */
     protected void serviceRequestBroadcast()
     {
-        UDPDiscoverySender sender1 = null;
-        try
+        // create this connection each time.
+        // more robust
+        try (UDPDiscoverySender sender = new UDPDiscoverySender(
+                getUdpDiscoveryAttributes().getUdpDiscoveryAddr(),
+                getUdpDiscoveryAttributes().getUdpDiscoveryPort() ))
         {
-            // create this connection each time.
-            // more robust
-            sender1 = new UDPDiscoverySender( getUdpDiscoveryAttributes().getUdpDiscoveryAddr(),
-                                             getUdpDiscoveryAttributes().getUdpDiscoveryPort() );
-
-            sender1.passiveBroadcast( getUdpDiscoveryAttributes().getServiceAddress(), getUdpDiscoveryAttributes()
+            sender.passiveBroadcast( getUdpDiscoveryAttributes().getServiceAddress(), getUdpDiscoveryAttributes()
                 .getServicePort(), this.getCacheNames() );
 
             // todo we should consider sending a request broadcast every so
@@ -154,25 +152,11 @@ public class UDPDiscoveryService
                 log.debug( "Called sender to issue a passive broadcast" );
             }
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             log.error( "Problem calling the UDP Discovery Sender. address ["
                 + getUdpDiscoveryAttributes().getUdpDiscoveryAddr() + "] port ["
                 + getUdpDiscoveryAttributes().getUdpDiscoveryPort() + "]", e );
-        }
-        finally
-        {
-            try
-            {
-                if ( sender1 != null )
-                {
-                    sender1.destroy();
-                }
-            }
-            catch ( Exception e )
-            {
-                log.error( "Problem closing Passive Broadcast sender, while servicing a request broadcast.", e );
-            }
         }
     }
 

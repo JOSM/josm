@@ -1,5 +1,12 @@
 package org.apache.commons.jcs.utils.discovery;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.util.ArrayList;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -25,19 +32,12 @@ import org.apache.commons.jcs.utils.serialization.StandardSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.util.ArrayList;
-
 /**
  * This is a generic sender for the UDPDiscovery process.
  * <p>
  * @author Aaron Smuts
  */
-public class UDPDiscoverySender
+public class UDPDiscoverySender implements AutoCloseable
 {
     /** The logger. */
     private static final Log log = LogFactory.getLog( UDPDiscoverySender.class );
@@ -92,7 +92,8 @@ public class UDPDiscoverySender
     /**
      * Closes the socket connection.
      */
-    public void destroy()
+    @Override
+    public void close()
     {
         try
         {
@@ -103,7 +104,7 @@ public class UDPDiscoverySender
         }
         catch ( Exception e )
         {
-            log.error( "Problem destrying sender", e );
+            log.error( "Problem closing sender", e );
         }
     }
 
@@ -117,7 +118,7 @@ public class UDPDiscoverySender
         throws Throwable
     {
         super.finalize();
-        destroy();
+        close();
     }
 
     /**

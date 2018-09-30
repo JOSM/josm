@@ -228,12 +228,10 @@ public class LateralTCPSender
             // write object to listener
             oos.writeUnshared( led );
             oos.flush();
-            ObjectInputStream ois = null;
 
-            try
+            try (ObjectInputStream ois = new ObjectInputStreamClassLoaderAware( socket.getInputStream(), null ))
             {
                 socket.setSoTimeout( socketSoTimeOut );
-                ois = new ObjectInputStreamClassLoaderAware( socket.getInputStream(), null );
                 response = ois.readObject();
             }
             catch ( IOException ioe )
@@ -247,13 +245,6 @@ public class LateralTCPSender
             catch ( Exception e )
             {
                 log.error( e );
-            }
-            finally
-            {
-                if (ois != null)
-                {
-                    ois.close();
-                }
             }
         }
 

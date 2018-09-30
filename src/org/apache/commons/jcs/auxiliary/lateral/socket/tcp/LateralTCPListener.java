@@ -503,7 +503,7 @@ public class LateralTCPListener<K, V>
         @Override
         public void run()
         {
-            try
+            try (ServerSocket ssck = serverSocket)
             {
                 ConnectionHandler handler;
 
@@ -529,7 +529,7 @@ public class LateralTCPListener<K, V>
 
                         try
                         {
-                            socket = serverSocket.accept();
+                            socket = ssck.accept();
                             break inner;
                         }
                         catch (SocketTimeoutException e)
@@ -552,20 +552,6 @@ public class LateralTCPListener<K, V>
             catch ( IOException e )
             {
                 log.error( "Exception caught in TCP listener", e );
-            }
-            finally
-            {
-            	if (serverSocket != null)
-            	{
-            		try
-            		{
-						serverSocket.close();
-					}
-            		catch (IOException e)
-            		{
-                        log.error( "Exception caught closing socket", e );
-					}
-            	}
             }
         }
     }

@@ -504,8 +504,7 @@ public class CompositeCache<K, V>
 
         boolean found = false;
 
-        final boolean debugEnabled = log.isDebugEnabled(); // tested anyway but don't test it > once
-        if (debugEnabled)
+        if ( log.isDebugEnabled() )
         {
             log.debug( "get: key = " + key + ", localOnly = " + localOnly );
         }
@@ -522,12 +521,21 @@ public class CompositeCache<K, V>
                     // Found in memory cache
                     if ( isExpired( element ) )
                     {
-                        missCountExpired.incrementAndGet();
-                        remove( key );
+                        if ( log.isDebugEnabled() )
+                        {
+                            log.debug( cacheAttr.getCacheName() + " - Memory cache hit, but element expired" );
+                        }
+
+                        doExpires(element);
                         element = null;
                     }
                     else
                     {
+                        if ( log.isDebugEnabled() )
+                        {
+                            log.debug( cacheAttr.getCacheName() + " - Memory cache hit" );
+                        }
+
                         // Update counters
                         hitCountRam.incrementAndGet();
                     }
@@ -546,7 +554,7 @@ public class CompositeCache<K, V>
 
                             if ( !localOnly || cacheType == CacheType.DISK_CACHE )
                             {
-                                if (debugEnabled)
+                                if ( log.isDebugEnabled() )
                                 {
                                     log.debug( "Attempting to get from aux [" + aux.getCacheName() + "] which is of type: "
                                         + cacheType );
@@ -562,7 +570,7 @@ public class CompositeCache<K, V>
                                 }
                             }
 
-                            if (debugEnabled)
+                            if ( log.isDebugEnabled() )
                             {
                                 log.debug( "Got CacheElement: " + element );
                             }
@@ -572,12 +580,10 @@ public class CompositeCache<K, V>
                             {
                                 if ( isExpired( element ) )
                                 {
-                                    if (debugEnabled)
+                                    if ( log.isDebugEnabled() )
                                     {
                                         log.debug( cacheAttr.getCacheName() + " - Aux cache[" + aux.getCacheName() + "] hit, but element expired." );
                                     }
-
-                                    missCountExpired.incrementAndGet();
 
                                     // This will tell the remotes to remove the item
                                     // based on the element's expiration policy. The elements attributes
@@ -588,7 +594,7 @@ public class CompositeCache<K, V>
                                 }
                                 else
                                 {
-                                    if (debugEnabled)
+                                    if ( log.isDebugEnabled() )
                                     {
                                         log.debug( cacheAttr.getCacheName() + " - Aux cache[" + aux.getCacheName() + "] hit" );
                                     }
@@ -616,20 +622,9 @@ public class CompositeCache<K, V>
         {
             missCountNotFound.incrementAndGet();
 
-            if (debugEnabled)
+            if ( log.isDebugEnabled() )
             {
                 log.debug( cacheAttr.getCacheName() + " - Miss" );
-            }
-        }
-        else if (debugEnabled) // we log here to avoid to log in the synchronized block
-        {
-            if (element == null)
-            {
-                log.debug( cacheAttr.getCacheName() + " - Memory cache hit, but element expired" );
-            }
-            else
-            {
-                log.debug( cacheAttr.getCacheName() + " - Memory cache hit" );
             }
         }
 

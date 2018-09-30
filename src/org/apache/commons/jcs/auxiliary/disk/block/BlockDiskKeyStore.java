@@ -150,8 +150,8 @@ public class BlockDiskKeyStore<K>
             {
                 FileOutputStream fos = new FileOutputStream(keyFile);
                 BufferedOutputStream bos = new BufferedOutputStream(fos, 65536);
-                ObjectOutputStream oos = new ObjectOutputStream(bos);
-                try
+
+                try (ObjectOutputStream oos = new ObjectOutputStream(bos))
                 {
                     if (!verify())
                     {
@@ -167,11 +167,6 @@ public class BlockDiskKeyStore<K>
                         // stream these out in the loop.
                         oos.writeUnshared(descriptor);
                     }
-                }
-                finally
-                {
-                    oos.flush();
-                    oos.close();
                 }
             }
 
@@ -264,8 +259,8 @@ public class BlockDiskKeyStore<K>
             {
                 FileInputStream fis = new FileInputStream(keyFile);
                 BufferedInputStream bis = new BufferedInputStream(fis, 65536);
-                ObjectInputStream ois = new ObjectInputStreamClassLoaderAware(bis, null);
-                try
+
+                try (ObjectInputStream ois = new ObjectInputStreamClassLoaderAware(bis, null))
                 {
                     while (true)
                     {
@@ -281,10 +276,6 @@ public class BlockDiskKeyStore<K>
                 catch (EOFException eof)
                 {
                     // nothing
-                }
-                finally
-                {
-                    ois.close();
                 }
             }
 
