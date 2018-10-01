@@ -92,7 +92,7 @@ public class KeyboardUtilsTest {
         testgetCharactersForKeyE00("de_LU", deadCircumflex, deadCircumflex2, '²', '§', '`', deadGrave, deadGrave2);
         if (PlatformManager.isPlatformUnixoid()) {
             testgetCharactersForKeyE00("fr_LU", '$', 'œ', '²', '§', '`', deadGrave, deadGrave2);
-            testgetCharactersForKeyE00("fr_CH", 'œ', '²', '$', '§', '`', deadGrave, deadGrave2);
+            testgetCharactersForKeyE00("fr_CH", '²', '$', 'œ', '§', '`', deadGrave, deadGrave2);
         } else {
             testgetCharactersForKeyE00("fr_LU", '$', '²', '§', '`', deadGrave, deadGrave2);
             testgetCharactersForKeyE00("fr_CH", '²', '$', '§', '`', deadGrave, deadGrave2);
