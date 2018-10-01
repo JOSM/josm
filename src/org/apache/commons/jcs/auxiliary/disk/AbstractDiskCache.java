@@ -341,34 +341,6 @@ public abstract class AbstractDiskCache<K, V>
     }
 
     /**
-     * Gets multiple items from the cache based on the given set of keys.
-     *
-     * @param keys
-     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
-     *         data in cache for any of these keys
-     */
-    @Override
-    public Map<K, ICacheElement<K, V>> processGetMultiple(Set<K> keys)
-    {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-
-        if ( keys != null && !keys.isEmpty() )
-        {
-            for (K key : keys)
-            {
-                ICacheElement<K, V> element = get( key );
-
-                if ( element != null )
-                {
-                    elements.put( key, element );
-                }
-            }
-        }
-
-        return elements;
-    }
-
-    /**
      * The keys in the cache.
      *
      * @see org.apache.commons.jcs.auxiliary.AuxiliaryCache#getKeySet()

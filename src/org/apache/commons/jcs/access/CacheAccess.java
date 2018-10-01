@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.access.exception.CacheException;
@@ -87,20 +88,24 @@ public class CacheAccess<K, V>
     @Override
     public Map<K, V> getMatching( String pattern )
     {
-        HashMap<K, V> unwrappedResults = new HashMap<K, V>();
+        Map<K, V> unwrappedResults;
 
         Map<K, ICacheElement<K, V>> wrappedResults = this.getCacheControl().getMatching( pattern );
-        if ( wrappedResults != null )
+
+        if ( wrappedResults == null )
         {
-            for (Map.Entry<K, ICacheElement<K, V>> entry : wrappedResults.entrySet())
-            {
-                ICacheElement<K, V> element = entry.getValue();
-                if ( element != null )
-                {
-                    unwrappedResults.put( entry.getKey(), element.getVal() );
-                }
-            }
+            unwrappedResults = new HashMap<K, V>();
         }
+        else
+        {
+            unwrappedResults = wrappedResults.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue() != null)
+                    .collect(Collectors.toMap(
+                            entry -> entry.getKey(),
+                            entry -> entry.getValue().getVal()));
+        }
+
         return unwrappedResults;
     }
 

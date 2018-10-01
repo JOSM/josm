@@ -21,7 +21,6 @@ package org.apache.commons.jcs.auxiliary.lateral;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -167,36 +166,6 @@ public class LateralCache<K, V>
             handleException( e, "Failed to getMatching [" + pattern + "] from " + lateralCacheAttributes.getCacheName() + "@" + lateralCacheAttributes );
             return Collections.emptyMap();
         }
-    }
-
-    /**
-     * Gets multiple items from the cache based on the given set of keys.
-     * <p>
-     * @param keys
-     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
-     *         data in cache for any of these keys
-     * @throws IOException
-     */
-    @Override
-    protected Map<K, ICacheElement<K, V>> processGetMultiple( Set<K> keys )
-        throws IOException
-    {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-
-        if ( keys != null && !keys.isEmpty() )
-        {
-            for (K key : keys)
-            {
-                ICacheElement<K, V> element = get( key );
-
-                if ( element != null )
-                {
-                    elements.put( key, element );
-                }
-            }
-        }
-
-        return elements;
     }
 
     /**

@@ -1,5 +1,14 @@
 package org.apache.commons.jcs.auxiliary.lateral;
 
+import java.io.IOException;
+import java.rmi.UnmarshalException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -34,14 +43,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.rmi.UnmarshalException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Used to queue up update requests to the underlying cache. These requests will be processed in
@@ -167,22 +168,21 @@ public class LateralCacheNoWait<K, V>
     @Override
     public Map<K, ICacheElement<K, V>> getMultiple(Set<K> keys)
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-
         if ( keys != null && !keys.isEmpty() )
         {
-            for (K key : keys)
-            {
-                ICacheElement<K, V> element = get( key );
+            Map<K, ICacheElement<K, V>> elements = keys.stream()
+                .collect(Collectors.toMap(
+                        key -> key,
+                        key -> get(key))).entrySet().stream()
+                    .filter(entry -> entry.getValue() != null)
+                    .collect(Collectors.toMap(
+                            entry -> entry.getKey(),
+                            entry -> entry.getValue()));
 
-                if ( element != null )
-                {
-                    elements.put( key, element );
-                }
-            }
+            return elements;
         }
 
-        return elements;
+        return new HashMap<K, ICacheElement<K, V>>();
     }
 
     /**

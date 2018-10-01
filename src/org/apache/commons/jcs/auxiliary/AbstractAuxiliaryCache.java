@@ -1,5 +1,11 @@
 package org.apache.commons.jcs.auxiliary;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -40,6 +46,51 @@ public abstract class AbstractAuxiliaryCache<K, V>
 
     /** Key matcher used by the getMatching API */
     private IKeyMatcher<K> keyMatcher = new KeyMatcherPatternImpl<K>();
+
+    /**
+     * Gets multiple items from the cache based on the given set of keys.
+     *
+     * @param keys
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
+     *         data in cache for any of these keys
+     */
+    protected Map<K, ICacheElement<K, V>> processGetMultiple(Set<K> keys) throws IOException
+    {
+        if ( keys != null && !keys.isEmpty() )
+        {
+            Map<K, ICacheElement<K, V>> elements = keys.stream()
+                .collect(Collectors.toMap(
+                        key -> key,
+                        key -> {
+                            try
+                            {
+                                return get(key);
+                            }
+                            catch (IOException e)
+                            {
+                                return null;
+                            }
+                        })).entrySet().stream()
+                    .filter(entry -> entry.getValue() != null)
+                    .collect(Collectors.toMap(
+                            entry -> entry.getKey(),
+                            entry -> entry.getValue()));
+
+            return elements;
+        }
+
+        return new HashMap<K, ICacheElement<K, V>>();
+    }
+
+    /**
+     * Gets the item from the cache.
+     *
+     * @param key
+     * @return ICacheElement, a wrapper around the key, value, and attributes
+     * @throws IOException
+     */
+    @Override
+    public abstract ICacheElement<K, V> get( K key ) throws IOException;
 
     /**
      * Logs an event if an event logger is configured.

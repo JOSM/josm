@@ -1,5 +1,16 @@
 package org.apache.commons.jcs.auxiliary.lateral;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,7 +31,6 @@ package org.apache.commons.jcs.auxiliary.lateral;
  */
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCache;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.lateral.behavior.ILateralCacheAttributes;
 import org.apache.commons.jcs.auxiliary.lateral.behavior.ILateralCacheListener;
@@ -32,13 +42,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Used to provide access to multiple services under nowait protection. Composite factory should
@@ -93,15 +96,12 @@ public class LateralCacheNoWaitFacade<K, V>
      */
     public boolean containsNoWait( LateralCacheNoWait<K, V> noWait )
     {
-        for ( int i = 0; i < noWaits.length; i++ )
-        {
-            // we know noWait isn't null
-            if ( noWait.equals( noWaits[i] ) )
-            {
-                return true;
-            }
-        }
-        return false;
+        Optional<LateralCacheNoWait<K, V>> optional = Arrays.stream(noWaits)
+                // we know noWait isn't null
+                .filter(nw -> noWait.equals( nw ))
+                .findFirst();
+
+        return optional.isPresent();
     }
 
     /**
@@ -193,16 +193,10 @@ public class LateralCacheNoWaitFacade<K, V>
         {
             log.debug( "updating through lateral cache facade, noWaits.length = " + noWaits.length );
         }
-        try
+
+        for (LateralCacheNoWait<K, V> nw : noWaits)
         {
-            for ( int i = 0; i < noWaits.length; i++ )
-            {
-                noWaits[i].update( ce );
-            }
-        }
-        catch ( Exception ex )
-        {
-            log.error( ex );
+            nw.update( ce );
         }
     }
 
@@ -215,25 +209,16 @@ public class LateralCacheNoWaitFacade<K, V>
     @Override
     public ICacheElement<K, V> get( K key )
     {
-        for ( int i = 0; i < noWaits.length; i++ )
-        {
-            try
-            {
-                ICacheElement<K, V> obj = noWaits[i].get( key );
+        Optional<ICacheElement<K, V>> optional = Arrays.stream(noWaits)
+            .map(nw -> nw.get( key ))
+            .filter(obj -> obj != null)
+            .findFirst();
 
-                if ( obj != null )
-                {
-                    // TODO: return after first success
-                    // could do this simultaneously
-                    // serious blocking risk here
-                    return obj;
-                }
-            }
-            catch ( Exception ex )
-            {
-                log.error( "Failed to get", ex );
-            }
+        if (optional.isPresent())
+        {
+            return optional.get();
         }
+
         return null;
     }
 
@@ -247,22 +232,21 @@ public class LateralCacheNoWaitFacade<K, V>
     @Override
     public Map<K, ICacheElement<K, V>> getMultiple(Set<K> keys)
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-
         if ( keys != null && !keys.isEmpty() )
         {
-            for (K key : keys)
-            {
-                ICacheElement<K, V> element = get( key );
+            Map<K, ICacheElement<K, V>> elements = keys.stream()
+                .collect(Collectors.toMap(
+                        key -> key,
+                        key -> get(key))).entrySet().stream()
+                    .filter(entry -> entry.getValue() != null)
+                    .collect(Collectors.toMap(
+                            entry -> entry.getKey(),
+                            entry -> entry.getValue()));
 
-                if ( element != null )
-                {
-                    elements.put( key, element );
-                }
-            }
+            return elements;
         }
 
-        return elements;
+        return new HashMap<K, ICacheElement<K, V>>();
     }
 
     /**
@@ -276,16 +260,9 @@ public class LateralCacheNoWaitFacade<K, V>
     public Map<K, ICacheElement<K, V>> getMatching(String pattern)
     {
         Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-        for ( int i = 0; i < noWaits.length; i++ )
+        for (LateralCacheNoWait<K, V> nw : noWaits)
         {
-            try
-            {
-                elements.putAll( noWaits[i].getMatching( pattern ) );
-            }
-            catch ( Exception ex )
-            {
-                log.error( "Failed to get", ex );
-            }
+            elements.putAll( nw.getMatching( pattern ) );
         }
         return elements;
     }
@@ -299,13 +276,12 @@ public class LateralCacheNoWaitFacade<K, V>
     public Set<K> getKeySet() throws IOException
     {
         HashSet<K> allKeys = new HashSet<K>();
-        for ( int i = 0; i < noWaits.length; i++ )
+        for (LateralCacheNoWait<K, V> nw : noWaits)
         {
-            AuxiliaryCache<K, V> aux = noWaits[i];
-            if ( aux != null )
+            if ( nw != null )
             {
-                Set<K> keys = aux.getKeySet();
-                if(keys != null)
+                Set<K> keys = nw.getKeySet();
+                if (keys != null)
                 {
                     allKeys.addAll( keys );
                 }
@@ -323,17 +299,7 @@ public class LateralCacheNoWaitFacade<K, V>
     @Override
     public boolean remove( K key )
     {
-        try
-        {
-            for ( int i = 0; i < noWaits.length; i++ )
-            {
-                noWaits[i].remove( key );
-            }
-        }
-        catch ( Exception ex )
-        {
-            log.error( ex );
-        }
+        Arrays.stream(noWaits).forEach(nw -> nw.remove( key ));
         return false;
     }
 
@@ -343,17 +309,7 @@ public class LateralCacheNoWaitFacade<K, V>
     @Override
     public void removeAll()
     {
-        try
-        {
-            for ( int i = 0; i < noWaits.length; i++ )
-            {
-                noWaits[i].removeAll();
-            }
-        }
-        catch ( Exception ex )
-        {
-            log.error( ex );
-        }
+        Arrays.stream(noWaits).forEach(nw -> nw.removeAll());
     }
 
     /** Adds a dispose request to the lateral cache. */
@@ -368,14 +324,7 @@ public class LateralCacheNoWaitFacade<K, V>
                 listener = null;
             }
 
-            for ( int i = 0; i < noWaits.length; i++ )
-            {
-                noWaits[i].dispose();
-            }
-        }
-        catch ( Exception ex )
-        {
-            log.error( ex );
+            Arrays.stream(noWaits).forEach(nw -> nw.dispose());
         }
         finally
         {
@@ -434,27 +383,20 @@ public class LateralCacheNoWaitFacade<K, V>
             return CacheStatus.ALIVE;
         }
 
-        CacheStatus[] statii = new CacheStatus[noWaits.length];
-        for (int i = 0; i < noWaits.length; i++)
-        {
-            statii[i] = noWaits[i].getStatus();
-        }
+        List<CacheStatus> statii = Arrays.stream(noWaits)
+                .map(nw -> nw.getStatus())
+                .collect(Collectors.toList());
+
         // It's alive if ANY of its nowaits is alive
-        for (int i = 0; i < noWaits.length; i++)
+        if (statii.contains(CacheStatus.ALIVE))
         {
-            if (statii[i] == CacheStatus.ALIVE)
-            {
-                return CacheStatus.ALIVE;
-            }
+            return CacheStatus.ALIVE;
         }
         // It's alive if ANY of its nowaits is in error, but
         // none are alive, then it's in error
-        for (int i = 0; i < noWaits.length; i++)
+        if (statii.contains(CacheStatus.ERROR))
         {
-            if (statii[i] == CacheStatus.ERROR)
-            {
-                return CacheStatus.ERROR;
-            }
+            return CacheStatus.ERROR;
         }
 
         // Otherwise, it's been disposed, since it's the only status left

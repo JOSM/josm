@@ -23,10 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache;
@@ -266,8 +265,6 @@ public class BlockDiskCache<K, V>
     @Override
     public Map<K, ICacheElement<K, V>> processGetMatching( String pattern )
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-
         Set<K> keyArray = null;
         storageLock.readLock().lock();
         try
@@ -281,14 +278,14 @@ public class BlockDiskCache<K, V>
 
         Set<K> matchingKeys = getKeyMatcher().getMatchingKeysFromArray( pattern, keyArray );
 
-        for (K key : matchingKeys)
-        {
-            ICacheElement<K, V> element = processGet( key );
-            if ( element != null )
-            {
-                elements.put( key, element );
-            }
-        }
+        Map<K, ICacheElement<K, V>> elements = matchingKeys.stream()
+            .collect(Collectors.toMap(
+                    key -> key,
+                    key -> processGet( key ))).entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey(),
+                        entry -> entry.getValue()));
 
         return elements;
     }
@@ -493,31 +490,19 @@ public class BlockDiskCache<K, V>
      */
     private boolean performGroupRemoval(GroupId key)
     {
-        boolean removed = false;
-
         // remove all keys of the same name group.
-        List<K> itemsToRemove = new LinkedList<K>();
-
-        // remove all keys of the same name hierarchy.
-        for (K k : keyStore.keySet())
-        {
-            if (k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(key))
-            {
-                itemsToRemove.add(k);
-            }
-        }
+        List<K> itemsToRemove = keyStore.keySet()
+                .stream()
+                .filter(k -> k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(key))
+                .collect(Collectors.toList());
 
         // remove matches.
-        for (K fullKey : itemsToRemove)
-        {
-            // Don't add to recycle bin here
-            // https://issues.apache.org/jira/browse/JCS-67
-            performSingleKeyRemoval(fullKey);
-            removed = true;
-            // TODO this needs to update the remove count separately
-        }
+        // Don't add to recycle bin here
+        // https://issues.apache.org/jira/browse/JCS-67
+        itemsToRemove.forEach(fullKey -> performSingleKeyRemoval(fullKey));
+        // TODO this needs to update the remove count separately
 
-        return removed;
+        return !itemsToRemove.isEmpty();
     }
 
     /**
@@ -532,30 +517,19 @@ public class BlockDiskCache<K, V>
      */
     private boolean performPartialKeyRemoval(String key)
     {
-        boolean removed = false;
-
         // remove all keys of the same name hierarchy.
-        List<K> itemsToRemove = new LinkedList<K>();
-
-        for (K k : keyStore.keySet())
-        {
-            if (k instanceof String && k.toString().startsWith(key))
-            {
-                itemsToRemove.add(k);
-            }
-        }
+        List<K> itemsToRemove = keyStore.keySet()
+                .stream()
+                .filter(k -> k instanceof String && k.toString().startsWith(key))
+                .collect(Collectors.toList());
 
         // remove matches.
-        for (K fullKey : itemsToRemove)
-        {
-            // Don't add to recycle bin here
-            // https://issues.apache.org/jira/browse/JCS-67
-            performSingleKeyRemoval(fullKey);
-            removed = true;
-            // TODO this needs to update the remove count separately
-        }
+        // Don't add to recycle bin here
+        // https://issues.apache.org/jira/browse/JCS-67
+        itemsToRemove.forEach(fullKey -> performSingleKeyRemoval(fullKey));
+        // TODO this needs to update the remove count separately
 
-        return removed;
+        return !itemsToRemove.isEmpty();
     }
 
 

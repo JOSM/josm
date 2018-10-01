@@ -1,5 +1,9 @@
 package org.apache.commons.jcs.access;
 
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -28,10 +32,6 @@ import org.apache.commons.jcs.engine.behavior.IElementAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.control.group.GroupAttrName;
 import org.apache.commons.jcs.engine.control.group.GroupId;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Access for groups.
@@ -168,18 +168,13 @@ public class GroupCacheAccess<K, V>
     @Override
     public Set<K> getGroupKeys( String group )
     {
-        Set<K> groupKeys = new HashSet<K>();
         GroupId groupId = new GroupId( this.getCacheControl().getCacheName(), group );
 
-        for (GroupAttrName<K> gan : this.getCacheControl().getKeySet())
-        {
-            if (gan.groupId.equals( groupId ))
-            {
-                groupKeys.add( gan.attrName );
-            }
-        }
-
-        return groupKeys;
+        return this.getCacheControl().getKeySet()
+                .stream()
+                .filter(gan -> gan.groupId.equals(groupId))
+                .map(gan -> gan.attrName)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -189,12 +184,10 @@ public class GroupCacheAccess<K, V>
      */
     public Set<String> getGroupNames()
     {
-        HashSet<String> names = new HashSet<String>();
-        for (GroupAttrName<K> gan : this.getCacheControl().getKeySet())
-        {
-            names.add(gan.groupId.groupName);
-        }
-        return names;
+        return this.getCacheControl().getKeySet()
+                .stream()
+                .map(gan -> gan.groupId.groupName)
+                .collect(Collectors.toSet());
     }
 
     /**
