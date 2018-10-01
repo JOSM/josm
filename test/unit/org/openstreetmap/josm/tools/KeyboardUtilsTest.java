@@ -90,8 +90,13 @@ public class KeyboardUtilsTest {
         testgetCharactersForKeyE00("es_ES", 'º', '`', deadGrave, deadGrave2);
         testgetCharactersForKeyE00("tr", '"', '*', '`', deadGrave, deadGrave2);
         testgetCharactersForKeyE00("de_LU", deadCircumflex, deadCircumflex2, '²', '§', '`', deadGrave, deadGrave2);
-        testgetCharactersForKeyE00("fr_LU", '$', '²', '§', '`', deadGrave, deadGrave2);
-        testgetCharactersForKeyE00("fr_CH", '²', '$', '§', '`', deadGrave, deadGrave2);
+        if (PlatformManager.isPlatformUnixoid()) {
+            testgetCharactersForKeyE00("fr_LU", '$', 'œ', '²', '§', '`', deadGrave, deadGrave2);
+            testgetCharactersForKeyE00("fr_CH", 'œ', '²', '$', '§', '`', deadGrave, deadGrave2);
+        } else {
+            testgetCharactersForKeyE00("fr_LU", '$', '²', '§', '`', deadGrave, deadGrave2);
+            testgetCharactersForKeyE00("fr_CH", '²', '$', '§', '`', deadGrave, deadGrave2);
+        }
         testgetCharactersForKeyE00("de_CH", deadCircumflex, deadCircumflex2, '§', '`', deadGrave, deadGrave2);
         testgetCharactersForKeyE00("de_LI", deadCircumflex, deadCircumflex2, '§', '`', deadGrave, deadGrave2);
         testgetCharactersForKeyE00("fi_FI", '§', '`', deadGrave, deadGrave2);
