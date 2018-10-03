@@ -84,7 +84,12 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         if (icon != null) {
             ImageResource resource = icon.getResource();
             if (resource != null) {
-                resource.attachImageIcon(this, true);
+                try {
+                    resource.attachImageIcon(this, true);
+                } catch (RuntimeException e) {
+                    Logging.warn("Unable to attach image icon {0} for action {1}", icon, name);
+                    Logging.error(e);
+                }
             }
         }
         setHelpId();

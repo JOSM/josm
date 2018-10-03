@@ -209,7 +209,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      */
     public void setIcon(final String iconName) {
         this.iconName = iconName;
-        if (!TaggingPresetReader.isLoadIcons()) {
+        if (iconName == null || !TaggingPresetReader.isLoadIcons()) {
             return;
         }
         File arch = TaggingPresetReader.getZipIcons();
