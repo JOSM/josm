@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -276,7 +277,7 @@ public class ImageProvider {
     /** sub directory the image can be found in */
     protected String subdir;
     /** image file name */
-    protected String name;
+    protected final String name;
     /** archive file to take image from */
     protected File archive;
     /** directory inside the archive */
@@ -326,19 +327,21 @@ public class ImageProvider {
      * @param subdir subdirectory the image lies in
      * @param name the name of the image. If it does not end with '.png' or '.svg',
      * both extensions are tried.
+     * @throws NullPointerException if name is null
      */
     public ImageProvider(String subdir, String name) {
         this.subdir = subdir;
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "name");
     }
 
     /**
      * Constructs a new {@code ImageProvider} from a filename.
      * @param name the name of the image. If it does not end with '.png' or '.svg',
      * both extensions are tried.
+     * @throws NullPointerException if name is null
      */
     public ImageProvider(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "name");
     }
 
     /**
@@ -862,8 +865,6 @@ public class ImageProvider {
         synchronized (cache) {
             // This method is called from different thread and modifying HashMap concurrently can result
             // for example in loops in map entries (ie freeze when such entry is retrieved)
-            if (name == null)
-                return null;
 
             String prefix = isDisabled ? "dis:" : "";
             if (name.startsWith("data:")) {
@@ -2088,7 +2089,7 @@ public class ImageProvider {
     public String toString() {
         return ("ImageProvider ["
                 + (dirs != null && !dirs.isEmpty() ? "dirs=" + dirs + ", " : "") + (id != null ? "id=" + id + ", " : "")
-                + (subdir != null && !subdir.isEmpty() ? "subdir=" + subdir + ", " : "") + (name != null ? "name=" + name + ", " : "")
+                + (subdir != null && !subdir.isEmpty() ? "subdir=" + subdir + ", " : "") + "name=" + name + ", "
                 + (archive != null ? "archive=" + archive + ", " : "")
                 + (inArchiveDir != null && !inArchiveDir.isEmpty() ? "inArchiveDir=" + inArchiveDir : "") + ']').replaceAll(", \\]", "]");
     }
