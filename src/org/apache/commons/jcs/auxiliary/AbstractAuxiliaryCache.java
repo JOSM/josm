@@ -59,22 +59,20 @@ public abstract class AbstractAuxiliaryCache<K, V>
         if ( keys != null && !keys.isEmpty() )
         {
             Map<K, ICacheElement<K, V>> elements = keys.stream()
+                .map(key -> {
+                    try
+                    {
+                        return get(key);
+                    }
+                    catch (IOException e)
+                    {
+                        return null;
+                    }
+                })
+                .filter(element -> element != null)
                 .collect(Collectors.toMap(
-                        key -> key,
-                        key -> {
-                            try
-                            {
-                                return get(key);
-                            }
-                            catch (IOException e)
-                            {
-                                return null;
-                            }
-                        })).entrySet().stream()
-                    .filter(entry -> entry.getValue() != null)
-                    .collect(Collectors.toMap(
-                            entry -> entry.getKey(),
-                            entry -> entry.getValue()));
+                        element -> element.getKey(),
+                        element -> element));
 
             return elements;
         }
