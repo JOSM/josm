@@ -88,12 +88,9 @@ public class CommonSettingsPanel extends JPanel {
         ImageryLayer.PROP_SHARPEN_LEVEL.put(sharpen.getSelectedIndex());
 
         boolean restartRequired = false;
+        restartRequired |= removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get(), 1024L * 1024L * ((Integer) this.maxElementsOnDisk.getValue()));
+
         if (!AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().equals(this.maxElementsOnDisk.getValue())) {
-            if (((Integer) this.maxElementsOnDisk.getValue()) < AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get() &&
-                    JCSCacheManager.USE_BLOCK_CACHE.get()) {
-                // reducing size of the cache, this requires deletion of the files
-                removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
-            }
             AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.put((Integer) this.maxElementsOnDisk.getValue());
             restartRequired = true;
         }
@@ -101,7 +98,7 @@ public class CommonSettingsPanel extends JPanel {
 
         if (!CachedTileLoaderFactory.PROP_TILECACHE_DIR.get().equals(this.tilecacheDir.getText())) {
             restartRequired = true;
-            removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get()); // clear old cache directory
+            restartRequired |= removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get(), 0); // clear old cache directory
             CachedTileLoaderFactory.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
         }
 
@@ -113,14 +110,31 @@ public class CommonSettingsPanel extends JPanel {
         return restartRequired;
     }
 
-    private static void removeCacheFiles(String path) {
+    private static boolean removeCacheFiles(String path, long maxSize) {
+
         File directory = new File(path);
         File[] cacheFiles = directory.listFiles((FilenameFilter) (dir, name) -> name.endsWith(".data") || name.endsWith(".key"));
-        JCSCacheManager.shutdown(); // shutdown Cache - so files can by safely deleted
+        boolean restartRequired = false;
         if (cacheFiles != null) {
             for (File cacheFile: cacheFiles) {
-                Utils.deleteFile(cacheFile);
+                if (cacheFile.length() > maxSize) {
+                    if (!restartRequired) {
+                        JCSCacheManager.shutdown(); // shutdown Cache - so files can by safely deleted
+                        restartRequired = true;
+                    }
+                    Utils.deleteFile(cacheFile);
+                    File otherFile = null;
+                    if (cacheFile.getName().endsWith(".data")) {
+                        otherFile = new File(cacheFile.getPath().replaceAll("\\.data$", ".key"));
+                    } else if (cacheFile.getName().endsWith(".key")) {
+                        otherFile = new File(cacheFile.getPath().replaceAll("\\.key$", ".data"));
+                    }
+                    if (otherFile != null) {
+                        Utils.deleteFileIfExists(otherFile);
+                    }
+                }
             }
         }
+        return restartRequired;
     }
 }
