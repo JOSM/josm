@@ -784,9 +784,9 @@ class SyncEditorLayerIndex {
                 def iehttps = ie.replace("http:","https:")
                 if(ij.equals(iehttps)) {
                     myprintln "+ Different icons: ${getDescription(j)}"
-                 } else {
+                } else {
                     myprintln "* Different icons: ${getDescription(j)}"
-                 }
+                }
             }
         }
         myprintln "*** Miscellaneous checks: ***"
