@@ -781,7 +781,12 @@ class SyncEditorLayerIndex {
             } else if(!ij.equals(ie) && !(
               ie.startsWith("https://osmlab.github.io/editor-layer-index/") &&
               ij.startsWith("data:"))) {
-                myprintln "* Different icons: ${getDescription(j)}"
+                def iehttps = ie.replace("http:","https:")
+                if(ij.equals(iehttps)) {
+                    myprintln "+ Different icons: ${getDescription(j)}"
+                } else {
+                    myprintln "* Different icons: ${getDescription(j)}"
+                }
             }
         }
         myprintln "*** Miscellaneous checks: ***"
