@@ -1255,7 +1255,6 @@ public final class DomainValidator extends AbstractValidator {
         "starhub", // starhub StarHub Limited
         "statebank", // statebank STATE BANK OF INDIA
         "statefarm", // statefarm State Farm Mutual Automobile Insurance Company
-        "statoil", // statoil Statoil ASA
         "stc", // stc Saudi Telecom Company
         "stcgroup", // stcgroup Saudi Telecom Company
         "stockholm", // stockholm Stockholms kommun
