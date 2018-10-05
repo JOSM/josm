@@ -100,7 +100,7 @@ public class OsmExporter extends FileExporter {
             JOptionPane.showMessageDialog(
                     MainApplication.getMainFrame(),
                     tr("<html>An error occurred while saving.<br>Error is:<br>{0}</html>",
-                            Utils.escapeReservedCharactersHTML(e.getMessage())),
+                            Utils.escapeReservedCharactersHTML(e.getClass().getSimpleName() + " - " + e.getMessage())),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
