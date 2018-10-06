@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +14,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -30,12 +32,15 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.bbox.SourceButton;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -125,6 +130,24 @@ public class MinimapDialogTest {
             // need to turn this *back* into an AssertionFailedError
             fail(String.format("Failed to find menu item with label %s: %s", label, e));
         }
+    }
+
+    protected void assertSourceLabelsVisible(final String... labels) {
+        GuiHelper.runInEDTAndWaitWithException(() -> {
+            final ArrayList<String> menuLabels = new ArrayList<>();
+            final JPopupMenu menu = this.sourceButton.getPopupMenu();
+            for (Component c: menu.getComponents()) {
+                if (c instanceof JPopupMenu.Separator) {
+                    break;
+                }
+                menuLabels.add(((JMenuItem) c).getText());
+            }
+
+            assertArrayEquals(
+                labels,
+                menuLabels.toArray()
+            );
+        });
     }
 
     private MinimapDialog minimap;
@@ -217,6 +240,211 @@ public class MinimapDialogTest {
         assertEquals(0xff00ff00, paintedSlippyMap.getRGB(0, 0));
 
         assertEquals("Green Tiles", Config.getPref().get("slippy_map_chooser.mapstyle", "Fail"));
+    }
+
+    /**
+     * Tests that the apparently-selected TileSource survives the tile sources being refreshed.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testRefreshSourcesRetainsSelection() throws Exception {
+        // relevant prefs starting out empty, should choose the first source and have shown download area enabled
+        // (not that there's a data layer for it to use)
+
+        this.setUpMiniMap();
+
+        this.clickSourceMenuItemByLabel("Magenta Tiles");
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+
+        this.slippyMap.refreshTileSources();
+
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+    }
+
+    /**
+     * Tests that the currently selected source being removed from ImageryLayerInfo will remain present and
+     * selected in the source menu even after the tile sources have been refreshed.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testRemovedSourceStillSelected() throws Exception {
+        // relevant prefs starting out empty, should choose the first source and have shown download area enabled
+        // (not that there's a data layer for it to use)
+
+        this.setUpMiniMap();
+
+        this.clickSourceMenuItemByLabel("Green Tiles");
+
+        ImageryLayerInfo.instance.remove(
+            ImageryLayerInfo.instance.getLayers().stream().filter(i -> i.getName().equals("Green Tiles")).findAny().get()
+        );
+
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+
+        this.slippyMap.refreshTileSources();
+
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xff00ff00, paintedSlippyMap.getRGB(0, 0));
+    }
+
+    /**
+     * Tests the tile source list includes sources only present in the LayerManager
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testTileSourcesFromCurrentLayers() throws Exception {
+        // relevant prefs starting out empty, should choose the first (ImageryLayerInfo) source and have shown download area enabled
+        // (not that there's a data layer for it to use)
+
+        final ImageryInfo magentaTilesInfo = ImageryLayerInfo.instance.getLayers().stream().filter(
+            i -> i.getName().equals("Magenta Tiles")
+        ).findAny().get();
+        final ImageryInfo blackTilesInfo = ImageryLayerInfo.instance.getLayers().stream().filter(
+            i -> i.getName().equals("Black Tiles")
+        ).findAny().get();
+
+        // first we will remove "Magenta Tiles" from ImageryLayerInfo
+        ImageryLayerInfo.instance.remove(magentaTilesInfo);
+
+        this.setUpMiniMap();
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles"
+        );
+
+        final ImageryLayer magentaTilesLayer = ImageryLayer.create(magentaTilesInfo);
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().addLayer(magentaTilesLayer));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles",
+            "Magenta Tiles"
+        );
+
+        this.clickSourceMenuItemByLabel("Magenta Tiles");
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+
+        final ImageryLayer blackTilesLayer = ImageryLayer.create(blackTilesInfo);
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().addLayer(blackTilesLayer));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles",
+            "Magenta Tiles"
+        );
+
+        this.clickSourceMenuItemByLabel("Black Tiles");
+        this.assertSingleSelectedSourceLabel("Black Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xff000000, paintedSlippyMap.getRGB(0, 0));
+
+        // removing magentaTilesLayer while it is *not* the selected TileSource should make it disappear
+        // immediately
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().removeLayer(magentaTilesLayer));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles"
+        );
+        this.assertSingleSelectedSourceLabel("Black Tiles");
+
+        final ImageryLayer magentaTilesLayer2 = ImageryLayer.create(magentaTilesInfo);
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().addLayer(magentaTilesLayer2));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles",
+            "Magenta Tiles"
+        );
+
+        this.clickSourceMenuItemByLabel("Magenta Tiles");
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+
+        // removing magentaTilesLayer while it *is* the selected TileSource...
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().removeLayer(magentaTilesLayer2));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles",
+            "Magenta Tiles"
+        );
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        this.clickSourceMenuItemByLabel("Green Tiles");
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles"
+        );
+
+        // removing blackTilesLayer shouldn't remove it from the menu as it is already in ImageryLayerInfo
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().removeLayer(blackTilesLayer));
+
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles"
+        );
     }
 
     /**

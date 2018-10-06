@@ -81,7 +81,7 @@ public class SourceButton extends PopupMenuButton {
             this.sourceButtonGroup.add(menuItem);
 
             // attempt to initialize button group matching current state of slippyMapBBoxChooser
-            buttonModel.setSelected(this.slippyMapBBoxChooser.getTileController().getTileSource() == ts);
+            buttonModel.setSelected(this.slippyMapBBoxChooser.getTileController().getTileSource().getId().equals(ts.getId()));
         }
 
         pm.addSeparator();
