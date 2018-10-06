@@ -211,9 +211,9 @@ public class TagCollection implements Iterable<Tag>, Serializable {
     }
 
     /**
-     * Gets the number of this this tag was added to the collection.
+     * Gets the number of times this tag was added to the collection.
      * @param tag The tag
-     * @return The number of thimes this tag is used in this collection.
+     * @return The number of times this tag is used in this collection.
      * @since 10736
      * @deprecated use {@link #getTagOccurrence}
      */
@@ -223,10 +223,10 @@ public class TagCollection implements Iterable<Tag>, Serializable {
     }
 
     /**
-     * Gets the number of this this tag was added to the collection.
+     * Gets the number of times this tag was added to the collection.
      * @param tag The tag
-     * @return The number of thimes this tag is used in this collection.
-     * @since 14301
+     * @return The number of times this tag is used in this collection.
+     * @since 14302
      */
     public int getTagOccurrence(Tag tag) {
         return tags.getOrDefault(tag, 0);
