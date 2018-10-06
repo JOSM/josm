@@ -6797,7 +6797,7 @@
             <text key="name" text="Name" />
             <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,sled,sleigh,snow_park" match="keyvalue"/>
             <optional>
-                <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" values_searchable="true" />
+                <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" values_searchable="true" values_sort="false" />
                 <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic;skating,scooter,backcountry" values_context="piste:grooming" />
             </optional>
         </item> <!-- Skiing -->
