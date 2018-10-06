@@ -37,6 +37,7 @@ public class MinimapDialog extends ToggleDialog implements NavigatableComponent.
         createLayout(slippyMap, false, Collections.emptyList());
         slippyMap.setSizeButtonVisible(false);
         slippyMap.addPropertyChangeListener(BBoxChooser.BBOX_PROP, this);
+        MainApplication.getLayerManager().addLayerChangeListener(slippyMap);
     }
 
     @Override

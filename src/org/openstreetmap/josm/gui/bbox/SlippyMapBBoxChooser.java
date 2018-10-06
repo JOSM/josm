@@ -63,8 +63,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * This panel displays a map and lets the user chose a {@link BBox}.
  */
-public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, ChangeListener, MainLayerManager.ActiveLayerChangeListener {
-
+public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, ChangeListener, MainLayerManager.ActiveLayerChangeListener, MainLayerManager.LayerChangeListener {
     /**
      * A list of tile sources that can be used for displaying the map.
      */
@@ -449,4 +448,21 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
 
         this.iSourceButton.setSources(new ArrayList<>(newTileSources.values()));
     }
+
+    @Override
+    public void layerAdded(MainLayerManager.LayerAddEvent e) {
+        if (e.getAddedLayer() instanceof ImageryLayer) {
+            this.refreshTileSources();
+        }
+    }
+
+    @Override
+    public void layerRemoving(MainLayerManager.LayerRemoveEvent e) {
+        if (e.getRemovedLayer() instanceof ImageryLayer) {
+            this.refreshTileSources();
+        }
+    }
+
+    @Override
+    public void layerOrderChanged(MainLayerManager.LayerOrderChangeEvent e) {}
 }

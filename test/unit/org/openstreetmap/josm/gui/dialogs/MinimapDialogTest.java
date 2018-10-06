@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +14,7 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -128,6 +130,24 @@ public class MinimapDialogTest {
             // need to turn this *back* into an AssertionFailedError
             fail(String.format("Failed to find menu item with label %s: %s", label, e));
         }
+    }
+
+    protected void assertSourceLabelsVisible(final String... labels) {
+        GuiHelper.runInEDTAndWaitWithException(() -> {
+            final ArrayList<String> menuLabels = new ArrayList<>();
+            final JPopupMenu menu = this.sourceButton.getPopupMenu();
+            for (Component c: menu.getComponents()) {
+                if (c instanceof JPopupMenu.Separator) {
+                    break;
+                }
+                menuLabels.add(((JMenuItem) c).getText());
+            }
+
+            assertArrayEquals(
+                labels,
+                menuLabels.toArray()
+            );
+        });
     }
 
     private MinimapDialog minimap;
@@ -302,18 +322,36 @@ public class MinimapDialogTest {
         // relevant prefs starting out empty, should choose the first (ImageryLayerInfo) source and have shown download area enabled
         // (not that there's a data layer for it to use)
 
-        // first we will remove "Green Tiles" from ImageryLayerInfo
-        final ImageryInfo greenTilesInfo = ImageryLayerInfo.instance.getLayers().stream().filter(
-            i -> i.getName().equals("Green Tiles")
+        final ImageryInfo magentaTilesInfo = ImageryLayerInfo.instance.getLayers().stream().filter(
+            i -> i.getName().equals("Magenta Tiles")
         ).findAny().get();
-        ImageryLayerInfo.instance.remove(greenTilesInfo);
+        final ImageryInfo blackTilesInfo = ImageryLayerInfo.instance.getLayers().stream().filter(
+            i -> i.getName().equals("Black Tiles")
+        ).findAny().get();
 
-        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().addLayer(ImageryLayer.create(greenTilesInfo)));
+        // first we will remove "Magenta Tiles" from ImageryLayerInfo
+        ImageryLayerInfo.instance.remove(magentaTilesInfo);
 
         this.setUpMiniMap();
 
-        this.clickSourceMenuItemByLabel("Green Tiles");
-        this.assertSingleSelectedSourceLabel("Green Tiles");
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles"
+        );
+
+        final ImageryLayer magentaTilesLayer = ImageryLayer.create(magentaTilesInfo);
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().addLayer(magentaTilesLayer));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles",
+            "Magenta Tiles"
+        );
+
+        this.clickSourceMenuItemByLabel("Magenta Tiles");
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
 
         // call paint to trigger new tile fetch
         this.paintSlippyMap();
@@ -322,7 +360,91 @@ public class MinimapDialogTest {
 
         this.paintSlippyMap();
 
-        assertEquals(0xff00ff00, paintedSlippyMap.getRGB(0, 0));
+        assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+
+        final ImageryLayer blackTilesLayer = ImageryLayer.create(blackTilesInfo);
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().addLayer(blackTilesLayer));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles",
+            "Magenta Tiles"
+        );
+
+        this.clickSourceMenuItemByLabel("Black Tiles");
+        this.assertSingleSelectedSourceLabel("Black Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xff000000, paintedSlippyMap.getRGB(0, 0));
+
+        // removing magentaTilesLayer while it is *not* the selected TileSource should make it disappear
+        // immediately
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().removeLayer(magentaTilesLayer));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles"
+        );
+        this.assertSingleSelectedSourceLabel("Black Tiles");
+
+        final ImageryLayer magentaTilesLayer2 = ImageryLayer.create(magentaTilesInfo);
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().addLayer(magentaTilesLayer2));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles",
+            "Magenta Tiles"
+        );
+
+        this.clickSourceMenuItemByLabel("Magenta Tiles");
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        // call paint to trigger new tile fetch
+        this.paintSlippyMap();
+
+        Awaitility.await().atMost(1000, MILLISECONDS).until(this.slippyMapTasksFinished);
+
+        this.paintSlippyMap();
+
+        assertEquals(0xffff00ff, paintedSlippyMap.getRGB(0, 0));
+
+        // removing magentaTilesLayer while it *is* the selected TileSource...
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().removeLayer(magentaTilesLayer2));
+
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles",
+            "Magenta Tiles"
+        );
+        this.assertSingleSelectedSourceLabel("Magenta Tiles");
+
+        this.clickSourceMenuItemByLabel("Green Tiles");
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles"
+        );
+
+        // removing blackTilesLayer shouldn't remove it from the menu as it is already in ImageryLayerInfo
+        GuiHelper.runInEDT(() -> MainApplication.getLayerManager().removeLayer(blackTilesLayer));
+
+        this.assertSingleSelectedSourceLabel("Green Tiles");
+        assertSourceLabelsVisible(
+            "White Tiles",
+            "Black Tiles",
+            "Green Tiles"
+        );
     }
 
     /**
