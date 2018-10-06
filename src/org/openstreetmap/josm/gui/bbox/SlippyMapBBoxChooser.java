@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.ButtonModel;
 import javax.swing.JOptionPane;
@@ -52,6 +52,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -60,8 +61,8 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * This panel displays a map and lets the user chose a {@link BBox}.
  */
-public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, ChangeListener, MainLayerManager.ActiveLayerChangeListener {
-
+public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, ChangeListener,
+    MainLayerManager.ActiveLayerChangeListener, MainLayerManager.LayerChangeListener {
     /**
      * A list of tile sources that can be used for displaying the map.
      */
@@ -75,23 +76,21 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
     }
 
     /**
-     * TMS TileSource provider for the slippymap chooser
+     * TileSource provider for the slippymap chooser.
+     * @since 14300
      */
-    public static class TMSTileSourceProvider implements TileSourceProvider {
-        private static final Set<String> existingSlippyMapUrls = new HashSet<>();
-        static {
-            // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
-            existingSlippyMapUrls.add("https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
-        }
+    public abstract static class AbstractImageryInfoBasedTileSourceProvider implements TileSourceProvider {
+        /**
+         * Returns the list of imagery infos backing tile sources.
+         * @return the list of imagery infos backing tile sources
+         */
+        public abstract List<ImageryInfo> getImageryInfos();
 
         @Override
         public List<TileSource> getTileSources() {
             if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
             List<TileSource> sources = new ArrayList<>();
-            for (ImageryInfo info : ImageryLayerInfo.instance.getLayers()) {
-                if (existingSlippyMapUrls.contains(info.getUrl())) {
-                    continue;
-                }
+            for (ImageryInfo info : this.getImageryInfos()) {
                 try {
                     TileSource source = TMSLayer.getTileSourceStatic(info);
                     if (source != null) {
@@ -111,6 +110,32 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
     }
 
     /**
+     * TileSource provider for the slippymap chooser - providing sources from imagery sources menu
+     * @since 14300
+     */
+    public static class TMSTileSourceProvider extends AbstractImageryInfoBasedTileSourceProvider {
+        @Override
+        public List<ImageryInfo> getImageryInfos() {
+            return ImageryLayerInfo.instance.getLayers();
+        }
+    }
+
+    /**
+     * TileSource provider for the slippymap chooser - providing sources from current layers
+     * @since 14300
+     */
+    public static class CurrentLayersTileSourceProvider extends AbstractImageryInfoBasedTileSourceProvider {
+        @Override
+        public List<ImageryInfo> getImageryInfos() {
+            return MainApplication.getLayerManager().getLayers().stream().filter(
+                layer -> layer instanceof ImageryLayer
+            ).map(
+                layer -> ((ImageryLayer) layer).getInfo()
+            ).collect(Collectors.toList());
+        }
+    }
+
+    /**
      * Plugins that wish to add custom tile sources to slippy map choose should call this method
      * @param tileSourceProvider new tile source provider
      */
@@ -122,6 +147,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
     static {
         addTileSourceProvider(() -> Arrays.<TileSource>asList(new OsmTileSource.Mapnik()));
         addTileSourceProvider(new TMSTileSourceProvider());
+        addTileSourceProvider(new CurrentLayersTileSourceProvider());
     }
 
     private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");
@@ -177,7 +203,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         }
         setMaxTilesInMemory(Config.getPref().getInt("slippy_map_chooser.max_tiles", 1000));
 
-        List<TileSource> tileSources = getAllTileSources();
+        List<TileSource> tileSources = new ArrayList<>(getAllTileSources().values());
 
         this.showDownloadAreaButtonModel = new JToggleButton.ToggleButtonModel();
         this.showDownloadAreaButtonModel.setSelected(PROP_SHOWDLAREA.get());
@@ -210,12 +236,16 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         new SlippyMapControler(this, this);
     }
 
-    private static List<TileSource> getAllTileSources() {
-        List<TileSource> tileSources = new ArrayList<>();
-        for (TileSourceProvider provider: providers) {
-            tileSources.addAll(provider.getTileSources());
-        }
-        return tileSources;
+    private static LinkedHashMap<String, TileSource> getAllTileSources() {
+        // using a LinkedHashMap of <id, TileSource> to retain ordering but provide deduplication
+        return providers.stream().flatMap(
+            provider -> provider.getTileSources().stream()
+        ).collect(Collectors.toMap(
+            TileSource::getId,
+            ts -> ts,
+            (oldTs, newTs) -> oldTs,
+            LinkedHashMap::new
+        ));
     }
 
     /**
@@ -358,9 +388,12 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         this.tileController.setTileCache(new MemoryTileCache());
         this.setTileSource(tileSource);
         PROP_MAPSTYLE.put(tileSource.getName()); // TODO Is name really unique?
-        if (this.iSourceButton.getCurrentSource() != tileSource) { // prevent infinite recursion
-            this.iSourceButton.setCurrentMap(tileSource);
-        }
+
+        // we need to refresh the tile sources in case the deselected source should no longer be present
+        // (and only remained there because its removal was deferred while the source was still the
+        // selected one). this should also have the effect of propagating the new selection to the
+        // iSourceButton & menu: it attempts to re-select the current source when rebuilding its menu.
+        this.refreshTileSources();
     }
 
     @Override
@@ -416,6 +449,29 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
      * @since 6364
      */
     public final void refreshTileSources() {
-        iSourceButton.setSources(getAllTileSources());
+        final LinkedHashMap<String, TileSource> newTileSources = getAllTileSources();
+        final TileSource currentTileSource = this.getTileController().getTileSource();
+
+        // re-add the currently active TileSource to prevent inconsistent display of menu
+        newTileSources.putIfAbsent(currentTileSource.getId(), currentTileSource);
+
+        this.iSourceButton.setSources(new ArrayList<>(newTileSources.values()));
     }
+
+    @Override
+    public void layerAdded(MainLayerManager.LayerAddEvent e) {
+        if (e.getAddedLayer() instanceof ImageryLayer) {
+            this.refreshTileSources();
+        }
+    }
+
+    @Override
+    public void layerRemoving(MainLayerManager.LayerRemoveEvent e) {
+        if (e.getRemovedLayer() instanceof ImageryLayer) {
+            this.refreshTileSources();
+        }
+    }
+
+    @Override
+    public void layerOrderChanged(MainLayerManager.LayerOrderChangeEvent e) {}
 }
