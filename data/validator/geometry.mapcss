@@ -52,7 +52,7 @@ node[boundary=administrative] {
   throwWarning: tr("{0} on a node. Should be used on a way or relation.", "{0.tag}");
 }
 
-/* {0} on a node, should be an area; #10679 #16528 */
+/* {0} on a node, should be an area; #10679 #16528 #16792 */
 node[golf=green],
 node[golf=bunker],
 node[golf=fairway],
@@ -77,6 +77,7 @@ node[man_made=bridge],
 node[man_made=breakwater],
 node[aeroway=apron],
 node[power=plant],
+node[power=switchgear],
 node[building:part],
 node[source:outline] {
   throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");

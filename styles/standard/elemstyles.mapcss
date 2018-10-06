@@ -1210,6 +1210,7 @@ area[power=plant],
 area[power=substation],
 area[power=compensator],
 area[power=converter],
+area[power=switchgear],
 area[power=generator] {
     fill-color: power#eeeeee;
 }
@@ -1231,10 +1232,6 @@ node[power=transformer] {
 }
 node[power=terminal] {
     icon-image: "presets/power/terminal.svg";
-    set icon_z17;
-}
-node[power=switchgear] {
-    icon-image: "presets/power/switchgear.svg";
     set icon_z17;
 }
 node[power=switch] {
