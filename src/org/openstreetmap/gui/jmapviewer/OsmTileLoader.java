@@ -188,7 +188,7 @@ public class OsmTileLoader implements TileLoader {
 
     /**
      * Sets the maximum number of concurrent connections the tile loader will do
-     * @param num number of conncurent connections
+     * @param num number of concurrent connections
      */
     public static void setConcurrentConnections(int num) {
         jobDispatcher.setMaximumPoolSize(num);
