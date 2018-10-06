@@ -218,7 +218,7 @@ public class MoveCommand extends Command {
     }
 
     /**
-     * Save curent displacement to restore in case of some problems
+     * Save current displacement to restore in case of some problems
      */
     public final void saveCheckpoint() {
         backupX = x;

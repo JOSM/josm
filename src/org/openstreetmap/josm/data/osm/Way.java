@@ -192,7 +192,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     /**
-     * Contructs a new {@code Way} with id 0.
+     * Constructs a new {@code Way} with id 0.
      * @since 86
      */
     public Way() {
@@ -200,7 +200,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     /**
-     * Contructs a new {@code Way} from an existing {@code Way}.
+     * Constructs a new {@code Way} from an existing {@code Way}.
      * @param original The original {@code Way} to be identically cloned. Must not be null
      * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
      * If {@code false}, does nothing
@@ -215,7 +215,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     /**
-     * Contructs a new {@code Way} from an existing {@code Way} (including its id).
+     * Constructs a new {@code Way} from an existing {@code Way} (including its id).
      * @param original The original {@code Way} to be identically cloned. Must not be null
      * @since 86
      */
@@ -224,7 +224,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     /**
-     * Contructs a new {@code Way} for the given id. If the id &gt; 0, the way is marked
+     * Constructs a new {@code Way} for the given id. If the id &gt; 0, the way is marked
      * as incomplete. If id == 0 then way is marked as new
      *
      * @param id the id. &gt;= 0 required
@@ -236,7 +236,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     /**
-     * Contructs a new {@code Way} with given id and version.
+     * Constructs a new {@code Way} with given id and version.
      * @param id the id. &gt;= 0 required
      * @param version the version
      * @throws IllegalArgumentException if id &lt; 0

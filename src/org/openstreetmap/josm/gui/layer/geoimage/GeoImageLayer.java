@@ -424,7 +424,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         }
         Collections.sort(data);
 
-        // Supress the double photos.
+        // Suppress the double photos.
         if (data.size() > 1) {
             ImageEntry cur;
             ImageEntry prev = data.get(data.size() - 1);

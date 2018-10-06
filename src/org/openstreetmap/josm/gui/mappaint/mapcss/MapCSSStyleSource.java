@@ -606,7 +606,7 @@ public class MapCSSStyleSource extends StyleSource {
             if ("boolean".equals(type)) {
                 set = BooleanStyleSetting.create(c, this, e.getKey());
             } else {
-                Logging.warn("Unkown setting type: "+type);
+                Logging.warn("Unknown setting type: "+type);
             }
             if (set != null) {
                 settings.add(set);

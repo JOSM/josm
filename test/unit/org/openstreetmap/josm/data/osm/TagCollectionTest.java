@@ -43,10 +43,10 @@ public class TagCollectionTest {
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     private void assertTagCounts(TagCollection collection, int a, int b, int c, int d) {
-        assertEquals(a, collection.getTagOccurence(tagA));
-        assertEquals(b, collection.getTagOccurence(tagB));
-        assertEquals(c, collection.getTagOccurence(tagC));
-        assertEquals(d, collection.getTagOccurence(tagD));
+        assertEquals(a, collection.getTagOccurrence(tagA));
+        assertEquals(b, collection.getTagOccurrence(tagB));
+        assertEquals(c, collection.getTagOccurrence(tagC));
+        assertEquals(d, collection.getTagOccurrence(tagD));
     }
 
     /**
@@ -91,7 +91,7 @@ public class TagCollectionTest {
     @Test
     public void testUnionOfAllPrimitivesCollectionOfQextendsTagged() {
         TagCollection c = TagCollection.unionOfAllPrimitives(Arrays.asList(tagA));
-        assertEquals(1, c.getTagOccurence(tagA));
+        assertEquals(1, c.getTagOccurrence(tagA));
 
         TagCollection d = TagCollection.unionOfAllPrimitives(Arrays.asList(tagA, tagC));
         assertTagCounts(d, 1, 0, 1, 0);
@@ -186,10 +186,10 @@ public class TagCollectionTest {
     @Test
     public void testGetTagCount() {
         TagCollection c = new TagCollection(Arrays.asList(tagA, tagC, tagC));
-        assertEquals(2, c.getTagOccurence(tagC));
-        assertEquals(0, c.getTagOccurence(tagB));
-        assertEquals(0, c.getTagOccurence(tagNullKey));
-        assertEquals(0, c.getTagOccurence(tagNullValue));
+        assertEquals(2, c.getTagOccurrence(tagC));
+        assertEquals(0, c.getTagOccurrence(tagB));
+        assertEquals(0, c.getTagOccurrence(tagNullKey));
+        assertEquals(0, c.getTagOccurrence(tagNullValue));
     }
 
     /**
@@ -414,7 +414,7 @@ public class TagCollectionTest {
         TagCollection d = new TagCollection(Arrays.asList(tagA, tagB, tagC, tagEmpty));
         TagCollection collection = d.getTagsFor("k");
         assertTagCounts(collection, 1, 1, 0, 0);
-        assertEquals(1, collection.getTagOccurence(tagEmpty));
+        assertEquals(1, collection.getTagOccurrence(tagEmpty));
     }
 
     /**
@@ -425,7 +425,7 @@ public class TagCollectionTest {
         TagCollection d = new TagCollection(Arrays.asList(tagA, tagB, tagC, tagEmpty));
         TagCollection collection = d.getTagsFor(Arrays.asList("k", "k2"));
         assertTagCounts(collection, 1, 1, 1, 0);
-        assertEquals(1, collection.getTagOccurence(tagEmpty));
+        assertEquals(1, collection.getTagOccurrence(tagEmpty));
     }
 
     /**
@@ -627,8 +627,8 @@ public class TagCollectionTest {
         TagCollection c2 = new TagCollection(Arrays.asList(tagA, tagB, tagD));
         TagCollection c = c1.intersect(c2);
         assertEquals(2, c.getKeys().size());
-        assertEquals(1, c.getTagOccurence(tagA));
-        assertEquals(1, c.getTagOccurence(tagD));
+        assertEquals(1, c.getTagOccurrence(tagA));
+        assertEquals(1, c.getTagOccurrence(tagD));
     }
 
     /**
@@ -640,8 +640,8 @@ public class TagCollectionTest {
         TagCollection c2 = new TagCollection(Arrays.asList(tagA, tagB, tagD));
         TagCollection c = c1.minus(c2);
         assertEquals(2, c.getKeys().size());
-        assertEquals(1, c.getTagOccurence(tagC));
-        assertEquals(1, c.getTagOccurence(tagEmpty));
+        assertEquals(1, c.getTagOccurrence(tagC));
+        assertEquals(1, c.getTagOccurrence(tagEmpty));
     }
 
     /**
@@ -652,11 +652,11 @@ public class TagCollectionTest {
         TagCollection c1 = new TagCollection(Arrays.asList(tagA, tagC, tagD, tagEmpty));
         TagCollection c2 = new TagCollection(Arrays.asList(tagA, tagB, tagD));
         TagCollection c = c1.union(c2);
-        assertEquals(2, c.getTagOccurence(tagA));
-        assertEquals(1, c.getTagOccurence(tagB));
-        assertEquals(1, c.getTagOccurence(tagC));
-        assertEquals(2, c.getTagOccurence(tagD));
-        assertEquals(1, c.getTagOccurence(tagEmpty));
+        assertEquals(2, c.getTagOccurrence(tagA));
+        assertEquals(1, c.getTagOccurrence(tagB));
+        assertEquals(1, c.getTagOccurrence(tagC));
+        assertEquals(2, c.getTagOccurrence(tagD));
+        assertEquals(1, c.getTagOccurrence(tagEmpty));
     }
 
     /**
@@ -668,8 +668,8 @@ public class TagCollectionTest {
         TagCollection c2 = new TagCollection(Arrays.asList(tagA, tagB, tagD));
         TagCollection c = c1.emptyTagsForKeysMissingIn(c2);
         assertEquals(2, c.getKeys().size());
-        assertEquals(1, c.getTagOccurence(new Tag(tagC.getKey(), "")));
-        assertEquals(1, c.getTagOccurence(tagEmpty));
+        assertEquals(1, c.getTagOccurrence(new Tag(tagC.getKey(), "")));
+        assertEquals(1, c.getTagOccurrence(tagEmpty));
     }
 
     /**

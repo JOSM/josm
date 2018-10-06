@@ -99,7 +99,7 @@ public abstract class AddImageryPanel extends JPanel {
                     currentUnit = TimeUnit.DAYS;
                     break;
                 default:
-                    Logging.warn("Unkown unit: " + units.indexOf(e.getItem()));
+                    Logging.warn("Unknown unit: " + units.indexOf(e.getItem()));
                 }
                 minimumCacheExpiry.setValue(newValue);
             }
