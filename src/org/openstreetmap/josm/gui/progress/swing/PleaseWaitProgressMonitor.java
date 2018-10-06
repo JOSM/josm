@@ -59,7 +59,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
         /**
          * Display that the current progress cannot be determined
-         * @param newValue wether the progress cannot be determined
+         * @param newValue whether the progress cannot be determined
          */
         void setIndeterminate(boolean newValue);
 

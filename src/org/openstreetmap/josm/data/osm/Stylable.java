@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 
 /**
- * Object that can be rendered using a cachable style.
+ * Object that can be rendered using a cacheable style.
  * @since 13636
  */
 public interface Stylable {

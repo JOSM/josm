@@ -63,7 +63,7 @@ public class Coastlines extends Test {
 
     /**
      * Check connections between coastline ways.
-     * The nodes of a coastline way have to fullfil these rules:
+     * The nodes of a coastline way have to fulfil these rules:
      * 1) the first node must be connected to the last node of a coastline way (which might be the same way)
      * 2) the last node must be connected to the first node of a coastline way (which might be the same way)
      * 3) all other nodes must not be connected to a coastline way

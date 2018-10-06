@@ -52,7 +52,7 @@ public final class Logging {
 
     /**
      * A {@link ConsoleHandler} with a couple of extra features, allowing it to be targeted at an
-     * an arbitrary {@link OutputStream} which it can be asked to reaquire the reference for on demand
+     * an arbitrary {@link OutputStream} which it can be asked to reacquire the reference for on demand
      * through {@link #reacquireOutputStream()}. It can also prevent a LogRecord's output if a
      * specified {@code prioritizedHandler} would have outputted it.
      * @since 14052

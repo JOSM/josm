@@ -251,11 +251,11 @@ public class MapImage {
     /**
      * Rescale excessively large images.
      * @param image the unscaled image
-     * @return The scaled down version to 16x16 pixels if the image height and width exceeds 48 pixels and no size has been explicitely specified
+     * @return The scaled down version to 16x16 pixels if the image height and width exceeds 48 pixels and no size has been explicitly specified
      */
     private Image rescale(Image image) {
         if (image == null) return null;
-        // Scale down large (.svg) images to 16x16 pixels if no size is explicitely specified
+        // Scale down large (.svg) images to 16x16 pixels if no size is explicitly specified
         if (mustRescale(image)) {
             return ImageProvider.createBoundedImage(image, 16);
         } else {

@@ -73,7 +73,7 @@ public class CreateMultipolygonAction extends JosmAction {
      */
     public CreateMultipolygonAction(final boolean update) {
         super(getName(update), /* ICON */ "multipoly_create", getName(update),
-                /* atleast three lines for each shortcut or the server extractor fails */
+                /* at least three lines for each shortcut or the server extractor fails */
                 update ? Shortcut.registerShortcut("tools:multipoly_update",
                             tr("Tool: {0}", getName(true)),
                             KeyEvent.VK_B, Shortcut.CTRL_SHIFT)

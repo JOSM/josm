@@ -124,7 +124,7 @@ public class ImportAudioAction extends AbstractAction {
     /**
      * Makes a new marker layer derived from this GpxLayer containing at least one audio marker
      * which the given audio file is associated with. Markers are derived from the following (a)
-     * explict waypoints in the GPX layer, or (b) named trackpoints in the GPX layer, or (d)
+     * explicit waypoints in the GPX layer, or (b) named trackpoints in the GPX layer, or (d)
      * timestamp on the audio file (e) (in future) voice recognised markers in the sound recording (f)
      * a single marker at the beginning of the track
      * @param audioFile the file to be associated with the markers in the new marker layer

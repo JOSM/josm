@@ -54,7 +54,7 @@ public class InspectPrimitiveDataText {
 
     private static String getNameAndId(String name, long id) {
         if (name != null) {
-            return name + tr(" ({0})", /* sic to avoid thousand seperators */ Long.toString(id));
+            return name + tr(" ({0})", /* sic to avoid thousand separators */ Long.toString(id));
         } else {
             return Long.toString(id);
         }

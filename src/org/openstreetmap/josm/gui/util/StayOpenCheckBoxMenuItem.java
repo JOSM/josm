@@ -24,7 +24,7 @@ public class StayOpenCheckBoxMenuItem extends JCheckBoxMenuItem {
   }
 
   /**
-   * Contructs a new {@code StayOpenCheckBoxMenuItem} whose properties are taken from the Action supplied.
+   * Constructs a new {@code StayOpenCheckBoxMenuItem} whose properties are taken from the Action supplied.
    * @param a action
    */
   public StayOpenCheckBoxMenuItem(Action a) {
