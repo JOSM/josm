@@ -7865,7 +7865,7 @@
                 <combo key="generator:type" text="Generator Type" values="bioreactor,reciprocating_engine,steam_generator" />
                 <reference ref="power_output" />
             </item> <!-- Waste Power Generator -->
-            <item name="Water Turbine" icon="presets/power/power_source-water.svg" type="node,closedway" preset_name_label="true">
+            <item name="Water Turbine" icon="presets/power/power_source-water.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="hydro" />
                 <reference ref="power_generator" />
                 <combo key="generator:method" text="Method" values_context="generator method" values="run-of-the-river,water-pumped-storage,water-storage" />
@@ -7877,7 +7877,7 @@
                 </combo>
                 <reference ref="power_output" />
             </item> <!-- Water Turbine -->
-            <item name="Tidal Water Turbine" icon="presets/power/power_source-water.svg" type="node,closedway" preset_name_label="true">
+            <item name="Tidal Water Turbine" icon="presets/power/power_source-water.svg" type="node,closedway,multipolygon" preset_name_label="true">
                 <key key="generator:source" value="tidal" />
                 <reference ref="power_generator" />
                 <combo key="generator:method" text="Method" values_context="generator method" values="barrage,stream" />
@@ -7948,7 +7948,7 @@
             <reference ref="ref_operator_branch" />
             <reference ref="optional_transformer_rating_phases_devices_windings" />
         </item> <!-- Power Transformer -->
-        <item name="Power Switchgear" icon="presets/power/switchgear.svg" type="closedway" preset_name_label="true">
+        <item name="Power Switchgear" icon="presets/power/switchgear.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:power=switchgear"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:power=switchgear" />
             <space />
