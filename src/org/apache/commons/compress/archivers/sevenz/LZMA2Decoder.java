@@ -37,7 +37,7 @@ class LZMA2Decoder extends CoderBase {
         try {
             final int dictionarySize = getDictionarySize(coder);
             return new LZMA2InputStream(in, dictionarySize);
-        } catch (final IllegalArgumentException ex) {
+        } catch (final IllegalArgumentException ex) {  // NOSONAR
             throw new IOException(ex.getMessage());
         }
     }

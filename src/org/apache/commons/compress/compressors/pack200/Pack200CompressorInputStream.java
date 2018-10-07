@@ -215,7 +215,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
     public boolean markSupported() {
         try {
             return streamBridge.getInput().markSupported();
-        } catch (final IOException ex) {
+        } catch (final IOException ex) { // NOSONAR
             return false;
         }
     }

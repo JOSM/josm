@@ -203,7 +203,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
     private void closeEntry() throws IOException {
         // the skip implementation of this class will not skip more
         // than Integer.MAX_VALUE bytes
-        while (skip((long) Integer.MAX_VALUE) == Integer.MAX_VALUE) { // NOPMD
+        while (skip((long) Integer.MAX_VALUE) == Integer.MAX_VALUE) { // NOPMD NOSONAR
             // do nothing
         }
     }

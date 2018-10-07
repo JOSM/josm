@@ -236,7 +236,7 @@ public final class IOUtils {
         if (c != null) {
             try {
                 c.close();
-            } catch (final IOException ignored) { // NOPMD
+            } catch (final IOException ignored) { // NOPMD NOSONAR
             }
         }
     }

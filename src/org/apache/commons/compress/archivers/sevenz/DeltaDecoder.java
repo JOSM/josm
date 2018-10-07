@@ -41,7 +41,7 @@ class DeltaDecoder extends CoderBase {
         final int distance = numberOptionOrDefault(options, 1);
         try {
             return new DeltaOptions(distance).getOutputStream(new FinishableWrapperOutputStream(out));
-        } catch (final UnsupportedOptionsException ex) {
+        } catch (final UnsupportedOptionsException ex) { // NOSONAR
             throw new IOException(ex.getMessage());
         }
     }

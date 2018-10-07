@@ -261,7 +261,7 @@ public class TarUtils {
     public static String parseName(final byte[] buffer, final int offset, final int length) {
         try {
             return parseName(buffer, offset, length, DEFAULT_ENCODING);
-        } catch (final IOException ex) {
+        } catch (final IOException ex) { // NOSONAR
             try {
                 return parseName(buffer, offset, length, FALLBACK_ENCODING);
             } catch (final IOException ex2) {
@@ -319,7 +319,7 @@ public class TarUtils {
     public static int formatNameBytes(final String name, final byte[] buf, final int offset, final int length) {
         try {
             return formatNameBytes(name, buf, offset, length, DEFAULT_ENCODING);
-        } catch (final IOException ex) {
+        } catch (final IOException ex) { // NOSONAR
             try {
                 return formatNameBytes(name, buf, offset, length,
                                        FALLBACK_ENCODING);

@@ -66,11 +66,11 @@ public class ExtraFieldUtils {
         try {
             final ZipExtraField ze = (ZipExtraField) c.newInstance();
             implementations.put(ze.getHeaderId(), c);
-        } catch (final ClassCastException cc) {
+        } catch (final ClassCastException cc) { // NOSONAR
             throw new RuntimeException(c + " doesn\'t implement ZipExtraField"); //NOSONAR
-        } catch (final InstantiationException ie) {
+        } catch (final InstantiationException ie) { // NOSONAR
             throw new RuntimeException(c + " is not a concrete class"); //NOSONAR
-        } catch (final IllegalAccessException ie) {
+        } catch (final IllegalAccessException ie) { // NOSONAR
             throw new RuntimeException(c + "\'s no-arg constructor is not public"); //NOSONAR
         }
     }

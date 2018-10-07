@@ -268,7 +268,7 @@ public class GzipCompressorInputStream extends CompressorInputStream
     private static byte[] readToNull(final DataInput inData) throws IOException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int b = 0;
-        while ((b = inData.readUnsignedByte()) != 0x00) { // NOPMD
+        while ((b = inData.readUnsignedByte()) != 0x00) { // NOPMD NOSONAR
             bos.write(b);
         }
         return bos.toByteArray();
@@ -309,7 +309,7 @@ public class GzipCompressorInputStream extends CompressorInputStream
             int ret;
             try {
                 ret = inf.inflate(b, off, len);
-            } catch (final DataFormatException e) {
+            } catch (final DataFormatException e) { // NOSONAR
                 throw new IOException("Gzip-compressed data is corrupt");
             }
 

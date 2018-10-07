@@ -1054,7 +1054,7 @@ public class ZipFile implements Closeable {
                     wordBbuf.rewind();
                     IOUtils.readFully(archive, wordBbuf);
                     wordBbuf.flip();
-                } catch (EOFException ex) {
+                } catch (EOFException ex) { // NOSONAR
                     break;
                 }
                 int curr = wordBbuf.get();
@@ -1350,7 +1350,7 @@ public class ZipFile implements Closeable {
                 final Entry otherEntry = (Entry) other;
                 return getLocalHeaderOffset()
                         == otherEntry.getLocalHeaderOffset()
-                    && getDataOffset()
+                    && super.getDataOffset()
                         == otherEntry.getDataOffset();
             }
             return false;

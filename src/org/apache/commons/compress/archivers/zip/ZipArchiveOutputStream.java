@@ -295,7 +295,7 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
                            StandardOpenOption.TRUNCATE_EXISTING));
             // will never get opened properly when an exception is thrown so doesn't need to get closed
             _streamCompressor = StreamCompressor.create(_channel, def); //NOSONAR
-        } catch (final IOException e) {
+        } catch (final IOException e) { // NOSONAR
             IOUtils.closeQuietly(_channel);
             _channel = null;
             o = new FileOutputStream(file);

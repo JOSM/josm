@@ -551,7 +551,7 @@ public class ArchiveStreamFactory implements ArchiveStreamProvider {
                 if (tais.getNextTarEntry().isCheckSumOK()) {
                     return TAR;
                 }
-            } catch (final Exception e) { // NOPMD // NOSONAR
+            } catch (final Exception e) { // NOPMD NOSONAR
                 // can generate IllegalArgumentException as well
                 // as IOException
                 // autodetection, simply not a TAR

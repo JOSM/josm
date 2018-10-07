@@ -1154,7 +1154,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     public void writeEntryHeader(final byte[] outbuf) {
         try {
             writeEntryHeader(outbuf, TarUtils.DEFAULT_ENCODING, false);
-        } catch (final IOException ex) {
+        } catch (final IOException ex) { // NOSONAR
             try {
                 writeEntryHeader(outbuf, TarUtils.FALLBACK_ENCODING, false);
             } catch (final IOException ex2) {
@@ -1241,7 +1241,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     public void parseTarHeader(final byte[] header) {
         try {
             parseTarHeader(header, TarUtils.DEFAULT_ENCODING);
-        } catch (final IOException ex) {
+        } catch (final IOException ex) { // NOSONAR
             try {
                 parseTarHeader(header, TarUtils.DEFAULT_ENCODING, true);
             } catch (final IOException ex2) {

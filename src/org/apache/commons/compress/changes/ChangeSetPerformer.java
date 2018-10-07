@@ -143,7 +143,7 @@ public class ChangeSetPerformer {
                     }
                 } else if (type == Change.TYPE_DELETE_DIR && name != null) {
                     // don't combine ifs to make future extensions more easy
-                    if (name.startsWith(change.targetFile() + "/")) { // NOPMD
+                    if (name.startsWith(change.targetFile() + "/")) { // NOPMD NOSONAR
                         copy = false;
                         results.deleted(name);
                         break;

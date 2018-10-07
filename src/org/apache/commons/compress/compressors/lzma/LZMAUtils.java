@@ -52,7 +52,7 @@ public class LZMAUtils {
         cachedLZMAAvailability = CachedAvailability.DONT_CACHE;
         try {
             Class.forName("org.osgi.framework.BundleEvent");
-        } catch (final Exception ex) {
+        } catch (final Exception ex) { // NOSONAR
             setCacheLZMAAvailablity(true);
         }
     }
@@ -99,7 +99,7 @@ public class LZMAUtils {
         try {
             LZMACompressorInputStream.matches(null, 0);
             return true;
-        } catch (final NoClassDefFoundError error) {
+        } catch (final NoClassDefFoundError error) { // NOSONAR
             return false;
         }
     }
