@@ -259,6 +259,11 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         return members.get(idx).getMember();
     }
 
+    /**
+     * Move up selected rows, if possible.
+     * @param selectedRows rows to move up
+     * @see #canMoveUp
+     */
     public void moveUp(int... selectedRows) {
         if (!canMoveUp(selectedRows))
             return;
@@ -282,6 +287,11 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         fireMakeMemberVisible(selectedRows[0] - 1);
     }
 
+    /**
+     * Move down selected rows, if possible.
+     * @param selectedRows rows to move down
+     * @see #canMoveDown
+     */
     public void moveDown(int... selectedRows) {
         if (!canMoveDown(selectedRows))
             return;
@@ -307,6 +317,11 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         fireMakeMemberVisible(selectedRows[0] + 1);
     }
 
+    /**
+     * Remove selected rows, if possible.
+     * @param selectedRows rows to remove
+     * @see #canRemove
+     */
     public void remove(int... selectedRows) {
         if (!canRemove(selectedRows))
             return;
@@ -321,24 +336,43 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         fireTableDataChanged();
     }
 
+    /**
+     * Checks that a range of rows can be moved up.
+     * @param rows indexes of rows to move up
+     * @return {@code true} if rows can be moved up
+     */
     public boolean canMoveUp(int... rows) {
         if (rows == null || rows.length == 0)
             return false;
         Arrays.sort(rows);
-        return rows[0] > 0 && !members.isEmpty();
+        return rows[0] > 0 && rows[rows.length - 1] < members.size();
     }
 
+    /**
+     * Checks that a range of rows can be moved down.
+     * @param rows indexes of rows to move down
+     * @return {@code true} if rows can be moved down
+     */
     public boolean canMoveDown(int... rows) {
         if (rows == null || rows.length == 0)
             return false;
         Arrays.sort(rows);
-        return !members.isEmpty() && rows[rows.length - 1] < members.size() - 1;
+        return rows[0] >= 0 && rows[rows.length - 1] < members.size() - 1;
     }
 
+    /**
+     * Checks that a range of rows can be removed.
+     * @param rows indexes of rows to remove
+     * @return {@code true} if rows can be removed
+     */
     public boolean canRemove(int... rows) {
         return rows != null && rows.length != 0;
     }
 
+    /**
+     * Returns the selection model.
+     * @return the selection model (never null)
+     */
     public DefaultListSelectionModel getSelectionModel() {
         if (listSelectionModel == null) {
             listSelectionModel = new DefaultListSelectionModel();
