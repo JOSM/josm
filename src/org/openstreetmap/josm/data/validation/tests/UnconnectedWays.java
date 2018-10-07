@@ -180,22 +180,24 @@ public abstract class UnconnectedWays extends Test {
                     map.clear();
                     return map;
                 }
-                for (Node en : s.nearbyNodes(mindist)) {
-                    if (en == null || !s.highway || !endnodesHighway.contains(en)) {
-                        continue;
+                if (s.highway) {
+                    for (Node en : s.nearbyNodes(mindist)) {
+                        if (en == null || !endnodesHighway.contains(en)) {
+                            continue;
+                        }
+                        if (en.hasTag(HIGHWAY, "turning_circle", "bus_stop")
+                                || en.hasTag("amenity", "parking_entrance")
+                                || en.hasTag(RAILWAY, "buffer_stop")
+                                || en.isKeyTrue("noexit")
+                                || en.hasKey("entrance", "barrier")) {
+                            continue;
+                        }
+                        // to handle intersections of 't' shapes and similar
+                        if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                            continue;
+                        }
+                        map.put(en, s.w);
                     }
-                    if (en.hasTag(HIGHWAY, "turning_circle", "bus_stop")
-                            || en.hasTag("amenity", "parking_entrance")
-                            || en.hasTag(RAILWAY, "buffer_stop")
-                            || en.isKeyTrue("noexit")
-                            || en.hasKey("entrance", "barrier")) {
-                        continue;
-                    }
-                    // to handle intersections of 't' shapes and similar
-                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                        continue;
-                    }
-                    map.put(en, s.w);
                 }
             }
         }
@@ -452,7 +454,7 @@ public abstract class UnconnectedWays extends Test {
                 // the time very near the associated highway, which is perfectly normal, see #9332
                 && !w.hasKey("addr:interpolation")
                 // similarly for public transport platforms, tree rows
-                && !w.hasTag(HIGHWAY, "platform") && !w.hasTag(RAILWAY, "platform") && !w.hasTag("natural", "tree_row")
+                && !w.hasTag(HIGHWAY, "platform") && !w.hasTag(RAILWAY, "platform", "platform_edge") && !w.hasTag("natural", "tree_row")
                 ) {
             ways.addAll(getWaySegments(w));
             QuadBuckets<Node> set = endnodes;
