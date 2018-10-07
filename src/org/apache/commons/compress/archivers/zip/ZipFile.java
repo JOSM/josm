@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.zip.Inflater;
 import java.util.zip.ZipException;
 
+import org.apache.commons.compress.archivers.EntryStreamOffsets;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.deflate64.Deflate64CompressorInputStream;
 import org.apache.commons.compress.utils.CountingInputStream;
@@ -294,6 +295,7 @@ public class ZipFile implements Closeable {
             final Map<ZipArchiveEntry, NameAndComment> entriesWithoutUTF8Flag =
                 populateFromCentralDirectory();
             resolveLocalFileHeaderData(entriesWithoutUTF8Flag);
+            fillNameMap();
             success = true;
         } finally {
             closed = !success;
@@ -441,6 +443,9 @@ public class ZipFile implements Closeable {
             return null;
         }
         final long start = ze.getDataOffset();
+        if (start == EntryStreamOffsets.OFFSET_UNKNOWN) {
+            return null;
+        }
         return createBoundedInputStream(start, ze.getCompressedSize());
     }
 
@@ -480,7 +485,7 @@ public class ZipFile implements Closeable {
         }
         // cast validity is checked just above
         ZipUtil.checkRequestedFeatures(ze);
-        final long start = ze.getDataOffset();
+        final long start = getDataOffset(ze);
 
         // doesn't get closed if the method is not supported - which
         // should never happen because of the checkRequestedFeatures
@@ -732,6 +737,8 @@ public class ZipFile implements Closeable {
         if (!hasUTF8Flag && useUnicodeExtraFields) {
             noUTF8Flag.put(ze, new NameAndComment(fileName, comment));
         }
+
+        ze.setStreamContiguous(true);
     }
 
     /**
@@ -1045,29 +1052,26 @@ public class ZipFile implements Closeable {
             // entries is filled in populateFromCentralDirectory and
             // never modified
             final Entry ze = (Entry) zipArchiveEntry;
-            final long offset = ze.getLocalHeaderOffset();
-            archive.position(offset + LFH_OFFSET_FOR_FILENAME_LENGTH);
-            wordBbuf.rewind();
-            IOUtils.readFully(archive, wordBbuf);
-            wordBbuf.flip();
-            wordBbuf.get(shortBuf);
-            final int fileNameLen = ZipShort.getValue(shortBuf);
-            wordBbuf.get(shortBuf);
-            final int extraFieldLen = ZipShort.getValue(shortBuf);
+            int[] lens = setDataOffset(ze);
+            final int fileNameLen = lens[0];
+            final int extraFieldLen = lens[1];
             skipBytes(fileNameLen);
             final byte[] localExtraData = new byte[extraFieldLen];
             IOUtils.readFully(archive, ByteBuffer.wrap(localExtraData));
             ze.setExtra(localExtraData);
-            ze.setDataOffset(offset + LFH_OFFSET_FOR_FILENAME_LENGTH
-                + SHORT + SHORT + fileNameLen + extraFieldLen);
-            ze.setStreamContiguous(true);
 
             if (entriesWithoutUTF8Flag.containsKey(ze)) {
                 final NameAndComment nc = entriesWithoutUTF8Flag.get(ze);
                 ZipUtil.setNameAndCommentFromExtraFields(ze, nc.name,
                                                          nc.comment);
             }
+        }
+    }
 
+    private void fillNameMap() {
+        for (final ZipArchiveEntry ze : entries) {
+            // entries is filled in populateFromCentralDirectory and
+            // never modified
             final String name = ze.getName();
             LinkedList<ZipArchiveEntry> entriesOfThatName = nameMap.get(name);
             if (entriesOfThatName == null) {
@@ -1076,6 +1080,30 @@ public class ZipFile implements Closeable {
             }
             entriesOfThatName.addLast(ze);
         }
+    }
+
+    private int[] setDataOffset(ZipArchiveEntry ze) throws IOException {
+        final long offset = ze.getLocalHeaderOffset();
+        archive.position(offset + LFH_OFFSET_FOR_FILENAME_LENGTH);
+        wordBbuf.rewind();
+        IOUtils.readFully(archive, wordBbuf);
+        wordBbuf.flip();
+        wordBbuf.get(shortBuf);
+        final int fileNameLen = ZipShort.getValue(shortBuf);
+        wordBbuf.get(shortBuf);
+        final int extraFieldLen = ZipShort.getValue(shortBuf);
+        ze.setDataOffset(offset + LFH_OFFSET_FOR_FILENAME_LENGTH
+                         + SHORT + SHORT + fileNameLen + extraFieldLen);
+        return new int[] { fileNameLen, extraFieldLen };
+    }
+
+    private long getDataOffset(ZipArchiveEntry ze) throws IOException {
+        long s = ze.getDataOffset();
+        if (s == EntryStreamOffsets.OFFSET_UNKNOWN) {
+            setDataOffset(ze);
+            return ze.getDataOffset();
+        }
+        return s;
     }
 
     /**
