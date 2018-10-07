@@ -112,19 +112,24 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     /**
-     * Decorates the name of primitive with its id, if the preference
-     * <code>osm-primitives.showid</code> is set. Shows unique id if osm-primitives.showid.new-primitives is set
+     * Decorates the name of primitive with its id and version, if the preferences
+     * <code>osm-primitives.showid</code> and <code>osm-primitives.showversion</code> are set.
+     * Shows unique id if <code>osm-primitives.showid.new-primitives</code> is set
      *
-     * @param name  the name without the id
+     * @param name the name without the id
      * @param primitive the primitive
      */
     protected void decorateNameWithId(StringBuilder name, IPrimitive primitive) {
         if (Config.getPref().getBoolean("osm-primitives.showid")) {
-            if (Config.getPref().getBoolean("osm-primitives.showid.new-primitives")) {
-                name.append(tr(" [id: {0}]", primitive.getUniqueId()));
+            long id = Config.getPref().getBoolean("osm-primitives.showid.new-primitives") ?
+                    primitive.getUniqueId() : primitive.getId();
+            if (Config.getPref().getBoolean("osm-primitives.showversion")) {
+                name.append(tr(" [id: {0}, v{1}]", id, primitive.getVersion()));
             } else {
-                name.append(tr(" [id: {0}]", primitive.getId()));
+                name.append(tr(" [id: {0}]", id));
             }
+        } else if (Config.getPref().getBoolean("osm-primitives.showversion")) {
+            name.append(tr(" [v{0}]", primitive.getVersion()));
         }
     }
 
