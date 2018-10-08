@@ -5,8 +5,8 @@ script:
 os: linux
 dist: trusty
 env:
-  - ANT_INVOCATION="xvfb-run ant -Dtest.headless=false"
-  - ANT_INVOCATION="ant -Dtest.headless=true"
+  - ANT_INVOCATION="xvfb-run ant -Dtest.headless=false -Djunit.printsummary=withOutAndErr"
+  - ANT_INVOCATION="ant -Dtest.headless=true -Djunit.printsummary=withOutAndErr"
 jdk:
   - oraclejdk11
   - oraclejdk10
@@ -16,7 +16,7 @@ matrix:
   - os: osx
     osx_image: xcode9.2
     jdk: ~
-    env: ANT_INVOCATION="ant -Dtest.headless=true"
+    env: ANT_INVOCATION="ant -Dtest.headless=true -Djunit.printsummary=withOutAndErr"
 before_install:
   - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz
   - tar -xzvf apache-ant-1.10.5-bin.tar.gz
