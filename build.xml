@@ -49,6 +49,7 @@
         <property name="jacoco.includes" value="org.openstreetmap.josm.*" />
         <property name="jacoco.inclbootstrapclasses" value="false" />
         <property name="jacoco.inclnolocationclasses" value="false" />
+        <property name="junit.printsummary" value="on" />
         <!-- build parameter: compression level (ant -Dclevel=N)
                  N ranges from 0 (no compression) to 9 (maximum compression)
                  default: 9 -->
@@ -493,7 +494,7 @@ Build-Date: ${build.tstamp}
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
             <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="${jacoco.includes}"
                 inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}">
-                <junit printsummary="yes" fork="true" forkmode="once" failureproperty="test.@{testfamily}@{testITsuffix}.failed">
+                <junit printsummary="${junit.printsummary}" fork="true" forkmode="once" failureproperty="test.@{testfamily}@{testITsuffix}.failed">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
                     <jvmarg value="-javaagent:${test.dir}/lib/jmockit-1.41.jar"/>
                     <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
