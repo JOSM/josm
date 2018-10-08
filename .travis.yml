@@ -1,13 +1,15 @@
 language: java
-script: (eval "$ANT_INVOCATION $(test $TRAVIS_JDK_VERSION = openjdk8 && echo -DnoJavaFX=true) test-unit-hardfail")
+script:
+  - ant -version
+  - (eval "$ANT_INVOCATION $(test ${TRAVIS_JDK_VERSION:0:4} = open && echo -DnoJavaFX=true) test-unit-hardfail")
 os: linux
 dist: trusty
 env:
   - ANT_INVOCATION="xvfb-run ant -Dtest.headless=false"
   - ANT_INVOCATION="ant -Dtest.headless=true"
 jdk:
-  - oraclejdk9
-  - oraclejdk8
+  - oraclejdk11
+  - oraclejdk10
   - openjdk8
 matrix:
   include:
@@ -16,12 +18,6 @@ matrix:
     jdk: ~
     env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
-  - >
-    case "${TRAVIS_OS_NAME:-linux}" in
-    linux)
-      ;;
-    osx)
-      brew update
-      brew install ant
-      ;;
-    esac;
+  - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz
+  - tar -xzvf apache-ant-1.10.5-bin.tar.gz
+  - export PATH=`pwd`/apache-ant-1.10.5/bin:$PATH
