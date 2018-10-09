@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.junit.Before;
@@ -144,13 +145,13 @@ public class TMSCachedTileLoaderJobTest {
      */
     @Test
     public void testServiceExceptionPattern() {
-        test("missing parameters ['version', 'format']",
+        testServiceException("missing parameters ['version', 'format']",
                 "<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE ServiceExceptionReport SYSTEM \"http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd\">\n" +
                 "<ServiceExceptionReport version=\"1.1.1\">\n" +
                 "    <ServiceException>missing parameters ['version', 'format']</ServiceException>\n" +
                 "</ServiceExceptionReport>");
-        test("Parameter 'layers' contains unacceptable layer names.",
+        testServiceException("Parameter 'layers' contains unacceptable layer names.",
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\r\n" +
                 "<!DOCTYPE ServiceExceptionReport SYSTEM \"http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd\">\r\n" +
                 "<ServiceExceptionReport version=\"1.1.1\">\r\n" +
@@ -161,8 +162,27 @@ public class TMSCachedTileLoaderJobTest {
                 "");
     }
 
-    private static void test(String expected, String xml) {
-        Matcher m = TMSCachedTileLoaderJob.SERVICE_EXCEPTION_PATTERN.matcher(xml);
+    /**
+     * Tests that {@code TMSCachedTileLoaderJob#CDATA_PATTERN} is correct.
+     */
+    @Test
+    public void testCdataPattern() {
+        testCdata("received unsuitable wms request: no <grid> with suitable srs found for layer capitais",
+                "<![CDATA[\r\n" +
+                "received unsuitable wms request: no <grid> with suitable srs found for layer capitais\r\n" +
+                "]]>");
+    }
+
+    private static void testServiceException(String expected, String xml) {
+        test(TMSCachedTileLoaderJob.SERVICE_EXCEPTION_PATTERN, expected, xml);
+    }
+
+    private static void testCdata(String expected, String xml) {
+        test(TMSCachedTileLoaderJob.CDATA_PATTERN, expected, xml);
+    }
+
+    private static void test(Pattern pattern, String expected, String xml) {
+        Matcher m = pattern.matcher(xml);
         assertTrue(xml, m.matches());
         assertEquals(expected, Utils.strip(m.group(1)));
     }
