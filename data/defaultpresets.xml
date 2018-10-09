@@ -4044,7 +4044,7 @@
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:airmark=beacon" />
             <key key="airmark" value="beacon" />
         </item> <!-- Beacon -->
-        <item name="Navigationaid" icon="presets/transport/airport/navigationaid.svg" type="node" preset_name_label="true">
+        <item name="Navigation aid" icon="presets/transport/airport/navigationaid.svg" type="node" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:aeroway=navigationaid"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:aeroway=navigationaid"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:aeroway=navigationaid"
@@ -4053,7 +4053,7 @@
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:aeroway=navigationaid"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:aeroway=navigationaid" />
             <key key="aeroway" value="navigationaid" />
-        </item> <!-- Navigationaid -->
+        </item> <!-- Navigation aid -->
         <item name="Windsock" icon="presets/transport/airport/windsock.svg" type="node" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:aeroway=windsock"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:aeroway=windsock"
