@@ -49,6 +49,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     /** General minimum expires for tiles. Might be overridden by imagery settings */
     public static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires", TimeUnit.HOURS.toMillis(1));
     static final Pattern SERVICE_EXCEPTION_PATTERN = Pattern.compile("(?s).+<ServiceException[^>]*>(.+)</ServiceException>.+");
+    static final Pattern CDATA_PATTERN = Pattern.compile("(?s)\\s*<!\\[CDATA\\[(.+)\\]\\]>\\s*");
     protected final Tile tile;
     private volatile URL url;
     private final TileJobOptions options;
@@ -316,5 +317,16 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             }
         }
         return true;
+    }
+
+    @Override
+    protected String detectErrorMessage(String data) {
+        Matcher m = SERVICE_EXCEPTION_PATTERN.matcher(data);
+        return m.matches() ? removeCdata(Utils.strip(m.group(1))) : super.detectErrorMessage(data);
+    }
+
+    private static String removeCdata(String msg) {
+        Matcher m = CDATA_PATTERN.matcher(msg);
+        return m.matches() ? Utils.strip(m.group(1)) : msg;
     }
 }
