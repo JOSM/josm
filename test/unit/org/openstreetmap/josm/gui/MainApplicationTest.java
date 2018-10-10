@@ -29,7 +29,8 @@ import javax.swing.UIManager;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
@@ -293,8 +294,8 @@ public class MainApplicationTest {
         Shortcut noAction = Shortcut.registerShortcut("foo", "bar", KeyEvent.VK_AMPERSAND, Shortcut.SHIFT);
         assertNotNull(noAction.getKeyStroke());
         assertNull(MainApplication.getRegisteredActionShortcut(noAction));
-        AboutAction about = new AboutAction();
-        assertEquals(about, MainApplication.getRegisteredActionShortcut(about.getShortcut()));
+        JosmAction action = new OpenLocationAction();
+        assertEquals(action, MainApplication.getRegisteredActionShortcut(action.getShortcut()));
     }
 
     /**
