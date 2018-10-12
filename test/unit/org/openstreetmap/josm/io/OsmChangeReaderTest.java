@@ -62,6 +62,9 @@ public class OsmChangeReaderTest {
                 "    <note lat=\"50.5\" lon=\"13.5\" id=\"-3\">\r\n" +
                 "      <comment text=\"something else\" />\r\n" +
                 "    </note>\r\n" +
+                "    <note lat=\"50.75\" lon=\"13.75\" id=\"-4\">\r\n" +
+                "      <comment text=\"\" />\r\n" +
+                "    </note>\r\n" +
                 "  </create>\r\n" +
                 "  <modify />\r\n" +
                 "  <delete />").b;
