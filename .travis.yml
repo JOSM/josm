@@ -1,4 +1,4 @@
-language: shell
+language: java
 script:
   - ant -version
   - (eval "$ANT_INVOCATION $(test ${TRAVIS_JDK_VERSION:0:4} = open && echo -DnoJavaFX=true) clean")
@@ -13,21 +13,20 @@ matrix:
   include:
   - os: linux
     dist: trusty
-    language: java
   - os: osx
     osx_image: xcode9.3
-    language: java
     jdk: ~
     env: ANT_INVOCATION="ant -Dtest.headless=true"
   - os: osx
     osx_image: xcode10
-    language: java
     jdk: ~
     env: ANT_INVOCATION="ant -Dtest.headless=true"
   - os: windows
+    language: shell
     jdk: jdk8
     env: ANT_INVOCATION="ant -Dtest.headless=true"
   - os: windows
+    language: shell
     jdk: jdk10
     env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
