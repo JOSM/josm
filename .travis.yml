@@ -1,4 +1,4 @@
-language: java
+language: shell
 script:
   - ant -version
   - (eval "$ANT_INVOCATION $(test ${TRAVIS_JDK_VERSION:0:4} = open && echo -DnoJavaFX=true) test-unit-hardfail")
