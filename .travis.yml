@@ -1,7 +1,7 @@
 language: java
 script:
   - ant -version
-  - (eval "$ANT_INVOCATION $(test ${TRAVIS_JDK_VERSION:0:4} = open && echo -DnoJavaFX=true) clean")
+  - $ANT_INVOCATION -DnoJavaFX=true clean
   - "grep -L ', Failures: 0, Errors: 0, ' test/report/*.txt | xargs cat"
 env:
   - ANT_INVOCATION="xvfb-run ant -Dtest.headless=false"
@@ -13,11 +13,11 @@ matrix:
   include:
   - os: windows
     language: shell
-    jdk: jdk10
+    jdk: oraclejdk11
     env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
   - env
   - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz
   - tar -xzvf apache-ant-1.10.5-bin.tar.gz
   - export PATH=`pwd`/apache-ant-1.10.5/bin:$PATH
-  - if [ "$TRAVIS_OS_NAME" == "windows" ] ; then ls "$ChocolateyInstall/lib" ; fi
+  - if [ "$TRAVIS_OS_NAME" == "windows" ] ; then choco install jdk11 && export JAVA_HOME="$ChocolateyInstall/lib/jdk11" ; fi
