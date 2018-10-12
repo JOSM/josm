@@ -25,6 +25,11 @@ matrix:
     jdk: ~
     env: ANT_INVOCATION="ant -Dtest.headless=true"
   - os: windows
+    jdk: jdk8
+    env: ANT_INVOCATION="ant -Dtest.headless=true"
+  - os: windows
+    jdk: jdk10
+    env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
   - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz
   - tar -xzvf apache-ant-1.10.5-bin.tar.gz
