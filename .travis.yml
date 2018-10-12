@@ -16,8 +16,10 @@ matrix:
     jdk: jdk10
     env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
+  - env
   - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz
   - tar -xzvf apache-ant-1.10.5-bin.tar.gz
   - export PATH=`pwd`/apache-ant-1.10.5/bin:$PATH
-  - env
-  - if [ "$os" == "windows" ] ; then ls "/c/Program Files/Java" ; fi
+  - if [ "$TRAVIS_OS_NAME" == "windows" ] ; then ls "/c/Program Files/Java" ; fi
+  - if [ "$TRAVIS_OS_NAME" == "windows" ] ; then ls "/c/tools" ; fi
+  - if [ "$TRAVIS_OS_NAME" == "windows" ] ; then ls "/C/ProgramData/chocolatey" ; fi
