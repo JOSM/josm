@@ -88,7 +88,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * A ? prefix indicates a boolean value, for which the key (instead of the value) is used.
      */
     private static final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
-        "leisure", "amenity", "public_transport", ":LocationCode", "note", "?building"};
+        "leisure", "amenity", "public_transport", ":LocationCode", "note", "?building", "?building:part"};
 
     /** the current list of tags used as naming tags in relations */
     private static List<String> namingTagsForRelations;
