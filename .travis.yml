@@ -8,7 +8,7 @@ env:
   - ANT_INVOCATION="ant -Dtest.headless=true"
 jdk:
   - openjdk8
-  - oraclejdk11
+  - openjdk11
 matrix:
   include:
   - os: linux
