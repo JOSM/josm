@@ -13,12 +13,15 @@ matrix:
   include:
   - os: linux
     dist: trusty
+    language: java
   - os: osx
     osx_image: xcode9.3
+    language: java
     jdk: ~
     env: ANT_INVOCATION="ant -Dtest.headless=true"
   - os: osx
     osx_image: xcode10
+    language: java
     jdk: ~
     env: ANT_INVOCATION="ant -Dtest.headless=true"
   - os: windows
