@@ -121,7 +121,7 @@ public class OsmChangeReader extends OsmReader {
                 break;
             }
         }
-        if (location != null && text != null) {
+        if (location != null && text != null && !text.isEmpty()) {
             noteData.createNote(location, text);
         }
     }
