@@ -1,7 +1,7 @@
 language: java
 script:
   - ant -version
-  - $ANT_INVOCATION -DnoJavaFX=true clean
+  - $ANT_INVOCATION -DnoJavaFX=true test-unit-hardfail
   - "grep -L ', Failures: 0, Errors: 0, ' test/report/*.txt | xargs cat"
 env:
   - ANT_INVOCATION="xvfb-run ant -Dtest.headless=false"
@@ -11,6 +11,16 @@ jdk:
   - openjdk11
 matrix:
   include:
+  - os: linux
+    dist: trusty
+  - os: osx
+    osx_image: xcode9.3
+    jdk: ~
+    env: ANT_INVOCATION="ant -Dtest.headless=true"
+  - os: osx
+    osx_image: xcode10
+    jdk: ~
+    env: ANT_INVOCATION="ant -Dtest.headless=true"
   - os: windows
     language: shell
     jdk: oraclejdk11
