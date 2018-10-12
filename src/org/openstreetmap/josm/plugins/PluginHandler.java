@@ -182,10 +182,8 @@ public final class PluginHandler {
             a.setEditable(false);
             a.setText(text);
             a.setCaretPosition(0);
-            if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(MainApplication.getMainFrame(), new JScrollPane(a), tr("Plugin information"),
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), new JScrollPane(a), tr("Plugin information"),
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -351,14 +349,12 @@ public final class PluginHandler {
             sb.append("</li>");
         }
         sb.append("</ul></html>");
-        if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(
-                    parent,
-                    sb.toString(),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-        }
+        JOptionPane.showMessageDialog(
+                parent,
+                sb.toString(),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE
+        );
     }
 
     /**
