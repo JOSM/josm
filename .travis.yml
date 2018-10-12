@@ -12,12 +12,6 @@ jdk:
   - openjdk8
 matrix:
   include:
-  - os: linux
-    dist: trusty
-  - os: osx
-    osx_image: xcode9.2
-    jdk: ~
-    env: ANT_INVOCATION="ant -Dtest.headless=true"
   - os: windows
 before_install:
   - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz
