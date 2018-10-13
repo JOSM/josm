@@ -117,9 +117,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
     protected AbstractTileSourceLayer<? extends AbstractTMSTileSource> askedLayer() {
         List<AbstractTileSourceLayer> targetLayers = MainApplication.getLayerManager().getLayersOfType(AbstractTileSourceLayer.class);
         if (targetLayers.isEmpty()) {
-            if (!GraphicsEnvironment.isHeadless()) {
-                warnNoImageryLayers();
-            }
+            warnNoImageryLayers();
             return null;
         }
         return AbstractMergeAction.askTargetLayer(targetLayers.toArray(new AbstractTileSourceLayer[0]),
