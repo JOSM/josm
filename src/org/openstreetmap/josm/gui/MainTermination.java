@@ -8,6 +8,9 @@ import java.nio.file.InvalidPathException;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
+import org.openstreetmap.josm.io.ChangesetUpdater;
+import org.openstreetmap.josm.io.MessageNotifier;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -19,6 +22,10 @@ public class MainTermination implements Runnable {
 
     @Override
     public void run() {
+        ChangesetUpdater.stop();
+        MessageNotifier.stop();
+        RemoteControl.stop();
+
         try {
             MainApplication.worker.shutdown();
         } catch (SecurityException e) {
