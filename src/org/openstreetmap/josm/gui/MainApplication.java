@@ -129,6 +129,7 @@ import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.CertificateAmendment;
+import org.openstreetmap.josm.io.ChangesetUpdater;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.MessageNotifier;
@@ -950,6 +951,8 @@ public class MainApplication {
         if (MessageNotifier.PROP_NOTIFIER_ENABLED.get()) {
             MessageNotifier.start();
         }
+
+        ChangesetUpdater.start();
 
         if (Config.getPref().getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process

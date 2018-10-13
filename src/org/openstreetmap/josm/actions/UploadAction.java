@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.ChangesetUpdater;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -240,6 +241,8 @@ public class UploadAction extends JosmAction {
         }
         if (!checkPreUploadConditions(layer, apiData))
             return;
+
+        ChangesetUpdater.check();
 
         final UploadDialog dialog = UploadDialog.getUploadDialog();
         dialog.setChangesetTags(layer.getDataSet());
