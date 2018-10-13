@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
 
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -120,6 +121,17 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
             this.getString(instance),
             instance.getTitle()
         };
+    }
+
+    /**
+     * A convenience method to access {@link ExtendedDialog#content} without exception-catching boilerplate
+     */
+    protected Component getContent(final ExtendedDialog instance) {
+        try {
+            return (Component) TestUtils.getPrivateField(instance, "content");
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Mock
