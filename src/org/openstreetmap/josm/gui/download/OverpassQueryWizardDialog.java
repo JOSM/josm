@@ -236,7 +236,17 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                 .append(tr("Basic logical operators can be used to create more sophisticated queries. Instead of \"or\" - \"|\", \"||\" " +
                         "can be used, and instead of \"and\" - \"&\", \"&&\"."))
                 .append(SPAN_END)
-                .append(TD_END).append(TR_END).append("</table>")
+                .append(TD_END).append(TR_END)
+                .append(TR_START).append(TD_START)
+                .append(Utils.joinAsHtmlUnorderedList(Arrays.asList(
+                        tr("<i>ref ~ \"[0-9]+\"</i>"), tr("<i>name ~ /postnord/i in sweden</i>"))))
+                .append(TD_END).append(TD_START)
+                .append(SPAN_START)
+                .append(tr("Regular expressions can be provided either as plain strings or with the regex notation. " +
+                        "The modifier \"i\" makes the match case-insensitive"))
+                .append(SPAN_END)
+                .append(TD_END).append(TR_END)
+                .append("</table>")
                 .append("</body>")
                 .append("</html>")
                 .toString();

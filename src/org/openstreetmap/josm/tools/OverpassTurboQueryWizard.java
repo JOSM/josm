@@ -9,6 +9,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Uses <a href="https://github.com/tyrasd/overpass-wizard/">Overpass Turbo query wizard</a> code (MIT Licensed)
@@ -44,6 +45,7 @@ public final class OverpassTurboQueryWizard {
                 engine.eval("var overpassWizard = function(query) {" +
                         "  return global.overpassWizard(query, {" +
                         "    comment: false," +
+                        "    timeout: " + Config.getPref().getInt("overpass.wizard.timeout", 90) + "," +
                         "    outputFormat: 'xml'," +
                         "    outputMode: 'recursive_meta'" +
                         "  });" +
