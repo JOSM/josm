@@ -107,6 +107,13 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
         );
     }
 
+    /**
+     * Target for overriding, similar to {@link #getMockResult} except with the implication it will only
+     * be invoked once per dialog display, therefore ideal opportunity to perform any mutating actions,
+     * e.g. making a selection on a widget.
+     */
+    protected void act(final ExtendedDialog instance) {};
+
     protected Object[] getInvocationLogEntry(final ExtendedDialog instance, final int mockResult) {
         return new Object[] {
             mockResult,
@@ -129,6 +136,7 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
         if (value == true) {
             try {
                 final ExtendedDialog instance = invocation.getInvokedInstance();
+                this.act(instance);
                 final int mockResult = this.getMockResult(instance);
                 // TODO check validity of mockResult?
                 Deencapsulation.setField(instance, "result", mockResult);
