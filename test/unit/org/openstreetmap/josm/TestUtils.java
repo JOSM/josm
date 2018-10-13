@@ -58,7 +58,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.common.io.ByteStreams;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import mockit.integration.internal.TestRunnerDecorator;
+import mockit.integration.TestRunnerDecorator;
 
 /**
  * Various utils, useful for unit tests.

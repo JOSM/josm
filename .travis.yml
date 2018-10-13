@@ -1,24 +1,32 @@
 language: java
 script:
   - ant -version
-  - (eval "$ANT_INVOCATION $(test ${TRAVIS_JDK_VERSION:0:4} = open && echo -DnoJavaFX=true) test-unit-hardfail")
+  - $ANT_INVOCATION -DnoJavaFX=true test-unit-hardfail
   - "grep -L ', Failures: 0, Errors: 0, ' test/report/*.txt | xargs cat"
-os: linux
-dist: trusty
 env:
   - ANT_INVOCATION="xvfb-run ant -Dtest.headless=false"
   - ANT_INVOCATION="ant -Dtest.headless=true"
 jdk:
-  - oraclejdk11
-  - oraclejdk10
   - openjdk8
+  - openjdk11
 matrix:
   include:
+  - os: linux
+    dist: trusty
   - os: osx
-    osx_image: xcode9.2
+    osx_image: xcode9.3
     jdk: ~
+    env: ANT_INVOCATION="ant -Dtest.headless=true"
+  - os: osx
+    osx_image: xcode10
+    jdk: ~
+    env: ANT_INVOCATION="ant -Dtest.headless=true"
+  - os: windows
+    language: shell
+    jdk: oraclejdk11
     env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
   - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz
   - tar -xzvf apache-ant-1.10.5-bin.tar.gz
   - export PATH=`pwd`/apache-ant-1.10.5/bin:$PATH
+  - if [ "$TRAVIS_OS_NAME" == "windows" ] ; then choco install jdk11 && export JAVA_HOME="/c/Program Files/Java/jdk-11" ; fi

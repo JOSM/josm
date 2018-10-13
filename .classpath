@@ -22,7 +22,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/jmockit-1.41.jar">
+	<classpathentry kind="lib" path="test/lib/jmockit-1.43.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
