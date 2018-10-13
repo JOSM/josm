@@ -482,8 +482,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                     .show();
             return DIALOG_ANSWER_CANCEL;
         } else if (p.getComponentCount() != 0 && (sel.isEmpty() || p.hasElements)) {
-            String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
-            if (!showNewRelation && sel.isEmpty()) {
+            int size = sel.size();
+            String title = trn("Change {0} object", "Change {0} objects", size, size);
+            if (!showNewRelation && size == 0) {
                 if (originalSelectionEmpty) {
                     title = tr("Nothing selected!");
                 } else {
@@ -491,8 +492,8 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 }
             }
 
-            boolean disableApply = false;
-            if (!sel.isEmpty()) {
+            boolean disableApply = size == 0;
+            if (!disableApply) {
                 OsmData<?, ?, ?, ?> ds = sel.iterator().next().getDataSet();
                 disableApply = ds != null && ds.isLocked();
             }
