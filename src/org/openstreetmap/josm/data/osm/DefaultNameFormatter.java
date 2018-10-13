@@ -120,16 +120,17 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param primitive the primitive
      */
     protected void decorateNameWithId(StringBuilder name, IPrimitive primitive) {
+        int version = primitive.getVersion();
         if (Config.getPref().getBoolean("osm-primitives.showid")) {
             long id = Config.getPref().getBoolean("osm-primitives.showid.new-primitives") ?
                     primitive.getUniqueId() : primitive.getId();
-            if (Config.getPref().getBoolean("osm-primitives.showversion")) {
-                name.append(tr(" [id: {0}, v{1}]", id, primitive.getVersion()));
+            if (Config.getPref().getBoolean("osm-primitives.showversion") && version > 0) {
+                name.append(tr(" [id: {0}, v{1}]", id, version));
             } else {
                 name.append(tr(" [id: {0}]", id));
             }
         } else if (Config.getPref().getBoolean("osm-primitives.showversion")) {
-            name.append(tr(" [v{0}]", primitive.getVersion()));
+            name.append(tr(" [v{0}]", version));
         }
     }
 
