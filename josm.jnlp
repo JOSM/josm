@@ -8,7 +8,8 @@
         <description>Java OpenStreetMap editor</description>
         <description kind="one-line">JOSM</description>
         <description kind="tooltip">JOSM</description>
-        <icon href="https://josm.openstreetmap.de/logo.png" width="256" height="256"/> 
+        <icon href="https://josm.openstreetmap.de/logo.png" width="256" height="256"/>
+        <icon href="https://josm.openstreetmap.de/logo64.png" width="64" height="64" kind="shortcut"/> 
         <offline-allowed/>
         <shortcut>
             <desktop/>
