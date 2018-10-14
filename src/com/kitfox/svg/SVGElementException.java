@@ -48,6 +48,7 @@ public class SVGElementException extends SVGException
     
     /**
      * Creates a new instance of <code>SVGException</code> without detail message.
+     * @param element
      */
     public SVGElementException(SVGElement element)
     {
@@ -57,6 +58,7 @@ public class SVGElementException extends SVGException
     
     /**
      * Constructs an instance of <code>SVGException</code> with the specified detail message.
+     * @param element
      * @param msg the detail message.
      */
     public SVGElementException(SVGElement element, String msg)

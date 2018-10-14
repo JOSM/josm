@@ -36,6 +36,7 @@
 package com.kitfox.svg;
 
 import com.kitfox.svg.xml.StyleAttribute;
+import java.awt.Color;
 import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
 import java.awt.RadialGradientPaint;
@@ -128,14 +129,16 @@ public class RadialGradient extends Gradient
         Paint paint;
         Point2D.Float pt1 = new Point2D.Float(cx, cy);
         Point2D.Float pt2 = hasFocus ? new Point2D.Float(fx, fy) : pt1;
+        float[] stopFractions = getStopFractions();
+        Color[] stopColors = getStopColors();
         if (gradientUnits == GU_USER_SPACE_ON_USE)
         {
             paint = new RadialGradientPaint(
                 pt1,
                 r,
                 pt2,
-                getStopFractions(),
-                getStopColors(),
+                stopFractions,
+                stopColors,
                 method,
                 MultipleGradientPaint.ColorSpaceType.SRGB,
                 gradientTransform);
@@ -151,8 +154,8 @@ public class RadialGradient extends Gradient
                 pt1,
                 r,
                 pt2,
-                getStopFractions(),
-                getStopColors(),
+                stopFractions,
+                stopColors,
                 method,
                 MultipleGradientPaint.ColorSpaceType.SRGB,
                 viewXform);
