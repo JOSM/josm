@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.layer.gpx;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;

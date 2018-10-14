@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.util.List;
 
