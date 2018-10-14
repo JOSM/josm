@@ -473,5 +473,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
     }
 
     @Override
-    public void layerOrderChanged(MainLayerManager.LayerOrderChangeEvent e) {}
+    public void layerOrderChanged(MainLayerManager.LayerOrderChangeEvent e) {
+        // Do nothing
+    }
 }
