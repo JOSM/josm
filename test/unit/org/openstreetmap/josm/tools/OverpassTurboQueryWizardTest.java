@@ -27,7 +27,7 @@ public class OverpassTurboQueryWizardTest {
     public void testKeyValue() {
         final String query = OverpassTurboQueryWizard.getInstance().constructQuery("amenity=drinking_water");
         assertEquals("" +
-                "[out:xml][timeout:25][bbox:{{bbox}}];\n" +
+                "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
                 "  node[\"amenity\"=\"drinking_water\"];\n" +
                 "  way[\"amenity\"=\"drinking_water\"];\n" +

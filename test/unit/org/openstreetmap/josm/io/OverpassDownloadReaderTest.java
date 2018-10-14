@@ -72,7 +72,7 @@ public class OverpassDownloadReaderTest {
     public void testBbox() {
         final String query = getExpandedQuery("amenity=drinking_water");
         assertEquals("" +
-                "[out:xml][timeout:25][bbox:2.0,1.0,4.0,3.0];\n" +
+                "[out:xml][timeout:90][bbox:2.0,1.0,4.0,3.0];\n" +
                 "(\n" +
                 "  node[\"amenity\"=\"drinking_water\"];\n" +
                 "  way[\"amenity\"=\"drinking_water\"];\n" +
@@ -134,7 +134,7 @@ public class OverpassDownloadReaderTest {
         stubNominatim("London");
         final String query = getExpandedQuery("amenity=drinking_water in London");
         assertEquals("" +
-                "[out:xml][timeout:25];\n" +
+                "[out:xml][timeout:90];\n" +
                 "area(3600065606)->.searchArea;\n" +
                 "(\n" +
                 "  node[\"amenity\"=\"drinking_water\"](area.searchArea);\n" +
@@ -167,7 +167,7 @@ public class OverpassDownloadReaderTest {
         }
 
         assertTrue(OverpassDownloadReader.OUTPUT_FORMAT_STATEMENT.matcher(
-                "[out:pbf][timeout:25][bbox:{{bbox}}];\n" +
+                "[out:pbf][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
                 "  node[\"amenity\"=\"pharmacy\"];\n" +
                 "  way[\"amenity\"=\"pharmacy\"];\n" +
@@ -204,13 +204,13 @@ public class OverpassDownloadReaderTest {
                 "    ::\"id\", amenity, name, operator, opening_hours, \"contact:website\", \"contact:phone\", brand, dispensing, lastcheck\n" +
                 "  )]"));
 
-        assertEquals("[out:json][timeout:25];\n" +
+        assertEquals("[out:json][timeout:90];\n" +
                 "(\n" +
                 "  node[\"historic\"=\"ringfort\"];\n" +
                 "  way[\"historic\"=\"ringfort\"];\n" +
                 ");\n" +
                 "out meta;",
-            OverpassDownloadReader.fixQuery("[out:json][timeout:25];\n" +
+            OverpassDownloadReader.fixQuery("[out:json][timeout:90];\n" +
                 "(\n" +
                 "  node[\"historic\"=\"ringfort\"];\n" +
                 "  way[\"historic\"=\"ringfort\"];\n" +
