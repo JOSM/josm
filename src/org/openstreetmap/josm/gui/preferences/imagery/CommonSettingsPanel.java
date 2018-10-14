@@ -88,7 +88,8 @@ public class CommonSettingsPanel extends JPanel {
         ImageryLayer.PROP_SHARPEN_LEVEL.put(sharpen.getSelectedIndex());
 
         boolean restartRequired = false;
-        restartRequired |= removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get(), 1024L * 1024L * ((Integer) this.maxElementsOnDisk.getValue()));
+        restartRequired |= removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get(),
+                1024L * 1024L * ((Integer) this.maxElementsOnDisk.getValue()));
 
         if (!AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().equals(this.maxElementsOnDisk.getValue())) {
             AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.put((Integer) this.maxElementsOnDisk.getValue());

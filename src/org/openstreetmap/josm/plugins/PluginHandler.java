@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -1207,12 +1206,21 @@ public final class PluginHandler {
         return null;
     }
 
+    /**
+     * Called in the download dialog to give the plugins a chance to modify the list
+     * of bounding box selectors.
+     * @param downloadSelections list of bounding box selectors
+     */
     public static void addDownloadSelection(List<DownloadSelection> downloadSelections) {
         for (PluginProxy p : pluginList) {
             p.addDownloadSelection(downloadSelections);
         }
     }
 
+    /**
+     * Returns the list of plugin preference settings.
+     * @return the list of plugin preference settings
+     */
     public static Collection<PreferenceSettingFactory> getPreferenceSetting() {
         Collection<PreferenceSettingFactory> settings = new ArrayList<>();
         for (PluginProxy plugin : pluginList) {
