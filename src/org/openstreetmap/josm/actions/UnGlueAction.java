@@ -174,12 +174,12 @@ public class UnGlueAction extends JosmAction {
         selectedNodes = null;
     }
 
-    void update(PropertiesMembershipChoiceDialog dialog, Node existingNode, List<Node> newNodes, Collection<Command> cmds) {
+    static void update(PropertiesMembershipChoiceDialog dialog, Node existingNode, List<Node> newNodes, Collection<Command> cmds) {
         updateMemberships(dialog.getMemberships(), existingNode, newNodes, cmds);
         updateProperties(dialog.getTags(), existingNode, newNodes, cmds);
     }
 
-    private void updateProperties(ExistingBothNewChoice tags, Node existingNode, Iterable<Node> newNodes, Collection<Command> cmds) {
+    private static void updateProperties(ExistingBothNewChoice tags, Node existingNode, Iterable<Node> newNodes, Collection<Command> cmds) {
         if (tags != null && tags.newNode.isSelected()) {
             final Node newSelectedNode = new Node(existingNode);
             newSelectedNode.removeAll();
@@ -191,7 +191,7 @@ public class UnGlueAction extends JosmAction {
         }
     }
 
-    private void updateMemberships(ExistingBothNewChoice memberships, Node existingNode, List<Node> newNodes, Collection<Command> cmds) {
+    private static void updateMemberships(ExistingBothNewChoice memberships, Node existingNode, List<Node> newNodes, Collection<Command> cmds) {
         if (memberships != null && memberships.bothNodes.isSelected()) {
             fixRelations(existingNode, cmds, newNodes, false);
         } else if (memberships != null && memberships.newNode.isSelected()) {
