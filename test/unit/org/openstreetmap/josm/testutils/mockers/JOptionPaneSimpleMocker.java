@@ -133,6 +133,16 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
         return this.getMockResultMap().get(messageString);
     }
 
+    /**
+     * Target for overriding, similar to {@link #getMockResultForMessage} except with the implication it
+     * will only be invoked once per dialog display, therefore ideal opportunity to perform any mutating
+     * actions, e.g. making a selection on a widget.
+     * @param message message
+     */
+    protected void act(final Object message) {
+        // Override in sub-classes
+    }
+
     protected Object[] getInvocationLogEntry(
         final Object message,
         final String title,
@@ -161,6 +171,7 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
         final Object initialSelectionValue
     ) {
         try {
+            this.act(message);
             final Object result = this.getMockResultForMessage(message);
             if (selectionValues == null) {
                 if (!(result instanceof String)) {
@@ -215,6 +226,7 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
         final Icon icon
     ) {
         try {
+            this.act(message);
             // why look up a "result" for a message dialog which can only have one possible result? it's
             // a good opportunity to assert its contents
             final Object result = this.getMockResultForMessage(message);
@@ -262,6 +274,7 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
         final Icon icon
     ) {
         try {
+            this.act(message);
             final Object result = this.getMockResultForMessage(message);
             if (!(result instanceof Integer && Ints.contains(optionTypePermittedResults.get(optionType), (int) result))) {
                 fail(String.format(

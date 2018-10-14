@@ -77,6 +77,16 @@ public class HelpAwareOptionPaneMocker extends BaseDialogMockUp<HelpAwareOptionP
         return this.getMockResultMap().get(messageString);
     }
 
+    /**
+     * Target for overriding, similar to {@link #getMockResultForMessage} except with the implication it
+     * will only be invoked once per dialog display, therefore ideal opportunity to perform any mutating
+     * actions, e.g. making a selection on a widget.
+     * @param message message
+     */
+    protected void act(final Object message) {
+        // Override in sub-classes
+    }
+
     protected int getButtonPositionFromLabel(
         final HelpAwareOptionPane.ButtonSpec[] options,
         final String label
@@ -133,6 +143,7 @@ public class HelpAwareOptionPaneMocker extends BaseDialogMockUp<HelpAwareOptionP
         final String helpTopic
     ) {
         try {
+            this.act(msg);
             final Object result = this.getMockResultForMessage(msg);
 
             if (result == null) {

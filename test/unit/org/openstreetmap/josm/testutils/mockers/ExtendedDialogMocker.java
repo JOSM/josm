@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
 
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -107,12 +108,35 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
         );
     }
 
+    /**
+     * Target for overriding, similar to {@link #getMockResult} except with the implication it will only
+     * be invoked once per dialog display, therefore ideal opportunity to perform any mutating actions,
+     * e.g. making a selection on a widget.
+     * @param instance dialog instance
+     */
+    protected void act(final ExtendedDialog instance) {
+        // Override in sub-classes
+    }
+
     protected Object[] getInvocationLogEntry(final ExtendedDialog instance, final int mockResult) {
         return new Object[] {
             mockResult,
             this.getString(instance),
             instance.getTitle()
         };
+    }
+
+    /**
+     * A convenience method to access {@link ExtendedDialog#content} without exception-catching boilerplate
+     * @param instance dialog instance
+     * @return dialog content component
+     */
+    protected Component getContent(final ExtendedDialog instance) {
+        try {
+            return (Component) TestUtils.getPrivateField(instance, "content");
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Mock
@@ -129,6 +153,7 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
         if (value == true) {
             try {
                 final ExtendedDialog instance = invocation.getInvokedInstance();
+                this.act(instance);
                 final int mockResult = this.getMockResult(instance);
                 // TODO check validity of mockResult?
                 Deencapsulation.setField(instance, "result", mockResult);

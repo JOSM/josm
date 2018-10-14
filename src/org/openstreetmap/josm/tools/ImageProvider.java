@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -314,7 +315,7 @@ public class ImageProvider {
     private static final Map<Image, Map<Long, Image>> ROTATE_CACHE = new HashMap<>();
 
     /** small cache of critical images used in many parts of the application */
-    private static final Map<OsmPrimitiveType, ImageIcon> osmPrimitiveTypeCache = new HashMap<>();
+    private static final Map<OsmPrimitiveType, ImageIcon> osmPrimitiveTypeCache = new EnumMap<>(OsmPrimitiveType.class);
 
     /** larger cache of critical padded image icons used in many parts of the application */
     private static final Map<Dimension, Map<MapImage, ImageIcon>> paddedImageCache = new HashMap<>();
@@ -1633,10 +1634,14 @@ public class ImageProvider {
             realHeight = GuiSizesHelper.getSizeDpiAdjusted(sourceHeight);
         }
 
-        if (realWidth == 0 || realHeight == 0) {
+        int roundedWidth = Math.round(realWidth);
+        int roundedHeight = Math.round(realHeight);
+        if (roundedWidth <= 0 || roundedHeight <= 0) {
+            Logging.error("createImageFromSvg: {0} {1} realWidth={2} realHeight={3}",
+                    svg.getXMLBase(), dim, Float.toString(realWidth), Float.toString(realHeight));
             return null;
         }
-        BufferedImage img = new BufferedImage(Math.round(realWidth), Math.round(realHeight), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage img = new BufferedImage(roundedWidth, roundedHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
         g.setClip(0, 0, img.getWidth(), img.getHeight());
         g.scale(realWidth / sourceWidth, realHeight / sourceHeight);

@@ -233,6 +233,11 @@ public class Tspan extends ShapeElement
             font = FontSystem.createFont(fontFamily, fontStyle, fontWeight, (int)fontSize);
         }
 
+        if (font == null)
+        {
+            font = FontSystem.createFont("Serif", fontStyle, fontWeight, fontStyle);
+        }
+
         AffineTransform xform = new AffineTransform();
 
         float cursorX = (float)cursor.getX();

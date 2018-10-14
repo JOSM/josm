@@ -55,6 +55,7 @@ public class XMLParseUtil
 {
     static final Matcher fpMatch = Pattern.compile("([-+]?((\\d*\\.\\d+)|(\\d+))([eE][+-]?\\d+)?)(\\%|in|cm|mm|pt|pc|px|em|ex)?").matcher("");
     static final Matcher intMatch = Pattern.compile("[-+]?\\d+").matcher("");
+    static final Matcher quoteMatch = Pattern.compile("^'|'$").matcher("");
 
     /** Creates a new instance of XMLParseUtil */
     private XMLParseUtil()
@@ -319,7 +320,7 @@ public class XMLParseUtil
             }
 
             String key = styles[i].substring(0, colon).trim();
-            String value = styles[i].substring(colon + 1).trim();
+            String value = quoteMatch.reset(styles[i].substring(colon + 1).trim()).replaceAll("");
 
             map.put(key, new StyleAttribute(key, value));
         }
