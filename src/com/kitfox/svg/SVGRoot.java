@@ -200,8 +200,8 @@ public class SVGRoot extends Group
         }
         else if (viewBox != null)
         {
-            xx = (float)viewBox.x;
-            ww = (float)viewBox.width;
+            xx = viewBox.x;
+            ww = viewBox.width;
             width = new NumberWithUnits(ww, NumberWithUnits.UT_PX);
             x = new NumberWithUnits(xx, NumberWithUnits.UT_PX);
         }
@@ -228,8 +228,8 @@ public class SVGRoot extends Group
         }
         else if (viewBox != null)
         {
-            yy = (float)viewBox.y;
-            hh = (float)viewBox.height;
+            yy = viewBox.y;
+            hh = viewBox.height;
             height = new NumberWithUnits(hh, NumberWithUnits.UT_PX);
             y = new NumberWithUnits(yy, NumberWithUnits.UT_PX);
         }
@@ -262,6 +262,12 @@ public class SVGRoot extends Group
     }
 
     public void renderToViewport(Graphics2D g) throws SVGException
+    {
+        render(g);
+    }
+
+    @Override
+    public void render(Graphics2D g) throws SVGException
     {
         prepareViewport();
         
