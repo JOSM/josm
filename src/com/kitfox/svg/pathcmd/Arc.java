@@ -103,6 +103,8 @@ public class Arc extends PathCommand
      * indicate if we increase or decrease the angles and the final
      * point of the arc.
      *
+     * @param path The path that the arc will be appended to.
+     * 
      * @param rx the x radius of the ellipse
      * @param ry the y radius of the ellipse
      *
@@ -159,6 +161,18 @@ public class Arc extends PathCommand
      * 
      * AffineTransform.getRotateInstance
      *     (angle, arc.getX()+arc.getWidth()/2, arc.getY()+arc.getHeight()/2);
+     * 
+     * @param x0 origin of arc in x
+     * @param y0 origin of arc in y
+     * @param rx radius of arc in x
+     * @param ry radius of arc in y
+     * @param angle number of radians in arc
+     * @param largeArcFlag
+     * @param sweepFlag
+     * @param x ending coordinate of arc in x
+     * @param y ending coordinate of arc in y
+     * @return arc shape
+     * 
      */
     public static Arc2D computeArc(double x0, double y0,
                                    double rx, double ry,

@@ -104,6 +104,9 @@ public class SVGUniverse implements Serializable
     //Cache reader for efficiency
     XMLReader cachedReader;
 
+    //If true, <imageSVG> elements will only load image data that is included using inline data: uris
+    private boolean imageDataInlineOnly = false;
+
     /**
      * Creates a new instance of SVGUniverse
      */
@@ -129,6 +132,32 @@ public class SVGUniverse implements Serializable
         loadedDocs.clear();
         loadedFonts.clear();
         loadedImages.clear();
+    }
+
+    /**
+     * Returns the current animation time in milliseconds.
+     */
+    public double getCurTime()
+    {
+        return curTime;
+    }
+
+    public void setCurTime(double curTime)
+    {
+        double oldTime = this.curTime;
+        this.curTime = curTime;
+        changes.firePropertyChange("curTime", new Double(oldTime), new Double(curTime));
+    }
+
+    /**
+     * Updates all time influenced style and presentation attributes in all SVG
+     * documents in this universe.
+     */
+    public void updateTime() throws SVGException
+    {
+        for (SVGDiagram dia : loadedDocs.values()) {
+            dia.updateTime(curTime);
+        }
     }
 
     /**
@@ -646,5 +675,21 @@ public class SVGUniverse implements Serializable
         is.close();
 
         return universe;
+    }
+
+    /**
+     * @return the imageDataInlineOnly
+     */
+    public boolean isImageDataInlineOnly()
+    {
+        return imageDataInlineOnly;
+    }
+
+    /**
+     * @param imageDataInlineOnly the imageDataInlineOnly to set
+     */
+    public void setImageDataInlineOnly(boolean imageDataInlineOnly)
+    {
+        this.imageDataInlineOnly = imageDataInlineOnly;
     }
 }

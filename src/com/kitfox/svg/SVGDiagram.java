@@ -89,7 +89,11 @@ public class SVGDiagram implements Serializable
      */
     final URI xmlBase;
 
-    /** Creates a new instance of SVGDiagram */
+    /**
+     * Creates a new instance of SVGDiagram
+     * @param xmlBase
+     * @param universe
+     */
     public SVGDiagram(URI xmlBase, SVGUniverse universe)
     {
         this.universe = universe;
@@ -99,6 +103,8 @@ public class SVGDiagram implements Serializable
 
     /**
      * Draws this diagram to the passed graphics context
+     * @param g
+     * @throws com.kitfox.svg.SVGException
      */
     public void render(Graphics2D g) throws SVGException
     {
@@ -113,7 +119,10 @@ public class SVGDiagram implements Serializable
      * path to the node is added to the return list.  That is, the result of
      * SVGElement.getPath() is added for each entry.
      *
+     * @param point
+     * @param retVec
      * @return the passed in list
+     * @throws com.kitfox.svg.SVGException
      */
     public List<List<SVGElement>> pick(Point2D point, List<List<SVGElement>> retVec) throws SVGException
     {
@@ -178,6 +187,8 @@ public class SVGDiagram implements Serializable
     
     /**
      * Returns the viewing rectangle of this diagram in device coordinates.
+     * @param rect
+     * @return 
      */
     public Rectangle2D getViewRect(Rectangle2D rect)
     {
@@ -223,6 +234,8 @@ public class SVGDiagram implements Serializable
     /**
      * Updates all attributes in this diagram associated with a time event.
      * Ie, all attributes with track information.
+     * @param curTime
+     * @throws com.kitfox.svg.SVGException
      */
     public void updateTime(double curTime) throws SVGException
     {
@@ -239,6 +252,7 @@ public class SVGDiagram implements Serializable
      * Sets the dimensions of the device being rendered into.  This is used by
      * SVGRoot when its x, y, width or height parameters are specified as
      * percentages.
+     * @param deviceViewport
      */
     public void setDeviceViewport(Rectangle deviceViewport)
     {

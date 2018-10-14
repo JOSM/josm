@@ -1655,6 +1655,8 @@ public class ImageProvider {
     private static synchronized SVGUniverse getSvgUniverse() {
         if (svgUniverse == null) {
             svgUniverse = new SVGUniverse();
+            // CVE-2017-5617: Allow only data scheme (see #14319)
+            svgUniverse.setImageDataInlineOnly(true);
         }
         return svgUniverse;
     }

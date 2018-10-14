@@ -60,10 +60,10 @@ public class MissingGlyph extends ShapeElement
     //We may define a path
     private Shape path = null;
     //Alternately, we may have child graphical elements
-    private int horizAdvX = -1;  //Inherits font's value if not set
-    private int vertOriginX = -1;  //Inherits font's value if not set
-    private int vertOriginY = -1;  //Inherits font's value if not set
-    private int vertAdvY = -1;  //Inherits font's value if not set
+    private float horizAdvX = -1;  //Inherits font's value if not set
+    private float vertOriginX = -1;  //Inherits font's value if not set
+    private float vertOriginY = -1;  //Inherits font's value if not set
+    private float vertAdvY = -1;  //Inherits font's value if not set
 
     /**
      * Creates a new instance of Font
@@ -131,22 +131,22 @@ public class MissingGlyph extends ShapeElement
         //Read glyph spacing info
         if (getPres(sty.setName("horiz-adv-x")))
         {
-            horizAdvX = sty.getIntValue();
+            horizAdvX = sty.getFloatValue();
         }
 
         if (getPres(sty.setName("vert-origin-x")))
         {
-            vertOriginX = sty.getIntValue();
+            vertOriginX = sty.getFloatValue();
         }
 
         if (getPres(sty.setName("vert-origin-y")))
         {
-            vertOriginY = sty.getIntValue();
+            vertOriginY = sty.getFloatValue();
         }
 
         if (getPres(sty.setName("vert-adv-y")))
         {
-            vertAdvY = sty.getIntValue();
+            vertAdvY = sty.getFloatValue();
         }
     }
 
@@ -178,7 +178,7 @@ public class MissingGlyph extends ShapeElement
         //Do not push or pop stack
     }
 
-    public int getHorizAdvX()
+    public float getHorizAdvX()
     {
         if (horizAdvX == -1)
         {
@@ -187,7 +187,7 @@ public class MissingGlyph extends ShapeElement
         return horizAdvX;
     }
 
-    public int getVertOriginX()
+    public float getVertOriginX()
     {
         if (vertOriginX == -1)
         {
@@ -196,7 +196,7 @@ public class MissingGlyph extends ShapeElement
         return vertOriginX;
     }
 
-    public int getVertOriginY()
+    public float getVertOriginY()
     {
         if (vertOriginY == -1)
         {
@@ -205,7 +205,7 @@ public class MissingGlyph extends ShapeElement
         return vertOriginY;
     }
 
-    public int getVertAdvY()
+    public float getVertAdvY()
     {
         if (vertAdvY == -1)
         {
@@ -260,7 +260,7 @@ public class MissingGlyph extends ShapeElement
     /**
      * @param horizAdvX the horizAdvX to set
      */
-    public void setHorizAdvX(int horizAdvX)
+    public void setHorizAdvX(float horizAdvX)
     {
         this.horizAdvX = horizAdvX;
     }
@@ -268,7 +268,7 @@ public class MissingGlyph extends ShapeElement
     /**
      * @param vertOriginX the vertOriginX to set
      */
-    public void setVertOriginX(int vertOriginX)
+    public void setVertOriginX(float vertOriginX)
     {
         this.vertOriginX = vertOriginX;
     }
@@ -276,7 +276,7 @@ public class MissingGlyph extends ShapeElement
     /**
      * @param vertOriginY the vertOriginY to set
      */
-    public void setVertOriginY(int vertOriginY)
+    public void setVertOriginY(float vertOriginY)
     {
         this.vertOriginY = vertOriginY;
     }
@@ -284,7 +284,7 @@ public class MissingGlyph extends ShapeElement
     /**
      * @param vertAdvY the vertAdvY to set
      */
-    public void setVertAdvY(int vertAdvY)
+    public void setVertAdvY(float vertAdvY)
     {
         this.vertAdvY = vertAdvY;
     }

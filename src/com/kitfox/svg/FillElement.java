@@ -58,6 +58,7 @@ abstract public class FillElement extends SVGElement
      * @param bounds - bounding box of shape being rendered
      * @param xform - The current transformation that the shape is being
      * rendered under.
+     * @return paint object
      */
     abstract public Paint getPaint(Rectangle2D bounds, AffineTransform xform);
 }

@@ -159,6 +159,34 @@ abstract public class Gradient extends FillElement
         }
     }
 
+    private void buildStops()
+    {
+        ArrayList<Stop> stopList = new ArrayList<>(stops);
+        stopList.sort((o1, o2) -> Float.compare(o1.offset, o2.offset));
+
+        //Remove doubles
+        for (int i = stopList.size() - 2; i > 0; --i)
+        {
+            if (stopList.get(i + 1).offset == stopList.get(i).offset)
+            {
+                stopList.remove(i + 1);
+            }
+        }
+        
+        stopFractions = new float[stopList.size()];
+        stopColors = new Color[stopList.size()];
+        int idx = 0;
+        for (Stop stop : stopList)
+        {
+            int stopColorVal = stop.color.getRGB();
+            Color stopColor = new Color((stopColorVal >> 16) & 0xff, (stopColorVal >> 8) & 0xff, stopColorVal & 0xff, clamp((int) (stop.opacity * 255), 0, 255));
+
+            stopColors[idx] = stopColor;
+            stopFractions[idx] = stop.offset;
+            idx++;
+        }
+    }
+
     public float[] getStopFractions()
     {
         if (stopRef != null)
@@ -172,16 +200,7 @@ abstract public class Gradient extends FillElement
             return stopFractions;
         }
 
-        stopFractions = new float[stops.size()];
-        int idx = 0;
-        for (Stop stop : stops) {
-            float val = stop.offset;
-            if (idx != 0 && val < stopFractions[idx - 1])
-            {
-                val = stopFractions[idx - 1];
-            }
-            stopFractions[idx++] = val;
-        }
+        buildStops();
 
         return stopFractions;
     }
@@ -199,27 +218,9 @@ abstract public class Gradient extends FillElement
             return stopColors;
         }
 
-        stopColors = new Color[stops.size()];
-        int idx = 0;
-        for (Stop stop : stops) {
-            int stopColorVal = stop.color.getRGB();
-            Color stopColor = new Color((stopColorVal >> 16) & 0xff, (stopColorVal >> 8) & 0xff, stopColorVal & 0xff, clamp((int) (stop.opacity * 255), 0, 255));
-            stopColors[idx++] = stopColor;
-        }
+        buildStops();
 
         return stopColors;
-    }
-
-    public void setStops(Color[] colors, float[] fractions)
-    {
-        if (colors.length != fractions.length)
-        {
-            throw new IllegalArgumentException();
-        }
-
-        this.stopColors = colors;
-        this.stopFractions = fractions;
-        stopRef = null;
     }
 
     private int clamp(int val, int min, int max)

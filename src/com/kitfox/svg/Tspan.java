@@ -230,7 +230,7 @@ public class Tspan extends ShapeElement
         Font font = diagram.getUniverse().getFont(fontFamily);
         if (font == null)
         {
-            font = new FontSystem(fontFamily, fontStyle, fontWeight, (int)fontSize);
+            font = FontSystem.createFont(fontFamily, fontStyle, fontWeight, (int)fontSize);
         }
 
         AffineTransform xform = new AffineTransform();

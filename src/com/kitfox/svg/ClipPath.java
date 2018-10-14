@@ -131,7 +131,7 @@ public class ClipPath extends SVGElement
      * Updates all attributes in this diagram associated with a time event. Ie,
      * all attributes with track information.
      *
-     * @param curTime
+     * @param curTime Time at which to evaluate node
      * @return - true if this node has changed state as a result of the time
      * update
      * @throws com.kitfox.svg.SVGException

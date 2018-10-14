@@ -155,6 +155,7 @@ abstract public class SVGElement implements Serializable
     }
 
     /**
+     * @param retVec
      * @return an ordered list of nodes from the root of the tree to this node
      */
     public List<SVGElement> getPath(List<SVGElement> retVec)
@@ -211,6 +212,8 @@ abstract public class SVGElement implements Serializable
     /**
      * Searches children for given element. If found, returns index of child.
      * Otherwise returns -1.
+     * @param child
+     * @return index of child
      */
     public int indexOfChild(SVGElement child)
     {
@@ -220,10 +223,9 @@ abstract public class SVGElement implements Serializable
     /**
      * Swaps 2 elements in children.
      *
-     * @i index of first
-     * @j index of second
-     *
-     * @return true if successful, false otherwise
+     * @param i index of first child
+     * @param j index of second child
+     * @throws com.kitfox.svg.SVGException
      */
     public void swapChildren(int i, int j) throws SVGException
     {
@@ -245,6 +247,8 @@ abstract public class SVGElement implements Serializable
      * @param attrs - Attributes of this tag
      * @param helper - An object passed to all SVG elements involved in this
      * build process to aid in sharing information.
+     * @param parent
+     * @throws org.xml.sax.SAXException
      */
     public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent) throws SAXException
     {
@@ -316,6 +320,9 @@ abstract public class SVGElement implements Serializable
     /**
      * Called after the start element but before the end element to indicate
      * each child tag that has been processed
+     * @param helper
+     * @param child
+     * @throws com.kitfox.svg.SVGElementException
      */
     public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
     {
@@ -345,6 +352,8 @@ abstract public class SVGElement implements Serializable
 
     /**
      * Called during load process to add text scanned within a tag
+     * @param helper
+     * @param text
      */
     public void loaderAddText(SVGLoaderHelper helper, String text)
     {
@@ -353,6 +362,8 @@ abstract public class SVGElement implements Serializable
     /**
      * Called to indicate that this tag and the tags it contains have been
      * completely processed, and that it should finish any load processes.
+     * @param helper
+     * @throws com.kitfox.svg.SVGParseException
      */
     public void loaderEndElement(SVGLoaderHelper helper) throws SVGParseException
     {
@@ -369,6 +380,7 @@ abstract public class SVGElement implements Serializable
     /**
      * Called by internal processes to rebuild the geometry of this node from
      * it's presentation attributes, style attributes and animated tracks.
+     * @throws com.kitfox.svg.SVGException
      */
     protected void build() throws SVGException
     {
@@ -419,6 +431,7 @@ abstract public class SVGElement implements Serializable
     /**
      * Hack to allow nodes to temporarily change their parents. The Use tag will
      * need this so it can alter the attributes that a particular node uses.
+     * @param context
      */
     protected void pushParentContext(SVGElement context)
     {
@@ -464,6 +477,7 @@ abstract public class SVGElement implements Serializable
      * @param recursive - If true and this object does not contain the named
      * style attribute, checks attributes of parents back to root until one
      * found.
+     * @return
      */
     public boolean getStyle(StyleAttribute attrib, boolean recursive) throws SVGException
     {
@@ -522,6 +536,7 @@ abstract public class SVGElement implements Serializable
     }
 
     /**
+     * @param styName
      * @return the raw style value of this attribute. Does not take the
      * presentation value or animation into consideration. Used by animations to
      * determine the base to animate from.
@@ -535,7 +550,9 @@ abstract public class SVGElement implements Serializable
     /**
      * Copies the presentation attribute into the passed one.
      *
+     * @param attrib
      * @return - True if attribute was read successfully
+     * @throws com.kitfox.svg.SVGException
      */
     public boolean getPres(StyleAttribute attrib) throws SVGException
     {
@@ -557,6 +574,7 @@ abstract public class SVGElement implements Serializable
     }
 
     /**
+     * @param styName
      * @return the raw presentation value of this attribute. Ignores any
      * modifications applied by style attributes or animation. Used by
      * animations to determine the starting point to animate from
@@ -809,8 +827,10 @@ abstract public class SVGElement implements Serializable
      * Updates all attributes in this diagram associated with a time event. Ie,
      * all attributes with track information.
      *
+     * @param curTime
      * @return - true if this node has changed state as a result of the time
      * update
+     * @throws com.kitfox.svg.SVGException
      */
     abstract public boolean updateTime(double curTime) throws SVGException;
 

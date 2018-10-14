@@ -258,6 +258,7 @@ public class Group extends ShapeElement
     /**
      * Recalculates the bounding box by taking the union of the bounding boxes
      * of all children. Caches the result.
+     * @throws com.kitfox.svg.SVGException
      */
     public void calcBoundingBox() throws SVGException
     {
