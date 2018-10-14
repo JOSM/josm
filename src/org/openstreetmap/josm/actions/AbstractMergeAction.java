@@ -109,10 +109,7 @@ public abstract class AbstractMergeAction extends JosmAction {
         JPanel pnl = new JPanel(new GridBagLayout());
         pnl.add(new JLabel(label), GBC.eol());
         pnl.add(layerList, GBC.eol().fill(GBC.HORIZONTAL));
-        if (GraphicsEnvironment.isHeadless()) {
-            // return first layer in headless mode, for unit tests
-            return targetLayers[0];
-        }
+
         ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), title, buttonText, tr("Cancel"));
         ed.setButtonIcons(buttonIcon, "cancel");
         ed.setContent(pnl);
@@ -130,8 +127,6 @@ public abstract class AbstractMergeAction extends JosmAction {
     protected void warnNoTargetLayersForSourceLayer(Layer sourceLayer) {
         String message = tr("<html>There are no layers the source layer<br>''{0}''<br>could be merged to.</html>",
                 Utils.escapeReservedCharactersHTML(sourceLayer.getName()));
-        if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), message, tr("No target layers"), JOptionPane.WARNING_MESSAGE);
-        }
+        JOptionPane.showMessageDialog(MainApplication.getMainFrame(), message, tr("No target layers"), JOptionPane.WARNING_MESSAGE);
     }
 }
