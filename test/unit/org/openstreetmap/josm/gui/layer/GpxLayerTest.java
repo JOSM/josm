@@ -63,7 +63,7 @@ public class GpxLayerTest {
      * @throws SAXException if any SAX error occurs
      */
     public static GpxLayer getMinimalGpxLayer() throws IOException, SAXException {
-        return new GpxLayer(getMinimalGpxData());
+        return new GpxLayer(getMinimalGpxData(), "Bananas");
     }
 
     /**
