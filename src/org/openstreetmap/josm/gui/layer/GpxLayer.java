@@ -306,7 +306,18 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
     public void mergeFrom(Layer from) {
         if (!(from instanceof GpxLayer))
             throw new IllegalArgumentException("not a GpxLayer: " + from);
-        data.mergeFrom(((GpxLayer) from).data);
+        mergeFrom((GpxLayer) from, false, false);
+    }
+
+    /**
+     * Merges the given GpxLayer into this layer and can remove timewise overlapping parts of the given track
+     * @param from The GpxLayer that gets merged into this one
+     * @param cutOverlapping whether overlapping parts of the given track should be removed
+     * @param connect whether the tracks should be connected on cuts
+     * @since 14338
+     */
+    public void mergeFrom(GpxLayer from, boolean cutOverlapping, boolean connect) {
+        data.mergeFrom(from.data, cutOverlapping, connect);
         invalidate();
     }
 
