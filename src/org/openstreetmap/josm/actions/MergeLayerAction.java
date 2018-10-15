@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +14,12 @@ import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
+import org.openstreetmap.josm.gui.dialogs.layer.MergeGpxLayerDialog;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -47,30 +51,69 @@ public class MergeLayerAction extends AbstractMergeAction {
      * @since 11885 (return type)
      */
     protected Future<?> doMerge(List<Layer> targetLayers, final Collection<Layer> sourceLayers) {
-        final Layer targetLayer = askTargetLayer(targetLayers);
+        final boolean onlygpx = targetLayers.stream().noneMatch(l -> !(l instanceof GpxLayer));
+        final TargetLayerDialogResult<Layer> res = askTargetLayer(targetLayers, onlygpx,
+                tr("Cut timewise overlapping parts of tracks"),
+                onlygpx && Config.getPref().getBoolean("mergelayer.gpx.cut", false));
+        final Layer targetLayer = res.selectedTargetLayer;
         if (targetLayer == null)
             return null;
+
+        if (onlygpx) {
+            Config.getPref().putBoolean("mergelayer.gpx.cut", res.checkboxTicked);
+        }
+
         final Object actionName = getValue(NAME);
-        return MainApplication.worker.submit(() -> {
-                final long start = System.currentTimeMillis();
-                boolean layerMerged = false;
-                for (final Layer sourceLayer: sourceLayers) {
-                    if (sourceLayer != null && !sourceLayer.equals(targetLayer)) {
-                        if (sourceLayer instanceof OsmDataLayer && targetLayer instanceof OsmDataLayer
-                                && ((OsmDataLayer) sourceLayer).isUploadDiscouraged() != ((OsmDataLayer) targetLayer).isUploadDiscouraged()
-                                && Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
-                                    warnMergingUploadDiscouragedLayers(sourceLayer, targetLayer)))) {
-                            break;
-                        }
-                        targetLayer.mergeFrom(sourceLayer);
-                        GuiHelper.runInEDTAndWait(() -> getLayerManager().removeLayer(sourceLayer));
-                        layerMerged = true;
+        if (onlygpx && res.checkboxTicked) {
+            List<GpxLayer> layers = new ArrayList<>();
+            layers.add((GpxLayer) targetLayer);
+            for (Layer sl : sourceLayers) {
+                if (sl != null && !sl.equals(targetLayer)) {
+                    layers.add((GpxLayer) sl);
+                }
+            }
+            final MergeGpxLayerDialog d = new MergeGpxLayerDialog(MainApplication.getMainFrame(), layers);
+
+            if (d.showDialog().getValue() == 1) {
+
+                final boolean connect = d.connectCuts();
+                final List<GpxLayer> sortedLayers = d.getSortedLayers();
+
+                return MainApplication.worker.submit(() -> {
+                    final long start = System.currentTimeMillis();
+
+                    for (int i = sortedLayers.size() - 2; i >= 0; i--) {
+                        final GpxLayer lower = sortedLayers.get(i + 1);
+                        sortedLayers.get(i).mergeFrom(lower, true, connect);
+                        GuiHelper.runInEDTAndWait(() -> getLayerManager().removeLayer(lower));
                     }
-                }
-                if (layerMerged) {
-                    getLayerManager().setActiveLayer(targetLayer);
+
                     Logging.info(tr("{0} completed in {1}", actionName, Utils.getDurationString(System.currentTimeMillis() - start)));
+                });
+            }
+        }
+
+        return MainApplication.worker.submit(() -> {
+            final long start = System.currentTimeMillis();
+            boolean layerMerged = false;
+            for (final Layer sourceLayer: sourceLayers) {
+                if (sourceLayer != null && !sourceLayer.equals(targetLayer)) {
+                    if (sourceLayer instanceof OsmDataLayer && targetLayer instanceof OsmDataLayer
+                            && ((OsmDataLayer) sourceLayer).isUploadDiscouraged() != ((OsmDataLayer) targetLayer).isUploadDiscouraged()
+                            && Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
+                            warnMergingUploadDiscouragedLayers(sourceLayer, targetLayer)))) {
+                        break;
+                    }
+                    targetLayer.mergeFrom(sourceLayer);
+                    GuiHelper.runInEDTAndWait(() -> getLayerManager().removeLayer(sourceLayer));
+                    layerMerged = true;
                 }
+            }
+
+            if (layerMerged) {
+                getLayerManager().setActiveLayer(targetLayer);
+                Logging.info(tr("{0} completed in {1}", actionName, Utils.getDurationString(System.currentTimeMillis() - start)));
+            }
         });
     }
 

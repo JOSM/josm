@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,8 +28,10 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -54,7 +57,6 @@ public class GpxDataTest {
     public void setUp() {
         data = new GpxData();
     }
-
 
     /**
      * Test method for {@link GpxData#mergeFrom(GpxData)}.
@@ -82,6 +84,29 @@ public class GpxDataTest {
         assertTrue(data.getRoutes().contains(route));
         assertTrue(data.getWaypoints().contains(newWP));
         assertTrue(data.getWaypoints().contains(existingWP));
+    }
+
+    /**
+     * Test method for {@link GpxData#mergeFrom(GpxData, boolean, boolean)} including cutting/connecting tracks using actual files.
+     * @throws Exception if the track cannot be parsed
+     */
+    @Test
+    public void testMergeFromFiles() throws Exception {
+        testMerge(false, false, "Merged-all"); // regular merging
+        testMerge(true, false, "Merged-cut"); // cut overlapping tracks, but do not connect them
+        testMerge(true, true, "Merged-cut-connect"); // cut overlapping tracks and connect them
+    }
+
+    private static void testMerge(boolean cut, boolean connect, String exp) throws IOException, SAXException {
+        final GpxData own = getGpx("Layer1");
+        final GpxData other = getGpx("Layer2");
+        final GpxData expected = getGpx(exp);
+        own.mergeFrom(other, cut, connect);
+        assertEquals(expected, own);
+    }
+
+    private static GpxData getGpx(String file) throws IOException, SAXException {
+        return GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "mergelayers/" + file + ".gpx");
     }
 
     /**
@@ -448,7 +473,7 @@ public class GpxDataTest {
     public void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(GpxData.class).usingGetClass()
-            .withIgnoredFields("attr", "creator", "fromServer", "storageFile", "listeners", "tracks", "routes", "waypoints", "proxy")
+            .withIgnoredFields("attr", "creator", "fromServer", "storageFile", "listeners", "tracks", "routes", "waypoints", "proxy", "segSpans")
             .withPrefabValues(WayPoint.class, new WayPoint(LatLon.NORTH_POLE), new WayPoint(LatLon.SOUTH_POLE))
             .withPrefabValues(ListenerList.class, ListenerList.create(), ListenerList.create())
             .verify();

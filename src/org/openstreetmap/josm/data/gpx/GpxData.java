@@ -58,7 +58,7 @@ public class GpxData extends WithAttributes implements Data {
      */
     private final ArrayList<GpxTrack> privateTracks = new ArrayList<>();
     /**
-     * GXP routes in this file
+     * GPX routes in this file
      */
     private final ArrayList<GpxRoute> privateRoutes = new ArrayList<>();
     /**
@@ -108,11 +108,26 @@ public class GpxData extends WithAttributes implements Data {
 
     private final ListenerList<GpxDataChangeListener> listeners = ListenerList.create();
 
+    static class TimestampConfictException extends Exception {}
+
+    private List<GpxTrackSegmentSpan> segSpans;
+
     /**
      * Merges data from another object.
      * @param other existing GPX data
      */
     public synchronized void mergeFrom(GpxData other) {
+        mergeFrom(other, false, false);
+    }
+
+    /**
+     * Merges data from another object.
+     * @param other existing GPX data
+     * @param cutOverlapping whether overlapping parts of the given track should be removed
+     * @param connect whether the tracks should be connected on cuts
+     * @since 14338
+     */
+    public synchronized void mergeFrom(GpxData other, boolean cutOverlapping, boolean connect) {
         if (storageFile == null && other.storageFile != null) {
             storageFile = other.storageFile;
         }
@@ -130,11 +145,222 @@ public class GpxData extends WithAttributes implements Data {
                 put(k, ent.getValue());
             }
         }
-        other.privateTracks.forEach(this::addTrack);
+
+        if (cutOverlapping) {
+            for (GpxTrack trk : other.privateTracks) {
+                cutOverlapping(trk, connect);
+            }
+        } else {
+            other.privateTracks.forEach(this::addTrack);
+        }
         other.privateRoutes.forEach(this::addRoute);
         other.privateWaypoints.forEach(this::addWaypoint);
         dataSources.addAll(other.dataSources);
         fireInvalidate();
+    }
+
+    private void cutOverlapping(GpxTrack trk, boolean connect) {
+        List<GpxTrackSegment> segsOld = new ArrayList<>(trk.getSegments());
+        List<GpxTrackSegment> segsNew = new ArrayList<>();
+        for (GpxTrackSegment seg : segsOld) {
+            GpxTrackSegmentSpan s = GpxTrackSegmentSpan.tryGetFromSegment(seg);
+            if (s != null && anySegmentOverlapsWith(s)) {
+                List<WayPoint> wpsNew = new ArrayList<>();
+                List<WayPoint> wpsOld = new ArrayList<>(seg.getWayPoints());
+                if (s.isInverted()) {
+                    Collections.reverse(wpsOld);
+                }
+                boolean split = false;
+                WayPoint prevLastOwnWp = null;
+                Date prevWpTime = null;
+                for (WayPoint wp : wpsOld) {
+                    Date wpTime = wp.setTimeFromAttribute();
+                    boolean overlap = false;
+                    if (wpTime != null) {
+                        for (GpxTrackSegmentSpan ownspan : getSegmentSpans()) {
+                            if (wpTime.after(ownspan.firstTime) && wpTime.before(ownspan.lastTime)) {
+                                overlap = true;
+                                if (connect) {
+                                    if (!split) {
+                                        wpsNew.add(ownspan.getFirstWp());
+                                    } else {
+                                        connectTracks(prevLastOwnWp, ownspan, trk.getAttributes());
+                                    }
+                                    prevLastOwnWp = ownspan.getLastWp();
+                                }
+                                split = true;
+                                break;
+                            } else if (connect && prevWpTime != null
+                                    && prevWpTime.before(ownspan.firstTime)
+                                    && wpTime.after(ownspan.lastTime)) {
+                                // the overlapping high priority track is shorter than the distance
+                                // between two waypoints of the low priority track
+                                if (split) {
+                                    connectTracks(prevLastOwnWp, ownspan, trk.getAttributes());
+                                    prevLastOwnWp = ownspan.getLastWp();
+                                } else {
+                                    wpsNew.add(ownspan.getFirstWp());
+                                    // splitting needs to be handled here,
+                                    // because other high priority tracks between the same waypoints could follow
+                                    if (!wpsNew.isEmpty()) {
+                                        segsNew.add(new ImmutableGpxTrackSegment(wpsNew));
+                                    }
+                                    if (!segsNew.isEmpty()) {
+                                        privateTracks.add(new ImmutableGpxTrack(segsNew, trk.getAttributes()));
+                                    }
+                                    segsNew = new ArrayList<>();
+                                    wpsNew = new ArrayList<>();
+                                    wpsNew.add(ownspan.getLastWp());
+                                    // therefore no break, because another segment could overlap, see above
+                                }
+                            }
+                        }
+                        prevWpTime = wpTime;
+                    }
+                    if (!overlap) {
+                        if (split) {
+                            //track has to be split, because we have an overlapping short track in the middle
+                            if (!wpsNew.isEmpty()) {
+                                segsNew.add(new ImmutableGpxTrackSegment(wpsNew));
+                            }
+                            if (!segsNew.isEmpty()) {
+                                privateTracks.add(new ImmutableGpxTrack(segsNew, trk.getAttributes()));
+                            }
+                            segsNew = new ArrayList<>();
+                            wpsNew = new ArrayList<>();
+                            if (connect && prevLastOwnWp != null) {
+                                wpsNew.add(new WayPoint(prevLastOwnWp));
+                            }
+                            prevLastOwnWp = null;
+                            split = false;
+                        }
+                        wpsNew.add(new WayPoint(wp));
+                    }
+                }
+                if (!wpsNew.isEmpty()) {
+                    segsNew.add(new ImmutableGpxTrackSegment(wpsNew));
+                }
+            } else {
+                segsNew.add(seg);
+            }
+        }
+        if (segsNew.equals(segsOld)) {
+            privateTracks.add(trk);
+        } else if (!segsNew.isEmpty()) {
+            privateTracks.add(new ImmutableGpxTrack(segsNew, trk.getAttributes()));
+        }
+    }
+
+    private void connectTracks(WayPoint prevWp, GpxTrackSegmentSpan span, Map<String, Object> attr) {
+        if (prevWp != null && !span.lastEquals(prevWp)) {
+            privateTracks.add(new ImmutableGpxTrack(Arrays.asList(Arrays.asList(new WayPoint(prevWp), span.getFirstWp())), attr));
+        }
+    }
+
+    static class GpxTrackSegmentSpan {
+
+        public final Date firstTime;
+        public final Date lastTime;
+        private final boolean inv;
+        private final WayPoint firstWp;
+        private final WayPoint lastWp;
+
+        GpxTrackSegmentSpan(WayPoint a, WayPoint b) {
+            Date at = a.getTime();
+            Date bt = b.getTime();
+            inv = bt.before(at);
+            if (inv) {
+                firstWp = b;
+                firstTime = bt;
+                lastWp = a;
+                lastTime = at;
+            } else {
+                firstWp = a;
+                firstTime = at;
+                lastWp = b;
+                lastTime = bt;
+            }
+        }
+
+        public WayPoint getFirstWp() {
+            return new WayPoint(firstWp);
+        }
+
+        public WayPoint getLastWp() {
+            return new WayPoint(lastWp);
+        }
+
+        // no new instances needed, therefore own methods for that
+
+        public boolean firstEquals(Object other) {
+            return firstWp.equals(other);
+        }
+
+        public boolean lastEquals(Object other) {
+            return lastWp.equals(other);
+        }
+
+        public boolean isInverted() {
+            return inv;
+        }
+
+        public boolean overlapsWith(GpxTrackSegmentSpan other) {
+            return (firstTime.before(other.lastTime) && other.firstTime.before(lastTime))
+                || (other.firstTime.before(lastTime) && firstTime.before(other.lastTime));
+        }
+
+        public static GpxTrackSegmentSpan tryGetFromSegment(GpxTrackSegment seg) {
+            WayPoint b = getNextWpWithTime(seg, true);
+            if (b != null) {
+                WayPoint e = getNextWpWithTime(seg, false);
+                if (e != null) {
+                    return new GpxTrackSegmentSpan(b, e);
+                }
+            }
+            return null;
+        }
+
+        private static WayPoint getNextWpWithTime(GpxTrackSegment seg, boolean forward) {
+            List<WayPoint> wps = new ArrayList<>(seg.getWayPoints());
+            for (int i = forward ? 0 : wps.size() - 1; i >= 0 && i < wps.size(); i += forward ? 1 : -1) {
+                if (wps.get(i).setTimeFromAttribute() != null) {
+                    return wps.get(i);
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Get a list of SegmentSpans containing the beginning and end of each segment
+     * @return the list of SegmentSpans
+     * @since 14338
+     */
+    public synchronized List<GpxTrackSegmentSpan> getSegmentSpans() {
+        if (segSpans == null) {
+            segSpans = new ArrayList<>();
+            for (GpxTrack trk : privateTracks) {
+                for (GpxTrackSegment seg : trk.getSegments()) {
+                    GpxTrackSegmentSpan s = GpxTrackSegmentSpan.tryGetFromSegment(seg);
+                    if (s != null) {
+                        segSpans.add(s);
+                    }
+                }
+            }
+            segSpans.sort((o1, o2) -> {
+                return o1.firstTime.compareTo(o2.firstTime);
+            });
+        }
+        return segSpans;
+    }
+
+    private boolean anySegmentOverlapsWith(GpxTrackSegmentSpan other) {
+        for (GpxTrackSegmentSpan s : getSegmentSpans()) {
+            if (s.overlapsWith(other)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
