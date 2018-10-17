@@ -476,7 +476,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     }
 
     private void addMembersAtIndex(List<? extends OsmPrimitive> primitives, int index) {
-        if (primitives == null)
+        if (primitives == null || primitives.isEmpty())
             return;
         int idx = index;
         for (OsmPrimitive primitive : primitives) {
