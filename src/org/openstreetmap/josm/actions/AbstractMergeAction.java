@@ -57,7 +57,7 @@ public abstract class AbstractMergeAction extends JosmAction {
         /**
          * Whether the checkbox is ticked
          */
-        public boolean checkboxTicked = false;
+        public boolean checkboxTicked;
 
         /**
          * Constructs a new {@link TargetLayerDialogResult}

@@ -41,17 +41,25 @@ public final class ExceptionDialogUtil {
         // Hide default constructor for utility classes
     }
 
+    private static int showErrorDialog(String msg, String title, String helpTopic) {
+        return HelpAwareOptionPane.showOptionDialog(
+                MainApplication.getMainFrame(),
+                new HtmlPanel(msg),
+                title,
+                JOptionPane.ERROR_MESSAGE,
+                helpTopic
+        );
+    }
+
     /**
      * handles an exception caught during OSM API initialization
      *
      * @param e the exception
      */
     public static void explainOsmApiInitializationException(OsmApiInitializationException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainOsmApiInitializationException(e),
                 tr("Error"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#OsmApiInitializationException")
         );
     }
@@ -62,11 +70,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainChangesetClosedException(ChangesetClosedException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainChangesetClosedException(e),
                 tr("Error"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/Action/Upload#ChangesetClosed")
         );
     }
@@ -77,11 +83,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainPreconditionFailed(OsmApiException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainPreconditionFailed(e),
                 tr("Precondition violation"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#OsmApiException")
         );
     }
@@ -103,13 +107,10 @@ public final class ExceptionDialogUtil {
      *
      * @param e the exception
      */
-
     public static void explainSecurityException(OsmTransferException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainSecurityException(e),
                 tr("Security exception"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#SecurityException")
         );
     }
@@ -121,13 +122,10 @@ public final class ExceptionDialogUtil {
      *
      * @param e the exception
      */
-
     public static void explainNestedSocketException(OsmTransferException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainNestedSocketException(e),
                 tr("Network exception"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#NestedSocketException")
         );
     }
@@ -139,13 +137,10 @@ public final class ExceptionDialogUtil {
      *
      * @param e the exception
      */
-
     public static void explainNestedIOException(OsmTransferException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainNestedIOException(e),
                 tr("IO Exception"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#NestedIOException")
         );
     }
@@ -157,11 +152,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainNestedIllegalDataException(OsmTransferException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainNestedIllegalDataException(e),
                 tr("Illegal Data"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#IllegalDataException")
         );
     }
@@ -174,11 +167,9 @@ public final class ExceptionDialogUtil {
      * @since 7434
      */
     public static void explainNestedOfflineAccessException(OsmTransferException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainOfflineAccessException(e),
                 tr("Offline mode"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#OfflineAccessException")
         );
     }
@@ -202,13 +193,10 @@ public final class ExceptionDialogUtil {
      *
      * @param e the exception
      */
-
     public static void explainInternalServerError(OsmTransferException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainInternalServerError(e),
                 tr("Internal Server Error"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#InternalServerError")
         );
     }
@@ -220,11 +208,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainBadRequest(OsmApiException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainBadRequest(e),
                 tr("Bad Request"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#BadRequest")
         );
     }
@@ -236,11 +222,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainNotFound(OsmApiException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainNotFound(e),
                 tr("Not Found"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#NotFound")
         );
     }
@@ -251,11 +235,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainConflict(OsmApiException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainConflict(e),
                 tr("Conflict"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#Conflict")
         );
     }
@@ -274,11 +256,9 @@ public final class ExceptionDialogUtil {
             msg = ExceptionUtil.explainFailedBasicAuthentication(e);
         }
 
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 msg,
                 tr("Authentication failed"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#AuthenticationFailed")
         );
     }
@@ -311,11 +291,9 @@ public final class ExceptionDialogUtil {
             msg = ExceptionUtil.explainFailedAuthorisation(e);
         }
 
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 msg,
                 tr("Authorisation Failed"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#AuthorizationFailed")
         );
     }
@@ -327,11 +305,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainClientTimeout(OsmApiException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainClientTimeout(e),
                 tr("Client Time Out"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#ClientTimeOut")
         );
     }
@@ -343,11 +319,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainBandwidthLimitExceeded(OsmApiException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainBandwidthLimitExceeded(e),
                 tr("Bandwidth Limit Exceeded"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#BandwidthLimit")
         );
     }
@@ -381,11 +355,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainMissingOAuthAccessTokenException(e),
                 tr("Authentication failed"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#MissingOAuthAccessToken")
         );
     }
@@ -398,11 +370,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainNestedUnkonwnHostException(OsmTransferException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainNestedUnknownHostException(e),
                 tr("Unknown host"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#UnknownHost")
         );
     }
@@ -501,11 +471,9 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGoneForUnknownPrimitive(OsmApiException e) {
-        HelpAwareOptionPane.showOptionDialog(
-                MainApplication.getMainFrame(),
+        showErrorDialog(
                 ExceptionUtil.explainGoneForUnknownPrimitive(e),
                 tr("Object deleted"),
-                JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#GoneForUnknownPrimitive")
         );
     }
