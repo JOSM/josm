@@ -40,7 +40,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * Gets the list of changesets that are currently selected
      * @return The selected changesets
      */
-    public Set<Changeset> getSelectedChangesets() {
+    public synchronized Set<Changeset> getSelectedChangesets() {
         Set<Changeset> ret = new HashSet<>();
         for (int i = 0; i < getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
@@ -54,7 +54,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * Gets the IDs of the changesets that are selected
      * @return The selected ids
      */
-    public Set<Integer> getSelectedChangesetIds() {
+    public synchronized Set<Integer> getSelectedChangesetIds() {
         Set<Integer> ret = new HashSet<>();
         for (int i = 0; i < getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
@@ -68,7 +68,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * Sets the changesets to select
      * @param changesets The changesets
      */
-    public void setSelectedChangesets(Collection<Changeset> changesets) {
+    public synchronized void setSelectedChangesets(Collection<Changeset> changesets) {
         selectionModel.setValueIsAdjusting(true);
         selectionModel.clearSelection();
         if (changesets != null) {
@@ -90,7 +90,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
         updateModel();
     }
 
-    private void updateModel() {
+    private synchronized void updateModel() {
         Set<Changeset> sel = getSelectedChangesets();
         data.clear();
         data.addAll(shownChangesets);
@@ -163,16 +163,16 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
     }
 
     @Override
-    public Changeset getElementAt(int idx) {
+    public synchronized Changeset getElementAt(int idx) {
         return data.get(idx);
     }
 
     @Override
-    public int getSize() {
+    public synchronized int getSize() {
         return data.size();
     }
 
-    protected void sort() {
+    protected synchronized void sort() {
         data.sort(Comparator.comparingInt(Changeset::getId).reversed());
     }
 
@@ -190,7 +190,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      *
      * @return the selected open changesets
      */
-    public List<Changeset> getSelectedOpenChangesets() {
+    public synchronized List<Changeset> getSelectedOpenChangesets() {
         List<Changeset> ret = new ArrayList<>();
         for (int i = 0; i < getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
@@ -207,7 +207,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
     /* Interface ChangesetCacheListener                                             */
     /* ---------------------------------------------------------------------------- */
     @Override
-    public void changesetCacheUpdated(ChangesetCacheEvent event) {
+    public synchronized void changesetCacheUpdated(ChangesetCacheEvent event) {
         Set<Changeset> sel = getSelectedChangesets();
         for (Changeset cs: event.getAddedChangesets()) {
             int idx = data.indexOf(cs);
