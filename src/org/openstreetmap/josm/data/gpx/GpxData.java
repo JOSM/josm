@@ -259,8 +259,8 @@ public class GpxData extends WithAttributes implements Data {
 
     static class GpxTrackSegmentSpan {
 
-        public final Date firstTime;
-        public final Date lastTime;
+        final Date firstTime;
+        final Date lastTime;
         private final boolean inv;
         private final WayPoint firstWp;
         private final WayPoint lastWp;
@@ -282,21 +282,21 @@ public class GpxData extends WithAttributes implements Data {
             }
         }
 
-        public WayPoint getFirstWp() {
+        WayPoint getFirstWp() {
             return new WayPoint(firstWp);
         }
 
-        public WayPoint getLastWp() {
+        WayPoint getLastWp() {
             return new WayPoint(lastWp);
         }
 
         // no new instances needed, therefore own methods for that
 
-        public boolean firstEquals(Object other) {
+        boolean firstEquals(Object other) {
             return firstWp.equals(other);
         }
 
-        public boolean lastEquals(Object other) {
+        boolean lastEquals(Object other) {
             return lastWp.equals(other);
         }
 
@@ -304,12 +304,12 @@ public class GpxData extends WithAttributes implements Data {
             return inv;
         }
 
-        public boolean overlapsWith(GpxTrackSegmentSpan other) {
+        boolean overlapsWith(GpxTrackSegmentSpan other) {
             return (firstTime.before(other.lastTime) && other.firstTime.before(lastTime))
                 || (other.firstTime.before(lastTime) && firstTime.before(other.lastTime));
         }
 
-        public static GpxTrackSegmentSpan tryGetFromSegment(GpxTrackSegment seg) {
+        static GpxTrackSegmentSpan tryGetFromSegment(GpxTrackSegment seg) {
             WayPoint b = getNextWpWithTime(seg, true);
             if (b != null) {
                 WayPoint e = getNextWpWithTime(seg, false);
@@ -347,9 +347,7 @@ public class GpxData extends WithAttributes implements Data {
                     }
                 }
             }
-            segSpans.sort((o1, o2) -> {
-                return o1.firstTime.compareTo(o2.firstTime);
-            });
+            segSpans.sort((o1, o2) -> o1.firstTime.compareTo(o2.firstTime));
         }
         return segSpans;
     }

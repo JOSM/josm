@@ -42,7 +42,6 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
     private final GpxLayersTableModel model;
     private final JTable t;
     private final JCheckBox c;
-    private final Component parent;
     private final JButton btnUp;
     private final JButton btnDown;
 
@@ -54,7 +53,6 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
     public MergeGpxLayerDialog(Component parent, List<GpxLayer> layers) {
         super(parent, tr("Merge GPX layers"), tr("Merge"), tr("Cancel"));
         setButtonIcons("dialogs/mergedown", "cancel");
-        this.parent = parent;
 
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel("<html>" +
@@ -136,7 +134,7 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
             if ((row == 0 || newRow == 0)
                     && (!ConditionalOptionPaneUtil.showConfirmationDialog(
                             "gpx_target_change",
-                            parent,
+                            getParent(),
                             new JLabel("<html>" +
                                     tr("This will change the target layer to \"{0}\".<br>Would you like to continue?",
                                     model.getValueAt(1, 0).toString()) + "</html>"),
@@ -184,14 +182,13 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
         @Override
         public int getRowCount() {
             return layers.size();
-
         }
 
-        public void moveRow(int row, int newRow) {
+        void moveRow(int row, int newRow) {
             Collections.swap(layers, row, newRow);
         }
 
-        public List<GpxLayer> getSortedLayers() {
+        List<GpxLayer> getSortedLayers() {
             return layers;
         }
 
@@ -209,8 +206,9 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
                 return SystemOfMeasurement.getSystemOfMeasurement().getDistText(layers.get(row).data.length());
             case 2:
                 return layers.get(row).data.getTrackSegsCount();
+            default:
+                throw new IndexOutOfBoundsException(Integer.toString(col));
             }
-            throw new IndexOutOfBoundsException(Integer.toString(col));
         }
     }
 }
