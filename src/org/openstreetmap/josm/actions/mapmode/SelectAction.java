@@ -1249,6 +1249,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         }
 
         private void createMiddleNodeFromVirtual(EastNorth currentEN) {
+            if (startEN == null) // #13724, #14712, #15087
+                return;
             DataSet ds = getLayerManager().getEditDataSet();
             Collection<Command> virtualCmds = new LinkedList<>();
             virtualCmds.add(new AddCommand(ds, virtualNode));
