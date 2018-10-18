@@ -17,6 +17,9 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.SchemaFactoryConfigurationError;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -139,5 +142,22 @@ public final class XmlUtils {
         TransformerFactory factory = TransformerFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         return factory;
+    }
+
+    /**
+     * Get the first child element
+     * @param parent parent node
+     * @return the first child element
+     * @since 14348
+     */
+    public static Element getFirstChildElement(Node parent) {
+        NodeList children = parent.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child instanceof Element) {
+                return (Element) child;
+            }
+        }
+        return null;
     }
 }
