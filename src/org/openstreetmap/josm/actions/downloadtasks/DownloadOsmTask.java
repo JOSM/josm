@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
@@ -250,29 +251,78 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             return getModifiableDataLayers().findFirst().orElse(null);
         }
 
-        protected OsmDataLayer createNewLayer(String layerName) {
-            if (layerName == null || layerName.isEmpty()) {
-                layerName = settings.getLayerName();
+        /**
+         * Creates a name for a new layer by utilizing the settings ({@link DownloadParams#getLayerName()}) or
+         * {@link OsmDataLayer#createNewName()} if the former option is {@code null}.
+         *
+         * @return a name for a new layer
+         * @since 14347
+         */
+        protected String generateLayerName() {
+            return Optional.ofNullable(settings.getLayerName())
+                .filter(layerName -> !Utils.isStripEmpty(layerName))
+                .orElse(OsmDataLayer.createNewName());
+        }
+
+        /**
+         * Can be overridden (e.g. by plugins) if a subclass of {@link OsmDataLayer} is needed.
+         * If you want to change how the name is determined, consider overriding
+         * {@link #generateLayerName()} instead.
+         *
+         * @param dataset the dataset on which the layer is based, must be non-null
+         * @param layerName the name of the new layer, must be either non-blank or non-present
+         * @return a new instance of {@link OsmDataLayer} constructed with the given arguments
+         * @since 14347
+         */
+        protected OsmDataLayer createNewLayer(final DataSet dataset, final Optional<String> layerName) {
+            if (layerName.filter(Utils::isStripEmpty).isPresent()) {
+                throw new IllegalArgumentException("Blank layer name!");
             }
-            if (layerName == null || layerName.isEmpty()) {
-                layerName = OsmDataLayer.createNewName();
-            }
-            if (settings.getDownloadPolicy() != null) {
-                dataSet.setDownloadPolicy(settings.getDownloadPolicy());
-            }
-            if (settings.getUploadPolicy() != null) {
-                dataSet.setUploadPolicy(settings.getUploadPolicy());
-            }
+            return new OsmDataLayer(
+                Objects.requireNonNull(dataset, "dataset parameter"),
+                layerName.orElseGet(this::generateLayerName),
+                null
+            );
+        }
+
+        /**
+         * Convenience method for {@link #createNewLayer(DataSet, Optional)}, uses the dataset
+         * from field {@link #dataSet} and applies the settings from field {@link #settings}.
+         *
+         * @param layerName an optional layer name, must be non-blank if the [Optional] is present
+         * @return a newly constructed layer
+         * @since 14347
+         */
+        protected final OsmDataLayer createNewLayer(final Optional<String> layerName) {
+            Optional.ofNullable(settings.getDownloadPolicy())
+                .ifPresent(dataSet::setDownloadPolicy);
+            Optional.ofNullable(settings.getUploadPolicy())
+                .ifPresent(dataSet::setUploadPolicy);
             if (dataSet.isLocked() && !settings.isLocked()) {
                 dataSet.unlock();
             } else if (!dataSet.isLocked() && settings.isLocked()) {
                 dataSet.lock();
             }
-            return new OsmDataLayer(dataSet, layerName, null);
+            return createNewLayer(dataSet, layerName);
         }
 
+        /**
+         * @param layerName the name of the new layer
+         * @deprecated Use {@link #createNewLayer(DataSet, Optional)}
+         * @return a newly constructed layer
+         */
+        @Deprecated
+        protected OsmDataLayer createNewLayer(final String layerName) {
+            return createNewLayer(Optional.ofNullable(layerName).filter(it -> !Utils.isStripEmpty(it)));
+        }
+
+        /**
+         * @deprecated Use {@link #createNewLayer(Optional)}
+         * @return a newly constructed layer
+         */
+        @Deprecated
         protected OsmDataLayer createNewLayer() {
-            return createNewLayer(null);
+            return createNewLayer(Optional.empty());
         }
 
         protected ProjectionBounds computeBbox(Bounds bounds) {
