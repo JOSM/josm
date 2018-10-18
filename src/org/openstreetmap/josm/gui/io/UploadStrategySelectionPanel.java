@@ -322,7 +322,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     public void initFromPreferences() {
         UploadStrategy strategy = UploadStrategy.getFromPreferences();
         rbStrategy.get(strategy).setSelected(true);
-        int chunkSize = Config.getPref().getInt("osm-server.upload-strategy.chunk-size", 1);
+        int chunkSize = Config.getPref().getInt("osm-server.upload-strategy.chunk-size", 1000);
         tfChunkSize.setText(Integer.toString(chunkSize));
         updateNumRequestsLabels();
     }
@@ -461,17 +461,17 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
 
         @Override
-        public void changedUpdate(DocumentEvent arg0) {
+        public void changedUpdate(DocumentEvent e) {
             validateChunkSize();
         }
 
         @Override
-        public void insertUpdate(DocumentEvent arg0) {
+        public void insertUpdate(DocumentEvent e) {
             validateChunkSize();
         }
 
         @Override
-        public void removeUpdate(DocumentEvent arg0) {
+        public void removeUpdate(DocumentEvent e) {
             validateChunkSize();
         }
 
@@ -509,12 +509,12 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
 
         @Override
-        public void focusLost(FocusEvent arg0) {
+        public void focusLost(FocusEvent e) {
             notifyStrategy();
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             notifyStrategy();
         }
     }
