@@ -34,7 +34,10 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.tools.date.DateUtils;
+
+import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -279,9 +282,19 @@ public class OsmDataLayerTest {
      */
     @Test
     public void testCheckSaveConditions() {
+        TestUtils.assumeWorkingJMockit();
+        final ExtendedDialogMocker edMocker = new ExtendedDialogMocker(
+            ImmutableMap.<String, Object>of("The document contains no data.", "Cancel")
+        );
+
         assertFalse(layer.checkSaveConditions());
         fillDataSet(ds);
         assertTrue(layer.checkSaveConditions());
+
+        assertEquals(1, edMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = edMocker.getInvocationLog().get(0);
+        assertEquals(2, (int) invocationLogEntry[0]);
+        assertEquals("Empty document", invocationLogEntry[2]);
     }
 
     @Test
