@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayerTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -33,7 +34,9 @@ public class ChooseTrackVisibilityActionTest {
      */
     @Test
     public void testAction() throws Exception {
+        TestUtils.assumeWorkingJMockit();
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker() {
+            @Override
             protected String getString(final ExtendedDialog instance) {
                 return ((JLabel) ((JPanel) this.getContent(instance)).getComponent(2)).getText();
             }

@@ -10,7 +10,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
@@ -1102,9 +1101,6 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     @Override
     public boolean checkSaveConditions() {
         if (isDataSetEmpty() && 1 != GuiHelper.runInEDTAndWaitAndReturn(() -> {
-            if (GraphicsEnvironment.isHeadless()) {
-                return 2;
-            }
             return new ExtendedDialog(
                     MainApplication.getMainFrame(),
                     tr("Empty document"),
