@@ -779,7 +779,8 @@ class SyncEditorLayerIndex {
             } else if(ij == null && ie != null) {
                 myprintln "- No JOSM icon: ${getDescription(j)}"
             } else if(!ij.equals(ie) && !(
-              ie.startsWith("https://osmlab.github.io/editor-layer-index/") &&
+              (ie.startsWith("https://osmlab.github.io/editor-layer-index/")
+              || ie.startsWith("https://raw.githubusercontent.com/osmlab/editor-layer-index/")) &&
               ij.startsWith("data:"))) {
                 def iehttps = ie.replace("http:","https:")
                 if(ij.equals(iehttps)) {
