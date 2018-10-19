@@ -269,17 +269,17 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          * If you want to change how the name is determined, consider overriding
          * {@link #generateLayerName()} instead.
          *
-         * @param dataset the dataset on which the layer is based, must be non-null
+         * @param ds the dataset on which the layer is based, must be non-null
          * @param layerName the name of the new layer, must be either non-blank or non-present
          * @return a new instance of {@link OsmDataLayer} constructed with the given arguments
          * @since 14347
          */
-        protected OsmDataLayer createNewLayer(final DataSet dataset, final Optional<String> layerName) {
+        protected OsmDataLayer createNewLayer(final DataSet ds, final Optional<String> layerName) {
             if (layerName.filter(Utils::isStripEmpty).isPresent()) {
                 throw new IllegalArgumentException("Blank layer name!");
             }
             return new OsmDataLayer(
-                Objects.requireNonNull(dataset, "dataset parameter"),
+                Objects.requireNonNull(ds, "dataset parameter"),
                 layerName.orElseGet(this::generateLayerName),
                 null
             );
