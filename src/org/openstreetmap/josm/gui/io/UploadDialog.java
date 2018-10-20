@@ -477,10 +477,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                     tr("Cancel and return to the previous dialog"),
                     tr("Ignore this hint and upload anyway")};
 
-            if (GraphicsEnvironment.isHeadless()) {
-                return false;
-            }
-
             ExtendedDialog dlg = new ExtendedDialog((Component) dialog, title, buttonTexts) {
                 @Override
                 public void setupDialog() {
