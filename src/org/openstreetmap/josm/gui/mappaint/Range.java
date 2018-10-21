@@ -24,8 +24,9 @@ public class Range {
      * @throws IllegalArgumentException if the range is invalid ({@code lower < 0 || lower >= upper})
      */
     public Range(double lower, double upper) {
-        if (lower < 0 || lower >= upper)
+        if (lower < 0 || lower >= upper || Double.isNaN(lower) || Double.isNaN(upper)) {
             throw new IllegalArgumentException("Invalid range: "+lower+'-'+upper);
+        }
         this.lower = lower;
         this.upper = upper;
     }
