@@ -75,6 +75,15 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
             JOptionPane.OK_OPTION,
             JOptionPane.CANCEL_OPTION,
             JOptionPane.CLOSED_OPTION
+        },
+        // it's hard to know much about DEFAULT_OPTION, so we can't really police anything here, so
+        // including all known options
+        JOptionPane.DEFAULT_OPTION, new int[] {
+            JOptionPane.OK_OPTION,
+            JOptionPane.CANCEL_OPTION,
+            JOptionPane.CLOSED_OPTION,
+            JOptionPane.YES_OPTION,
+            JOptionPane.NO_OPTION
         }
     );
 
