@@ -275,10 +275,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
     private static void warn(String msg, List<SaveLayerInfo> infos, String title) {
         JPanel panel = new LayerListWarningMessagePanel(msg, infos);
-        // For unit test coverage in headless mode
-        if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showConfirmDialog(MainApplication.getMainFrame(), panel, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
-        }
+        JOptionPane.showConfirmDialog(MainApplication.getMainFrame(), panel, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
     }
 
     protected static void warnLayersWithConflictsAndUploadRequest(List<SaveLayerInfo> infos) {
