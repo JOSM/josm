@@ -8,7 +8,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -476,10 +475,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                     tr("Return to the previous dialog to enter a more descriptive comment"),
                     tr("Cancel and return to the previous dialog"),
                     tr("Ignore this hint and upload anyway")};
-
-            if (GraphicsEnvironment.isHeadless()) {
-                return false;
-            }
 
             ExtendedDialog dlg = new ExtendedDialog((Component) dialog, title, buttonTexts) {
                 @Override

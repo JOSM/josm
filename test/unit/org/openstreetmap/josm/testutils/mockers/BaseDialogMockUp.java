@@ -25,6 +25,13 @@ abstract class BaseDialogMockUp<T> extends MockUp<T> {
         return this.invocationLog;
     }
 
+    /**
+     * Empties the invocation log.
+     */
+    public void resetInvocationLog() {
+        this.invocationLogInternal.clear();
+    }
+
     private final List<Object[]> invocationLogInternal = new ArrayList<>(4);
 
     /**
