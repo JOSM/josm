@@ -61,6 +61,7 @@ way.major_road[!ref][!destination:ref][noref!=yes][junction!=roundabout] {
   assertNoMatch: "way highway=primary noref=yes";
 }
 
+way[highway=yes],
 way[highway=road] {
   throwWarning: tr("Unspecific highway type");
   assertMatch: "way highway=road";
