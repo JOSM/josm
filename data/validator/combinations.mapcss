@@ -232,7 +232,9 @@ way[highway=footway][oneway=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.tag} together with {1.tag}, see #16147, #10186 */
+/* {0.tag} together with {1.tag}, see #16861, #16147, #10186 */
+way[segregated][bicycle=no],
+way[segregated][foot=no],
 way[man_made=pipeline][tunnel=flooded],
 way[waterway=canal][tunnel=yes],
 way[highway=footway][bicycle=designated] {
