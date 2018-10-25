@@ -1167,10 +1167,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         if (tile.hasError() && getDisplaySettings().isShowErrors()) {
             String errorMessage = tr(tile.getErrorMessage());
-            if (!errorMessage.startsWith("Error") && !errorMessage.startsWith(tr("Error"))) {
-                errorMessage = tr("Error") + ": " + errorMessage;
+            if (errorMessage != null) {
+                if (!errorMessage.startsWith("Error") && !errorMessage.startsWith(tr("Error"))) {
+                    errorMessage = tr("Error") + ": " + errorMessage;
+                }
+                myDrawString(g, errorMessage, x + 2, texty);
             }
-            myDrawString(g, errorMessage, x + 2, texty);
             //texty += 1 + fontHeight;
         }
 
