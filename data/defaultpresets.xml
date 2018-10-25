@@ -5979,21 +5979,21 @@
                   zh_TW.href="https://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=toilets" />
             <space />
             <key key="amenity" value="toilets" />
-            <combo key="access" text="Access rights" values="yes,permissive,customers" />
             <optional>
+                <combo key="access" text="Access rights" values="yes,permissive,customers" />
                 <checkgroup columns="3">
                     <check key="female" text="Female" text_context="restroom" />
                     <check key="male" text="Male" text_context="restroom" />
                     <check key="unisex" text="Unisex" text_context="restroom" />
                 </checkgroup>
                 <combo key="toilets:disposal" text="Type" values="flush,pitlatrine,chemical,bucket" />
-                <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
                 <text key="description" text="Description" />
                 <reference ref="fee" />
                 <text key="operator" text="Operator" />
                 <combo key="toilets:position" text="Usage Position" values="seated,seated;urinal,squat,urinal" />
                 <combo key="diaper" text="Diaper" values="yes,no,room,1,2,3,4,5" text_context="toilets" />
                 <reference ref="wheelchair" />
+                <check key="drinking_water" text="Drinking Water" />
             </optional>
         </item> <!-- Toilets/Restrooms -->
         <item name="Shower" icon="presets/service/shower.svg" type="node,closedway" preset_name_label="true">
