@@ -3,16 +3,16 @@
  * Copyright (c) 2004, Mark McKay
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or 
+ * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
  * conditions are met:
  *
- *   - Redistributions of source code must retain the above 
+ *   - Redistributions of source code must retain the above
  *     copyright notice, this list of conditions and the following
  *     disclaimer.
  *   - Redistributions in binary form must reproduce the above
  *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials 
+ *     disclaimer in the documentation and/or other materials
  *     provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,8 +26,8 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
- * 
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
  * projects can be found at http://www.kitfox.com
  *
@@ -35,8 +35,6 @@
  */
 package com.kitfox.svg;
 
-import com.kitfox.svg.util.FontSystem;
-import com.kitfox.svg.xml.StyleAttribute;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
@@ -44,6 +42,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+
+import com.kitfox.svg.util.FontSystem;
+import com.kitfox.svg.xml.StyleAttribute;
 
 /**
  * @author Mark McKay
@@ -228,7 +229,7 @@ public class Tspan extends ShapeElement
 
         //Get font
         Font font = diagram.getUniverse().getFont(fontFamily);
-        if (font == null)
+        if (font == null && fontFamily != null)
         {
             font = FontSystem.createFont(fontFamily, fontStyle, fontWeight, (int)fontSize);
         }
@@ -242,7 +243,7 @@ public class Tspan extends ShapeElement
 
         float cursorX = (float)cursor.getX();
         float cursorY = (float)cursor.getY();
-    
+
         String drawText = this.text;
         drawText = drawText.trim();
         for (int i = 0; i < drawText.length(); i++)
@@ -254,7 +255,7 @@ public class Tspan extends ShapeElement
             {
                 cursorX += dx[i];
             }
-            
+
             if (y != null && i < y.length)
             {
                 cursorY = y[i];
@@ -262,7 +263,7 @@ public class Tspan extends ShapeElement
             {
                 cursorY += dy[i];
             }
-            
+
             xform.setToIdentity();
             xform.setToTranslation(cursorX, cursorY);
             if (rotate != null)
@@ -321,7 +322,7 @@ public class Tspan extends ShapeElement
 //                cursorY += dy[i];
 //            }
 ////            i++;
-//            
+//
 //            xform.setToIdentity();
 //            xform.setToTranslation(cursorX, cursorY);
 //            if (rotate != null)
@@ -341,7 +342,7 @@ public class Tspan extends ShapeElement
 ////            cursorX += fontScale * glyph.getHorizAdvX() + letterSpacing;
 //            cursorX += glyphMetrics.getAdvance() + letterSpacing;
 //        }
-//        
+//
 //        cursor.setLocation(cursorX, cursorY);
 //    }
 
@@ -350,7 +351,7 @@ public class Tspan extends ShapeElement
     {
         float cursorX = 0;
         float cursorY = 0;
-    
+
         if (x != null)
         {
             cursorX = x[0];
@@ -438,7 +439,7 @@ public class Tspan extends ShapeElement
     {
         float cursorX = 0;
         float cursorY = 0;
-    
+
         FontRenderContext frc = g.getFontRenderContext();
 
         Shape textShape = font.createGlyphVector(frc, text).getOutline(cursorX, cursorY);
