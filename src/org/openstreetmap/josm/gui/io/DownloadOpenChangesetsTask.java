@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -66,10 +65,8 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
                     + "You have either chosen to work anonymously or you are not entitled<br>"
                     + "to know the identity of the user on whose behalf you are working.");
             Logging.warn(msg);
-            if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(GuiHelper.getFrameForComponent(parent),
-                        "<html>" + msg + "</html>", tr("Missing user identity"), JOptionPane.ERROR_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(GuiHelper.getFrameForComponent(parent),
+                    "<html>" + msg + "</html>", tr("Missing user identity"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (canceled) return;
@@ -78,14 +75,12 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             return;
         }
         if (changesets.isEmpty()) {
-            if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(
-                        MainApplication.getMainFrame(),
-                        tr("There are no open changesets"),
-                        tr("No open changesets"),
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
+            JOptionPane.showMessageDialog(
+                    MainApplication.getMainFrame(),
+                    tr("There are no open changesets"),
+                    tr("No open changesets"),
+                    JOptionPane.INFORMATION_MESSAGE
+            );
             return;
         }
         SwingUtilities.invokeLater(() -> ChangesetCache.getInstance().update(changesets));
