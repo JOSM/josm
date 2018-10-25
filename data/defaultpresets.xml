@@ -1407,7 +1407,7 @@
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:highway=traffic_signals" />
             <key key="highway" value="traffic_signals" />
             <optional text="Optional crossing attributes:">
-                <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
+                <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,zebra,traffic_signals,island,unmarked,no" />
                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
                 <check key="button_operated" text="Button operated" />
                 <check key="traffic_signals:sound" text="Sound signals" />
@@ -1476,6 +1476,7 @@
             <key key="highway" value="crossing" />
             <combo key="crossing" text="Pedestrian crossing type" >
                 <list_entry value="uncontrolled" icon="presets/vehicle/crossing.svg" />
+				<list_entry value="zebra" icon="presets/vehicle/crossing_ref_zebra.svg" />
                 <list_entry value="traffic_signals" icon="presets/vehicle/crossing_traffic_signals.svg" />
                 <list_entry value="island" icon="presets/vehicle/crossing_island.svg" />
                 <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
