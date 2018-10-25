@@ -89,7 +89,7 @@
   assertNoMatch: "node maxheight=3.5";
   assertNoMatch: "node maxheight=4";
 }
-*[maxheight][maxheight !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default)$/]!.maxheight_separator_autofix {
+*[maxheight][maxheight !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxheight_separator_autofix {
   throwWarning: tr("unusual value of {0}: meters is default; point is decimal separator; if units, put space then unit", "{0.key}");
   assertMatch: "node maxheight=something";
   assertMatch: "node maxheight=-5";
