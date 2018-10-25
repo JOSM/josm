@@ -2978,8 +2978,8 @@ node[craft=photographer][!is_prop_set(icon-image)] {
 node[craft=metal_construction][!is_prop_set(icon-image)] {
     icon-image: "presets/misc/no_icon.svg";
     set icon_z17;
-}node[craft=electrician][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+}node[craft=electrician] {
+    icon-image: "presets/craft/electrician.svg";
     set icon_z17;
 }
 node[craft=brewery][!is_prop_set(icon-image)] {

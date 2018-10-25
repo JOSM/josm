@@ -1476,7 +1476,7 @@
             <key key="highway" value="crossing" />
             <combo key="crossing" text="Pedestrian crossing type" >
                 <list_entry value="uncontrolled" icon="presets/vehicle/crossing.svg" />
-				<list_entry value="zebra" icon="presets/vehicle/crossing_ref_zebra.svg" />
+                <list_entry value="zebra" icon="presets/vehicle/crossing_ref_zebra.svg" />
                 <list_entry value="traffic_signals" icon="presets/vehicle/crossing_traffic_signals.svg" />
                 <list_entry value="island" icon="presets/vehicle/crossing_island.svg" />
                 <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
@@ -10141,7 +10141,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Locksmith -->
-    <item name="Electrician" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Electrician" icon="presets/craft/electrician.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=electrician"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=electrician"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=electrician"
