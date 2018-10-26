@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -132,6 +133,7 @@ public class WMSImagery {
      * @param url service url
      * @throws IOException when connection error when fetching get capabilities document
      * @throws WMSGetCapabilitiesException when there are errors when parsing get capabilities document
+     * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
      */
     public WMSImagery(String url) throws IOException, WMSGetCapabilitiesException {
         this(url, null);
@@ -143,6 +145,7 @@ public class WMSImagery {
      * @param headers HTTP headers to be sent with request
      * @throws IOException when connection error when fetching get capabilities document
      * @throws WMSGetCapabilitiesException when there are errors when parsing get capabilities document
+     * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
      */
     public WMSImagery(String url, Map<String, String> headers) throws IOException, WMSGetCapabilitiesException {
         if (headers != null) {

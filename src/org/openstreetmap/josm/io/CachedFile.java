@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -218,6 +219,7 @@ public class CachedFile implements Closeable {
      * Get InputStream to the requested resource.
      * @return the InputStream
      * @throws IOException when the resource with the given name could not be retrieved
+     * @throws InvalidPathException if a Path object cannot be constructed from the inner file path
      */
     public InputStream getInputStream() throws IOException {
         File file = getFile();

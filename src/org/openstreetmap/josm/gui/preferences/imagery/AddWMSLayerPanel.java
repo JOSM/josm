@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 Collection<String> wmsFormats = wms.getFormats();
                 formats.setModel(new DefaultComboBoxModel<>(wmsFormats.toArray(new String[0])));
                 formats.setSelectedItem(wms.getPreferredFormat());
-            } catch (MalformedURLException ex1) {
+            } catch (MalformedURLException | InvalidPathException ex1) {
                 Logging.log(Logging.LEVEL_ERROR, ex1);
                 JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);

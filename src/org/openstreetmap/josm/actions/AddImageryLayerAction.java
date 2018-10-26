@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -168,6 +169,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      * @return chosen WMS layer, or null
      * @throws IOException if any I/O error occurs while contacting the WMS endpoint
      * @throws WMSGetCapabilitiesException if the WMS getCapabilities request fails
+     * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
      */
     protected static ImageryInfo getWMSLayerInfo(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
         try {
