@@ -465,14 +465,12 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
                         url,
                         HelpUtil.getWikiBaseUrl()
                 );
-                if (!GraphicsEnvironment.isHeadless()) {
-                    JOptionPane.showMessageDialog(
-                            MainApplication.getMainFrame(),
-                            message,
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                }
+                JOptionPane.showMessageDialog(
+                        MainApplication.getMainFrame(),
+                        message,
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
                 return;
             }
             url = url.replaceAll("#[^#]*$", "");

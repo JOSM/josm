@@ -4,10 +4,16 @@ package org.openstreetmap.josm.gui.help;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import javax.swing.JOptionPane;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
+
+import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -88,6 +94,7 @@ public class HelpBrowserTest {
      */
     @Test
     public void testEditAction() {
+        TestUtils.assumeWorkingJMockit();
         IHelpBrowser browser = newHelpBrowser();
         assertNull(browser.getUrl());
         new HelpBrowser.EditAction(browser).actionPerformed(null);
@@ -96,9 +103,23 @@ public class HelpBrowserTest {
         assertEquals(URL_2, browser.getUrl());
         new HelpBrowser.EditAction(browser).actionPerformed(null);
 
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
+            ImmutableMap.<String, Object>of(
+                "<html>The current URL <tt>https://josm.openstreetmap.de/javadoc</tt><br>is an external "
+                + "URL. Editing is only possible for help topics<br>on the help server "
+                + "<tt>https://josm.openstreetmap.de</tt>.</html>",
+                JOptionPane.OK_OPTION
+            )
+        );
+
         browser.openUrl(URL_3);
         assertEquals(URL_3, browser.getUrl());
         new HelpBrowser.EditAction(browser).actionPerformed(null);
+
+        assertEquals(1, jopsMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
+        assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
+        assertEquals("Warning", invocationLogEntry[2]);
     }
 
     /**
