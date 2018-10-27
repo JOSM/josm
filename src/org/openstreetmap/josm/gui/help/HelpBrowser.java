@@ -8,7 +8,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -465,14 +464,12 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
                         url,
                         HelpUtil.getWikiBaseUrl()
                 );
-                if (!GraphicsEnvironment.isHeadless()) {
-                    JOptionPane.showMessageDialog(
-                            MainApplication.getMainFrame(),
-                            message,
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                }
+                JOptionPane.showMessageDialog(
+                        MainApplication.getMainFrame(),
+                        message,
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
                 return;
             }
             url = url.replaceAll("#[^#]*$", "");

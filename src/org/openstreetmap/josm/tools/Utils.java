@@ -1219,6 +1219,87 @@ public final class Utils {
     }
 
     /**
+     * Compute <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a>
+     *
+     * @param s First word
+     * @param t Second word
+     * @return The distance between words
+     * @since 14371
+     */
+    public static int getLevenshteinDistance(String s, String t) {
+        int[][] d; // matrix
+        int n; // length of s
+        int m; // length of t
+        int i; // iterates through s
+        int j; // iterates through t
+        char si; // ith character of s
+        char tj; // jth character of t
+        int cost; // cost
+
+        // Step 1
+        n = s.length();
+        m = t.length();
+        if (n == 0)
+            return m;
+        if (m == 0)
+            return n;
+        d = new int[n+1][m+1];
+
+        // Step 2
+        for (i = 0; i <= n; i++) {
+            d[i][0] = i;
+        }
+        for (j = 0; j <= m; j++) {
+            d[0][j] = j;
+        }
+
+        // Step 3
+        for (i = 1; i <= n; i++) {
+
+            si = s.charAt(i - 1);
+
+            // Step 4
+            for (j = 1; j <= m; j++) {
+
+                tj = t.charAt(j - 1);
+
+                // Step 5
+                if (si == tj) {
+                    cost = 0;
+                } else {
+                    cost = 1;
+                }
+
+                // Step 6
+                d[i][j] = Math.min(Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
+            }
+        }
+
+        // Step 7
+        return d[n][m];
+    }
+
+    /**
+     * Check if two strings are similar, but not identical, i.e., have a Levenshtein distance of 1 or 2.
+     * @param string1 first string to compare
+     * @param string2 second string to compare
+     * @return true if the normalized strings are different but only a "little bit"
+     * @see #getLevenshteinDistance
+     * @since 14371
+     */
+    public static boolean isSimilar(String string1, String string2) {
+        // check plain strings
+        int distance = getLevenshteinDistance(string1, string2);
+
+        // check if only the case differs, so we don't consider large distance as different strings
+        if (distance > 2 && string1.length() == string2.length()) {
+            return deAccent(string1).equalsIgnoreCase(deAccent(string2));
+        } else {
+            return distance > 0 && distance <= 2;
+        }
+    }
+
+    /**
      * A ForkJoinWorkerThread that will always inherit caller permissions,
      * unlike JDK's InnocuousForkJoinWorkerThread, used if a security manager exists.
      */
