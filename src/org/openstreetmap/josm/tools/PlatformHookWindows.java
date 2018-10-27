@@ -187,7 +187,7 @@ public class PlatformHookWindows implements PlatformHook {
 
     @Override
     public void openUrl(String url) throws IOException {
-        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+        Runtime.getRuntime().exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
     }
 
     @Override

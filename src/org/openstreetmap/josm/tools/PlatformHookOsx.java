@@ -204,7 +204,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
     @Override
     public void openUrl(String url) throws IOException {
-        Runtime.getRuntime().exec("open " + url);
+        Runtime.getRuntime().exec(new String[]{"open", url});
     }
 
     @Override
