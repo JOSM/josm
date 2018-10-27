@@ -110,6 +110,19 @@ public class SimilarNamedWays extends Test {
     }
 
     /**
+     * Compute Levenshtein distance
+     *
+     * @param s First word
+     * @param t Second word
+     * @return The distance between words
+     * @deprecated Use {@link Utils#getLevenshteinDistance} instead
+     */
+    @Deprecated
+    public static int getLevenshteinDistance(String s, String t) {
+        return Utils.getLevenshteinDistance(s, t);
+    }
+
+    /**
      * Add a regular expression rule.
      * @param regExpr the regular expression to search for
      * @param replacement a string to replace with, which should match the expression.
