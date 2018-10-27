@@ -294,4 +294,26 @@ public class UtilsTest {
     public void testNullStreamForReadBytesFromStream() throws IOException {
         assertEquals("Empty on null stream", 0, Utils.readBytesFromStream(null).length);
     }
+
+    /**
+     * Test of {@link Utils#getLevenshteinDistance} method.
+     */
+    @Test
+    public void testLevenshteinDistance() {
+        assertEquals(0, Utils.getLevenshteinDistance("foo", "foo"));
+        assertEquals(3, Utils.getLevenshteinDistance("foo", "bar"));
+        assertEquals(1, Utils.getLevenshteinDistance("bar", "baz"));
+    }
+
+    /**
+     * Test of {@link Utils#isSimilar} method.
+     */
+    @Test
+    public void testIsSimilar() {
+        assertFalse(Utils.isSimilar("foo", "foo"));
+        assertFalse(Utils.isSimilar("foo", "bar"));
+        assertTrue(Utils.isSimilar("bar", "baz"));
+        assertTrue(Utils.isSimilar("bar", "baz"));
+        assertTrue(Utils.isSimilar("Rua São João", "Rua SAO Joao"));
+    }
 }

@@ -876,6 +876,18 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Check if two strings are similar, but not identical, i.e., have a Levenshtein distance of 1 or 2.
+         * @param string1 first string to compare
+         * @param string2 second string to compare
+         * @return true if the normalized strings are different but only a "little bit"
+         * @see Utils#isSimilar
+         * @since 14371
+         */
+        public static boolean is_similar(String string1, String string2) {
+            return Utils.isSimilar(string1, string2);
+        }
+
+        /**
          * Percent-decode a string. (See https://en.wikipedia.org/wiki/Percent-encoding)
          * This is especially useful for wikipedia titles
          * @param s url-encoded string

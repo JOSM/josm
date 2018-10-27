@@ -110,66 +110,6 @@ public class SimilarNamedWays extends Test {
     }
 
     /**
-     * Compute Levenshtein distance
-     *
-     * @param s First word
-     * @param t Second word
-     * @return The distance between words
-     */
-    public static int getLevenshteinDistance(String s, String t) {
-        int[][] d; // matrix
-        int n; // length of s
-        int m; // length of t
-        int i; // iterates through s
-        int j; // iterates through t
-        char si; // ith character of s
-        char tj; // jth character of t
-        int cost; // cost
-
-        // Step 1
-        n = s.length();
-        m = t.length();
-        if (n == 0)
-            return m;
-        if (m == 0)
-            return n;
-        d = new int[n+1][m+1];
-
-        // Step 2
-        for (i = 0; i <= n; i++) {
-            d[i][0] = i;
-        }
-        for (j = 0; j <= m; j++) {
-            d[0][j] = j;
-        }
-
-        // Step 3
-        for (i = 1; i <= n; i++) {
-
-            si = s.charAt(i - 1);
-
-            // Step 4
-            for (j = 1; j <= m; j++) {
-
-                tj = t.charAt(j - 1);
-
-                // Step 5
-                if (si == tj) {
-                    cost = 0;
-                } else {
-                    cost = 1;
-                }
-
-                // Step 6
-                d[i][j] = Math.min(Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
-            }
-        }
-
-        // Step 7
-        return d[n][m];
-    }
-
-    /**
      * Add a regular expression rule.
      * @param regExpr the regular expression to search for
      * @param replacement a string to replace with, which should match the expression.
@@ -199,18 +139,11 @@ public class SimilarNamedWays extends Test {
      * @return true if the normalized names are different but only a "little bit"
      */
     public boolean similaryName(String name, String name2) {
-        // check plain strings
-        int distance = getLevenshteinDistance(name, name2);
-        boolean similar = distance > 0 && distance <= 2;
-
-        // check if only the case differs, so we don't consider large distance as different strings
-        if (distance > 2 && name.length() == name2.length()) {
-            similar = Utils.deAccent(name).equalsIgnoreCase(Utils.deAccent(name2));
-        }
+        boolean similar = Utils.isSimilar(name, name2);
 
         // try all rules
         for (NormalizeRule rule : rules) {
-            int levenshteinDistance = getLevenshteinDistance(rule.normalize(name), rule.normalize(name2));
+            int levenshteinDistance = Utils.getLevenshteinDistance(rule.normalize(name), rule.normalize(name2));
             if (levenshteinDistance == 0)
                 // one rule results in identical names: identical
                 return false;
