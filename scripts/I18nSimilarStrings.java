@@ -5,11 +5,11 @@ import java.util.List;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
-import org.openstreetmap.josm.data.validation.tests.SimilarNamedWays;
 import org.openstreetmap.josm.gui.MainApplicationTest;
 import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Utils;
 
 // License: GPL. For details, see LICENSE file.
 
@@ -44,7 +44,7 @@ public final class I18nSimilarStrings {
             for (int j = i+1; j < strings.size(); j++) {
                 String a = strings.get(i);
                 String b = strings.get(j);
-                int d = SimilarNamedWays.getLevenshteinDistance(a, b);
+                int d = Utils.getLevenshteinDistance(a, b);
                 if (d <= 2) {
                     System.err.println(": " + a + " <--> " + b);
                 }
