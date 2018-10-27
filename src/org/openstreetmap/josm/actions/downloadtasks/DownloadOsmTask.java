@@ -199,7 +199,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
     @Override
     public ProjectionBounds getDownloadProjectionBounds() {
-        return downloadTask != null ? downloadTask.computeBbox(currentBounds) : null;
+        return downloadTask != null ? downloadTask.computeBbox(currentBounds).orElse(null) : null;
     }
 
     /**
@@ -345,14 +345,14 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             return createNewLayer(Optional.empty());
         }
 
-        protected ProjectionBounds computeBbox(Bounds bounds) {
+        protected Optional<ProjectionBounds> computeBbox(Bounds bounds) {
             BoundingXYVisitor v = new BoundingXYVisitor();
             if (bounds != null) {
                 v.visit(bounds);
             } else {
                 v.computeBoundingBox(dataSet.getNodes());
             }
-            return v.getBounds();
+            return Optional.ofNullable(v.getBounds());
         }
 
         protected OsmDataLayer addNewLayerIfRequired(String newLayerName) {
@@ -377,8 +377,8 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 Collection<OsmPrimitive> primitivesToUpdate = searchPrimitivesToUpdate(bounds, layer.getDataSet());
                 layer.mergeFrom(dataSet);
                 MapFrame map = MainApplication.getMap();
-                if (map != null && zoomAfterDownload && bounds != null) {
-                    map.mapView.zoomTo(new ViewportData(computeBbox(bounds)));
+                if (map != null && zoomAfterDownload) {
+                    computeBbox(bounds).map(ViewportData::new).ifPresent(map.mapView::zoomTo);
                 }
                 if (!primitivesToUpdate.isEmpty()) {
                     MainApplication.worker.submit(new UpdatePrimitivesTask(layer, primitivesToUpdate));
