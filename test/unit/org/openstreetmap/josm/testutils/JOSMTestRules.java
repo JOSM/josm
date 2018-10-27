@@ -7,6 +7,8 @@ import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -60,6 +62,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManagerTest;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Territories;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -673,7 +676,12 @@ public class JOSMTestRules implements TestRule {
                 if (exception != null) {
                     throw exception;
                 } else {
-                    Logging.debug("Thread state at timeout: {0}", Thread.getAllStackTraces());
+                    if (Logging.isLoggingEnabled(Logging.LEVEL_DEBUG)) {
+                        // i.e. skip expensive formatting of stack trace if it won't be shown
+                        final StringWriter sw = new StringWriter();
+                        new ReportedException(exception).printReportThreadsTo(new PrintWriter(sw));
+                        Logging.debug("Thread state at timeout: {0}", sw);
+                    }
                     throw new Exception(MessageFormat.format("Test timed out after {0}ms", timeout));
                 }
             }

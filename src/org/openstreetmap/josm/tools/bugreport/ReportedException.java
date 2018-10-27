@@ -48,11 +48,11 @@ public class ReportedException extends RuntimeException {
     private final transient Thread caughtOnThread;
     private String methodWarningFrom;
 
-    ReportedException(Throwable exception) {
+    public ReportedException(Throwable exception) {
         this(exception, Thread.currentThread());
     }
 
-    ReportedException(Throwable exception, Thread caughtOnThread) {
+    public ReportedException(Throwable exception, Thread caughtOnThread) {
         super(exception);
 
         try {
