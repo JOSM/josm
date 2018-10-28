@@ -563,7 +563,7 @@ public final class MapStatus extends JPanel implements
          * Tries to show the given popup, can be hidden using {@link #popupHidePopup}
          * If an old popup exists, it will be automatically hidden
          * @param newPopup popup to show
-         * @param lbls lables to show (see {@link #popupLabels})
+         * @param lbls labels to show (see {@link #popupLabels})
          */
         private void popupShowPopup(Popup newPopup, List<JLabel> lbls) {
             final Popup staticPopup = newPopup;
