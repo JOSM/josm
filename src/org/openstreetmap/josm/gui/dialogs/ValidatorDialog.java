@@ -533,11 +533,10 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
 
     /**
      * Task for fixing a collection of {@link TestError}s. Can be run asynchronously.
-     *
-     *
      */
     class FixTask extends PleaseWaitRunnable {
         private final Collection<TestError> testErrors;
+        private final List<Command> fixCommands = new ArrayList<>();
         private boolean canceled;
 
         FixTask(Collection<TestError> testErrors) {
@@ -560,6 +559,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                 final Command fixCommand = error.getFix();
                 if (fixCommand != null) {
                     SwingUtilities.invokeAndWait(() -> UndoRedoHandler.getInstance().addNoRedraw(fixCommand));
+                    fixCommands.add(fixCommand);
                 }
                 // It is wanted to ignore an error if it said fixable, even if fixCommand was null
                 // This is to fix #5764 and #5773:
@@ -590,7 +590,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                 }
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(() -> {
-                    UndoRedoHandler.getInstance().afterAdd(null);
+                    UndoRedoHandler.getInstance().afterAdd(fixCommands);
                     invalidateValidatorLayers();
                     tree.resetErrors();
                 });

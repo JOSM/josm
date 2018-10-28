@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data;
 import java.util.EventObject;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 import org.openstreetmap.josm.command.Command;
@@ -304,6 +305,20 @@ public final class UndoRedoHandler {
     public void afterAdd(Command cmd) {
         if (cmd != null) {
             fireEvent(new CommandAddedEvent(this, cmd));
+        }
+        fireCommandsChanged();
+    }
+
+    /**
+     * Fires a commands change event after adding a list of commands.
+     * @param cmds commands added
+     * @since 14381
+     */
+    public void afterAdd(List<? extends Command> cmds) {
+        if (cmds != null) {
+            for (Command cmd : cmds) {
+                fireEvent(new CommandAddedEvent(this, cmd));
+            }
         }
         fireCommandsChanged();
     }
