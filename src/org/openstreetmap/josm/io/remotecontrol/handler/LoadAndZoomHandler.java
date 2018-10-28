@@ -56,6 +56,7 @@ public class LoadAndZoomHandler extends RequestHandler {
      * The remote control command name used to zoom.
      */
     public static final String command2 = "zoom";
+    private static final String CURRENT_SELECTION = "currentselection";
 
     // Mandatory arguments
     private double minlat;
@@ -111,6 +112,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             return new String[] {
             "/zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999",
             "/zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&search=highway+OR+railway",
+            "/zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&search=" + CURRENT_SELECTION + "&addtags=foo=bar",
             };
         }
     }
@@ -315,7 +317,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             toSelect.clear();
             for (String item : args.get("select").split(",")) {
                 if (!item.isEmpty()) {
-                    if ("currentselection".equals(item.toLowerCase(Locale.ENGLISH))) {
+                    if (CURRENT_SELECTION.equals(item.toLowerCase(Locale.ENGLISH))) {
                         isKeepingCurrentSelection = true;
                         continue;
                     }
