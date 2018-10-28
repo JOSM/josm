@@ -175,7 +175,7 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
      * down to the minimum of 1% enlargement.
      *
      * Warning: if the bounding box only contains a single node, no expansion takes
-     * place because a node has no width/height. Use <code>enlargeToMinDegrees</code>
+     * place because a node has no width/height. Use {@link #enlargeBoundingBox(double)}
      * instead.
      *
      * Example: You specify enlargement to be up to 100%.
