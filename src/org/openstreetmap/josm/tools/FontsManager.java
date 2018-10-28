@@ -40,7 +40,8 @@ public final class FontsManager {
             try (CachedFile cf = new CachedFile(url); InputStream i = cf.getInputStream()) {
                 ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, i));
             } catch (IOException | FontFormatException ex) {
-                throw new JosmRuntimeException(ex);
+                Logging.error("Unable to register font {0}", fontFile);
+                Logging.error(ex);
             }
         }
     }
