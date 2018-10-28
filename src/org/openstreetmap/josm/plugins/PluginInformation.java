@@ -246,7 +246,7 @@ public class PluginInformation {
         } else {
             Logging.warn(tr("Missing plugin main version in plugin {0}", name));
         }
-        s = attr.getValue("Minimum-Java-Version");
+        s = attr.getValue("Plugin-Minimum-Java-Version");
         if (s != null) {
             try {
                 minjavaversion = Integer.parseInt(s);
