@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -115,7 +114,6 @@ public final class ConditionalOptionPaneUtil {
      *
      * @return the option selected by user.
      *         {@link JOptionPane#CLOSED_OPTION} if the dialog was closed.
-     *         {@link JOptionPane#YES_OPTION} if <code>GraphicsEnvironment.isHeadless</code> returns <code>true</code>
      */
     public static int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType,
             int messageType, Object[] options, Object defaultOption) {
@@ -123,12 +121,7 @@ public final class ConditionalOptionPaneUtil {
         if (isYesOrNo(ret))
             return ret;
         MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
-        if (GraphicsEnvironment.isHeadless()) {
-            // for unit tests
-            ret = JOptionPane.YES_OPTION;
-        } else {
-            ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null, options, defaultOption);
-        }
+        ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null, options, defaultOption);
         if (isYesOrNo(ret)) {
             pnl.getNotShowAgain().store(preferenceKey, ret);
         }
@@ -161,7 +154,6 @@ public final class ConditionalOptionPaneUtil {
      *
      *
      * @return true, if the selected option is equal to <code>trueOption</code>, otherwise false.
-     *         {@code trueOption} if <code>GraphicsEnvironment.isHeadless</code> returns <code>true</code>
      *
      * @see JOptionPane#INFORMATION_MESSAGE
      * @see JOptionPane#WARNING_MESSAGE
@@ -173,12 +165,7 @@ public final class ConditionalOptionPaneUtil {
         if (isYesOrNo(ret))
             return ret == trueOption;
         MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
-        if (GraphicsEnvironment.isHeadless()) {
-            // for unit tests
-            ret = trueOption;
-        } else {
-            ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
-        }
+        ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
         if (isYesOrNo(ret)) {
             pnl.getNotShowAgain().store(preferenceKey, ret);
         }

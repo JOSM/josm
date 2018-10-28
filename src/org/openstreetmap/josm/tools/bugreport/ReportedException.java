@@ -48,11 +48,22 @@ public class ReportedException extends RuntimeException {
     private final transient Thread caughtOnThread;
     private String methodWarningFrom;
 
-    ReportedException(Throwable exception) {
+    /**
+     * Constructs a new {@code ReportedException}.
+     * @param exception the cause (which is saved for later retrieval by the {@link #getCause()} method)
+     * @since 14380
+     */
+    public ReportedException(Throwable exception) {
         this(exception, Thread.currentThread());
     }
 
-    ReportedException(Throwable exception, Thread caughtOnThread) {
+    /**
+     * Constructs a new {@code ReportedException}.
+     * @param exception the cause (which is saved for later retrieval by the {@link #getCause()} method)
+     * @param caughtOnThread thread where the exception was caugth
+     * @since 14380
+     */
+    public ReportedException(Throwable exception, Thread caughtOnThread) {
         super(exception);
 
         try {
