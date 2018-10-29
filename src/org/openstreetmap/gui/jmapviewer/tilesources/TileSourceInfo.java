@@ -192,6 +192,14 @@ public class TileSourceInfo {
     }
 
     /**
+     * Sets the cookies to be sent together with request
+     * @param cookies cookies to be sent along with request to tile source
+     */
+    public final void setCookies(String cookies) {
+        this.cookies = cookies;
+    }
+
+    /**
      * Determines if this imagery supports "/status" and "/dirty" mode (tile re-rendering).
      * @return <code>true</code> if it supports "/status" and "/dirty" mode (tile re-rendering)
      */
