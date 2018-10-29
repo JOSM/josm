@@ -606,6 +606,13 @@ public final class PluginHandler {
         });
     }
 
+    private static void logWrongPlatform(String plugin, String pluginPlatform) {
+        Logging.warn(
+                tr("Plugin {0} must be run on a {1} platform.",
+                        plugin, pluginPlatform
+                ));
+    }
+
     private static void logJavaUpdateRequired(String plugin, int requiredVersion) {
         Logging.warn(
                 tr("Plugin {0} requires Java version {1}. The current Java version is {2}. "
@@ -639,9 +646,16 @@ public final class PluginHandler {
      */
     public static boolean checkLoadPreconditions(Component parent, Collection<PluginInformation> plugins, PluginInformation plugin) {
 
+        // make sure the plugin is not meant for another platform
+        if (!plugin.isForCurrentPlatform()) {
+            // Just log a warning, this is unlikely to happen as we display only relevant plugins in HMI
+            logWrongPlatform(plugin.name, plugin.platform);
+            return false;
+        }
+
         // make sure the plugin is compatible with the current Java version
         if (plugin.localminjavaversion > Utils.getJavaVersion()) {
-            // Just log a warning until we switch to Java 11 so that openjfx plugin does not trigger a popup
+            // Just log a warning until we switch to Java 11 so that javafx plugin does not trigger a popup
             logJavaUpdateRequired(plugin.name, plugin.localminjavaversion);
             return false;
         }
@@ -685,6 +699,9 @@ public final class PluginHandler {
             Set<String> pluginNames = new HashSet<>();
             for (PluginInformation pi: plugins) {
                 pluginNames.add(pi.name);
+                if (pi.provides != null) {
+                    pluginNames.add(pi.provides);
+                }
             }
             Set<String> missingPlugins = new HashSet<>();
             List<String> requiredPlugins = local ? plugin.getLocalRequiredPlugins() : plugin.getRequiredPlugins();

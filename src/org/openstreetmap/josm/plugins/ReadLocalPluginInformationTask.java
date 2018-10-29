@@ -189,6 +189,10 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
+    protected void filterIrrelevantPlugins() {
+        availablePlugins.entrySet().removeIf(e -> !e.getValue().isForCurrentPlatform());
+    }
+
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         Collection<String> pluginLocations = PluginInformation.getPluginLocations();
@@ -206,6 +210,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         getProgressMonitor().worked(1);
         if (canceled) return;
         filterOldPlugins();
+        filterIrrelevantPlugins();
         getProgressMonitor().worked(1);
     }
 
