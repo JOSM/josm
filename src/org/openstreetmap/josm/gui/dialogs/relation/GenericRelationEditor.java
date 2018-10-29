@@ -905,9 +905,7 @@ public class GenericRelationEditor extends RelationEditor {
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {
                 if (p instanceof Relation && orig.equals(p)) {
-                    if (!GraphicsEnvironment.isHeadless()) {
-                        warnOfCircularReferences(p);
-                    }
+                    warnOfCircularReferences(p);
                     continue;
                 } else if (MemberTableModel.hasMembersReferringTo(relation.getMembers(), Collections.singleton(p))
                         && !confirmAddingPrimitive(p)) {
