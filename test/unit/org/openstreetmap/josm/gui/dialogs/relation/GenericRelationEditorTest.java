@@ -1,11 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Collections;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.junit.Rule;
@@ -20,6 +22,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -82,13 +85,30 @@ public class GenericRelationEditorTest {
      */
     @Test
     public void testAddPrimitivesToRelation() {
+        TestUtils.assumeWorkingJMockit();
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker();
+
         Relation r = TestUtils.addFakeDataSet(new Relation(1));
         assertNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.<OsmPrimitive>emptyList()));
+
+        jopsMocker.getMockResultMap().put(
+            "<html>You are trying to add a relation to itself.<br><br>This creates circular references "
+            + "and is therefore discouraged.<br>Skipping relation 'incomplete'.</html>",
+            JOptionPane.OK_OPTION
+        );
+
         assertNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Relation(1))));
+
+        assertEquals(1, jopsMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
+        assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
+        assertEquals("Warning", invocationLogEntry[2]);
 
         assertNotNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Node(1))));
         assertNotNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Way(1))));
         assertNotNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Relation(2))));
+
+        assertEquals(1, jopsMocker.getInvocationLog().size());
     }
 
     /**
