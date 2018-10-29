@@ -10,8 +10,9 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -70,6 +71,7 @@ public class RelationEditorActionsTest extends AbstractRelationEditorActionTest 
      */
     @Test
     public void testDeleteCurrentRelationAction() {
+        TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
             ImmutableMap.<String, Object>of(
                 "<html>\n  <head>\n    \n  </head>\n  <body>\n    You are about to delete 1 "
@@ -106,6 +108,7 @@ public class RelationEditorActionsTest extends AbstractRelationEditorActionTest 
      */
     @Test
     public void testSetRoleAction() {
+        TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker.MessagePanelMocker mpMocker = new JOptionPaneSimpleMocker.MessagePanelMocker();
         // JOptionPaneSimpleMocker doesn't handle showOptionDialog calls because of their potential
         // complexity, but this is quite a simple use of showOptionDialog which we can mock from scratch.
