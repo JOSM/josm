@@ -710,8 +710,8 @@ Build-Date: ${build.tstamp}
                     <regexp pattern="${deprecated-plugins}"/>
                 </linecontainsregexp>
                 <linecontainsregexp negate="true" unless:set="isJava10">
-                    <!-- Skip openjfx on Java 8/9, built for Java 10+ only -->
-                    <regexp pattern="openjfx"/>
+                    <!-- Skip javafx on Java 8/9, built for Java 10+ only -->
+                    <regexp pattern="javafx.*"/>
                 </linecontainsregexp>
                 <tokenfilter>
                     <replaceregex pattern="^.*;" replace="" flags="gi"/>
