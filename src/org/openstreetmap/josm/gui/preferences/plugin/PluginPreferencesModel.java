@@ -236,9 +236,11 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * @return the plugin info.
      */
     public PluginInformation getPluginInformation(String name) {
-        for (PluginInformation pi: availablePlugins) {
-            if (pi.getName() != null && pi.getName().equals(name))
-                return pi;
+        if (name != null) {
+            for (PluginInformation pi: availablePlugins) {
+                if (name.equals(pi.getName()) || name.equals(pi.provides))
+                    return pi;
+            }
         }
         return null;
     }

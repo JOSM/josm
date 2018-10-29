@@ -62,7 +62,7 @@ public class PluginCheckBox extends JCheckBox implements ActionListener {
             for (PluginInformation p : ppModel.getAvailablePlugins()) {
                 if (!p.equals(pi) && p.requires != null && ppModel.isSelectedPlugin(p.getName())) {
                     for (String s : p.getRequiredPlugins()) {
-                        if (s.equals(pi.getName())) {
+                        if (s.equals(pi.getName()) || s.equals(pi.provides)) {
                             otherPlugins.add(p.getName());
                             break;
                         }

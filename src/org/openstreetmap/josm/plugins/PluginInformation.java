@@ -30,6 +30,8 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Platform;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -61,6 +63,10 @@ public class PluginInformation {
     public String requires;
     /** The list of required plugins, separated by ';' (from locally available jar). */
     public String localrequires;
+    /** The plugin platform on which it is meant to run (windows, osx, unixoid). */
+    public String platform;
+    /** The virtual plugin provided by this plugin, if native for a given platform. */
+    public String provides;
     /** The plugin link (for documentation). */
     public String link;
     /** The plugin description. */
@@ -168,6 +174,8 @@ public class PluginInformation {
         this.minjavaversion = other.minjavaversion;
         this.className = other.className;
         this.requires = other.requires;
+        this.provides = other.provides;
+        this.platform = other.platform;
         this.link = other.link;
         this.description = other.description;
         this.early = other.early;
@@ -215,6 +223,8 @@ public class PluginInformation {
             s = null;
         }
         link = s;
+        platform = attr.getValue("Plugin-Platform");
+        provides = attr.getValue("Plugin-Provides");
         requires = attr.getValue("Plugin-Requires");
         s = attr.getValue(lang+"Plugin-Description");
         if (s == null) {
@@ -421,10 +431,15 @@ public class PluginInformation {
 
         Collection<String> locations = getPluginLocations();
 
+        String[] nameCandidates = new String[] {
+                pluginName,
+                pluginName + "-" + PlatformManager.getPlatform().getPlatform().name().toLowerCase(Locale.ENGLISH)};
         for (String s : locations) {
-            File pluginFile = new File(s, pluginName + ".jar");
-            if (pluginFile.exists()) {
-                return new PluginInformation(pluginFile);
+            for (String nameCandidate: nameCandidates) {
+                File pluginFile = new File(s, nameCandidate + ".jar");
+                if (pluginFile.exists()) {
+                    return new PluginInformation(pluginFile);
+                }
             }
         }
         return null;
@@ -576,6 +591,20 @@ public class PluginInformation {
             this.localmainversion = info.mainversion;
             this.localminjavaversion = info.minjavaversion;
             this.localrequires = info.requires;
+        }
+    }
+
+    /**
+     * Determines if this plugin can be run on the current platform.
+     * @return {@code true} if this plugin can be run on the current platform
+     * @since 14384
+     */
+    public boolean isForCurrentPlatform() {
+        try {
+            return platform == null || PlatformManager.getPlatform().getPlatform() == Platform.valueOf(platform.toUpperCase(Locale.ENGLISH));
+        } catch (IllegalArgumentException e) {
+            Logging.warn(e);
+            return true;
         }
     }
 }

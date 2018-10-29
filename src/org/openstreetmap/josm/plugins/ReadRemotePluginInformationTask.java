@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -282,6 +283,10 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         return ret;
     }
 
+    protected List<PluginInformation> filterIrrelevantPlugins(List<PluginInformation> plugins) {
+        return plugins.stream().filter(PluginInformation::isForCurrentPlatform).collect(Collectors.toList());
+    }
+
     /**
      * Parses the plugin list
      *
@@ -293,7 +298,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             getProgressMonitor().subTask(tr("Parsing plugin list from site ''{0}''", site));
             InputStream in = new ByteArrayInputStream(doc.getBytes(StandardCharsets.UTF_8));
             List<PluginInformation> pis = new PluginListParser().parse(in);
-            availablePlugins.addAll(filterDeprecatedPlugins(pis));
+            availablePlugins.addAll(filterIrrelevantPlugins(filterDeprecatedPlugins(pis)));
         } catch (PluginListParseException e) {
             Logging.error(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
             Logging.error(e);
