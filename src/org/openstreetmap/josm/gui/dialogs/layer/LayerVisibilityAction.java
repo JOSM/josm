@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.layer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,7 +15,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -247,6 +250,18 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             slider.setPaintTicks(true);
 
             slider.addChangeListener(e -> onStateChanged());
+
+            //final NumberFormat format = DecimalFormat.getInstance();
+            //setLabels(format.format(minValue), format.format((minValue + maxValue) / 2), format.format(maxValue));
+        }
+
+        protected void setLabels(String labelMinimum, String labelMiddle, String labelMaximum) {
+            final Dictionary<Integer, JLabel> labels = new Hashtable<>();
+            labels.put(slider.getMinimum(), new JLabel(labelMinimum));
+            labels.put((slider.getMaximum() + slider.getMinimum()) / 2, new JLabel(labelMiddle));
+            labels.put(slider.getMaximum(), new JLabel(labelMaximum));
+            slider.setLabelTable(labels);
+            slider.setPaintLabels(true);
         }
 
         /**
@@ -333,10 +348,11 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
      */
     class OpacitySlider extends AbstractFilterSlider<Layer> {
         /**
-         * Creaate a new {@link OpacitySlider}.
+         * Create a new {@link OpacitySlider}.
          */
         OpacitySlider() {
             super(0, 1, Layer.class);
+            setLabels("0%", "50%", "100%");
             slider.setToolTipText(tr("Adjust opacity of the layer."));
         }
 
@@ -409,6 +425,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          */
         GammaFilterSlider() {
             super(-1, 1, ImageryLayer.class);
+            setLabels("0", "1", "∞");
             slider.setToolTipText(tr("Adjust gamma value of the layer."));
         }
 
@@ -468,6 +485,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          */
         SharpnessSlider() {
             super(0, MAX_SHARPNESS_FACTOR, ImageryLayer.class);
+            setLabels(trc("image sharpness", "blurred"), trc("image sharpness", "normal"), trc("image sharpness", "sharp"));
             slider.setToolTipText(tr("Adjust sharpness/blur value of the layer."));
         }
 
@@ -505,6 +523,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          */
         ColorfulnessSlider() {
             super(0, MAX_COLORFUL_FACTOR, ImageryLayer.class);
+            setLabels(trc("image colorfulness", "less"), trc("image colorfulness", "normal"), trc("image colorfulness", "more"));
             slider.setToolTipText(tr("Adjust colorfulness of the layer."));
         }
 
