@@ -66,7 +66,6 @@ public class DownloadDialog extends JDialog {
     private static final IntegerProperty DOWNLOAD_TAB = new IntegerProperty("download.tab", 0);
     private static final StringProperty DOWNLOAD_SOURCE_TAB = new StringProperty("download.source.tab", OSMDownloadSource.SIMPLE_NAME);
     private static final BooleanProperty DOWNLOAD_AUTORUN = new BooleanProperty("download.autorun", false);
-    private static final BooleanProperty DOWNLOAD_NEWLAYER = new BooleanProperty("download.newlayer", false);
     private static final BooleanProperty DOWNLOAD_ZOOMTODATA = new BooleanProperty("download.zoomtodata", true);
 
     /** the unique instance of the download dialog */
@@ -96,7 +95,6 @@ public class DownloadDialog extends JDialog {
     protected final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
     protected final DownloadSourceTabs downloadSourcesTab = new DownloadSourceTabs();
 
-    protected JCheckBox cbNewLayer;
     protected JCheckBox cbStartup;
     protected JCheckBox cbZoomToDownloadedData;
     protected SlippyMapChooser slippyMapChooser;
@@ -112,6 +110,7 @@ public class DownloadDialog extends JDialog {
     protected boolean canceled;
 
     protected JButton btnDownload;
+    protected JButton btnDownloadNewLayer;
     protected JButton btnCancel;
     protected JButton btnHelp;
 
@@ -154,10 +153,6 @@ public class DownloadDialog extends JDialog {
 
         mainPanel.add(dialogSplit, GBC.eol().fill());
 
-        cbNewLayer = new JCheckBox(tr("Download as new layer"));
-        cbNewLayer.setToolTipText(tr("<html>Select to download data into a new data layer.<br>"
-                +"Unselect to download into the currently active data layer.</html>"));
-
         cbStartup = new JCheckBox(tr("Open this dialog on startup"));
         cbStartup.setToolTipText(
                 tr("<html>Autostart ''Download from OSM'' dialog every time JOSM is started.<br>" +
@@ -167,7 +162,6 @@ public class DownloadDialog extends JDialog {
         cbZoomToDownloadedData = new JCheckBox(tr("Zoom to downloaded data"));
         cbZoomToDownloadedData.setToolTipText(tr("Select to zoom to entire newly downloaded data."));
 
-        mainPanel.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5, 5, 5, 5));
         mainPanel.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));
         mainPanel.add(cbZoomToDownloadedData, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));
 
@@ -188,7 +182,8 @@ public class DownloadDialog extends JDialog {
      * @return The button panel of the dialog.
      */
     protected final JPanel buildButtonPanel() {
-        btnDownload = new JButton(new DownloadAction());
+        btnDownload = new JButton(new DownloadAction(false));
+        btnDownloadNewLayer = new JButton(new DownloadAction(true));
         btnCancel = new JButton(new CancelAction());
         btnHelp = new JButton(
                 new ContextSensitiveHelpAction(getRootPane().getClientProperty("help").toString()));
@@ -196,6 +191,7 @@ public class DownloadDialog extends JDialog {
         JPanel pnl = new JPanel(new FlowLayout());
 
         pnl.add(btnDownload);
+        pnl.add(btnDownloadNewLayer);
         pnl.add(btnCancel);
         pnl.add(btnHelp);
 
@@ -204,7 +200,6 @@ public class DownloadDialog extends JDialog {
         InputMapUtils.addEscapeAction(getRootPane(), btnCancel.getAction());
         InputMapUtils.enableEnter(btnHelp);
 
-        InputMapUtils.addEnterActionWhenAncestor(cbNewLayer, btnDownload.getAction());
         InputMapUtils.addEnterActionWhenAncestor(cbStartup, btnDownload.getAction());
         InputMapUtils.addEnterActionWhenAncestor(cbZoomToDownloadedData, btnDownload.getAction());
         InputMapUtils.addCtrlEnterAction(pnl, btnDownload.getAction());
@@ -296,15 +291,6 @@ public class DownloadDialog extends JDialog {
     }
 
     /**
-     * Replies true if the user requires to download into a new layer
-     *
-     * @return true if the user requires to download into a new layer
-     */
-    public boolean isNewLayerRequired() {
-        return cbNewLayer.isSelected();
-    }
-
-    /**
      * Replies true if the user requires to zoom to new downloaded data
      *
      * @return true if the user requires to zoom to new downloaded data
@@ -367,7 +353,6 @@ public class DownloadDialog extends JDialog {
         DOWNLOAD_TAB.put(tpDownloadAreaSelectors.getSelectedIndex());
         downloadSourcesTab.getAllPanels().forEach(AbstractDownloadSourcePanel::rememberSettings);
         downloadSourcesTab.getSelectedPanel().ifPresent(panel -> DOWNLOAD_SOURCE_TAB.put(panel.getSimpleName()));
-        DOWNLOAD_NEWLAYER.put(cbNewLayer.isSelected());
         DOWNLOAD_ZOOMTODATA.put(cbZoomToDownloadedData.isSelected());
         if (currentBounds != null) {
             Config.getPref().put("osm-download.bounds", currentBounds.encodeAsString(";"));
@@ -378,7 +363,6 @@ public class DownloadDialog extends JDialog {
      * Restores the previous settings in the download dialog.
      */
     public void restoreSettings() {
-        cbNewLayer.setSelected(DOWNLOAD_NEWLAYER.get());
         cbStartup.setSelected(isAutorunEnabled());
         cbZoomToDownloadedData.setSelected(DOWNLOAD_ZOOMTODATA.get());
 
@@ -474,8 +458,8 @@ public class DownloadDialog extends JDialog {
      * @return The {@link DownloadSettings} object that describes the current state of
      * the download dialog.
      */
-    public DownloadSettings getDownloadSettings() {
-        return new DownloadSettings(currentBounds, isNewLayerRequired(), isZoomToDownloadedDataRequired());
+    public DownloadSettings getDownloadSettings(boolean newLayer) {
+        return new DownloadSettings(currentBounds, newLayer, isZoomToDownloadedDataRequired());
     }
 
     protected void setCanceled(boolean canceled) {
@@ -542,10 +526,18 @@ public class DownloadDialog extends JDialog {
      * Action that is executed when the download button is pressed.
      */
     class DownloadAction extends AbstractAction {
-        DownloadAction() {
-            putValue(NAME, tr("Download"));
-            new ImageProvider("download").getResource().attachImageIcon(this);
-            putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area"));
+        final boolean newLayer;
+        DownloadAction(boolean newLayer) {
+            this.newLayer = newLayer;
+            if (!newLayer) {
+                putValue(NAME, tr("Download"));
+                putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area"));
+                new ImageProvider("download").getResource().attachImageIcon(this);
+            } else {
+                putValue(NAME, tr("Download as new layer"));
+                putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area into a new data layer"));
+                new ImageProvider("download_new_layer").getResource().attachImageIcon(this);
+            }
             setEnabled(!NetworkManager.isOffline(OnlineResource.OSM_API));
         }
 
@@ -556,7 +548,7 @@ public class DownloadDialog extends JDialog {
         public void run() {
             rememberSettings();
             downloadSourcesTab.getSelectedPanel().ifPresent(panel -> {
-                DownloadSettings downloadSettings = getDownloadSettings();
+                DownloadSettings downloadSettings = getDownloadSettings(newLayer);
                 if (panel.checkDownload(downloadSettings)) {
                     setCanceled(false);
                     setVisible(false);
