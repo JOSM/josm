@@ -43,7 +43,7 @@ public class CloseChangesetAction extends JosmAction {
      * Constructs a new {@code CloseChangesetAction}.
      */
     public CloseChangesetAction() {
-        super(tr("Close open changesets"),
+        super(tr("Close open changesets..."),
             "closechangeset",
             tr("Close open changesets"),
             Shortcut.registerShortcut("system:closechangeset",

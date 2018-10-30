@@ -44,7 +44,7 @@ public class UploadSelectionAction extends JosmAction {
      */
     public UploadSelectionAction() {
         super(
-                tr("Upload selection"),
+                tr("Upload selection..."),
                 "uploadselection",
                 tr("Upload all changes in the current selection to the OSM server."),
                 // CHECKSTYLE.OFF: LineLength
