@@ -321,7 +321,7 @@ public abstract class CrossingWays extends Test {
     }
 
     static boolean isHighway(OsmPrimitive w) {
-        return w.hasTagDifferent(HIGHWAY, "rest_area", "services");
+        return w.hasTagDifferent(HIGHWAY, "rest_area", "services", "bus_stop", "platform");
     }
 
     static boolean isRailway(OsmPrimitive w) {
