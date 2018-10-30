@@ -30,6 +30,7 @@ import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 import static org.openstreetmap.josm.tools.WinRegistry.HKEY_LOCAL_MACHINE;
 
+import java.awt.Desktop;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -39,6 +40,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -187,7 +190,18 @@ public class PlatformHookWindows implements PlatformHook {
 
     @Override
     public void openUrl(String url) throws IOException {
-        Runtime.getRuntime().exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
+        final String customBrowser = Config.getPref().get("browser.windows", null);
+        if (customBrowser != null) {
+            Runtime.getRuntime().exec(new String[]{customBrowser, url});
+            return;
+        }
+        try {
+            // Desktop API works fine under Windows
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (IOException | URISyntaxException e) {
+            Logging.log(Logging.LEVEL_WARN, "Desktop class failed. Platform dependent fall back for open url in browser.", e);
+            Runtime.getRuntime().exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
+        }
     }
 
     @Override
