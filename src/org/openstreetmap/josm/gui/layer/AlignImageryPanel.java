@@ -54,7 +54,7 @@ public class AlignImageryPanel extends JPanel {
         closeButton.setContentAreaFilled(false);
         closeButton.setRolloverEnabled(true);
         closeButton.setBorderPainted(false);
-        closeButton.setToolTipText(tr("Hide this message and never show it again"));
+        closeButton.setToolTipText(tr("Hide this message"));
         closeButton.addActionListener(e -> {
             if (MainApplication.isDisplayingMapView()) {
                 MainApplication.getMap().removeTopPanel(AlignImageryPanel.class);

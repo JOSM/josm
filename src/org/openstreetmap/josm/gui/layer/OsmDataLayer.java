@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.HatchAreaOutsideDownloadAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
@@ -498,7 +499,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
                 g.setPaint(new TexturePaint(hatched, anchorRect));
             }
             try {
-                g.fill(a);
+                if (HatchAreaOutsideDownloadAction.isHatchEnabled()) {
+                    g.fill(a);
+                }
             } catch (ArrayIndexOutOfBoundsException e) {
                 // #16686 - AIOOBE in java.awt.TexturePaintContext$Int.setRaster
                 Logging.error(e);
