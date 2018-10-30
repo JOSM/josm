@@ -52,6 +52,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.FollowLineAction;
 import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
+import org.openstreetmap.josm.actions.HatchAreaOutsideDownloadAction;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.HistoryInfoWebAction;
@@ -220,6 +221,8 @@ public class MainMenu extends JMenuBar {
     /* View menu */
     /** View / Wireframe View */
     public final WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
+    /** View / Hatch area outside download */
+    public final HatchAreaOutsideDownloadAction hatchAreaOutsideDownloadAction = new HatchAreaOutsideDownloadAction();
     /** View / Advanced info */
     public final InfoAction info = new InfoAction();
     /** View / Advanced info (web) */
@@ -650,6 +653,7 @@ public class MainMenu extends JMenuBar {
      * Initialize the main menu.
      * @since 10340
      */
+    // CHECKSTYLE.OFF: ExecutableStatementCountCheck
     public void initialize() {
         moreToolsMenu.setVisible(false);
         dataMenu.setVisible(false);
@@ -714,6 +718,9 @@ public class MainMenu extends JMenuBar {
         viewMenu.add(wireframe);
         wireframe.setAccelerator(wireFrameToggleAction.getShortcut().getKeyStroke());
         wireFrameToggleAction.addButtonModel(wireframe.getModel());
+        final JCheckBoxMenuItem hatchAreaOutsideDownloadMenuItem = hatchAreaOutsideDownloadAction.getCheckbox();
+        viewMenu.add(hatchAreaOutsideDownloadMenuItem);
+        ExpertToggleAction.addVisibilitySwitcher(hatchAreaOutsideDownloadMenuItem);
 
         viewMenu.add(new MapPaintMenu());
         viewMenu.addSeparator();
@@ -837,6 +844,7 @@ public class MainMenu extends JMenuBar {
 
         new PresetsMenuEnabler(presetsMenu);
     }
+    // CHECKSTYLE.ON: ExecutableStatementCountCheck
 
     /**
      * Search main menu for items with {@code textToFind} in title.
