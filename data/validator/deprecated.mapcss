@@ -1296,3 +1296,44 @@ way[power=busbar] {
   fixAdd: "power=line";
   fixAdd: "line=busbar";
 }
+
+/* #16924 */
+*[man_made=MDF],
+*[man_made=telephone_exchange] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "telecom=exchange";
+  fixAdd: "telecom=exchange";
+  fixRemove: "man_made";
+  group: tr("deprecated tagging");
+}
+*[building=central_office] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "telecom=exchange";
+  fixAdd: "telecom=exchange";
+  fixAdd: "building=yes";
+  group: tr("deprecated tagging");
+}
+*[telecom=central_office] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "telecom=exchange";
+  fixAdd: "telecom=exchange";
+  group: tr("deprecated tagging");
+}
+
+/* #16925 */
+node[communication=outdoor_dslam],
+node[man_made=outdoor_dslam],
+node[street_cabinet=outdoor_dslam] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "telecom=service_device";
+  fixAdd: "telecom=service_device";
+  fixRemove: "{0.key}";
+  group: tr("deprecated tagging");
+}
+node[telecom=dslam],
+node[telecom=outdoor_dslam] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "telecom=service_device";
+  fixAdd: "telecom=service_device";
+  group: tr("deprecated tagging");
+}
