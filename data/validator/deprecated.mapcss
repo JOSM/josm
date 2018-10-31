@@ -686,30 +686,18 @@ relation[/^..$/][!to] {
   fixAdd: "sport=billiards";
 }
 
-/* see #11499 */
+/* see #11499, #16928 */
 *[payment:credit_cards=yes] {
-  throwWarning: tr("{0} is inaccurate", "{0.tag}");
-  suggestAlternative: "payment:mastercard=yes";
-  suggestAlternative: "payment:visa=yes";
-  suggestAlternative: "...";
+  throwWarning: tr("{0} is inaccurate. Use separate tags for each specific type, e.g. {1} or {2}.", "{0.tag}", "payment:mastercard=yes", "payment:visa=yes");
 }
 *[payment:debit_cards=yes] {
-  throwWarning: tr("{0} is inaccurate", "{0.tag}");
-  suggestAlternative: "payment:maestro=yes";
-  suggestAlternative: "payment:girocard=yes";
-  suggestAlternative: "...";
+  throwWarning: tr("{0} is inaccurate. Use separate tags for each specific type, e.g. {1} or {2}.", "{0.tag}", "payment:maestro=yes", "payment:girocard=yes");
 }
 *[payment:electronic_purses=yes] {
-  throwWarning: tr("{0} is inaccurate", "{0.tag}");
-  suggestAlternative: "payment:ep_geldkarte=yes";
-  suggestAlternative: "payment:ep_quick=yes";
-  suggestAlternative: "...";
+  throwWarning: tr("{0} is inaccurate. Use separate tags for each specific type, e.g. {1} or {2}.", "{0.tag}", "payment:ep_geldkarte=yes", "payment:ep_quick=yes");
 }
 *[payment:cryptocurrencies=yes] {
-  throwWarning: tr("{0} is inaccurate", "{0.tag}");
-  suggestAlternative: "payment:bitcoin=yes";
-  suggestAlternative: "payment:litecoin=yes";
-  suggestAlternative: "...";
+  throwWarning: tr("{0} is inaccurate. Use separate tags for each specific type, e.g. {1} or {2}.", "{0.tag}", "payment:bitcoin=yes", "payment:litecoin=yes");
 }
 
 /* defunct payment cards */
