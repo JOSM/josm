@@ -849,13 +849,13 @@ public final class PluginHandler {
                 DEPENDENCIES:
                 for (String depName : info.getLocalRequiredPlugins()) {
                     for (PluginInformation depInfo : toLoad) {
-                        if (depInfo.getName().equals(depName)) {
+                        if (isDependency(depInfo, depName)) {
                             cl.addDependency(classLoaders.get(depInfo));
                             continue DEPENDENCIES;
                         }
                     }
                     for (PluginProxy proxy : pluginList) {
-                        if (proxy.getPluginInformation().getName().equals(depName)) {
+                        if (isDependency(proxy.getPluginInformation(), depName)) {
                             cl.addDependency(proxy.getClassLoader());
                             continue DEPENDENCIES;
                         }
@@ -875,6 +875,10 @@ public final class PluginHandler {
         } finally {
             monitor.finishTask();
         }
+    }
+
+    private static boolean isDependency(PluginInformation pi, String depName) {
+        return depName.equals(pi.getName()) || depName.equals(pi.provides);
     }
 
     /**
