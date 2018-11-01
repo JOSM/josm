@@ -51,7 +51,7 @@ public class OverlappingWays extends Test {
 
     protected static final ListProperty IGNORED_KEYS = new ListProperty(
             "overlapping-ways.ignored-keys", Arrays.asList(
-                    "barrier", "building", "historic:building", "demolished:building",
+                    "barrier", "building", "building:part", "historic:building", "demolished:building",
                     "removed:building", "disused:building", "abandoned:building", "proposed:building", "man_made"));
 
     /** Constructor */
