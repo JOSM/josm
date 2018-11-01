@@ -33,7 +33,7 @@ public final class PasteTagsAction extends JosmAction {
                 tr("Apply tags of contents of paste buffer to all selected items."),
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")),
                 KeyEvent.VK_V, Shortcut.CTRL_SHIFT), true);
-        putValue("help", HELP);
+        setHelpId(HELP);
     }
 
     @Override

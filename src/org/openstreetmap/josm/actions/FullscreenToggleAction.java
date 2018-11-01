@@ -42,7 +42,7 @@ public class FullscreenToggleAction extends ToggleAction {
               Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle fullscreen view"), KeyEvent.VK_F11, Shortcut.DIRECT),
               false /* register */
         );
-        putValue("help", ht("/Action/FullscreenView"));
+        setHelpId(ht("/Action/FullscreenView"));
         putValue("toolbar", "fullscreen");
         MainApplication.getToolbar().register(this);
         gd = GraphicsEnvironment.isHeadless() ? null : GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();

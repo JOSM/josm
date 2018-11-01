@@ -62,7 +62,7 @@ public final class DeleteAction extends JosmAction {
     public DeleteAction() {
         super(tr("Delete"), "dialogs/delete", tr("Delete selected objects."),
                 Shortcut.registerShortcut("system:delete", tr("Edit: {0}", tr("Delete")), KeyEvent.VK_DELETE, Shortcut.DIRECT), true);
-        putValue("help", ht("/Action/Delete"));
+        setHelpId(ht("/Action/Delete"));
     }
 
     @Override

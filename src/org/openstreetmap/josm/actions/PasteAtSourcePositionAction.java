@@ -24,7 +24,7 @@ public class PasteAtSourcePositionAction extends AbstractPasteAction {
         super(tr("Paste at source position"), "paste", tr("Paste contents of clipboard at the position they were copied from."),
                 Shortcut.registerShortcut("menu:edit:pasteAtSource", tr("Edit: {0}", tr("Paste at source position")),
                         KeyEvent.VK_V, Shortcut.ALT_CTRL), true, "pasteatsource");
-        putValue("help", ht("/Action/Paste"));
+        setHelpId(ht("/Action/Paste"));
     }
 
     @Override

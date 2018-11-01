@@ -34,7 +34,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
             KeyEvent.VK_M, Shortcut.CTRL_SHIFT),
             true /* register */
         );
-        putValue("help", ht("/Action/MergeSelection"));
+        setHelpId(ht("/Action/MergeSelection"));
     }
 
     /**

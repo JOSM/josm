@@ -62,7 +62,7 @@ public final class CreateCircleAction extends JosmAction {
         super(tr("Create Circle"), "aligncircle", tr("Create a circle from three selected nodes."),
             Shortcut.registerShortcut("tools:createcircle", tr("Tool: {0}", tr("Create Circle")),
             KeyEvent.VK_O, Shortcut.SHIFT), true, "createcircle", true);
-        putValue("help", ht("/Action/CreateCircle"));
+        setHelpId(ht("/Action/CreateCircle"));
     }
 
     /**

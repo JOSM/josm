@@ -198,7 +198,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         DualAlignChangeAction() {
             super(tr("Dual alignment"), /* ICON() */ "mapmode/extrude/dualalign",
                     tr("Switch dual alignment mode while extruding"), null, false);
-            putValue("help", ht("/Action/Extrude#DualAlign"));
+            setHelpId(ht("/Action/Extrude#DualAlign"));
         }
 
         @Override
@@ -221,7 +221,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         super(tr("Extrude"), /* ICON(mapmode/) */ "extrude/extrude", tr("Create areas"),
                 Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.DIRECT),
                 ImageProvider.getCursor("normal", "rectangle"));
-        putValue("help", ht("/Action/Extrude"));
+        setHelpId(ht("/Action/Extrude"));
         cursorCreateNew = ImageProvider.getCursor("normal", "rectangle_plus");
         cursorTranslate = ImageProvider.getCursor("normal", "rectangle_move");
         cursorCreateNodes = ImageProvider.getCursor("normal", "rectangle_plussmall");

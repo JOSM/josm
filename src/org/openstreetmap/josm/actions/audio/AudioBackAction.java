@@ -27,7 +27,7 @@ public class AudioBackAction extends AbstractAudioAction {
     public AudioBackAction() {
         super(trc("audio", "Back"), "audio-back", trc("audio", "Jump back."),
         Shortcut.registerShortcut("audio:back", tr("Audio: {0}", trc("audio", "Back")), KeyEvent.VK_F6, Shortcut.DIRECT), true);
-        this.putValue("help", ht("/Action/AudioBack"));
+        setHelpId(ht("/Action/AudioBack"));
     }
 
     @Override

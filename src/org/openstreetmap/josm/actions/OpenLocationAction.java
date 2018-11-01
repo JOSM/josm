@@ -88,7 +88,7 @@ public class OpenLocationAction extends JosmAction {
         super(tr("Open Location..."), "openlocation", tr("Open an URL."),
                 Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")),
                         KeyEvent.VK_L, Shortcut.CTRL), true);
-        putValue("help", ht("/Action/OpenLocation"));
+        setHelpId(ht("/Action/OpenLocation"));
         this.downloadTasks = new ArrayList<>();
         addDownloadTaskClass(DownloadOsmTask.class);
         addDownloadTaskClass(DownloadGpsTask.class);

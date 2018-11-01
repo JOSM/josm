@@ -64,7 +64,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize Shape")),
                         KeyEvent.VK_Q,
                         Shortcut.DIRECT), true);
-        putValue("help", ht("/Action/OrthogonalizeShape"));
+        setHelpId(ht("/Action/OrthogonalizeShape"));
     }
 
     /**

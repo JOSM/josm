@@ -154,7 +154,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
             Shortcut.registerShortcut("mapmode:parallel", tr("Mode: {0}",
                 tr("Parallel")), KeyEvent.VK_P, Shortcut.SHIFT),
             ImageProvider.getCursor("normal", "parallel"));
-        putValue("help", ht("/Action/Parallel"));
+        setHelpId(ht("/Action/Parallel"));
         mv = mapFrame.mapView;
     }
 

@@ -66,7 +66,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 Shortcut.registerShortcut("help:showstatusreport", tr("Help: {0}",
                         tr("Show Status Report")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false);
 
-        putValue("help", ht("/Action/ShowStatusReport"));
+        setHelpId(ht("/Action/ShowStatusReport"));
         putValue("toolbar", "help/showstatusreport");
         MainApplication.getToolbar().register(this);
     }

@@ -30,7 +30,7 @@ public class DownloadReferrersAction extends JosmAction {
                 Shortcut.registerShortcut("file:downloadreferrers",
                         tr("File: {0}", tr("Download parent ways/relations...")), KeyEvent.VK_D, Shortcut.ALT_CTRL),
                 true, "downloadreferrers", true);
-        putValue("help", ht("/Action/DownloadParentWaysAndRelation"));
+        setHelpId(ht("/Action/DownloadParentWaysAndRelation"));
     }
 
     /**

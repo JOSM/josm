@@ -51,7 +51,7 @@ public class UploadSelectionAction extends JosmAction {
                 Shortcut.registerShortcut("file:uploadSelection", tr("File: {0}", tr("Upload selection")), KeyEvent.VK_U, Shortcut.ALT_CTRL_SHIFT),
                 // CHECKSTYLE.ON: LineLength
                 true);
-        putValue("help", ht("/Action/UploadSelection"));
+        setHelpId(ht("/Action/UploadSelection"));
     }
 
     @Override

@@ -40,7 +40,7 @@ public class MergeLayerAction extends AbstractMergeAction {
             Shortcut.registerShortcut("system:merge", tr("Edit: {0}",
             tr("Merge")), KeyEvent.VK_M, Shortcut.CTRL),
             true, "action/mergelayer", true);
-        putValue("help", ht("/Action/MergeLayer"));
+        setHelpId(ht("/Action/MergeLayer"));
     }
 
     /**

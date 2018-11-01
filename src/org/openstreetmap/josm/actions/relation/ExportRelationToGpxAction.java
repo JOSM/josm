@@ -79,7 +79,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
     public ExportRelationToGpxAction(Set<Mode> mode) {
         super(name(mode), mode.contains(TO_FILE) ? "exportgpx" : "dialogs/layerlist", tooltip(mode),
                 null, false, null, false);
-        putValue("help", ht("/Action/ExportRelationToGpx"));
+        setHelpId(ht("/Action/ExportRelationToGpx"));
         this.mode = mode;
     }
 

@@ -29,7 +29,7 @@ public class HistoryInfoAction extends JosmAction {
                 tr("Display history information about OSM ways, nodes, or relations."),
                 Shortcut.registerShortcut("core:historyinfo",
                         tr("History"), KeyEvent.VK_H, Shortcut.CTRL), false);
-        putValue("help", ht("/Action/ObjectHistory"));
+        setHelpId(ht("/Action/ObjectHistory"));
         putValue("toolbar", "action/historyinfo");
         MainApplication.getToolbar().register(this);
         setEnabled(true);

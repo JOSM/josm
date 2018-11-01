@@ -23,7 +23,7 @@ public class NewAction extends JosmAction {
     public NewAction() {
         super(tr("New Layer"), "new", tr("Create a new map layer."),
                 Shortcut.registerShortcut("system:new", tr("File: {0}", tr("New Layer")), KeyEvent.VK_N, Shortcut.CTRL), true);
-        putValue("help", ht("/Action/NewLayer"));
+        setHelpId(ht("/Action/NewLayer"));
     }
 
     @Override

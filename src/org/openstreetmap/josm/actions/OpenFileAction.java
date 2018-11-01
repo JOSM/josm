@@ -67,7 +67,7 @@ public class OpenFileAction extends DiskAccessAction {
     public OpenFileAction() {
         super(tr("Open..."), "open", tr("Open a file."),
                 Shortcut.registerShortcut("system:open", tr("File: {0}", tr("Open...")), KeyEvent.VK_O, Shortcut.CTRL));
-        putValue("help", ht("/Action/Open"));
+        setHelpId(ht("/Action/Open"));
     }
 
     @Override

@@ -21,7 +21,7 @@ public class SelectAllAction extends JosmAction {
     public SelectAllAction() {
         super(tr("Select All"), "selectall", tr("Select all undeleted objects in the data layer. This selects incomplete objects too."),
                 Shortcut.registerShortcut("system:selectall", tr("Edit: {0}", tr("Select All")), KeyEvent.VK_A, Shortcut.CTRL), true);
-        putValue("help", ht("/Action/SelectAll"));
+        setHelpId(ht("/Action/SelectAll"));
     }
 
     @Override

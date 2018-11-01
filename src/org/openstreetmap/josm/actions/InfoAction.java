@@ -28,7 +28,7 @@ public class InfoAction extends JosmAction {
             Shortcut.registerShortcut("core:info",
                 tr("Advanced info"), KeyEvent.VK_I, Shortcut.CTRL),
             true, "action/info", true);
-        putValue("help", ht("/Action/InfoAboutElements"));
+        setHelpId(ht("/Action/InfoAboutElements"));
     }
 
     @Override

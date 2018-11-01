@@ -38,7 +38,7 @@ public class UpdateDataAction extends JosmAction {
                         tr("File: {0}", tr("Update data")),
                         KeyEvent.VK_U, Shortcut.CTRL),
                 true);
-        putValue("help", ht("/Action/UpdateData"));
+        setHelpId(ht("/Action/UpdateData"));
     }
 
     /**

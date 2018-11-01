@@ -28,7 +28,7 @@ public final class ZoomInAction extends JosmAction {
                 Shortcut.registerShortcut("view:zoomin", tr("View: {0}", tr("Zoom In")), KeyEvent.VK_PLUS, Shortcut.DIRECT),
                 true
         );
-        putValue("help", ht("/Action/ZoomIn"));
+        setHelpId(ht("/Action/ZoomIn"));
         // On standard QWERTY, AZERTY and other common layouts the '+' key is obtained with Shift+EQUALS
         MainApplication.registerActionShortcut(this,
                 Shortcut.registerShortcut("view:zoominbis", tr("View: {0}", tr("Zoom In")),

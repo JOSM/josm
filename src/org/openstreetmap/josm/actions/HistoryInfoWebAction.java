@@ -26,7 +26,7 @@ public class HistoryInfoWebAction extends AbstractInfoAction {
                 Shortcut.registerShortcut("core:historyinfoweb",
                         tr("History (web)"), KeyEvent.VK_H, Shortcut.CTRL_SHIFT),
                 true, "action/historyinfoweb", true);
-        putValue("help", ht("/Action/ObjectHistoryWeb"));
+        setHelpId(ht("/Action/ObjectHistoryWeb"));
     }
 
     @Override

@@ -51,7 +51,7 @@ public class CloseChangesetAction extends JosmAction {
                 KeyEvent.VK_Q, Shortcut.ALT_CTRL),
             true
         );
-        putValue("help", ht("/Action/CloseChangeset"));
+        setHelpId(ht("/Action/CloseChangeset"));
         setEnabled(!NetworkManager.isOffline(OnlineResource.OSM_API));
 
     }

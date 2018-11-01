@@ -22,6 +22,6 @@ public class AudioFasterAction extends AudioFastSlowAction {
     public AudioFasterAction() {
         super(trc("audio", "Faster"), "audio-faster", trc("audio", "Faster Forward"),
         Shortcut.registerShortcut("audio:faster", tr("Audio: {0}", trc("audio", "Faster")), KeyEvent.VK_F9, Shortcut.DIRECT), true);
-        this.putValue("help", ht("/Action/AudioFaster"));
+        setHelpId(ht("/Action/AudioFaster"));
     }
 }
