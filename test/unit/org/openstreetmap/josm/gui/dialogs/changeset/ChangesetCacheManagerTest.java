@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.changeset;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -26,7 +27,10 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.Remove
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.ShowDetailAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
+
+import com.google.common.collect.ImmutableMap;
 
 import mockit.Invocation;
 import mockit.Mock;
@@ -114,7 +118,22 @@ public class ChangesetCacheManagerTest {
      */
     @Test
     public void testDownloadMyChangesets() {
+        TestUtils.assumeWorkingJMockit();
+        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
+            ImmutableMap.<String, Object>of(
+                "<html>JOSM is currently running with an anonymous user. It cannot download<br>"
+                + "your changesets from the OSM server unless you enter your OSM user name<br>"
+                + "in the JOSM preferences.</html>",
+                "OK"
+            )
+        );
+
         new DownloadMyChangesets().actionPerformed(null);
+
+        assertEquals(1, haMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = haMocker.getInvocationLog().get(0);
+        assertEquals(0, (int) invocationLogEntry[0]);
+        assertEquals("Warning", invocationLogEntry[2]);
     }
 
     /**
