@@ -196,7 +196,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, Shortcut.DIRECT),
                 ImageProvider.getCursor("normal", "selection"));
         mv = mapFrame.mapView;
-        putValue("help", ht("/Action/Select"));
+        setHelpId(ht("/Action/Select"));
         selectionManager = new SelectionManager(this, false, mv);
     }
 

@@ -67,7 +67,7 @@ public class MergeNodesAction extends JosmAction {
     public MergeNodesAction() {
         super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into the oldest one."),
                 Shortcut.registerShortcut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, Shortcut.DIRECT), true);
-        putValue("help", ht("/Action/MergeNodes"));
+        setHelpId(ht("/Action/MergeNodes"));
     }
 
     @Override

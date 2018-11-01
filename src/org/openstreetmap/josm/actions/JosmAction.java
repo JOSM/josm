@@ -268,6 +268,10 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         if (helpId.endsWith("Action")) {
             helpId = helpId.substring(0, helpId.length()-6);
         }
+        setHelpId(helpId);
+    }
+
+    protected void setHelpId(String helpId) {
         putValue("help", helpId);
     }
 

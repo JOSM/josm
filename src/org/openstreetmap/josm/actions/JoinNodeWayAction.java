@@ -63,7 +63,7 @@ public class JoinNodeWayAction extends JosmAction {
                 tr("Include a node into the nearest way segments"),
                 Shortcut.registerShortcut("tools:joinnodeway", tr("Tool: {0}", tr("Join Node to Way")),
                         KeyEvent.VK_J, Shortcut.DIRECT), true);
-        action.putValue("help", ht("/Action/JoinNodeWay"));
+        action.setHelpId(ht("/Action/JoinNodeWay"));
         return action;
     }
 
@@ -77,7 +77,7 @@ public class JoinNodeWayAction extends JosmAction {
                 tr("Move the node onto the nearest way segments and include it"),
                 Shortcut.registerShortcut("tools:movenodeontoway", tr("Tool: {0}", tr("Move Node onto Way")),
                         KeyEvent.VK_N, Shortcut.DIRECT), true);
-        action.putValue("help", ht("/Action/MoveNodeWay"));
+        action.setHelpId(ht("/Action/MoveNodeWay"));
         return action;
     }
 

@@ -27,7 +27,7 @@ public class DownloadAction extends JosmAction {
         super(tr("Download data..."), "download", tr("Download map data from a server of your choice"),
               Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download data")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT),
               true);
-        putValue("help", ht("/Action/Download"));
+        setHelpId(ht("/Action/Download"));
     }
 
     @Override

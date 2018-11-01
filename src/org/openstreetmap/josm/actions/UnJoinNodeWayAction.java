@@ -36,7 +36,7 @@ public class UnJoinNodeWayAction extends JosmAction {
                 tr("Disconnect nodes from a way they currently belong to"),
                 Shortcut.registerShortcut("tools:unjoinnodeway",
                     tr("Tool: {0}", tr("Disconnect Node from Way")), KeyEvent.VK_J, Shortcut.ALT), true);
-        putValue("help", ht("/Action/UnJoinNodeWay"));
+        setHelpId(ht("/Action/UnJoinNodeWay"));
     }
 
     /**

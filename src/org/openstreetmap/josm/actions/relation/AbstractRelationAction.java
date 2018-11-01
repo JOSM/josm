@@ -59,4 +59,8 @@ public abstract class AbstractRelationAction extends AbstractAction implements I
         return !NetworkManager.isOffline(OnlineResource.OSM_API)
             && ds != null && !ds.isLocked() && DownloadPolicy.BLOCKED != ds.getDownloadPolicy();
     }
+    
+    protected void setHelpId(String helpId) {
+        putValue("help", helpId);
+    }
 }

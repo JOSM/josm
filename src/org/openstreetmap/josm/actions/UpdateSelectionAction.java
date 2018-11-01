@@ -91,7 +91,7 @@ public class UpdateSelectionAction extends JosmAction {
                         tr("File: {0}", tr("Update selection")), KeyEvent.VK_U,
                         Shortcut.ALT_CTRL),
                 true, "updateselection", true);
-        putValue("help", ht("/Action/UpdateSelection"));
+        setHelpId(ht("/Action/UpdateSelection"));
     }
 
     /**

@@ -54,7 +54,7 @@ public class SplitWayAction extends JosmAction {
     public SplitWayAction() {
         super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
                 Shortcut.registerShortcut("tools:splitway", tr("Tool: {0}", tr("Split Way")), KeyEvent.VK_P, Shortcut.DIRECT), true);
-        putValue("help", ht("/Action/SplitWay"));
+        setHelpId(ht("/Action/SplitWay"));
     }
 
     /**

@@ -56,7 +56,7 @@ public class CombineWayAction extends JosmAction {
     public CombineWayAction() {
         super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
                 Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.DIRECT), true);
-        putValue("help", ht("/Action/CombineWay"));
+        setHelpId(ht("/Action/CombineWay"));
     }
 
     protected static boolean confirmChangeDirectionOfWays() {

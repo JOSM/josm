@@ -245,32 +245,32 @@ public class AutoScaleAction extends JosmAction {
                         getModeShortcut(mode.getEnglishLabel()), Shortcut.DIRECT), true, null, false);
         String label = mode.getEnglishLabel();
         String modeHelp = Character.toUpperCase(label.charAt(0)) + label.substring(1);
-        putValue("help", "Action/AutoScale/" + modeHelp);
+        setHelpId("Action/AutoScale/" + modeHelp);
         this.mode = mode;
         switch (mode) {
         case DATA:
-            putValue("help", ht("/Action/ZoomToData"));
+            setHelpId(ht("/Action/ZoomToData"));
             break;
         case LAYER:
-            putValue("help", ht("/Action/ZoomToLayer"));
+            setHelpId(ht("/Action/ZoomToLayer"));
             break;
         case SELECTION:
-            putValue("help", ht("/Action/ZoomToSelection"));
+            setHelpId(ht("/Action/ZoomToSelection"));
             break;
         case CONFLICT:
-            putValue("help", ht("/Action/ZoomToConflict"));
+            setHelpId(ht("/Action/ZoomToConflict"));
             break;
         case PROBLEM:
-            putValue("help", ht("/Action/ZoomToProblem"));
+            setHelpId(ht("/Action/ZoomToProblem"));
             break;
         case DOWNLOAD:
-            putValue("help", ht("/Action/ZoomToDownload"));
+            setHelpId(ht("/Action/ZoomToDownload"));
             break;
         case PREVIOUS:
-            putValue("help", ht("/Action/ZoomToPrevious"));
+            setHelpId(ht("/Action/ZoomToPrevious"));
             break;
         case NEXT:
-            putValue("help", ht("/Action/ZoomToNext"));
+            setHelpId(ht("/Action/ZoomToNext"));
             break;
         default:
             throw new IllegalArgumentException("Unknown mode: " + mode);

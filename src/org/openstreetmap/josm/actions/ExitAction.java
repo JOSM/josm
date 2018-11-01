@@ -22,7 +22,7 @@ public class ExitAction extends JosmAction {
     public ExitAction() {
         super(tr("Exit"), "exit", tr("Exit the application."),
                 Shortcut.registerShortcut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, Shortcut.CTRL), true);
-        putValue("help", ht("/Action/Exit"));
+        setHelpId(ht("/Action/Exit"));
     }
 
     @Override

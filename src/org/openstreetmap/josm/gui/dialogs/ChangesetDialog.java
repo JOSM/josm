@@ -177,6 +177,11 @@ public class ChangesetDialog extends ToggleDialog {
         return pnl;
     }
 
+    @Override
+    public String helpTopic() {
+        return HelpUtil.ht("/Dialog/ChangesetList");
+    }
+
     protected void build() {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(buildFilterPanel(), BorderLayout.NORTH);
@@ -184,8 +189,6 @@ public class ChangesetDialog extends ToggleDialog {
         pnl.add(pnlList, BorderLayout.CENTER);
 
         cbInSelectionOnly.addItemListener(new FilterChangeHandler());
-
-        HelpUtil.setHelpContext(pnl, HelpUtil.ht("/Dialog/ChangesetList"));
 
         // -- select objects action
         selectObjectsAction = new SelectObjectsAction();

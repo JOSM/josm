@@ -30,7 +30,7 @@ public class InfoWebAction extends AbstractInfoAction {
                 Shortcut.registerShortcut("core:infoweb",
                         tr("Advanced info (web)"), KeyEvent.VK_I, Shortcut.CTRL_SHIFT),
                 true, "action/infoweb", true);
-        putValue("help", ht("/Action/InfoAboutElementsWeb"));
+        setHelpId(ht("/Action/InfoAboutElementsWeb"));
     }
 
     @Override

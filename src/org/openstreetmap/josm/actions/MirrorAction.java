@@ -39,7 +39,7 @@ public final class MirrorAction extends JosmAction {
         super(tr("Mirror"), "mirror", tr("Mirror selected nodes and ways."),
                 Shortcut.registerShortcut("tools:mirror", tr("Tool: {0}", tr("Mirror")),
                         KeyEvent.VK_M, Shortcut.SHIFT), true);
-        putValue("help", ht("/Action/Mirror"));
+        setHelpId(ht("/Action/Mirror"));
     }
 
     @Override

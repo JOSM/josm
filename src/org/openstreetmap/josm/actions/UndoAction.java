@@ -27,7 +27,7 @@ public class UndoAction extends JosmAction implements CommandQueueListener {
         super(tr("Undo"), "undo", tr("Undo the last action."),
                 Shortcut.registerShortcut("system:undo", tr("Edit: {0}", tr("Undo")), KeyEvent.VK_Z, Shortcut.CTRL), true);
         setEnabled(false);
-        putValue("help", ht("/Action/Undo"));
+        setHelpId(ht("/Action/Undo"));
     }
 
     @Override

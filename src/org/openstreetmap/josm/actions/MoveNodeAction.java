@@ -29,7 +29,7 @@ public final class MoveNodeAction extends JosmAction {
         super(tr("Move Node..."), "movenode", tr("Edit latitude and longitude of a node."),
                 null, /* no shortcut */
                 true);
-        putValue("help", ht("/Action/MoveNode"));
+        setHelpId(ht("/Action/MoveNode"));
     }
 
     @Override

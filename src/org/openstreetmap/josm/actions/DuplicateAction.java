@@ -26,7 +26,7 @@ public final class DuplicateAction extends AbstractPasteAction {
         super(tr("Duplicate"), "duplicate",
                 tr("Duplicate selection."),
                 Shortcut.registerShortcut("system:duplicate", tr("Edit: {0}", tr("Duplicate")), KeyEvent.VK_D, Shortcut.CTRL), true);
-        putValue("help", ht("/Action/Duplicate"));
+        setHelpId(ht("/Action/Duplicate"));
     }
 
     @Override

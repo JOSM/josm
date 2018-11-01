@@ -22,7 +22,7 @@ public class UnselectAllAction extends JosmAction {
             Shortcut.registerShortcut("edit:unselectall", tr("Edit: {0}",
             tr("Unselect All")), KeyEvent.VK_ESCAPE, Shortcut.DIRECT), true);
 
-        putValue("help", ht("/Action/UnselectAll"));
+        setHelpId(ht("/Action/UnselectAll"));
     }
 
     @Override

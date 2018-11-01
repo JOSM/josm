@@ -70,7 +70,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     public AddImageryLayerAction(ImageryInfo info) {
         super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}", info.getName()), null,
                 true, ToolbarPreferences.IMAGERY_PREFIX + info.getToolbarName(), false);
-        putValue("help", ht("/Preferences/Imagery"));
+        setHelpId(ht("/Preferences/Imagery"));
         setTooltip(info.getToolTipText().replaceAll("</?html>", ""));
         this.info = info;
         installAdapters();

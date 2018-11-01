@@ -27,7 +27,7 @@ public class ViewportFollowToggleAction extends ToggleAction {
               KeyEvent.VK_F, Shortcut.CTRL_SHIFT),
               true /* register shortcut */
         );
-        putValue("help", ht("/Action/ViewportFollowing"));
+        setHelpId(ht("/Action/ViewportFollowing"));
         setSelected(false);
         notifySelectedState();
     }

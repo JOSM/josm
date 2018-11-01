@@ -86,7 +86,7 @@ public class MoveAction extends JosmAction {
                 tr("Moves Objects {0}", calltosupermustbefirststatementinconstructortext(dir)),
                 calltosupermustbefirststatementinconstructor(dir), false);
         myDirection = dir;
-        putValue("help", ht("/Action/Move"));
+        setHelpId(ht("/Action/Move"));
         if (dir == Direction.UP) {
             putValue("toolbar", "action/move/up");
         } else if (dir == Direction.DOWN) {

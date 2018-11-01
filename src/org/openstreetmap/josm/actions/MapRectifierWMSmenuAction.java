@@ -88,7 +88,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                         KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
                 true
         );
-        putValue("help", ht("/Menu/Imagery"));
+        setHelpId(ht("/Menu/Imagery"));
 
         // Add default services
         services.add(

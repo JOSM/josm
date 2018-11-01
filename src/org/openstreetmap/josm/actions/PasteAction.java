@@ -22,7 +22,7 @@ public final class PasteAction extends AbstractPasteAction {
     public PasteAction() {
         super(tr("Paste"), "paste", tr("Paste contents of clipboard."),
                 Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.CTRL), true);
-        putValue("help", ht("/Action/Paste"));
+        setHelpId(ht("/Action/Paste"));
         // CUA shortcut for paste (https://en.wikipedia.org/wiki/IBM_Common_User_Access#Description)
         MainApplication.registerActionShortcut(this,
                 Shortcut.registerShortcut("system:paste:cua", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_INSERT, Shortcut.SHIFT));

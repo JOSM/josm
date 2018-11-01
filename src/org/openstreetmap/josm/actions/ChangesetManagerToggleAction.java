@@ -34,7 +34,7 @@ public class ChangesetManagerToggleAction extends ToggleAction {
         );
         notifySelectedState();
         changesetCacheManagerClosedHandler = new ChangesetCacheManagerClosedHandler();
-        putValue("help", ht("/Dialog/ChangesetManager"));
+        setHelpId(ht("/Dialog/ChangesetManager"));
     }
 
     @Override

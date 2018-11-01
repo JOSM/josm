@@ -49,7 +49,7 @@ public class SimplifyWayAction extends JosmAction {
     public SimplifyWayAction() {
         super(tr("Simplify Way"), "simplify", tr("Delete unnecessary nodes from a way."),
                 Shortcut.registerShortcut("tools:simplify", tr("Tool: {0}", tr("Simplify Way")), KeyEvent.VK_Y, Shortcut.SHIFT), true);
-        putValue("help", ht("/Action/SimplifyWay"));
+        setHelpId(ht("/Action/SimplifyWay"));
     }
 
     protected boolean confirmWayWithNodesOutsideBoundingBox(List<? extends OsmPrimitive> primitives) {

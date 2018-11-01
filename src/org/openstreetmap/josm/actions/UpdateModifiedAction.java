@@ -31,7 +31,7 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
                         tr("File: {0}", tr("Update modified")), KeyEvent.VK_M,
                         Shortcut.ALT_CTRL),
                         true, "updatemodified");
-        putValue("help", ht("/Action/UpdateModified"));
+        setHelpId(ht("/Action/UpdateModified"));
     }
 
     // FIXME: overrides the behaviour of UpdateSelectionAction. Doesn't update

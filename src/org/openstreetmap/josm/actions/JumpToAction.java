@@ -50,7 +50,7 @@ public class JumpToAction extends JosmAction {
         super(tr("Jump to Position"), (ImageProvider) null, tr("Opens a dialog that allows to jump to a specific location"),
                 Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump to Position")),
                         KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", true);
-        putValue("help", ht("/Action/JumpToPosition"));
+        setHelpId(ht("/Action/JumpToPosition"));
     }
 
     static class JumpToPositionDialog extends ExtendedDialog {

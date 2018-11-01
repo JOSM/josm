@@ -106,7 +106,7 @@ public final class ReverseWayAction extends JosmAction {
     public ReverseWayAction() {
         super(tr("Reverse Ways"), "wayflip", tr("Reverse the direction of all selected ways."),
                 Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse Ways")), KeyEvent.VK_R, Shortcut.DIRECT), true);
-        putValue("help", ht("/Action/ReverseWays"));
+        setHelpId(ht("/Action/ReverseWays"));
     }
 
     @Override

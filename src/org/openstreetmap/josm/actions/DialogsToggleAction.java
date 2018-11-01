@@ -34,7 +34,7 @@ public class DialogsToggleAction extends ToggleAction {
               true, "dialogspanel", /* register in toolbar */
               false
         );
-        putValue("help", ht("/ToggleDialogs"));
+        setHelpId(ht("/ToggleDialogs"));
         setSelected(Config.getPref().getBoolean("draw.dialogspanel", true));
         notifySelectedState();
     }

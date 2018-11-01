@@ -1412,7 +1412,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         SnapChangeAction() {
             super(tr("Angle snapping"), /* ICON() */ "anglesnap",
                     tr("Switch angle snapping mode while drawing"), null, false);
-            putValue("help", ht("/Action/Draw/AngleSnap"));
+            setHelpId(ht("/Action/Draw/AngleSnap"));
         }
 
         @Override

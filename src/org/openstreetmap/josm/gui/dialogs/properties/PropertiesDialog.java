@@ -248,8 +248,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                 Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Tags/Memberships")), KeyEvent.VK_P,
                         Shortcut.ALT_SHIFT), 150, true);
 
-        HelpUtil.setHelpContext(this, HelpUtil.ht("/Dialog/TagsMembership"));
-
         setupTagsMenu();
         buildTagsTable();
 
@@ -298,6 +296,11 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         editHelper.loadTagsIfNeeded();
 
         Config.getPref().addKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
+    }
+
+    @Override
+    public String helpTopic() {
+        return HelpUtil.ht("/Dialog/TagsMembership");
     }
 
     private void buildTagsTable() {
