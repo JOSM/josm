@@ -267,6 +267,11 @@ public final class PluginHandler {
     static final Collection<PluginProxy> pluginList = new LinkedList<>();
 
     /**
+     * All installed but not loaded plugins
+     */
+    static final Collection<PluginInformation> pluginListNotLoaded = new LinkedList<>();
+
+    /**
      * All exceptions that occurred during plugin loading
      */
     static final Map<String, Throwable> pluginLoadingExceptions = new HashMap<>();
@@ -673,6 +678,9 @@ public final class PluginHandler {
             allPlugins.add(proxy.getPluginInformation());
         }
 
+        // Include plugins that have been processed but not been loaded (for javafx plugin)
+        allPlugins.addAll(pluginListNotLoaded);
+
         return checkRequiredPluginsPreconditions(parent, allPlugins, plugin, true);
     }
 
@@ -682,7 +690,7 @@ public final class PluginHandler {
      *
      * @param parent The parent Component used to display error popup. If parent is
      * null, the error popup is suppressed
-     * @param plugins the collection of all loaded plugins
+     * @param plugins the collection of all processed plugins
      * @param plugin the plugin for which preconditions are checked
      * @param local Determines if the local or up-to-date plugin dependencies are to be checked.
      * @return true, if the preconditions are met; false otherwise
@@ -814,6 +822,8 @@ public final class PluginHandler {
             for (PluginInformation pi: plugins) {
                 if (checkLoadPreconditions(parent, plugins, pi)) {
                     toLoad.add(pi);
+                } else {
+                    pluginListNotLoaded.add(pi);
                 }
             }
             // sort the plugins according to their "staging" equivalence class. The
