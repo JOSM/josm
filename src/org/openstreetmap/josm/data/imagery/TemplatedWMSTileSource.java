@@ -50,6 +50,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
         PATTERN_HEADER, PATTERN_PROJ, PATTERN_WKID, PATTERN_BBOX, PATTERN_W, PATTERN_S, PATTERN_E, PATTERN_N, PATTERN_WIDTH, PATTERN_HEIGHT
     };
 
+    private final boolean switchLatLon;
     /**
      * Creates a tile source based on imagery info
      * @param info imagery info
@@ -61,6 +62,31 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
         this.headers.putAll(info.getCustomHttpHeaders());
         handleTemplate();
         initProjection();
+        // Bounding box coordinates have to be switched for WMS 1.3.0 EPSG:4326.
+        //
+        // Background:
+        //
+        // bbox=x_min,y_min,x_max,y_max
+        //
+        //      SRS=... is WMS 1.1.1
+        //      CRS=... is WMS 1.3.0
+        //
+        // The difference:
+        //      For SRS x is east-west and y is north-south
+        //      For CRS x and y are as specified by the EPSG
+        //          E.g. [1] lists lat as first coordinate axis and lot as second, so it is switched for EPSG:4326.
+        //          For most other EPSG code there seems to be no difference.
+        // CHECKSTYLE.OFF: LineLength
+        // [1] https://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
+        // CHECKSTYLE.ON: LineLength
+        if (baseUrl.toLowerCase(Locale.US).contains("crs=epsg:4326")) {
+            switchLatLon = true;
+        } else if (baseUrl.toLowerCase(Locale.US).contains("crs=")) {
+            // assume WMS 1.3.0
+            switchLatLon = ProjectionRegistry.getProjection().switchXY();
+        } else {
+            switchLatLon = false;
+        }
     }
 
     @Override
@@ -85,32 +111,6 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
             myProjCode = "CRS:84";
         }
 
-        // Bounding box coordinates have to be switched for WMS 1.3.0 EPSG:4326.
-        //
-        // Background:
-        //
-        // bbox=x_min,y_min,x_max,y_max
-        //
-        //      SRS=... is WMS 1.1.1
-        //      CRS=... is WMS 1.3.0
-        //
-        // The difference:
-        //      For SRS x is east-west and y is north-south
-        //      For CRS x and y are as specified by the EPSG
-        //          E.g. [1] lists lat as first coordinate axis and lot as second, so it is switched for EPSG:4326.
-        //          For most other EPSG code there seems to be no difference.
-        // CHECKSTYLE.OFF: LineLength
-        // [1] https://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
-        // CHECKSTYLE.ON: LineLength
-        boolean switchLatLon = false;
-        if (baseUrl.toLowerCase(Locale.US).contains("crs=epsg:4326")) {
-            switchLatLon = true;
-        } else if (baseUrl.toLowerCase(Locale.US).contains("crs=")) {
-            // assume WMS 1.3.0
-            switchLatLon = ProjectionRegistry.getProjection().switchXY();
-        }
-        String bbox = getBbox(zoom, tilex, tiley, switchLatLon);
-
         // Using StringBuffer and generic PATTERN_PARAM matcher gives 2x performance improvement over replaceAll
         StringBuffer url = new StringBuffer(baseUrl.length());
         Matcher matcher = PATTERN_PARAM.matcher(baseUrl);
@@ -124,7 +124,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
                 replacement = myProjCode.startsWith("EPSG:") ? myProjCode.substring(5) : myProjCode;
                 break;
             case "bbox":
-                replacement = bbox;
+                replacement = getBbox(zoom, tilex, tiley, switchLatLon);
                 break;
             case "w":
                 replacement = LATLON_FORMAT.format(w);

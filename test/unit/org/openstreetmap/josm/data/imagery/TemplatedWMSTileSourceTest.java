@@ -151,6 +151,47 @@ public class TemplatedWMSTileSourceTest {
         verifyLocation(source, new LatLon(60, 18.1));
     }
 
+    /**
+     * Test getTileUrl
+     */
+    @Test
+    public void testGetTileUrl() {
+        // "https://maps.six.nsw.gov.au/arcgis/services/public/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE",
+        Projection projection = Projections.getProjectionByCode("EPSG:4326");
+        ProjectionRegistry.setProjection(projection);
+        ImageryInfo testImageryWMS = new ImageryInfo("test imagery",
+                "https://maps.six.nsw.gov.au/arcgis/services/public/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&"
+                + "REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&"
+                + "MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE",
+                "wms",
+                null,
+                null);
+        TemplatedWMSTileSource ts = new TemplatedWMSTileSource(testImageryWMS, projection);
+        assertEquals("https://maps.six.nsw.gov.au/arcgis/services/public/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&"
+                + "VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&BBOX=-1349.9999381,539.9999691,-989.9999536,899.9999536&WIDTH=512&"
+                + "HEIGHT=512&LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE",
+                ts.getTileUrl(1, 2, 3));
+        assertEquals("https://maps.six.nsw.gov.au/arcgis/services/public/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&"
+                + "VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&BBOX=-89.9999923,-0.0000077,0.0000039,89.9999884&WIDTH=512&HEIGHT=512&"
+                + "LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE",
+                ts.getTileUrl(3, 2, 1));
+        testImageryWMS = new ImageryInfo("test imagery",
+                "https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Transport/MapServer/WMSServer?LAYERS=8&"
+                + "TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS={proj}&BBOX={bbox}&"
+                + "WIDTH={width}&HEIGHT={height}",
+                "wms",
+                null,
+                null);
+        ts = new TemplatedWMSTileSource(testImageryWMS, projection);
+        assertEquals("https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Transport/MapServer/WMSServer?LAYERS=8&"
+                + "TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS=EPSG:4326&"
+                + "BBOX=539.9999691,-1349.9999381,899.9999536,-989.9999536&WIDTH=512&HEIGHT=512",
+                ts.getTileUrl(1, 2, 3));
+        assertEquals("https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Transport/MapServer/WMSServer?LAYERS=8&"
+                + "TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS=EPSG:4326&"
+                + "BBOX=-0.0000077,-89.9999923,89.9999884,0.0000039&WIDTH=512&HEIGHT=512", ts.getTileUrl(3, 2, 1));
+    }
+
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = getTileLatLon(source, x, y, z);

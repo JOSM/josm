@@ -225,14 +225,20 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
         double s = se.getY();
         double e = se.getX();
 
-        return (
-                switchLatLon ?
-                        String.format("%s,%s,%s,%s",
-                                LATLON_FORMAT.format(s), LATLON_FORMAT.format(w), LATLON_FORMAT.format(n), LATLON_FORMAT.format(e))
-                        :
-                        String.format("%s,%s,%s,%s",
-                                LATLON_FORMAT.format(w), LATLON_FORMAT.format(s), LATLON_FORMAT.format(e), LATLON_FORMAT.format(n))
+        return switchLatLon ?
+                getBboxstr(s, w, n, e)
+                : getBboxstr(w, s, e, n);
+    }
 
-                );
+    private final String getBboxstr(double x1, double x2, double x3, double x4) {
+        return new StringBuilder(64)
+                .append(LATLON_FORMAT.format(x1))
+                .append(',')
+                .append(LATLON_FORMAT.format(x2))
+                .append(',')
+                .append(LATLON_FORMAT.format(x3))
+                .append(',')
+                .append(LATLON_FORMAT.format(x4))
+                .toString();
     }
 }
