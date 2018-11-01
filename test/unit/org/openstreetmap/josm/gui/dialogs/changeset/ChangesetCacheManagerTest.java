@@ -2,12 +2,18 @@
 package org.openstreetmap.josm.gui.dialogs.changeset;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.awt.GraphicsEnvironment;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.CancelAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.ChangesetDetailViewSynchronizer;
@@ -18,7 +24,13 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.Downlo
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.QueryAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.RemoveFromCacheAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.ShowDetailAction;
+import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.WindowMocker;
+
+import mockit.Invocation;
+import mockit.Mock;
+import mockit.MockUp;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -130,7 +142,44 @@ public class ChangesetCacheManagerTest {
      */
     @Test
     public void testQueryAction() {
+        TestUtils.assumeWorkingJMockit();
+
+        // set up mockers to simulate the dialog being cancelled
+        final boolean[] dialogShown = new boolean[] {false};
+        if (GraphicsEnvironment.isHeadless()) {
+            new WindowMocker();
+        }
+        new MockUp<JDialog>() {
+            @Mock
+            void setVisible(final Invocation invocation, final boolean visible) throws Exception {
+                if (visible) {
+                    ((JButton) TestUtils.getComponentByName((JDialog) invocation.getInvokedInstance(), "cancelButton")).doClick();
+                    dialogShown[0] = true;
+                }
+                // critically, don't proceed into implementation
+            }
+        };
+        new MockUp<ChangesetQueryDialog>() {
+            @Mock
+            void setVisible(final Invocation invocation, final boolean visible) throws Exception {
+                if (GraphicsEnvironment.isHeadless()) {
+                    // we have to mock the behaviour quite coarsely as much of ChangesetQueryDialog will
+                    // raise a HeadlessException
+                    if (visible) {
+                        TestUtils.setPrivateField(ChangesetQueryDialog.class, invocation.getInvokedInstance(), "canceled", true);
+                        dialogShown[0] = true;
+                    }
+                } else {
+                    // proceeding into the implementation allows a bit more of the target code to be
+                    // covered, actual mocking is performed on JDialog's setVisible()
+                    invocation.proceed(visible);
+                }
+            }
+        };
+
         new QueryAction().actionPerformed(null);
+
+        assertTrue(dialogShown[0]);
     }
 
     /**
