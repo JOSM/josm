@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.openstreetmap.josm</id>
+  <id>org.openstreetmap.josm-latest</id>
   <metadata_license>CC-BY-SA-3.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <developer_name>JOSM developers</developer_name>
@@ -21,7 +21,7 @@
     <category>Maps</category>
   </categories>
   <content_rating/>
-  <launchable type="desktop-id">josm.desktop</launchable>
+  <launchable type="desktop-id">org.openstreetmap.josm-latest.desktop</launchable>
   <screenshots>
     <screenshot type="default" width="1024" height="576">https://josm.openstreetmap.de/svn/trunk/linux/josm-screenshot.png</screenshot>
   </screenshots>
