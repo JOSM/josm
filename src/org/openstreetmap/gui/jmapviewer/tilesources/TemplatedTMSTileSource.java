@@ -33,19 +33,22 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
     private Random rand;
     private String[] randomParts;
     private final Map<String, String> headers = new HashMap<>();
+    private boolean inverse_zoom = false;
+    private int zoom_offset = 0;
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     private static final String COOKIE_HEADER   = "Cookie";
-    private static final String PATTERN_ZOOM    = "\\{(?:(\\d+)-)?z(?:oom)?([+-]\\d+)?\\}";
-    private static final String PATTERN_X       = "\\{x\\}";
-    private static final String PATTERN_Y       = "\\{y\\}";
-    private static final String PATTERN_Y_YAHOO = "\\{!y\\}";
-    private static final String PATTERN_NEG_Y   = "\\{-y\\}";
-    private static final String PATTERN_SWITCH  = "\\{switch:([^}]+)\\}";
-    private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
+    private static final Pattern PATTERN_ZOOM    = Pattern.compile("\\{(?:(\\d+)-)?z(?:oom)?([+-]\\d+)?\\}");
+    private static final Pattern PATTERN_X       = Pattern.compile("\\{x\\}");
+    private static final Pattern PATTERN_Y       = Pattern.compile("\\{y\\}");
+    private static final Pattern PATTERN_Y_YAHOO = Pattern.compile("\\{!y\\}");
+    private static final Pattern PATTERN_NEG_Y   = Pattern.compile("\\{-y\\}");
+    private static final Pattern PATTERN_SWITCH  = Pattern.compile("\\{switch:([^}]+)\\}");
+    private static final Pattern PATTERN_HEADER  = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
+    private static final Pattern PATTERN_PARAM  = Pattern.compile("\\{((?:\\d+-)?z(?:oom)?(:?[+-]\\d+)?|x|y|!y|-y|switch:([^}]+))\\}");
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
-    private static final String[] ALL_PATTERNS = {
+    private static final Pattern[] ALL_PATTERNS = {
         PATTERN_HEADER, PATTERN_ZOOM, PATTERN_X, PATTERN_Y, PATTERN_Y_YAHOO, PATTERN_NEG_Y, PATTERN_SWITCH
     };
 
@@ -64,20 +67,33 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
 
     private void handleTemplate() {
         // Capturing group pattern on switch values
-        Matcher m = Pattern.compile(".*"+PATTERN_SWITCH+".*").matcher(baseUrl);
-        if (m.matches()) {
+        Matcher m = PATTERN_SWITCH.matcher(baseUrl);
+        if (m.find()) {
             rand = new Random();
             randomParts = m.group(1).split(",");
         }
-        Pattern pattern = Pattern.compile(PATTERN_HEADER);
         StringBuffer output = new StringBuffer();
-        Matcher matcher = pattern.matcher(baseUrl);
+        Matcher matcher = PATTERN_HEADER.matcher(baseUrl);
         while (matcher.find()) {
             headers.put(matcher.group(1), matcher.group(2));
             matcher.appendReplacement(output, "");
         }
         matcher.appendTail(output);
         baseUrl = output.toString();
+        m = PATTERN_ZOOM.matcher(this.baseUrl);
+        if (m.find()) {
+            if (m.group(1) != null) {
+                inverse_zoom = true;
+                zoom_offset = Integer.parseInt(m.group(1));
+            }
+            if (m.group(2) != null) {
+                String ofs = m.group(2);
+                if (ofs.startsWith("+"))
+                    ofs = ofs.substring(1);
+                zoom_offset += Integer.parseInt(ofs);
+            }
+        }
+
     }
 
     @Override
@@ -87,29 +103,44 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
 
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) {
-        int finalZoom = zoom;
-        Matcher m = Pattern.compile(".*"+PATTERN_ZOOM+".*").matcher(this.baseUrl);
-        if (m.matches()) {
-            if (m.group(1) != null) {
-                finalZoom = Integer.parseInt(m.group(1))-zoom;
+        StringBuffer url = new StringBuffer(baseUrl.length());
+        Matcher matcher = PATTERN_PARAM.matcher(baseUrl);
+        while (matcher.find()) {
+            String replacement = "replace";
+            switch (matcher.group(1)) {
+            case "z": // PATTERN_ZOOM
+            case "zoom":
+                replacement = Integer.toString((inverse_zoom ? -1 * zoom : zoom) + zoom_offset);
+                break;
+            case "x": // PATTERN_X
+                replacement = Integer.toString(tilex);
+                break;
+            case "y": // PATTERN_Y
+                replacement = Integer.toString(tiley);
+                break;
+            case "!y": // PATTERN_Y_YAHOO
+                replacement = Integer.toString((int) Math.pow(2, zoom-1)-1-tiley);
+                break;
+            case "-y": // PATTERN_NEG_Y
+                replacement = Integer.toString((int) Math.pow(2, zoom)-1-tiley);
+                break;
+            case "switch:":
+                replacement = randomParts[rand.nextInt(randomParts.length)];
+                break;
+            default:
+                // handle switch/zoom here, as group will contain parameters and switch will not work
+                if (PATTERN_ZOOM.matcher("{" + matcher.group(1) + "}").matches()) {
+                    replacement = Integer.toString((inverse_zoom ? -1 * zoom : zoom) + zoom_offset);
+                } else if (PATTERN_SWITCH.matcher("{" + matcher.group(1) + "}").matches()) {
+                    replacement = randomParts[rand.nextInt(randomParts.length)];
+                } else {
+                    replacement = '{' + matcher.group(1) + '}';
+                }
             }
-            if (m.group(2) != null) {
-                String ofs = m.group(2);
-                if (ofs.startsWith("+"))
-                    ofs = ofs.substring(1);
-                finalZoom += Integer.parseInt(ofs);
-            }
+            matcher.appendReplacement(url, replacement);
         }
-        String r = this.baseUrl
-            .replaceAll(PATTERN_ZOOM, Integer.toString(finalZoom))
-            .replaceAll(PATTERN_X, Integer.toString(tilex))
-            .replaceAll(PATTERN_Y, Integer.toString(tiley))
-            .replaceAll(PATTERN_Y_YAHOO, Integer.toString((int) Math.pow(2, zoom-1)-1-tiley))
-            .replaceAll(PATTERN_NEG_Y, Integer.toString((int) Math.pow(2, zoom)-1-tiley));
-        if (rand != null) {
-            r = r.replaceAll(PATTERN_SWITCH, randomParts[rand.nextInt(randomParts.length)]);
-        }
-        return r;
+        matcher.appendTail(url);
+        return url.toString().replace(" ", "%20");
     }
 
     /**
@@ -121,8 +152,8 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
         Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
         while (m.find()) {
             boolean isSupportedPattern = false;
-            for (String pattern : ALL_PATTERNS) {
-                if (m.group().matches(pattern)) {
+            for (Pattern pattern : ALL_PATTERNS) {
+                if (pattern.matcher(m.group()).matches()) {
                     isSupportedPattern = true;
                     break;
                 }
