@@ -230,7 +230,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
                 : getBboxstr(w, s, e, n);
     }
 
-    private final String getBboxstr(double x1, double x2, double x3, double x4) {
+    private String getBboxstr(double x1, double x2, double x3, double x4) {
         return new StringBuilder(64)
                 .append(LATLON_FORMAT.format(x1))
                 .append(',')

@@ -1297,43 +1297,32 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate,
             boolean useSelected, Collection<OsmPrimitive> preferredRefs) {
         WaySegment wayseg = null;
-        WaySegment ntsel = null;
-        WaySegment ntref = null;
         if (preferredRefs != null && preferredRefs.isEmpty())
             preferredRefs = null;
 
-        searchLoop: for (List<WaySegment> wslist : getNearestWaySegmentsImpl(p, predicate).values()) {
+        for (List<WaySegment> wslist : getNearestWaySegmentsImpl(p, predicate).values()) {
             for (WaySegment ws : wslist) {
                 if (wayseg == null) {
                     wayseg = ws;
                 }
-                if (ntsel == null && ws.way.isSelected()) {
-                    ntsel = ws;
-                    break searchLoop;
+                if (useSelected && ws.way.isSelected()) {
+                    return ws;
                 }
-                if (ntref == null && preferredRefs != null) {
+                if (preferredRefs != null && !preferredRefs.isEmpty()) {
                     // prefer ways containing given nodes
-                    for (Node nd: ws.way.getNodes()) {
-                        if (preferredRefs.contains(nd)) {
-                            ntref = ws;
-                            break searchLoop;
-                        }
+                    if (preferredRefs.contains(ws.getFirstNode()) || preferredRefs.contains(ws.getSecondNode())) {
+                        return ws;
                     }
                     Collection<OsmPrimitive> wayRefs = ws.way.getReferrers();
                     // prefer member of the given relations
                     for (OsmPrimitive ref: preferredRefs) {
                         if (ref instanceof Relation && wayRefs.contains(ref)) {
-                            ntref = ws;
-                            break searchLoop;
+                            return ws;
                         }
                     }
                 }
             }
         }
-        if (ntsel != null && useSelected)
-            return ntsel;
-        if (ntref != null)
-            return ntref;
         return wayseg;
     }
 
