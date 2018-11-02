@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.Pair;
  * Tests if there are overlapping ways.
  *
  * @author frsantos
+ * @since 3669
  */
 public class OverlappingWays extends Test {
 
@@ -46,7 +47,6 @@ public class OverlappingWays extends Test {
     protected static final int OVERLAPPING_HIGHWAY_AREA = 111;
     protected static final int OVERLAPPING_RAILWAY_AREA = 112;
     protected static final int OVERLAPPING_WAY_AREA = 113;
-    protected static final int OVERLAPPING_AREA = 120;
     protected static final int DUPLICATE_WAY_SEGMENT = 121;
 
     protected static final ListProperty IGNORED_KEYS = new ListProperty(
@@ -118,8 +118,7 @@ public class OverlappingWays extends Test {
 
                     if (area > 0) {
                         if (ways == 0 || duplicated.size() == area) {
-                            errortype = tr("Areas share segment");
-                            type = OVERLAPPING_AREA;
+                            continue; // We previously issued an annoying "Areas share segment" warning
                         } else if (highway == ways) {
                             errortype = tr("Highways share segment with area");
                             type = OVERLAPPING_HIGHWAY_AREA;
