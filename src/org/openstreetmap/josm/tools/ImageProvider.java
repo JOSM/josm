@@ -1165,8 +1165,14 @@ public class ImageProvider {
             synchronized (getSvgUniverse()) {
                 try {
                     URI uri = getSvgUniverse().loadSVG(path);
+                    if (uri == null && "jar".equals(path.getProtocol())) {
+                        URL betterPath = Utils.betterJarUrl(path);
+                        if (betterPath != null) {
+                            uri = getSvgUniverse().loadSVG(betterPath);
+                        }
+                    }
                     svg = getSvgUniverse().getDiagram(uri);
-                } catch (SecurityException e) {
+                } catch (SecurityException | IOException e) {
                     Logging.log(Logging.LEVEL_WARN, "Unable to read SVG", e);
                 }
             }

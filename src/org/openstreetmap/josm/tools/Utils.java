@@ -1845,25 +1845,11 @@ public final class Utils {
             case "jar":
                 try {
                     return url.openStream();
-                } catch (FileNotFoundException e) {
-                    // Workaround to https://bugs.openjdk.java.net/browse/JDK-4523159
-                    String urlPath = url.getPath();
-                    if (urlPath.startsWith("file:/") && urlPath.split("!").length > 2) {
+                } catch (FileNotFoundException | InvalidPathException e) {
+                    URL betterUrl = betterJarUrl(url);
+                    if (betterUrl != null) {
                         try {
-                            // Locate jar file
-                            int index = urlPath.lastIndexOf("!/");
-                            Path jarFile = Paths.get(urlPath.substring("file:/".length(), index));
-                            Path filename = jarFile.getFileName();
-                            FileTime jarTime = Files.readAttributes(jarFile, BasicFileAttributes.class).lastModifiedTime();
-                            // Copy it to temp directory (hopefully free of exclamation mark) if needed (missing or older jar)
-                            Path jarCopy = Paths.get(getSystemProperty("java.io.tmpdir")).resolve(filename);
-                            if (!jarCopy.toFile().exists() ||
-                                    Files.readAttributes(jarCopy, BasicFileAttributes.class).lastModifiedTime().compareTo(jarTime) < 0) {
-                                Files.copy(jarFile, jarCopy, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-                            }
-                            // Open the stream using the copy
-                            return new URL(url.getProtocol() + ':' + jarCopy.toUri().toURL().toExternalForm() + urlPath.substring(index))
-                                    .openStream();
+                            return betterUrl.openStream();
                         } catch (RuntimeException | IOException ex) {
                             Logging.warn(ex);
                         }
@@ -1874,5 +1860,33 @@ public final class Utils {
             default:
                 return url.openStream();
         }
+    }
+
+    /**
+     * Tries to build a better JAR URL if we find it concerned by a JDK bug.
+     * @param jarUrl jar URL to test
+     * @return potentially a better URL that won't provoke a JDK bug, or null
+     * @throws IOException if an I/O error occurs
+     * @since 14404
+     */
+    public static URL betterJarUrl(URL jarUrl) throws IOException {
+        // Workaround to https://bugs.openjdk.java.net/browse/JDK-4523159
+        String urlPath = jarUrl.getPath().replace("%20", " ");
+        if (urlPath.startsWith("file:/") && urlPath.split("!").length > 2) {
+            // Locate jar file
+            int index = urlPath.lastIndexOf("!/");
+            Path jarFile = Paths.get(urlPath.substring("file:/".length(), index));
+            Path filename = jarFile.getFileName();
+            FileTime jarTime = Files.readAttributes(jarFile, BasicFileAttributes.class).lastModifiedTime();
+            // Copy it to temp directory (hopefully free of exclamation mark) if needed (missing or older jar)
+            Path jarCopy = Paths.get(getSystemProperty("java.io.tmpdir")).resolve(filename);
+            if (!jarCopy.toFile().exists() ||
+                    Files.readAttributes(jarCopy, BasicFileAttributes.class).lastModifiedTime().compareTo(jarTime) < 0) {
+                Files.copy(jarFile, jarCopy, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+            }
+            // Return URL using the copy
+            return new URL(jarUrl.getProtocol() + ':' + jarCopy.toUri().toURL().toExternalForm() + urlPath.substring(index));
+        }
+        return null;
     }
 }
