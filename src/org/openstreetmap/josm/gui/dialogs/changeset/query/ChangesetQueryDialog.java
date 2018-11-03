@@ -72,8 +72,12 @@ public class ChangesetQueryDialog extends JDialog {
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        pnl.add(new JButton(new QueryAction()));
-        pnl.add(new JButton(new CancelAction()));
+        final JButton queryButton = new JButton(new QueryAction());
+        queryButton.setName("queryButton");
+        pnl.add(queryButton);
+        final JButton cancelButton = new JButton(new CancelAction());
+        cancelButton.setName("cancelButton");
+        pnl.add(cancelButton);
         pnl.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/ChangesetQuery"))));
 
         return pnl;

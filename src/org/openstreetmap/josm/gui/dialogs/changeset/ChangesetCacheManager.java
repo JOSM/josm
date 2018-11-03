@@ -392,22 +392,20 @@ public class ChangesetCacheManager extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             Window parent = GuiHelper.getWindowAncestorFor(evt);
-            if (!GraphicsEnvironment.isHeadless()) {
-                ChangesetQueryDialog dialog = new ChangesetQueryDialog(parent);
-                dialog.initForUserInput();
-                dialog.setVisible(true);
-                if (dialog.isCanceled())
-                    return;
+            ChangesetQueryDialog dialog = new ChangesetQueryDialog(parent);
+            dialog.initForUserInput();
+            dialog.setVisible(true);
+            if (dialog.isCanceled())
+                return;
 
-                try {
-                    ChangesetQuery query = dialog.getChangesetQuery();
-                    if (query != null) {
-                        ChangesetCacheManager.getInstance().runDownloadTask(new ChangesetQueryTask(parent, query));
-                    }
-                } catch (IllegalStateException e) {
-                    Logging.error(e);
-                    JOptionPane.showMessageDialog(parent, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
+            try {
+                ChangesetQuery query = dialog.getChangesetQuery();
+                if (query != null) {
+                    ChangesetCacheManager.getInstance().runDownloadTask(new ChangesetQueryTask(parent, query));
                 }
+            } catch (IllegalStateException e) {
+                Logging.error(e);
+                JOptionPane.showMessageDialog(parent, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }

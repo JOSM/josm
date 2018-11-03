@@ -203,6 +203,43 @@ public final class TestUtils {
     }
 
     /**
+     * Sets a private field value.
+     * @param obj object
+     * @param fieldName private field name
+     * @param value replacement value
+     * @throws ReflectiveOperationException if a reflection operation error occurs
+     */
+    public static void setPrivateField(
+        final Object obj,
+        final String fieldName,
+        final Object value
+    ) throws ReflectiveOperationException {
+        setPrivateField(obj.getClass(), obj, fieldName, value);
+    }
+
+    /**
+     * Sets a private field value.
+     * @param cls object class
+     * @param obj object
+     * @param fieldName private field name
+     * @param value replacement value
+     * @throws ReflectiveOperationException if a reflection operation error occurs
+     */
+    public static void setPrivateField(
+        final Class<?> cls,
+        final Object obj,
+        final String fieldName,
+        final Object value
+    ) throws ReflectiveOperationException {
+        Field f = cls.getDeclaredField(fieldName);
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            f.setAccessible(true);
+            return null;
+        });
+        f.set(obj, value);
+    }
+
+    /**
      * Returns a private static field value.
      * @param cls object class
      * @param fieldName private field name
