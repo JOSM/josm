@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
@@ -141,9 +142,15 @@ public class ChangesetCacheManagerTest {
      */
     @Test
     public void testDownloadSelectedChangesetContentAction() {
+        if (GraphicsEnvironment.isHeadless()) {
+            TestUtils.assumeWorkingJMockit();
+            // to allow us to construct a JDialog
+            new WindowMocker();
+        }
+
         DownloadSelectedChangesetContentAction action = new DownloadSelectedChangesetContentAction(ChangesetCacheManager.buildModel());
         action.valueChanged(null);
-        action.actionPerformed(null);
+        action.actionPerformed(new ActionEvent(new JDialog().getComponent(0), ActionEvent.ACTION_PERFORMED, "foo"));
     }
 
     /**
@@ -151,9 +158,15 @@ public class ChangesetCacheManagerTest {
      */
     @Test
     public void testDownloadSelectedChangesetsAction() {
+        if (GraphicsEnvironment.isHeadless()) {
+            TestUtils.assumeWorkingJMockit();
+            // to allow us to construct a JDialog
+            new WindowMocker();
+        }
+
         DownloadSelectedChangesetsAction action = new DownloadSelectedChangesetsAction(ChangesetCacheManager.buildModel());
         action.valueChanged(null);
-        action.actionPerformed(null);
+        action.actionPerformed(new ActionEvent(new JDialog().getComponent(0), ActionEvent.ACTION_PERFORMED, "foo"));
     }
 
     /**
