@@ -36,7 +36,7 @@ sub handle_start
       my $main = `wget "$data{href}" -O - -q`;
       my $h = uri_unescape($data{href});
       my $v = "href=\"$h\"";
-      while($main =~ /<a href="(\/wiki\/[^"]+)"[^>]+><b>·<\/b> <bdi lang="([a-z_A-Z-]+)"(?: style="unicode-bidi:embed;unicode-bidi:-webkit-isolate;unicode-bidi:isolate")?>/g)
+      while($main =~ /<a href="(\/wiki\/[^"]+)"[^>]+>• <bdi lang="([a-z_A-Z-]+)"(?: style="unicode-bidi:embed;unicode-bidi:-webkit-isolate;unicode-bidi:isolate")?>/g)
       {
         my $lang = lc($2);
         my $val = uri_unescape($1);
