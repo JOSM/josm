@@ -137,6 +137,16 @@ public final class I18n {
         languages.put("zh_TW", PluralMode.MODE_NONE);
     }
 
+    private static String format(String text, Object... objects) {
+        try {
+            return MessageFormat.format(text, objects);
+        } catch (InvalidPathException e) {
+            System.err.println("!!! Unable to format '" + text + "': " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Translates some text for the current locale.
      * These strings are collected by a script that runs on the source code files.
@@ -161,7 +171,7 @@ public final class I18n {
      */
     public static String tr(String text, Object... objects) {
         if (text == null) return null;
-        return MessageFormat.format(gettext(text, null), objects);
+        return format(gettext(text, null), objects);
     }
 
     /**
@@ -181,7 +191,7 @@ public final class I18n {
             return tr(text);
         if (text == null)
             return null;
-        return MessageFormat.format(gettext(text, context), (Object) null);
+        return format(gettext(text, context), (Object) null);
     }
 
     public static String trcLazy(String context, String text) {
@@ -189,7 +199,7 @@ public final class I18n {
             return tr(text);
         if (text == null)
             return null;
-        return MessageFormat.format(gettextLazy(text, context), (Object) null);
+        return format(gettextLazy(text, context), (Object) null);
     }
 
     /**
@@ -234,7 +244,7 @@ public final class I18n {
      * @see #trnc
      */
     public static String trn(String singularText, String pluralText, long n, Object... objects) {
-        return MessageFormat.format(gettextn(singularText, pluralText, null, n), objects);
+        return format(gettextn(singularText, pluralText, null, n), objects);
     }
 
     /**
@@ -261,7 +271,7 @@ public final class I18n {
      * @see #trn
      */
     public static String trnc(String context, String singularText, String pluralText, long n, Object... objects) {
-        return MessageFormat.format(gettextn(singularText, pluralText, context, n), objects);
+        return format(gettextn(singularText, pluralText, context, n), objects);
     }
 
     private static String gettext(String text, String ctx, boolean lazy) {
@@ -347,19 +357,28 @@ public final class I18n {
         return languages.containsKey(code);
     }
 
-    static void setupJavaLocaleProviders() {
+    static String setupJavaLocaleProviders() {
         // Look up SPI providers first (for JosmDecimalFormatSymbolsProvider).
         // Enable CLDR locale provider on Java 8 to get additional languages, such as Khmer.
         // http://docs.oracle.com/javase/8/docs/technotes/guides/intl/enhancements.8.html#cldr
         // FIXME: This must be updated after we switch to Java 9.
         // See https://docs.oracle.com/javase/9/docs/api/java/util/spi/LocaleServiceProvider.html
         try {
-            // Don't call Utils.updateSystemProperty to avoid spurious log at startup
-            System.setProperty("java.locale.providers", "SPI,JRE,CLDR");
+            try {
+                // First check we're able to open a stream to our own SPI file
+                // Java will fail on Windows if the jar file is in a folder with a space character!
+                I18n.class.getResourceAsStream("/META-INF/services/java.text.spi.DecimalFormatSymbolsProvider").close();
+                // Don't call Utils.updateSystemProperty to avoid spurious log at startup
+                return System.setProperty("java.locale.providers", "SPI,JRE,CLDR");
+            } catch (RuntimeException | IOException e) {
+                // Don't call Logging class, it may not be fully initialized yet
+                System.err.println("Unable to set SPI locale provider: " + e.getMessage());
+            }
         } catch (SecurityException e) {
             // Don't call Logging class, it may not be fully initialized yet
             System.err.println("Unable to set locale providers: " + e.getMessage());
         }
+        return System.setProperty("java.locale.providers", "JRE,CLDR");
     }
 
     /**

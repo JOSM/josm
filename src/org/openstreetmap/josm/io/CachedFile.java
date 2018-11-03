@@ -226,7 +226,13 @@ public class CachedFile implements Closeable {
         if (file == null) {
             if (name != null && name.startsWith("resource://")) {
                 String resourceName = name.substring("resource:/".length());
-                InputStream is = getClass().getResourceAsStream(resourceName);
+                InputStream is = null;
+                try {
+                    is = getClass().getResourceAsStream(resourceName);
+                } catch (InvalidPathException e) {
+                    Logging.error("Cannot open {0}: {1}", resourceName, e.getMessage());
+                    Logging.trace(e);
+                }
                 if (is == null) {
                     URL resource = getClass().getResource(resourceName);
                     if (resource != null) {

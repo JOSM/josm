@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
@@ -1164,7 +1165,13 @@ public class ImageProvider {
             SVGDiagram svg = null;
             synchronized (getSvgUniverse()) {
                 try {
-                    URI uri = getSvgUniverse().loadSVG(path);
+                    URI uri = null;
+                    try {
+                        uri = getSvgUniverse().loadSVG(path);
+                    } catch (InvalidPathException e) {
+                        Logging.error("Cannot open {0}: {1}", path, e.getMessage());
+                        Logging.trace(e);
+                    }
                     if (uri == null && "jar".equals(path.getProtocol())) {
                         URL betterPath = Utils.betterJarUrl(path);
                         if (betterPath != null) {
