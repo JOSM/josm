@@ -265,22 +265,32 @@ public class MultipolygonTest extends Test {
         if (wayMap.isEmpty())
             return;
 
-        Set<Node> sharedNodes = findIntersectionNodes(r);
+        Set<Node> sharedNodes = new HashSet<>();
+        Set<Way> intersectionWays = new HashSet<>();
+        findIntersectionNodes(r, sharedNodes, intersectionWays);
+
         List<PolyData> innerPolygons = polygon.getInnerPolygons();
         List<PolyData> outerPolygons = polygon.getOuterPolygons();
         List<PolyData> allPolygons = new ArrayList<>();
         allPolygons.addAll(outerPolygons);
         allPolygons.addAll(innerPolygons);
+
         Map<PolyData, List<PolyData>> crossingPolyMap = findIntersectingWays(r, innerPolygons, outerPolygons);
 
         if (!sharedNodes.isEmpty()) {
             for (int i = 0; i < allPolygons.size(); i++) {
                 PolyData pd1 = allPolygons.get(i);
                 checkPolygonForSelfIntersection(r, pd1);
+                // check if this ring has a way that is known to intersect with another way
+
+                if (!hasIntersectionWay(pd1, intersectionWays))
+                    continue;
+
                 for (int j = i + 1; j < allPolygons.size(); j++) {
                     PolyData pd2 = allPolygons.get(j);
                     if (!checkProblemMap(crossingPolyMap, pd1, pd2)) {
-                        checkPolygonsForSharedNodes(r, pd1, pd2, sharedNodes);
+                        if (hasIntersectionWay(pd2, intersectionWays))
+                            checkPolygonsForSharedNodes(r, pd1, pd2, sharedNodes);
                     }
                 }
             }
@@ -297,6 +307,21 @@ public class MultipolygonTest extends Test {
             // now we can calculate the nesting level to verify the roles with some simple node checks
             checkRoles(r, allPolygons, wayMap, sharedNodes);
         }
+    }
+
+    /**
+     * Simple check if given ring contains way that is known to intersect.
+     * @param pd the ring
+     * @param intersectionWays the known intersection ways
+     * @return true if one or more ways are in the set of known ways
+     */
+    private boolean hasIntersectionWay(PolyData pd, Set<Way> intersectionWays) {
+        for (Way w : intersectionWays) {
+            if (pd.getWayIds().contains(w.getUniqueId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -339,10 +364,10 @@ public class MultipolygonTest extends Test {
      * Detect intersections of multipolygon ways at nodes. If any way node is used by more than two ways
      * or two times in one way and at least once in another way we found an intersection.
      * @param r the relation
-     * @return List of nodes were ways intersect
+     * @param sharedNodes We be filled with shared nodes
+     * @param intersectionWays We be filled with ways that have a shared node
      */
-    private static Set<Node> findIntersectionNodes(Relation r) {
-        Set<Node> intersectionNodes = new HashSet<>();
+    private static void findIntersectionNodes(Relation r, Set<Node> sharedNodes, Set<Way> intersectionWays) {
         Map<Node, List<Way>> nodeMap = new HashMap<>();
         for (RelationMember rm : r.getMembers()) {
             if (!rm.isWay())
@@ -360,11 +385,11 @@ public class MultipolygonTest extends Test {
                 }
                 ways.add(rm.getWay());
                 if (ways.size() > 2 || (ways.size() == 2 && i != 0 && i + 1 != numNodes)) {
-                    intersectionNodes.add(n);
+                    sharedNodes.add(n);
+                    intersectionWays.addAll(ways);
                 }
             }
         }
-        return intersectionNodes;
     }
 
     private enum ExtPolygonIntersection {
