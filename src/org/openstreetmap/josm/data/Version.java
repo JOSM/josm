@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.InvalidPathException;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
@@ -104,7 +106,7 @@ public class Version {
      * Initializes version info
      */
     public void init() {
-        try (InputStream stream = Version.class.getResourceAsStream("/REVISION")) {
+        try (InputStream stream = openRevisionStream("/REVISION")) {
             if (stream == null) {
                 Logging.warn(tr("The revision file ''/REVISION'' is missing."));
                 version = 0;
@@ -114,6 +116,19 @@ public class Version {
             initFromRevisionInfo(stream);
         } catch (IOException e) {
             Logging.warn(e);
+        }
+    }
+
+    private static InputStream openRevisionStream(String path) throws IOException {
+        try {
+            return Version.class.getResourceAsStream(path);
+        } catch (InvalidPathException e) {
+            Logging.error("Cannot open {0}: {1}", path, e.getMessage());
+            URL betterUrl = Utils.betterJarUrl(Version.class.getResource(path));
+            if (betterUrl != null) {
+                return betterUrl.openStream();
+            }
+            return null;
         }
     }
 
