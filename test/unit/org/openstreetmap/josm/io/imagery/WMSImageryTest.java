@@ -117,7 +117,18 @@ public class WMSImageryTest {
 
         assertEquals("bag:Matching Street", wms.getLayers().get(0).getChildren().get(0).getName());
         assertEquals("Dichtstbijzijnde straat", wms.getLayers().get(0).getChildren().get(0).getTitle());
+    }
 
+    @Test
+    public void testForTitleWithinAttribution_ticket16940() throws IOException, WMSGetCapabilitiesException {
+        tileServer.stubFor(
+                WireMock.get(WireMock.anyUrl())
+                .willReturn(WireMock.aResponse().withBody(
+                        Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16940, "capabilities.xml")))
+                ))
+        );
+        WMSImagery wms = new WMSImagery(tileServer.url("any"));
+        assertEquals("Hipsográfico", wms.getLayers().stream().findFirst().get().getTitle());
     }
 }
 
