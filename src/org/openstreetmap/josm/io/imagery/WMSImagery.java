@@ -460,29 +460,21 @@ public class WMSImagery {
             if (event == XMLStreamReader.START_ELEMENT) {
                 if (tagEquals(QN_NAME, reader.getName())) {
                     ret.setName(reader.getElementText());
-                }
-                if (tagEquals(QN_ABSTRACT, reader.getName())) {
+                } else if (tagEquals(QN_ABSTRACT, reader.getName())) {
                     ret.setAbstract(GetCapabilitiesParseHelper.getElementTextWithSubtags(reader));
-                }
-                if (tagEquals(QN_TITLE, reader.getName())) {
+                } else if (tagEquals(QN_TITLE, reader.getName())) {
                     ret.setTitle(reader.getElementText());
-                }
-                if (tagEquals(QN_CRS, reader.getName())) {
+                } else if (tagEquals(QN_CRS, reader.getName())) {
                     ret.addCrs(reader.getElementText());
-                }
-                if (tagEquals(QN_SRS, reader.getName()) && belowWMS130()) {
+                } else if (tagEquals(QN_SRS, reader.getName()) && belowWMS130()) {
                     ret.addCrs(reader.getElementText());
-                }
-                if (tagEquals(QN_STYLE, reader.getName())) {
+                } else if (tagEquals(QN_STYLE, reader.getName())) {
                     parseAndAddStyle(reader, ret);
-                }
-                if (tagEquals(QN_LAYER, reader.getName())) {
+                } else if (tagEquals(QN_LAYER, reader.getName())) {
                     parseLayer(reader, ret);
-                }
-                if (tagEquals(QN_EX_GEOGRAPHIC_BBOX, reader.getName()) && ret.getBounds() == null) {
+                } else if (tagEquals(QN_EX_GEOGRAPHIC_BBOX, reader.getName()) && ret.getBounds() == null) {
                     ret.setBounds(parseExGeographic(reader));
-                }
-                if (tagEquals(QN_BOUNDINGBOX, reader.getName())) {
+                } else if (tagEquals(QN_BOUNDINGBOX, reader.getName())) {
                     Projection conv;
                     if (belowWMS130()) {
                         conv = Projections.getProjectionByCode(reader.getAttributeValue(WMS_NS_URL, "SRS"));
@@ -492,9 +484,11 @@ public class WMSImagery {
                     if (ret.getBounds() == null && conv != null) {
                         ret.setBounds(parseBoundingBox(reader, conv));
                     }
-                }
-                if (tagEquals(QN_LATLONBOUNDINGBOX, reader.getName()) && belowWMS130() && ret.getBounds() == null) {
+                } else if (tagEquals(QN_LATLONBOUNDINGBOX, reader.getName()) && belowWMS130() && ret.getBounds() == null) {
                     ret.setBounds(parseBoundingBox(reader, null));
+                } else {
+                    // unknown tag, move to its end as it may have child elements
+                    GetCapabilitiesParseHelper.moveReaderToEndCurrentTag(reader);
                 }
             }
         }
