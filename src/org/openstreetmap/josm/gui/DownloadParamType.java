@@ -123,14 +123,12 @@ public enum DownloadParamType {
      * @return the download task, or {@code null}
      */
     public List<Future<?>> downloadGps(String param) {
-        if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(
-                    MainApplication.getMainFrame(),
-                    tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-        }
+        JOptionPane.showMessageDialog(
+                MainApplication.getMainFrame(),
+                tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE
+        );
         return Collections.emptyList();
     }
 

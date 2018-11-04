@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import java.awt.GraphicsEnvironment;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -43,9 +45,13 @@ import org.openstreetmap.josm.plugins.PluginListParseException;
 import org.openstreetmap.josm.plugins.PluginListParser;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
+import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
+
+import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -164,6 +170,16 @@ public class MainApplicationTest {
      */
     @Test
     public void testUpdateAndLoadPlugins() throws PluginListParseException {
+        TestUtils.assumeWorkingJMockit();
+        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
+            ImmutableMap.<String, Object>of(
+                "<html>JOSM could not find information about the following plugins:<ul>"
+                + "<li>buildings_tools</li><li>plastic_laf</li></ul>The plugins are not "
+                + "going to be loaded.</html>",
+                "OK"
+            )
+        );
+
         final String old = System.getProperty("josm.plugins");
         try {
             System.setProperty("josm.plugins", "buildings_tools,plastic_laf");
@@ -188,6 +204,14 @@ public class MainApplicationTest {
             } else {
                 System.clearProperty("josm.plugins");
             }
+        }
+
+        // TODO remove following headless check once similar check removed from HelpAwareOptionPane
+        if (!GraphicsEnvironment.isHeadless()) {
+            assertEquals(1, haMocker.getInvocationLog().size());
+            Object[] invocationLogEntry = haMocker.getInvocationLog().get(0);
+            assertEquals(0, (int) invocationLogEntry[0]);
+            assertEquals("Warning", invocationLogEntry[2]);
         }
     }
 
@@ -267,9 +291,21 @@ public class MainApplicationTest {
      */
     @Test
     public void testPostConstructorProcessCmdLineFileUrl() throws MalformedURLException {
+        TestUtils.assumeWorkingJMockit();
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
+            ImmutableMap.<String, Object>of(
+                "Parameter \"downloadgps\" does not accept file names or file URLs", JOptionPane.OK_OPTION
+            )
+        );
+
         doTestPostConstructorProcessCmdLine(
                 Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toUri().toURL().toExternalForm(),
                 Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toUri().toURL().toExternalForm(), false);
+
+        assertEquals(1, jopsMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
+        assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
+        assertEquals("Warning", invocationLogEntry[2]);
     }
 
     /**
@@ -278,9 +314,21 @@ public class MainApplicationTest {
      */
     @Test
     public void testPostConstructorProcessCmdLineFilename() throws MalformedURLException {
+        TestUtils.assumeWorkingJMockit();
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
+            ImmutableMap.<String, Object>of(
+                "Parameter \"downloadgps\" does not accept file names or file URLs", JOptionPane.OK_OPTION
+            )
+        );
+
         doTestPostConstructorProcessCmdLine(
                 Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toFile().getAbsolutePath(),
                 Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toFile().getAbsolutePath(), false);
+
+        assertEquals(1, jopsMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
+        assertEquals(JOptionPane.OK_OPTION, (int) invocationLogEntry[0]);
+        assertEquals("Warning", invocationLogEntry[2]);
     }
 
     /**
