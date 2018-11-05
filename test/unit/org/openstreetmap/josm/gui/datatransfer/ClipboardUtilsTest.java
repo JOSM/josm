@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.datatransfer.Clipboard;
@@ -117,7 +118,7 @@ public class ClipboardUtilsTest {
      */
     @Test
     public void testSystemSelectionDoesNotFail() {
-        assertTrue(GraphicsEnvironment.isHeadless());
+        assumeTrue(GraphicsEnvironment.isHeadless());
         assertNull(ClipboardUtils.getSystemSelection());
     }
 

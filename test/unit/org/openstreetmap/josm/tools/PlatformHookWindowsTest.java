@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assert.fail;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
@@ -19,9 +20,13 @@ import java.util.Collection;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlTest;
 import org.openstreetmap.josm.spi.preferences.Config;
+
+import mockit.Expectations;
+import mockit.Injectable;
 
 /**
  * Unit tests of {@link PlatformHookWindows} class.
@@ -116,21 +121,49 @@ public class PlatformHookWindowsTest {
     }
 
     /**
-     * Test method for {@code PlatformHookWindows#openUrl}
+     * Test method for {@code PlatformHookWindows#openUrl} when Desktop works as expected
+     * @param mockDesktop desktop mock
      * @throws IOException if an error occurs
      */
     @Test
-    public void testOpenUrl() throws IOException {
-        if (PlatformManager.isPlatformWindows()) {
-            hook.openUrl(Config.getUrls().getJOSMWebsite());
-        } else {
-            try {
-                hook.openUrl(Config.getUrls().getJOSMWebsite());
-                fail("Expected IOException");
-            } catch (IOException e) {
-                Logging.info(e.getMessage());
-            }
-        }
+    public void testOpenUrlSuccess(@Injectable final Desktop mockDesktop) throws IOException {
+        TestUtils.assumeWorkingJMockit();
+        new Expectations(Desktop.class) {{
+            // real implementation would raise HeadlessException
+            Desktop.getDesktop(); result = mockDesktop; times = 1;
+        }};
+        new Expectations() {{
+            mockDesktop.browse(withNotNull()); times = 1;
+        }};
+
+        hook.openUrl(Config.getUrls().getJOSMWebsite());
+    }
+
+    /**
+     * Test method for {@code PlatformHookWindows#openUrl} when Desktop fails
+     * @param mockDesktop desktop mock
+     * @throws IOException if an error occurs
+     */
+    @Test
+    public void testOpenUrlFallback(@Injectable final Desktop mockDesktop) throws IOException {
+        TestUtils.assumeWorkingJMockit();
+        new Expectations(Desktop.class) {{
+            // real implementation would raise HeadlessException
+            Desktop.getDesktop(); result = mockDesktop; times = 1;
+        }};
+        new Expectations() {{
+            mockDesktop.browse(withNotNull()); result = new IOException(); times = 1;
+        }};
+        final Runtime anyRuntime = Runtime.getRuntime();
+        new Expectations(Runtime.class) {{
+            anyRuntime.exec(new String[] {"rundll32", "url.dll,FileProtocolHandler", Config.getUrls().getJOSMWebsite()});
+            result = null;
+            times = 1;
+            // prevent a non-matching invocation being executed
+            anyRuntime.exec((String[]) withNotNull()); result = null; times = 0;
+        }};
+
+        hook.openUrl(Config.getUrls().getJOSMWebsite());
     }
 
     /**
