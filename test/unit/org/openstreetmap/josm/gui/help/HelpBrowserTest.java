@@ -12,10 +12,14 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
+import org.openstreetmap.josm.tools.PlatformHook;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import mockit.Expectations;
+import mockit.Injectable;
 
 /**
  * Unit tests of {@link HelpBrowser} class.
@@ -90,19 +94,62 @@ public class HelpBrowserTest {
     }
 
     /**
-     * Unit test of {@link HelpBrowser.EditAction} class.
+     * Unit test of {@link HelpBrowser.EditAction} class handling a null url.
+     * @param mockPlatformHook platform hook mock
+     * @throws Exception  in case of error
      */
     @Test
-    public void testEditAction() {
+    public void testEditActionNull(@Injectable final PlatformHook mockPlatformHook) throws Exception {
         TestUtils.assumeWorkingJMockit();
+        new Expectations(PlatformManager.class) {{
+            PlatformManager.getPlatform(); result = mockPlatformHook; minTimes = 0;
+        }};
+        new Expectations() {{
+            // should not be called
+            mockPlatformHook.openUrl((String) any); times = 0;
+        }};
+
         IHelpBrowser browser = newHelpBrowser();
         assertNull(browser.getUrl());
         new HelpBrowser.EditAction(browser).actionPerformed(null);
+    }
 
+    /**
+     * Unit test of {@link HelpBrowser.EditAction} class handling an "internal" url.
+     * @param mockPlatformHook platform hook mock
+     * @throws Exception  in case of error
+     */
+    @Test
+    public void testEditActionInternal(@Injectable final PlatformHook mockPlatformHook) throws Exception {
+        TestUtils.assumeWorkingJMockit();
+        new Expectations(PlatformManager.class) {{
+            PlatformManager.getPlatform(); result = mockPlatformHook;
+        }};
+        new Expectations() {{
+            mockPlatformHook.openUrl(URL_2 + "?action=edit"); result = null; times = 1;
+        }};
+
+        IHelpBrowser browser = newHelpBrowser();
         browser.openUrl(URL_2);
         assertEquals(URL_2, browser.getUrl());
         new HelpBrowser.EditAction(browser).actionPerformed(null);
+    }
 
+    /**
+     * Unit test of {@link HelpBrowser.EditAction} class handling an "external" url.
+     * @param mockPlatformHook platform hook mock
+     * @throws Exception  in case of error
+     */
+    @Test
+    public void testEditActionExternal(@Injectable final PlatformHook mockPlatformHook) throws Exception {
+        TestUtils.assumeWorkingJMockit();
+        new Expectations(PlatformManager.class) {{
+            PlatformManager.getPlatform(); result = mockPlatformHook; minTimes = 0;
+        }};
+        new Expectations() {{
+            // should not be called
+            mockPlatformHook.openUrl((String) any); times = 0;
+        }};
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
             ImmutableMap.<String, Object>of(
                 "<html>The current URL <tt>https://josm.openstreetmap.de/javadoc</tt><br>is an external "
@@ -112,6 +159,7 @@ public class HelpBrowserTest {
             )
         );
 
+        IHelpBrowser browser = newHelpBrowser();
         browser.openUrl(URL_3);
         assertEquals(URL_3, browser.getUrl());
         new HelpBrowser.EditAction(browser).actionPerformed(null);
@@ -124,9 +172,19 @@ public class HelpBrowserTest {
 
     /**
      * Unit test of {@link HelpBrowser.OpenInBrowserAction} class.
+     * @param mockPlatformHook platform hook mock
+     * @throws Exception  in case of error
      */
     @Test
-    public void testOpenInBrowserAction() {
+    public void testOpenInBrowserAction(@Injectable final PlatformHook mockPlatformHook) throws Exception {
+        TestUtils.assumeWorkingJMockit();
+        new Expectations(PlatformManager.class) {{
+            PlatformManager.getPlatform(); result = mockPlatformHook;
+        }};
+        new Expectations() {{
+            mockPlatformHook.openUrl(URL_1); result = null; times = 1;
+        }};
+
         IHelpBrowser browser = newHelpBrowser();
         browser.openUrl(URL_1);
         assertEquals(URL_1, browser.getUrl());
