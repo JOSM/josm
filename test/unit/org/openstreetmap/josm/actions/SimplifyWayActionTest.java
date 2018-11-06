@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.GraphicsEnvironment;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -21,7 +23,10 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.tools.Utils;
+
+import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -38,7 +43,7 @@ public final class SimplifyWayActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Setup test.
@@ -102,6 +107,14 @@ public final class SimplifyWayActionTest {
      */
     @Test
     public void testMoreThanTenWays() {
+        TestUtils.assumeWorkingJMockit();
+        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
+            ImmutableMap.<String, Object>of(
+                "The selection contains 11 ways. Are you sure you want to simplify them all?",
+                "Yes"
+            )
+        );
+
         DataSet ds = new DataSet();
         for (int i = 0; i < 11; i++) {
             createWaySelected(ds, i);
@@ -113,6 +126,14 @@ public final class SimplifyWayActionTest {
             action.actionPerformed(null);
         } finally {
             MainApplication.getLayerManager().removeLayer(layer);
+        }
+
+        // TODO remove following headless check once similar check removed from HelpAwareOptionPane
+        if (!GraphicsEnvironment.isHeadless()) {
+            assertEquals(1, haMocker.getInvocationLog().size());
+            Object[] invocationLogEntry = haMocker.getInvocationLog().get(0);
+            assertEquals(0, (int) invocationLogEntry[0]);
+            assertEquals("Simplify ways?", invocationLogEntry[2]);
         }
     }
 
