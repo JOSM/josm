@@ -3396,10 +3396,11 @@
                     <check key="fuel:e10" text="E10 (10% Ethanol mix)" />
                     <check key="fuel:e85" text="E85 (85% Ethanol mix)" />
                     <check key="fuel:ethanol" text="Ethanol (alcohol)" />
-                    <check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" />
-                    <check key="fuel:cng" text="CNG (Compressed Natural Gas)" />
                     <check key="fuel:1_25" text="1/25 mix (mofa/moped)" />
                     <check key="fuel:1_50" text="1/50 mix (mofa/moped)" />
+                    <check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" />
+                    <check key="fuel:cng" text="CNG (Compressed Natural Gas)" />
+                    <check key="fuel:biogas" text="Biogas" />
                 </checkgroup>
                 <space />
                 <label text="Additives:" />
