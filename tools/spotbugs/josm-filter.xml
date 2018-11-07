@@ -51,9 +51,6 @@
         <Class name="~com.*" />
     </Match>
     <Match>
-        <Class name="~gnu.getopt.*" />
-    </Match>
-    <Match>
         <Class name="~javax.json.*" />
     </Match>
     <Match>

@@ -203,9 +203,6 @@ There are some third party libraries which are directly included in the source c
 * Signpost: OAuth library
     src/oauth, src/com/google
     -> https://github.com/mttkay/signpost
-* GNU getopt Java port: Command line argument processing library
-    src/gnu/getopt
-    -> https://github.com/arenn/java-getopt
 * MultiSplitPane: Small lib for GUI layout management
     src/org/openstreetmap/josm/gui/MultiSplitLayout.java, MultiSplitPane.java
     -> https://github.com/floscher/multi-split
