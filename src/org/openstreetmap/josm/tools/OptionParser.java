@@ -260,7 +260,7 @@ public class OptionParser {
         }
     }
 
-    protected abstract class AvailableOption {
+    protected abstract static class AvailableOption {
 
         public boolean requiresParameter() {
             return false;
