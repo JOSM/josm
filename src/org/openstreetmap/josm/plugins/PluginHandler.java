@@ -143,7 +143,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("walkingpapers", tr("replaced by new {0} plugin", "fieldpapers")),
             new DeprecatedPlugin("czechaddress", tr("no longer required")),
             new DeprecatedPlugin("kendzi3d_Improved_by_Andrei", tr("no longer required")),
-            new DeprecatedPlugin("videomapping", tr("no longer required"))
+            new DeprecatedPlugin("videomapping", tr("no longer required")),
+            new DeprecatedPlugin("public_transport_layer", tr("replaced by new {0} plugin", "pt_assistant"))
         );
     }
 
