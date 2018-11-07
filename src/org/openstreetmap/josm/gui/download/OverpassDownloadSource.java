@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -163,6 +164,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
                 .map(this::generateWizardButton)
                 .forEach(button -> leftPanel.add(button, GBC.eol().anchor(GBC.CENTER)));
             leftPanel.add(new JLabel(), GBC.eol().fill(GBC.VERTICAL));
+            leftPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
             add(leftPanel, BorderLayout.WEST);
             add(innerPanel, BorderLayout.CENTER);
@@ -284,7 +286,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
 
         @Override
         public DownloadSourceSizingPolicy getSizingPolicy() {
-            return new AdjustableDownloadSizePolicy(PANEL_SIZE_PROPERTY);
+            return new AdjustableDownloadSizePolicy(PANEL_SIZE_PROPERTY, () -> 50);
         }
 
         /**

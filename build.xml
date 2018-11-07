@@ -273,7 +273,7 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile-cots" depends="init">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/tukaani/**,gnu/**" nowarn="on" encoding="iso-8859-1"
+        <javac srcdir="${src.dir}" includes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/tukaani/**" nowarn="on" encoding="iso-8859-1"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
@@ -328,7 +328,7 @@ Build-Date: ${build.tstamp}
     <target name="compile-jmapviewer" depends="init">
         <!-- JMapViewer -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
-            excludes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**,org/tukaani/**,gnu/**"
+            excludes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**,org/tukaani/**"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-J-Xbootclasspath/p:${error_prone_javac.jar}" unless:set="isJava9"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
@@ -354,7 +354,7 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc,compile-cots,compile-jmapviewer">
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
-            excludes="com/**,javax/**,gnu/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**,org/tukaani/**"
+            excludes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**,org/tukaani/**"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-J-Xbootclasspath/p:${error_prone_javac.jar}" unless:set="isJava9"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
@@ -1006,7 +1006,7 @@ Build-Date: ${build.tstamp}
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-spi.jar" includes="org/openstreetmap/josm/spi/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-tools.jar" includes="org/openstreetmap/josm/tools/**/*.class"/>
         <exec executable="jdeps" dir="${modules.dir}">
-            <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.*|gnu.*|oauth.*|org.apache.*|org.glassfish.*|org.jdesktop.*|org.openstreetmap.gui.*'"/>
+            <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.*|oauth.*|org.apache.*|org.glassfish.*|org.jdesktop.*|org.openstreetmap.gui.*'"/>
             <arg line="-dotoutput dots *.jar"/>
         </exec>
         <exec executable="dot" dir="${modules.dir}/dots">
@@ -1016,7 +1016,6 @@ Build-Date: ${build.tstamp}
         <!-- Direct dependencies -->
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/metadata-extractor.jar" includes="com/drew/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/svgSalamander.jar" includes="com/kitfox/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/gnu-getopt.jar" includes="gnu/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/javax-json.jar" includes="javax/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/oauth-signpost.jar" includes="oauth/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-compress.jar" includes="org/apache/commons/compress/**/*.class"/>

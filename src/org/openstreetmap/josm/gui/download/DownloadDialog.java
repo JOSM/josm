@@ -10,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -654,10 +656,28 @@ public class DownloadDialog extends JDialog {
     private static class DownloadDialogSplitPane extends JSplitPane {
         private DownloadSourceSizingPolicy policy;
         private final JTabbedPane topComponent;
+        /**
+         * If the height was explicitly set by the user.
+         */
+        private boolean heightAdjustedExplicitly;
 
         DownloadDialogSplitPane(JTabbedPane newTopComponent, Component newBottomComponent) {
             super(VERTICAL_SPLIT, newTopComponent, newBottomComponent);
             this.topComponent = newTopComponent;
+
+            addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    // doLayout is called automatically when the component size decreases
+                    // This seems to be the only way to call doLayout when the component size increases
+                    // We need this since we sometimes want to increase the top component size.
+                    revalidate();
+                }
+            });
+
+            addPropertyChangeListener(DIVIDER_LOCATION_PROPERTY, e -> {
+                heightAdjustedExplicitly = true;
+            });
         }
 
         public void setPolicy(DownloadSourceSizingPolicy policy) {
@@ -673,11 +693,16 @@ public class DownloadDialog extends JDialog {
             // We need to force this height before the layout manager is run.
             // We cannot do this in the setDividerLocation, since the offset cannot be computed there.
             int offset = computeOffset();
-            if (policy.isHeightAdjustable()) {
+            if (policy.isHeightAdjustable() && heightAdjustedExplicitly) {
                 policy.storeHeight(Math.max(getDividerLocation() - offset, 0));
             }
-            super.setDividerLocation(policy.getComponentHeight() + offset);
+            // At least 30 pixel for map, if we have enough space
+            int maxValidDividerLocation = getHeight() > 150 ? getHeight() - 40 : getHeight();
+
+            super.setDividerLocation(Math.min(policy.getComponentHeight() + offset, maxValidDividerLocation));
             super.doLayout();
+            // Order is important (set this after setDividerLocation/doLayout called the listener)
+            this.heightAdjustedExplicitly = false;
         }
 
         /**

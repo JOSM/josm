@@ -10,7 +10,6 @@
   <filter name="DerivedFiles" enabled="true"/>
   <filter name="FilesFromPackage" enabled="true">
     <filter-data value="src/com"/>
-    <filter-data value="src/gnu"/>
     <filter-data value="src/javax"/>
     <filter-data value="src/oauth"/>
     <filter-data value="src/org/apache"/>
