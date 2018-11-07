@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -18,11 +19,8 @@ import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
-import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.Utils;
-
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
 
 /**
  * Command line interface for projecting coordinates.
@@ -43,37 +41,23 @@ public class ProjectionCLI implements CLIModule {
 
     @Override
     public void processArguments(String[] argArray) {
-        Getopt.setI18nHandler(I18n::tr);
-        Getopt getopt = new Getopt("JOSM projection", argArray, "Irh", new LongOpt[] {
-                new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h')});
-
-        int c;
-        while ((c = getopt.getopt()) != -1) {
-            switch (c) {
-            case 'h':
-                showHelp();
-                System.exit(0);
-            case 'I':
-                argInverse = true;
-                break;
-            case 'r':
-                argSwitchInput = true;
-                break;
-            case 's':
-                argSwitchOutput = true;
-                break;
-            default:
-                // ignore
-            }
-        }
+        List<String> positionalArguments = new OptionParser("JOSM projection")
+            .addFlagParameter("help", this::showHelp)
+            .addShortAlias("help", "h")
+            .addFlagParameter("inverse", () -> argInverse = true)
+            .addShortAlias("inverse", "I")
+            .addFlagParameter("switch-input", () -> argSwitchInput = true)
+            .addShortAlias("switch-input", "r")
+            .addFlagParameter("switch-output", () -> argSwitchOutput = true)
+            .addShortAlias("switch-output", "s")
+            .parseOptionsOrExit(Arrays.asList(argArray));
 
         List<String> projParamFrom = new ArrayList<>();
         List<String> projParamTo = new ArrayList<>();
         List<String> otherPositional = new ArrayList<>();
         boolean toTokenSeen = false;
         // positional arguments:
-        for (int i = getopt.getOptind(); i < argArray.length; ++i) {
-            String arg = argArray[i];
+        for (String arg: positionalArguments) {
             if (arg.isEmpty()) throw new IllegalArgumentException("non-empty argument expected");
             if (arg.startsWith("+")) {
                 if ("+to".equals(arg)) {
@@ -99,8 +83,9 @@ public class ProjectionCLI implements CLIModule {
     /**
      * Displays help on the console
      */
-    public static void showHelp() {
+    private void showHelp() {
         System.out.println(getHelp());
+        System.exit(0);
     }
 
     private static String getHelp() {

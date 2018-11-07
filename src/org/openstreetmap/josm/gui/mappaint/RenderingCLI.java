@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -37,13 +38,12 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.MemoryPreferences;
-import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.OptionParser;
+import org.openstreetmap.josm.tools.OptionParser.OptionCount;
+import org.openstreetmap.josm.tools.OptionParser.OptionParseException;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
-
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
 
 /**
  * Command line interface for rendering osm data to an image file.
@@ -75,6 +75,8 @@ public class RenderingCLI implements CLIModule {
     private Integer argHeightPx;
     private String argProjection;
     private Integer argMaxImageSize;
+
+    private StyleData argCurrentStyle;
 
     private enum Option {
         HELP(false, 'h'),
@@ -127,10 +129,6 @@ public class RenderingCLI implements CLIModule {
          */
         public char getShortOption() {
             return shortOption;
-        }
-
-        LongOpt toLongOpt() {
-            return new LongOpt(getName(), requiresArgument() ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, getShortOption());
         }
     }
 
@@ -187,169 +185,181 @@ public class RenderingCLI implements CLIModule {
      * @param argArray the arguments array
      */
     void parseArguments(String[] argArray) {
-        Getopt.setI18nHandler(I18n::tr);
         Logging.setLogLevel(Level.INFO);
 
-        LongOpt[] opts = new LongOpt[Option.values().length];
-        StringBuilder optString = new StringBuilder();
+        OptionParser parser = new OptionParser("JOSM rendering");
         for (Option o : Option.values()) {
-            opts[o.ordinal()] = o.toLongOpt();
+            if (o.requiresArgument()) {
+                parser.addArgumentParameter(o.getName(),
+                        o == Option.SETTING ? OptionCount.MULTIPLE : OptionCount.OPTIONAL,
+                        arg -> handleOption(o, arg));
+            } else {
+                parser.addFlagParameter(o.getName(), () -> handleOption(o));
+            }
             if (o.getShortOption() != '*') {
-                optString.append(o.getShortOption());
-                if (o.requiresArgument()) {
-                    optString.append(':');
-                }
+                parser.addShortAlias(o.getName(), o.getShortOption() + "");
             }
         }
 
-        Getopt getopt = new Getopt("JOSM rendering", argArray, optString.toString(), opts);
-
-        StyleData currentStyle = new StyleData();
+        argCurrentStyle = new StyleData();
         argStyles = new ArrayList<>();
 
-        int c;
-        while ((c = getopt.getopt()) != -1) {
-            switch (c) {
-            case 'h':
-                showHelp();
-                System.exit(0);
-            case 'i':
-                argInput = getopt.getOptarg();
-                break;
-            case 's':
-                if (currentStyle.styleUrl != null) {
-                    argStyles.add(currentStyle);
-                    currentStyle = new StyleData();
-                }
-                currentStyle.styleUrl = getopt.getOptarg();
-                break;
-            case 'o':
-                argOutput = getopt.getOptarg();
-                break;
-            case 'z':
-                try {
-                    argZoom = Integer.valueOf(getopt.getOptarg());
-                } catch (NumberFormatException nfe) {
-                    throw new IllegalArgumentException(
-                            tr("Expected integer number for option {0}, but got ''{1}''", "--zoom", getopt.getOptarg()), nfe);
-                }
-                if (argZoom < 0)
-                    throw new IllegalArgumentException(
-                            tr("Expected integer number >= 0 for option {0}, but got ''{1}''", "--zoom", getopt.getOptarg()));
-                break;
-            case 'b':
-                if (!"auto".equals(getopt.getOptarg())) {
-                    try {
-                        argBounds = new Bounds(getopt.getOptarg(), ",", Bounds.ParseMethod.LEFT_BOTTOM_RIGHT_TOP, false);
-                    } catch (IllegalArgumentException iae) { // NOPMD
-                        throw new IllegalArgumentException(tr("Unable to parse {0} parameter: {1}", "--bounds", iae.getMessage()), iae);
-                    }
-                }
-                break;
-            case '*':
-                switch (Option.values()[getopt.getLongind()]) {
-                case DEBUG:
-                    argDebug = true;
-                    break;
-                case TRACE:
-                    argTrace = true;
-                    break;
-                case SETTING:
-                    String keyval = getopt.getOptarg();
-                    String[] comp = keyval.split(":");
-                    if (comp.length != 2)
-                        throw new IllegalArgumentException(
-                                tr("Expected key and value, separated by '':'' character for option {0}, but got ''{1}''",
-                                        "--setting", getopt.getOptarg()));
-                    currentStyle.settings.put(comp[0].trim(), comp[1].trim());
-                    break;
-                case SCALE:
-                    try {
-                        argScale = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
-                    } catch (NumberFormatException nfe) {
-                        throw new IllegalArgumentException(
-                                tr("Expected floating point number for option {0}, but got ''{1}''", "--scale", getopt.getOptarg()), nfe);
-                    }
-                    break;
-                case ANCHOR:
-                    String[] parts = getopt.getOptarg().split(",");
-                    if (parts.length != 2)
-                        throw new IllegalArgumentException(
-                                tr("Expected two coordinates, separated by comma, for option {0}, but got ''{1}''",
-                                "--anchor", getopt.getOptarg()));
-                    try {
-                        double lon = LatLonParser.parseCoordinate(parts[0]);
-                        double lat = LatLonParser.parseCoordinate(parts[1]);
-                        argAnchor = new LatLon(lat, lon);
-                    } catch (IllegalArgumentException iae) { // NOPMD
-                        throw new IllegalArgumentException(tr("In option {0}: {1}", "--anchor", iae.getMessage()), iae);
-                    }
-                    break;
-                case WIDTH_M:
-                    try {
-                        argWidthM = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
-                    } catch (NumberFormatException nfe) {
-                        throw new IllegalArgumentException(
-                                tr("Expected floating point number for option {0}, but got ''{1}''", "--width-m", getopt.getOptarg()), nfe);
-                    }
-                    if (argWidthM <= 0) throw new IllegalArgumentException(
-                            tr("Expected floating point number > 0 for option {0}, but got ''{1}''", "--width-m", getopt.getOptarg()));
-                    break;
-                case HEIGHT_M:
-                    try {
-                        argHeightM = JosmDecimalFormatSymbolsProvider.parseDouble(getopt.getOptarg());
-                    } catch (NumberFormatException nfe) {
-                        throw new IllegalArgumentException(
-                                tr("Expected floating point number for option {0}, but got ''{1}''", "--height-m", getopt.getOptarg()), nfe);
-                    }
-                    if (argHeightM <= 0) throw new IllegalArgumentException(
-                            tr("Expected floating point number > 0 for option {0}, but got ''{1}''", "--width-m", getopt.getOptarg()));
-                    break;
-                case WIDTH_PX:
-                    try {
-                        argWidthPx = Integer.valueOf(getopt.getOptarg());
-                    } catch (NumberFormatException nfe) {
-                        throw new IllegalArgumentException(
-                                tr("Expected integer number for option {0}, but got ''{1}''", "--width-px", getopt.getOptarg()), nfe);
-                    }
-                    if (argWidthPx <= 0) throw new IllegalArgumentException(
-                            tr("Expected integer number > 0 for option {0}, but got ''{1}''", "--width-px", getopt.getOptarg()));
-                    break;
-                case HEIGHT_PX:
-                    try {
-                        argHeightPx = Integer.valueOf(getopt.getOptarg());
-                    } catch (NumberFormatException nfe) {
-                        throw new IllegalArgumentException(
-                                tr("Expected integer number for option {0}, but got ''{1}''", "--height-px", getopt.getOptarg()), nfe);
-                    }
-                    if (argHeightPx <= 0) throw new IllegalArgumentException(
-                            tr("Expected integer number > 0 for option {0}, but got ''{1}''", "--height-px", getopt.getOptarg()));
-                    break;
-                case PROJECTION:
-                    argProjection = getopt.getOptarg();
-                    break;
-                case MAX_IMAGE_SIZE:
-                    try {
-                        argMaxImageSize = Integer.valueOf(getopt.getOptarg());
-                    } catch (NumberFormatException nfe) {
-                        throw new IllegalArgumentException(
-                                tr("Expected integer number for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()), nfe);
-                    }
-                    if (argMaxImageSize < 0) throw new IllegalArgumentException(
-                            tr("Expected integer number >= 0 for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()));
-                    break;
-                default:
-                    throw new AssertionError("Unexpected option index: " + getopt.getLongind());
-                }
-                break;
-            case '?':
-                throw new IllegalArgumentException();   // getopt error
-            default:
-                throw new AssertionError("Unrecognized option: " + c);
-            }
+        parser.parseOptionsOrExit(Arrays.asList(argArray));
+
+        if (argCurrentStyle.styleUrl != null) {
+            argStyles.add(argCurrentStyle);
         }
-        if (currentStyle.styleUrl != null) {
-            argStyles.add(currentStyle);
+    }
+
+    private void handleOption(Option o) {
+        switch (o) {
+        case HELP:
+            showHelp();
+            System.exit(0);
+            break;
+        case DEBUG:
+            argDebug = true;
+            break;
+        case TRACE:
+            argTrace = true;
+            break;
+        default:
+            throw new AssertionError("Unexpected option index: " + o);
+        }
+    }
+
+    private void handleOption(Option o, String arg) {
+        switch (o) {
+        case INPUT:
+            argInput = arg;
+            break;
+        case STYLE:
+            if (argCurrentStyle.styleUrl != null) {
+                argStyles.add(argCurrentStyle);
+                argCurrentStyle = new StyleData();
+            }
+            argCurrentStyle.styleUrl = arg;
+            break;
+        case OUTPUT:
+            argOutput = arg;
+            break;
+        case ZOOM:
+            try {
+                argZoom = Integer.valueOf(arg);
+            } catch (NumberFormatException nfe) {
+                throw new OptionParseException(
+                        tr("Expected integer number for option {0}, but got ''{1}''", "--zoom", arg), nfe);
+            }
+            if (argZoom < 0) {
+                throw new OptionParseException(
+                        tr("Expected integer number >= 0 for option {0}, but got ''{1}''", "--zoom", arg));
+            }
+            break;
+        case BOUNDS:
+            if (!"auto".equals(arg)) {
+                try {
+                    argBounds = new Bounds(arg, ",", Bounds.ParseMethod.LEFT_BOTTOM_RIGHT_TOP, false);
+                } catch (IllegalArgumentException iae) { // NOPMD
+                    throw new OptionParseException(
+                            tr("Unable to parse {0} parameter: {1}", "--bounds", iae.getMessage()), iae);
+                }
+            }
+            break;
+
+        case SETTING:
+            String keyval = arg;
+            String[] comp = keyval.split(":", 2);
+            if (comp.length != 2) {
+                throw new OptionParseException(
+                        tr("Expected key and value, separated by '':'' character for option {0}, but got ''{1}''",
+                                "--setting", arg));
+            }
+            argCurrentStyle.settings.put(comp[0].trim(), comp[1].trim());
+            break;
+        case SCALE:
+            try {
+                argScale = JosmDecimalFormatSymbolsProvider.parseDouble(arg);
+            } catch (NumberFormatException nfe) {
+                throw new OptionParseException(
+                        tr("Expected floating point number for option {0}, but got ''{1}''", "--scale", arg), nfe);
+            }
+            break;
+        case ANCHOR:
+            String[] parts = arg.split(",");
+            if (parts.length != 2)
+                throw new OptionParseException(
+                        tr("Expected two coordinates, separated by comma, for option {0}, but got ''{1}''", "--anchor",
+                                arg));
+            try {
+                double lon = LatLonParser.parseCoordinate(parts[0]);
+                double lat = LatLonParser.parseCoordinate(parts[1]);
+                argAnchor = new LatLon(lat, lon);
+            } catch (IllegalArgumentException iae) { // NOPMD
+                throw new OptionParseException(tr("In option {0}: {1}", "--anchor", iae.getMessage()), iae);
+            }
+            break;
+        case WIDTH_M:
+            try {
+                argWidthM = JosmDecimalFormatSymbolsProvider.parseDouble(arg);
+            } catch (NumberFormatException nfe) {
+                throw new OptionParseException(
+                        tr("Expected floating point number for option {0}, but got ''{1}''", "--width-m", arg), nfe);
+            }
+            if (argWidthM <= 0)
+                throw new OptionParseException(
+                        tr("Expected floating point number > 0 for option {0}, but got ''{1}''", "--width-m", arg));
+            break;
+        case HEIGHT_M:
+            try {
+                argHeightM = JosmDecimalFormatSymbolsProvider.parseDouble(arg);
+            } catch (NumberFormatException nfe) {
+                throw new OptionParseException(
+                        tr("Expected floating point number for option {0}, but got ''{1}''", "--height-m", arg), nfe);
+            }
+            if (argHeightM <= 0)
+                throw new OptionParseException(
+                        tr("Expected floating point number > 0 for option {0}, but got ''{1}''", "--width-m", arg));
+            break;
+        case WIDTH_PX:
+            try {
+                argWidthPx = Integer.valueOf(arg);
+            } catch (NumberFormatException nfe) {
+                throw new OptionParseException(
+                        tr("Expected integer number for option {0}, but got ''{1}''", "--width-px", arg), nfe);
+            }
+            if (argWidthPx <= 0)
+                throw new OptionParseException(
+                        tr("Expected integer number > 0 for option {0}, but got ''{1}''", "--width-px", arg));
+            break;
+        case HEIGHT_PX:
+            try {
+                argHeightPx = Integer.valueOf(arg);
+            } catch (NumberFormatException nfe) {
+                throw new OptionParseException(
+                        tr("Expected integer number for option {0}, but got ''{1}''", "--height-px", arg), nfe);
+            }
+            if (argHeightPx <= 0) {
+                throw new OptionParseException(
+                        tr("Expected integer number > 0 for option {0}, but got ''{1}''", "--height-px", arg));
+            }
+            break;
+        case PROJECTION:
+            argProjection = arg;
+            break;
+        case MAX_IMAGE_SIZE:
+            try {
+                argMaxImageSize = Integer.valueOf(arg);
+            } catch (NumberFormatException nfe) {
+                throw new OptionParseException(
+                        tr("Expected integer number for option {0}, but got ''{1}''", "--max-image-size", arg), nfe);
+            }
+            if (argMaxImageSize < 0) {
+                throw new OptionParseException(
+                        tr("Expected integer number >= 0 for option {0}, but got ''{1}''", "--max-image-size", arg));
+            }
+            break;
+        default:
+            throw new AssertionError("Unexpected option index: " + o);
         }
     }
 
@@ -382,7 +392,7 @@ public class RenderingCLI implements CLIModule {
                 "\t--bounds|-b auto|<min_lon>,<min_lat>,<max_lon>,<max_lat>\n"+
                 "\t                          "+tr("Area to render, default value is ''{0}''", "auto")+"\n"+
                 "\t                          "+tr("With keyword ''{0}'', the downloaded area in the .osm input file will be used (if recorded).",
-                                                     "auto")+"\n"+
+                                                  "auto")+"\n"+
                 "\t--anchor <lon>,<lat>      "+tr("Specify bottom left corner of the rendering area")+"\n"+
                 "\t                          "+tr("Used in combination with width and height options to determine the area to render.")+"\n"+
                 "\t--width-m <number>        "+tr("Width of the rendered area, in meter")+"\n"+
@@ -391,7 +401,7 @@ public class RenderingCLI implements CLIModule {
                 "\t--height-px <number>      "+tr("Height of the target image, in pixel")+"\n"+
                 "\t--projection <code>       "+tr("Projection to use, default value ''{0}'' (web-Mercator)", "epsg:3857")+"\n"+
                 "\t--max-image-size <number> "+tr("Maximum image width/height in pixel (''{0}'' means no limit), default value: {1}",
-                                                    0, Integer.toString(DEFAULT_MAX_IMAGE_SIZE))+"\n"+
+                                                   0, Integer.toString(DEFAULT_MAX_IMAGE_SIZE))+"\n"+
                 "\n"+
                 tr("To specify the rendered area and scale, the options can be combined in various ways")+":\n"+
                 "  * --bounds (--zoom|--scale|--width-px|--height-px)\n"+
@@ -451,7 +461,8 @@ public class RenderingCLI implements CLIModule {
         Projection proj = ProjectionRegistry.getProjection();
         Double scale = null; // scale in east-north units per pixel
         if (argZoom != null) {
-            scale = OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, argZoom) / OsmMercator.DEFAUL_TILE_SIZE / proj.getMetersPerUnit();
+            scale = OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, argZoom) / OsmMercator.DEFAUL_TILE_SIZE
+                    / proj.getMetersPerUnit();
         }
         Bounds bounds = argBounds;
         ProjectionBounds pb = null;
@@ -463,8 +474,8 @@ public class RenderingCLI implements CLIModule {
                 double enPerMeter = Double.NaN;
                 DoubleSupplier getEnPerMeter = () -> {
                     double shiftMeter = 10;
-                    EastNorth projAnchorShifted = projAnchor.add(
-                            shiftMeter / proj.getMetersPerUnit(), shiftMeter / proj.getMetersPerUnit());
+                    EastNorth projAnchorShifted = projAnchor.add(shiftMeter / proj.getMetersPerUnit(),
+                            shiftMeter / proj.getMetersPerUnit());
                     LatLon anchorShifted = proj.eastNorth2latlon(projAnchorShifted);
                     return projAnchor.distance(projAnchorShifted) / argAnchor.greatCircleDistance(anchorShifted);
                 };
@@ -481,7 +492,8 @@ public class RenderingCLI implements CLIModule {
                         scale = argHeightM / argHeightPx * enPerMeter;
                     } else {
                         throw new IllegalArgumentException(
-                                tr("Argument {0} given, but scale cannot be determined from remaining arguments", "--anchor"));
+                                tr("Argument {0} given, but scale cannot be determined from remaining arguments",
+                                        "--anchor"));
                     }
                 }
 
@@ -516,7 +528,8 @@ public class RenderingCLI implements CLIModule {
                 bounds.extend(proj.eastNorth2latlon(pb.getMax()));
             } else {
                 if (ds.getDataSourceBounds().isEmpty()) {
-                    throw new IllegalArgumentException(tr("{0} mode, but no bounds found in osm data input file", "--bounds=auto"));
+                    throw new IllegalArgumentException(
+                            tr("{0} mode, but no bounds found in osm data input file", "--bounds=auto"));
                 }
                 bounds = ds.getDataSourceBounds().get(0);
             }
@@ -530,7 +543,8 @@ public class RenderingCLI implements CLIModule {
 
         if (scale == null) {
             if (argScale != null) {
-                double enPerMeter = pb.getMin().distance(pb.getMax()) / bounds.getMin().greatCircleDistance(bounds.getMax());
+                double enPerMeter = pb.getMin().distance(pb.getMax())
+                        / bounds.getMin().greatCircleDistance(bounds.getMax());
                 scale = argScale * enPerMeter / PIXEL_PER_METER;
             } else if (argWidthPx != null) {
                 scale = (pb.maxEast - pb.minEast) / argWidthPx;
@@ -538,8 +552,8 @@ public class RenderingCLI implements CLIModule {
                 scale = (pb.maxNorth - pb.minNorth) / argHeightPx;
             } else {
                 throw new IllegalArgumentException(
-                        tr("Unable to determine scale, one of the options {0}, {1}, {2} or {3} expected",
-                                "--zoom", "--scale", "--width-px", "--height-px"));
+                        tr("Unable to determine scale, one of the options {0}, {1}, {2} or {3} expected", "--zoom",
+                                "--scale", "--width-px", "--height-px"));
             }
         }
 

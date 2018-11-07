@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -13,11 +14,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
-
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
+import org.openstreetmap.josm.tools.OptionParser;
+import org.openstreetmap.josm.tools.OptionParser.OptionCount;
 
 /**
  * This class holds the arguments passed on to {@link MainApplication#main}.
@@ -90,10 +89,6 @@ public class ProgramArguments {
         public boolean requiresArgument() {
             return requiresArg;
         }
-
-        LongOpt toLongOpt() {
-            return new LongOpt(getName(), requiresArgument() ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 0);
-        }
     }
 
     private final Map<Option, List<String>> argMap = new EnumMap<>(Option.class);
@@ -113,34 +108,23 @@ public class ProgramArguments {
      * @param args command-line arguments array
      */
     private void buildCommandLineArgumentMap(String... args) {
-        Getopt.setI18nHandler(I18n::tr);
-        LongOpt[] los = Stream.of(Option.values()).map(Option::toLongOpt).toArray(LongOpt[]::new);
-        Getopt g = new Getopt("JOSM", args, "hv", los);
-
-        int c;
-        while ((c = g.getopt()) != -1) {
-            Option opt;
-            switch (c) {
-            case 'h':
-                opt = Option.HELP;
-                break;
-            case 'v':
-                opt = Option.VERSION;
-                break;
-            case 0:
-                opt = Option.values()[g.getLongind()];
-                break;
-            default:
-                opt = null;
+        OptionParser parser = new OptionParser("JOSM");
+        for (Option o : Option.values()) {
+            if (o.requiresArgument()) {
+                parser.addArgumentParameter(o.getName(), OptionCount.MULTIPLE, p -> addOption(o, p));
+            } else {
+                parser.addFlagParameter(o.getName(), () -> addOption(o, ""));
             }
-            if (opt != null) {
-                addOption(opt, g.getOptarg());
-            } else
-                throw new IllegalArgumentException("Invalid option: "+ (char) c);
         }
+
+        parser.addShortAlias(Option.HELP.getName(), "h");
+        parser.addShortAlias(Option.VERSION.getName(), "v");
+
+        List<String> remaining = parser.parseOptionsOrExit(Arrays.asList(args));
+
         // positional arguments are a shortcut for the --download ... option
-        for (int i = g.getOptind(); i < args.length; ++i) {
-            addOption(Option.DOWNLOAD, args[i]);
+        for (String arg : remaining) {
+            addOption(Option.DOWNLOAD, arg);
         }
     }
 
