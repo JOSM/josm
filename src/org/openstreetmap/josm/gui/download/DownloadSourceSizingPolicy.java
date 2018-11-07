@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.download;
 
 import java.awt.Component;
+import java.util.function.IntSupplier;
 
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
 
@@ -66,18 +67,34 @@ public interface DownloadSourceSizingPolicy {
     class AdjustableDownloadSizePolicy implements DownloadSourceSizingPolicy {
 
         private final AbstractProperty<Integer> preference;
+        private IntSupplier minHeight;
 
         /**
          * Create a new {@link AdjustableDownloadSizePolicy}
-         * @param preference The preference key to use
+         * @param preference The preference to use
          */
         public AdjustableDownloadSizePolicy(AbstractProperty<Integer> preference) {
+            this(preference, () -> 1);
+        }
+
+        /**
+         * Create a new {@link AdjustableDownloadSizePolicy}
+         * @param preference The preference to use
+         * @param minHeight A supplier that gives the minimum height of the component. Must be positive or 0.
+         * @since 14418
+         */
+        public AdjustableDownloadSizePolicy(AbstractProperty<Integer> preference, IntSupplier minHeight) {
             this.preference = preference;
+            this.minHeight = minHeight;
         }
 
         @Override
         public int getComponentHeight() {
-            return Math.max(1, preference.get());
+            int computedMinHeight = this.minHeight.getAsInt();
+            if (computedMinHeight < 0) {
+                throw new IllegalStateException("Illegal minimum component height:" + computedMinHeight);
+            }
+            return Math.max(computedMinHeight, preference.get());
         }
 
         @Override
