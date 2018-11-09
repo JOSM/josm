@@ -208,7 +208,7 @@ public class OptionParser {
                 if (!e.getLocalizedMessage().isEmpty()) {
                     message += ": " + e.getLocalizedMessage().isEmpty();
                 }
-                throw new OptionParseException(message);
+                throw new OptionParseException(message, e);
             }
         }
         return remainingArguments;

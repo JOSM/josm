@@ -197,7 +197,7 @@ public class RenderingCLI implements CLIModule {
                 parser.addFlagParameter(o.getName(), () -> handleOption(o));
             }
             if (o.getShortOption() != '*') {
-                parser.addShortAlias(o.getName(), o.getShortOption() + "");
+                parser.addShortAlias(o.getName(), Character.toString(o.getShortOption()));
             }
         }
 
