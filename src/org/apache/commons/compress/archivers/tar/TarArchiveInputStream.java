@@ -80,12 +80,25 @@ public class TarArchiveInputStream extends ArchiveInputStream {
     // the global PAX header
     private Map<String, String> globalPaxHeaders = new HashMap<>();
 
+    private final boolean lenient;
+
     /**
      * Constructor for TarInputStream.
      * @param is the input stream to use
      */
     public TarArchiveInputStream(final InputStream is) {
         this(is, TarConstants.DEFAULT_BLKSIZE, TarConstants.DEFAULT_RCDSIZE);
+    }
+
+    /**
+     * Constructor for TarInputStream.
+     * @param is the input stream to use
+     * @param lenient when set to true illegal values for group/userid, mode, device numbers and timestamp will be
+     * ignored and the fields set to {@link #UNKNOWN}. When set to false such illegal fields cause an exception instead.
+     * @since 1.19
+     */
+    public TarArchiveInputStream(final InputStream is, boolean lenient) {
+        this(is, TarConstants.DEFAULT_BLKSIZE, TarConstants.DEFAULT_RCDSIZE, null, lenient);
     }
 
     /**
@@ -140,12 +153,28 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      */
     public TarArchiveInputStream(final InputStream is, final int blockSize, final int recordSize,
                                  final String encoding) {
+        this(is, blockSize, recordSize, encoding, false);
+    }
+
+    /**
+     * Constructor for TarInputStream.
+     * @param is the input stream to use
+     * @param blockSize the block size to use
+     * @param recordSize the record size to use
+     * @param encoding name of the encoding to use for file names
+     * @param lenient when set to true illegal values for group/userid, mode, device numbers and timestamp will be
+     * ignored and the fields set to {@link #UNKNOWN}. When set to false such illegal fields cause an exception instead.
+     * @since 1.19
+     */
+    public TarArchiveInputStream(final InputStream is, final int blockSize, final int recordSize,
+                                 final String encoding, boolean lenient) {
         this.is = is;
         this.hasHitEOF = false;
         this.encoding = encoding;
         this.zipEncoding = ZipEncodingHelper.getZipEncoding(encoding);
         this.recordSize = recordSize;
         this.blockSize = blockSize;
+        this.lenient = lenient;
     }
 
     /**
@@ -280,7 +309,7 @@ public class TarArchiveInputStream extends ArchiveInputStream {
         }
 
         try {
-            currEntry = new TarArchiveEntry(headerBuf, zipEncoding);
+            currEntry = new TarArchiveEntry(headerBuf, zipEncoding, lenient);
         } catch (final IllegalArgumentException e) {
             throw new IOException("Error detected parsing the header", e);
         }

@@ -146,6 +146,13 @@ import org.apache.commons.compress.utils.ArchiveUtils;
 public class TarArchiveEntry implements ArchiveEntry, TarConstants {
     private static final TarArchiveEntry[] EMPTY_TAR_ARCHIVE_ENTRIES = new TarArchiveEntry[0];
 
+    /**
+     * Value used to indicate unknown mode, user/groupids, device numbers and modTime when parsing a file in lenient
+     * mode an the archive contains illegal fields.
+     * @since 1.19
+     */
+    public static final long UNKNOWN = -1l;
+
     /** The entry's name. */
     private String name = "";
 
@@ -400,8 +407,25 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      */
     public TarArchiveEntry(final byte[] headerBuf, final ZipEncoding encoding)
         throws IOException {
+        this(headerBuf, encoding, false);
+    }
+
+    /**
+     * Construct an entry from an archive's header bytes. File is set
+     * to null.
+     *
+     * @param headerBuf The header bytes from a tar archive entry.
+     * @param encoding encoding to use for file names
+     * @param lenient when set to true illegal values for group/userid, mode, device numbers and timestamp will be
+     * ignored and the fields set to {@link #UNKNOWN}. When set to false such illegal fields cause an exception instead.
+     * @since 1.19
+     * @throws IllegalArgumentException if any of the numeric fields have an invalid format
+     * @throws IOException on error
+     */
+    public TarArchiveEntry(final byte[] headerBuf, final ZipEncoding encoding, boolean lenient)
+        throws IOException {
         this(false);
-        parseTarHeader(headerBuf, encoding);
+        parseTarHeader(headerBuf, encoding, false, lenient);
     }
 
     /**
@@ -1243,7 +1267,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
             parseTarHeader(header, TarUtils.DEFAULT_ENCODING);
         } catch (final IOException ex) { // NOSONAR
             try {
-                parseTarHeader(header, TarUtils.DEFAULT_ENCODING, true);
+                parseTarHeader(header, TarUtils.DEFAULT_ENCODING, true, false);
             } catch (final IOException ex2) {
                 // not really possible
                 throw new RuntimeException(ex2); //NOSONAR
@@ -1263,26 +1287,26 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
      */
     public void parseTarHeader(final byte[] header, final ZipEncoding encoding)
         throws IOException {
-        parseTarHeader(header, encoding, false);
+        parseTarHeader(header, encoding, false, false);
     }
 
     private void parseTarHeader(final byte[] header, final ZipEncoding encoding,
-                                final boolean oldStyle)
+                                final boolean oldStyle, final boolean lenient)
         throws IOException {
         int offset = 0;
 
         name = oldStyle ? TarUtils.parseName(header, offset, NAMELEN)
             : TarUtils.parseName(header, offset, NAMELEN, encoding);
         offset += NAMELEN;
-        mode = (int) TarUtils.parseOctalOrBinary(header, offset, MODELEN);
+        mode = (int) parseOctalOrBinary(header, offset, MODELEN, lenient);
         offset += MODELEN;
-        userId = (int) TarUtils.parseOctalOrBinary(header, offset, UIDLEN);
+        userId = (int) parseOctalOrBinary(header, offset, UIDLEN, lenient);
         offset += UIDLEN;
-        groupId = (int) TarUtils.parseOctalOrBinary(header, offset, GIDLEN);
+        groupId = (int) parseOctalOrBinary(header, offset, GIDLEN, lenient);
         offset += GIDLEN;
         size = TarUtils.parseOctalOrBinary(header, offset, SIZELEN);
         offset += SIZELEN;
-        modTime = TarUtils.parseOctalOrBinary(header, offset, MODTIMELEN);
+        modTime = parseOctalOrBinary(header, offset, MODTIMELEN, lenient);
         offset += MODTIMELEN;
         checkSumOK = TarUtils.verifyCheckSum(header);
         offset += CHKSUMLEN;
@@ -1301,9 +1325,9 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
             : TarUtils.parseName(header, offset, GNAMELEN, encoding);
         offset += GNAMELEN;
         if (linkFlag == LF_CHR || linkFlag == LF_BLK) {
-            devMajor = (int) TarUtils.parseOctalOrBinary(header, offset, DEVLEN);
+            devMajor = (int) parseOctalOrBinary(header, offset, DEVLEN, lenient);
             offset += DEVLEN;
-            devMinor = (int) TarUtils.parseOctalOrBinary(header, offset, DEVLEN);
+            devMinor = (int) parseOctalOrBinary(header, offset, DEVLEN, lenient);
             offset += DEVLEN;
         } else {
             offset += 2 * DEVLEN;
@@ -1348,6 +1372,17 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
             }
         }
         }
+    }
+
+    private long parseOctalOrBinary(byte[] header, int offset, int length, boolean lenient) {
+        if (lenient) {
+            try {
+                return TarUtils.parseOctalOrBinary(header, offset, length);
+            } catch (IllegalArgumentException ex) {
+                return UNKNOWN;
+            }
+        }
+        return TarUtils.parseOctalOrBinary(header, offset, length);
     }
 
     /**
