@@ -694,7 +694,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final Selector selector = check.whichSelectorMatchesEnvironment(env);
                 if (selector != null) {
                     check.rule.declaration.execute(env);
-                    if (!ignoreError /*&& !check.errors.isEmpty()*/) {
+                    if (!ignoreError && !check.errors.isEmpty()) {
                         final TestError error = check.getErrorForPrimitive(p, selector, env, new MapCSSTagCheckerAndRule(check.rule));
                         if (error != null) {
                             r.add(error);
