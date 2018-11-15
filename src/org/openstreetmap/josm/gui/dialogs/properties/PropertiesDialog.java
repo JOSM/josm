@@ -258,7 +258,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         // combine both tables and wrap them in a scrollPane
         boolean top = Config.getPref().getBoolean("properties.presets.top", true);
-        if (top) {
+        boolean presetsVisible = Config.getPref().getBoolean("properties.presets.visable", true);
+        if (presetsVisible && top) {
             bothTables.add(presets, GBC.std().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2).anchor(GBC.NORTHWEST));
             double epsilon = Double.MIN_VALUE; // need to set a weight or else anchor value is ignored
             bothTables.add(pluginHook, GBC.eol().insets(0, 1, 1, 1).anchor(GBC.NORTHEAST).weight(epsilon, epsilon));
@@ -269,7 +270,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         bothTables.add(tagTable, GBC.eol().fill(GBC.BOTH));
         bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
-        if (!top) {
+        if (presetsVisible && !top) {
             bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         }
 
