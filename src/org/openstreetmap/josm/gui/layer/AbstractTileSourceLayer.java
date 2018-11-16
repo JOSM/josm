@@ -1776,9 +1776,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         /**
          * @param progressMonitor that will be notified about progess of the task
-         * @param bufferY
-         * @param bufferX
-         * @param points
+         * @param bufferY buffer Y in degrees around which to download tiles
+         * @param bufferX buffer X in degrees around which to download tiles
+         * @param points list of points along which to download
          */
         public PrecacheTask(ProgressMonitor progressMonitor, List<LatLon> points, double bufferX, double bufferY) {
             this.progressMonitor = progressMonitor;
@@ -1885,9 +1885,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     public AbstractTileSourceLayer<T>.PrecacheTask getDownloadAreaToCacheTask(final ProgressMonitor progressMonitor, List<LatLon> points,
             double bufferX, double bufferY) {
-        PrecacheTask precacheTask = new PrecacheTask(progressMonitor, points, bufferX, bufferY);
-
-        return precacheTask;
+        return new PrecacheTask(progressMonitor, points, bufferX, bufferY);
     }
 
     @Override
