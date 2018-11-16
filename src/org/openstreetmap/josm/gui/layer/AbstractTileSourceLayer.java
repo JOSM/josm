@@ -1769,20 +1769,47 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     public class PrecacheTask implements TileLoaderListener {
         private final ProgressMonitor progressMonitor;
-        private int totalCount;
+        private final int totalCount;
         private final AtomicInteger processedCount = new AtomicInteger(0);
         private final TileLoader tileLoader;
+        private final Set<Tile> requestedTiles;
 
         /**
          * @param progressMonitor that will be notified about progess of the task
+         * @param bufferY
+         * @param bufferX
+         * @param points
          */
-        public PrecacheTask(ProgressMonitor progressMonitor) {
+        public PrecacheTask(ProgressMonitor progressMonitor, List<LatLon> points, double bufferX, double bufferY) {
             this.progressMonitor = progressMonitor;
             this.tileLoader = getTileLoaderFactory().makeTileLoader(this, getHeaders(tileSource), minimumTileExpire);
             if (this.tileLoader instanceof TMSCachedTileLoader) {
                 ((TMSCachedTileLoader) this.tileLoader).setDownloadExecutor(
                         TMSCachedTileLoader.getNewThreadPoolExecutor("Precache downloader"));
             }
+            requestedTiles = new ConcurrentSkipListSet<>(
+                    (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getKey(), o2.getKey()));
+            for (LatLon point: points) {
+                TileXY minTile = tileSource.latLonToTileXY(point.lat() - bufferY, point.lon() - bufferX, currentZoomLevel);
+                TileXY curTile = tileSource.latLonToTileXY(CoordinateConversion.llToCoor(point), currentZoomLevel);
+                TileXY maxTile = tileSource.latLonToTileXY(point.lat() + bufferY, point.lon() + bufferX, currentZoomLevel);
+
+                // take at least one tile of buffer
+                int minY = Math.min(curTile.getYIndex() - 1, minTile.getYIndex());
+                int maxY = Math.max(curTile.getYIndex() + 1, maxTile.getYIndex());
+                int minX = Math.min(curTile.getXIndex() - 1, minTile.getXIndex());
+                int maxX = Math.max(curTile.getXIndex() + 1, maxTile.getXIndex());
+
+                for (int x = minX; x <= maxX; x++) {
+                    for (int y = minY; y <= maxY; y++) {
+                        requestedTiles.add(new Tile(tileSource, x, y, currentZoomLevel));
+                    }
+                }
+            }
+
+            this.totalCount = requestedTiles.size();
+            this.progressMonitor.setTicksCount(requestedTiles.size());
+
         }
 
         /**
@@ -1812,8 +1839,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         public void tileLoadingFinished(Tile tile, boolean success) {
             int processed = this.processedCount.incrementAndGet();
             if (success) {
-                this.progressMonitor.worked(1);
-                this.progressMonitor.setCustomText(tr("Downloaded {0}/{1} tiles", processed, totalCount));
+                synchronized (progressMonitor) {
+                    if (!this.progressMonitor.isCanceled()) {
+                        this.progressMonitor.worked(1);
+                        this.progressMonitor.setCustomText(tr("Downloaded {0}/{1} tiles", processed, totalCount));
+                    }
+                }
             } else {
                 Logging.warn("Tile loading failure: " + tile + " - " + tile.getErrorMessage());
             }
@@ -1824,6 +1855,19 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          */
         public TileLoader getTileLoader() {
             return tileLoader;
+        }
+
+        /**
+         * Execute the download
+         */
+        public void run() {
+            TileLoader loader = getTileLoader();
+            for (Tile t: requestedTiles) {
+                if (!progressMonitor.isCanceled()) {
+                    loader.createTileLoaderJob(t).submit();
+                }
+            }
+
         }
     }
 
@@ -1839,36 +1883,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @param bufferY how many units in current Coordinate Reference System to cover in Y axis in both sides
      * @return precache task representing download task
      */
-    public AbstractTileSourceLayer<T>.PrecacheTask downloadAreaToCache(final ProgressMonitor progressMonitor, List<LatLon> points,
+    public AbstractTileSourceLayer<T>.PrecacheTask getDownloadAreaToCacheTask(final ProgressMonitor progressMonitor, List<LatLon> points,
             double bufferX, double bufferY) {
-        PrecacheTask precacheTask = new PrecacheTask(progressMonitor);
-        final Set<Tile> requestedTiles = new ConcurrentSkipListSet<>(
-                (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getKey(), o2.getKey()));
-        for (LatLon point: points) {
-            TileXY minTile = tileSource.latLonToTileXY(point.lat() - bufferY, point.lon() - bufferX, currentZoomLevel);
-            TileXY curTile = tileSource.latLonToTileXY(CoordinateConversion.llToCoor(point), currentZoomLevel);
-            TileXY maxTile = tileSource.latLonToTileXY(point.lat() + bufferY, point.lon() + bufferX, currentZoomLevel);
+        PrecacheTask precacheTask = new PrecacheTask(progressMonitor, points, bufferX, bufferY);
 
-            // take at least one tile of buffer
-            int minY = Math.min(curTile.getYIndex() - 1, minTile.getYIndex());
-            int maxY = Math.max(curTile.getYIndex() + 1, maxTile.getYIndex());
-            int minX = Math.min(curTile.getXIndex() - 1, minTile.getXIndex());
-            int maxX = Math.max(curTile.getXIndex() + 1, maxTile.getXIndex());
-
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
-                    requestedTiles.add(new Tile(tileSource, x, y, currentZoomLevel));
-                }
-            }
-        }
-
-        precacheTask.totalCount = requestedTiles.size();
-        precacheTask.progressMonitor.setTicksCount(requestedTiles.size());
-
-        TileLoader loader = precacheTask.getTileLoader();
-        for (Tile t: requestedTiles) {
-            loader.createTileLoaderJob(t).submit();
-        }
         return precacheTask;
     }
 
