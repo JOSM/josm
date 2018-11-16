@@ -1000,6 +1000,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     /**
      * @return the last used height stored in preferences or preferredHeight
+     * @since 14425
      */
     public int getLastHeight() {
         return Config.getPref().getInt(preferencePrefix+".lastHeight", preferredHeight);
@@ -1007,6 +1008,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     /**
      * Store the current height in preferences so that we can restore it.
+     * @since 14425
      */
     public void rememberHeight() {
         int h = getHeight();

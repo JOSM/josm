@@ -128,6 +128,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         COLLAPSED_TO_DEFAULT,
         /**
          * Restore saved heights.
+         * @since 14425
          */
         RESTORE_SAVED,
         /*  INVISIBLE_TO_COLLAPSED,    does not happen */
