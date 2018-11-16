@@ -59,7 +59,8 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            precacheTask = layer.downloadAreaToCache(progressMonitor, points, 0, 0);
+            precacheTask = layer.getDownloadAreaToCacheTask(progressMonitor, points, 0, 0);
+            precacheTask.run();
             synchronized (this) {
                 try {
                     while (!precacheTask.isFinished() && !progressMonitor.isCanceled()) {
