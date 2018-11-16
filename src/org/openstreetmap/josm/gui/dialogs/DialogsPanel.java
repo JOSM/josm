@@ -63,7 +63,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         }
 
         this.add(mSpltPane);
-        reconstruct(Action.ELEMENT_SHRINKS, null);
+        reconstruct(Action.RESTORE_SAVED, null);
     }
 
     /**
@@ -126,6 +126,10 @@ public class DialogsPanel extends JPanel implements Destroyable {
          * The panel was collapsed by the user.
          */
         COLLAPSED_TO_DEFAULT,
+        /**
+         * Restore saved heights.
+         */
+        RESTORE_SAVED,
         /*  INVISIBLE_TO_COLLAPSED,    does not happen */
         /**
          * else. (Remaining elements have more space.)
@@ -186,7 +190,17 @@ public class DialogsPanel extends JPanel implements Destroyable {
         /**
          * Determine the panel geometry
          */
-        if (action == Action.ELEMENT_SHRINKS) {
+        if (action == Action.RESTORE_SAVED) {
+            for (int i = 0; i < n; ++i) {
+                final ToggleDialog dlg = allDialogs.get(i);
+                if (dlg.isDialogInDefaultView()) {
+                    final int ph = dlg.getLastHeight();
+                    final int ah = dlg.getSize().height;
+                    dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, ah < 20 ? ph : ah));
+                }
+            }
+
+        } else if (action == Action.ELEMENT_SHRINKS) {
             for (int i = 0; i < n; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView()) {
@@ -236,7 +250,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
             final int hnTrig = hpTrig * s2 / (hpTrig + sumP);
             triggeredBy.setPreferredSize(new Dimension(Integer.MAX_VALUE, hnTrig));
 
-            /** This is remainig for the other default view dialogs */
+            /** This is remaining for the other default view dialogs */
             final int r = s2 - hnTrig;
 
             /**

@@ -239,7 +239,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         setPreferredSize(new Dimension(0, preferredHeight));
         /** Override any minimum sizes of child elements so the user can resize freely */
         setMinimumSize(new Dimension(0, 0));
-        this.preferredHeight = preferredHeight;
+        this.preferredHeight = Config.getPref().getInt(preferencePrefix+".preferredHeight", preferredHeight);
         toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut, helpTopic());
 
         isShowing = Config.getPref().getBoolean(preferencePrefix+".visible", defShow);
@@ -456,6 +456,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     @Override
     public void destroy() {
+        rememberHeight();
         closeDetachedDialog();
         if (isShowing) {
             hideNotify();
@@ -995,5 +996,20 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             buttonsPanel.setVisible(buttonHiding != ButtonHidingType.ALWAYS_HIDDEN || !isDocked);
         }
         stateChanged();
+    }
+
+    /**
+     * @return the last used height stored in preferences or preferredHeight
+     */
+    public int getLastHeight() {
+        return Config.getPref().getInt(preferencePrefix+".lastHeight", preferredHeight);
+    }
+
+    /**
+     * Store the current height in preferences so that we can restore it.
+     */
+    public void rememberHeight() {
+        int h = getHeight();
+        Config.getPref().put(preferencePrefix+".lastHeight", Integer.toString(h));
     }
 }
