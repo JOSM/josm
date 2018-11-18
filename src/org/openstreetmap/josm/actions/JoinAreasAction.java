@@ -1378,6 +1378,8 @@ public class JoinAreasAction extends JosmAction {
             innerWays.clear();
 
             for (RelationMember rm : r.getMembers()) {
+                if (!rm.isWay())
+                    continue;
                 if ("outer".equalsIgnoreCase(rm.getRole())) {
                     outerWays.add(rm.getWay());
                     hasKnownOuter |= selectedWays.contains(rm.getWay());
