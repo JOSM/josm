@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.Deflater;
 
 /**
@@ -49,6 +50,7 @@ public class ScatterZipOutputStream implements Closeable {
     private final Queue<CompressedEntry> items = new ConcurrentLinkedQueue<>();
     private final ScatterGatherBackingStore backingStore;
     private final StreamCompressor streamCompressor;
+    private AtomicBoolean isClosed = new AtomicBoolean();
 
     private static class CompressedEntry {
         final ZipArchiveEntryRequest zipArchiveEntryRequest;
@@ -124,6 +126,9 @@ public class ScatterZipOutputStream implements Closeable {
      */
     @Override
     public void close() throws IOException {
+        if (!isClosed.compareAndSet(false, true)) {
+            return;
+        }
         try {
             backingStore.close();
         } finally {

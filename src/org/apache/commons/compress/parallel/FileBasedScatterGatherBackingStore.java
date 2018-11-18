@@ -70,7 +70,9 @@ public class FileBasedScatterGatherBackingStore implements ScatterGatherBackingS
         try {
             closeForWriting();
         } finally {
-            target.delete();
+            if (target.exists() && !target.delete()) {
+                target.deleteOnExit();
+            }
         }
     }
 }

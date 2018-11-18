@@ -239,28 +239,32 @@ public class ParallelScatterZipCreator {
     public void writeTo(final ZipArchiveOutputStream targetStream)
             throws IOException, InterruptedException, ExecutionException {
 
-        // Make sure we catch any exceptions from parallel phase
         try {
-            for (final Future<?> future : futures) {
-                future.get();
+            // Make sure we catch any exceptions from parallel phase
+            try {
+                for (final Future<?> future : futures) {
+                    future.get();
+                }
+            } finally {
+                es.shutdown();
             }
+
+            es.awaitTermination(1000 * 60L, TimeUnit.SECONDS);  // == Infinity. We really *must* wait for this to complete
+
+            // It is important that all threads terminate before we go on, ensure happens-before relationship
+            compressionDoneAt = System.currentTimeMillis();
+
+            synchronized (streams) {
+                for (final ScatterZipOutputStream scatterStream : streams) {
+                    scatterStream.writeTo(targetStream);
+                    scatterStream.close();
+                }
+            }
+
+            scatterDoneAt = System.currentTimeMillis();
         } finally {
-            es.shutdown();
+            ensureStreamsAreClosed();
         }
-
-        es.awaitTermination(1000 * 60L, TimeUnit.SECONDS);  // == Infinity. We really *must* wait for this to complete
-
-        // It is important that all threads terminate before we go on, ensure happens-before relationship
-        compressionDoneAt = System.currentTimeMillis();
-
-        synchronized (streams) {
-            for (final ScatterZipOutputStream scatterStream : streams) {
-                scatterStream.writeTo(targetStream);
-                scatterStream.close();
-            }
-        }
-
-        scatterDoneAt = System.currentTimeMillis();
     }
 
     /**
@@ -270,6 +274,18 @@ public class ParallelScatterZipCreator {
      */
     public ScatterStatistics getStatisticsMessage() {
         return new ScatterStatistics(compressionDoneAt - startedAt, scatterDoneAt - compressionDoneAt);
+    }
+
+    private void ensureStreamsAreClosed() {
+        synchronized (streams) {
+            for (final ScatterZipOutputStream scatterStream : streams) {
+                try {
+                    scatterStream.close();
+                } catch (IOException ex) {
+                    // no way to properly log this
+                }
+            }
+        }
     }
 }
 
