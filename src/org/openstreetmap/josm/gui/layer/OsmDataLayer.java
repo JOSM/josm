@@ -115,6 +115,7 @@ import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -795,15 +796,19 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
         addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
 
-        if (time > 0) {
-            wpt.put(GpxConstants.PT_TIME, DateUtils.fromTimestamp(time));
-            wpt.setTime(time);
-        } else if (n.hasKey(GpxConstants.PT_TIME)) {
-            wpt.put(GpxConstants.PT_TIME, DateUtils.fromString(n.get(GpxConstants.PT_TIME)));
-            wpt.setTime();
-        } else if (!n.isTimestampEmpty()) {
-            wpt.put(GpxConstants.PT_TIME, DateUtils.fromTimestamp(n.getRawTimestamp()));
-            wpt.setTime();
+        try {
+            if (time > 0) {
+                wpt.put(GpxConstants.PT_TIME, DateUtils.fromTimestamp(time));
+                wpt.setTime(time);
+            } else if (n.hasKey(GpxConstants.PT_TIME)) {
+                wpt.put(GpxConstants.PT_TIME, DateUtils.fromString(n.get(GpxConstants.PT_TIME)));
+                wpt.setTime();
+            } else if (!n.isTimestampEmpty()) {
+                wpt.put(GpxConstants.PT_TIME, DateUtils.fromTimestamp(n.getRawTimestamp()));
+                wpt.setTime();
+            }
+        } catch (UncheckedParseException e) {
+            Logging.error(e);
         }
 
         addDoubleIfPresent(wpt, n, GpxConstants.PT_MAGVAR);
