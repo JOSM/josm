@@ -225,7 +225,7 @@ public final class UserQueryList extends SearchTextResultListPanel<UserQueryList
         String text = edSearchText.getText().toLowerCase(Locale.ENGLISH);
         List<SelectorItem> matchingItems = this.items.values().stream()
                 .sorted((i1, i2) -> i2.getLastEdit().compareTo(i1.getLastEdit()))
-                .filter(item -> item.getKey().contains(text))
+                .filter(item -> item.getKey().toLowerCase(Locale.ENGLISH).contains(text))
                 .collect(Collectors.toList());
 
         super.lsResultModel.setItems(matchingItems);
