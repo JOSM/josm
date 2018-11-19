@@ -95,6 +95,11 @@ import org.openstreetmap.josm.spi.preferences.Config;
 public class PlatformHookWindows implements PlatformHook {
 
     /**
+     * Pattern of Microsoft .NET and Powershell version numbers in registry.
+     */
+    private static final Pattern MS_VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+.*)?");
+
+    /**
      * Simple data class to hold information about a font.
      *
      * Used for fontconfig.properties files.
@@ -467,15 +472,20 @@ public class PlatformHookWindows implements PlatformHook {
     @Override
     public X509Certificate getX509Certificate(NativeCertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        // Make a web request to target site to force Windows to update if needed its trust root store from its certificate trust list
-        // A better, but a lot more complex method might be to get certificate list from Windows Registry with PowerShell
-        // using (Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\SystemCertificates\\AuthRoot\\AutoUpdate').EncodedCtl)
-        // then decode it using CertUtil -dump or calling CertCreateCTLContext API using JNI, and finally find and decode the certificate
-        Logging.trace(webRequest(certAmend.getWebSite()));
         // Get Windows Trust Root Store
         KeyStore ks = getRootKeystore();
         // Search by alias (fast)
         Certificate result = ks.getCertificate(certAmend.getWinAlias());
+        if (result == null) {
+            // Make a web request to target site to force Windows to update if needed its trust root store from its certificate trust list
+            // A better, but a lot more complex method might be to get certificate list from Windows Registry with PowerShell
+            // using (Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\SystemCertificates\\AuthRoot\\AutoUpdate').EncodedCtl)
+            // then decode it using CertUtil -dump or calling CertCreateCTLContext API using JNI, and finally find and decode the certificate
+            Logging.trace(webRequest(certAmend.getWebSite()));
+            // Reload Windows Trust Root Store and search again by alias (fast)
+            ks = getRootKeystore();
+            result = ks.getCertificate(certAmend.getWinAlias());
+        }
         if (result instanceof X509Certificate) {
             return (X509Certificate) result;
         }
@@ -729,7 +739,7 @@ public class PlatformHookWindows implements PlatformHook {
             // Great, but our WinRegistry only handles REG_SZ type, so we have to check the Version key
             String version = WinRegistry.readString(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full", "Version");
             if (version != null) {
-                Matcher m = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+.*)?").matcher(version);
+                Matcher m = MS_VERSION_PATTERN.matcher(version);
                 if (m.matches()) {
                     int maj = Integer.parseInt(m.group(1));
                     int min = Integer.parseInt(m.group(2));
@@ -749,16 +759,18 @@ public class PlatformHookWindows implements PlatformHook {
      */
     public static int getPowerShellVersion() {
         try {
-            return Integer.parseInt(Utils.execOutput(Arrays.asList(
-                    "powershell", "-Command", "$PSVersionTable.PSVersion.Major"), 2, TimeUnit.SECONDS));
-        } catch (ExecutionException e) {
-            // PowerShell 2.0 (included in Windows 7) does not even support this
-            Logging.debug(e);
-            return -1;
-        } catch (NumberFormatException | IOException | InterruptedException e) {
+            String version = WinRegistry.readString(
+                    HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Powershell\\3\\PowershellEngine", "PowershellVersion");
+            if (version != null) {
+                Matcher m = MS_VERSION_PATTERN.matcher(version);
+                if (m.matches()) {
+                    return Integer.parseInt(m.group(1));
+                }
+            }
+        } catch (NumberFormatException | IllegalAccessException | InvocationTargetException e) {
             Logging.error(e);
-            return -1;
         }
+        return -1;
     }
 
     /**
