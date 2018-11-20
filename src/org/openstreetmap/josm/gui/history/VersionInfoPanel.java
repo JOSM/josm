@@ -28,6 +28,7 @@ import javax.swing.plaf.basic.BasicArrowButton;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -67,6 +68,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
     private JTextArea texChangesetComment;
     private JTextArea texChangesetSource;
     private JTextArea texChangesetImageryUsed;
+    private PrimitiveId primitiveId;
 
     protected static JTextArea buildTextArea(String tooltip) {
         JTextArea lbl = new JTextArea();
@@ -116,7 +118,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         changesetPanel.add(changesetButton, BorderLayout.CENTER);
         arrowButton.addActionListener(action -> {
             if (changesetDialogAction.id != null) { // fix #15444, #16097
-                final OpenChangesetPopupMenu popupMenu = new OpenChangesetPopupMenu(changesetDialogAction.id);
+                final OpenChangesetPopupMenu popupMenu = new OpenChangesetPopupMenu(changesetDialogAction.id, primitiveId);
                 popupMenu.insert(changesetDialogAction, 0);
                 ((AbstractButton) popupMenu.getComponent(0)).setText(tr("Open Changeset Manager"));
                 popupMenu.show(arrowButton);
@@ -222,7 +224,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         HistoryOsmPrimitive primitive = getPrimitive();
         if (primitive != null) {
             Changeset cs = primitive.getChangeset();
-            update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
+            update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion(), primitive.getPrimitiveId());
         }
     }
 
@@ -232,7 +234,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
      * @param isLatest whether this relates to a not yet committed changeset
      */
     public void update(final OsmPrimitive primitive, final boolean isLatest) {
-        update(Changeset.fromPrimitive(primitive), isLatest, primitive.getTimestamp(), primitive.getVersion());
+        update(Changeset.fromPrimitive(primitive), isLatest, primitive.getTimestamp(), primitive.getVersion(), primitive.getPrimitiveId());
     }
 
     /**
@@ -241,9 +243,12 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
      * @param isLatest whether this relates to a not yet committed changeset
      * @param timestamp the timestamp
      * @param version the version of the primitive
+     * @param id the id and type of the primitive
+     * @since 14432
      */
-    public void update(final Changeset cs, final boolean isLatest, final Date timestamp, final long version) {
+    public void update(final Changeset cs, final boolean isLatest, final Date timestamp, final long version, final PrimitiveId id) {
         lblInfo.setText(getInfoText(timestamp, version, isLatest));
+        primitiveId = id;
 
         if (!isLatest && cs != null) {
             User user = cs.getUser();

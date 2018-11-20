@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -17,6 +18,7 @@ import javax.swing.JPopupMenu;
 
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -32,11 +34,14 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
      * Constructs a new {@code OpenChangesetPopupMenu} for the given changeset id.
      *
      * @param changesetId the changeset id
+     * @param primitiveId the primitive id
+     * @since 14432
      */
-    public OpenChangesetPopupMenu(final long changesetId) {
+    public OpenChangesetPopupMenu(final long changesetId, final PrimitiveId primitiveId) {
         StructUtils.getListOfStructs(Config.getPref(), "history-dialog.tools", DEFAULT_ENTRIES, ChangesetViewerEntry.class)
                 .stream()
-                .map(entry -> entry.toAction(changesetId))
+                .map(entry -> entry.toAction(changesetId, primitiveId))
+                .filter(Objects::nonNull)
                 .forEach(this::add);
     }
 
@@ -57,7 +62,8 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
             new ChangesetViewerEntry(tr("View changeset in web browser"), Config.getUrls().getBaseBrowseUrl() + "/changeset/{0}"),
             new ChangesetViewerEntry(tr("Open {0}", "achavi (Augmented OSM Change Viewer)"), "https://overpass-api.de/achavi/?changeset={0}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSMCha (OSM Changeset Analyzer)"), "https://osmcha.mapbox.com/changesets/{0}"),
-            new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer"), "http://osmhv.openstreetmap.de/changeset.jsp?id={0}"),
+            new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer (osmrmhv)"), "http://osmhv.openstreetmap.de/changeset.jsp?id={0}"),
+            new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer (Pewu)"), "https://pewu.github.io/osm-history/#/{1}/{2}"),
             new ChangesetViewerEntry(tr("Open {0}", "WhoDidIt (OSM Changeset Analyzer)"),
                     "http://simon04.dev.openstreetmap.org/whodidit/index.html?changeset={0}&show=1")
     );
@@ -69,7 +75,12 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
         /** Name to be displayed in popup menu */
         @StructEntry
         public String name;
-        /** Templated service url. <code>{0}</code> will be replaced by changeset id */
+        /**
+         * Templated service url.
+         * <code>{0}</code> will be replaced by changeset id
+         * <code>{1}</code> will be replaced by object type (node, way, relation)
+         * <code>{2}</code> will be replaced by object id
+         */
         @StructEntry
         public String url;
 
@@ -80,12 +91,18 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
         }
 
         ChangesetViewerEntry(String name, String url) {
-            this.name = name;
-            this.url = url;
+            this.name = Objects.requireNonNull(name);
+            this.url = Objects.requireNonNull(url);
         }
 
-        Action toAction(final long changesetId) {
-            return new OpenBrowserAction(name, MessageFormat.format(this.url, Long.toString(changesetId)));
+        Action toAction(final long changesetId, PrimitiveId primitiveId) {
+            if (primitiveId != null) {
+                return new OpenBrowserAction(name, MessageFormat.format(url,
+                        Long.toString(changesetId), primitiveId.getType().getAPIName(), Long.toString(primitiveId.getUniqueId())));
+            } else if (url.contains("{0}")) {
+                return new OpenBrowserAction(name, MessageFormat.format(url, Long.toString(changesetId)));
+            }
+            return null;
         }
     }
 

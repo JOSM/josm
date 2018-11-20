@@ -52,7 +52,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 /**
  * This panel displays the properties of the currently selected changeset in the
  * {@link ChangesetCacheManager}.
- *
+ * @since 2689
  */
 public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener, ChangesetAware {
 
@@ -346,7 +346,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         @Override
         public void actionPerformed(ActionEvent evt) {
             if (currentChangeset != null)
-                new OpenChangesetPopupMenu(currentChangeset.getId()).show(btnOpenChangesetPopupMenu);
+                new OpenChangesetPopupMenu(currentChangeset.getId(), null).show(btnOpenChangesetPopupMenu);
         }
 
         void initProperties(Changeset cs) {
