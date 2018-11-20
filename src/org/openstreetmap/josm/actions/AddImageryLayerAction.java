@@ -92,7 +92,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      * @param info ImageryInfo that will be converted (or returned when no conversion needed)
      * @return ImageryInfo object that's ready to be used to create TileSource
      */
-    private ImageryInfo convertImagery(ImageryInfo info) {
+    private static ImageryInfo convertImagery(ImageryInfo info) {
         try {
             switch(info.getImageryType()) {
             case WMS_ENDPOINT:

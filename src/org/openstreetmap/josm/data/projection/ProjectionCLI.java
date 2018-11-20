@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
 import org.openstreetmap.josm.cli.CLIModule;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -165,12 +165,12 @@ public class ProjectionCLI implements CLIModule {
         return proj;
     }
 
-    private EastNorth parseEastNorth(String s, Function<String, Double> parser) {
+    private EastNorth parseEastNorth(String s, ToDoubleFunction<String> parser) {
         String[] en = s.split("[;, ]+");
         if (en.length != 2)
             throw new IllegalArgumentException(tr("Expected two coordinates, separated by white space, found {0} in ''{1}''", en.length, s));
-        double east = parser.apply(en[0]);
-        double north = parser.apply(en[1]);
+        double east = parser.applyAsDouble(en[0]);
+        double north = parser.applyAsDouble(en[1]);
         if (this.argSwitchInput)
             return new EastNorth(north, east);
         else

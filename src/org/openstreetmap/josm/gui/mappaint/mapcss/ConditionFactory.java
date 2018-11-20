@@ -8,7 +8,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -180,7 +180,7 @@ public final class ConditionFactory {
 
         static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
 
-        private final BiFunction<String, String, Boolean> function;
+        private final BiPredicate<String, String> function;
 
         private final boolean negated;
 
@@ -188,7 +188,7 @@ public final class ConditionFactory {
          * Create a new string operation.
          * @param func The function to apply during {@link #eval(String, String)}.
          */
-        Op(BiFunction<String, String, Boolean> func) {
+        Op(BiPredicate<String, String> func) {
             this.function = func;
             negated = false;
         }
@@ -218,7 +218,7 @@ public final class ConditionFactory {
          * @param negate inverse operation
          */
         Op(Op negate) {
-            this.function = (a, b) -> !negate.function.apply(a, b);
+            this.function = (a, b) -> !negate.function.test(a, b);
             negated = true;
         }
 
@@ -232,7 +232,7 @@ public final class ConditionFactory {
             if (testString == null)
                 return negated;
             else
-                return function.apply(testString, prototypeString);
+                return function.test(testString, prototypeString);
         }
     }
 

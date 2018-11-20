@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -169,7 +170,7 @@ public final class HiDPISupport {
      * @return multi-resolution image assembled from the output of calls to <code>processor</code>
      * for each resolution variant
      */
-    public static Image processMRImage(Image img, Function<Image, Image> processor) {
+    public static Image processMRImage(Image img, UnaryOperator<Image> processor) {
         return processMRImages(Collections.singletonList(img), imgs -> processor.apply(imgs.get(0)));
     }
 

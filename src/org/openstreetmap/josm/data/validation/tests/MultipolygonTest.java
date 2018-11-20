@@ -315,7 +315,7 @@ public class MultipolygonTest extends Test {
      * @param intersectionWays the known intersection ways
      * @return true if one or more ways are in the set of known ways
      */
-    private boolean hasIntersectionWay(PolyData pd, Set<Way> intersectionWays) {
+    private static boolean hasIntersectionWay(PolyData pd, Set<Way> intersectionWays) {
         for (Way w : intersectionWays) {
             if (pd.getWayIds().contains(w.getUniqueId())) {
                 return true;

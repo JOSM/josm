@@ -149,7 +149,7 @@ public class RelationChecker extends Test {
         return allroles;
     }
 
-    private boolean checkMemberType(Role r, RelationMember member) {
+    private static boolean checkMemberType(Role r, RelationMember member) {
         if (r.types != null) {
             switch (member.getDisplayType()) {
             case NODE:

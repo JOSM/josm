@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -175,7 +175,7 @@ public class NoteReader {
         }
     }
 
-    static LatLon parseLatLon(Function<String, String> attrs) {
+    static LatLon parseLatLon(UnaryOperator<String> attrs) {
         double lat = Double.parseDouble(attrs.apply("lat"));
         double lon = Double.parseDouble(attrs.apply("lon"));
         return new LatLon(lat, lon);
@@ -185,7 +185,7 @@ public class NoteReader {
         return parseNoteBasic(attrs::getValue);
     }
 
-    static Note parseNoteBasic(Function<String, String> attrs) {
+    static Note parseNoteBasic(UnaryOperator<String> attrs) {
         return new Note(parseLatLon(attrs));
     }
 
@@ -193,7 +193,7 @@ public class NoteReader {
         return parseNoteFull(attrs::getValue);
     }
 
-    static Note parseNoteFull(Function<String, String> attrs) {
+    static Note parseNoteFull(UnaryOperator<String> attrs) {
         Note note = parseNoteBasic(attrs);
         String id = attrs.apply("id");
         if (id != null) {

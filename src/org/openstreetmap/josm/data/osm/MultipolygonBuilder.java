@@ -69,7 +69,7 @@ public class MultipolygonBuilder {
          * @param intersection the intersection result for polygons a1 and a2 (in that order)
          * @return the intersection result for a2 and a1
          */
-        private PolygonIntersection getReverseIntersectionResult(PolygonIntersection intersection) {
+        private static PolygonIntersection getReverseIntersectionResult(PolygonIntersection intersection) {
             switch (intersection) {
                 case FIRST_INSIDE_SECOND:
                     return PolygonIntersection.SECOND_INSIDE_FIRST;
