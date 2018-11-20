@@ -18,9 +18,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
@@ -60,6 +62,7 @@ public class RelationChecker extends Test {
      * @since 6731
      */
     public static final String ROLE_VERIF_PROBLEM_MSG = tr("Role verification problem");
+    private boolean ignoreMultiPolygons;
 
     /**
      * Constructor
@@ -99,7 +102,30 @@ public class RelationChecker extends Test {
     }
 
     @Override
+    public void startTest(ProgressMonitor progressMonitor) {
+        super.startTest(progressMonitor);
+
+        for (Test t : OsmValidator.getEnabledTests(false)) {
+            if (t instanceof MultipolygonTest) {
+                ignoreMultiPolygons = true;
+                break;
+            }
+        }
+    }
+
+    @Override
     public void visit(Relation n) {
+        Map<String, RoleInfo> map = buildRoleInfoMap(n);
+        if (map.isEmpty()) {
+            errors.add(TestError.builder(this, Severity.ERROR, RELATION_EMPTY)
+                    .message(tr("Relation is empty"))
+                    .primitives(n)
+                    .build());
+        }
+        if (ignoreMultiPolygons && n.isMultipolygon()) {
+            // see #17010: don't report same problem twice
+            return;
+        }
         Map<Role, String> allroles = buildAllRoles(n);
         if (allroles.isEmpty() && n.hasTag("type", "route")
                 && n.hasTag("route", "train", "subway", "monorail", "tram", "bus", "trolleybus", "aerialway", "ferry")) {
@@ -114,13 +140,7 @@ public class RelationChecker extends Test {
                     .build());
         }
 
-        Map<String, RoleInfo> map = buildRoleInfoMap(n);
-        if (map.isEmpty()) {
-            errors.add(TestError.builder(this, Severity.ERROR, RELATION_EMPTY)
-                    .message(tr("Relation is empty"))
-                    .primitives(n)
-                    .build());
-        } else if (!allroles.isEmpty()) {
+        if (!map.isEmpty() && !allroles.isEmpty()) {
             checkRoles(n, allroles, map);
         }
     }

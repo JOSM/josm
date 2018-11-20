@@ -53,8 +53,6 @@ public class MultipolygonTest extends Test {
     public static final int WRONG_MEMBER_ROLE = 1602;
     /** Multipolygon is not closed */
     public static final int NON_CLOSED_WAY = 1603;
-    /** No outer way for multipolygon */
-    public static final int MISSING_OUTER_WAY = 1604;
     /** Multipolygon inner way is outside */
     public static final int INNER_WAY_OUTSIDE = 1605;
     /** Intersection between multipolygon ways */
@@ -132,34 +130,19 @@ public class MultipolygonTest extends Test {
     @Override
     public void visit(Relation r) {
         if (r.isMultipolygon() && r.getMembersCount() > 0) {
-            checkMembersAndRoles(r);
-            checkOuterWay(r);
+            List<TestError> tmpErrors = new ArrayList<>(30);
+            boolean hasUnexpectedWayRoles = checkMembersAndRoles(r, tmpErrors);
             boolean hasRepeatedMembers = checkRepeatedWayMembers(r);
             // Rest of checks is only for complete multipolygon
-            if (!hasRepeatedMembers && !r.hasIncompleteMembers()) {
+            if (!hasUnexpectedWayRoles && !hasRepeatedMembers && !r.hasIncompleteMembers()) {
                 Multipolygon polygon = new Multipolygon(r);
                 checkStyleConsistency(r, polygon);
                 checkGeometryAndRoles(r, polygon);
+                // see #17010: don't report problems twice
+                tmpErrors.removeIf(e -> e.getCode() == WRONG_MEMBER_ROLE);
             }
+            errors.addAll(tmpErrors);
         }
-    }
-
-    /**
-     * Checks that multipolygon has at least an outer way:<ul>
-     * <li>{@link #MISSING_OUTER_WAY}: No outer way for multipolygon</li>
-     * </ul>
-     * @param r relation
-     */
-    private void checkOuterWay(Relation r) {
-        for (RelationMember m : r.getMembers()) {
-            if (m.isWay() && "outer".equals(m.getRole())) {
-                return;
-            }
-        }
-        errors.add(TestError.builder(this, Severity.WARNING, MISSING_OUTER_WAY)
-                .message(r.isBoundary() ? tr("No outer way for boundary") : tr("No outer way for multipolygon"))
-                .primitives(r)
-                .build());
     }
 
     /**
@@ -527,7 +510,7 @@ public class MultipolygonTest extends Test {
             String calculatedRole = (pol.level % 2 == 0) ? "outer" : "inner";
             for (long wayId : pol.outerWay.getWayIds()) {
                 RelationMember member = wayMap.get(wayId);
-                if (!member.getRole().equals(calculatedRole)) {
+                if (!calculatedRole.equals(member.getRole())) {
                     errors.add(TestError.builder(this, Severity.ERROR, WRONG_MEMBER_ROLE)
                             .message(RelationChecker.ROLE_VERIF_PROBLEM_MSG,
                                     marktr("Role for ''{0}'' should be ''{1}''"),
@@ -704,25 +687,31 @@ public class MultipolygonTest extends Test {
      * <li>{@link #WRONG_MEMBER_TYPE}: Non-Way in multipolygon</li>
      * </ul>
      * @param r relation
+     * @param tmpErrors list that will contain found errors
+     * @return true if ways with roles other than inner, outer or empty where found
      */
-    private void checkMembersAndRoles(Relation r) {
+    private boolean checkMembersAndRoles(Relation r, List<TestError> tmpErrors) {
+        boolean hasUnexpectedWayRole = false;
         for (RelationMember rm : r.getMembers()) {
             if (rm.isWay()) {
-                if (!(rm.hasRole("inner", "outer") || !rm.hasRole())) {
-                    errors.add(TestError.builder(this, Severity.WARNING, WRONG_MEMBER_ROLE)
-                            .message(tr("No useful role for multipolygon member"))
+                if (rm.hasRole() && !(rm.hasRole("inner", "outer")))
+                    hasUnexpectedWayRole = true;
+                if (!(rm.hasRole("inner", "outer")) || !rm.hasRole()) {
+                    tmpErrors.add(TestError.builder(this, Severity.ERROR, WRONG_MEMBER_ROLE)
+                            .message(tr("Role for multipolygon way member should be inner or outer"))
                             .primitives(Arrays.asList(r, rm.getMember()))
                             .build());
                 }
             } else {
                 if (!r.isBoundary() || !rm.hasRole("admin_centre", "label", "subarea", "land_area")) {
-                    errors.add(TestError.builder(this, Severity.WARNING, WRONG_MEMBER_TYPE)
+                    tmpErrors.add(TestError.builder(this, Severity.WARNING, WRONG_MEMBER_TYPE)
                             .message(r.isBoundary() ? tr("Non-Way in boundary") : tr("Non-Way in multipolygon"))
                             .primitives(Arrays.asList(r, rm.getMember()))
                             .build());
                 }
             }
         }
+        return hasUnexpectedWayRole;
     }
 
     private static Collection<? extends OsmPrimitive> combineRelAndPrimitives(Relation r, Collection<? extends OsmPrimitive> primitives) {
@@ -748,6 +737,8 @@ public class MultipolygonTest extends Test {
         boolean hasDups = false;
         Map<OsmPrimitive, List<RelationMember>> seenMemberPrimitives = new HashMap<>();
         for (RelationMember rm : r.getMembers()) {
+            if (!rm.isWay())
+                continue;
             List<RelationMember> list = seenMemberPrimitives.get(rm.getMember());
             if (list == null) {
                 list = new ArrayList<>(2);
