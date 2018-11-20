@@ -152,8 +152,18 @@ public final class DateUtils {
      * @return The formatted date
      * @since 14055
      */
-    public static synchronized String fromTimestamp(long timestamp) {
-        final ZonedDateTime temporal = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(timestamp)).atZone(ZoneOffset.UTC);
+    public static String fromTimestamp(long timestamp) {
+        return fromTimestampInMillis(TimeUnit.SECONDS.toMillis(timestamp));
+    }
+
+    /**
+     * Formats a date to the XML UTC format regardless of current locale.
+     * @param timestamp number of milliseconds since the epoch
+     * @return The formatted date
+     * @since 14434
+     */
+    public static synchronized String fromTimestampInMillis(long timestamp) {
+        final ZonedDateTime temporal = Instant.ofEpochMilli(timestamp).atZone(ZoneOffset.UTC);
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(temporal);
     }
 
@@ -163,7 +173,7 @@ public final class DateUtils {
      * @return The formatted date
      */
     public static synchronized String fromTimestamp(int timestamp) {
-        return fromTimestamp((long) timestamp);
+        return fromTimestamp(Integer.toUnsignedLong(timestamp));
     }
 
     /**

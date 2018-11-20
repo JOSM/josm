@@ -524,7 +524,7 @@ public class NmeaReader implements IGpxReader {
             ps.pDate = currentDate;
             if (ps.pWp != currentwp) {
                 if (ps.pWp != null) {
-                    ps.pWp.setTime();
+                    ps.pWp.setTimeFromAttribute();
                 }
                 ps.pWp = currentwp;
                 ps.waypoints.add(currentwp);

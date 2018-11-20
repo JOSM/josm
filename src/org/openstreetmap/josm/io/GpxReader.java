@@ -444,7 +444,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "cmt":
                 case "desc":
                     currentWayPoint.put(localName, accumulator.toString());
-                    currentWayPoint.setTime();
+                    currentWayPoint.setTimeFromAttribute();
                     break;
                 case "rtept":
                     currentState = states.pop();

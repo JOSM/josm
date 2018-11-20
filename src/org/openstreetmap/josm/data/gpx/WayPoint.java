@@ -128,7 +128,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     }
 
     /**
-     * Sets the {@link #time} field as well as the {@link #PT_TIME} attribute to the specified time
+     * Sets the {@link #time} field as well as the {@link #PT_TIME} attribute to the specified time.
      *
      * @param time the time to set
      * @since 9383
@@ -139,19 +139,35 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     }
 
     /**
-     * Convert the time stamp of the waypoint into seconds from the epoch
+     * Convert the time stamp of the waypoint into seconds from the epoch.
+     *
+     * @deprecated call {@link #setTimeFromAttribute()} directly if you need this
      */
+    @Deprecated
     public void setTime() {
         setTimeFromAttribute();
     }
 
     /**
-     * Set the the time stamp of the waypoint into seconds from the epoch,
-     * @param time millisecond from the epoch
+     * Sets the {@link #time} field as well as the {@link #PT_TIME} attribute to the specified time.
+     *
+     * @param ts seconds from the epoch
      * @since 13210
      */
-    public void setTime(long time) {
-        this.time = time / 1000.;
+    public void setTime(long ts) {
+        this.time = ts;
+        this.attr.put(PT_TIME, DateUtils.fromTimestamp(ts));
+    }
+
+    /**
+     * Sets the {@link #time} field as well as the {@link #PT_TIME} attribute to the specified time.
+     *
+     * @param ts milliseconds from the epoch
+     * @since 14434
+     */
+    public void setTimeInMillis(long ts) {
+        this.time = ts / 1000.;
+        this.attr.put(PT_TIME, DateUtils.fromTimestampInMillis(ts));
     }
 
     /**
