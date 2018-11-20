@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -366,7 +366,7 @@ public class OsmApi extends OsmConnection {
     }
 
     private void individualPrimitiveModification(String method, String verb, IPrimitive osm, ProgressMonitor monitor,
-            Consumer<String> consumer, Function<String, String> errHandler) throws OsmTransferException {
+            Consumer<String> consumer, UnaryOperator<String> errHandler) throws OsmTransferException {
         String ret = "";
         try {
             ensureValidChangeset();

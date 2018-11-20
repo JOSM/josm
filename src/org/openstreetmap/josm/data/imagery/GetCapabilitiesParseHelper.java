@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
-import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -166,7 +166,7 @@ public final class GetCapabilitiesParseHelper {
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
     public static boolean moveReaderToTag(XMLStreamReader reader,
-            BiFunction<QName, QName, Boolean> equalsFunc, QName... tags) throws XMLStreamException {
+            BiPredicate<QName, QName> equalsFunc, QName... tags) throws XMLStreamException {
         QName stopTag = reader.getName();
         int currentLevel = 0;
         QName searchTag = tags[currentLevel];
@@ -174,14 +174,14 @@ public final class GetCapabilitiesParseHelper {
         QName skipTag = null;
 
         for (int event = 0; //skip current element, so we will not skip it as a whole
-                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && equalsFunc.apply(stopTag, reader.getName()));
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && equalsFunc.test(stopTag, reader.getName()));
                 event = reader.next()) {
-            if (event == XMLStreamReader.END_ELEMENT && skipTag != null && equalsFunc.apply(skipTag, reader.getName())) {
+            if (event == XMLStreamReader.END_ELEMENT && skipTag != null && equalsFunc.test(skipTag, reader.getName())) {
                 skipTag = null;
             }
             if (skipTag == null) {
                 if (event == XMLStreamReader.START_ELEMENT) {
-                    if (equalsFunc.apply(searchTag, reader.getName())) {
+                    if (equalsFunc.test(searchTag, reader.getName())) {
                         currentLevel += 1;
                         if (currentLevel >= tags.length) {
                             return true; // found!
@@ -193,7 +193,7 @@ public final class GetCapabilitiesParseHelper {
                     }
                 }
 
-                if (event == XMLStreamReader.END_ELEMENT && parentTag != null && equalsFunc.apply(parentTag, reader.getName())) {
+                if (event == XMLStreamReader.END_ELEMENT && parentTag != null && equalsFunc.test(parentTag, reader.getName())) {
                     currentLevel -= 1;
                     searchTag = parentTag;
                     if (currentLevel >= 0) {
