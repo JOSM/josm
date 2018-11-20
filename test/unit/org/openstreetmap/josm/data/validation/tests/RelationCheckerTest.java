@@ -46,7 +46,10 @@ public class RelationCheckerTest {
 
     @Test
     public void testUnknownType() {
-        List<TestError> errors = testRelation(createRelation("type=foobar"));
+        Relation r = createRelation("type=foobar");
+        r.addMember(new RelationMember("", new Way()));
+        List<TestError> errors = testRelation(r);
+
         assertTrue(errors.size() >= 1);
         assertEquals("Relation type is unknown", errors.get(0).getMessage());
     }
