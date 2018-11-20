@@ -192,6 +192,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     protected int changesetId;
 
+    /**
+     * A time value, measured in seconds from the epoch, or in other words,
+     * a number of seconds that have passed since 1970-01-01T00:00:00Z
+     */
     protected int timestamp;
 
     /**
@@ -326,7 +330,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public Date getTimestamp() {
-        return new Date(TimeUnit.SECONDS.toMillis(timestamp));
+        return new Date(TimeUnit.SECONDS.toMillis(Integer.toUnsignedLong(timestamp)));
     }
 
     @Override

@@ -1775,6 +1775,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         private final Set<Tile> requestedTiles;
 
         /**
+         * Constructs a new {@code PrecacheTask}.
          * @param progressMonitor that will be notified about progess of the task
          * @param bufferY buffer Y in degrees around which to download tiles
          * @param bufferX buffer X in degrees around which to download tiles

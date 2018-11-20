@@ -780,12 +780,12 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      * @since 13210
      */
     public static WayPoint nodeToWayPoint(Node n) {
-        return nodeToWayPoint(n, 0);
+        return nodeToWayPoint(n, Long.MIN_VALUE);
     }
 
     /**
      * @param n the {@code Node} to convert
-     * @param time a time value in milliseconds from the epoch.
+     * @param time a timestamp value in milliseconds from the epoch.
      * @return {@code WayPoint} object
      * @since 13210
      */
@@ -797,15 +797,12 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
 
         try {
-            if (time > 0) {
-                wpt.put(GpxConstants.PT_TIME, DateUtils.fromTimestamp(time));
-                wpt.setTime(time);
+            if (time > Long.MIN_VALUE) {
+                wpt.setTimeInMillis(time);
             } else if (n.hasKey(GpxConstants.PT_TIME)) {
-                wpt.put(GpxConstants.PT_TIME, DateUtils.fromString(n.get(GpxConstants.PT_TIME)));
-                wpt.setTime();
+                wpt.setTime(DateUtils.fromString(n.get(GpxConstants.PT_TIME)));
             } else if (!n.isTimestampEmpty()) {
-                wpt.put(GpxConstants.PT_TIME, DateUtils.fromTimestamp(n.getRawTimestamp()));
-                wpt.setTime();
+                wpt.setTime(Integer.toUnsignedLong(n.getRawTimestamp()));
             }
         } catch (UncheckedParseException e) {
             Logging.error(e);

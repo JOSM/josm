@@ -20,6 +20,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.IPrimitiveAction;
@@ -173,7 +174,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
 
         GpxData gpxData = new GpxData();
         String layerName = " (GPX export)";
-        long time = System.currentTimeMillis()-24*3600*1000;
+        long time = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - 24*3600;
 
         if (!flat.isEmpty()) {
             Map<String, Object> trkAttr = new HashMap<>();
@@ -196,16 +197,18 @@ public class ExportRelationToGpxAction extends GpxExportAction
                         if (trkAttr.isEmpty()) {
                             Relation r = Way.getParentRelations(Arrays.asList(flat.get(i).getWay()))
                                     .stream().filter(relsFound::contains).findFirst().orElseGet(null);
-                            if (r != null)
+                            if (r != null) {
                                 trkAttr.put("name", r.getName() != null ? r.getName() : r.getId());
+                                trkAttr.put("desc", tr("based on osm route relation data, timestamps are synthetic"));
+                            }
                             GpxData.ensureUniqueName(trkAttr, names);
                         }
                         List<Node> ln = flat.get(i).getWay().getNodes();
                         if (wct.get(i).direction == WayConnectionType.Direction.BACKWARD)
                             Collections.reverse(ln);
                         for (Node n: ln) {
-                            trkseg.add(OsmDataLayer.nodeToWayPoint(n, time));
-                            time += 1000;
+                            trkseg.add(OsmDataLayer.nodeToWayPoint(n, TimeUnit.SECONDS.toMillis(time)));
+                            time += 1;
                         }
                     }
                 }

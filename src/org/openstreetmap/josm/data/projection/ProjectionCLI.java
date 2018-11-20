@@ -28,6 +28,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class ProjectionCLI implements CLIModule {
 
+    /** The unique instance **/
     public static final ProjectionCLI INSTANCE = new ProjectionCLI();
 
     private boolean argInverse;
@@ -42,7 +43,7 @@ public class ProjectionCLI implements CLIModule {
     @Override
     public void processArguments(String[] argArray) {
         List<String> positionalArguments = new OptionParser("JOSM projection")
-            .addFlagParameter("help", this::showHelp)
+            .addFlagParameter("help", ProjectionCLI::showHelp)
             .addShortAlias("help", "h")
             .addFlagParameter("inverse", () -> argInverse = true)
             .addShortAlias("inverse", "I")
@@ -83,7 +84,7 @@ public class ProjectionCLI implements CLIModule {
     /**
      * Displays help on the console
      */
-    private void showHelp() {
+    private static void showHelp() {
         System.out.println(getHelp());
         System.exit(0);
     }
