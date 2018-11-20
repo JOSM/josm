@@ -675,9 +675,7 @@ public class DownloadDialog extends JDialog {
                 }
             });
 
-            addPropertyChangeListener(DIVIDER_LOCATION_PROPERTY, e -> {
-                heightAdjustedExplicitly = true;
-            });
+            addPropertyChangeListener(DIVIDER_LOCATION_PROPERTY, e -> heightAdjustedExplicitly = true);
         }
 
         public void setPolicy(DownloadSourceSizingPolicy policy) {

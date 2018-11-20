@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +21,7 @@ import org.openstreetmap.josm.tools.OptionParser.OptionParseException;
  */
 public class OptionParserTest {
 
-    // A reason for moving to jupter...
+    // A reason for moving to jupiter...
     @Test(expected = OptionParseException.class)
     public void testEmptyParserRejectsLongopt() {
         new OptionParser("test").parseOptions(Arrays.asList("--long"));
@@ -42,7 +44,7 @@ public class OptionParserTest {
     }
 
     @Test
-    public void testparserOption() {
+    public void testParserOption() {
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -52,7 +54,7 @@ public class OptionParserTest {
     }
 
     @Test(expected = OptionParseException.class)
-    public void testparserOptionFailsIfMissing() {
+    public void testParserOptionFailsIfMissing() {
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -61,7 +63,7 @@ public class OptionParserTest {
     }
 
     @Test(expected = OptionParseException.class)
-    public void testparserOptionFailsIfMissingArgument() {
+    public void testParserOptionFailsIfMissingArgument() {
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -70,7 +72,7 @@ public class OptionParserTest {
     }
 
     @Test(expected = OptionParseException.class)
-    public void testparserOptionFailsIfMissing2() {
+    public void testParserOptionFailsIfMissing2() {
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -79,7 +81,7 @@ public class OptionParserTest {
     }
 
     @Test(expected = OptionParseException.class)
-    public void testparserOptionFailsIfTwice() {
+    public void testParserOptionFailsIfTwice() {
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -88,7 +90,7 @@ public class OptionParserTest {
     }
 
     @Test(expected = OptionParseException.class)
-    public void testparserOptionFailsIfTwiceForAlias() {
+    public void testParserOptionFailsIfTwiceForAlias() {
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set)
@@ -225,8 +227,8 @@ public class OptionParserTest {
         assertEquals(Arrays.asList("x1", "x2", "x3", "--x4", "x5"), remaining);
         assertEquals("arg", argFound.get());
         assertEquals(Arrays.asList("m1", "m2"), multiFound);
-        assertEquals(true, usedFlag.get());
-        assertEquals(false, unusedFlag.get());
+        assertTrue(usedFlag.get());
+        assertFalse(unusedFlag.get());
     }
 
     @Test
@@ -244,12 +246,12 @@ public class OptionParserTest {
 
         assertEquals(Arrays.asList(), remaining);
         assertEquals("arg", argFound.get());
-        assertEquals(true, usedFlag.get());
-        assertEquals(false, unusedFlag.get());
+        assertTrue(usedFlag.get());
+        assertFalse(unusedFlag.get());
     }
 
     @Test(expected = OptionParseException.class)
-    public void testAbigiousAlternatives() {
+    public void testAmbiguousAlternatives() {
         AtomicReference<String> argFound = new AtomicReference<>();
         AtomicBoolean usedFlag = new AtomicBoolean();
         AtomicBoolean unusedFlag = new AtomicBoolean();
@@ -279,22 +281,22 @@ public class OptionParserTest {
 
         assertEquals(Arrays.asList("x"), remaining);
         assertEquals("arg", argFound.get());
-        assertEquals(true, usedFlag.get());
-        assertEquals(false, unusedFlag.get());
+        assertTrue(usedFlag.get());
+        assertFalse(unusedFlag.get());
 
         remaining = parser.parseOptions(Arrays.asList("-ft", "arg", "x"));
 
         assertEquals(Arrays.asList("x"), remaining);
         assertEquals("arg", argFound.get());
-        assertEquals(true, usedFlag.get());
-        assertEquals(false, unusedFlag.get());
+        assertTrue(usedFlag.get());
+        assertFalse(unusedFlag.get());
 
         remaining = parser.parseOptions(Arrays.asList("-f", "-t=arg", "x"));
 
         assertEquals(Arrays.asList("x"), remaining);
         assertEquals("arg", argFound.get());
-        assertEquals(true, usedFlag.get());
-        assertEquals(false, unusedFlag.get());
+        assertTrue(usedFlag.get());
+        assertFalse(unusedFlag.get());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -318,12 +320,12 @@ public class OptionParserTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testDupplicateOptionName() {
+    public void testDuplicateOptionName() {
         new OptionParser("test").addFlagParameter("test", this::nop).addFlagParameter("test", this::nop);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testDupplicateOptionName2() {
+    public void testDuplicateOptionName2() {
         new OptionParser("test").addFlagParameter("test", this::nop)
             .addArgumentParameter("test", OptionCount.OPTIONAL, this::nop);
     }
@@ -344,7 +346,7 @@ public class OptionParserTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testDupplicateShortAlias() {
+    public void testDuplicateShortAlias() {
         new OptionParser("test").addFlagParameter("test", this::nop)
         .addFlagParameter("test2", this::nop)
         .addShortAlias("test", "t")

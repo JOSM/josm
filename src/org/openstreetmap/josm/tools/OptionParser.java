@@ -167,7 +167,7 @@ public class OptionParser {
                     if (split.length > 1) {
                         parameter = split[1];
                     } else {
-                        if (toHandle.isEmpty() || toHandle.getFirst().equals("--")) {
+                        if (toHandle.isEmpty() || "--".equals(toHandle.getFirst())) {
                             throw new OptionParseException(tr("{0}: option ''{1}'' requires an argument", program));
                         }
                         parameter = toHandle.removeFirst();
@@ -197,18 +197,18 @@ public class OptionParser {
             try {
                 option.option.runFor(option.parameter);
             } catch (OptionParseException e) {
-                String message;
+                StringBuilder message = new StringBuilder();
                 // Just add a nicer error message
                 if (option.parameter == null) {
-                    message = tr("{0}: Error while handling option ''{1}''", program, option.optionName);
+                    message.append(tr("{0}: Error while handling option ''{1}''", program, option.optionName));
                 } else {
-                    message = tr("{0}: Invalid value {2} for option ''{1}''", program, option.optionName,
-                            option.parameter);
+                    message.append(tr("{0}: Invalid value {2} for option ''{1}''", program, option.optionName,
+                            option.parameter));
                 }
                 if (!e.getLocalizedMessage().isEmpty()) {
-                    message += ": " + e.getLocalizedMessage().isEmpty();
+                    message.append(": ").append(e.getLocalizedMessage().isEmpty());
                 }
-                throw new OptionParseException(message, e);
+                throw new OptionParseException(message.toString(), e);
             }
         }
         return remainingArguments;
@@ -260,13 +260,21 @@ public class OptionParser {
         }
     }
 
-    protected abstract static class AvailableOption {
+    protected interface AvailableOption {
 
-        public boolean requiresParameter() {
+        /**
+         * Determines if this option requires a parameter.
+         * @return {@code true} if this option requires a parameter ({@code false} by default)
+         */
+        default boolean requiresParameter() {
             return false;
         }
 
-        public OptionCount getRequiredCount() {
+        /**
+         * Determines how often this option may / must be specified on the command line.
+         * @return how often this option may / must be specified on the command line
+         */
+        default OptionCount getRequiredCount() {
             return OptionCount.OPTIONAL;
         }
 
@@ -274,8 +282,7 @@ public class OptionParser {
          * Called once if the parameter is encountered, afer basic validation.
          * @param parameter The parameter if {@link #requiresParameter()} is true, <code>null</code> otherwise.
          */
-        public abstract void runFor(String parameter);
-
+        void runFor(String parameter);
     }
 
     private static class FoundOption {
@@ -291,6 +298,7 @@ public class OptionParser {
     }
 
     /**
+     * Exception thrown when an option cannot be parsed.
      * @author Michael Zangl
      */
     public static class OptionParseException extends RuntimeException {
@@ -306,6 +314,7 @@ public class OptionParser {
         }
 
         /**
+         * Create an error with a localized description
          * @param localizedMessage The message to display to the user.
          */
         public OptionParseException(String localizedMessage) {
@@ -314,6 +323,7 @@ public class OptionParser {
         }
 
         /**
+         * Create an error with a localized description and a root cause
          * @param localizedMessage The message to display to the user.
          * @param t The error that caused this message to be displayed.
          */
