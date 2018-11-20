@@ -126,14 +126,18 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             }
         }
 
+        private static String simplifyString(String s) {
+            return Utils.deAccent(s).toLowerCase(Locale.ENGLISH).replaceAll("\\p{Punct}", "");
+        }
+
         private static int isMatching(Collection<String> values, String... searchString) {
             int sum = 0;
-            List<String> deaccentedValues = values.stream().map(
-                    s -> Utils.deAccent(s).toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
+            List<String> deaccentedValues = values.stream()
+                    .map(PresetClassification::simplifyString).collect(Collectors.toList());
             for (String word: searchString) {
                 boolean found = false;
                 boolean foundFirst = false;
-                String deaccentedWord = Utils.deAccent(word);
+                String deaccentedWord = simplifyString(word);
                 for (String value: deaccentedValues) {
                     int index = value.indexOf(deaccentedWord);
                     if (index == 0) {
