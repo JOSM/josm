@@ -263,7 +263,7 @@ public class ParallelScatterZipCreator {
 
             scatterDoneAt = System.currentTimeMillis();
         } finally {
-            ensureStreamsAreClosed();
+            closeAll();
         }
     }
 
@@ -276,7 +276,7 @@ public class ParallelScatterZipCreator {
         return new ScatterStatistics(compressionDoneAt - startedAt, scatterDoneAt - compressionDoneAt);
     }
 
-    private void ensureStreamsAreClosed() {
+    private void closeAll() {
         synchronized (streams) {
             for (final ScatterZipOutputStream scatterStream : streams) {
                 try {
