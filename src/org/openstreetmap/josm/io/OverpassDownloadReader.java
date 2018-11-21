@@ -301,7 +301,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         idOffset.put(OsmPrimitiveType.WAY, 2_400_000_000L);
         idOffset.put(OsmPrimitiveType.RELATION, 3_600_000_000L);
         final PrimitiveId osmId = searchName(area).getOsmId();
-        Logging.debug("Area '{0}' resolved to {1}", area, osmId);
+        Logging.debug("Area ''{0}'' resolved to {1}", area, osmId);
         return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
     }
 

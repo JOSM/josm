@@ -986,7 +986,7 @@ public final class PluginHandler {
             String systemProp = Utils.getSystemProperty("josm.plugins");
             if (systemProp != null) {
                 plugins.addAll(Arrays.asList(systemProp.split(",")));
-                Logging.debug("josm.plugins system property set to '{0}'. Plugins list is now {1}", systemProp, plugins);
+                Logging.debug("josm.plugins system property set to ''{0}''. Plugins list is now {1}", systemProp, plugins);
             }
             monitor.subTask(tr("Removing deprecated plugins..."));
             filterDeprecatedPlugins(parent, plugins);
