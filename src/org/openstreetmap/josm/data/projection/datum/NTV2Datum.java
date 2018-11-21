@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.projection.datum;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
@@ -24,7 +25,7 @@ public class NTV2Datum extends AbstractDatum {
      */
     public NTV2Datum(String name, String proj4Id, Ellipsoid ellps, NTV2GridShiftFileWrapper nadgrids) {
         super(name, proj4Id, ellps);
-        this.nadgrids = nadgrids;
+        this.nadgrids = Objects.requireNonNull(nadgrids);
     }
 
     @Override
