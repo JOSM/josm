@@ -180,7 +180,7 @@ public final class Cascade {
             try {
                 return Float.valueOf((String) o);
             } catch (NumberFormatException e) {
-                Logging.debug("'{0}' cannot be converted to float", o);
+                Logging.debug("''{0}'' cannot be converted to float", o);
             }
         }
         return null;
