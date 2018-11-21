@@ -63,12 +63,7 @@ public class OptionParser {
      */
     public OptionParser addFlagParameter(String optionName, Runnable handler) {
         checkOptionName(optionName);
-        availableOptions.put("--" + optionName, new AvailableOption() {
-            @Override
-            public void runFor(String parameter) {
-                handler.run();
-            }
-        });
+        availableOptions.put("--" + optionName, parameter -> handler.run());
         return this;
     }
 
