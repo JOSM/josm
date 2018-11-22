@@ -9,18 +9,14 @@ use XML::LibXML;
 my %urls;
 
 my %known = map {$_ => 1} qw(
-  e-mapa.net
   ge.ch
   gis.mapa.lodz.pl
-  hikebikemap.org
   osmdata.asitvd.ch
-  siglon.londrina.pr.gov.br
   tiles.itoworld.com
   tms.cadastre.openstreetmap.fr
   wms.openstreetmap.de
   www.jgoodies.com
   www.osm-tools.org
-  www.webatlasde.de
   zibi.openstreetmap.org.pl
 );
 
