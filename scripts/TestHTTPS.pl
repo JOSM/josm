@@ -12,6 +12,7 @@ my %known = map {$_ => 1} qw(
   ge.ch
   gis.mapa.lodz.pl
   osmdata.asitvd.ch
+  siglon.londrina.pr.gov.br
   tiles.itoworld.com
   tms.cadastre.openstreetmap.fr
   wms.openstreetmap.de
