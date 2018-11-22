@@ -25,7 +25,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.Validator;
 
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.XmlStreamParsingException;
@@ -96,8 +95,7 @@ public class PreferencesReader {
     public static void validateXML(Reader in) throws IOException, SAXException {
         try (CachedFile cf = new CachedFile("resource://data/preferences.xsd"); InputStream xsdStream = cf.getInputStream()) {
             Schema schema = XmlUtils.newXmlSchemaFactory().newSchema(new StreamSource(xsdStream));
-            Validator validator = schema.newValidator();
-            validator.validate(new StreamSource(in));
+            XmlUtils.newSafeValidator(schema).validate(new StreamSource(in));
         }
     }
 

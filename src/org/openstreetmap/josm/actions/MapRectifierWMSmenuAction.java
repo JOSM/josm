@@ -231,7 +231,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
 
     /**
      * Adds a WMS Layer with given title and URL
-     * @param title Name of the layer as it will shop up in the layer manager
+     * @param title Name of the layer as it will show up in the layer manager
      * @param url URL to the WMS server
      * @throws IllegalStateException if imagery time is neither HTML nor WMS
      */
@@ -241,13 +241,21 @@ public class MapRectifierWMSmenuAction extends JosmAction {
             try {
                 info = AddImageryLayerAction.getWMSLayerInfo(info);
             } catch (IOException | WMSGetCapabilitiesException e) {
-                Logging.error(e);
-                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                        e.getMessage(), tr("No valid WMS URL or id"), JOptionPane.ERROR_MESSAGE);
+                handleException(e);
                 return;
             }
         }
-        MainApplication.getLayerManager().addLayer(ImageryLayer.create(info));
+        try {
+            MainApplication.getLayerManager().addLayer(ImageryLayer.create(info));
+        } catch (IllegalArgumentException e) {
+            handleException(e);
+        }
+    }
+
+    private static void handleException(Exception e) {
+        Logging.error(e);
+        JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                e.getMessage(), tr("No valid WMS URL or id"), JOptionPane.ERROR_MESSAGE);
     }
 
     @Override

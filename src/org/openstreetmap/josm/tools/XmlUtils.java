@@ -13,8 +13,10 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.SchemaFactoryConfigurationError;
+import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,6 +24,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -142,6 +146,24 @@ public final class XmlUtils {
         TransformerFactory factory = TransformerFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         return factory;
+    }
+
+    /**
+     * Returns a new secure {@link Validator}.
+     * @param schema XML schema
+     * @return a new secure {@link Validator}
+     * @since 14441
+     */
+    public static Validator newSafeValidator(Schema schema) {
+        Validator validator = schema.newValidator();
+        try {
+            validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        } catch (SAXNotRecognizedException | SAXNotSupportedException e) {
+            // All implementations that implement JAXP 1.5 or newer are required to support these two properties
+            Logging.trace(e);
+        }
+        return validator;
     }
 
     /**

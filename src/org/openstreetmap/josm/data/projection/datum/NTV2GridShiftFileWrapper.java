@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
+
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Wrapper for {@link NTV2GridShiftFile}.
@@ -42,7 +45,7 @@ public class NTV2GridShiftFileWrapper {
      * @param filename Path to the grid file (GSB format)
      */
     public NTV2GridShiftFileWrapper(String filename) {
-        this.gridFileName = filename;
+        this.gridFileName = Objects.requireNonNull(filename);
     }
 
     /**
@@ -63,6 +66,9 @@ public class NTV2GridShiftFileWrapper {
                         break;
                     }
                 }
+            }
+            if (instance == null) {
+                Logging.error("Unable to find NTV2 grid shift file for {0}", gridFileName);
             }
         }
         return instance;
