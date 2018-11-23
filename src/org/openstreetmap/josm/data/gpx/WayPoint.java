@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.awt.Color;
-import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,8 +13,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.UncheckedParseException;
-import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
@@ -135,7 +132,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      */
     public void setTime(Date time) {
         this.time = time.getTime() / 1000.;
-        this.attr.put(PT_TIME, DateUtils.fromDate(time));
+        this.attr.put(PT_TIME, time);
     }
 
     /**
@@ -155,8 +152,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * @since 13210
      */
     public void setTime(long ts) {
-        this.time = ts;
-        this.attr.put(PT_TIME, DateUtils.fromTimestamp(ts));
+        setTimeInMillis(ts*1000);
     }
 
     /**
@@ -167,7 +163,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      */
     public void setTimeInMillis(long ts) {
         this.time = ts / 1000.;
-        this.attr.put(PT_TIME, DateUtils.fromTimestampInMillis(ts));
+        this.attr.put(PT_TIME, new Date(ts));
     }
 
     /**
@@ -177,13 +173,13 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      */
     public Date setTimeFromAttribute() {
         if (attr.containsKey(PT_TIME)) {
-            try {
-                final Object obj = get(PT_TIME);
-                final Date date = obj instanceof Date ? (Date) obj : DateUtils.fromString(obj.toString());
+            final Object obj = get(PT_TIME);
+            if (obj instanceof Date) {
+                final Date date = (Date) obj;
                 time = date.getTime() / 1000.;
                 return date;
-            } catch (UncheckedParseException | DateTimeException e) {
-                Logging.warn(e);
+            } else {
+                Logging.warn("Unsupported waypoint {0} value: {1}", PT_TIME, obj);
                 time = 0;
             }
         }
