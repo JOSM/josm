@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,7 +30,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
@@ -206,7 +204,6 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
     public static final String LABEL_PATTERN_NAME = "{name}";
     public static final String LABEL_PATTERN_DESC = "{desc}";
 
-    private final DateFormat timeFormatter = DateUtils.getGpxFormat();
     private final TemplateEngineDataProvider dataProvider;
     private final String text;
 
