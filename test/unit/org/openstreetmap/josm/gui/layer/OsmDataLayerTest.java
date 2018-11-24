@@ -220,9 +220,13 @@ public class OsmDataLayerTest {
                 "    <tag k='ele' v='456' />\n" +
                 "    <tag k='time' v='2018-08-01T10:01:00Z' />\n" +
                 "  </node>\n" +
-                "  <way id='-546308'>\n" +
+                "  <node id='-546308' timestamp='2018-08-01T10:02:00Z' lat='47.05' lon='9.05'>\n" +
+                "    <tag k='ele' v='789' />\n" +
+                "  </node>\n" +
+                "  <way id='-546309'>\n" +
                 "    <nd ref='-546306' />\n" +
                 "    <nd ref='-546307' />\n" +
+                "    <nd ref='-546308' />\n" +
                 "  </way>\r\n" +
                 "</osm>").getBytes(StandardCharsets.UTF_8)), null));
         GpxData gpx = layer.toGpxData();
@@ -237,7 +241,7 @@ public class OsmDataLayerTest {
         Collection<GpxTrackSegment> segments = track.getSegments();
         assertEquals(1, segments.size());
         Collection<WayPoint> trackpoints = segments.iterator().next().getWayPoints();
-        assertEquals(2, trackpoints.size());
+        assertEquals(3, trackpoints.size());
         Iterator<WayPoint> it = trackpoints.iterator();
         DateFormat gpxFormat = DateUtils.getGpxFormat();
         WayPoint p1 = it.next();
@@ -248,6 +252,10 @@ public class OsmDataLayerTest {
         assertEquals(new LatLon(47.1, 9.1), p2.getCoor());
         assertEquals("456", p2.get(GpxConstants.PT_ELE));
         assertEquals("2018-08-01T10:01:00.000Z", gpxFormat.format(p2.get(GpxConstants.PT_TIME)));
+        WayPoint p3 = it.next();
+        assertEquals(new LatLon(47.05, 9.05), p3.getCoor());
+        assertEquals("789", p3.get(GpxConstants.PT_ELE));
+        assertEquals("2018-08-01T10:02:00.000Z", gpxFormat.format(p3.get(GpxConstants.PT_TIME)));
     }
 
     /**

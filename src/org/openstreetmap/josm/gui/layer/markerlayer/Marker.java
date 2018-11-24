@@ -12,7 +12,6 @@ import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -259,7 +258,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
      */
     public WayPoint convertToWayPoint() {
         WayPoint wpt = new WayPoint(getCoor());
-        wpt.put(GpxConstants.PT_TIME, timeFormatter.format(new Date(Math.round(time * 1000))));
+        wpt.setTime((long) (time*1000));
         if (text != null) {
             wpt.addExtension("text", text);
         } else if (dataProvider != null) {
