@@ -431,6 +431,8 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "sym":
                 case "url":
                 case "urlname":
+                case "cmt":
+                case "desc":
                     currentWayPoint.put(localName, accumulator.toString());
                     break;
                 case "hdop":
@@ -448,10 +450,6 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     } catch (UncheckedParseException e) {
                         Logging.error(e);
                     }
-                    break;
-                case "cmt":
-                case "desc":
-                    currentWayPoint.put(localName, accumulator.toString());
                     break;
                 case "rtept":
                     currentState = states.pop();
