@@ -26,7 +26,9 @@ import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.XmlUtils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -440,11 +442,16 @@ public class GpxReader implements GpxConstants, IGpxReader {
                         currentWayPoint.put(localName, 0f);
                     }
                     break;
-                case "time":
+                case GpxConstants.PT_TIME:
+                    try {
+                        currentWayPoint.setTime(DateUtils.fromString(accumulator.toString()));
+                    } catch (UncheckedParseException e) {
+                        Logging.error(e);
+                    }
+                    break;
                 case "cmt":
                 case "desc":
                     currentWayPoint.put(localName, accumulator.toString());
-                    currentWayPoint.setTimeFromAttribute();
                     break;
                 case "rtept":
                     currentState = states.pop();

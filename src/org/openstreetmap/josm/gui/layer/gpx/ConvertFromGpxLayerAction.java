@@ -33,8 +33,6 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -79,14 +77,6 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
                             if (!none) {
                                 // only convert when required
                                 n.put(key, str);
-                            }
-                            if (GpxConstants.PT_TIME.equals(key)) {
-                                // timestamps should always be converted
-                                try {
-                                    n.setTimestamp(DateUtils.fromString(str));
-                                } catch (UncheckedParseException e) {
-                                    Logging.log(Logging.LEVEL_WARN, e);
-                                }
                             }
                         } else if (obj instanceof Date && GpxConstants.PT_TIME.equals(key)) {
                             // timestamps should always be converted

@@ -178,6 +178,8 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
                 final Date date = (Date) obj;
                 time = date.getTime() / 1000.;
                 return date;
+            } else if (obj == null) {
+                Logging.info("Waypoint {0} value unset", PT_TIME);
             } else {
                 Logging.warn("Unsupported waypoint {0} value: {1}", PT_TIME, obj);
                 time = 0;
