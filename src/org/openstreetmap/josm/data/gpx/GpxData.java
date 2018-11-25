@@ -839,7 +839,7 @@ public class GpxData extends WithAttributes implements Data {
      * @return an Iterable object, which iterates over all track segments and
      * over all routes
      */
-    public Iterable<Collection<WayPoint>> getLinesIterable(final boolean... trackVisibility) {
+    public Iterable<Line> getLinesIterable(final boolean... trackVisibility) {
         return () -> new LinesIterator(this, trackVisibility);
     }
 
@@ -862,15 +862,16 @@ public class GpxData extends WithAttributes implements Data {
     /**
      * Iterates over all track segments and then over all routes.
      */
-    public static class LinesIterator implements Iterator<Collection<WayPoint>> {
+    public static class LinesIterator implements Iterator<Line> {
 
         private Iterator<GpxTrack> itTracks;
         private int idxTracks;
         private Iterator<GpxTrackSegment> itTrackSegments;
         private final Iterator<GpxRoute> itRoutes;
 
-        private Collection<WayPoint> next;
+        private Line next;
         private final boolean[] trackVisibility;
+        private Map<String, Object> trackAttributes;
 
         /**
          * Constructs a new {@code LinesIterator}.
@@ -892,36 +893,38 @@ public class GpxData extends WithAttributes implements Data {
         }
 
         @Override
-        public Collection<WayPoint> next() {
+        public Line next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            Collection<WayPoint> current = next;
+            Line current = next;
             next = getNext();
             return current;
         }
 
-        private Collection<WayPoint> getNext() {
+        private Line getNext() {
             if (itTracks != null) {
                 if (itTrackSegments != null && itTrackSegments.hasNext()) {
-                    return itTrackSegments.next().getWayPoints();
+                    return new Line(itTrackSegments.next(), trackAttributes);
                 } else {
                     while (itTracks.hasNext()) {
                         GpxTrack nxtTrack = itTracks.next();
+                        trackAttributes = nxtTrack.getAttributes();
                         idxTracks++;
                         if (trackVisibility != null && !trackVisibility[idxTracks])
                             continue;
                         itTrackSegments = nxtTrack.getSegments().iterator();
                         if (itTrackSegments.hasNext()) {
-                            return itTrackSegments.next().getWayPoints();
+                            return new Line(itTrackSegments.next(), trackAttributes);
                         }
                     }
                     // if we get here, all the Tracks are finished; Continue with Routes
+                    trackAttributes = null;
                     itTracks = null;
                 }
             }
             if (itRoutes.hasNext()) {
-                return itRoutes.next().routePoints;
+                return new Line(itRoutes.next());
             }
             return null;
         }

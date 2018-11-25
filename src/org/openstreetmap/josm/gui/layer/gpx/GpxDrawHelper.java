@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -41,6 +40,7 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
+import org.openstreetmap.josm.data.gpx.Line;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MapView;
@@ -364,7 +364,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         LinkedList<WayPoint> visibleSegments = new LinkedList<>();
 
         ensureTrackVisibilityLength();
-        for (Collection<WayPoint> segment : data.getLinesIterable(layer.trackVisibility)) {
+        for (Line segment : data.getLinesIterable(layer.trackVisibility)) {
 
             for (WayPoint pt : segment) {
                 Bounds b = new Bounds(pt.getCoor());
@@ -500,7 +500,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         if (colorModeDynamic) {
             if (colored == ColorMode.VELOCITY) {
                 final List<Double> velocities = new ArrayList<>();
-                for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
+                for (Line segment : data.getLinesIterable(null)) {
                     if (!forceLines) {
                         oldWp = null;
                     }
@@ -525,7 +525,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     velocityScale.setRange(minval, maxval);
                 }
             } else if (colored == ColorMode.HDOP) {
-                for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
+                for (Line segment : data.getLinesIterable(null)) {
                     for (WayPoint trkPnt : segment) {
                         Object val = trkPnt.get(GpxConstants.PT_HDOP);
                         if (val != null) {
@@ -564,7 +564,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         }
 
         // Now the colors for all the points will be assigned
-        for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
+        for (Line segment : data.getLinesIterable(null)) {
             if (!forceLines) { // don't draw lines between segments, unless forced to
                 oldWp = null;
             }
@@ -608,7 +608,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                         break;
                     default: // Do nothing
                     }
-                    if (!noDraw && (maxLineLength == -1 || dist <= maxLineLength)) {
+                    if (!noDraw && !segment.isUnordered() && (maxLineLength == -1 || dist <= maxLineLength)) {
                         trkPnt.drawLine = true;
                         double bearing = oldWp.getCoor().bearing(trkPnt.getCoor());
                         trkPnt.dir = ((int) (bearing / Math.PI * 4 + 1.5)) % 8;
