@@ -145,13 +145,14 @@ public class XmlObjectParser implements Iterable<Object> {
                         String.class.equals(f.getType()) || boolean.class.equals(f.getType()))) {
                     f.set(c, getValueForClass(f.getType(), value));
                 } else {
+                    String setter;
                     if (fieldName.startsWith(lang)) {
                         int l = lang.length();
-                        fieldName = "set" + fieldName.substring(l, l + 1).toUpperCase(Locale.ENGLISH) + fieldName.substring(l + 1);
+                        setter = "set" + fieldName.substring(l, l + 1).toUpperCase(Locale.ENGLISH) + fieldName.substring(l + 1);
                     } else {
-                        fieldName = "set" + fieldName.substring(0, 1).toUpperCase(Locale.ENGLISH) + fieldName.substring(1);
+                        setter = "set" + fieldName.substring(0, 1).toUpperCase(Locale.ENGLISH) + fieldName.substring(1);
                     }
-                    Method m = entry.getMethod(fieldName);
+                    Method m = entry.getMethod(setter);
                     if (m != null) {
                         m.invoke(c, getValueForClass(m.getParameterTypes()[0], value));
                     }
