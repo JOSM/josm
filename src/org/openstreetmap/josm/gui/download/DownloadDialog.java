@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.io.NetworkManager;
@@ -433,6 +434,8 @@ public class DownloadDialog extends JDialog {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
+            btnDownloadNewLayer.setVisible(
+                    !MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class).isEmpty());
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
@@ -457,6 +460,7 @@ public class DownloadDialog extends JDialog {
 
     /**
      * Gets the global settings of the download dialog.
+     * @param newLayer The flag defining if a new layer must be created for the downloaded data.
      * @return The {@link DownloadSettings} object that describes the current state of
      * the download dialog.
      */
