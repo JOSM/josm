@@ -92,6 +92,7 @@ node[restriction] {
 
 /* {0} on a way, should be a node */
 way[entrance],
+way[door],
 way[railway=subway_entrance],
 way[man_made=survey_point],
 way[aeroway=holding_position],
