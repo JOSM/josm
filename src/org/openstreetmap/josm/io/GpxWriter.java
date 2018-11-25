@@ -37,8 +37,6 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class GpxWriter extends XmlWriter implements GpxConstants {
 
-    private final DateFormat gpxFormat = DateUtils.getGpxFormat();
-
     /**
      * Constructs a new {@code GpxWriter}.
      * @param out The output writer
@@ -120,7 +118,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 } else {
                     Object val = obj.get(key);
                     if (val instanceof Date) {
-                        simpleTag(key, gpxFormat.format(val));
+                        simpleTag(key, DateUtils.fromDate((Date) val));
                     } else if (val instanceof Number) {
                         simpleTag(key, val.toString());
                     } else if (val != null) {

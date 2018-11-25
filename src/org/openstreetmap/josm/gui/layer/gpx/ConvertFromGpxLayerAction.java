@@ -42,7 +42,6 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer> {
 
     private static final String GPX_SETTING = "gpx.convert-tags";
-    private final DateFormat timeFormatter = DateUtils.getGpxFormat();
 
     /**
      * Creates a new {@code FromGpxLayer}.
@@ -82,7 +81,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
                             // timestamps should always be converted
                             Date date = (Date) obj;
                             if (!none) { //... but the tag will only be set when required
-                                n.put(key, timeFormatter.format(date));
+                                n.put(key, DateUtils.fromDate(date));
                             }
                             n.setTimestamp(date);
                         }
