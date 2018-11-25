@@ -329,7 +329,9 @@ public abstract class CrossingWays extends Test {
     }
 
     static boolean isSubwayOrTramOrRazed(OsmPrimitive w) {
-        return w.hasTag(RAILWAY, "subway", "tram", "razed");
+        return w.hasTag(RAILWAY, "subway", "tram", "razed") ||
+              (w.hasTag(RAILWAY, "construction") && w.hasTag("construction", "tram")) ||
+              (w.hasTag(RAILWAY, "disused") && w.hasTag("disused", "tram"));
     }
 
     static boolean isProposedOrAbandoned(OsmPrimitive w) {
