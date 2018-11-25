@@ -65,7 +65,7 @@ public class GpxWriterTest {
         // Checks that time stored as date is correctly written into XML timestamp
         testSingleWaypoint(
                 w -> w.put(GpxConstants.PT_TIME, Date.from(LocalDate.of(2018, Month.AUGUST, 2).atStartOfDay(ZoneOffset.UTC).toInstant())),
-                "    <time>2018-08-02T00:00:00.000Z</time>%n");
+                "    <time>2018-08-02T00:00:00Z</time>%n");
     }
 
     /**
