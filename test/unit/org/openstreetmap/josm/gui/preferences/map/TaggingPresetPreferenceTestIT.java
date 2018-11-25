@@ -7,9 +7,13 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,8 +53,8 @@ public class TaggingPresetPreferenceTestIT {
         // Double traditional timeouts to avoid random problems
         Config.getPref().putInt("socket.timeout.connect", 30);
         Config.getPref().putInt("socket.timeout.read", 60);
-        Map<Object, Throwable> allErrors = new HashMap<>();
-        Set<String> allMessages = new HashSet<>();
+        Map<String, Throwable> allErrors = new HashMap<>();
+        Map<String, Set<String>> allMessages = new HashMap<>();
         for (ExtendedSourceEntry source : sources) {
             System.out.println(source.url);
             try {
@@ -82,9 +86,17 @@ public class TaggingPresetPreferenceTestIT {
         assertTrue(allMessages.toString(), allMessages.isEmpty());
     }
 
-    private static void testPresets(Set<String> allMessages, ExtendedSourceEntry source) throws SAXException, IOException {
+    private static void testPresets(Map<String, Set<String>> allMessages, ExtendedSourceEntry source) throws SAXException, IOException {
         Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, true);
         assertFalse(presets.isEmpty());
+        // wait for asynchronous icon loading
+        presets.stream().map(TaggingPreset::getIconLoadingTask).filter(Objects::nonNull).forEach(t -> {
+            try {
+                t.get(30, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                Logging.error(e);
+            }
+        });
         Collection<String> errorsAndWarnings = Logging.getLastErrorAndWarnings();
         boolean error = false;
         for (String message : errorsAndWarnings) {
@@ -92,7 +104,7 @@ public class TaggingPresetPreferenceTestIT {
                 error = true;
                 // ignore https://github.com/yopaseopor/traffic_signs_preset_JOSM because of far too frequent missing icons errors
                 if (!source.url.contains("yopaseopor/traffic_signs")) {
-                    allMessages.add(message);
+                    allMessages.computeIfAbsent(source.url, x -> new TreeSet<>()).add(message);
                 }
             }
         }

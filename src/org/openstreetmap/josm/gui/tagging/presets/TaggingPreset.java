@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 import javax.swing.AbstractAction;
@@ -127,6 +128,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      */
     private boolean originalSelectionEmpty;
 
+    /** The completable future task of asynchronous icon loading */
+    private CompletableFuture<Void> iconFuture;
+
     /**
      * Create an empty tagging preset. This will not have any items and
      * will be an empty string as text. createPanel will return null.
@@ -214,18 +218,18 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         }
         File arch = TaggingPresetReader.getZipIcons();
         final Collection<String> s = Config.getPref().getList("taggingpreset.icon.sources", null);
-        ImageProvider imgProv = new ImageProvider(iconName);
-        imgProv.setDirs(s);
-        imgProv.setId("presets");
-        imgProv.setArchive(arch);
-        imgProv.setOptional(true);
-        imgProv.getResourceAsync(result -> {
-            if (result != null) {
-                GuiHelper.runInEDT(() -> result.attachImageIcon(this));
-            } else {
-                Logging.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
-            }
-        });
+        this.iconFuture = new ImageProvider(iconName)
+            .setDirs(s)
+            .setId("presets")
+            .setArchive(arch)
+            .setOptional(true)
+            .getResourceAsync(result -> {
+                if (result != null) {
+                    GuiHelper.runInEDT(() -> result.attachImageIcon(this));
+                } else {
+                    Logging.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
+                }
+            });
     }
 
     /**
@@ -646,5 +650,14 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     public String getToolbarString() {
         ToolbarPreferences.ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
         return actionParser.saveAction(new ToolbarPreferences.ActionDefinition(this));
+    }
+
+    /**
+     * Returns the completable future task that performs icon loading, if any.
+     * @return the completable future task that performs icon loading, or null
+     * @since 14449
+     */
+    public CompletableFuture<Void> getIconLoadingTask() {
+        return iconFuture;
     }
 }
