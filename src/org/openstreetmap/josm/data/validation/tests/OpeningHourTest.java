@@ -322,8 +322,10 @@ public class OpeningHourTest extends Test.TagTest {
 
     @Override
     public void check(final OsmPrimitive p) {
-        check(p, "opening_hours");
-        check(p, "collection_times");
-        check(p, "service_times");
+        if (p.isTagged()) {
+            check(p, "opening_hours");
+            check(p, "collection_times");
+            check(p, "service_times");
+        }
     }
 }
