@@ -96,7 +96,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
         for (WayPoint wpt : indata.waypoints) {
             /* calculate time differences in waypoints */
-            double time = wpt.time;
+            double time = wpt.getTime();
             boolean wptHasLink = wpt.attr.containsKey(GpxConstants.META_LINKS);
             if (firstTime < 0 && wptHasLink) {
                 firstTime = time;

@@ -166,7 +166,7 @@ public final class PlayHeadMarker extends Marker {
             for (Marker m : recent.parentLayer.data) {
                 if (m instanceof AudioMarker) {
                     AudioMarker a = (AudioMarker) m;
-                    if (a.time > cw.time) {
+                    if (a.time > cw.getTime()) {
                         break;
                     }
                     ca = a;
@@ -187,7 +187,7 @@ public final class PlayHeadMarker extends Marker {
         } else {
             if (cw != null) {
                 setCoor(cw.getCoor());
-                ca.play(cw.time - ca.time);
+                ca.play(cw.getTime() - ca.time);
             }
             endDrag(false);
         }
@@ -244,7 +244,7 @@ public final class PlayHeadMarker extends Marker {
                 endDrag(true);
                 return;
             }
-            ca = recent.parentLayer.addAudioMarker(cw.time, cw.getCoor());
+            ca = recent.parentLayer.addAudioMarker(cw.getTime(), cw.getCoor());
         }
 
         /* Actually do the synchronization */
@@ -329,7 +329,7 @@ public final class PlayHeadMarker extends Marker {
         for (GpxTrack track : trackLayer.data.getTracks()) {
             for (GpxTrackSegment trackseg : track.getSegments()) {
                 for (WayPoint w: trackseg.getWayPoints()) {
-                    if (audioTime < w.time) {
+                    if (audioTime < w.getTime()) {
                         w2 = w;
                         break;
                     }
@@ -349,7 +349,7 @@ public final class PlayHeadMarker extends Marker {
         setEastNorth(w2 == null ?
                 w1.getEastNorth(ProjectionRegistry.getProjection()) :
                     w1.getEastNorth(ProjectionRegistry.getProjection()).interpolate(w2.getEastNorth(ProjectionRegistry.getProjection()),
-                            (audioTime - w1.time)/(w2.time - w1.time)));
+                            (audioTime - w1.getTime())/(w2.getTime() - w1.getTime())));
         time = audioTime;
         MapView mapView = MainApplication.getMap().mapView;
         if (jumpToMarker) {

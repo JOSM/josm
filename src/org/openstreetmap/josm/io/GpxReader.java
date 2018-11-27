@@ -444,9 +444,9 @@ public class GpxReader implements GpxConstants, IGpxReader {
                         currentWayPoint.put(localName, 0f);
                     }
                     break;
-                case GpxConstants.PT_TIME:
+                case PT_TIME:
                     try {
-                        currentWayPoint.setTime(DateUtils.fromString(accumulator.toString()));
+                        currentWayPoint.setTimeInMillis(DateUtils.tsFromString(accumulator.toString()));
                     } catch (UncheckedParseException e) {
                         Logging.error(e);
                     }

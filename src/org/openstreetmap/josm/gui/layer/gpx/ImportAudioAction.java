@@ -149,7 +149,7 @@ public class ImportAudioAction extends AbstractAction {
             for (GpxTrack track : layer.data.tracks) {
                 for (GpxTrackSegment seg : track.getSegments()) {
                     for (WayPoint w : seg.getWayPoints()) {
-                        firstTime = w.time;
+                        firstTime = w.getTime();
                         break;
                     }
                     if (firstTime >= 0.0) {
@@ -174,9 +174,9 @@ public class ImportAudioAction extends AbstractAction {
         // (a) try explicit timestamped waypoints - unless suppressed
         if (hasWaypoints && Config.getPref().getBoolean("marker.audiofromexplicitwaypoints", true)) {
             for (WayPoint w : layer.data.waypoints) {
-                if (w.time > firstTime) {
+                if (w.getTime() > firstTime) {
                     waypoints.add(w);
-                } else if (w.time > 0.0) {
+                } else if (w.getTime() > 0.0) {
                     timedMarkersOmitted = true;
                 }
             }
@@ -191,7 +191,7 @@ public class ImportAudioAction extends AbstractAction {
                 WayPoint wNear = layer.data.nearestPointOnTrack(w.getEastNorth(ProjectionRegistry.getProjection()), snapDistance);
                 if (wNear != null) {
                     WayPoint wc = new WayPoint(w.getCoor());
-                    wc.time = wNear.time;
+                    wc.setTimeInMillis(wNear.getTimeInMillis());
                     if (w.attr.containsKey(GpxConstants.GPX_NAME)) {
                         wc.put(GpxConstants.GPX_NAME, w.getString(GpxConstants.GPX_NAME));
                     }
@@ -229,7 +229,7 @@ public class ImportAudioAction extends AbstractAction {
             for (GpxTrack track : layer.data.tracks) {
                 for (GpxTrackSegment seg : track.getSegments()) {
                     for (WayPoint w : seg.getWayPoints()) {
-                        if (startTime < w.time) {
+                        if (startTime < w.getTime()) {
                             w2 = w;
                             break;
                         }
@@ -245,8 +245,8 @@ public class ImportAudioAction extends AbstractAction {
                 timedMarkersOmitted = true;
             } else {
                 wayPointFromTimeStamp = new WayPoint(w1.getCoor().interpolate(w2.getCoor(),
-                        (startTime - w1.time) / (w2.time - w1.time)));
-                wayPointFromTimeStamp.time = startTime;
+                        (startTime - w1.getTime()) / (w2.getTime() - w1.getTime())));
+                wayPointFromTimeStamp.setTimeInMillis((long) (startTime * 1000));
                 String name = audioFile.getName();
                 int dot = name.lastIndexOf('.');
                 if (dot > 0) {
@@ -267,7 +267,7 @@ public class ImportAudioAction extends AbstractAction {
                     for (WayPoint w : seg.getWayPoints()) {
                         WayPoint wStart = new WayPoint(w.getCoor());
                         wStart.put(GpxConstants.GPX_NAME, "start");
-                        wStart.time = w.time;
+                        wStart.setTimeInMillis(w.getTimeInMillis());
                         waypoints.add(wStart);
                         gotOne = true;
                         break;
@@ -283,15 +283,15 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // we must have got at least one waypoint now
-        ((ArrayList<WayPoint>) waypoints).sort(Comparator.comparingDouble(o -> o.time));
+        ((ArrayList<WayPoint>) waypoints).sort((wp, other) -> wp.compareTo(other));
 
         firstTime = -1.0; // this time of the first waypoint, not first trackpoint
         for (WayPoint w : waypoints) {
             if (firstTime < 0.0) {
-                firstTime = w.time;
+                firstTime = w.getTime();
             }
-            double offset = w.time - firstTime;
-            AudioMarker am = new AudioMarker(w.getCoor(), w, url, ml, w.time, offset);
+            double offset = w.getTime() - firstTime;
+            AudioMarker am = new AudioMarker(w.getCoor(), w, url, ml, w.getTime(), offset);
             // timeFromAudio intended for future use to shift markers of this type on synchronization
             if (w == wayPointFromTimeStamp) {
                 am.timeFromAudio = true;

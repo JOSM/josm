@@ -8,11 +8,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -174,7 +174,7 @@ public class GpxData extends WithAttributes implements Data {
                 WayPoint prevLastOwnWp = null;
                 Date prevWpTime = null;
                 for (WayPoint wp : wpsOld) {
-                    Date wpTime = wp.setTimeFromAttribute();
+                    Date wpTime = wp.getDate();
                     boolean overlap = false;
                     if (wpTime != null) {
                         for (GpxTrackSegmentSpan ownspan : getSegmentSpans()) {
@@ -266,8 +266,8 @@ public class GpxData extends WithAttributes implements Data {
         private final WayPoint lastWp;
 
         GpxTrackSegmentSpan(WayPoint a, WayPoint b) {
-            Date at = a.getTime();
-            Date bt = b.getTime();
+            Date at = a.getDate();
+            Date bt = b.getDate();
             inv = bt.before(at);
             if (inv) {
                 firstWp = b;
@@ -323,7 +323,7 @@ public class GpxData extends WithAttributes implements Data {
         private static WayPoint getNextWpWithTime(GpxTrackSegment seg, boolean forward) {
             List<WayPoint> wps = new ArrayList<>(seg.getWayPoints());
             for (int i = forward ? 0 : wps.size() - 1; i >= 0 && i < wps.size(); i += forward ? 1 : -1) {
-                if (wps.get(i).setTimeFromAttribute() != null) {
+                if (wps.get(i).hasDate()) {
                     return wps.get(i);
                 }
             }
@@ -690,13 +690,13 @@ public class GpxData extends WithAttributes implements Data {
      * @return  minimum and maximum dates in array of 2 elements
      */
     public static Date[] getMinMaxTimeForTrack(GpxTrack trk) {
-        final DoubleSummaryStatistics statistics = trk.getSegments().stream()
+        final LongSummaryStatistics statistics = trk.getSegments().stream()
                 .flatMap(seg -> seg.getWayPoints().stream())
-                .mapToDouble(pnt -> pnt.time)
+                .mapToLong(pnt -> pnt.getTimeInMillis())
                 .summaryStatistics();
         return statistics.getCount() == 0
                 ? null
-                : new Date[]{new Date((long) (statistics.getMin() * 1000)), new Date((long) (statistics.getMax() * 1000))};
+                : new Date[]{new Date(statistics.getMin()), new Date(statistics.getMax())};
     }
 
     /**
@@ -707,16 +707,16 @@ public class GpxData extends WithAttributes implements Data {
      * @return minimum and maximum dates in array of 2 elements
     */
     public synchronized Date[] getMinMaxTimeForAllTracks() {
-        double now = System.currentTimeMillis() / 1000.0;
-        final DoubleSummaryStatistics statistics = tracks.stream()
+        long now = System.currentTimeMillis();
+        final LongSummaryStatistics statistics = tracks.stream()
                 .flatMap(trk -> trk.getSegments().stream())
                 .flatMap(seg -> seg.getWayPoints().stream())
-                .mapToDouble(pnt -> pnt.time)
+                .mapToLong(pnt -> pnt.getTimeInMillis())
                 .filter(t -> t > 0 && t <= now)
                 .summaryStatistics();
         return statistics.getCount() == 0
                 ? new Date[0]
-                : new Date[]{new Date((long) (statistics.getMin() * 1000)), new Date((long) (statistics.getMax() * 1000))};
+                : new Date[]{new Date(statistics.getMin()), new Date(statistics.getMax())};
     }
 
     /**
@@ -754,7 +754,7 @@ public class GpxData extends WithAttributes implements Data {
 
         double pnminsq = tolerance * tolerance;
         EastNorth bestEN = null;
-        double bestTime = 0.0;
+        double bestTime = Double.NaN;
         double px = p.east();
         double py = p.north();
         double rx = 0.0, ry = 0.0, sx, sy, x, y;
@@ -773,7 +773,9 @@ public class GpxData extends WithAttributes implements Data {
                         if (pRsq < pnminsq) {
                             pnminsq = pRsq;
                             bestEN = en;
-                            bestTime = r.time;
+                            if (r.hasDate()) {
+                                bestTime = r.getTime();
+                            }
                         }
                     } else {
                         sx = en.east();
@@ -799,7 +801,9 @@ public class GpxData extends WithAttributes implements Data {
                                 double nx = rx - rnoverRS * b;
                                 double ny = ry + rnoverRS * a;
                                 bestEN = new EastNorth(nx, ny);
-                                bestTime = r.time + rnoverRS * (wpSeg.time - r.time);
+                                if (r.hasDate() && wpSeg.hasDate()) {
+                                    bestTime = r.getTime() + rnoverRS * (wpSeg.getTime() - r.getTime());
+                                }
                                 pnminsq = pnsq;
                             }
                         }
@@ -819,7 +823,9 @@ public class GpxData extends WithAttributes implements Data {
                     if (prsq < pnminsq) {
                         pnminsq = prsq;
                         bestEN = c;
-                        bestTime = r.time;
+                        if (r.hasDate()) {
+                            bestTime = r.getTime();
+                        }
                     }
                 }
             }
@@ -827,7 +833,9 @@ public class GpxData extends WithAttributes implements Data {
         if (bestEN == null)
             return null;
         WayPoint best = new WayPoint(ProjectionRegistry.getProjection().eastNorth2latlon(bestEN));
-        best.time = bestTime;
+        if (!Double.isNaN(bestTime)) {
+            best.setTimeInMillis((long) (bestTime * 1000));
+        }
         return best;
     }
 

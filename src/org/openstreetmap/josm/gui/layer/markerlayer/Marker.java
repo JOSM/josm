@@ -255,7 +255,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
      */
     public WayPoint convertToWayPoint() {
         WayPoint wpt = new WayPoint(getCoor());
-        wpt.setTime((long) (time*1000));
+        wpt.setTimeInMillis((long) (time * 1000));
         if (text != null) {
             wpt.addExtension("text", text);
         } else if (dataProvider != null) {
