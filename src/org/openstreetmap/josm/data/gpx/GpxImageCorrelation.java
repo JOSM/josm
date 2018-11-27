@@ -45,7 +45,7 @@ public final class GpxImageCorrelation {
                     //remove waypoints at the beginning of the track/segment without timestamps
                     int wp;
                     for (wp = 0; wp < wps.size(); wp++) {
-                        if (wps.get(wp).setTimeFromAttribute() != null) {
+                        if (wps.get(wp).hasDate()) {
                             break;
                         }
                     }
@@ -61,7 +61,7 @@ public final class GpxImageCorrelation {
                 segs.sort((o1, o2) -> {
                     if (o1.isEmpty() || o2.isEmpty())
                         return 0;
-                    return Double.compare(o1.get(0).time, o2.get(0).time);
+                    return o1.get(0).compareTo(o2.get(0));
                 });
                 trks.add(segs);
             }
@@ -71,7 +71,7 @@ public final class GpxImageCorrelation {
             if (o1.isEmpty() || o1.get(0).isEmpty()
              || o2.isEmpty() || o2.get(0).isEmpty())
                 return 0;
-            return Double.compare(o1.get(0).get(0).time, o2.get(0).get(0).time);
+            return o1.get(0).get(0).compareTo(o2.get(0).get(0));
         });
 
         boolean trkInt, trkTag, segInt, segTag;
@@ -110,29 +110,26 @@ public final class GpxImageCorrelation {
                 List<WayPoint> wps = segs.get(s);
                 for (int i = 0; i < wps.size(); i++) {
                     WayPoint curWp = wps.get(i);
-                    Date parsedTime = curWp.setTimeFromAttribute();
                     // Interpolate timestamps in the segment, if one or more waypoints miss them
-                    if (parsedTime == null) {
+                    if (!curWp.hasDate()) {
                         //check if any of the following waypoints has a timestamp...
-                        if (i > 0 && wps.get(i - 1).time != 0) {
-                            long prevWpTimeNoOffset = wps.get(i - 1).getTime().getTime();
+                        if (i > 0 && wps.get(i - 1).hasDate()) {
+                            long prevWpTimeNoOffset = wps.get(i - 1).getTimeInMillis();
                             double totalDist = 0;
                             List<Pair<Double, WayPoint>> nextWps = new ArrayList<>();
                             for (int j = i; j < wps.size(); j++) {
                                 totalDist += wps.get(j - 1).getCoor().greatCircleDistance(wps.get(j).getCoor());
                                 nextWps.add(new Pair<>(totalDist, wps.get(j)));
-                                final Date nextTime = wps.get(j).setTimeFromAttribute();
-                                if (nextTime != null) {
+                                if (wps.get(j).hasDate()) {
                                     // ...if yes, interpolate everything in between
-                                    long timeDiff = nextTime.getTime() - prevWpTimeNoOffset;
+                                    long timeDiff = wps.get(j).getTimeInMillis() - prevWpTimeNoOffset;
                                     for (Pair<Double, WayPoint> pair : nextWps) {
-                                        pair.b.setTime(new Date((long) (prevWpTimeNoOffset + (timeDiff * (pair.a / totalDist)))));
+                                        pair.b.setTimeInMillis((long) (prevWpTimeNoOffset + (timeDiff * (pair.a / totalDist))));
                                     }
                                     break;
                                 }
                             }
-                            parsedTime = curWp.setTimeFromAttribute();
-                            if (parsedTime == null) {
+                            if (!curWp.hasDate()) {
                                 break; //It's pointless to continue with this segment, because none of the following waypoints had a timestamp
                             }
                         } else {
@@ -141,7 +138,7 @@ public final class GpxImageCorrelation {
                         }
                     }
 
-                    final long curWpTime = parsedTime.getTime() + offset;
+                    final long curWpTime = curWp.getTimeInMillis() + offset;
                     boolean interpolate = true;
                     int tagTime = 0;
                     if (i == 0) {

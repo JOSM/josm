@@ -1229,9 +1229,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
         outer: for (GpxTrack trk : gpx.tracks) {
             for (GpxTrackSegment segment : trk.getSegments()) {
                 for (WayPoint curWp : segment.getWayPoints()) {
-                    final Date parsedTime = curWp.setTimeFromAttribute();
-                    if (parsedTime != null) {
-                        firstGPXDate = parsedTime.getTime();
+                    if (curWp.hasDate()) {
+                        firstGPXDate = curWp.getTimeInMillis();
                         break outer;
                     }
                 }

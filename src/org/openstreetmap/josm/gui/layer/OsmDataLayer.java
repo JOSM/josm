@@ -800,7 +800,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             if (time > Long.MIN_VALUE) {
                 wpt.setTimeInMillis(time);
             } else if (n.hasKey(GpxConstants.PT_TIME)) {
-                wpt.setTime(DateUtils.fromString(n.get(GpxConstants.PT_TIME)));
+                wpt.setTimeInMillis(DateUtils.tsFromString(n.get(GpxConstants.PT_TIME)));
             } else if (!n.isTimestampEmpty()) {
                 wpt.setTime(Integer.toUnsignedLong(n.getRawTimestamp()));
             }

@@ -508,9 +508,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                         if (!trkPnt.isLatLonKnown()) {
                             continue;
                         }
-                        if (oldWp != null && trkPnt.time > oldWp.time) {
+                        if (oldWp != null && trkPnt.getTimeInMillis() > oldWp.getTimeInMillis()) {
                             double vel = trkPnt.getCoor().greatCircleDistance(oldWp.getCoor())
-                                    / (trkPnt.time - oldWp.time);
+                                    / (trkPnt.getTime() - oldWp.getTime());
                             velocities.add(vel);
                         }
                         oldWp = trkPnt;
@@ -586,7 +586,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     boolean noDraw = false;
                     switch (colored) {
                     case VELOCITY:
-                        double dtime = trkPnt.time - oldWp.time;
+                        double dtime = trkPnt.getTime() - oldWp.getTime();
                         if (dtime > 0) {
                             color = velocityScale.getColor(dist / dtime);
                         } else {
@@ -598,7 +598,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                         color = directionScale.getColor(dirColor);
                         break;
                     case TIME:
-                        double t = trkPnt.time;
+                        double t = trkPnt.getTime();
                         // skip bad timestamps and very short tracks
                         if (t > 0 && t <= now && maxval - minval > minTrackDurationForTimeColoring) {
                             color = dateScale.getColor(t);

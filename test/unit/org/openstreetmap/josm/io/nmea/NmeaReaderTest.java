@@ -69,11 +69,11 @@ public class NmeaReaderTest {
         assertEquals(DateUtils.fromString("2016-01-25T05:05:09.200Z"), wayPoints.get(0).get(GpxConstants.PT_TIME));
         assertEquals(DateUtils.fromString("2016-01-25T05:05:09.400Z"), wayPoints.get(1).get(GpxConstants.PT_TIME));
         assertEquals(DateUtils.fromString("2016-01-25T05:05:09.600Z"), wayPoints.get(2).get(GpxConstants.PT_TIME));
-        assertEquals(wayPoints.get(0).getTime(), wayPoints.get(0).get(GpxConstants.PT_TIME));
+        assertEquals(wayPoints.get(0).getDate(), wayPoints.get(0).get(GpxConstants.PT_TIME));
 
-        assertEquals("2016-01-25T05:05:09.200Z", iso8601.format(wayPoints.get(0).getTime()));
-        assertEquals("2016-01-25T05:05:09.400Z", iso8601.format(wayPoints.get(1).getTime()));
-        assertEquals("2016-01-25T05:05:09.600Z", iso8601.format(wayPoints.get(2).getTime()));
+        assertEquals("2016-01-25T05:05:09.200Z", iso8601.format(wayPoints.get(0).getDate()));
+        assertEquals("2016-01-25T05:05:09.400Z", iso8601.format(wayPoints.get(1).getDate()));
+        assertEquals("2016-01-25T05:05:09.600Z", iso8601.format(wayPoints.get(2).getDate()));
 
         assertEquals(new LatLon(46.98807, -1.400525), wayPoints.get(0).getCoor());
         assertEquals("38.9", wayPoints.get(0).get(GpxConstants.PT_ELE));
@@ -170,7 +170,7 @@ public class NmeaReaderTest {
     }
 
     private static Date readDate(String nmeaLine) throws IOException, SAXException {
-        return readWayPoint(nmeaLine).getTime();
+        return readWayPoint(nmeaLine).getDate();
     }
 
     private static double readSpeed(String nmeaLine) throws IOException, SAXException {
