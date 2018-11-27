@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
