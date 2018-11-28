@@ -692,7 +692,7 @@ public class GpxData extends WithAttributes implements Data {
     public static Date[] getMinMaxTimeForTrack(GpxTrack trk) {
         final LongSummaryStatistics statistics = trk.getSegments().stream()
                 .flatMap(seg -> seg.getWayPoints().stream())
-                .mapToLong(pnt -> pnt.getTimeInMillis())
+                .mapToLong(WayPoint::getTimeInMillis)
                 .summaryStatistics();
         return statistics.getCount() == 0
                 ? null
@@ -711,7 +711,7 @@ public class GpxData extends WithAttributes implements Data {
         final LongSummaryStatistics statistics = tracks.stream()
                 .flatMap(trk -> trk.getSegments().stream())
                 .flatMap(seg -> seg.getWayPoints().stream())
-                .mapToLong(pnt -> pnt.getTimeInMillis())
+                .mapToLong(WayPoint::getTimeInMillis)
                 .filter(t -> t > 0 && t <= now)
                 .summaryStatistics();
         return statistics.getCount() == 0
