@@ -471,33 +471,33 @@ public class MapCSSStyleSource extends StyleSource {
                 MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
                 final String base = ((GeneralSelector) selRightmost).getBase();
                 switch (base) {
-                    case "node":
+                    case Selector.BASE_NODE:
                         nodeRules.add(optRule);
                         break;
-                    case "way":
+                    case Selector.BASE_WAY:
                         wayNoAreaRules.add(optRule);
                         wayRules.add(optRule);
                         break;
-                    case "area":
+                    case Selector.BASE_AREA:
                         wayRules.add(optRule);
                         multipolygonRules.add(optRule);
                         break;
-                    case "relation":
+                    case Selector.BASE_RELATION:
                         relationRules.add(optRule);
                         multipolygonRules.add(optRule);
                         break;
-                    case "*":
+                    case Selector.BASE_ANY:
                         nodeRules.add(optRule);
                         wayRules.add(optRule);
                         wayNoAreaRules.add(optRule);
                         relationRules.add(optRule);
                         multipolygonRules.add(optRule);
                         break;
-                    case "canvas":
+                    case Selector.BASE_CANVAS:
                         canvasRules.add(r);
                         break;
-                    case "meta":
-                    case "setting":
+                    case Selector.BASE_META:
+                    case Selector.BASE_SETTING:
                         break;
                     default:
                         final RuntimeException e = new JosmRuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
@@ -556,7 +556,7 @@ public class MapCSSStyleSource extends StyleSource {
      * load meta info from a selector "meta"
      */
     private void loadMeta() {
-        Cascade c = constructSpecial("meta");
+        Cascade c = constructSpecial(Selector.BASE_META);
         String pTitle = c.get("title", null, String.class);
         if (title == null) {
             title = pTitle;
@@ -568,7 +568,7 @@ public class MapCSSStyleSource extends StyleSource {
     }
 
     private void loadCanvas() {
-        Cascade c = constructSpecial("canvas");
+        Cascade c = constructSpecial(Selector.BASE_CANVAS);
         backgroundColorOverride = c.get("fill-color", null, Color.class);
     }
 
@@ -585,7 +585,7 @@ public class MapCSSStyleSource extends StyleSource {
         for (MapCSSRule r : rules) {
             if (r.selector instanceof GeneralSelector) {
                 GeneralSelector gs = (GeneralSelector) r.selector;
-                if ("setting".equals(gs.getBase())) {
+                if (Selector.BASE_SETTING.equals(gs.getBase())) {
                     if (!gs.matchesConditions(env)) {
                         continue;
                     }
@@ -737,7 +737,7 @@ public class MapCSSStyleSource extends StyleSource {
             MapCSSRule x = it.next();
             if (x.selector instanceof GeneralSelector) {
                 GeneralSelector gs = (GeneralSelector) x.selector;
-                if ("meta".equals(gs.base)) {
+                if (Selector.BASE_META.equals(gs.base)) {
                     it.remove();
                 }
             }
