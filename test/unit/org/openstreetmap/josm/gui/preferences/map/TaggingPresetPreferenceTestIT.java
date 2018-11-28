@@ -103,7 +103,8 @@ public class TaggingPresetPreferenceTestIT {
             if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX)) {
                 error = true;
                 // ignore https://github.com/yopaseopor/traffic_signs_preset_JOSM because of far too frequent missing icons errors
-                if (!source.url.contains("yopaseopor/traffic_signs")) {
+                // ignore https://github.com/ruosm-presets because of frequent missing icons errors and no response
+                if (!source.url.contains("yopaseopor/traffic_signs") && !source.url.contains("ruosm-presets/literan-moscow")) {
                     allMessages.computeIfAbsent(source.url, x -> new TreeSet<>()).add(message);
                 }
             }
