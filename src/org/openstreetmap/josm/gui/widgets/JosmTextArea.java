@@ -10,12 +10,15 @@ import javax.swing.text.Document;
 
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.tools.Destroyable;
 
 /**
  * Subclass of {@link JTextArea} that adds a "native" context menu (cut/copy/paste/select all).
  * @since 5886
  */
-public class JosmTextArea extends JTextArea implements FocusListener {
+public class JosmTextArea extends JTextArea implements Destroyable, FocusListener {
+
+    private final PopupMenuLauncher launcher;
 
     /**
      * Constructs a new {@code JosmTextArea}. A default model is set, the initial string
@@ -87,7 +90,7 @@ public class JosmTextArea extends JTextArea implements FocusListener {
      */
     public JosmTextArea(Document doc, String text, int rows, int columns) {
         super(doc, text, rows, columns);
-        TextContextualPopupMenu.enableMenuFor(this, true);
+        launcher = TextContextualPopupMenu.enableMenuFor(this, true);
         addFocusListener(this);
     }
 
@@ -117,5 +120,11 @@ public class JosmTextArea extends JTextArea implements FocusListener {
         if (map != null) {
             map.keyDetector.setEnabled(true);
         }
+    }
+
+    @Override
+    public void destroy() {
+        removeFocusListener(this);
+        TextContextualPopupMenu.disableMenuFor(this, launcher);
     }
 }

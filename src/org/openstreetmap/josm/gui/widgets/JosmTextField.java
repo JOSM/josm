@@ -15,6 +15,7 @@ import javax.swing.text.Document;
 
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.tools.Destroyable;
 
 /**
  * Subclass of {@link JTextField} that:<ul>
@@ -25,8 +26,9 @@ import org.openstreetmap.josm.gui.MapFrame;
  * </ul><br>This class must be used everywhere in core and plugins instead of {@code JTextField}.
  * @since 5886
  */
-public class JosmTextField extends JTextField implements FocusListener {
+public class JosmTextField extends JTextField implements Destroyable, FocusListener {
 
+    private final PopupMenuLauncher launcher;
     private String hint;
 
     /**
@@ -68,7 +70,7 @@ public class JosmTextField extends JTextField implements FocusListener {
      */
     public JosmTextField(Document doc, String text, int columns, boolean undoRedo) {
         super(doc, text, columns);
-        TextContextualPopupMenu.enableMenuFor(this, undoRedo);
+        launcher = TextContextualPopupMenu.enableMenuFor(this, undoRedo);
         // Fix minimum size when columns are specified
         if (columns > 0) {
             setMinimumSize(getPreferredSize());
@@ -182,5 +184,11 @@ public class JosmTextField extends JTextField implements FocusListener {
             map.keyDetector.setEnabled(true);
         }
         repaint();
+    }
+
+    @Override
+    public void destroy() {
+        removeFocusListener(this);
+        TextContextualPopupMenu.disableMenuFor(this, launcher);
     }
 }

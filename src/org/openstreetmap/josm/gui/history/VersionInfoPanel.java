@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -50,7 +51,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * of a {@link OsmPrimitive}.
  * @since 1709
  */
-public class VersionInfoPanel extends JPanel implements ChangeListener {
+public class VersionInfoPanel extends JPanel implements ChangeListener, Destroyable {
     private final PointInTimeType pointInTimeType;
     private final transient HistoryBrowserModel model;
     private JMultilineLabel lblInfo;
@@ -337,5 +338,10 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
                 ChangesetCacheManager.getInstance().setSelectedComponentInDetailPanel(componentToSelect);
             }
         }
+    }
+
+    @Override
+    public void destroy() {
+        model.removeChangeListener(this);
     }
 }

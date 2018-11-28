@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -643,6 +644,23 @@ public final class GuiHelper {
                     break;
                 }
             }
+        }
+    }
+
+    /**
+     * Destroys recursively all {@link Destroyable} components of a given container, and optionnally the container itself.
+     * @param component the component to destroy
+     * @param destroyItself whether to destroy the component itself
+     * @since 14463
+     */
+    public static void destroyComponents(Component component, boolean destroyItself) {
+        if (component instanceof Container) {
+            for (Component c: ((Container) component).getComponents()) {
+                destroyComponents(c, true);
+            }
+        }
+        if (destroyItself && component instanceof Destroyable) {
+            ((Destroyable) component).destroy();
         }
     }
 }

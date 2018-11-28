@@ -2,10 +2,8 @@
 package org.openstreetmap.josm.gui.history;
 
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -15,11 +13,8 @@ import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
  * Base class of {@link TagInfoViewer} and {@link RelationMemberListViewer}.
  * @since 6207
  */
-public abstract class HistoryViewerPanel extends JPanel {
+public abstract class HistoryViewerPanel extends HistoryBrowserPanel {
 
-    protected transient HistoryBrowserModel model;
-    protected VersionInfoPanel referenceInfoPanel;
-    protected VersionInfoPanel currentInfoPanel;
     protected transient AdjustmentSynchronizer adjustmentSynchronizer;
     protected transient SelectionSynchronizer selectionSynchronizer;
 
@@ -34,44 +29,11 @@ public abstract class HistoryViewerPanel extends JPanel {
         return pane;
     }
 
-    /**
-     * Sets the history browsing model.
-     * @param model The history browsing model
-     */
-    public final void setModel(HistoryBrowserModel model) {
-        if (this.model != null) {
-            unregisterAsChangeListener(model);
-        }
-        this.model = model;
-        if (this.model != null) {
-            registerAsChangeListener(model);
-        }
-    }
-
-    protected final void unregisterAsChangeListener(HistoryBrowserModel model) {
-        if (currentInfoPanel != null) {
-            model.removeChangeListener(currentInfoPanel);
-        }
-        if (referenceInfoPanel != null) {
-            model.removeChangeListener(referenceInfoPanel);
-        }
-    }
-
-    protected final void registerAsChangeListener(HistoryBrowserModel model) {
-        if (currentInfoPanel != null) {
-            model.addChangeListener(currentInfoPanel);
-        }
-        if (referenceInfoPanel != null) {
-            model.addChangeListener(referenceInfoPanel);
-        }
-    }
-
     protected abstract JTable buildReferenceTable();
 
     protected abstract JTable buildCurrentTable();
 
     private void build() {
-        setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
         // ---------------------------
