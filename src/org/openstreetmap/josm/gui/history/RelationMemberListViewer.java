@@ -16,7 +16,7 @@ import javax.swing.event.TableModelListener;
  *   <li>on the left, it displays the list of relation members for the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
  *   <li>on the right, it displays the list of relation members for the version at {@link PointInTimeType#CURRENT_POINT_IN_TIME}</li>
  * </ul>
- *
+ * @since 1709
  */
 public class RelationMemberListViewer extends HistoryViewerPanel {
 

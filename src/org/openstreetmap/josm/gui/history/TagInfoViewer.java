@@ -90,12 +90,12 @@ public class TagInfoViewer extends HistoryViewerPanel {
         };
         Supplier<Collection<? extends Tagged>> objectSp = () -> Arrays.asList(histoSp.get());
 
-        tagMenu.add(new CopyValueAction(table, tagKeyFn, objectSp));
-        tagMenu.add(new CopyKeyValueAction(table, tagKeyFn, objectSp));
-        tagMenu.add(new CopyAllKeyValueAction(table, tagKeyFn, objectSp));
+        tagMenu.add(trackJosmAction(new CopyValueAction(table, tagKeyFn, objectSp)));
+        tagMenu.add(trackJosmAction(new CopyKeyValueAction(table, tagKeyFn, objectSp)));
+        tagMenu.add(trackJosmAction(new CopyAllKeyValueAction(table, tagKeyFn, objectSp)));
         tagMenu.addSeparator();
-        tagMenu.add(new HelpAction(table, tagKeyFn, tagValuesFn, null, null));
-        tagMenu.add(new TaginfoAction(table, tagKeyFn, tagValuesFn, null, null));
+        tagMenu.add(trackJosmAction(new HelpAction(table, tagKeyFn, tagValuesFn, null, null)));
+        tagMenu.add(trackJosmAction(new TaginfoAction(table, tagKeyFn, tagValuesFn, null, null)));
 
         table.addMouseListener(new PopupMenuLauncher(tagMenu));
         return table;

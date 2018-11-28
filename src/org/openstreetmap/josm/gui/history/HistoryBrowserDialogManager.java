@@ -152,7 +152,6 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         List<HistoryBrowserDialog> dialogs = new ArrayList<>();
         dialogs.addAll(this.dialogs.values());
         for (HistoryBrowserDialog dialog: dialogs) {
-            dialog.unlinkAsListener();
             hide(dialog);
         }
     }

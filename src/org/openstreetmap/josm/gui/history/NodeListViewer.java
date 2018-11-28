@@ -3,16 +3,12 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,7 +27,6 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -46,31 +41,26 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * </ul>
  * @since 1709
  */
-public class NodeListViewer extends JPanel {
+public class NodeListViewer extends HistoryViewerPanel {
 
-    private transient HistoryBrowserModel model;
-    private VersionInfoPanel referenceInfoPanel;
-    private VersionInfoPanel currentInfoPanel;
-    private transient AdjustmentSynchronizer adjustmentSynchronizer;
-    private transient SelectionSynchronizer selectionSynchronizer;
-    private NodeListPopupMenu popupMenu;
+    private final NodeListPopupMenu popupMenu = new NodeListPopupMenu();
 
     /**
      * Constructs a new {@code NodeListViewer}.
      * @param model history browser model
      */
     public NodeListViewer(HistoryBrowserModel model) {
-        setModel(model);
-        build();
+        super(model);
     }
 
-    protected JScrollPane embeddInScrollPane(JTable table) {
+    protected JScrollPane embedInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
         adjustmentSynchronizer.participateInSynchronizedScrolling(pane.getVerticalScrollBar());
         return pane;
     }
 
-    protected JTable buildReferenceNodeListTable() {
+    @Override
+    protected JTable buildReferenceTable() {
         final DiffTableModel tableModel = model.getNodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
         final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
@@ -83,7 +73,8 @@ public class NodeListViewer extends JPanel {
         return table;
     }
 
-    protected JTable buildCurrentNodeListTable() {
+    @Override
+    protected JTable buildCurrentTable() {
         final DiffTableModel tableModel = model.getNodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
         final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
@@ -94,93 +85,6 @@ public class NodeListViewer extends JPanel {
         table.addMouseListener(new InternalPopupMenuLauncher());
         table.addMouseListener(new DoubleClickAdapter(table));
         return table;
-    }
-
-    protected void build() {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-
-        // ---------------------------
-        gc.gridx = 0;
-        gc.gridy = 0;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.weightx = 0.5;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(5, 5, 5, 0);
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        referenceInfoPanel = new VersionInfoPanel(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
-        add(referenceInfoPanel, gc);
-
-        gc.gridx = 1;
-        gc.gridy = 0;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.5;
-        gc.weighty = 0.0;
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        currentInfoPanel = new VersionInfoPanel(model, PointInTimeType.CURRENT_POINT_IN_TIME);
-        add(currentInfoPanel, gc);
-
-        adjustmentSynchronizer = new AdjustmentSynchronizer();
-        selectionSynchronizer = new SelectionSynchronizer();
-
-        popupMenu = new NodeListPopupMenu();
-
-        // ---------------------------
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.weightx = 0.5;
-        gc.weighty = 1.0;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embeddInScrollPane(buildReferenceNodeListTable()), gc);
-
-        gc.gridx = 1;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.weightx = 0.5;
-        gc.weighty = 1.0;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embeddInScrollPane(buildCurrentNodeListTable()), gc);
-    }
-
-    protected void unregisterAsChangeListener(HistoryBrowserModel model) {
-        if (currentInfoPanel != null) {
-            model.removeChangeListener(currentInfoPanel);
-        }
-        if (referenceInfoPanel != null) {
-            model.removeChangeListener(referenceInfoPanel);
-        }
-    }
-
-    protected void registerAsChangeListener(HistoryBrowserModel model) {
-        if (currentInfoPanel != null) {
-            model.addChangeListener(currentInfoPanel);
-        }
-        if (referenceInfoPanel != null) {
-            model.addChangeListener(referenceInfoPanel);
-        }
-    }
-
-    /**
-     * Sets the history browser model.
-     * @param model the history browser model
-     */
-    public void setModel(HistoryBrowserModel model) {
-        if (this.model != null) {
-            unregisterAsChangeListener(model);
-        }
-        this.model = model;
-        if (this.model != null) {
-            registerAsChangeListener(model);
-        }
     }
 
     static final class ReversedChangeListener implements TableModelListener {

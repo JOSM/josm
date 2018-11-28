@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -34,14 +35,8 @@ import org.openstreetmap.josm.tools.Pair;
  * {@link HistoryNode}s.
  * @since 2243
  */
-public class CoordinateInfoViewer extends JPanel {
+public class CoordinateInfoViewer extends HistoryBrowserPanel {
 
-    /** the model */
-    private transient HistoryBrowserModel model;
-    /** the common info panel for the history node in role REFERENCE_POINT_IN_TIME */
-    private VersionInfoPanel referenceInfoPanel;
-    /** the common info panel for the history node in role CURRENT_POINT_IN_TIME */
-    private VersionInfoPanel currentInfoPanel;
     /** the info panel for coordinates for the node in role REFERENCE_POINT_IN_TIME */
     private LatLonViewer referenceLatLonViewer;
     /** the info panel for coordinates for the node in role CURRENT_POINT_IN_TIME */
@@ -52,7 +47,6 @@ public class CoordinateInfoViewer extends JPanel {
     private MapViewer mapViewer;
 
     protected void build() {
-        setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
         // ---------------------------
@@ -132,13 +126,9 @@ public class CoordinateInfoViewer extends JPanel {
         registerAsChangeListener(model);
     }
 
+    @Override
     protected void unregisterAsChangeListener(HistoryBrowserModel model) {
-        if (currentInfoPanel != null) {
-            model.removeChangeListener(currentInfoPanel);
-        }
-        if (referenceInfoPanel != null) {
-            model.removeChangeListener(referenceInfoPanel);
-        }
+        super.unregisterAsChangeListener(model);
         if (currentLatLonViewer != null) {
             model.removeChangeListener(currentLatLonViewer);
         }
@@ -153,13 +143,9 @@ public class CoordinateInfoViewer extends JPanel {
         }
     }
 
+    @Override
     protected void registerAsChangeListener(HistoryBrowserModel model) {
-        if (currentInfoPanel != null) {
-            model.addChangeListener(currentInfoPanel);
-        }
-        if (referenceInfoPanel != null) {
-            model.addChangeListener(referenceInfoPanel);
-        }
+        super.registerAsChangeListener(model);
         if (currentLatLonViewer != null) {
             model.addChangeListener(currentLatLonViewer);
         }
@@ -174,19 +160,12 @@ public class CoordinateInfoViewer extends JPanel {
         }
     }
 
-    /**
-     * Sets the model for this viewer
-     *
-     * @param model the model.
-     */
-    public void setModel(HistoryBrowserModel model) {
-        if (this.model != null) {
-            unregisterAsChangeListener(model);
-        }
-        this.model = model;
-        if (this.model != null) {
-            registerAsChangeListener(model);
-        }
+    @Override
+    public void destroy() {
+        super.destroy();
+        referenceLatLonViewer.destroy();
+        currentLatLonViewer.destroy();
+        distanceViewer.destroy();
     }
 
     /**
@@ -243,7 +222,7 @@ public class CoordinateInfoViewer extends JPanel {
     /**
      * A UI widgets which displays the Lan/Lon-coordinates of a {@link HistoryNode}.
      */
-    private static class LatLonViewer extends JPanel implements ChangeListener {
+    private static class LatLonViewer extends JPanel implements ChangeListener, Destroyable {
 
         private final JosmTextArea lblLat = newTextArea();
         private final JosmTextArea lblLon = newTextArea();
@@ -251,7 +230,6 @@ public class CoordinateInfoViewer extends JPanel {
         private final Color modifiedColor;
 
         protected void build() {
-            setLayout(new GridBagLayout());
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             GridBagConstraints gc = new GridBagConstraints();
 
@@ -293,6 +271,7 @@ public class CoordinateInfoViewer extends JPanel {
          * @param role the role for this viewer.
          */
         LatLonViewer(HistoryBrowserModel model, PointInTimeType role) {
+            super(new GridBagLayout());
             this.updater = new Updater(model, role);
             this.modifiedColor = PointInTimeType.CURRENT_POINT_IN_TIME == role
                     ? TwoColumnDiff.Item.DiffItemType.INSERTED.getColor()
@@ -328,6 +307,12 @@ public class CoordinateInfoViewer extends JPanel {
         @Override
         public void stateChanged(ChangeEvent e) {
             refresh();
+        }
+
+        @Override
+        public void destroy() {
+            lblLat.destroy();
+            lblLon.destroy();
         }
     }
 
@@ -373,18 +358,18 @@ public class CoordinateInfoViewer extends JPanel {
         }
     }
 
-    private static class DistanceViewer extends JPanel implements ChangeListener {
+    private static class DistanceViewer extends JPanel implements ChangeListener, Destroyable {
 
         private final JosmTextArea lblDistance = newTextArea();
         private final transient Updater updater;
 
         DistanceViewer(HistoryBrowserModel model) {
-            this.updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
+            super(new GridBagLayout());
+            updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
             build();
         }
 
         protected void build() {
-            setLayout(new GridBagLayout());
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             GridBagConstraints gc = new GridBagConstraints();
 
@@ -430,6 +415,11 @@ public class CoordinateInfoViewer extends JPanel {
         @Override
         public void stateChanged(ChangeEvent e) {
             refresh();
+        }
+
+        @Override
+        public void destroy() {
+            lblDistance.destroy();
         }
     }
 }

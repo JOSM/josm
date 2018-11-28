@@ -14,13 +14,14 @@ import javax.swing.JTabbedPane;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.tools.Destroyable;
 
 /**
  * HistoryBrowser is an UI component which displays history information about an {@link OsmPrimitive}.
  *
- *
+ * @since 1709
  */
-public class HistoryBrowser extends JPanel {
+public class HistoryBrowser extends JPanel implements Destroyable {
 
     /** the model */
     private transient HistoryBrowserModel model;
@@ -105,7 +106,6 @@ public class HistoryBrowser extends JPanel {
         right.setMinimumSize(minimumSize);
     }
 
-
     /**
      * populates the browser with the history of a specific {@link OsmPrimitive}
      *
@@ -147,5 +147,14 @@ public class HistoryBrowser extends JPanel {
      */
     public HistoryBrowserModel getModel() {
         return model;
+    }
+
+    @Override
+    public void destroy() {
+        model.unlinkAsListener();
+        for (Destroyable component : new Destroyable[] {
+                tagInfoViewer, nodeListViewer, relationMemberListViewer, coordinateInfoViewer}) {
+            component.destroy();
+        }
     }
 }

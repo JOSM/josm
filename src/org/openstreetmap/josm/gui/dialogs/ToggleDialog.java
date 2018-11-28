@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -468,18 +467,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             Logging.log(Logging.LEVEL_ERROR, "Unable to remove AWT event listener", e);
         }
         Config.getPref().removePreferenceChangeListener(this);
-        destroyComponents(this, false);
-    }
-
-    private static void destroyComponents(Component component, boolean destroyItself) {
-        if (component instanceof Container) {
-            for (Component c: ((Container) component).getComponents()) {
-                destroyComponents(c, true);
-            }
-        }
-        if (destroyItself && component instanceof Destroyable) {
-            ((Destroyable) component).destroy();
-        }
+        GuiHelper.destroyComponents(this, false);
     }
 
     /**

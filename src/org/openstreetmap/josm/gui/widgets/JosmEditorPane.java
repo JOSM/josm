@@ -15,6 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
@@ -23,14 +24,16 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  * and effectively uses JOSM user agent when performing HTTP request in {@link #setPage(URL)} method.
  * @since 5886
  */
-public class JosmEditorPane extends JEditorPane {
+public class JosmEditorPane extends JEditorPane implements Destroyable {
+
+    private final PopupMenuLauncher launcher;
 
     /**
      * Creates a new <code>JosmEditorPane</code>.
      * The document model is set to <code>null</code>.
      */
     public JosmEditorPane() {
-        TextContextualPopupMenu.enableMenuFor(this, true);
+        launcher = TextContextualPopupMenu.enableMenuFor(this, true);
     }
 
     /**
@@ -135,5 +138,10 @@ public class JosmEditorPane extends JEditorPane {
                 "bold",
                 f.isItalic() ? "italic" : "normal"
         );
+    }
+
+    @Override
+    public void destroy() {
+        TextContextualPopupMenu.disableMenuFor(this, launcher);
     }
 }

@@ -125,7 +125,9 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
 
     /**
      * Removes this history browser model as listener for data change and layer change events.
+     * @deprecated not needeed anymore, job is done in {@link #dispose}
      */
+    @Deprecated
     public void unlinkAsListener() {
         getHistoryBrowser().getModel().unlinkAsListener();
     }
@@ -159,8 +161,6 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         }
 
         void run() {
-            getHistoryBrowser().getModel().unlinkAsListener();
-            HistoryDataSet.getInstance().removeHistoryDataSetListener(HistoryBrowserDialog.this);
             HistoryBrowserDialogManager.getInstance().hide(HistoryBrowserDialog.this);
         }
 
@@ -200,5 +200,12 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
      */
     public HistoryBrowser getHistoryBrowser() {
         return browser;
+    }
+
+    @Override
+    public void dispose() {
+        HistoryDataSet.getInstance().removeHistoryDataSetListener(HistoryBrowserDialog.this);
+        GuiHelper.destroyComponents(this, false);
+        super.dispose();
     }
 }
