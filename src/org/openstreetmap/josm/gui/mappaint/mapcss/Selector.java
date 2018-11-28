@@ -62,7 +62,8 @@ public interface Selector {
     /** selector base that matches on OSM object relation. */
     String BASE_RELATION = "relation";
 
-    /** selector base that matches with any area regardless of whether the area border is only modelled with a single way or with a set of ways glued together with a relation.*/
+    /** selector base that matches with any area regardless of whether the area border is only modelled with a single way or with
+     * a set of ways glued together with a relation.*/
     String BASE_AREA = "area";
 
     /** selector base for special rules containing meta information. */
@@ -636,9 +637,10 @@ public interface Selector {
         }
 
         /**
-         * Check if this is a known base and return the corresponding string constant.
-         * @param base
-         * @return the matching String constant
+         * Set base and check if this is a known value.
+         * @param base value for base
+         * @return the matching String constant for a known value
+         * @throws IllegalArgumentException if value is not knwon
          */
         private static String checkBase(String base) {
             switch(base) {
