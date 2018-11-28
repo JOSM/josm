@@ -50,6 +50,30 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public interface Selector {
 
+    /** selector base that matches anything. */
+    String BASE_ANY = "*";
+
+    /** selector base that matches on OSM object node. */
+    String BASE_NODE = "node";
+
+    /** selector base that matches on OSM object way. */
+    String BASE_WAY = "way";
+
+    /** selector base that matches on OSM object relation. */
+    String BASE_RELATION = "relation";
+
+    /** selector base that matches with any area regardless of whether the area border is only modelled with a single way or with a set of ways glued together with a relation.*/
+    String BASE_AREA = "area";
+
+    /** selector base for special rules containing meta information. */
+    String BASE_META = "meta";
+
+    /** selector base for style information not specific to nodes, ways or relations. */
+    String BASE_CANVAS = "canvas";
+
+    /** selector base for artificial bases created to use preferences. */
+    String BASE_SETTING = "setting";
+
     /**
      * Apply the selector to the primitive and check if it matches.
      *
@@ -575,7 +599,7 @@ public interface Selector {
 
         public OptimizedGeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
             super(conds);
-            this.base = base;
+            this.base = checkBase(base);
             if (zoom != null) {
                 int a = zoom.a == null ? 0 : zoom.a;
                 int b = zoom.b == null ? Integer.MAX_VALUE : zoom.b;
@@ -592,7 +616,7 @@ public interface Selector {
 
         public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, Subpart subpart) {
             super(conds);
-            this.base = base;
+            this.base = checkBase(base);
             this.range = range;
             this.subpart = subpart != null ? subpart : Subpart.DEFAULT_SUBPART;
         }
@@ -611,19 +635,39 @@ public interface Selector {
             return range;
         }
 
+        /**
+         * Check if this is a known base and return the corresponding string constant.
+         * @param base
+         * @return the matching String constant
+         */
+        private static String checkBase(String base) {
+            switch(base) {
+            case "*": return BASE_ANY;
+            case "node": return BASE_NODE;
+            case "way": return BASE_WAY;
+            case "relation": return BASE_RELATION;
+            case "area": return BASE_AREA;
+            case "meta": return BASE_META;
+            case "canvas": return BASE_CANVAS;
+            case "setting": return BASE_SETTING;
+            default:
+                throw new IllegalArgumentException("unknown selector " + base);
+            }
+        }
+
         public String getBase() {
             return base;
         }
 
         public boolean matchesBase(OsmPrimitiveType type) {
-            if ("*".equals(base)) {
+            if (BASE_ANY.equals(base)) {
                 return true;
             } else if (OsmPrimitiveType.NODE == type) {
-                return "node".equals(base);
+                return BASE_NODE.equals(base);
             } else if (OsmPrimitiveType.WAY == type) {
-                return "way".equals(base) || "area".equals(base);
+                return BASE_WAY.equals(base) || BASE_AREA.equals(base);
             } else if (OsmPrimitiveType.RELATION == type) {
-                return "area".equals(base) || "relation".equals(base) || "canvas".equals(base);
+                return BASE_AREA.equals(base) || BASE_RELATION.equals(base) || BASE_CANVAS.equals(base);
             }
             return false;
         }
@@ -633,9 +677,9 @@ public interface Selector {
                 return false;
             } else {
                 if (p instanceof IRelation) {
-                    if ("area".equals(base)) {
+                    if (BASE_AREA.equals(base)) {
                         return ((IRelation<?>) p).isMultipolygon();
-                    } else if ("canvas".equals(base)) {
+                    } else if (BASE_CANVAS.equals(base)) {
                         return p.get("#canvas") != null;
                     }
                 }
