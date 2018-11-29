@@ -204,7 +204,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
 
     @Override
     public void dispose() {
-        HistoryDataSet.getInstance().removeHistoryDataSetListener(HistoryBrowserDialog.this);
+        HistoryDataSet.getInstance().removeHistoryDataSetListener(this);
         GuiHelper.destroyComponents(this, false);
         super.dispose();
     }
