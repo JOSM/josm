@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -653,7 +654,7 @@ public interface Selector {
             case "canvas": return BASE_CANVAS;
             case "setting": return BASE_SETTING;
             default:
-                throw new IllegalArgumentException("unknown selector " + base);
+                throw new IllegalArgumentException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
             }
         }
 
