@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -35,6 +36,9 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
@@ -54,12 +58,15 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource.MapCSSRuleIndex;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -67,6 +74,7 @@ import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -76,11 +84,146 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 6506
  */
 public class MapCSSTagChecker extends Test.TagTest {
+    IndexData indexData;
 
     /**
-     * A grouped MapCSSRule with multiple selectors for a single declaration.
-     * @see MapCSSRule
+     * Helper class to store indexes of rules.
+     * @author Gerd
+     *
      */
+    private static class IndexData {
+        final Map<MapCSSRule, TagCheck> ruleToCheckMap = new HashMap<>();
+
+        /**
+         * Rules for nodes
+         */
+        final MapCSSRuleIndex nodeRules = new MapCSSRuleIndex();
+        /**
+         * Rules for ways without tag area=no
+         */
+        final MapCSSRuleIndex wayRules = new MapCSSRuleIndex();
+        /**
+         * Rules for ways with tag area=no
+         */
+        final MapCSSRuleIndex wayNoAreaRules = new MapCSSRuleIndex();
+        /**
+         * Rules for relations that are not multipolygon relations
+         */
+        final MapCSSRuleIndex relationRules = new MapCSSRuleIndex();
+        /**
+         * Rules for multipolygon relations
+         */
+        final MapCSSRuleIndex multipolygonRules = new MapCSSRuleIndex();
+
+        IndexData(MultiMap<String, TagCheck> checks) {
+            buildIndex(checks);
+        }
+
+        private void buildIndex(MultiMap<String, TagCheck> checks) {
+            List<TagCheck> allChecks = new ArrayList<>();
+            for (Set<TagCheck> cs : checks.values()) {
+                allChecks.addAll(cs);
+            }
+
+            ruleToCheckMap.clear();
+            nodeRules.clear();
+            wayRules.clear();
+            wayNoAreaRules.clear();
+            relationRules.clear();
+            multipolygonRules.clear();
+
+            // optimization: filter rules for different primitive types
+            for (TagCheck c : allChecks) {
+                for (Selector s : c.rule.selectors) {
+                    // find the rightmost selector, this must be a GeneralSelector
+                    Selector selRightmost = s;
+                    while (selRightmost instanceof Selector.ChildOrParentSelector) {
+                        selRightmost = ((Selector.ChildOrParentSelector) selRightmost).right;
+                    }
+                    MapCSSRule optRule = new MapCSSRule(s.optimizedBaseCheck(), c.rule.declaration);
+
+                    ruleToCheckMap.put(optRule, c);
+                    final String base = ((GeneralSelector) selRightmost).getBase();
+                    switch (base) {
+                    case Selector.BASE_NODE:
+                        nodeRules.add(optRule);
+                        break;
+                    case Selector.BASE_WAY:
+                        wayNoAreaRules.add(optRule);
+                        wayRules.add(optRule);
+                        break;
+                    case Selector.BASE_AREA:
+                        wayRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case Selector.BASE_RELATION:
+                        relationRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case Selector.BASE_ANY:
+                        nodeRules.add(optRule);
+                        wayRules.add(optRule);
+                        wayNoAreaRules.add(optRule);
+                        relationRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case Selector.BASE_CANVAS:
+                    case Selector.BASE_META:
+                    case Selector.BASE_SETTING:
+                        break;
+                    default:
+                        final RuntimeException e = new JosmRuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
+                        Logging.warn(tr("Failed to index validator rules. Error was: {0}", e.getMessage()));
+                        Logging.error(e);
+                    }
+                }
+            }
+            nodeRules.initIndex();
+            wayRules.initIndex();
+            wayNoAreaRules.initIndex();
+            relationRules.initIndex();
+            multipolygonRules.initIndex();
+        }
+
+        /**
+         * Get the index of rules for the given primitive.
+         * @param p the primitve
+         * @return index of rules for the given primitive
+         */
+        public MapCSSRuleIndex get(OsmPrimitive p) {
+            if (p instanceof INode) {
+                return nodeRules;
+            } else if (p instanceof IWay) {
+                if (OsmUtils.isFalse(p.get("area"))) {
+                    return wayNoAreaRules;
+                } else {
+                    return wayRules;
+                }
+            } else if (p instanceof IRelation) {
+                if (((IRelation<?>) p).isMultipolygon()) {
+                    return multipolygonRules;
+                } else {
+                    return relationRules;
+                }
+            } else {
+                throw new IllegalArgumentException("Unsupported type: " + p);
+            }
+        }
+
+        /**
+         * return the TagCheck for which the given indexed rule was created.
+         * @param rule an indexed rule
+         * @return the original TagCheck
+         */
+        public TagCheck getCheck(MapCSSRule rule) {
+            return ruleToCheckMap.get(rule);
+        }
+    }
+
+    /**
+    * A grouped MapCSSRule with multiple selectors for a single declaration.
+    * @see MapCSSRule
+    */
     public static class GroupedMapCSSRule {
         /** MapCSS selectors **/
         public final List<Selector> selectors;
@@ -429,7 +572,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @param p OSM primitive
          * @return argument value, can be {@code null}
          */
-        static String determineArgument(Selector.GeneralSelector matchingSelector, int index, String type, OsmPrimitive p) {
+        static String determineArgument(OptimizedGeneralSelector matchingSelector, int index, String type, OsmPrimitive p) {
             try {
                 final Condition c = matchingSelector.getConditions().get(index);
                 final Tag tag = c instanceof Condition.ToTagConvertable
@@ -461,13 +604,13 @@ public class MapCSSTagChecker extends Test.TagTest {
         static String insertArguments(Selector matchingSelector, String s, OsmPrimitive p) {
             if (s != null && matchingSelector instanceof Selector.ChildOrParentSelector) {
                 return insertArguments(((Selector.ChildOrParentSelector) matchingSelector).right, s, p);
-            } else if (s == null || !(matchingSelector instanceof GeneralSelector)) {
+            } else if (s == null || !(matchingSelector instanceof Selector.OptimizedGeneralSelector)) {
                 return s;
             }
             final Matcher m = Pattern.compile("\\{(\\d+)\\.(key|value|tag)\\}").matcher(s);
             final StringBuffer sb = new StringBuffer();
             while (m.find()) {
-                final String argument = determineArgument((Selector.GeneralSelector) matchingSelector,
+                final String argument = determineArgument((Selector.OptimizedGeneralSelector) matchingSelector,
                         Integer.parseInt(m.group(1)), m.group(2), p);
                 try {
                     // Perform replacement with null-safe + regex-safe handling
@@ -677,7 +820,44 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @return all errors for the given primitive, with or without those of "info" severity
      */
     public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
-        return getErrorsForPrimitive(p, includeOtherSeverity, checks.values());
+        final List<TestError> res = new ArrayList<>();
+        if (indexData == null)
+            indexData = new IndexData(checks);
+
+        MapCSSRuleIndex matchingRuleIndex = indexData.get(p);
+
+        Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        // the declaration indices are sorted, so it suffices to save the last used index
+        Declaration lastDeclUsed = null;
+
+        Iterator<MapCSSRule> candidates = matchingRuleIndex.getRuleCandidates(p);
+        while (candidates.hasNext()) {
+            MapCSSRule r = candidates.next();
+            env.clearSelectorMatchingInformation();
+            if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
+                TagCheck check = indexData.getCheck(r);
+                if (check != null) {
+                    boolean ignoreError = Severity.OTHER == check.getSeverity() && !includeOtherSeverity;
+                    // Do not run "information" level checks if not wanted, unless they also set a MapCSS class
+                    if (ignoreError && check.setClassExpressions.isEmpty()) {
+                        continue;
+                    }
+                    if (r.declaration == lastDeclUsed)
+                        continue; // don't apply one declaration more than once
+                    lastDeclUsed = r.declaration;
+
+                    r.declaration.execute(env);
+                    if (!ignoreError && !check.errors.isEmpty()) {
+                        final TestError error = check.getErrorForPrimitive(p, r.selector, env, new MapCSSTagCheckerAndRule(check.rule));
+                        if (error != null) {
+                            res.add(error);
+                        }
+                    }
+
+                }
+            }
+        }
+        return res;
     }
 
     private static Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity,
@@ -736,6 +916,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             result = TagCheck.readMapCSS(reader);
             checks.remove(url);
             checks.putAll(url, result.parseChecks);
+            indexData = null;
             // Check assertions, useful for development of local files
             if (Config.getPref().getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url)) {
                 for (String msg : checkAsserts(result.parseChecks)) {
@@ -749,6 +930,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     @Override
     public synchronized void initialize() throws Exception {
         checks.clear();
+        indexData = null;
         for (SourceEntry source : new ValidatorPrefHelper().get()) {
             if (!source.active) {
                 continue;
@@ -841,4 +1023,20 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
         }
     }
+
+    @Override
+    public void startTest(ProgressMonitor progressMonitor) {
+        super.startTest(progressMonitor);
+        if (indexData == null) {
+            indexData = new IndexData(checks);
+        }
+    }
+
+    @Override
+    public void endTest() {
+        super.endTest();
+        // no need to keep the index, it is quickly build and doubles the memory needs
+        indexData = null;
+    }
+
 }
