@@ -193,18 +193,14 @@ public class OverlappingWays extends Test {
                 duplicateWaySegments.add(segment);
             }
         }
-        if (duplicateWaySegments.size() > 1) {
-            return duplicateWaySegments;
-        } else {
-            return null;
-        }
+        return duplicateWaySegments;
     }
 
     @Override
     public void visit(Way w) {
 
         final Set<WaySegment> duplicateWaySegment = checkDuplicateWaySegment(w);
-        if (duplicateWaySegment != null) {
+        if (!duplicateWaySegment.isEmpty()) {
             errors.add(TestError.builder(this, Severity.ERROR, DUPLICATE_WAY_SEGMENT)
                     .message(tr("Way contains segment twice"))
                     .primitives(w)
