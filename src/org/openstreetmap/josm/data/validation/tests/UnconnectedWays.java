@@ -45,17 +45,19 @@ import org.openstreetmap.josm.tools.Logging;
  * @author frsantos
  */
 public abstract class UnconnectedWays extends Test {
+    private final int code;
 
     /**
      * Unconnected highways test.
      */
     public static class UnconnectedHighways extends UnconnectedWays {
+        static final int UNCONNECTED_HIGHWAYS = 1311;
 
         /**
          * Constructs a new {@code UnconnectedHighways} test.
          */
         public UnconnectedHighways() {
-            super(tr("Unconnected highways"));
+            super(tr("Unconnected highways"), UNCONNECTED_HIGHWAYS);
         }
 
         @Override
@@ -68,12 +70,12 @@ public abstract class UnconnectedWays extends Test {
      * Unconnected railways test.
      */
     public static class UnconnectedRailways extends UnconnectedWays {
-
+        static final int UNCONNECTED_RAILWAYS = 1321;
         /**
          * Constructs a new {@code UnconnectedRailways} test.
          */
         public UnconnectedRailways() {
-            super(tr("Unconnected railways"));
+            super(tr("Unconnected railways"), UNCONNECTED_RAILWAYS);
         }
 
         @Override
@@ -86,12 +88,12 @@ public abstract class UnconnectedWays extends Test {
      * Unconnected waterways test.
      */
     public static class UnconnectedWaterways extends UnconnectedWays {
-
+        static final int UNCONNECTED_WATERWAYS = 1331;
         /**
          * Constructs a new {@code UnconnectedWaterways} test.
          */
         public UnconnectedWaterways() {
-            super(tr("Unconnected waterways"));
+            super(tr("Unconnected waterways"), UNCONNECTED_WATERWAYS);
         }
 
         @Override
@@ -104,12 +106,12 @@ public abstract class UnconnectedWays extends Test {
      * Unconnected natural/landuse test.
      */
     public static class UnconnectedNaturalOrLanduse extends UnconnectedWays {
-
+        static final int UNCONNECTED_NATURAL_OR_LANDUSE = 1341;
         /**
          * Constructs a new {@code UnconnectedNaturalOrLanduse} test.
          */
         public UnconnectedNaturalOrLanduse() {
-            super(tr("Unconnected natural lands and landuses"));
+            super(tr("Unconnected natural lands and landuses"), UNCONNECTED_NATURAL_OR_LANDUSE);
         }
 
         @Override
@@ -122,12 +124,12 @@ public abstract class UnconnectedWays extends Test {
      * Unconnected power ways test.
      */
     public static class UnconnectedPower extends UnconnectedWays {
-
+        static final int UNCONNECTED_POWER = 1351;
         /**
          * Constructs a new {@code UnconnectedPower} test.
          */
         public UnconnectedPower() {
-            super(tr("Unconnected power ways"));
+            super(tr("Unconnected power ways"), UNCONNECTED_POWER);
         }
 
         @Override
@@ -155,7 +157,19 @@ public abstract class UnconnectedWays extends Test {
      * @since 6691
      */
     public UnconnectedWays(String title) {
+        this(title, UNCONNECTED_WAYS);
+
+    }
+
+    /**
+     * Constructs a new {@code UnconnectedWays} test with the given code.
+     * @param title The test title
+     * @param code The test code
+     * @since 14468
+     */
+    public UnconnectedWays(String title, int code) {
         super(title, tr("This test checks if a way has an endpoint very near to another way."));
+        this.code = code;
     }
 
     @Override
@@ -267,7 +281,7 @@ public abstract class UnconnectedWays extends Test {
 
     protected final void addErrors(Severity severity, Map<Node, Way> errorMap, String message) {
         for (Map.Entry<Node, Way> error : errorMap.entrySet()) {
-            errors.add(TestError.builder(this, severity, UNCONNECTED_WAYS)
+            errors.add(TestError.builder(this, severity, code)
                     .message(message)
                     .primitives(error.getKey(), error.getValue())
                     .highlight(error.getKey())
