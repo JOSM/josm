@@ -37,6 +37,16 @@ public abstract class CrossingWays extends Test {
     static final String WATERWAY = "waterway";
     static final String LANDUSE = "landuse";
 
+    private static final class MessageHelper {
+        final String message;
+        final int code;
+
+        MessageHelper(String message, int code) {
+            this.message = message;
+            this.code = code;
+        }
+    }
+
     /**
      * Type of way. Entries have to be declared in alphabetical order, see sort below.
      */
@@ -64,7 +74,7 @@ public abstract class CrossingWays extends Test {
     /** The already detected ways in error */
     private final Map<List<Way>, List<WaySegment>> seenWays = new HashMap<>(50);
 
-    private final int code;
+    protected final int code;
 
     /**
      * General crossing ways test.
@@ -119,69 +129,69 @@ public abstract class CrossingWays extends Test {
         }
 
         @Override
-        String createMessage(Way w1, Way w2) {
+        MessageHelper createMessage(Way w1, Way w2) {
             WayType[] types = {WayType.of(w1), WayType.of(w2)};
             Arrays.sort(types);
 
             if (types[0] == types[1]) {
                 switch(types[0]) {
                     case BUILDING:
-                        return tr("Crossing buildings");
+                        return new MessageHelper(tr("Crossing buildings"), 610);
                     case HIGHWAY:
-                        return tr("Crossing highways");
+                        return new MessageHelper(tr("Crossing highways"), 620);
                     case RAILWAY:
-                        return tr("Crossing railways");
+                        return new MessageHelper(tr("Crossing railways"), 630);
                     case RESIDENTIAL_AREA:
-                        return tr("Crossing residential areas");
+                        return new MessageHelper(tr("Crossing residential areas"), 640);
                     case WATERWAY:
-                        return tr("Crossing waterways");
+                        return new MessageHelper(tr("Crossing waterways"), 650);
                     case WAY:
                     default:
-                        return tr("Crossing ways");
+                        return new MessageHelper(tr("Crossing ways"), CROSSING_WAYS);
                 }
             } else {
                 switch (types[0]) {
                     case BUILDING:
                         switch (types[1]) {
                             case HIGHWAY:
-                                return tr("Crossing building/highway");
+                                return new MessageHelper(tr("Crossing building/highway"), 612);
                             case RAILWAY:
-                                return tr("Crossing building/railway");
+                                return new MessageHelper(tr("Crossing building/railway"), 613);
                             case RESIDENTIAL_AREA:
-                                return tr("Crossing building/residential area");
+                                return new MessageHelper(tr("Crossing building/residential area"), 614);
                             case WATERWAY:
-                                return tr("Crossing building/waterway");
+                                return new MessageHelper(tr("Crossing building/waterway"), 615);
                             case WAY:
                             default:
-                                return tr("Crossing building/way");
+                                return new MessageHelper(tr("Crossing building/way"), 611);
                         }
                     case HIGHWAY:
                         switch (types[1]) {
                             case RAILWAY:
-                                return tr("Crossing highway/railway");
+                                return new MessageHelper(tr("Crossing highway/railway"), 622);
                             case WATERWAY:
-                                return tr("Crossing highway/waterway");
+                                return new MessageHelper(tr("Crossing highway/waterway"), 623);
                             case WAY:
                             default:
-                                return tr("Crossing highway/way");
+                                return new MessageHelper(tr("Crossing highway/way"), 621);
                         }
                     case RAILWAY:
                         switch (types[1]) {
                             case WATERWAY:
-                                return tr("Crossing railway/waterway");
+                                return new MessageHelper(tr("Crossing railway/waterway"), 632);
                             case WAY:
                             default:
-                                return tr("Crossing railway/way");
+                                return new MessageHelper(tr("Crossing railway/way"), 631);
                         }
                     case RESIDENTIAL_AREA:
                         switch (types[1]) {
                             case WAY:
                             default:
-                                return tr("Crossing residential area/way");
+                                return new MessageHelper(tr("Crossing residential area/way"), 641);
                         }
                     case WATERWAY:
                     default:
-                        return tr("Crossing waterway/way");
+                        return new MessageHelper(tr("Crossing waterway/way"), 651);
                 }
             }
         }
@@ -213,8 +223,8 @@ public abstract class CrossingWays extends Test {
         }
 
         @Override
-        String createMessage(Way w1, Way w2) {
-            return tr("Crossing boundaries");
+        MessageHelper createMessage(Way w1, Way w2) {
+            return new MessageHelper(tr("Crossing boundaries"), CROSSING_BOUNDARIES);
         }
 
         @Override
@@ -250,8 +260,8 @@ public abstract class CrossingWays extends Test {
         }
 
         @Override
-        String createMessage(Way w1, Way w2) {
-            return tr("Crossing barriers");
+        MessageHelper createMessage(Way w1, Way w2) {
+            return new MessageHelper(tr("Crossing barriers"), CROSSING_BARRIERS);
         }
     }
 
@@ -285,8 +295,8 @@ public abstract class CrossingWays extends Test {
         }
 
         @Override
-        String createMessage(Way w1, Way w2) {
-            return tr("Self-crossing ways");
+        MessageHelper createMessage(Way w1, Way w2) {
+            return new MessageHelper(tr("Self-crossing ways"), CROSSING_SELF);
         }
     }
 
@@ -340,7 +350,7 @@ public abstract class CrossingWays extends Test {
 
     abstract boolean ignoreWaySegmentCombination(Way w1, Way w2);
 
-    abstract String createMessage(Way w1, Way w2);
+    abstract MessageHelper createMessage(Way w1, Way w2);
 
     @Override
     public void visit(Way w) {
@@ -356,7 +366,7 @@ public abstract class CrossingWays extends Test {
             final EastNorth en1 = es1.getFirstNode().getEastNorth();
             final EastNorth en2 = es1.getSecondNode().getEastNorth();
             if (en1 == null || en2 == null) {
-                Logging.warn("Crossing ways test skipped "+es1);
+                Logging.warn("Crossing ways test skipped " + es1);
                 continue;
             }
             for (List<WaySegment> segments : getSegments(cellSegments, en1, en2)) {
@@ -377,9 +387,9 @@ public abstract class CrossingWays extends Test {
                         highlight.add(es1);
                         highlight.add(es2);
 
-                        final String message = createMessage(es1.way, es2.way);
-                        errors.add(TestError.builder(this, Severity.WARNING, code)
-                                .message(message)
+                        final MessageHelper message = createMessage(es1.way, es2.way);
+                        errors.add(TestError.builder(this, Severity.WARNING, message.code)
+                                .message(message.message)
                                 .primitives(prims)
                                 .highlightWaySegments(highlight)
                                 .build());
