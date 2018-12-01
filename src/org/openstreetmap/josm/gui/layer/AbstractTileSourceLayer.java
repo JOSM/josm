@@ -1902,6 +1902,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     @Override
     public synchronized void destroy() {
         super.destroy();
+        MapView.removeZoomChangeListener(this);
         adjustAction.destroy();
     }
 

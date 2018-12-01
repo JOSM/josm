@@ -134,6 +134,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     default: return false;
                 }
             }
+            dialog.closeDialog();
         }
 
         return true;
@@ -347,6 +348,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
      */
     public void closeDialog() {
         setVisible(false);
+        saveSessionAction.destroy();
         dispose();
     }
 

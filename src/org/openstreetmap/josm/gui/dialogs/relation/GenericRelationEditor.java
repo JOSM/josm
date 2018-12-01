@@ -829,6 +829,12 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
+    @Override
+    public void dispose() {
+        refreshAction.destroy();
+        super.dispose();
+    }
+
     /**
      * Exception thrown when user aborts add operation.
      */

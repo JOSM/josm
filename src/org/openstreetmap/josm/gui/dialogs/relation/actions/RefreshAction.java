@@ -137,4 +137,11 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
     public void commandChanged(int queueSize, int redoSize) {
         updateEnabledState();
     }
+
+    /**
+     * Allow GC to do its work
+     */
+    public void destroy() {
+        UndoRedoHandler.getInstance().removeCommandQueueListener(this);
+    }
 }
