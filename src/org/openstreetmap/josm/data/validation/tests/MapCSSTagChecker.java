@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.FixCommand.evaluateObject;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -490,6 +489,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                             check.assertions.put(val, Boolean.FALSE);
                         } else if (val != null && "group".equals(ai.key)) {
                             check.group = val;
+                        } else if (ai.key.startsWith("-")) {
+                            Logging.debug("Ignoring extension instruction: " + ai.key + ": " + ai.val);
                         } else {
                             throw new IllegalDataException("Cannot add instruction " + ai.key + ": " + ai.val + '!');
                         }

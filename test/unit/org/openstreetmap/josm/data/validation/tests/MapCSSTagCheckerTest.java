@@ -219,6 +219,25 @@ public class MapCSSTagCheckerTest {
         }
     }
 
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17053">Bug #17053</a>.
+     * @throws ParseException if a parsing error occurs
+     */
+    @Test
+    public void testTicket17053() throws ParseException {
+        final MapCSSTagChecker test = buildTagChecker(
+                "way[highway=cycleway][cycleway=track] {\n" +
+                "   throwWarning: tr(\"{0} with {1}\", \"{0.tag}\", \"{1.tag}\");\n" +
+                "   -osmoseItemClassLevel: \"3032/30328/2\";\n" +
+                "   -osmoseTags: list(\"tag\", \"highway\", \"cycleway\");\n" +
+                "   fixRemove: \"cycleway\";\n" +
+                "}");
+        assertEquals(1, test.checks.size());
+        TagCheck check = test.checks.get("test").iterator().next();
+        assertEquals(1, check.fixCommands.size());
+        assertEquals(2, check.rule.declaration.instructions.size());
+    }
+
     private void doTestNaturalWood(int ticket, String filename, int errorsCount, int setsCount) throws Exception {
         final MapCSSTagChecker test = buildTagChecker(
                 "area:closed:areaStyle[tag(\"natural\") = parent_tag(\"natural\")] ⧉ area:closed:areaStyle[natural] {" +
