@@ -1,4 +1,4 @@
-// License: GPL. For details, see LICENSE file.
+    // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -96,6 +96,7 @@ public class PowerLines extends Test {
                     .ifPresent(ignore -> errors.add(e));
         }
         potentialErrors.clear();
+        powerStations.clear();
         super.endTest();
     }
 

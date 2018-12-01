@@ -101,6 +101,7 @@ public class ValidateAction extends JosmAction {
     public void destroy() {
         // Hack - this action should stay forever because it could be added to toolbar
         // Do not call super.destroy() here
+        lastSelection = null;
     }
 
     /**
@@ -165,6 +166,7 @@ public class ValidateAction extends JosmAction {
                 test.visit(validatedPrimitives);
                 test.endTest();
                 errors.addAll(test.getErrors());
+                test.clear();
             }
             tests = null;
             if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {

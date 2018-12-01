@@ -87,4 +87,10 @@ public class PublicTransportRouteTest extends Test {
             }
         }
     }
+
+    @Override
+    public void clear() {
+        connectionTypeCalculator.clear();
+        super.clear();
+    }
 }
