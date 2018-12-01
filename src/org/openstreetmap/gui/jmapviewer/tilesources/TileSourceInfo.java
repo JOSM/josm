@@ -107,7 +107,7 @@ public class TileSourceInfo {
     }
 
     /**
-     * Checkusm for empty tiles for servers delivering such tile types
+     * Checksum for empty tiles for servers delivering such tile types
      * @return map of checksums, that when detected, means that this is "no tile at this zoom level" situation
      * @since 32022
      */
