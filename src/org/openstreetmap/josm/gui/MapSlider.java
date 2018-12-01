@@ -10,13 +10,14 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
+import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.tools.Destroyable;
 
 /**
  * This is the slider used in the top left corner of the map view. It allows the user to select the scale
  */
-class MapSlider extends JSlider implements ZoomChangeListener, ChangeListener, Helpful {
+class MapSlider extends JSlider implements ZoomChangeListener, ChangeListener, Helpful, Destroyable {
 
     private static final double ZOOM_STEP = 1.1;
     private final MapView mv;
@@ -67,5 +68,12 @@ class MapSlider extends JSlider implements ZoomChangeListener, ChangeListener, H
     @Override
     public String helpTopic() {
         return ht("/MapView/Slider");
+    }
+
+    /**
+     * Free resources
+     */
+    public void destroy() {
+        NavigatableComponent.removeZoomChangeListener(this);
     }
 }
