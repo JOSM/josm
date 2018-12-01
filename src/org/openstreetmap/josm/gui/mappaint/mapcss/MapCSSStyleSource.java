@@ -445,7 +445,7 @@ public class MapCSSStyleSource extends StyleSource {
                 } finally {
                     closeSourceInputStream(in);
                 }
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 Logging.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
                 Logging.log(Logging.LEVEL_ERROR, e);
                 logError(e);
@@ -457,12 +457,6 @@ public class MapCSSStyleSource extends StyleSource {
                 Logging.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
                 Logging.error(e);
                 logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
-            } catch (IllegalArgumentException e1) {
-                final RuntimeException e = new JosmRuntimeException(e1.getMessage());
-                Logging.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-                Logging.error(e);
-                logError(e);
-
             }
             if (metadataOnly) {
                 return;
