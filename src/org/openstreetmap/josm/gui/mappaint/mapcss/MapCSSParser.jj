@@ -165,6 +165,7 @@ TOKEN [IGNORE_CASE]:
 TOKEN:
 {
     < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
+|   < EXTIDENT: <MINUS> <IDENT> >
 |   < UINT: ( ["0"-"9"] )+ >
 |   < STRING: "\"" ( [" ","!","#"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
 |   < #PREDEFINED: "\\" ["d","D","s","S","w","W","b","B","A","G","Z","z"] >
@@ -282,7 +283,7 @@ void pp_black_box(boolean write):
 }
 {
     (
-        (t=<PP_AND> | t=<PP_OR> | t=<PP_NOT> | t=<UINT> | t=<STRING> | t=<REGEX> | t=<LPAR> | t=<RPAR> | t=<COMMA> | t=<COLON> | t=<IDENT> | t=<PP_SOMETHING_ELSE>) { if (write) sb.append(t.image); }
+        (t=<PP_AND> | t=<PP_OR> | t=<PP_NOT> | t=<UINT> | t=<STRING> | t=<REGEX> | t=<LPAR> | t=<RPAR> | t=<COMMA> | t=<COLON> | t=<IDENT> | t=<EXTIDENT> | t=<PP_SOMETHING_ELSE>) { if (write) sb.append(t.image); }
         |
             pp_w1()
         |
@@ -904,6 +905,8 @@ Declaration declaration() :
             { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val, true)); }
             ( <RBRACE> { return new Declaration(ins, declarationCounter++); } | <SEMICOLON> w() )
         )
+    |
+        <EXTIDENT> w() <COLON> w() expression() <SEMICOLON> w()
     |
         key=<IDENT> w() <COLON> w()
         (
