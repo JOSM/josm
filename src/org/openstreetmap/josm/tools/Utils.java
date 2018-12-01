@@ -1870,6 +1870,18 @@ public final class Utils {
      * @since 14404
      */
     public static URL betterJarUrl(URL jarUrl) throws IOException {
+        return betterJarUrl(jarUrl, null);
+    }
+
+    /**
+     * Tries to build a better JAR URL if we find it concerned by a JDK bug.
+     * @param jarUrl jar URL to test
+     * @param defaultUrl default URL to return
+     * @return potentially a better URL that won't provoke a JDK bug, or {@code defaultUrl}
+     * @throws IOException if an I/O error occurs
+     * @since 14480
+     */
+    public static URL betterJarUrl(URL jarUrl, URL defaultUrl) throws IOException {
         // Workaround to https://bugs.openjdk.java.net/browse/JDK-4523159
         String urlPath = jarUrl.getPath().replace("%20", " ");
         if (urlPath.startsWith("file:/") && urlPath.split("!").length > 2) {
@@ -1887,6 +1899,30 @@ public final class Utils {
             // Return URL using the copy
             return new URL(jarUrl.getProtocol() + ':' + jarCopy.toUri().toURL().toExternalForm() + urlPath.substring(index));
         }
-        return null;
+        return defaultUrl;
+    }
+
+    /**
+     * Finds a resource with a given name, with robustness to known JDK bugs.
+     * @param klass class on which {@link Class#getResourceAsStream} will be called
+     * @param path name of the desired resource
+     * @return  A {@link java.io.InputStream} object or {@code null} if no resource with this name is found
+     * @since 14480
+     */
+    public static InputStream getResourceAsStream(Class<?> klass, String path) {
+        try {
+            return klass.getResourceAsStream(path);
+        } catch (InvalidPathException e) {
+            Logging.error("Cannot open {0}: {1}", path, e.getMessage());
+            try {
+                URL betterUrl = betterJarUrl(klass.getResource(path));
+                if (betterUrl != null) {
+                    return betterUrl.openStream();
+                }
+            } catch (IOException ex) {
+                Logging.error(ex);
+            }
+            return null;
+        }
     }
 }

@@ -32,6 +32,7 @@ import org.openstreetmap.josm.spi.lifecycle.InitializationSequence;
 import org.openstreetmap.josm.spi.lifecycle.InitializationTask;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
@@ -139,6 +140,7 @@ public class MainInitialization implements InitializationSequence {
             new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
                 // hooks for the jmapviewer component
                 FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
+                FeatureAdapter.registerImageAdapter(ImageProvider::read);
                 FeatureAdapter.registerTranslationAdapter(I18n::tr);
                 FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
                 // UI update
