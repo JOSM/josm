@@ -85,6 +85,12 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         }
     }
 
+    @Override
+    public void destroy() {
+        MainApplication.removeMapFrameListener(this);
+        super.destroy();
+    }
+
     /**
      * Attempts to save the session.
      * @throws UserCancelException when the user has cancelled the save process.

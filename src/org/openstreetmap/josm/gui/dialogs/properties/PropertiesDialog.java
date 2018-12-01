@@ -551,6 +551,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
     @Override
     public void destroy() {
+        taginfoAction.destroy();
         super.destroy();
         Config.getPref().removeKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
         Container parent = pluginHook.getParent();

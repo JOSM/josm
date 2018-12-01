@@ -222,6 +222,12 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         return noteData != null ? noteData.getSelectedNote() : null;
     }
 
+    @Override
+    public void destroy() {
+        MainApplication.getLayerManager().removeLayerChangeListener(this);
+        super.destroy();
+    }
+
     private static class NoteRenderer implements ListCellRenderer<Note> {
 
         private final DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
@@ -436,4 +442,5 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
             }
         }
     }
+
 }

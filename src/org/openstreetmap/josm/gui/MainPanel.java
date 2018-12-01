@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.data.UndoRedoHandler; 
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.LayerAvailabilityEvent;
@@ -65,6 +66,7 @@ public class MainPanel extends JPanel {
             map = null;
             MainApplication.map = map;
             add(getGettingStarted(), BorderLayout.CENTER);
+            UndoRedoHandler.getInstance().clean();
         }
         setVisible(true);
 
