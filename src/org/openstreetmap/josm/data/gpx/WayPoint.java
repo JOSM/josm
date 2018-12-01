@@ -91,6 +91,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * To remove mid 2019
      */
     private static class LegacyMap extends HashMap<String, Object> {
+        private static final long serialVersionUID = 1;
 
         LegacyMap() {
             super(0);

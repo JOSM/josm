@@ -1914,6 +1914,7 @@ public final class Utils {
             return klass.getResourceAsStream(path);
         } catch (InvalidPathException e) {
             Logging.error("Cannot open {0}: {1}", path, e.getMessage());
+            Logging.trace(e);
             try {
                 URL betterUrl = betterJarUrl(klass.getResource(path));
                 if (betterUrl != null) {

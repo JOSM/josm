@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
@@ -51,12 +50,6 @@ public class NodeListViewer extends HistoryViewerPanel {
      */
     public NodeListViewer(HistoryBrowserModel model) {
         super(model);
-    }
-
-    protected JScrollPane embedInScrollPane(JTable table) {
-        JScrollPane pane = new JScrollPane(table);
-        adjustmentSynchronizer.participateInSynchronizedScrolling(pane.getVerticalScrollBar());
-        return pane;
     }
 
     @Override

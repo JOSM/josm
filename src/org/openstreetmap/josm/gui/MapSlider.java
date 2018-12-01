@@ -70,9 +70,7 @@ class MapSlider extends JSlider implements ZoomChangeListener, ChangeListener, H
         return ht("/MapView/Slider");
     }
 
-    /**
-     * Free resources
-     */
+    @Override
     public void destroy() {
         NavigatableComponent.removeZoomChangeListener(this);
     }
