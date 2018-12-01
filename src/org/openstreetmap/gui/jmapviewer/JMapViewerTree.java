@@ -3,8 +3,6 @@ package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -93,21 +91,15 @@ public class JMapViewerTree extends JPanel {
         } else if (layer.isVisibleTexts()) popup.add(menuItemHide);
         else popup.add(menuItemShow);
 
-        menuItemShow.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                setVisibleTexts(layer, true);
-                if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
-                map.repaint();
-            }
+        menuItemShow.addActionListener(e -> {
+            setVisibleTexts(layer, true);
+            if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
+            map.repaint();
         });
-        menuItemHide.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                setVisibleTexts(layer, false);
-                if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
-                map.repaint();
-            }
+        menuItemHide.addActionListener(e -> {
+            setVisibleTexts(layer, false);
+            if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
+            map.repaint();
         });
 
         return popup;

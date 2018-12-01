@@ -4,8 +4,6 @@ package org.openstreetmap.gui.jmapviewer;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -79,12 +77,7 @@ public class Demo extends JFrame implements JMapViewerEventListener {
                 + "left double click or mouse wheel to zoom.");
         helpPanel.add(helpLabel);
         JButton button = new JButton("setDisplayToFitMapMarkers");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                map().setDisplayToFitMapMarkers();
-            }
-        });
+        button.addActionListener(e -> map().setDisplayToFitMapMarkers());
         JComboBox<TileSource> tileSourceSelector = new JComboBox<>(new TileSource[] {
                 new OsmTileSource.Mapnik(),
                 new OsmTileSource.CycleMap(),
@@ -109,57 +102,27 @@ public class Demo extends JFrame implements JMapViewerEventListener {
         panelTop.add(tileLoaderSelector);
         final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
         showMapMarker.setSelected(map().getMapMarkersVisible());
-        showMapMarker.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                map().setMapMarkerVisible(showMapMarker.isSelected());
-            }
-        });
+        showMapMarker.addActionListener(e -> map().setMapMarkerVisible(showMapMarker.isSelected()));
         panelBottom.add(showMapMarker);
         ///
         final JCheckBox showTreeLayers = new JCheckBox("Tree Layers visible");
-        showTreeLayers.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                treeMap.setTreeVisible(showTreeLayers.isSelected());
-            }
-        });
+        showTreeLayers.addActionListener(e -> treeMap.setTreeVisible(showTreeLayers.isSelected()));
         panelBottom.add(showTreeLayers);
         ///
         final JCheckBox showToolTip = new JCheckBox("ToolTip visible");
-        showToolTip.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                map().setToolTipText(null);
-            }
-        });
+        showToolTip.addActionListener(e -> map().setToolTipText(null));
         panelBottom.add(showToolTip);
         ///
         final JCheckBox showTileGrid = new JCheckBox("Tile grid visible");
         showTileGrid.setSelected(map().isTileGridVisible());
-        showTileGrid.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                map().setTileGridVisible(showTileGrid.isSelected());
-            }
-        });
+        showTileGrid.addActionListener(e -> map().setTileGridVisible(showTileGrid.isSelected()));
         panelBottom.add(showTileGrid);
         final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
         showZoomControls.setSelected(map().getZoomControlsVisible());
-        showZoomControls.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                map().setZoomControlsVisible(showZoomControls.isSelected());
-            }
-        });
+        showZoomControls.addActionListener(e -> map().setZoomControlsVisible(showZoomControls.isSelected()));
         panelBottom.add(showZoomControls);
         final JCheckBox scrollWrapEnabled = new JCheckBox("Scrollwrap enabled");
-        scrollWrapEnabled.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                map().setScrollWrapEnabled(scrollWrapEnabled.isSelected());
-            }
-        });
+        scrollWrapEnabled.addActionListener(e -> map().setScrollWrapEnabled(scrollWrapEnabled.isSelected()));
         panelBottom.add(scrollWrapEnabled);
         panelBottom.add(button);
 
