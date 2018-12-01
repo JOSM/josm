@@ -95,6 +95,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -308,6 +309,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         // setting up the tags table
         tagData.setColumnIdentifiers(new String[]{tr("Key"), tr("Value")});
         tagTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tagTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tagTable.getTableHeader().setReorderingAllowed(false);
 
         tagTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
@@ -332,6 +334,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private void buildMembershipTable() {
         membershipData.setColumnIdentifiers(new String[]{tr("Member Of"), tr("Role"), tr("Position")});
         membershipTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        membershipTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         TableColumnModel mod = membershipTable.getColumnModel();
         membershipTable.getTableHeader().setReorderingAllowed(false);
@@ -668,6 +671,10 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagTableFilter.setVisible(hasTags);
         selectSth.setVisible(!hasSelection);
         pluginHook.setVisible(hasSelection);
+
+        // resize tables to fit content
+        TableHelper.computeColumnsWidth(tagTable);
+        TableHelper.computeColumnsWidth(membershipTable);
 
         int selectedIndex;
         if (selectedTag != null && (selectedIndex = findViewRow(tagTable, tagData, selectedTag)) != -1) {

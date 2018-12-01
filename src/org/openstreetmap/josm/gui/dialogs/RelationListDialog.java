@@ -209,10 +209,7 @@ public class RelationListDialog extends ToggleDialog
     @Override
     public void destroy() {
         recentRelationsAction.destroy();
-        exportRelationFromFirstAction.setPrimitives(Collections.emptyList());
-        exportRelationFromFirstToLayerAction.setPrimitives(Collections.emptyList());
-        exportRelationFromLastAction.setPrimitives(Collections.emptyList());
-        exportRelationFromLastToLayerAction.setPrimitives(Collections.emptyList());
+        popupMenuHandler.setPrimitives(Collections.emptyList());
         model.clear();
         super.destroy();
     }
