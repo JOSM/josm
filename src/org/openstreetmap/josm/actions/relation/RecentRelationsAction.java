@@ -111,6 +111,7 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
     @Override
     public void destroy() {
         MainApplication.unregisterActionShortcut(launchAction, shortcut);
+        UndoRedoHandler.getInstance().removeCommandQueueListener(this);
         super.destroy();
     }
 
