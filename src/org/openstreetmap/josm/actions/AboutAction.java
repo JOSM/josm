@@ -162,7 +162,7 @@ public final class AboutAction extends JosmAction {
      * @param filePath the path where the resource file to read resides
      */
     private void setTextFromResourceFile(JTextArea ta, String filePath) {
-        InputStream is = getClass().getResourceAsStream(filePath);
+        InputStream is = Utils.getResourceAsStream(getClass(), filePath);
         if (is == null) {
             displayErrorMessage(ta, tr("Failed to locate resource ''{0}''.", filePath));
         } else {

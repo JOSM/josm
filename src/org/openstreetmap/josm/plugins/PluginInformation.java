@@ -421,7 +421,8 @@ public class PluginInformation {
     public static PluginInformation findPlugin(String pluginName) throws PluginException {
         String name = pluginName;
         name = name.replaceAll("[-. ]", "");
-        try (InputStream manifestStream = PluginInformation.class.getResourceAsStream("/org/openstreetmap/josm/plugins/"+name+"/MANIFEST.MF")) {
+        try (InputStream manifestStream = Utils.getResourceAsStream(
+                PluginInformation.class, "/org/openstreetmap/josm/plugins/"+name+"/MANIFEST.MF")) {
             if (manifestStream != null) {
                 return new PluginInformation(manifestStream, pluginName, null);
             }
