@@ -2,15 +2,21 @@
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.Desktop;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 public final class FeatureAdapter {
 
     private static BrowserAdapter browserAdapter = new DefaultBrowserAdapter();
+    private static ImageAdapter imageAdapter = new DefaultImageAdapter();
     private static TranslationAdapter translationAdapter = new DefaultTranslationAdapter();
     private static LoggingAdapter loggingAdapter = new DefaultLoggingAdapter();
 
@@ -31,20 +37,32 @@ public final class FeatureAdapter {
         Logger getLogger(String name);
     }
 
+    public interface ImageAdapter {
+        BufferedImage read(URL input, boolean readMetadata, boolean enforceTransparency) throws IOException;
+    }
+
     public static void registerBrowserAdapter(BrowserAdapter browserAdapter) {
-        FeatureAdapter.browserAdapter = browserAdapter;
+        FeatureAdapter.browserAdapter = Objects.requireNonNull(browserAdapter);
+    }
+
+    public static void registerImageAdapter(ImageAdapter imageAdapter) {
+        FeatureAdapter.imageAdapter = Objects.requireNonNull(imageAdapter);
     }
 
     public static void registerTranslationAdapter(TranslationAdapter translationAdapter) {
-        FeatureAdapter.translationAdapter = translationAdapter;
+        FeatureAdapter.translationAdapter = Objects.requireNonNull(translationAdapter);
     }
 
     public static void registerLoggingAdapter(LoggingAdapter loggingAdapter) {
-        FeatureAdapter.loggingAdapter = loggingAdapter;
+        FeatureAdapter.loggingAdapter = Objects.requireNonNull(loggingAdapter);
     }
 
     public static void openLink(String url) {
         browserAdapter.openLink(url);
+    }
+
+    public static BufferedImage readImage(URL url) throws IOException {
+        return imageAdapter.read(url, false, false);
     }
 
     public static String tr(String text, Object... objects) {
@@ -69,6 +87,13 @@ public final class FeatureAdapter {
             } else {
                 System.err.println(tr("Opening link not supported on current platform (''{0}'')", url));
             }
+        }
+    }
+
+    public static class DefaultImageAdapter implements ImageAdapter {
+        @Override
+        public BufferedImage read(URL input, boolean readMetadata, boolean enforceTransparency) throws IOException {
+            return ImageIO.read(input);
         }
     }
 

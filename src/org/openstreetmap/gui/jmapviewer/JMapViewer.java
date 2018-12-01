@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -163,9 +164,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomSlider.setFocusable(false);
         add(zoomSlider);
         int size = 18;
-        URL url = JMapViewer.class.getResource("images/plus.png");
-        if (url != null) {
-            ImageIcon icon = new ImageIcon(url);
+        ImageIcon icon = getImageIcon("images/plus.png");
+        if (icon != null) {
             zoomInButton = new JButton(icon);
         } else {
             zoomInButton = new JButton("+");
@@ -176,9 +176,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomInButton.addActionListener(e -> zoomIn());
         zoomInButton.setFocusable(false);
         add(zoomInButton);
-        url = JMapViewer.class.getResource("images/minus.png");
-        if (url != null) {
-            ImageIcon icon = new ImageIcon(url);
+        icon = getImageIcon("images/minus.png");
+        if (icon != null) {
             zoomOutButton = new JButton(icon);
         } else {
             zoomOutButton = new JButton("-");
@@ -189,6 +188,18 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomOutButton.addActionListener(e -> zoomOut());
         zoomOutButton.setFocusable(false);
         add(zoomOutButton);
+    }
+
+    private static ImageIcon getImageIcon(String name) {
+        URL url = JMapViewer.class.getResource(name);
+        if (url != null) {
+            try {
+                return new ImageIcon(FeatureAdapter.readImage(url));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     /**

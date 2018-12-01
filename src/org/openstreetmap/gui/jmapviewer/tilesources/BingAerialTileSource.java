@@ -3,7 +3,6 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Image;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,6 +26,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.w3c.dom.Document;
@@ -190,9 +189,9 @@ public class BingAerialTileSource extends TMSTileSource {
     @Override
     public Image getAttributionImage() {
         try {
-            final InputStream imageResource = JMapViewer.class.getResourceAsStream("images/bing_maps.png");
+            final URL imageResource = JMapViewer.class.getResource("images/bing_maps.png");
             if (imageResource != null) {
-                return ImageIO.read(imageResource);
+                return FeatureAdapter.readImage(imageResource);
             } else {
                 // Some Linux distributions (like Debian) will remove Bing logo from sources, so get it at runtime
                 for (int i = 0; i < 5 && getAttribution() == null; i++) {
@@ -203,7 +202,7 @@ public class BingAerialTileSource extends TMSTileSource {
                 }
                 if (brandLogoUri != null && !brandLogoUri.isEmpty()) {
                     System.out.println("Reading Bing logo from "+brandLogoUri);
-                    return ImageIO.read(new URL(brandLogoUri));
+                    return FeatureAdapter.readImage(new URL(brandLogoUri));
                 }
             }
         } catch (IOException e) {
