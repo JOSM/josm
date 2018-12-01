@@ -1010,6 +1010,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         MapView mapView = MainApplication.getMap().mapView;
         mapView.removeMouseListener(mouseAdapter);
         mapView.removeMouseMotionListener(mouseMotionAdapter);
+        MapView.removeZoomChangeListener(this);
         MapFrame.removeMapModeChangeListener(mapModeListener);
         MainApplication.getLayerManager().removeActiveLayerChangeListener(activeLayerChangeListener);
         currentPhoto = -1;

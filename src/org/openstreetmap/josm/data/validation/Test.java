@@ -373,4 +373,11 @@ public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
     public int compareTo(Test t) {
         return name.compareTo(t.name);
     }
+
+    /**
+     * Free resources.
+     */
+    public void clear() {
+        errors.clear();
+    }
 }

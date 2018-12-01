@@ -325,4 +325,12 @@ public class WayConnectionTypeCalculator {
         }
         return NONE;
     }
+
+
+    /**
+     * Free resources.
+     */
+    public void clear() {
+        members = null;
+    }
 }
