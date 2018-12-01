@@ -45,7 +45,6 @@ import org.openstreetmap.josm.actions.relation.ExportRelationToGpxAction.Mode;
 import org.openstreetmap.josm.actions.relation.RecentRelationsAction;
 import org.openstreetmap.josm.actions.relation.SelectMembersAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
-import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -209,8 +208,11 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void destroy() {
-        UndoRedoHandler.getInstance().removeCommandQueueListener(recentRelationsAction);
         recentRelationsAction.destroy();
+        exportRelationFromFirstAction.setPrimitives(Collections.emptyList());
+        exportRelationFromFirstToLayerAction.setPrimitives(Collections.emptyList());
+        exportRelationFromLastAction.setPrimitives(Collections.emptyList());
+        exportRelationFromLastToLayerAction.setPrimitives(Collections.emptyList());
         model.clear();
         super.destroy();
     }
