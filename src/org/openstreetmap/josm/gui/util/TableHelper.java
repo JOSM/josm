@@ -16,7 +16,6 @@ public final class TableHelper {
     }
 
     /**
-     * (originally from @class org.openstreetmap.josm.gui.preferences.SourceEditor)
      * adjust the preferred width of column col to the maximum preferred width of the cells
      * requires JTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
      * @param tbl table
@@ -32,5 +31,17 @@ public final class TableHelper {
             maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
         }
         tbl.getColumnModel().getColumn(col).setPreferredWidth(Math.min(maxwidth+10, maxColumnWidth));
+    }
+
+    /**
+     * adjust the table's columns to fit their content best
+     * requires JTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+     * @param tbl table
+     * @since 14476
+     */
+    public static void computeColumnsWidth(JTable tbl) {
+        for (int column = 0; column < tbl.getColumnCount(); column++) {
+            adjustColumnWidth(tbl, column, Integer.MAX_VALUE);
+        }
     }
 }
