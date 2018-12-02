@@ -18,12 +18,12 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -322,7 +322,7 @@ public class CoordinateInfoViewer extends HistoryBrowserPanel {
 
         MapViewer(HistoryBrowserModel model) {
             this.updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
-            setTileSource(new OsmTileSource.Mapnik()); // for attribution
+            setTileSource(SlippyMapBBoxChooser.DefaultOsmTileSourceProvider.get()); // for attribution
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             addMouseListener(new MouseAdapter() {
                 @Override

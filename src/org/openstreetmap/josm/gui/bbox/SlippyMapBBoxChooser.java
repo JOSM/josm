@@ -12,7 +12,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -89,23 +88,35 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         @Override
         public List<TileSource> getTileSources() {
             if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
-            List<TileSource> sources = new ArrayList<>();
-            for (ImageryInfo info : this.getImageryInfos()) {
-                try {
-                    TileSource source = TMSLayer.getTileSourceStatic(info);
-                    if (source != null) {
-                        sources.add(source);
-                    }
-                } catch (IllegalArgumentException ex) {
-                    Logging.warn(ex);
-                    if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-                        JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                                ex.getMessage(), tr("Warning"),
-                                JOptionPane.WARNING_MESSAGE);
-                    }
-                }
+            return imageryInfosToTileSources(getImageryInfos());
+        }
+    }
+
+    /**
+     * TileSource provider for the slippymap chooser - providing default OSM tile source
+     * @since 14495
+     */
+    public static class DefaultOsmTileSourceProvider implements TileSourceProvider {
+
+        protected static final StringProperty DEFAULT_OSM_TILE_URL = new StringProperty(
+                "default.osm.tile.source.url", "https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");
+
+        @Override
+        public List<TileSource> getTileSources() {
+            List<TileSource> result = imageryInfosToTileSources(ImageryLayerInfo.instance.getLayers().stream()
+                   .filter(l -> l.getUrl().equals(DEFAULT_OSM_TILE_URL.get())).collect(Collectors.toList()));
+            if (result.isEmpty()) {
+                result.add(new OsmTileSource.Mapnik());
             }
-            return sources;
+            return result;
+        }
+
+        /**
+         * Returns the default OSM tile source.
+         * @return the default OSM tile source
+         */
+        public static TileSource get() {
+            return new DefaultOsmTileSourceProvider().getTileSources().get(0);
         }
     }
 
@@ -135,6 +146,26 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         }
     }
 
+    static List<TileSource> imageryInfosToTileSources(List<ImageryInfo> imageryInfos) {
+        List<TileSource> sources = new ArrayList<>();
+        for (ImageryInfo info : imageryInfos) {
+            try {
+                TileSource source = TMSLayer.getTileSourceStatic(info);
+                if (source != null) {
+                    sources.add(source);
+                }
+            } catch (IllegalArgumentException ex) {
+                Logging.warn(ex);
+                if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                            ex.getMessage(), tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }
+        return sources;
+    }
+
     /**
      * Plugins that wish to add custom tile sources to slippy map choose should call this method
      * @param tileSourceProvider new tile source provider
@@ -145,7 +176,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
 
     private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<>();
     static {
-        addTileSourceProvider(() -> Arrays.<TileSource>asList(new OsmTileSource.Mapnik()));
+        addTileSourceProvider(new DefaultOsmTileSourceProvider());
         addTileSourceProvider(new TMSTileSourceProvider());
         addTileSourceProvider(new CurrentLayersTileSourceProvider());
     }
