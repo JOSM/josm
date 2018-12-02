@@ -80,6 +80,15 @@ public class CertificateAmendmentTestIT {
         connect("https://geodata.nationaalgeoregister.nl", true);
     }
 
+    /**
+     * Test Taiwan government.
+     * @throws IOException in case of I/O error
+     */
+    @Test
+    public void testTaiwanGovernment() throws IOException {
+        connect("https://grca.nat.gov.tw", true);
+    }
+
     private static void connect(String url, boolean shouldWork) throws IOException {
         URLConnection connection = new URL(url).openConnection();
         try {
