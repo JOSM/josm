@@ -460,4 +460,21 @@ public class MapCSSParserTest {
         assertTrue(condition.applies(new Environment(OsmUtils.createPrimitive("way name=fóo"))));
         assertFalse(condition.applies(new Environment(OsmUtils.createPrimitive("way name=fÓo"))));
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17053">Bug #17053</a>.
+     */
+    @Test
+    public void testTicket17053() {
+        MapCSSStyleSource sheet = new MapCSSStyleSource(
+            "way {\n" +
+            "    placement_offset: eval(\n" +
+            "        cond(prop(\"placement_value\")=\"right_of:1\",eval((prop(lane_width_forward_1)/2)-prop(lane_offset_forward_1)),\n" +
+            "        0\n" +
+            "        )\n" +
+            "       );\n" +
+            "}");
+        sheet.loadStyleSource();
+        assertTrue(sheet.getErrors().toString(), sheet.getErrors().isEmpty());
+    }
 }

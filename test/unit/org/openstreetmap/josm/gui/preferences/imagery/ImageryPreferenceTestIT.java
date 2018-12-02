@@ -82,7 +82,7 @@ public class ImageryPreferenceTestIT {
         checkUrl(info, info.getAttributionImageURL());
         checkUrl(info, info.getAttributionLinkURL());
         String eula = info.getEulaAcceptanceRequired();
-        if(eula != null) {
+        if (eula != null) {
             checkUrl(info, eula.replaceAll("\\{lang\\}", ""));
         }
         checkUrl(info, info.getPermissionReferenceURL());
