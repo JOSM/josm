@@ -1305,6 +1305,24 @@ public final class ExpressionFactory {
             this.needsEnvironment = needsEnvironment;
         }
 
+        /**
+         * Returns the method.
+         * @return the method
+         * @since 14484
+         */
+        public final Method getMethod() {
+            return m;
+        }
+
+        /**
+         * Returns the arguments.
+         * @return the arguments
+         * @since 14484
+         */
+        public final List<Expression> getArgs() {
+            return args;
+        }
+
         @Override
         public Object evaluate(Environment env) {
             Object[] convertedArgs;

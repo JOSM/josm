@@ -22,6 +22,15 @@ public class LiteralExpression implements Expression {
         this.literal = literal;
     }
 
+    /**
+     * Returns the literal.
+     * @return the literal
+     * @since 14484
+     */
+    public final Object getLiteral() {
+        return literal;
+    }
+
     @Override
     public Object evaluate(Environment env) {
         return literal;

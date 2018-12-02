@@ -50,7 +50,17 @@ public final class Territories {
     }
 
     /**
-     * Determine, if a point is inside a territory with the given the ISO3166-1
+     * Returns the {@link GeoPropertyIndex} for the given ISO3166-1 or ISO3166-2 code.
+     * @param code the ISO3166-1 or ISO3166-2 code
+     * @return the {@link GeoPropertyIndex} for the given {@code code}
+     * @since 14484
+     */
+    public static GeoPropertyIndex<Boolean> getGeoPropertyIndex(String code) {
+        return iso3166Cache.get(code);
+    }
+
+    /**
+     * Determine, if a point is inside a territory with the given ISO3166-1
      * or ISO3166-2 code.
      *
      * @param code the ISO3166-1 or ISO3166-2 code

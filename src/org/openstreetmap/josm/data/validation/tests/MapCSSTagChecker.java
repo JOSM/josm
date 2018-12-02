@@ -3,11 +3,13 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +36,7 @@ import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -52,8 +55,12 @@ import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ClassCondition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ExpressionCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory.Functions;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory.ParameterFunction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
+import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -72,10 +79,14 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.DefaultGeoProperty;
+import org.openstreetmap.josm.tools.GeoProperty;
+import org.openstreetmap.josm.tools.GeoPropertyIndex;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -957,6 +968,47 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
     }
 
+    private static Method getFunctionMethod(String method) {
+        try {
+            return Functions.class.getDeclaredMethod(method, Environment.class, String.class);
+        } catch (NoSuchMethodException | SecurityException e) {
+            Logging.error(e);
+            return null;
+        }
+    }
+
+    private static Optional<String> getFirstInsideCountry(TagCheck check, Method insideMethod) {
+        return check.rule.selectors.stream()
+                .filter(s -> s instanceof GeneralSelector)
+                .flatMap(s -> ((GeneralSelector) s).getConditions().stream())
+                .filter(c -> c instanceof ExpressionCondition)
+                .map(c -> ((ExpressionCondition) c).getExpression())
+                .filter(c -> c instanceof ParameterFunction)
+                .map(c -> (ParameterFunction) c)
+                .filter(c -> c.getMethod().equals(insideMethod))
+                .flatMap(c -> c.getArgs().stream())
+                .filter(e -> e instanceof LiteralExpression)
+                .map(e -> ((LiteralExpression) e).getLiteral())
+                .filter(l -> l instanceof String)
+                .map(l -> (String) l)
+                .findFirst();
+    }
+
+    private static LatLon getLocation(TagCheck check, Method insideMethod) {
+        Optional<String> inside = getFirstInsideCountry(check, insideMethod);
+        if (inside.isPresent()) {
+            GeoPropertyIndex<Boolean> index = Territories.getGeoPropertyIndex(inside.get());
+            if (index != null) {
+                GeoProperty<Boolean> prop = index.getGeoProperty();
+                if (prop instanceof DefaultGeoProperty) {
+                    Rectangle bounds = ((DefaultGeoProperty) prop).getArea().getBounds();
+                    return new LatLon(bounds.getCenterY(), bounds.getCenterX());
+                }
+            }
+        }
+        return LatLon.ZERO;
+    }
+
     /**
      * Checks that rule assertions are met for the given set of TagChecks.
      * @param schecks The TagChecks for which assertions have to be checked
@@ -965,12 +1017,13 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     public Set<String> checkAsserts(final Collection<TagCheck> schecks) {
         Set<String> assertionErrors = new LinkedHashSet<>();
+        final Method insideMethod = getFunctionMethod("inside");
         final DataSet ds = new DataSet();
         for (final TagCheck check : schecks) {
             Logging.debug("Check: {0}", check);
             for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
                 Logging.debug("- Assertion: {0}", i);
-                final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey());
+                final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey(), getLocation(check, insideMethod));
                 // Build minimal ordered list of checks to run to test the assertion
                 List<Set<TagCheck>> checksToRun = new ArrayList<>();
                 Set<TagCheck> checkDependencies = check.getTagCheckDependencies(schecks);
