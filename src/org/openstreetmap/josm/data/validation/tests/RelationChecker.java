@@ -63,6 +63,7 @@ public class RelationChecker extends Test {
      */
     public static final String ROLE_VERIF_PROBLEM_MSG = tr("Role verification problem");
     private boolean ignoreMultiPolygons;
+    private boolean ignoreTurnRestrictions;
 
     /**
      * Constructor
@@ -108,7 +109,9 @@ public class RelationChecker extends Test {
         for (Test t : OsmValidator.getEnabledTests(false)) {
             if (t instanceof MultipolygonTest) {
                 ignoreMultiPolygons = true;
-                break;
+            }
+            if (t instanceof TurnrestrictionTest) {
+                ignoreTurnRestrictions = true;
             }
         }
     }
@@ -124,6 +127,10 @@ public class RelationChecker extends Test {
         }
         if (ignoreMultiPolygons && n.isMultipolygon()) {
             // see #17010: don't report same problem twice
+            return;
+        }
+        if (ignoreTurnRestrictions && n.hasTag("type","restriction")) {
+            // see #17057: TurnrestrictionTest is specialized on this
             return;
         }
         Map<Role, String> allroles = buildAllRoles(n);
