@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.validation.routines.DomainValidator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
@@ -77,7 +79,13 @@ public final class HttpClient {
     }
 
     private HttpClient(URL url, String requestMethod) {
-        this.url = url;
+        try {
+            String host = url.getHost();
+            String asciiHost = DomainValidator.unicodeToASCII(host);
+            this.url = asciiHost.equals(host) ? url : new URL(url.getProtocol(), asciiHost, url.getPort(), url.getFile());
+        } catch (MalformedURLException e) {
+            throw new JosmRuntimeException(e);
+        }
         this.requestMethod = requestMethod;
         this.headers.put("Accept-Encoding", "gzip");
     }

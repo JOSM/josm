@@ -2010,7 +2010,7 @@ public final class DomainValidator extends AbstractValidator {
      * @return converted input, or original input if conversion fails
      */
     // Needed by UrlValidator
-    static String unicodeToASCII(String input) {
+    public static String unicodeToASCII(String input) {
         if (isOnlyASCII(input)) { // skip possibly expensive processing
             return input;
         }
