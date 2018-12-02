@@ -4,15 +4,14 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,31 +36,23 @@ public class ImageryPreferenceTestIT {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().https().timeout(10000*60);
 
-    private final Map<ImageryInfo, List<String>> errors = Collections.synchronizedMap(new HashMap<>());
-    private final Set<URL> workingURLs = Collections.synchronizedSet(new HashSet<>());
+    private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
+    private final Set<String> workingURLs = Collections.synchronizedSet(new HashSet<>());
 
     private boolean addError(ImageryInfo info, String error) {
-        return errors.computeIfAbsent(info, x -> new ArrayList<>()).add(error);
+        return errors.computeIfAbsent(info.getCountryCode(), x -> Collections.synchronizedMap(new TreeMap<>()))
+                     .computeIfAbsent(info, x -> Collections.synchronizedList(new ArrayList<>()))
+                     .add(error);
     }
 
     private void checkUrl(ImageryInfo info, String url) {
-        if (url != null) {
-            try {
-                checkUrl(info, new URL(url));
-            } catch (MalformedURLException e) {
-                addError(info, url + " -> " + e);
-            }
-        }
-    }
-
-    private void checkUrl(ImageryInfo info, URL url) {
         if (url != null && !workingURLs.contains(url)) {
             try {
-                Response response = HttpClient.create(url).connect();
+                Response response = HttpClient.create(new URL(url)).connect();
                 if (response.getResponseCode() >= 400) {
-                    addError(info, url.toExternalForm() + " -> HTTP " + response.getResponseCode());
+                    addError(info, url + " -> HTTP " + response.getResponseCode());
                 } else if (response.getResponseCode() >= 300) {
-                    Logging.warn(url.toExternalForm() + " -> HTTP " + response.getResponseCode());
+                    Logging.warn(url + " -> HTTP " + response.getResponseCode());
                 } else {
                     workingURLs.add(url);
                 }
@@ -101,6 +92,7 @@ public class ImageryPreferenceTestIT {
     public void testValidityOfAvailableImageryEntries() throws Exception {
         ImageryLayerInfo.instance.load(false);
         ImageryLayerInfo.instance.getDefaultLayers().parallelStream().forEach(this::checkEntry);
-        assertTrue(errors.toString(), errors.isEmpty());
+        assertTrue(errors.toString().replaceAll("\\}, ", "\n\\}, ").replaceAll(", ImageryInfo\\{", "\n      ,ImageryInfo\\{"),
+                errors.isEmpty());
     }
 }
