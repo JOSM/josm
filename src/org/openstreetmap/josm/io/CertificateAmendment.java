@@ -161,6 +161,7 @@ public final class CertificateAmendment {
      * Certificates looked into platform native keystore and not embedded in JOSM.
      * Identifiers must match Windows/macOS keystore aliases and Unix filenames for efficient search.
      * To find correct values, see https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReport
+     * and https://support.apple.com/en-us/HT208127
      */
     private static final NativeCertAmend[] PLATFORM_CERT_AMEND = {
         // Let's Encrypt - should be included in JDK, but problems with Ubuntu 18.04, see #15851
@@ -186,6 +187,10 @@ public final class CertificateAmendment {
         new NativeCertAmend("CA Disig Root R2", "CA Disig Root R2", "CA_Disig_Root_R2.pem",
                 "e23d4a036d7b70e9f595b1422079d2b91edfbb1fb651a0633eaa8a9dc5f80703",
                 "https://eidas.disig.sk"),
+        // Government of Taiwan - https://grca.nat.gov.tw/GRCAeng/index.html
+        new NativeCertAmend("Government Root Certification Authority", "Government Root Certification Authority", "Taiwan_GRCA.pem",
+                "7600295eefe85b9e1fd624db76062aaaae59818a54d2774cd4c0b2c01131e1b3",
+                "https://grca.nat.gov.tw")
     };
 
     private CertificateAmendment() {
