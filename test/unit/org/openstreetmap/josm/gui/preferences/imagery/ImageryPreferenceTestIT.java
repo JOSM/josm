@@ -60,6 +60,8 @@ public class ImageryPreferenceTestIT {
                 Response response = HttpClient.create(url).connect();
                 if (response.getResponseCode() >= 400) {
                     addError(info, url.toExternalForm() + " -> HTTP " + response.getResponseCode());
+                } else if (response.getResponseCode() >= 300) {
+                    Logging.warn(url.toExternalForm() + " -> HTTP " + response.getResponseCode());
                 } else {
                     workingURLs.add(url);
                 }
