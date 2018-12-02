@@ -49,7 +49,7 @@ public class ImageryPreferenceTestIT {
             try {
                 checkUrl(info, new URL(url));
             } catch (MalformedURLException e) {
-                addError(info, url + " -> " + e.getMessage());
+                addError(info, url + " -> " + e);
             }
         }
     }
@@ -65,7 +65,7 @@ public class ImageryPreferenceTestIT {
                 }
                 response.disconnect();
             } catch (IOException e) {
-                addError(info, url + " -> " + e.getMessage());
+                addError(info, url + " -> " + e);
             }
         }
     }
