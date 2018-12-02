@@ -114,13 +114,14 @@ public final class OsmUtils {
     /**
      * Creates a new OSM primitive around (0,0) according to the given assertion. Originally written for unit tests,
      * this can also be used in another places like validation of local MapCSS validator rules.
+     * Ways and relations created using this method are empty.
      * @param assertion The assertion describing OSM primitive (ex: "way name=Foo railway=rail")
      * @return a new OSM primitive according to the given assertion
      * @throws IllegalArgumentException if assertion is null or if the primitive type cannot be deduced from it
      * @since 7356
      */
     public static OsmPrimitive createPrimitive(String assertion) {
-        return createPrimitive(assertion, LatLon.ZERO);
+        return createPrimitive(assertion, LatLon.ZERO, false);
     }
 
     /**
@@ -128,19 +129,20 @@ public final class OsmUtils {
      * this can also be used in another places like validation of local MapCSS validator rules.
      * @param assertion The assertion describing OSM primitive (ex: "way name=Foo railway=rail")
      * @param around the coordinate at which the primitive will be located
+     * @param enforceLocation if {@code true}, ways and relations will not be empty to force a physical location
      * @return a new OSM primitive according to the given assertion
      * @throws IllegalArgumentException if assertion is null or if the primitive type cannot be deduced from it
-     * @since 14484
+     * @since 14486
      */
-    public static OsmPrimitive createPrimitive(String assertion, LatLon around) {
+    public static OsmPrimitive createPrimitive(String assertion, LatLon around, boolean enforceLocation) {
         CheckParameterUtil.ensureParameterNotNull(assertion, "assertion");
         final String[] x = assertion.split("\\s+", 2);
         final OsmPrimitive p = "n".equals(x[0]) || "node".equals(x[0])
-                ? new Node(around)
+                ? newNode(around)
                 : "w".equals(x[0]) || "way".equals(x[0]) || /*for MapCSS related usage*/ "area".equals(x[0])
-                ? newWay(around)
+                ? newWay(around, enforceLocation)
                 : "r".equals(x[0]) || "relation".equals(x[0])
-                ? newRelation(around)
+                ? newRelation(around, enforceLocation)
                 : null;
         if (p == null) {
             throw new IllegalArgumentException("Expecting n/node/w/way/r/relation/area, but got '" + x[0] + '\'');
@@ -157,16 +159,20 @@ public final class OsmUtils {
         return new Node(around);
     }
 
-    private static Way newWay(LatLon around) {
+    private static Way newWay(LatLon around, boolean enforceLocation) {
         Way w = new Way();
-        w.addNode(newNode(new LatLon(around.lat()+0.1, around.lon())));
-        w.addNode(newNode(new LatLon(around.lat()-0.1, around.lon())));
+        if (enforceLocation) {
+            w.addNode(newNode(new LatLon(around.lat()+0.1, around.lon())));
+            w.addNode(newNode(new LatLon(around.lat()-0.1, around.lon())));
+        }
         return w;
     }
 
-    private static Relation newRelation(LatLon around) {
+    private static Relation newRelation(LatLon around, boolean enforceLocation) {
         Relation r = new Relation();
-        r.addMember(new RelationMember(null, newNode(around)));
+        if (enforceLocation) {
+            r.addMember(new RelationMember(null, newNode(around)));
+        }
         return r;
     }
 

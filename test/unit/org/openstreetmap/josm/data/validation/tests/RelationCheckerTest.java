@@ -16,6 +16,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 
+/**
+ * Unit tests of {@link RelationChecker} class.
+ */
 public class RelationCheckerTest {
 
     /**
