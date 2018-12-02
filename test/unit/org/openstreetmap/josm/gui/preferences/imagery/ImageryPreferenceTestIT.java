@@ -49,7 +49,7 @@ public class ImageryPreferenceTestIT {
             try {
                 checkUrl(info, new URL(url));
             } catch (MalformedURLException e) {
-                addError(info, url + " -> " + e.getMessage());
+                addError(info, url + " -> " + e);
             }
         }
     }
@@ -60,12 +60,14 @@ public class ImageryPreferenceTestIT {
                 Response response = HttpClient.create(url).connect();
                 if (response.getResponseCode() >= 400) {
                     addError(info, url.toExternalForm() + " -> HTTP " + response.getResponseCode());
+                } else if (response.getResponseCode() >= 300) {
+                    Logging.warn(url.toExternalForm() + " -> HTTP " + response.getResponseCode());
                 } else {
                     workingURLs.add(url);
                 }
                 response.disconnect();
             } catch (IOException e) {
-                addError(info, url + " -> " + e.getMessage());
+                addError(info, url + " -> " + e);
             }
         }
     }
