@@ -43,7 +43,9 @@ import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -1023,7 +1025,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             Logging.debug("Check: {0}", check);
             for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
                 Logging.debug("- Assertion: {0}", i);
-                final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey(), getLocation(check, insideMethod));
+                final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey(), getLocation(check, insideMethod), true);
                 // Build minimal ordered list of checks to run to test the assertion
                 List<Set<TagCheck>> checksToRun = new ArrayList<>();
                 Set<TagCheck> checkDependencies = check.getTagCheckDependencies(schecks);
@@ -1032,7 +1034,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
                 checksToRun.add(Collections.singleton(check));
                 // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
-                ds.addPrimitive(p);
+                addPrimitive(ds, p);
                 final Collection<TestError> pErrors = getErrorsForPrimitive(p, true, checksToRun);
                 Logging.debug("- Errors: {0}", pErrors);
                 @SuppressWarnings({"EqualsBetweenInconvertibleTypes", "EqualsIncompatibleType"})
@@ -1046,6 +1048,15 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
         }
         return assertionErrors;
+    }
+
+    private static void addPrimitive(DataSet ds, OsmPrimitive p) {
+        if (p instanceof Way) {
+            ((Way) p).getNodes().forEach(n -> addPrimitive(ds, n));
+        } else if (p instanceof Relation) {
+            ((Relation) p).getMembers().forEach(m -> addPrimitive(ds, m.getMember()));
+        }
+        ds.addPrimitive(p);
     }
 
     @Override
