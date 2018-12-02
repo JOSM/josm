@@ -147,6 +147,6 @@ public final class PrimitiveTransferData implements Serializable {
      * @return <code>true</code> if invalid data is contained in this set.
      */
     public boolean hasIncompleteData() {
-        return getAll().stream().anyMatch(p -> p.isIncomplete() || !p.isVisible());
+        return getAll().stream().anyMatch(p -> !p.isUsable());
     }
 }

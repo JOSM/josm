@@ -94,7 +94,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
         newIds.put(OsmPrimitiveType.RELATION, new HashMap<Long, Long>());
 
         for (PrimitiveData data : pasteBuffer.getAll()) {
-            if (data.isIncomplete() || !data.isVisible()) {
+            if (!data.isUsable()) {
                 continue;
             }
             PrimitiveData copy = data.makeCopy();
