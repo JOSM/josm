@@ -51,7 +51,7 @@ public class MapCSSTagCheckerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
+    public JOSMTestRules test = new JOSMTestRules().projection().territories();
 
     static MapCSSTagChecker buildTagChecker(String css) throws ParseException {
         final MapCSSTagChecker test = new MapCSSTagChecker();
@@ -187,6 +187,22 @@ public class MapCSSTagCheckerTest {
             Logging.error(msg);
         }
         assertTrue("not all assertions included in the tests are met", assertionErrors.isEmpty());
+    }
+
+    /**
+     * Checks that assertions work for country-specific checks.
+     * @throws ParseException if a parsing error occurs
+     */
+    @Test
+    public void testAssertInsideCountry() throws ParseException {
+        final MapCSSTagChecker test = buildTagChecker(
+                "node[amenity=parking][inside(\"BR\")] {\n" +
+                "  throwWarning: \"foo\";\n" +
+                "  assertMatch: \"node amenity=parking\";\n" +
+                "  assertNoMatch: \"node amenity=restaurant\";\n" +
+                "}");
+        Set<String> errors = test.checkAsserts(test.checks.get("test"));
+        assertTrue(errors.toString(), errors.isEmpty());
     }
 
     /**

@@ -871,6 +871,15 @@ public final class ConditionFactory {
             this.e = e;
         }
 
+        /**
+         * Returns the expression.
+         * @return the expression
+         * @since 14484
+         */
+        public final Expression getExpression() {
+            return e;
+        }
+
         @Override
         public boolean applies(Environment env) {
             Boolean b = Cascade.convertTo(e.evaluate(env), Boolean.class);

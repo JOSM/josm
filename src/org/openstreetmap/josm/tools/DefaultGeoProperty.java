@@ -59,4 +59,12 @@ public class DefaultGeoProperty implements GeoProperty<Boolean> {
         }
     }
 
+    /**
+     * Returns the area.
+     * @return the area
+     * @since 14484
+     */
+    public final Area getArea() {
+        return area;
+    }
 }

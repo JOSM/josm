@@ -50,6 +50,15 @@ public class GeoPropertyIndex<T> {
     }
 
     /**
+     * Returns the geo property.
+     * @return the geo property
+     * @since 14484
+     */
+    public final GeoProperty<T> getGeoProperty() {
+        return geoProp;
+    }
+
+    /**
      * Gets the index of the given coordinate. Only used internally
      * @param ll The lat/lon coordinate
      * @param level The scale level
