@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -256,7 +257,12 @@ public class TagChecker extends TagTest {
                     } else if (line.charAt(0) == '+') {
                         okValue = line.substring(1);
                     } else if (line.charAt(0) == '-' && okValue != null) {
-                        harmonizedKeys.put(harmonizeKey(line.substring(1)), okValue);
+                        String hk = harmonizeKey(line.substring(1));
+                        if (!okValue.equals(hk)) {
+                            if (harmonizedKeys.put(hk, okValue) != null) {
+                                Logging.debug(tr("Line was ignored: {0}", line));
+                            }
+                        }
                     } else {
                         Logging.error(tr("Invalid spellcheck line: {0}", line));
                     }
@@ -312,9 +318,11 @@ public class TagChecker extends TagTest {
     }
 
     private static void addPresetValue(KeyedItem ky) {
-        Collection<String> values = ky.getValues();
-        if (ky.key != null && values != null) {
-            harmonizedKeys.put(harmonizeKey(ky.key), ky.key);
+        if (ky.key != null && ky.getValues() != null) {
+            String hk = harmonizeKey(ky.key);
+            if (!ky.key.equals(hk)) {
+                harmonizedKeys.put(hk, ky.key);
+            }
         }
     }
 
@@ -414,6 +422,9 @@ public class TagChecker extends TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
+        if (!p.isTagged())
+            return;
+
         // Just a collection to know if a primitive has been already marked with error
         MultiMap<OsmPrimitive, String> withErrors = new MultiMap<>();
 
@@ -501,7 +512,7 @@ public class TagChecker extends TagTest {
                     && !isTagIgnored(key, value)) {
                 if (!isKeyInPresets(key)) {
                     String prettifiedKey = harmonizeKey(key);
-                    String fixedKey = harmonizedKeys.get(prettifiedKey);
+                    String fixedKey = isKeyInPresets(prettifiedKey) ? prettifiedKey : harmonizedKeys.get(prettifiedKey);
                     if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
                         // misspelled preset key
                         final TestError.Builder error = TestError.builder(this, Severity.WARNING, MISSPELLED_KEY)
@@ -524,6 +535,37 @@ public class TagChecker extends TagTest {
                     // try to fix common typos and check again if value is still unknown
                     String fixedValue = harmonizeValue(prop.getValue());
                     Map<String, String> possibleValues = getPossibleValues(getPresetValues(key));
+                    List<String> fixVals = new ArrayList<>();
+                    if (!possibleValues.containsKey(fixedValue)) {
+                        int minDist = 2;
+                        String closest = null;
+                        for (String possibleVal : possibleValues.keySet()) {
+                            int dist = Utils.getLevenshteinDistance(possibleVal, fixedValue);
+                            if (dist < minDist) {
+                                closest = possibleVal;
+                                minDist = dist;
+                                fixVals.clear();
+                                fixVals.add(possibleVal);
+                            } else if (dist == minDist) {
+                                fixVals.add(possibleVal);
+                            }
+                        }
+                        if (minDist <= 1) {
+                            if (fixVals.size() < 2) {
+                                fixedValue = closest;
+                            } else {
+                                Collections.sort(fixVals);
+                                // misspelled preset value with multiple good alternatives
+                                errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
+                                        .message(tr("Misspelled property value"),
+                                                marktr("Value ''{0}'' for key ''{1}'' looks like one of {2}."), prop.getValue(), key, fixVals)
+                                        .primitives(p)
+                                        .build());
+                                withErrors.put(p, "WPV");
+                                continue;
+                            }
+                        }
+                    }
                     if (possibleValues.containsKey(fixedValue)) {
                         final String newValue = possibleValues.get(fixedValue);
                         // misspelled preset value
@@ -595,7 +637,7 @@ public class TagChecker extends TagTest {
             checkValues = checkValues && Config.getPref().getBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, true);
         }
 
-        checkComplex = Config.getPref().getBoolean(PREF_CHECK_COMPLEX, true);
+        checkComplex = Config.getPref().getBoolean(PREF_CHECK_COMPLEX, true) && !checkerData.isEmpty();
         if (isBeforeUpload) {
             checkComplex = checkComplex && Config.getPref().getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true);
         }

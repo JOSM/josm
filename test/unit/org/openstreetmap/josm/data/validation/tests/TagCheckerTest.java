@@ -100,8 +100,20 @@ public class TagCheckerTest {
     public void testMisspelledTag() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node landuse=forrest"));
         assertEquals(1, errors.size());
-        assertEquals("Presets do not contain property value", errors.get(0).getMessage());
-        assertEquals("Value 'forrest' for key 'landuse' not in presets.", errors.get(0).getDescription());
+        assertEquals("Misspelled property value", errors.get(0).getMessage());
+        assertEquals("Value 'forrest' for key 'landuse' looks like 'forest'.", errors.get(0).getDescription());
+    }
+
+    /**
+     * Check for misspelled value with multiple alternatives in presets.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testMisspelledTag2() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=servics"));
+        assertEquals(1, errors.size());
+        assertEquals("Misspelled property value", errors.get(0).getMessage());
+        assertEquals("Value 'servics' for key 'highway' looks like one of [service, services].", errors.get(0).getDescription());
     }
 
     /**
