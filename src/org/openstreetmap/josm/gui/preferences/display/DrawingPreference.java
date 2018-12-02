@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterRule;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -61,6 +62,7 @@ public class DrawingPreference implements SubPreferenceSetting {
     private final JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
     private final JCheckBox useWireframeAntialiasing = new JCheckBox(tr("Smooth map graphics in wireframe mode (antialiasing)"));
     private final JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
+    private final JCheckBox hideLabelsWhileDragging = new JCheckBox(tr("Hide labels while dragging the map"));
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
@@ -133,6 +135,10 @@ public class DrawingPreference implements SubPreferenceSetting {
         outlineOnly.setToolTipText(tr("This option suppresses the filling of areas, overriding anything specified in the selected style."));
         outlineOnly.setSelected(Config.getPref().getBoolean("draw.data.area_outline_only", false));
 
+        // hideLabelsWhileDragging
+        hideLabelsWhileDragging.setToolTipText(tr("This option hides the textual labels of OSM objects while dragging the map."));
+        hideLabelsWhileDragging.setSelected(OsmDataLayer.PROPERTY_HIDE_LABELS_WHILE_DRAGGING.get());
+
         // discardable keys
         discardableKeys.setToolTipText(tr("Display keys which have been deemed uninteresting to the point that they can be silently removed."));
         discardableKeys.setSelected(Config.getPref().getBoolean("display.discardable-keys", false));
@@ -167,6 +173,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         panel.add(useWireframeAntialiasing, GBC.eop().insets(20, 0, 0, 0));
         panel.add(useHighlighting, GBC.eop().insets(20, 0, 0, 0));
         panel.add(outlineOnly, GBC.eol().insets(20, 0, 0, 0));
+        panel.add(hideLabelsWhileDragging, GBC.eol().insets(20, 0, 0, 0));
 
         panel.add(new JLabel(tr("Other options")),
                 GBC.eop().insets(5, 10, 0, 0));
@@ -182,6 +189,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         ExpertToggleAction.addVisibilitySwitcher(useWireframeAntialiasing);
         ExpertToggleAction.addVisibilitySwitcher(useHighlighting);
         ExpertToggleAction.addVisibilitySwitcher(outlineOnly);
+        ExpertToggleAction.addVisibilitySwitcher(hideLabelsWhileDragging);
         ExpertToggleAction.addVisibilitySwitcher(discardableKeys);
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
@@ -194,6 +202,7 @@ public class DrawingPreference implements SubPreferenceSetting {
     @Override
     public boolean ok() {
         boolean restart = gpxPanel.savePreferences();
+        OsmDataLayer.PROPERTY_HIDE_LABELS_WHILE_DRAGGING.put(hideLabelsWhileDragging.isSelected());
         Config.getPref().putBoolean("draw.data.area_outline_only", outlineOnly.isSelected());
         Config.getPref().putBoolean("draw.segment.direction", directionHint.isSelected());
         Config.getPref().putBoolean("draw.segment.head_only", headArrow.isSelected());
