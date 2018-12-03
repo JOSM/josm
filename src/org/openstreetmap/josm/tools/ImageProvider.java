@@ -34,6 +34,7 @@ import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -258,7 +259,7 @@ public class ImageProvider {
     public static final String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
 
     /** set of class loaders to take images from */
-    private static final Set<ClassLoader> classLoaders = new HashSet<>();
+    private static final Set<ClassLoader> classLoaders = Collections.synchronizedSet(new HashSet<>());
     static {
         try {
             classLoaders.add(ClassLoader.getSystemClassLoader());
@@ -1207,10 +1208,12 @@ public class ImageProvider {
     private static URL getImageUrl(String path, String name) {
         if (path != null && path.startsWith("resource://")) {
             String p = path.substring("resource://".length());
-            for (ClassLoader source : classLoaders) {
-                URL res;
-                if ((res = source.getResource(p + name)) != null)
-                    return res;
+            synchronized (classLoaders) {
+                for (ClassLoader source : classLoaders) {
+                    URL res;
+                    if ((res = source.getResource(p + name)) != null)
+                        return res;
+                }
             }
         } else {
             File f = new File(path, name);
