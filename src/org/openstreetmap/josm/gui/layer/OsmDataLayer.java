@@ -13,12 +13,15 @@ import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,6 +97,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
+import org.openstreetmap.josm.gui.datatransfer.data.OsmLayerTransferData;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.io.AbstractIOTask;
@@ -1053,6 +1058,21 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         super.destroy();
         data.removeSelectionListener(this);
         data.removeHighlightUpdateListener(this);
+        removeClipboardDataFor(this);
+    }
+
+    protected static void removeClipboardDataFor(OsmDataLayer osm) {
+        Transferable clipboardContents = ClipboardUtils.getClipboardContent();
+        if (clipboardContents != null) {
+            try {
+                Object o = clipboardContents.getTransferData(OsmLayerTransferData.OSM_FLAVOR);
+                if (o instanceof OsmLayerTransferData && osm.equals(((OsmLayerTransferData) o).getLayer())) {
+                    ClipboardUtils.clear();
+                }
+            } catch (UnsupportedFlavorException | IOException e) {
+                Logging.error(e);
+            }
+        }
     }
 
     @Override
