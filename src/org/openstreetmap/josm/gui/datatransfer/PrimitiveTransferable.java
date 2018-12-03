@@ -29,7 +29,7 @@ public class PrimitiveTransferable implements Transferable {
     private static final List<DataFlavor> PRIMITIVE_FLAVORS = Arrays.asList(PrimitiveTransferData.DATA_FLAVOR,
             TagTransferData.FLAVOR, DataFlavor.stringFlavor);
     private final PrimitiveTransferData primitives;
-    private OsmDataLayer sourceLayer;
+    private final OsmDataLayer sourceLayer;
 
     /**
      * Constructs a new {@code PrimitiveTransferable}.

@@ -23,7 +23,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
- * This transfer hanlder provides the ability to transfer OSM data. It allows you to receive files, primitives or tags.
+ * This transfer handler provides the ability to transfer OSM data. It allows you to receive files, primitives or tags.
  * @author Michael Zangl
  * @since 10604
  */

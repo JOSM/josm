@@ -165,4 +165,14 @@ public final class ClipboardUtils {
             throw new IllegalArgumentException(e);
         }
     }
+
+    /**
+     * Clears the system clipboard.
+     * @return True if the clear was successful
+     * @since 14500
+     */
+    public static boolean clear() {
+        // Cannot simply set clipboard contents to null, see https://stackoverflow.com/a/18254949/2257172
+        return copy(new StringSelection(""));
+    }
 }
