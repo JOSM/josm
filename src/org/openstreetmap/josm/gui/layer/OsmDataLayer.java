@@ -1063,7 +1063,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
     protected static void removeClipboardDataFor(OsmDataLayer osm) {
         Transferable clipboardContents = ClipboardUtils.getClipboardContent();
-        if (clipboardContents != null) {
+        if (clipboardContents != null && clipboardContents.isDataFlavorSupported(OsmLayerTransferData.OSM_FLAVOR)) {
             try {
                 Object o = clipboardContents.getTransferData(OsmLayerTransferData.OSM_FLAVOR);
                 if (o instanceof OsmLayerTransferData && osm.equals(((OsmLayerTransferData) o).getLayer())) {
