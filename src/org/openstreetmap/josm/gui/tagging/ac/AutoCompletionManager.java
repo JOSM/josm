@@ -484,8 +484,9 @@ public class AutoCompletionManager implements DataSetListener {
                     INSTANCES.remove(ds);
                     ds.removeDataSetListener(AutoCompletionManager.this);
                     MainApplication.getLayerManager().removeLayerChangeListener(this);
-                    tagCache.clear();
-                    roleCache.clear();
+                    dirty = true;
+                    tagCache = null;
+                    roleCache = null;
                     ds = null;                    
                 }
             }
