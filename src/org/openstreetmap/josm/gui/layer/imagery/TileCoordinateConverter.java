@@ -21,6 +21,8 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.ShiftedProjecting;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This class handles tile coordinate management and computes their position in the map view.
@@ -79,8 +81,15 @@ public class TileCoordinateConverter {
      * @return the position
      */
     public Point2D getPixelForTile(int x, int y, int zoom) {
-        ICoordinate coord = tileSource.tileXYToLatLon(x, y, zoom);
-        return pos(coord).getInView();
+        try {
+            ICoordinate coord = tileSource.tileXYToLatLon(x, y, zoom);
+            if (Double.isNaN(coord.getLat()) || Double.isNaN(coord.getLon())) {
+                throw new JosmRuntimeException("tileXYToLatLon returned " + coord);
+            }
+            return pos(coord).getInView();
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("tileSource", tileSource).put("x", x).put("y", y).put("zoom", zoom);
+        }
     }
 
     /**

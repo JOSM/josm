@@ -31,10 +31,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import com.google.common.collect.ImmutableMap;
@@ -309,7 +311,7 @@ public class OsmDataLayerTest {
      * Checks that unnamed layer number increases
      */
     @Test
-    public void testLayerNameIncreases() throws Exception {
+    public void testLayerNameIncreases() {
         final OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), OsmDataLayer.createLayerName(147), null);
         final OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
         assertEquals("Data Layer 147", layer1.getName());
@@ -332,5 +334,16 @@ public class OsmDataLayerTest {
     public void testLayerNameDoesFinish() {
         final OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Data Layer from GeoJSON: foo.geojson", null);
         assertEquals("Data Layer from GeoJSON: foo.geojson", layer.getName());
+    }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/17065">#17065</a>.
+     */
+    @Test
+    public void testTicket17065() {
+        ClipboardUtils.clear();
+        Logging.clearLastErrorAndWarnings();
+        new OsmDataLayer(new DataSet(), null, null).destroy();
+        assertTrue(Logging.getLastErrorAndWarnings().stream().noneMatch(s -> s.contains("UnsupportedFlavorException")));
     }
 }
