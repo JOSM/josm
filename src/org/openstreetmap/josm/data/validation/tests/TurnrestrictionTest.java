@@ -129,17 +129,14 @@ public class TurnrestrictionTest extends Test {
                         .build());
             }
         }
-        final String restriction = r.get("restriction");
         if (morefrom) {
-            Severity severity = "no_entry".equals(restriction) ? Severity.OTHER : Severity.ERROR;
-            errors.add(TestError.builder(this, severity, MORE_FROM)
+            errors.add(TestError.builder(this, Severity.ERROR, MORE_FROM)
                     .message(tr("More than one \"from\" way found"))
                     .primitives(r)
                     .build());
         }
         if (moreto) {
-            Severity severity = "no_exit".equals(restriction) ? Severity.OTHER : Severity.ERROR;
-            errors.add(TestError.builder(this, severity, MORE_TO)
+            errors.add(TestError.builder(this, Severity.ERROR, MORE_TO)
                     .message(tr("More than one \"to\" way found"))
                     .primitives(r)
                     .build());
@@ -172,7 +169,7 @@ public class TurnrestrictionTest extends Test {
             return;
         }
         if (fromWay.equals(toWay)) {
-            Severity severity = "no_u_turn".equals(restriction) ? Severity.OTHER : Severity.WARNING;
+            Severity severity = r.hasTag("restriction", "no_u_turn") ? Severity.OTHER : Severity.WARNING;
             errors.add(TestError.builder(this, severity, FROM_EQUALS_TO)
                     .message(tr("\"from\" way equals \"to\" way"))
                     .primitives(r)
