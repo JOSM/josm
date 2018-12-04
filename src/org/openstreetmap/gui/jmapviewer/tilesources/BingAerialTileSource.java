@@ -37,7 +37,8 @@ import org.xml.sax.SAXException;
 
 /**
  * Tile source for the Bing Maps REST Imagery API.
- * @see <a href="https://msdn.microsoft.com/en-us/library/ff701724.aspx">MSDN</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/library/bb259689.aspx">MSDN (1)</a>
+ *  and <a href="https://msdn.microsoft.com/en-us/library/ff701724.aspx">MSDN (2)</a>
  */
 public class BingAerialTileSource extends TMSTileSource {
 
@@ -57,6 +58,7 @@ public class BingAerialTileSource extends TMSTileSource {
      */
     public BingAerialTileSource() {
         super(new TileSourceInfo("Bing", null, null));
+        minZoom = 1;
     }
 
     /**

@@ -93,8 +93,6 @@ public class OsmTileSource {
 
     /**
      * The "Transport Map" OSM tile source.
-     *
-     * Template for thunderforest.com.
      */
     public static class TransportMap extends AbstractOsmTileSource {
 
