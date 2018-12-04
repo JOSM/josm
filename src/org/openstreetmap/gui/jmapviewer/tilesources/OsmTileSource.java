@@ -25,7 +25,7 @@ public class OsmTileSource {
          * Constructs a new {@code "Mapnik"} tile source.
          */
         public Mapnik() {
-            super("Mapnik", PATTERN, "MAPNIK");
+            super("OpenStreetMap Carto", PATTERN, "standard");
             modTileFeatures = true;
         }
 
@@ -40,9 +40,9 @@ public class OsmTileSource {
     /**
      * The "Cycle Map" OSM tile source.
      */
-    public static class CycleMap extends AbstractOsmTileSource {
+    public abstract static class CycleMap extends AbstractOsmTileSource {
 
-        private static final String PATTERN = "http://%s.tile.opencyclemap.org/cycle";
+        private static final String PATTERN = "https://%s.tile.thunderforest.com/cycle";
 
         private static final String[] SERVER = {"a", "b", "c"};
 
@@ -52,7 +52,7 @@ public class OsmTileSource {
          * Constructs a new {@code CycleMap} tile source.
          */
         public CycleMap() {
-            super("Cyclemap", PATTERN, "opencyclemap");
+            super("OpenCycleMap", PATTERN, "opencyclemap");
         }
 
         @Override
@@ -60,32 +60,6 @@ public class OsmTileSource {
             String url = String.format(this.baseUrl, new Object[] {SERVER[serverNum]});
             serverNum = (serverNum + 1) % SERVER.length;
             return url;
-        }
-
-        @Override
-        public int getMaxZoom() {
-            return 18;
-        }
-    }
-
-    /**
-     * The "Transport Map" OSM tile source.
-     *
-     * Template for thunderforest.com.
-     */
-    public abstract static class TransportMap extends AbstractOsmTileSource {
-
-        private static final String PATTERN = "https://%s.tile.thunderforest.com/transport";
-
-        private static final String[] SERVER = {"a", "b", "c"};
-
-        private int serverNum;
-
-        /**
-         * Constructs a new {@code TransportMap} tile source.
-         */
-        public TransportMap() {
-            super("OSM Transport Map", PATTERN, "osmtransportmap");
         }
 
         /**
@@ -95,13 +69,6 @@ public class OsmTileSource {
          * @return the API key
          */
         protected abstract String getApiKey();
-
-        @Override
-        public String getBaseUrl() {
-            String url = String.format(this.baseUrl, new Object[] {SERVER[serverNum]});
-            serverNum = (serverNum + 1) % SERVER.length;
-            return url;
-        }
 
         @Override
         public int getMaxZoom() {
@@ -114,14 +81,43 @@ public class OsmTileSource {
         }
 
         @Override
+        public String getTermsOfUseText() {
+            return "Maps © Thunderforest";
+        }
+
+        @Override
+        public String getTermsOfUseURL() {
+            return "https://thunderforest.com/terms/";
+        }
+    }
+
+    /**
+     * The "Transport Map" OSM tile source.
+     *
+     * Template for thunderforest.com.
+     */
+    public static class TransportMap extends AbstractOsmTileSource {
+
+        /**
+         * Constructs a new {@code TransportMap} tile source.
+         */
+        public TransportMap() {
+            super("Public Transport", "https://tile.memomaps.de/tilegen", "public_transport_oepnv");
+        }
+
+        @Override
+        public int getMaxZoom() {
+            return 18;
+        }
+
+        @Override
         public String getAttributionText(int zoom, ICoordinate topLeft, ICoordinate botRight) {
-            return "Maps © Thunderforest, Data © OpenStreetMap contributors";
+            return "© OpenStreetMap contributors, CC-BY-SA";
         }
 
         @Override
         public String getAttributionLinkURL() {
-            return "http://www.thunderforest.com/";
+            return "https://öpnvkarte.de/<";
         }
     }
-
 }

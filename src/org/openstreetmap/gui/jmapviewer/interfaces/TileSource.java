@@ -91,7 +91,7 @@ public interface TileSource extends Attributed {
      * @param lo1 longitude of first point
      * @param la2 latitude of second point
      * @param lo2 longitude of second point
-     * @return the distance betwen first and second point, in m.
+     * @return the distance between first and second point, in m.
      */
     double getDistance(double la1, double lo1, double la2, double lo2);
 
