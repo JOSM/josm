@@ -132,6 +132,7 @@ public class TagEditHelper {
     /** The preference storage of recent tags */
     public static final ListProperty PROPERTY_RECENT_TAGS = new ListProperty("properties.recent-tags",
             Collections.<String>emptyList());
+    /** The preference list of tags which should not be remembered, since r9940 */
     public static final StringProperty PROPERTY_TAGS_TO_IGNORE = new StringProperty("properties.recent-tags.ignore",
             new SearchSetting().writeToString());
 
@@ -364,6 +365,14 @@ public class TagEditHelper {
         if (PROPERTY_REMEMBER_TAGS.get() && !recentTags.isEmpty()) {
             recentTags.saveToPreference(PROPERTY_RECENT_TAGS);
         }
+    }
+
+    /**
+     * Forget recently selected primitives to allow GC.
+     * @since 14509
+     */
+    public void resetSelection() {
+        sel = null;
     }
 
     /**
