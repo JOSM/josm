@@ -793,7 +793,8 @@ public class PlatformHookWindows implements PlatformHook {
                         "[System.Net.WebRequest]::Create('"+uri+"').GetResponse()"
                         ), 5, TimeUnit.SECONDS);
             } catch (ExecutionException | InterruptedException e) {
-                Logging.error(e);
+                Logging.warn("Unable to request certificate of " + uri);
+                Logging.debug(e);
             }
         }
         return null;
