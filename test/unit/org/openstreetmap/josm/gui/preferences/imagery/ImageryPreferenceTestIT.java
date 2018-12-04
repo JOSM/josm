@@ -80,7 +80,24 @@ public class ImageryPreferenceTestIT {
     private void checkTileUrl(ImageryInfo info, AbstractTileSource tileSource, ICoordinate center, int zoom)
             throws IOException {
         TileXY xy = tileSource.latLonToTileXY(center, zoom);
-        checkUrl(info, tileSource.getTileUrl(zoom, xy.getXIndex(), xy.getYIndex()));
+        for (int i = 0; i < 3; i++) {
+            try {
+                checkUrl(info, tileSource.getTileUrl(zoom, xy.getXIndex(), xy.getYIndex()));
+                return;
+            } catch (IOException e) {
+                // Try up to three times max to allow Bing source to initialize itself
+                // and avoid random network errors
+                Logging.trace(e);
+                if (i == 2) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logging.warn(ex);
+                }
+            }
+        }
     }
 
     private void checkEntry(ImageryInfo info) {
@@ -117,7 +134,7 @@ public class ImageryPreferenceTestIT {
     private static AbstractTileSource getTileSource(ImageryInfo info) throws IOException, WMTSGetCapabilitiesException {
         switch (info.getImageryType()) {
             case BING:
-                return new BingAerialTileSource();
+                return new BingAerialTileSource(info);
             case SCANEX:
                 return new ScanexTileSource(info);
             case TMS:
