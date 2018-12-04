@@ -337,6 +337,20 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     /**
+     * Creates a tile source based on imagery info and initializes it with given projection.
+     * @param info imagery info
+     * @param projection projection to be used by this TileSource
+     * @throws IOException if any I/O error occurs
+     * @throws WMTSGetCapabilitiesException when document didn't contain any layers
+     * @throws IllegalArgumentException if any other error happens for the given imagery info
+     * @since 14507
+     */
+    public WMTSTileSource(ImageryInfo info, Projection projection) throws IOException, WMTSGetCapabilitiesException {
+        this(info);
+        initProjection(projection);
+    }
+
+    /**
      * Creates a dialog based on this tile source with all available layers and returns the name of selected layer
      * @return Name of selected layer
      */
