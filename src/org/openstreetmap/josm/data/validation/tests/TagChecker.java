@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -76,7 +77,7 @@ public class TagChecker extends TagTest {
     /** The TagChecker data */
     private static final List<CheckerData> checkerData = new ArrayList<>();
     private static final List<String> ignoreDataStartsWith = new ArrayList<>();
-    private static final List<String> ignoreDataEquals = new ArrayList<>();
+    private static final Set<String> ignoreDataEquals = new HashSet<>();
     private static final List<String> ignoreDataEndsWith = new ArrayList<>();
     private static final List<Tag> ignoreDataTag = new ArrayList<>();
 
@@ -123,6 +124,8 @@ public class TagChecker extends TagTest {
      */
     public static final String PREF_CHECK_FIXMES_BEFORE_UPLOAD = PREF_CHECK_FIXMES + "BeforeUpload";
 
+    private static final int MAX_LEVENSHTEIN_DISTANCE = 2;
+
     protected boolean checkKeys;
     protected boolean checkValues;
     protected boolean checkComplex;
@@ -141,20 +144,21 @@ public class TagChecker extends TagTest {
     protected JCheckBox prefCheckPaintBeforeUpload;
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
-    protected static final int EMPTY_VALUES      = 1200;
-    protected static final int INVALID_KEY       = 1201;
-    protected static final int INVALID_VALUE     = 1202;
-    protected static final int FIXME             = 1203;
-    protected static final int INVALID_SPACE     = 1204;
-    protected static final int INVALID_KEY_SPACE = 1205;
-    protected static final int INVALID_HTML      = 1206; /* 1207 was PAINT */
-    protected static final int LONG_VALUE        = 1208;
-    protected static final int LONG_KEY          = 1209;
-    protected static final int LOW_CHAR_VALUE    = 1210;
-    protected static final int LOW_CHAR_KEY      = 1211;
-    protected static final int MISSPELLED_VALUE  = 1212;
-    protected static final int MISSPELLED_KEY    = 1213;
-    protected static final int MULTIPLE_SPACES   = 1214;
+    protected static final int EMPTY_VALUES             = 1200;
+    protected static final int INVALID_KEY              = 1201;
+    protected static final int INVALID_VALUE            = 1202;
+    protected static final int FIXME                    = 1203;
+    protected static final int INVALID_SPACE            = 1204;
+    protected static final int INVALID_KEY_SPACE        = 1205;
+    protected static final int INVALID_HTML             = 1206; /* 1207 was PAINT */
+    protected static final int LONG_VALUE               = 1208;
+    protected static final int LONG_KEY                 = 1209;
+    protected static final int LOW_CHAR_VALUE           = 1210;
+    protected static final int LOW_CHAR_KEY             = 1211;
+    protected static final int MISSPELLED_VALUE         = 1212;
+    protected static final int MISSPELLED_KEY           = 1213;
+    protected static final int MULTIPLE_SPACES          = 1214;
+    protected static final int MISSPELLED_VALUE_NO_FIX  = 1215;
     // CHECKSTYLE.ON: SingleSpaceSeparator
     // 1250 and up is used by tagcheck
 
@@ -387,33 +391,28 @@ public class TagChecker extends TagTest {
      * @since 9023
      */
     public static boolean isTagIgnored(String key, String value) {
-        boolean tagInPresets = isTagInPresets(key, value);
-        boolean ignore = false;
-
+        if (ignoreDataEquals.contains(key)) {
+            return true;
+        }
         for (String a : ignoreDataStartsWith) {
             if (key.startsWith(a)) {
-                ignore = true;
-            }
-        }
-        for (String a : ignoreDataEquals) {
-            if (key.equals(a)) {
-                ignore = true;
+                return true;
             }
         }
         for (String a : ignoreDataEndsWith) {
             if (key.endsWith(a)) {
-                ignore = true;
+                return true;
             }
         }
 
-        if (!tagInPresets) {
+        if (!isTagInPresets(key, value)) {
             for (Tag a : ignoreDataTag) {
                 if (key.equals(a.getKey()) && value.equals(a.getValue())) {
-                    ignore = true;
+                    return true;
                 }
             }
         }
-        return ignore;
+        return false;
     }
 
     /**
@@ -534,12 +533,17 @@ public class TagChecker extends TagTest {
                 } else if (!isTagInPresets(key, value)) {
                     // try to fix common typos and check again if value is still unknown
                     String fixedValue = harmonizeValue(prop.getValue());
-                    Map<String, String> possibleValues = getPossibleValues(getPresetValues(key));
+                    Set<String> possibleValues = getPresetValues(key);
                     List<String> fixVals = new ArrayList<>();
-                    if (!possibleValues.containsKey(fixedValue)) {
-                        int minDist = 2;
+                    int maxPresetValueLen = 0;
+                    if (!possibleValues.contains(fixedValue)) {
+                        // use Levenshtein distance to find typical typos
+                        int minDist = MAX_LEVENSHTEIN_DISTANCE + 1;
                         String closest = null;
-                        for (String possibleVal : possibleValues.keySet()) {
+                        for (String possibleVal : possibleValues) {
+                            if (possibleVal.isEmpty())
+                                continue;
+                            maxPresetValueLen = Math.max(maxPresetValueLen, possibleVal.length());
                             int dist = Utils.getLevenshteinDistance(possibleVal, fixedValue);
                             if (dist < minDist) {
                                 closest = possibleVal;
@@ -550,13 +554,14 @@ public class TagChecker extends TagTest {
                                 fixVals.add(possibleVal);
                             }
                         }
-                        if (minDist <= 1) {
+                        fixedValue = null;
+                        if (minDist <= MAX_LEVENSHTEIN_DISTANCE && maxPresetValueLen > MAX_LEVENSHTEIN_DISTANCE) {
                             if (fixVals.size() < 2) {
                                 fixedValue = closest;
                             } else {
                                 Collections.sort(fixVals);
                                 // misspelled preset value with multiple good alternatives
-                                errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
+                                errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE_NO_FIX)
                                         .message(tr("Misspelled property value"),
                                                 marktr("Value ''{0}'' for key ''{1}'' looks like one of {2}."), prop.getValue(), key, fixVals)
                                         .primitives(p)
@@ -566,8 +571,8 @@ public class TagChecker extends TagTest {
                             }
                         }
                     }
-                    if (possibleValues.containsKey(fixedValue)) {
-                        final String newValue = possibleValues.get(fixedValue);
+                    if (fixedValue != null && possibleValues.contains(fixedValue)) {
+                        final String newValue = fixedValue;
                         // misspelled preset value
                         errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
                                 .message(tr("Misspelled property value"),
@@ -600,20 +605,6 @@ public class TagChecker extends TagTest {
     private static boolean isFixme(String key, String value) {
         return key.toLowerCase(Locale.ENGLISH).contains("fixme") || key.contains("todo")
           || value.toLowerCase(Locale.ENGLISH).contains("fixme") || value.contains("check and delete");
-    }
-
-    private static Map<String, String> getPossibleValues(Set<String> values) {
-        // generate a map with common typos
-        Map<String, String> map = new HashMap<>();
-        if (values != null) {
-            for (String value : values) {
-                map.put(value, value);
-                if (value.contains("_")) {
-                    map.put(value.replace("_", ""), value);
-                }
-            }
-        }
-        return map;
     }
 
     private static String harmonizeKey(String key) {

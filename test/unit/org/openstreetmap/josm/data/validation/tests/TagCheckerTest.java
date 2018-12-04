@@ -15,6 +15,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -77,6 +78,7 @@ public class TagCheckerTest {
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
         assertEquals("Key 'Brand' looks like 'brand'.", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
         assertFalse(errors.get(0).isFixable());
     }
 
@@ -90,6 +92,8 @@ public class TagCheckerTest {
         assertEquals(1, errors.size());
         assertEquals("Presets do not contain property key", errors.get(0).getMessage());
         assertEquals("Key 'namez' not in presets.", errors.get(0).getDescription());
+        assertEquals(Severity.OTHER, errors.get(0).getSeverity());
+        assertFalse(errors.get(0).isFixable());
     }
 
     /**
@@ -102,6 +106,8 @@ public class TagCheckerTest {
         assertEquals(1, errors.size());
         assertEquals("Misspelled property value", errors.get(0).getMessage());
         assertEquals("Value 'forrest' for key 'landuse' looks like 'forest'.", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertTrue(errors.get(0).isFixable());
     }
 
     /**
@@ -114,6 +120,35 @@ public class TagCheckerTest {
         assertEquals(1, errors.size());
         assertEquals("Misspelled property value", errors.get(0).getMessage());
         assertEquals("Value 'servics' for key 'highway' looks like one of [service, services].", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertFalse(errors.get(0).isFixable());
+    }
+
+    /**
+     * Check for misspelled value.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testMisspelledTag3() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=residentail"));
+        assertEquals(1, errors.size());
+        assertEquals("Misspelled property value", errors.get(0).getMessage());
+        assertEquals("Value 'residentail' for key 'highway' looks like 'residential'.", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertTrue(errors.get(0).isFixable());
+    }
+    /**
+     * Check for misspelled value.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testShortValNotInPreset() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node layer=6"));
+        assertEquals(1, errors.size());
+        assertEquals("Presets do not contain property value", errors.get(0).getMessage());
+        assertEquals("Value '6' for key 'layer' not in presets.", errors.get(0).getDescription());
+        assertEquals(Severity.OTHER, errors.get(0).getSeverity());
+        assertFalse(errors.get(0).isFixable());
     }
 
     /**
