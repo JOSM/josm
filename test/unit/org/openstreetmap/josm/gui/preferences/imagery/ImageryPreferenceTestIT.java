@@ -15,11 +15,16 @@ import java.util.TreeMap;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.gui.jmapviewer.TileXY;
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
 import org.openstreetmap.josm.data.imagery.WMSEndpointTileSource;
@@ -72,6 +77,12 @@ public class ImageryPreferenceTestIT {
         }
     }
 
+    private void checkTileUrl(ImageryInfo info, AbstractTileSource tileSource, ICoordinate center, int zoom)
+            throws IOException {
+        TileXY xy = tileSource.latLonToTileXY(center, zoom);
+        checkUrl(info, tileSource.getTileUrl(zoom, xy.getXIndex(), xy.getYIndex()));
+    }
+
     private void checkEntry(ImageryInfo info) {
         Logging.info("Checking "+ info);
 
@@ -89,7 +100,11 @@ public class ImageryPreferenceTestIT {
         checkUrl(info, info.getTermsOfUseURL());
 
         try {
-            getTileSource(info);
+            ImageryBounds bounds = info.getBounds();
+            ICoordinate center = CoordinateConversion.llToCoor(bounds != null ? bounds.getCenter() : LatLon.ZERO);
+            AbstractTileSource tileSource = getTileSource(info);
+            checkTileUrl(info, tileSource, center, info.getMinZoom());
+            checkTileUrl(info, tileSource, center, info.getMaxZoom());
         } catch (IOException | WMTSGetCapabilitiesException | IllegalArgumentException e) {
             addError(info, e.toString());
         }
@@ -112,7 +127,7 @@ public class ImageryPreferenceTestIT {
             case WMS_ENDPOINT:
                 return new WMSEndpointTileSource(info, ProjectionRegistry.getProjection());
             case WMTS:
-                return new WMTSTileSource(info);
+                return new WMTSTileSource(info, ProjectionRegistry.getProjection());
             default:
                 throw new UnsupportedOperationException(info.toString());
         }
