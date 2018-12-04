@@ -389,6 +389,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     public void selectionChanged(SelectionChangeEvent event) {
         if (!MainApplication.getMap().mapView.isActiveLayerDrawable())
             return;
+        if (event.getSelection().isEmpty())
+            finishDrawing();
         // Make sure helper line is computed later (causes deadlock in selection event chain otherwise)
         SwingUtilities.invokeLater(() -> {
             event.getOldSelection().stream().forEach(x -> updatePreservedFlag(x, false));
@@ -1371,6 +1373,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     @Override
     public void destroy() {
         super.destroy();
+        finishDrawing();
         snapChangeAction.destroy();
     }
 
