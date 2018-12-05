@@ -124,7 +124,9 @@ public class ImageryPreferenceTestIT {
             AbstractTileSource tileSource = getTileSource(info);
             checkTileUrl(info, tileSource, center, info.getMinZoom());
             // checking max zoom for real is complex, see https://josm.openstreetmap.de/ticket/16073#comment:27
-            checkTileUrl(info, tileSource, center, Utils.clamp(12, info.getMinZoom() + 1, info.getMaxZoom()));
+            if (info.getMaxZoom() > 0) {
+                checkTileUrl(info, tileSource, center, Utils.clamp(12, info.getMinZoom() + 1, info.getMaxZoom()));
+            }
         } catch (IOException | WMTSGetCapabilitiesException | IllegalArgumentException e) {
             addError(info, e.toString());
         }
