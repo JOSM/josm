@@ -119,7 +119,8 @@ public class ImageryPreferenceTestIT {
 
         try {
             ImageryBounds bounds = info.getBounds();
-            ICoordinate center = CoordinateConversion.llToCoor(bounds != null ? bounds.getCenter() : LatLon.ZERO);
+            // Some imagery sources do not define tiles at (0,0). So pickup Greenwich Royal Observatory for global sources
+            ICoordinate center = CoordinateConversion.llToCoor(bounds != null ? bounds.getCenter() : new LatLon(51.47810, -0.00170));
             AbstractTileSource tileSource = getTileSource(info);
             checkTileUrl(info, tileSource, center, info.getMinZoom());
             // checking max zoom for real is complex, see https://josm.openstreetmap.de/ticket/16073#comment:27
