@@ -137,6 +137,7 @@ public class TagCheckerTest {
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
         assertTrue(errors.get(0).isFixable());
     }
+
     /**
      * Check for misspelled value.
      * @throws IOException if any I/O error occurs
@@ -166,4 +167,33 @@ public class TagCheckerTest {
         }
         assertTrue(errors.toString(), errors.isEmpty());
     }
+
+    /**
+     * Check regression: Don't fix surface=u -> surface=mud.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testTooShortToFix() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node surface=u"));
+        assertEquals(1, errors.size());
+        assertEquals("Presets do not contain property value", errors.get(0).getMessage());
+        assertEquals("Value 'u' for key 'surface' not in presets.", errors.get(0).getDescription());
+        assertEquals(Severity.OTHER, errors.get(0).getSeverity());
+        assertFalse(errors.get(0).isFixable());
+    }
+
+    /**
+     * Check value with upper case
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testValueDifferentCase() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=Residential"));
+        assertEquals(1, errors.size());
+        assertEquals("Misspelled property value", errors.get(0).getMessage());
+        assertEquals("Value 'Residential' for key 'highway' looks like 'residential'.", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertTrue(errors.get(0).isFixable());
+    }
+
 }

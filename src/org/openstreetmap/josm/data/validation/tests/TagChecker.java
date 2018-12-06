@@ -532,19 +532,27 @@ public class TagChecker extends TagTest {
                     }
                 } else if (!isTagInPresets(key, value)) {
                     // try to fix common typos and check again if value is still unknown
-                    String fixedValue = harmonizeValue(prop.getValue());
+                    final String harmonizedValue = harmonizeValue(prop.getValue());
+                    String fixedValue = null;
                     Set<String> possibleValues = getPresetValues(key);
                     List<String> fixVals = new ArrayList<>();
                     int maxPresetValueLen = 0;
-                    if (!possibleValues.contains(fixedValue)) {
+                    if (possibleValues.contains(harmonizedValue)) {
+                        fixedValue = harmonizedValue;
+                    } else {
                         // use Levenshtein distance to find typical typos
                         int minDist = MAX_LEVENSHTEIN_DISTANCE + 1;
                         String closest = null;
                         for (String possibleVal : possibleValues) {
                             if (possibleVal.isEmpty())
                                 continue;
+                            if (harmonizedValue.length() < 3 && possibleVal.length() >= harmonizedValue.length() + MAX_LEVENSHTEIN_DISTANCE) {
+                                // don't suggest fix value when given value is short and lengths are too different
+                                // for example surface=u would result in surface=mud
+                                continue;
+                            }
                             maxPresetValueLen = Math.max(maxPresetValueLen, possibleVal.length());
-                            int dist = Utils.getLevenshteinDistance(possibleVal, fixedValue);
+                            int dist = Utils.getLevenshteinDistance(possibleVal, harmonizedValue);
                             if (dist < minDist) {
                                 closest = possibleVal;
                                 minDist = dist;
@@ -554,7 +562,6 @@ public class TagChecker extends TagTest {
                                 fixVals.add(possibleVal);
                             }
                         }
-                        fixedValue = null;
                         if (minDist <= MAX_LEVENSHTEIN_DISTANCE && maxPresetValueLen > MAX_LEVENSHTEIN_DISTANCE) {
                             if (fixVals.size() < 2) {
                                 fixedValue = closest;
