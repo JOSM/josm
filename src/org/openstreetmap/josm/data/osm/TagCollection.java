@@ -122,7 +122,6 @@ public class TagCollection implements Iterable<Tag>, Serializable {
         TagCollection tags = new TagCollection();
         if (primitives == null || primitives.isEmpty()) return tags;
         // initialize with the first
-        //
         tags.add(TagCollection.from(primitives.iterator().next()));
 
         // intersect with the others
@@ -131,7 +130,9 @@ public class TagCollection implements Iterable<Tag>, Serializable {
             if (primitive == null) {
                 continue;
             }
-            tags.add(tags.intersect(TagCollection.from(primitive)));
+            tags = tags.intersect(TagCollection.from(primitive));
+            if (tags.isEmpty())
+                break;
         }
         return tags;
     }

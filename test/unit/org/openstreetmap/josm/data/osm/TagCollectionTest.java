@@ -705,4 +705,22 @@ public class TagCollectionTest {
         TagCollection f = new TagCollection();
         assertEquals("0", f.getSummedValues("k"));
     }
+
+    /**
+     * Test method for {@link TagCollection#commonToAllPrimitives(Collection)}.
+     */
+    @Test
+    public void testCommonToAllPrimitives() {
+        Tagged t1 = new Node();
+        t1.put("k1", "10");
+        t1.put("k2", "20");
+        Tagged t2 = new Node();
+        t2.put("k2", "20");
+        TagCollection c = TagCollection.commonToAllPrimitives(Arrays.asList(t1, t2));
+        assertEquals(1, c.size());
+        assertFalse(c.hasValuesFor("k1"));
+        assertTrue(c.hasValuesFor("k2"));
+        assertEquals(1, c.getValues("k2").size());
+        assertEquals("20", c.getValues("k2").iterator().next());
+    }
 }
