@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -69,7 +70,10 @@ public class ImageryPreferenceTestIT {
     private void checkUrl(ImageryInfo info, String url) {
         if (url != null && !url.isEmpty() && !workingURLs.contains(url)) {
             try {
-                Response response = HttpClient.create(new URL(url)).setConnectTimeout(30).setReadTimeout(60).connect();
+                Response response = HttpClient.create(new URL(url))
+                        .setConnectTimeout((int) TimeUnit.SECONDS.toMillis(30))
+                        .setReadTimeout((int) TimeUnit.SECONDS.toMillis(60))
+                        .connect();
                 if (response.getResponseCode() >= 400) {
                     addError(info, url + " -> HTTP " + response.getResponseCode());
                 } else if (response.getResponseCode() >= 300) {
