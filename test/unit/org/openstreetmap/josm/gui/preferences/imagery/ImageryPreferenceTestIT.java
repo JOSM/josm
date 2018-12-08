@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
@@ -68,7 +69,7 @@ public class ImageryPreferenceTestIT {
     private void checkUrl(ImageryInfo info, String url) {
         if (url != null && !url.isEmpty() && !workingURLs.contains(url)) {
             try {
-                Response response = HttpClient.create(new URL(url)).connect();
+                Response response = HttpClient.create(new URL(url)).setConnectTimeout(30).setReadTimeout(60).connect();
                 if (response.getResponseCode() >= 400) {
                     addError(info, url + " -> HTTP " + response.getResponseCode());
                 } else if (response.getResponseCode() >= 300) {
@@ -179,7 +180,7 @@ public class ImageryPreferenceTestIT {
             AbstractTileSource tileSource = getTileSource(info);
             checkTileUrl(info, tileSource, center, info.getMinZoom());
             // checking max zoom for real is complex, see https://josm.openstreetmap.de/ticket/16073#comment:27
-            if (info.getMaxZoom() > 0) {
+            if (info.getMaxZoom() > 0 && info.getImageryType() != ImageryType.SCANEX) {
                 checkTileUrl(info, tileSource, center, Utils.clamp(12, info.getMinZoom() + 1, info.getMaxZoom()));
             }
         } catch (IOException | WMTSGetCapabilitiesException | IllegalArgumentException e) {

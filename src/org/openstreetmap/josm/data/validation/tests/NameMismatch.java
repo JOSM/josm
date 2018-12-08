@@ -4,9 +4,12 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -33,6 +36,17 @@ public class NameMismatch extends Test.TagTest {
     protected static final int NAME_MISSING = 1501;
     protected static final int NAME_TRANSLATION_MISSING = 1502;
     private static final Pattern NAME_SPLIT_PATTERN = Pattern.compile(" - ");
+
+    private static final List<String> EXCLUSIONS = Arrays.asList(
+            "name:botanical",
+            "name:etymology:wikidata",
+            "name:full",
+            "name:genitive",
+            "name:left",
+            "name:prefix",
+            "name:right",
+            "name:source"
+            );
 
     /**
      * Constructs a new {@code NameMismatch} test.
@@ -63,13 +77,10 @@ public class NameMismatch extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
-        Set<String> names = new HashSet<>();
-
-        p.getKeys().forEach((key, n) -> {
-            if (n != null && key.startsWith("name:") && !"name:etymology:wikidata".equals(key)) {
-                names.add(n);
-            }
-        });
+        Set<String> names = p.getKeys().entrySet().stream()
+                .filter(e -> e.getValue() != null && e.getKey().startsWith("name:") && !EXCLUSIONS.contains(e.getKey()))
+                .map(Entry::getValue)
+                .collect(Collectors.toSet());
 
         if (names.isEmpty()) return;
 
