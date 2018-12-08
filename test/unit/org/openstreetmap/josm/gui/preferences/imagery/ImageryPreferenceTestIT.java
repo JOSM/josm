@@ -12,16 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -32,10 +33,8 @@ import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
 import org.openstreetmap.josm.data.imagery.WMSEndpointTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
@@ -105,16 +104,54 @@ public class ImageryPreferenceTestIT {
         }
     }
 
+    private static LatLon getPointInShape(Shape shape) {
+        final Coordinate p1 = shape.getPoints().get(0);
+        final Bounds bounds = new Bounds(p1.getLat(), p1.getLon(), p1.getLat(), p1.getLon());
+        shape.getPoints().forEach(p -> bounds.extend(p.getLat(), p.getLon()));
+
+        final double w = bounds.getWidth();
+        final double h = bounds.getHeight();
+
+        final double x2 = bounds.getMinLon() + (w / 2.0);
+        final double y2 = bounds.getMinLat() + (h / 2.0);
+
+        final LatLon center = new LatLon(y2, x2);
+
+        // check to see if center is inside shape
+        if (shape.contains(center)) {
+            return center;
+        }
+
+        // if center position (C) is not inside shape, try naively some other positions as follows:
+        final double x1 = bounds.getMinLon() + (.25 * w);
+        final double x3 = bounds.getMinLon() + (.75 * w);
+        final double y1 = bounds.getMinLat() + (.25 * h);
+        final double y3 = bounds.getMinLat() + (.75 * h);
+        // +-----------+
+        // |  5  1  6  |
+        // |  4  C  2  |
+        // |  8  3  7  |
+        // +-----------+
+        for (LatLon candidate : new LatLon[] {
+                new LatLon(y1, x2),
+                new LatLon(y2, x3),
+                new LatLon(y3, x2),
+                new LatLon(y2, x1),
+                new LatLon(y1, x1),
+                new LatLon(y1, x3),
+                new LatLon(y3, x3),
+                new LatLon(y3, x1)
+        }) {
+            if (shape.contains(candidate)) {
+                return candidate;
+            }
+        }
+        return center;
+    }
+
     private static LatLon getCenter(ImageryBounds bounds) {
         List<Shape> shapes = bounds.getShapes();
-        Projection proj = ProjectionRegistry.getProjection();
-        return shapes != null && shapes.size() > 1
-                ? proj.eastNorth2latlon(
-                        Geometry.getCentroidEN(shapes.get(0).getPoints().stream()
-                                .map(CoordinateConversion::coorToLL)
-                                .map(proj::latlon2eastNorth)
-                                .collect(Collectors.toList())))
-                : bounds.getCenter();
+        return shapes != null && !shapes.isEmpty() ? getPointInShape(shapes.get(0)) : bounds.getCenter();
     }
 
     private void checkEntry(ImageryInfo info) {

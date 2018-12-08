@@ -839,7 +839,7 @@ public final class Geometry {
         BigDecimal north = BigDecimal.ZERO;
         BigDecimal east = BigDecimal.ZERO;
 
-        // See https://en.wikipedia.org/wiki/Centroid#Centroid_of_a_polygon for the equation used here
+        // See https://en.wikipedia.org/wiki/Centroid#Of_a_polygon for the equation used here
         for (int i = 0; i < size; i++) {
             EastNorth n0 = nodes.get(i);
             EastNorth n1 = nodes.get((i+1) % size);
