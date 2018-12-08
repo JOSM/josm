@@ -33,7 +33,9 @@ import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
 import org.openstreetmap.josm.data.imagery.WMSEndpointTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
@@ -189,6 +191,11 @@ public class ImageryPreferenceTestIT {
         }
     }
 
+    private static Projection getProjection(ImageryInfo info) {
+        return info.getServerProjections().isEmpty() ? ProjectionRegistry.getProjection() :
+            Projections.getProjectionByCode(info.getServerProjections().get(0));
+    }
+
     private static AbstractTileSource getTileSource(ImageryInfo info) throws IOException, WMTSGetCapabilitiesException {
         switch (info.getImageryType()) {
             case BING:
@@ -198,11 +205,11 @@ public class ImageryPreferenceTestIT {
             case TMS:
                 return new TemplatedTMSTileSource(info);
             case WMS:
-                return new TemplatedWMSTileSource(info, ProjectionRegistry.getProjection());
+                return new TemplatedWMSTileSource(info, getProjection(info));
             case WMS_ENDPOINT:
-                return new WMSEndpointTileSource(info, ProjectionRegistry.getProjection());
+                return new WMSEndpointTileSource(info, getProjection(info));
             case WMTS:
-                return new WMTSTileSource(info, ProjectionRegistry.getProjection());
+                return new WMTSTileSource(info, getProjection(info));
             default:
                 throw new UnsupportedOperationException(info.toString());
         }
