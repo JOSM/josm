@@ -24,10 +24,12 @@ import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Assume;
@@ -51,6 +53,7 @@ import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.WikiReader;
 import org.reflections.Reflections;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -576,5 +579,21 @@ public final class TestUtils {
      */
     public static boolean areCredentialsProvided() {
         return Utils.getSystemProperty("osm.username") != null && Utils.getSystemProperty("osm.password") != null;
+    }
+
+    /**
+     * Returns the ignored error messages listed on
+     * <a href="https://josm.openstreetmap.de/wiki/IntegrationTestIgnores">JOSM wiki</a> for a given test.
+     * @param integrationTest The integration test class
+     * @return the ignored error messages listed on JOSM wiki for this test.
+     * @throws IOException in case of I/O error
+     */
+    public static List<String> getIgnoredErrorMessages(Class<?> integrationTest) throws IOException {
+        return Arrays.stream(new WikiReader()
+                .read("https://josm.openstreetmap.de/wiki/IntegrationTestIgnores?format=txt")
+                .split("\\n"))
+                .filter(s -> s.startsWith("|| " + integrationTest.getSimpleName() + " ||"))
+                .map(s -> s.substring(s.indexOf("{{{") + 3, s.indexOf("}}}")))
+                .collect(Collectors.toList());
     }
 }
