@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
@@ -22,6 +24,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.CoordinateConversion;
@@ -55,13 +58,25 @@ public class ImageryPreferenceTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().projection().projectionNadGrids().timeout(10000*60);
+    public JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids().timeout(10000*60);
 
     private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
     private final Set<String> workingURLs = Collections.synchronizedSet(new HashSet<>());
 
+    private List<String> ignoredErrors;
+
+    /**
+     * Setup test
+     * @throws IOException in case of I/O error
+     */
+    @Before
+    public void before() throws IOException {
+        ignoredErrors = TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class);
+    }
+
     private boolean addError(ImageryInfo info, String error) {
-        return errors.computeIfAbsent(info.getCountryCode(), x -> Collections.synchronizedMap(new TreeMap<>()))
+        return !ignoredErrors.contains(error) &&
+               errors.computeIfAbsent(info.getCountryCode(), x -> Collections.synchronizedMap(new TreeMap<>()))
                      .computeIfAbsent(info, x -> Collections.synchronizedList(new ArrayList<>()))
                      .add(error);
     }
@@ -69,7 +84,10 @@ public class ImageryPreferenceTestIT {
     private void checkUrl(ImageryInfo info, String url) {
         if (url != null && !url.isEmpty() && !workingURLs.contains(url)) {
             try {
-                Response response = HttpClient.create(new URL(url)).setConnectTimeout(30).setReadTimeout(60).connect();
+                Response response = HttpClient.create(new URL(url))
+                        .setConnectTimeout((int) TimeUnit.SECONDS.toMillis(30))
+                        .setReadTimeout((int) TimeUnit.SECONDS.toMillis(60))
+                        .connect();
                 if (response.getResponseCode() >= 400) {
                     addError(info, url + " -> HTTP " + response.getResponseCode());
                 } else if (response.getResponseCode() >= 300) {
