@@ -192,8 +192,13 @@ public class ImageryPreferenceTestIT {
     }
 
     private static Projection getProjection(ImageryInfo info) {
-        return info.getServerProjections().isEmpty() ? ProjectionRegistry.getProjection() :
-            Projections.getProjectionByCode(info.getServerProjections().get(0));
+        if (!info.getServerProjections().isEmpty()) {
+            Projection proj = Projections.getProjectionByCode(info.getServerProjections().get(0));
+            if (proj != null) {
+                return proj;
+            }
+        }
+        return ProjectionRegistry.getProjection();
     }
 
     private static AbstractTileSource getTileSource(ImageryInfo info) throws IOException, WMTSGetCapabilitiesException {
