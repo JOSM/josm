@@ -160,7 +160,11 @@ public final class HttpClient {
                                 : ""
                 );
                 if (Logging.isDebugEnabled()) {
-                    Logging.debug("RESPONSE: {0}", connection.getHeaderFields());
+                    try {
+                        Logging.debug("RESPONSE: {0}", connection.getHeaderFields());
+                    } catch (IllegalArgumentException e) {
+                        Logging.warn(e);
+                    }
                 }
                 if (DefaultAuthenticator.getInstance().isEnabled() && connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     DefaultAuthenticator.getInstance().addFailedCredentialHost(url.getHost());

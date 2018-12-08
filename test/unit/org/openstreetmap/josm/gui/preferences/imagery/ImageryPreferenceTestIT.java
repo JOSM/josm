@@ -64,7 +64,7 @@ public class ImageryPreferenceTestIT {
     }
 
     private void checkUrl(ImageryInfo info, String url) {
-        if (url != null && !workingURLs.contains(url)) {
+        if (url != null && !url.isEmpty() && !workingURLs.contains(url)) {
             try {
                 Response response = HttpClient.create(new URL(url)).connect();
                 if (response.getResponseCode() >= 400) {
