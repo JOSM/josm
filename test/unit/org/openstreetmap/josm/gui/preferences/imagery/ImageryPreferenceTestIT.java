@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,12 +27,15 @@ import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
 import org.openstreetmap.josm.data.imagery.WMSEndpointTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
@@ -101,6 +105,18 @@ public class ImageryPreferenceTestIT {
         }
     }
 
+    private static LatLon getCenter(ImageryBounds bounds) {
+        List<Shape> shapes = bounds.getShapes();
+        Projection proj = ProjectionRegistry.getProjection();
+        return shapes != null && shapes.size() > 1
+                ? proj.eastNorth2latlon(
+                        Geometry.getCentroidEN(shapes.get(0).getPoints().stream()
+                                .map(CoordinateConversion::coorToLL)
+                                .map(proj::latlon2eastNorth)
+                                .collect(Collectors.toList())))
+                : bounds.getCenter();
+    }
+
     private void checkEntry(ImageryInfo info) {
         Logging.info("Checking "+ info);
 
@@ -120,7 +136,7 @@ public class ImageryPreferenceTestIT {
         try {
             ImageryBounds bounds = info.getBounds();
             // Some imagery sources do not define tiles at (0,0). So pickup Greenwich Royal Observatory for global sources
-            ICoordinate center = CoordinateConversion.llToCoor(bounds != null ? bounds.getCenter() : new LatLon(51.47810, -0.00170));
+            ICoordinate center = CoordinateConversion.llToCoor(bounds != null ? getCenter(bounds) : new LatLon(51.47810, -0.00170));
             AbstractTileSource tileSource = getTileSource(info);
             checkTileUrl(info, tileSource, center, info.getMinZoom());
             // checking max zoom for real is complex, see https://josm.openstreetmap.de/ticket/16073#comment:27
