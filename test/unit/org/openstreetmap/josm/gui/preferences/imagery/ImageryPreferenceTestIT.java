@@ -58,7 +58,7 @@ public class ImageryPreferenceTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids().timeout(10000*60);
+    public JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids().timeout(10000*120);
 
     private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
     private final Set<String> workingURLs = Collections.synchronizedSet(new HashSet<>());
