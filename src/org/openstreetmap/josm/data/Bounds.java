@@ -499,11 +499,24 @@ public class Bounds {
      * @return the bounding box to Rectangle2D.Double
      */
     public Rectangle2D.Double asRect() {
-        double w = getWidth();
-        return new Rectangle2D.Double(minLon, minLat, w, maxLat-minLat);
+        return new Rectangle2D.Double(minLon, minLat, getWidth(), getHeight());
     }
 
-    private double getWidth() {
+    /**
+     * Returns the bounds width.
+     * @return the bounds width
+     * @since 14521
+     */
+    public double getHeight() {
+        return maxLat-minLat;
+    }
+
+    /**
+     * Returns the bounds width.
+     * @return the bounds width
+     * @since 14521
+     */
+    public double getWidth() {
         return maxLon-minLon + (crosses180thMeridian() ? 360.0 : 0.0);
     }
 
@@ -512,7 +525,7 @@ public class Bounds {
      * @return The area
      */
     public double getArea() {
-        return getWidth() * (maxLat - minLat);
+        return getWidth() * getHeight();
     }
 
     /**
