@@ -25,6 +25,7 @@ import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.command.SplitWayCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -65,6 +66,15 @@ public class SplitWayAction extends JosmAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+        runOn(getLayerManager().getEditDataSet());
+    }
+
+    /**
+     * Run the action on the given dataset.
+     * @param ds dataset
+     * @since 14542
+     */
+    public static void runOn(DataSet ds) {
 
         if (SegmentToKeepSelectionDialog.DISPLAY_COUNT.get() > 0) {
             new Notification(tr("Cannot split since another split operation is already in progress"))
@@ -72,7 +82,7 @@ public class SplitWayAction extends JosmAction {
             return;
         }
 
-        Collection<OsmPrimitive> selection = getLayerManager().getEditDataSet().getSelected();
+        Collection<OsmPrimitive> selection = ds.getSelected();
 
         List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
         List<Way> selectedWays = OsmPrimitive.getFilteredList(selection, Way.class);
@@ -283,7 +293,7 @@ public class SplitWayAction extends JosmAction {
         UndoRedoHandler.getInstance().add(result);
         List<? extends PrimitiveId> newSel = result.getNewSelection();
         if (newSel != null && !newSel.isEmpty()) {
-            MainApplication.getLayerManager().getEditDataSet().setSelected(newSel);
+            way.getDataSet().setSelected(newSel);
         }
     }
 

@@ -129,8 +129,15 @@ public final class CreateCircleAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
+        runOn(getLayerManager().getEditDataSet());
+    }
 
-        DataSet ds = getLayerManager().getEditDataSet();
+    /**
+     * Run the action on the given dataset.
+     * @param ds dataset
+     * @since 14542
+     */
+    public static void runOn(DataSet ds) {
         Collection<OsmPrimitive> sel = ds.getSelected();
         List<Node> nodes = OsmPrimitive.getFilteredList(sel, Node.class);
         List<Way> ways = OsmPrimitive.getFilteredList(sel, Way.class);
