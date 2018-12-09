@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
@@ -88,10 +89,10 @@ public class ImageryPreferenceTestIT {
                      .add(error);
     }
 
-    private byte[] checkUrl(ImageryInfo info, String url) {
+    private Optional<byte[]> checkUrl(ImageryInfo info, String url) {
         if (url != null && !url.isEmpty()) {
             if (workingURLs.containsKey(url)) {
-                return workingURLs.get(url);
+                return Optional.of(workingURLs.get(url));
             }
             try {
                 Response response = HttpClient.create(new URL(url))
@@ -109,7 +110,7 @@ public class ImageryPreferenceTestIT {
                     if (response.getResponseCode() < 300) {
                         workingURLs.put(url, data);
                     }
-                    return data;
+                    return Optional.of(data);
                 } finally {
                     response.disconnect();
                 }
@@ -117,13 +118,11 @@ public class ImageryPreferenceTestIT {
                 addError(info, url + " -> " + e);
             }
         }
-        return new byte[0];
+        return Optional.empty();
     }
 
     private void checkLinkUrl(ImageryInfo info, String url) {
-        if (url != null && checkUrl(info, url).length == 0) {
-            addError(info, url + " -> returned empty contents");
-        }
+        checkUrl(info, url).filter(x -> x.length == 0).ifPresent(x -> addError(info, url + " -> returned empty contents"));
     }
 
     private void checkTileUrl(ImageryInfo info, AbstractTileSource tileSource, ICoordinate center, int zoom)
@@ -132,15 +131,16 @@ public class ImageryPreferenceTestIT {
         for (int i = 0; i < 3; i++) {
             try {
                 String url = tileSource.getTileUrl(zoom, xy.getXIndex(), xy.getYIndex());
-                byte[] data = checkUrl(info, url);
-                try (ByteArrayInputStream bais = new ByteArrayInputStream(data)) {
-                    if (ImageIO.read(bais) == null) {
-                        addImageError(info, url, data, "did not return an image");
+                checkUrl(info, url).ifPresent(data -> {
+                    try (ByteArrayInputStream bais = new ByteArrayInputStream(data)) {
+                        if (ImageIO.read(bais) == null) {
+                            addImageError(info, url, data, "did not return an image");
+                        }
+                    } catch (IOException e) {
+                        addImageError(info, url, data, e.toString());
+                        Logging.trace(e);
                     }
-                } catch (IOException e) {
-                    addImageError(info, url, data, e.toString());
-                    Logging.trace(e);
-                }
+                });
                 return;
             } catch (IOException e) {
                 // Try up to three times max to allow Bing source to initialize itself
