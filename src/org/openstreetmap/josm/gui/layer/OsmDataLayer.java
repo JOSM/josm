@@ -1059,6 +1059,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         data.removeSelectionListener(this);
         data.removeHighlightUpdateListener(this);
         removeClipboardDataFor(this);
+        if (!data.isLocked()) {
+            data.clear();
+        }
     }
 
     protected static void removeClipboardDataFor(OsmDataLayer osm) {

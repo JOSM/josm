@@ -161,7 +161,7 @@ public class ImageryPreferenceTestIT {
     private void addImageError(ImageryInfo info, String url, byte[] data, String defaultMessage) {
         // Check if we have received an error message
         String error = helper.detectErrorMessage(new String(data, StandardCharsets.UTF_8));
-        addError(info, url + " -> " + (error != null ? error : defaultMessage));
+        addError(info, url + " -> " + (error != null ? error.split("\\n")[0] : defaultMessage));
     }
 
     private static LatLon getPointInShape(Shape shape) {
