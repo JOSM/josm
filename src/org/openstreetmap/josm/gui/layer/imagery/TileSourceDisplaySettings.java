@@ -38,7 +38,7 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     public static final String AUTO_ZOOM = "automatically-change-resolution";
 
     /**
-     * A string returned by {@link DisplaySettingsChangeEvent#getChangedSetting()} if the sow errors property was changed.
+     * A string returned by {@link DisplaySettingsChangeEvent#getChangedSetting()} if the show errors property was changed.
      * @see TileSourceDisplaySettings#isShowErrors()
      */
     private static final String SHOW_ERRORS = "show-errors";
@@ -90,19 +90,19 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     }
 
     private TileSourceDisplaySettings(String... prefixes) {
-        autoZoom = getProperty(prefixes, "default_autozoom");
-        autoLoad = getProperty(prefixes, "default_autoload");
-        showErrors = getProperty(prefixes, "default_showerrors");
+        autoZoom = getProperty(prefixes, "default_autozoom", PROP_AUTO_ZOOM.getDefaultValue());
+        autoLoad = getProperty(prefixes, "default_autoload", PROP_AUTO_LOAD.getDefaultValue());
+        showErrors = getProperty(prefixes, "default_showerrors", Boolean.TRUE);
     }
 
-    private static boolean getProperty(String[] prefixes, String name) {
+    private static boolean getProperty(String[] prefixes, String name, Boolean def) {
         // iterate through all values to force the preferences to receive the default value.
         // we only support a default value of true.
         boolean value = true;
         for (String p : prefixes) {
             String key = p + "." + name;
             boolean currentValue = Config.getPref().getBoolean(key, true);
-            if (!Config.getPref().get(key).isEmpty()) {
+            if (!Config.getPref().get(key, def.toString()).isEmpty()) {
                 value = currentValue;
             }
         }
