@@ -31,7 +31,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -85,9 +84,6 @@ public class CompositeCacheManager
     /** Caches managed by this cache manager */
     private final ConcurrentMap<String, ICache<?, ?>> caches =
         new ConcurrentHashMap<String, ICache<?, ?>>();
-
-    /** Lock for initialization of caches */
-    private final ReentrantLock cacheLock = new ReentrantLock();
 
     /** Number of clients accessing this cache manager */
     private final AtomicInteger clients = new AtomicInteger(0);
@@ -564,39 +560,17 @@ public class CompositeCacheManager
     @SuppressWarnings("unchecked") // Need to cast because of common map for all caches
     public <K, V> CompositeCache<K, V>  getCache( ICompositeCacheAttributes cattr, IElementAttributes attr )
     {
-        CompositeCache<K, V> cache;
-
         if ( log.isDebugEnabled() )
         {
             log.debug( "attr = " + attr );
         }
 
-        cache = (CompositeCache<K, V>) caches.get( cattr.getCacheName() );
-
-        if (cache == null)
-        {
-            cacheLock.lock();
-
-            try
-            {
-                // double check
-                cache = (CompositeCache<K, V>) caches.get( cattr.getCacheName() );
-
-                if ( cache == null )
-                {
-                    CompositeCacheConfigurator configurator = newConfigurator();
-
-                    cache = configurator.parseRegion( this.getConfigurationProperties(), this, cattr.getCacheName(),
-                                                      this.defaultAuxValues, cattr );
-
-                    caches.put( cattr.getCacheName(), cache );
-                }
-            }
-            finally
-            {
-                cacheLock.unlock();
-            }
-        }
+        CompositeCache<K, V> cache = (CompositeCache<K, V>) caches.computeIfAbsent(cattr.getCacheName(),
+                cacheName -> {
+            CompositeCacheConfigurator configurator = newConfigurator();
+            return configurator.parseRegion( this.getConfigurationProperties(), this, cacheName,
+                                              this.defaultAuxValues, cattr );
+        });
 
         return cache;
     }

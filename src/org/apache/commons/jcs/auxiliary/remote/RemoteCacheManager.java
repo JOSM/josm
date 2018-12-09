@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.rmi.Naming;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheClient;
@@ -56,9 +55,6 @@ public class RemoteCacheManager
     /** Contains instances of RemoteCacheNoWait managed by a RemoteCacheManager instance. */
     private final ConcurrentMap<String, RemoteCacheNoWait<?, ?>> caches =
             new ConcurrentHashMap<String, RemoteCacheNoWait<?, ?>>();
-
-    /** Lock for initialization of caches */
-    private ReentrantLock cacheLock = new ReentrantLock();
 
     /** The event logger. */
     private final ICacheEventLogger cacheEventLogger;
@@ -249,30 +245,12 @@ public class RemoteCacheManager
     @SuppressWarnings("unchecked") // Need to cast because of common map for all caches
     public <K, V> RemoteCacheNoWait<K, V> getCache( IRemoteCacheAttributes cattr )
     {
-        RemoteCacheNoWait<K, V> remoteCacheNoWait = (RemoteCacheNoWait<K, V>) caches.get( cattr.getCacheName() );
-
-        if ( remoteCacheNoWait == null )
-        {
-            cacheLock.lock();
-
-            try
-            {
-                remoteCacheNoWait = (RemoteCacheNoWait<K, V>) caches.get( cattr.getCacheName() );
-
-                if (remoteCacheNoWait == null)
-                {
-                    remoteCacheNoWait = newRemoteCacheNoWait(cattr);
-                    caches.put( cattr.getCacheName(), remoteCacheNoWait );
-                }
-            }
-            finally
-            {
-                cacheLock.unlock();
-            }
-        }
+        RemoteCacheNoWait<K, V> remoteCacheNoWait =
+                (RemoteCacheNoWait<K, V>) caches.computeIfAbsent(cattr.getCacheName(), key -> {
+                    return newRemoteCacheNoWait(cattr);
+                });
 
         // might want to do some listener sanity checking here.
-
         return remoteCacheNoWait;
     }
 
@@ -319,34 +297,25 @@ public class RemoteCacheManager
     /** Shutdown all. */
     public void release()
     {
-        cacheLock.lock();
-
-        try
+        for (RemoteCacheNoWait<?, ?> c : caches.values())
         {
-            for (RemoteCacheNoWait<?, ?> c : caches.values())
+            try
             {
-                try
+                if ( log.isInfoEnabled() )
                 {
-                    if ( log.isInfoEnabled() )
-                    {
-                        log.info( "freeCache [" + c.getCacheName() + "]" );
-                    }
+                    log.info( "freeCache [" + c.getCacheName() + "]" );
+                }
 
-                    removeListenerFromCache(c);
-                    c.dispose();
-                }
-                catch ( IOException ex )
-                {
-                    log.error( "Problem releasing " + c.getCacheName(), ex );
-                }
+                removeListenerFromCache(c);
+                c.dispose();
             }
+            catch ( IOException ex )
+            {
+                log.error( "Problem releasing " + c.getCacheName(), ex );
+            }
+        }
 
-            caches.clear();
-        }
-        finally
-        {
-            cacheLock.unlock();
-        }
+        caches.clear();
     }
 
     /**

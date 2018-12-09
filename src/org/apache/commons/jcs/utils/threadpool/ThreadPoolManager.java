@@ -250,33 +250,14 @@ public class ThreadPoolManager
      */
     public ExecutorService getExecutorService( String name )
     {
-    	ExecutorService pool = pools.get( name );
-
-        if ( pool == null )
-        {
+    	ExecutorService pool = pools.computeIfAbsent(name, key -> {
             if ( log.isDebugEnabled() )
             {
-                log.debug( "Creating pool for name [" + name + "]" );
+                log.debug( "Creating pool for name [" + key + "]" );
             }
-
-            PoolConfiguration config = loadConfig( PROP_NAME_ROOT + "." + name );
-            ExecutorService _pool = createPool( config, "JCS-ThreadPoolManager-" + name + "-" );
-            pool = pools.putIfAbsent( name, _pool );
-            if (pool == null)
-            {
-                pool = _pool;
-            }
-            else
-            {
-            	// already created in another thread
-            	_pool.shutdownNow();
-            }
-
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( "PoolName = " + getPoolNames() );
-            }
-        }
+            PoolConfiguration config = loadConfig( PROP_NAME_ROOT + "." + key );
+            return createPool( config, "JCS-ThreadPoolManager-" + key + "-" );
+    	});
 
         return pool;
     }
@@ -292,29 +273,17 @@ public class ThreadPoolManager
      */
     public ScheduledExecutorService getSchedulerPool( String name )
     {
-    	ScheduledExecutorService pool = schedulerPools.get( name );
-
-        if ( pool == null )
-        {
+    	ScheduledExecutorService pool = schedulerPools.computeIfAbsent(name, key -> {
             if ( log.isDebugEnabled() )
             {
-                log.debug( "Creating scheduler pool for name [" + name + "]" );
+                log.debug( "Creating scheduler pool for name [" + key + "]" );
             }
 
             PoolConfiguration defaultSchedulerConfig = loadConfig( DEFAULT_PROP_NAME_SCHEDULER_ROOT );
-            PoolConfiguration config = loadConfig( PROP_NAME_SCHEDULER_ROOT + "." + name, defaultSchedulerConfig );
-            ScheduledExecutorService _pool = createSchedulerPool( config, "JCS-ThreadPoolManager-" + name + "-", Thread.NORM_PRIORITY );
-            pool = schedulerPools.putIfAbsent( name, _pool );
-            if (pool == null)
-            {
-                pool = _pool;
-            }
-            else
-            {
-            	// already created in another thread
-            	_pool.shutdownNow();
-            }
-        }
+            PoolConfiguration config = loadConfig( PROP_NAME_SCHEDULER_ROOT + "." + key,
+                    defaultSchedulerConfig );
+            return createSchedulerPool( config, "JCS-ThreadPoolManager-" + key + "-", Thread.NORM_PRIORITY );
+    	});
 
         return pool;
     }

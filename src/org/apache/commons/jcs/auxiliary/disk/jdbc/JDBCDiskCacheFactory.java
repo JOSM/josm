@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
@@ -69,9 +68,6 @@ public class JDBCDiskCacheFactory
 
     /** Pool name to DataSourceFactories */
     private ConcurrentMap<String, DataSourceFactory> dsFactories;
-
-    /** Lock to allow lengthy initialization of DataSourceFactories */
-    private ReentrantLock dsFactoryLock;
 
     /** props prefix */
     protected static final String POOL_CONFIGURATION_PREFIX = "jcs.jdbcconnectionpool.";
@@ -119,7 +115,6 @@ public class JDBCDiskCacheFactory
         this.tableStates = new ConcurrentHashMap<String, TableState>();
         this.shrinkerThreadMap = new ConcurrentHashMap<String, ShrinkerThread>();
         this.dsFactories = new ConcurrentHashMap<String, DataSourceFactory>();
-        this.dsFactoryLock = new ReentrantLock();
     }
 
     /**
@@ -155,15 +150,7 @@ public class JDBCDiskCacheFactory
      */
     protected TableState getTableState(String tableName)
     {
-    	TableState newTableState = new TableState( tableName );
-        TableState tableState = tableStates.putIfAbsent( tableName, newTableState );
-
-        if ( tableState == null )
-        {
-            tableState = newTableState;
-        }
-
-        return tableState;
+        return tableStates.computeIfAbsent(tableName, key -> new TableState(key));
     }
 
     /**
@@ -197,21 +184,19 @@ public class JDBCDiskCacheFactory
         if ( cattr.isUseDiskShrinker() )
         {
             ScheduledExecutorService shrinkerService = getScheduledExecutorService();
-            ShrinkerThread newShrinkerThread = new ShrinkerThread();
-            ShrinkerThread shrinkerThread = shrinkerThreadMap.putIfAbsent( cattr.getTableName(), newShrinkerThread );
-
-            if ( shrinkerThread == null )
-            {
-            	shrinkerThread = newShrinkerThread;
+            ShrinkerThread shrinkerThread = shrinkerThreadMap.computeIfAbsent(cattr.getTableName(), key -> {
+                ShrinkerThread newShrinkerThread = new ShrinkerThread();
 
                 long intervalMillis = Math.max( 999, cattr.getShrinkerIntervalSeconds() * 1000 );
                 if ( log.isInfoEnabled() )
                 {
                     log.info( "Setting the shrinker to run every [" + intervalMillis + "] ms. for table ["
-                        + cattr.getTableName() + "]" );
+                        + key + "]" );
                 }
-                shrinkerService.scheduleAtFixedRate(shrinkerThread, 0, intervalMillis, TimeUnit.MILLISECONDS);
-            }
+                shrinkerService.scheduleAtFixedRate(newShrinkerThread, 0, intervalMillis, TimeUnit.MILLISECONDS);
+
+                return newShrinkerThread;
+            });
 
             shrinkerThread.addDiskCacheToShrinkList( raf );
         }
@@ -240,54 +225,44 @@ public class JDBCDiskCacheFactory
         }
 
 
-    	DataSourceFactory dsFactory = this.dsFactories.get(poolName);
+    	DataSourceFactory dsFactory = this.dsFactories.computeIfAbsent(poolName, key -> {
+    	    DataSourceFactory newDsFactory;
+            JDBCDiskCacheAttributes dsConfig = null;
 
-    	if (dsFactory == null)
-    	{
-            dsFactoryLock.lock();
+            if (cattr.getConnectionPoolName() == null)
+            {
+                dsConfig = cattr;
+            }
+            else
+            {
+                dsConfig = new JDBCDiskCacheAttributes();
+                String dsConfigAttributePrefix = POOL_CONFIGURATION_PREFIX + key + ATTRIBUTE_PREFIX;
+                PropertySetter.setProperties( dsConfig,
+                        configProps,
+                        dsConfigAttributePrefix + "." );
+
+                dsConfig.setConnectionPoolName(key);
+            }
+
+            if ( dsConfig.getJndiPath() != null )
+            {
+                newDsFactory = new JndiDataSourceFactory();
+            }
+            else
+            {
+                newDsFactory = new SharedPoolDataSourceFactory();
+            }
 
             try
             {
-                // double check
-                dsFactory = this.dsFactories.get(poolName);
-
-                if (dsFactory == null)
-                {
-                	JDBCDiskCacheAttributes dsConfig = null;
-
-                	if (cattr.getConnectionPoolName() == null)
-                	{
-                		dsConfig = cattr;
-                    }
-                    else
-                    {
-                        dsConfig = new JDBCDiskCacheAttributes();
-                        String dsConfigAttributePrefix = POOL_CONFIGURATION_PREFIX + poolName + ATTRIBUTE_PREFIX;
-                        PropertySetter.setProperties( dsConfig,
-                        		configProps,
-                        		dsConfigAttributePrefix + "." );
-
-                        dsConfig.setConnectionPoolName(poolName);
-                    }
-
-        	        if ( dsConfig.getJndiPath() != null )
-        	        {
-        	        	dsFactory = new JndiDataSourceFactory();
-        	        }
-        	        else
-        	        {
-        	            dsFactory = new SharedPoolDataSourceFactory();
-        	        }
-
-                	dsFactory.initialize(dsConfig);
-            		this.dsFactories.put(poolName, dsFactory);
-                }
+                newDsFactory.initialize(dsConfig);
             }
-            finally
+            catch (SQLException e)
             {
-                dsFactoryLock.unlock();
+                throw new RuntimeException(e);
             }
-    	}
+    	    return newDsFactory;
+    	});
 
     	return dsFactory;
     }

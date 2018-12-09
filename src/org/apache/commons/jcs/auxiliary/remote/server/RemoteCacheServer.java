@@ -33,7 +33,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheListener;
@@ -115,12 +114,6 @@ public class RemoteCacheServer<K, V>
 
     /** An optional event logger */
     private transient ICacheEventLogger cacheEventLogger;
-
-    /** Lock for Cache listener initialization */
-    private ReentrantLock cacheListenersLock = new ReentrantLock();
-
-    /** Lock for Cluster listener initialization */
-    private ReentrantLock clusterListenersLock = new ReentrantLock();
 
     /**
      * Constructor for the RemoteCacheServer object. This initializes the server with the values
@@ -1158,28 +1151,10 @@ public class RemoteCacheServer<K, V>
      */
     protected CacheListeners<K, V> getCacheListeners( String cacheName )
     {
-        CacheListeners<K, V> cacheListeners = cacheListenersMap.get( cacheName );
-
-        if ( cacheListeners == null )
-        {
-            cacheListenersLock.lock();
-
-            try
-            {
-                // double check
-                cacheListeners = cacheListenersMap.get( cacheName );
-                if ( cacheListeners == null )
-                {
-                    CompositeCache<K, V> cache = cacheManager.getCache( cacheName );
-                    cacheListeners = new CacheListeners<K, V>( cache );
-                    cacheListenersMap.put( cacheName, cacheListeners );
-                }
-            }
-            finally
-            {
-                cacheListenersLock.unlock();
-            }
-        }
+        CacheListeners<K, V> cacheListeners = cacheListenersMap.computeIfAbsent(cacheName, key -> {
+            CompositeCache<K, V> cache = cacheManager.getCache(key);
+            return new CacheListeners<K, V>( cache );
+        });
 
         return cacheListeners;
     }
@@ -1193,27 +1168,10 @@ public class RemoteCacheServer<K, V>
      */
     protected CacheListeners<K, V> getClusterListeners( String cacheName )
     {
-        CacheListeners<K, V> cacheListeners = clusterListenersMap.get( cacheName );
-
-        if ( cacheListeners == null )
-        {
-            clusterListenersLock.lock();
-
-            try
-            {
-                cacheListeners = clusterListenersMap.get( cacheName );
-                if ( cacheListeners == null )
-                {
-                    CompositeCache<K, V> cache = cacheManager.getCache( cacheName );
-                    cacheListeners = new CacheListeners<K, V>( cache );
-                    clusterListenersMap.put( cacheName, cacheListeners );
-                }
-            }
-            finally
-            {
-                clusterListenersLock.unlock();
-            }
-        }
+        CacheListeners<K, V> cacheListeners = clusterListenersMap.computeIfAbsent(cacheName, key -> {
+            CompositeCache<K, V> cache = cacheManager.getCache( cacheName );
+            return new CacheListeners<K, V>( cache );
+        });
 
         return cacheListeners;
     }

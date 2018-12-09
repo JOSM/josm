@@ -303,20 +303,14 @@ public class LateralTCPCacheFactory
     private LateralTCPDiscoveryListener getDiscoveryListener( ITCPLateralCacheAttributes ilca, ICompositeCacheManager cacheManager )
     {
         String key = ilca.getUdpDiscoveryAddr() + ":" + ilca.getUdpDiscoveryPort();
-        LateralTCPDiscoveryListener ins = null;
 
-        LateralTCPDiscoveryListener newListener = new LateralTCPDiscoveryListener( this.getName(),  cacheManager);
-        ins = lTCPDLInstances.putIfAbsent(key, newListener );
-
-        if ( ins == null )
-        {
-            ins = newListener;
-
+        LateralTCPDiscoveryListener ins = lTCPDLInstances.computeIfAbsent(key, key1 -> {
             if ( log.isInfoEnabled() )
             {
-                log.info( "Created new discovery listener for " + key + " cacheName for request " + ilca.getCacheName() );
+                log.info( "Created new discovery listener for " + key1 + " cacheName for request " + ilca.getCacheName() );
             }
-        }
+            return new LateralTCPDiscoveryListener( this.getName(),  cacheManager);
+        });
 
         return ins;
     }
