@@ -202,7 +202,7 @@ public class ImageryPreferenceTestIT {
                 checkTileUrl(info, tileSource, center, Utils.clamp(12, info.getMinZoom() + 1, info.getMaxZoom()));
             }
         } catch (IOException | WMTSGetCapabilitiesException | IllegalArgumentException e) {
-            addError(info, e.toString());
+            addError(info, info.getUrl() + " -> " + e.toString());
         }
 
         for (ImageryInfo mirror : info.getMirrors()) {
