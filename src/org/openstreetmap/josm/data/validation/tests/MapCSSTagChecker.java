@@ -992,7 +992,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 .filter(e -> e instanceof LiteralExpression)
                 .map(e -> ((LiteralExpression) e).getLiteral())
                 .filter(l -> l instanceof String)
-                .map(l -> (String) l)
+                .map(l -> ((String) l).split(",")[0])
                 .findFirst();
     }
 

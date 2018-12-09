@@ -16,8 +16,6 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.GeoProperty;
 import org.openstreetmap.josm.tools.GeoPropertyIndex;
@@ -37,7 +35,7 @@ public final class CreateCircleActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     /**
      * Test case: When Create Circle action is performed with a single way selected,
@@ -48,7 +46,6 @@ public final class CreateCircleActionTest {
     @Test
     public void testTicket7421case0() throws ReflectiveOperationException {
         DataSet dataSet = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         Node n1 = new Node(new EastNorth(0, 0));
         Node n2 = new Node(new EastNorth(-1, 1));
@@ -63,15 +60,7 @@ public final class CreateCircleActionTest {
 
         dataSet.addSelected(w);
 
-        CreateCircleAction action = new CreateCircleAction();
-        action.setEnabled(true);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            action.actionPerformed(null);
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+        CreateCircleAction.runOn(dataSet);
 
         // Expected result: Dataset contain one closed way, clockwise
         Collection<Way> resultingWays = dataSet.getWays();
@@ -114,7 +103,6 @@ public final class CreateCircleActionTest {
     @Test
     public void testTicket7421case1() throws ReflectiveOperationException {
         DataSet dataSet = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         Node n1 = new Node(new EastNorth(0, 0));
         Node n2 = new Node(new EastNorth(-1, 1));
@@ -134,15 +122,7 @@ public final class CreateCircleActionTest {
         rlCache.set(null, new GeoPropertyIndex<>(new ConstantTrafficHand(true), 24));
 
         try {
-            CreateCircleAction action = new CreateCircleAction();
-            action.setEnabled(true);
-            try {
-                MainApplication.getLayerManager().addLayer(layer);
-                action.actionPerformed(null);
-            } finally {
-                // Ensure we clean the place before leaving, even if test fails.
-                MainApplication.getLayerManager().removeLayer(layer);
-            }
+            CreateCircleAction.runOn(dataSet);
 
             // Expected result: Dataset contain one closed way, clockwise
             Collection<Way> resultingWays = dataSet.getWays();

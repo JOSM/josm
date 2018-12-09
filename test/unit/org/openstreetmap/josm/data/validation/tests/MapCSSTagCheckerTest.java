@@ -206,6 +206,22 @@ public class MapCSSTagCheckerTest {
     }
 
     /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17058">Bug #17058</a>.
+     * @throws ParseException if a parsing error occurs
+     */
+    @Test
+    public void testTicket17058() throws ParseException {
+        final MapCSSTagChecker test = buildTagChecker(
+                "*[name =~ /(?i).*Straße.*/][inside(\"LI,CH\")] {\n" +
+                "  throwError: tr(\"street name contains ß\");\n" +
+                "  assertMatch: \"way name=Hauptstraße\";\n" +
+                "  assertNoMatch: \"way name=Hauptstrasse\";\n" +
+                "}");
+        Set<String> errors = test.checkAsserts(test.checks.get("test"));
+        assertTrue(errors.toString(), errors.isEmpty());
+    }
+
+    /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13762">Bug #13762</a>.
      * @throws ParseException if a parsing error occurs
      */
