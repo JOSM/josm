@@ -85,6 +85,7 @@ public class ImageryPreferenceTestIT {
         if (url != null && !url.isEmpty() && !workingURLs.contains(url)) {
             try {
                 Response response = HttpClient.create(new URL(url))
+                        .setHeaders(info.getCustomHttpHeaders())
                         .setConnectTimeout((int) TimeUnit.SECONDS.toMillis(30))
                         .setReadTimeout((int) TimeUnit.SECONDS.toMillis(60))
                         .connect();
