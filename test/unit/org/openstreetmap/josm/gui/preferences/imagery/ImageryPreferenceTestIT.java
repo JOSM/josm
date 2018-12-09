@@ -9,10 +9,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +66,7 @@ public class ImageryPreferenceTestIT {
     public JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids().timeout(10000*120);
 
     private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
-    private final Set<String> workingURLs = Collections.synchronizedSet(new HashSet<>());
+    private final Map<String, byte[]> workingURLs = Collections.synchronizedMap(new TreeMap<>());
 
     private TMSCachedTileLoaderJob helper;
     private List<String> ignoredErrors;
@@ -91,7 +89,10 @@ public class ImageryPreferenceTestIT {
     }
 
     private byte[] checkUrl(ImageryInfo info, String url) {
-        if (url != null && !url.isEmpty() && !workingURLs.contains(url)) {
+        if (url != null && !url.isEmpty()) {
+            if (workingURLs.containsKey(url)) {
+                return workingURLs.get(url);
+            }
             try {
                 Response response = HttpClient.create(new URL(url))
                         .setHeaders(info.getCustomHttpHeaders())
@@ -102,11 +103,13 @@ public class ImageryPreferenceTestIT {
                     addError(info, url + " -> HTTP " + response.getResponseCode());
                 } else if (response.getResponseCode() >= 300) {
                     Logging.warn(url + " -> HTTP " + response.getResponseCode());
-                } else {
-                    workingURLs.add(url);
                 }
                 try {
-                    return Utils.readBytesFromStream(response.getContent());
+                    byte[] data = Utils.readBytesFromStream(response.getContent());
+                    if (response.getResponseCode() < 300) {
+                        workingURLs.put(url, data);
+                    }
+                    return data;
                 } finally {
                     response.disconnect();
                 }
