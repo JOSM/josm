@@ -546,13 +546,17 @@ public class TagChecker extends TagTest {
                         for (String possibleVal : possibleValues) {
                             if (possibleVal.isEmpty())
                                 continue;
+                            maxPresetValueLen = Math.max(maxPresetValueLen, possibleVal.length());
                             if (harmonizedValue.length() < 3 && possibleVal.length() >= harmonizedValue.length() + MAX_LEVENSHTEIN_DISTANCE) {
                                 // don't suggest fix value when given value is short and lengths are too different
                                 // for example surface=u would result in surface=mud
                                 continue;
                             }
-                            maxPresetValueLen = Math.max(maxPresetValueLen, possibleVal.length());
                             int dist = Utils.getLevenshteinDistance(possibleVal, harmonizedValue);
+                            if (dist >= harmonizedValue.length()) {
+                                // short value, all characters are different. Don't warn, might say Value '10' for key 'fee' looks like 'no'.
+                                continue;
+                            }
                             if (dist < minDist) {
                                 closest = possibleVal;
                                 minDist = dist;
