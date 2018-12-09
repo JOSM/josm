@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.OptionalLong;
 import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -322,6 +323,10 @@ public abstract class AbstractReader {
         } catch (IOException e) {
             throw new IllegalDataException(e);
         } finally {
+            OptionalLong minId = externalIdMap.values().stream().mapToLong(AbstractPrimitive::getUniqueId).min();
+            if (minId.isPresent() && minId.getAsLong() < AbstractPrimitive.currentUniqueId()) {
+                AbstractPrimitive.advanceUniqueId(minId.getAsLong());
+            }
             progressMonitor.finishTask();
             progressMonitor.removeCancelListener(cancelListener);
         }
@@ -603,18 +608,29 @@ public abstract class AbstractReader {
         return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
+    @SuppressWarnings("unchecked")
+    private <T extends OsmPrimitive> T buildPrimitive(PrimitiveData pd) {
+        OsmPrimitive p;
+        if (pd.getUniqueId() < AbstractPrimitive.currentUniqueId()) {
+            p = pd.getType().newInstance(pd.getUniqueId(), true);
+        } else {
+            p = pd.getType().newVersionedInstance(pd.getId(), pd.getVersion());
+        }
+        p.setVisible(pd.isVisible());
+        p.load(pd);
+        externalIdMap.put(pd.getPrimitiveId(), p);
+        return (T) p;
+    }
+
     private Node addNode(NodeData nd, NodeReader nodeReader) throws IllegalDataException {
-        Node n = new Node(nd.getId(), nd.getVersion());
-        n.setVisible(nd.isVisible());
-        n.load(nd);
+        Node n = buildPrimitive(nd);
         nodeReader.accept(n);
-        externalIdMap.put(nd.getPrimitiveId(), n);
         return n;
     }
 
     protected final Node parseNode(double lat, double lon, CommonReader commonReader, NodeReader nodeReader)
             throws IllegalDataException {
-        NodeData nd = new NodeData();
+        NodeData nd = new NodeData(0);
         LatLon ll = null;
         if (areLatLonDefined(lat, lon)) {
             try {
@@ -653,12 +669,9 @@ public abstract class AbstractReader {
     }
 
     protected final Way parseWay(CommonReader commonReader, WayReader wayReader) throws IllegalDataException {
-        WayData wd = new WayData();
+        WayData wd = new WayData(0);
         commonReader.accept(wd);
-        Way w = new Way(wd.getId(), wd.getVersion());
-        w.setVisible(wd.isVisible());
-        w.load(wd);
-        externalIdMap.put(wd.getPrimitiveId(), w);
+        Way w = buildPrimitive(wd);
 
         Collection<Long> nodeIds = new ArrayList<>();
         wayReader.accept(w, nodeIds);
@@ -671,12 +684,9 @@ public abstract class AbstractReader {
     }
 
     protected final Relation parseRelation(CommonReader commonReader, RelationReader relationReader) throws IllegalDataException {
-        RelationData rd = new RelationData();
+        RelationData rd = new RelationData(0);
         commonReader.accept(rd);
-        Relation r = new Relation(rd.getId(), rd.getVersion());
-        r.setVisible(rd.isVisible());
-        r.load(rd);
-        externalIdMap.put(rd.getPrimitiveId(), r);
+        Relation r = buildPrimitive(rd);
 
         Collection<RelationMemberData> members = new ArrayList<>();
         relationReader.accept(r, members);

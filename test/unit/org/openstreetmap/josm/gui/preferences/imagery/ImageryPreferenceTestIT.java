@@ -3,8 +3,10 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,6 +16,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.jcs.access.CacheAccess;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +38,9 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.Shape;
+import org.openstreetmap.josm.data.imagery.TMSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
+import org.openstreetmap.josm.data.imagery.TileJobOptions;
 import org.openstreetmap.josm.data.imagery.WMSEndpointTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
@@ -63,6 +70,7 @@ public class ImageryPreferenceTestIT {
     private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
     private final Set<String> workingURLs = Collections.synchronizedSet(new HashSet<>());
 
+    private TMSCachedTileLoaderJob helper;
     private List<String> ignoredErrors;
 
     /**
@@ -71,6 +79,7 @@ public class ImageryPreferenceTestIT {
      */
     @Before
     public void before() throws IOException {
+        helper = new TMSCachedTileLoaderJob(null, null, new CacheAccess<>(null), new TileJobOptions(0, 0, null, 0), null);
         ignoredErrors = TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class);
     }
 
@@ -81,7 +90,7 @@ public class ImageryPreferenceTestIT {
                      .add(error);
     }
 
-    private void checkUrl(ImageryInfo info, String url) {
+    private byte[] checkUrl(ImageryInfo info, String url) {
         if (url != null && !url.isEmpty() && !workingURLs.contains(url)) {
             try {
                 Response response = HttpClient.create(new URL(url))
@@ -96,10 +105,21 @@ public class ImageryPreferenceTestIT {
                 } else {
                     workingURLs.add(url);
                 }
-                response.disconnect();
+                try {
+                    return Utils.readBytesFromStream(response.getContent());
+                } finally {
+                    response.disconnect();
+                }
             } catch (IOException e) {
                 addError(info, url + " -> " + e);
             }
+        }
+        return new byte[0];
+    }
+
+    private void checkLinkUrl(ImageryInfo info, String url) {
+        if (url != null && checkUrl(info, url).length == 0) {
+            addError(info, url + " -> returned empty contents");
         }
     }
 
@@ -108,7 +128,16 @@ public class ImageryPreferenceTestIT {
         TileXY xy = tileSource.latLonToTileXY(center, zoom);
         for (int i = 0; i < 3; i++) {
             try {
-                checkUrl(info, tileSource.getTileUrl(zoom, xy.getXIndex(), xy.getYIndex()));
+                String url = tileSource.getTileUrl(zoom, xy.getXIndex(), xy.getYIndex());
+                byte[] data = checkUrl(info, url);
+                try (ByteArrayInputStream bais = new ByteArrayInputStream(data)) {
+                    if (ImageIO.read(bais) == null) {
+                        addImageError(info, url, data, "did not return an image");
+                    }
+                } catch (IOException e) {
+                    addImageError(info, url, data, e.toString());
+                    Logging.trace(e);
+                }
                 return;
             } catch (IOException e) {
                 // Try up to three times max to allow Bing source to initialize itself
@@ -124,6 +153,12 @@ public class ImageryPreferenceTestIT {
                 }
             }
         }
+    }
+
+    private void addImageError(ImageryInfo info, String url, byte[] data, String defaultMessage) {
+        // Check if we have received an error message
+        String error = helper.detectErrorMessage(new String(data, StandardCharsets.UTF_8));
+        addError(info, url + " -> " + (error != null ? error : defaultMessage));
     }
 
     private static LatLon getPointInShape(Shape shape) {
@@ -183,14 +218,14 @@ public class ImageryPreferenceTestIT {
             addError(info, "Can't fetch attribution image: " + info.getAttributionImageRaw());
         }
 
-        checkUrl(info, info.getAttributionImageURL());
-        checkUrl(info, info.getAttributionLinkURL());
+        checkLinkUrl(info, info.getAttributionImageURL());
+        checkLinkUrl(info, info.getAttributionLinkURL());
         String eula = info.getEulaAcceptanceRequired();
         if (eula != null) {
-            checkUrl(info, eula.replaceAll("\\{lang\\}", ""));
+            checkLinkUrl(info, eula.replaceAll("\\{lang\\}", ""));
         }
-        checkUrl(info, info.getPermissionReferenceURL());
-        checkUrl(info, info.getTermsOfUseURL());
+        checkLinkUrl(info, info.getPermissionReferenceURL());
+        checkLinkUrl(info, info.getTermsOfUseURL());
 
         try {
             ImageryBounds bounds = info.getBounds();
