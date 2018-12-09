@@ -66,7 +66,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      * @param options for job (such as http headers, timeouts etc.)
      * @param downloadExecutor that will be executing the jobs
      */
-
     public TMSCachedTileLoaderJob(TileLoaderListener listener, Tile tile,
             ICacheAccess<String, BufferedImageCacheEntry> cache,
             TileJobOptions options,
@@ -320,7 +319,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     @Override
-    protected String detectErrorMessage(String data) {
+    public String detectErrorMessage(String data) {
         Matcher m = SERVICE_EXCEPTION_PATTERN.matcher(data);
         return m.matches() ? removeCdata(Utils.strip(m.group(1))) : super.detectErrorMessage(data);
     }

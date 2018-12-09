@@ -1446,7 +1446,7 @@ public final class Utils {
         }
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream(stream.available());
-            byte[] buffer = new byte[2048];
+            byte[] buffer = new byte[8192];
             boolean finished = false;
             do {
                 int read = stream.read(buffer);

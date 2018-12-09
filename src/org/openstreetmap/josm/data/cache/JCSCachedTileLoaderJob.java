@@ -419,7 +419,13 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         return false;
     }
 
-    protected String detectErrorMessage(String data) {
+    /**
+     * Tries do detect an error message from given string.
+     * @param data string to analyze
+     * @return error message if detected, or null
+     * @since 14535
+     */
+    public String detectErrorMessage(String data) {
         Matcher m = HttpClient.getTomcatErrorMatcher(data);
         return m.matches() ? m.group(1).replace("'", "''") : null;
     }

@@ -1022,16 +1022,18 @@
             <space />
             <label text="Some road types already imply some access restrictions which should not be set again." />
             <space />
-            <check key="oneway" text="Oneway" />
-            <check key="toll" text="Toll" />
-            <check key="noexit" text="No exit (cul-de-sac)" />
-            <label text="Transport mode restrictions" />
+            <checkgroup columns="3" >
+                <check key="oneway" text="Oneway" />
+                <check key="toll" text="Toll" />
+                <check key="noexit" text="No exit (cul-de-sac)" />
+            </checkgroup>
             <space />
+            <label text="Transport mode restrictions" />
             <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" match="key" values_searchable="true" />
             <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
             <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
-            <label text="Vehicles per type" />
             <space />
+            <label text="Vehicles per type" />
             <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
             <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" match="key" />
             <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
@@ -1039,8 +1041,9 @@
             <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
             <combo key="goods" text="Light Commercial Vehicles (goods)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
             <combo key="hgv" text="Heavy Goods Vehicles (hgv)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <label text="Vehicles per use" />
+            <combo key="4wd_only" text="4WD only" values="yes,recommended,no" match="key" />
             <space />
+            <label text="Vehicles per use" />
             <combo key="agricultural" text="Agricultural" values="yes,official,designated,destination,permissive,private,no" match="key" />
             <combo key="emergency" text="Emergency vehicles" values="yes,official,designated,destination,no" match="keyvalue" />
             <combo key="hov" text="High-occupancy vehicles (hov)" values="yes,official,designated,destination,permissive,private,no" match="key" />
