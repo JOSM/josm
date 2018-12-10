@@ -29,6 +29,8 @@ import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.AddImageryLayerAction;
+import org.openstreetmap.josm.actions.AddImageryLayerAction.LayerSelection;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.CoordinateConversion;
@@ -36,16 +38,17 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.data.imagery.LayerDetails;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
 import org.openstreetmap.josm.data.imagery.TileJobOptions;
-import org.openstreetmap.josm.data.imagery.WMSEndpointTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesException;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
@@ -244,7 +247,7 @@ public class ImageryPreferenceTestIT {
             if (info.getMaxZoom() > 0 && info.getImageryType() != ImageryType.SCANEX) {
                 checkTileUrl(info, tileSource, center, Utils.clamp(12, info.getMinZoom() + 1, info.getMaxZoom()));
             }
-        } catch (IOException | WMTSGetCapabilitiesException | IllegalArgumentException e) {
+        } catch (IOException | RuntimeException | WMSGetCapabilitiesException | WMTSGetCapabilitiesException e) {
             addError(info, info.getUrl() + " -> " + e.toString());
         }
 
@@ -263,7 +266,8 @@ public class ImageryPreferenceTestIT {
         return ProjectionRegistry.getProjection();
     }
 
-    private static AbstractTileSource getTileSource(ImageryInfo info) throws IOException, WMTSGetCapabilitiesException {
+    private static AbstractTileSource getTileSource(ImageryInfo info)
+            throws IOException, WMTSGetCapabilitiesException, WMSGetCapabilitiesException {
         switch (info.getImageryType()) {
             case BING:
                 return new BingAerialTileSource(info);
@@ -271,15 +275,31 @@ public class ImageryPreferenceTestIT {
                 return new ScanexTileSource(info);
             case TMS:
                 return new TemplatedTMSTileSource(info);
+            case WMS_ENDPOINT:
+                info = convertWmsEndpointToWms(info); // fall-through
             case WMS:
                 return new TemplatedWMSTileSource(info, getProjection(info));
-            case WMS_ENDPOINT:
-                return new WMSEndpointTileSource(info, getProjection(info));
             case WMTS:
                 return new WMTSTileSource(info, getProjection(info));
             default:
                 throw new UnsupportedOperationException(info.toString());
         }
+    }
+
+    private static ImageryInfo convertWmsEndpointToWms(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
+        return AddImageryLayerAction.getWMSLayerInfo(
+                info, wms -> new LayerSelection(firstLeafLayer(wms.getLayers()), wms.getPreferredFormat(), true));
+    }
+
+    private static List<LayerDetails> firstLeafLayer(List<LayerDetails> layers) {
+        for (LayerDetails layer : layers) {
+            if (layer.getChildren().isEmpty()) {
+                return Collections.singletonList(layer);
+            } else {
+                return firstLeafLayer(layer.getChildren());
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**

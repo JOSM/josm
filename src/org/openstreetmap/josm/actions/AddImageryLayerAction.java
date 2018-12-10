@@ -14,6 +14,7 @@ import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.swing.JComboBox;
@@ -164,6 +165,57 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     }
 
     /**
+     * Represents the user choices when selecting layers to display.
+     * @since 14549
+     */
+    public static class LayerSelection {
+        private final List<LayerDetails> layers;
+        private final String format;
+        private final boolean transparent;
+
+        /**
+         * Constructs a new {@code LayerSelection}.
+         * @param layers selected layers
+         * @param format selected image format
+         * @param transparent enable transparency?
+         */
+        public LayerSelection(List<LayerDetails> layers, String format, boolean transparent) {
+            this.layers = layers;
+            this.format = format;
+            this.transparent = transparent;
+        }
+    }
+
+    private static LayerSelection askToSelectLayers(WMSImagery wms) {
+        final WMSLayerTree tree = new WMSLayerTree();
+        tree.updateTree(wms);
+
+        Collection<String> wmsFormats = wms.getFormats();
+        final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[0]));
+        formats.setSelectedItem(wms.getPreferredFormat());
+        formats.setToolTipText(tr("Select image format for WMS layer"));
+
+        if (!GraphicsEnvironment.isHeadless()) {
+            ExtendedDialog dialog = new ExtendedDialog(MainApplication.getMainFrame(),
+                    tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
+            final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
+            scrollPane.setPreferredSize(new Dimension(400, 400));
+            final JPanel panel = new JPanel(new GridBagLayout());
+            panel.add(scrollPane, GBC.eol().fill());
+            panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+            dialog.setContent(panel);
+
+            if (dialog.showDialog().getValue() != 1) {
+                return null;
+            }
+        }
+        return new LayerSelection(
+                tree.getSelectedLayers(),
+                (String) formats.getSelectedItem(),
+                true); // TODO: ask the user if transparent layer is wanted
+    }
+
+    /**
      * Asks user to choose a WMS layer from a WMS endpoint.
      * @param info the WMS endpoint.
      * @return chosen WMS layer, or null
@@ -172,41 +224,37 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
      */
     protected static ImageryInfo getWMSLayerInfo(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
+        return getWMSLayerInfo(info, AddImageryLayerAction::askToSelectLayers);
+    }
+
+    /**
+     * Asks user to choose a WMS layer from a WMS endpoint.
+     * @param info the WMS endpoint.
+     * @param choice how the user may choose the WMS layer
+     * @return chosen WMS layer, or null
+     * @throws IOException if any I/O error occurs while contacting the WMS endpoint
+     * @throws WMSGetCapabilitiesException if the WMS getCapabilities request fails
+     * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
+     * @since 14549
+     */
+    public static ImageryInfo getWMSLayerInfo(ImageryInfo info, Function<WMSImagery, LayerSelection> choice)
+            throws IOException, WMSGetCapabilitiesException {
         try {
             CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT == info.getImageryType(), "wms_endpoint imagery type expected");
             final WMSImagery wms = new WMSImagery(info.getUrl(), info.getCustomHttpHeaders());
-
-            final WMSLayerTree tree = new WMSLayerTree();
-            tree.updateTree(wms);
-
-            Collection<String> wmsFormats = wms.getFormats();
-            final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[0]));
-            formats.setSelectedItem(wms.getPreferredFormat());
-            formats.setToolTipText(tr("Select image format for WMS layer"));
-
-            if (!GraphicsEnvironment.isHeadless()) {
-                ExtendedDialog dialog = new ExtendedDialog(MainApplication.getMainFrame(),
-                        tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
-                final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
-                scrollPane.setPreferredSize(new Dimension(400, 400));
-                final JPanel panel = new JPanel(new GridBagLayout());
-                panel.add(scrollPane, GBC.eol().fill());
-                panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
-                dialog.setContent(panel);
-
-                if (dialog.showDialog().getValue() != 1) {
-                    return null;
-                }
+            LayerSelection selection = choice.apply(wms);
+            if (selection == null) {
+                return null;
             }
 
             final String url = wms.buildGetMapUrl(
-                    tree.getSelectedLayers().stream().map(LayerDetails::getName).collect(Collectors.toList()),
+                    selection.layers.stream().map(LayerDetails::getName).collect(Collectors.toList()),
                     (List<String>) null,
-                    (String) formats.getSelectedItem(),
-                    true // TODO: ask the user if transparent layer is wanted
+                    selection.format,
+                    selection.transparent
                     );
 
-            String selectedLayers = tree.getSelectedLayers().stream()
+            String selectedLayers = selection.layers.stream()
                     .map(LayerDetails::getName)
                     .collect(Collectors.joining(", "));
             // Use full copy of original Imagery info to copy all attributes. Only overwrite what's different
@@ -214,7 +262,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             ret.setUrl(url);
             ret.setImageryType(ImageryType.WMS);
             ret.setName(info.getName() + selectedLayers);
-            ret.setServerProjections(wms.getServerProjections(tree.getSelectedLayers()));
+            ret.setServerProjections(wms.getServerProjections(selection.layers));
             return ret;
         } catch (MalformedURLException ex) {
             handleException(ex, tr("Invalid service URL."), tr("WMS Error"), null);
