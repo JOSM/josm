@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
@@ -42,7 +43,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
  * @since 1709
  */
-public class VersionTable extends JTable implements ChangeListener {
+public class VersionTable extends JTable implements ChangeListener, Destroyable {
     private VersionTablePopupMenu popupMenu;
     private final transient HistoryBrowserModel model;
 
@@ -101,6 +102,11 @@ public class VersionTable extends JTable implements ChangeListener {
             adjustColumnWidth(this, 4, 0);
             adjustColumnWidth(this, 5, 0);
         });
+    }
+
+    @Override
+    public void destroy() {
+        popupMenu.destroy();
     }
 
     // some kind of hack to prevent the table from scrolling to the
@@ -219,7 +225,7 @@ public class VersionTable extends JTable implements ChangeListener {
         }
     }
 
-    static class VersionTablePopupMenu extends JPopupMenu {
+    static class VersionTablePopupMenu extends JPopupMenu implements Destroyable {
 
         private ChangesetInfoAction changesetInfoAction;
         private UserInfoAction userInfoAction;
@@ -243,6 +249,14 @@ public class VersionTable extends JTable implements ChangeListener {
             changesetInfoAction.prepare(primitive);
             userInfoAction.prepare(primitive);
             invalidate();
+        }
+
+        @Override
+        public void destroy() {
+            if (changesetInfoAction != null)
+                changesetInfoAction.destroy();
+            if (userInfoAction != null)
+                userInfoAction.destroy();
         }
     }
 
