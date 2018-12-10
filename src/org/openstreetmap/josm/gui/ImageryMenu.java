@@ -153,7 +153,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         final List<ImageryInfo> savedLayers = new ArrayList<>(ImageryLayerInfo.instance.getLayers());
         savedLayers.sort(alphabeticImageryComparator);
         for (final ImageryInfo u : savedLayers) {
-            addDynamic(new AddImageryLayerAction(u));
+            addDynamic(trackJosmAction(new AddImageryLayerAction(u)));
         }
 
         // list all imagery entries where the current map location
@@ -188,7 +188,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
                 inViewLayers.sort(alphabeticImageryComparator);
                 addDynamicSeparator();
                 for (ImageryInfo i : inViewLayers) {
-                    addDynamic(new AddImageryLayerAction(i));
+                    addDynamic(trackJosmAction(new AddImageryLayerAction(i)));
                 }
             }
         }
@@ -261,12 +261,15 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      * @since 5803
      */
     private final List<Object> dynamicItems = new ArrayList<>(20);
+    private final List<JosmAction> dynJosmActions = new ArrayList<>(20);
 
     /**
      * Remove all the items in dynamic items collection
      * @since 5803
      */
     private void removeDynamicItems() {
+        dynJosmActions.forEach(JosmAction::destroy);
+        dynJosmActions.clear();
         for (Object item : dynamicItems) {
             if (item instanceof JMenuItem) {
                 Optional.ofNullable(((JMenuItem) item).getAction()).ifPresent(MainApplication.getToolbar()::unregister);
@@ -293,4 +296,12 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     private void addDynamic(JMenuItem it) {
         dynamicItems.add(this.add(it));
     }
+
+    private Action trackJosmAction(Action action) {
+        if (action instanceof JosmAction) {
+            dynJosmActions.add((JosmAction) action);
+        }
+        return action;
+    }
+
 }
