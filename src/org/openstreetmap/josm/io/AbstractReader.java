@@ -608,8 +608,7 @@ public abstract class AbstractReader {
         return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T extends OsmPrimitive> T buildPrimitive(PrimitiveData pd) {
+    private OsmPrimitive buildPrimitive(PrimitiveData pd) {
         OsmPrimitive p;
         if (pd.getUniqueId() < AbstractPrimitive.currentUniqueId()) {
             p = pd.getType().newInstance(pd.getUniqueId(), true);
@@ -619,11 +618,11 @@ public abstract class AbstractReader {
         p.setVisible(pd.isVisible());
         p.load(pd);
         externalIdMap.put(pd.getPrimitiveId(), p);
-        return (T) p;
+        return p;
     }
 
     private Node addNode(NodeData nd, NodeReader nodeReader) throws IllegalDataException {
-        Node n = buildPrimitive(nd);
+        Node n = (Node) buildPrimitive(nd);
         nodeReader.accept(n);
         return n;
     }
@@ -671,7 +670,7 @@ public abstract class AbstractReader {
     protected final Way parseWay(CommonReader commonReader, WayReader wayReader) throws IllegalDataException {
         WayData wd = new WayData(0);
         commonReader.accept(wd);
-        Way w = buildPrimitive(wd);
+        Way w = (Way) buildPrimitive(wd);
 
         Collection<Long> nodeIds = new ArrayList<>();
         wayReader.accept(w, nodeIds);
@@ -686,7 +685,7 @@ public abstract class AbstractReader {
     protected final Relation parseRelation(CommonReader commonReader, RelationReader relationReader) throws IllegalDataException {
         RelationData rd = new RelationData(0);
         commonReader.accept(rd);
-        Relation r = buildPrimitive(rd);
+        Relation r = (Relation) buildPrimitive(rd);
 
         Collection<RelationMemberData> members = new ArrayList<>();
         relationReader.accept(r, members);

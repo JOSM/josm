@@ -111,6 +111,10 @@ public class ImageryPreferenceTestIT {
                         workingURLs.put(url, data);
                     }
                     return Optional.of(data);
+                } catch (IOException e) {
+                    if (response.getResponseCode() < 300) {
+                        addError(info, url + " -> " + e);
+                    }
                 } finally {
                     response.disconnect();
                 }
