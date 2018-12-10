@@ -20,17 +20,17 @@ package org.apache.commons.jcs.utils.struct;
  */
 
 import java.io.Serializable;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import org.apache.commons.jcs.engine.control.group.GroupAttrName;
 import org.apache.commons.jcs.engine.stats.StatElement;
@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
  * use any but put, get, remove, and clear.
  * <p>
  * Children can implement the processRemovedLRU method if they want to handle the removal of the
- * lest recently used item.
+ * least recently used item.
  * <p>
  * This class was abstracted out of the LRU Memory cache. Put, remove, and get should be thread
  * safe. It uses a hashtable and our own double linked list.
@@ -162,14 +162,9 @@ public abstract class AbstractLRUMap<K, V>
     @Override
     public Collection<V> values()
     {
-        List<V> valueList = new ArrayList<V>(map.size());
-
-        for (LRUElementDescriptor<K, V> value : map.values())
-        {
-            valueList.add(value.getPayload());
-        }
-
-        return valueList;
+        return map.values().stream()
+                .map(value -> value.getPayload())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -180,10 +175,8 @@ public abstract class AbstractLRUMap<K, V>
     {
         if ( source != null )
         {
-            for (Map.Entry<? extends K, ? extends V> entry : source.entrySet())
-            {
-                this.put( entry.getKey(), entry.getValue() );
-            }
+            source.entrySet()
+                .forEach(entry -> put(entry.getKey(), entry.getValue()));
         }
     }
 
@@ -337,7 +330,7 @@ public abstract class AbstractLRUMap<K, V>
             // The spool will put them in a disk event queue, so there is no
             // need to pre-queue the queuing. This would be a bit wasteful
             // and wouldn't save much time in this synchronous call.
-            while ( shouldRemove() )
+            while (shouldRemove())
             {
                 lock.lock();
                 try
@@ -392,12 +385,12 @@ public abstract class AbstractLRUMap<K, V>
     @SuppressWarnings("unchecked") // No generics for public fields
     public void dumpCacheEntries()
     {
-        log.debug( "dumpingCacheEntries" );
-        for ( LRUElementDescriptor<K, V> me = list.getFirst(); me != null; me = (LRUElementDescriptor<K, V>) me.next )
+        if (log.isDebugEnabled())
         {
-            if ( log.isDebugEnabled() )
+            log.debug("dumpingCacheEntries");
+            for (LRUElementDescriptor<K, V> me = list.getFirst(); me != null; me = (LRUElementDescriptor<K, V>) me.next)
             {
-                log.debug( "dumpCacheEntries> key=" + me.getKey() + ", val=" + me.getPayload() );
+                log.debug("dumpCacheEntries> key=" + me.getKey() + ", val=" + me.getPayload());
             }
         }
     }
@@ -407,14 +400,11 @@ public abstract class AbstractLRUMap<K, V>
      */
     public void dumpMap()
     {
-        log.debug( "dumpingMap" );
-        for (Map.Entry<K, LRUElementDescriptor<K, V>> e : map.entrySet())
+        if (log.isDebugEnabled())
         {
-            LRUElementDescriptor<K, V> me = e.getValue();
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( "dumpMap> key=" + e.getKey() + ", val=" + me.getPayload() );
-            }
+            log.debug("dumpingMap");
+            map.entrySet().forEach(e ->
+                log.debug("dumpMap> key=" + e.getKey() + ", val=" + e.getValue().getPayload()));
         }
     }
 
@@ -562,16 +552,10 @@ public abstract class AbstractLRUMap<K, V>
         lock.lock();
         try
         {
-            // TODO we should return a defensive copy
-            Set<Map.Entry<K, LRUElementDescriptor<K, V>>> entries = map.entrySet();
-            Set<Map.Entry<K, V>> unWrapped = new HashSet<Map.Entry<K, V>>();
-
-            for (Map.Entry<K, LRUElementDescriptor<K, V>> pre : entries) {
-                Map.Entry<K, V> post = new LRUMapEntry<K, V>(pre.getKey(), pre.getValue().getPayload());
-                unWrapped.add(post);
-            }
-
-            return unWrapped;
+            return map.entrySet().stream()
+                    .map(entry -> new AbstractMap.SimpleEntry<K, V>(
+                            entry.getKey(), entry.getValue().getPayload()))
+                    .collect(Collectors.toSet());
         }
         finally
         {
@@ -585,8 +569,9 @@ public abstract class AbstractLRUMap<K, V>
     @Override
     public Set<K> keySet()
     {
-        // TODO fix this, it needs to return the keys inside the wrappers.
-        return map.keySet();
+        return map.values().stream()
+                .map(value -> value.getKey())
+                .collect(Collectors.toSet());
     }
 
 }

@@ -280,11 +280,12 @@ public abstract class AbstractMemoryCache<K, V>
      */
     public void dumpMap()
     {
-        log.debug( "dumpingMap" );
-        for (Map.Entry<K, MemoryElementDescriptor<K, V>> e : map.entrySet())
+        if (log.isDebugEnabled())
         {
-            MemoryElementDescriptor<K, V> me = e.getValue();
-            log.debug( "dumpMap> key=" + e.getKey() + ", val=" + me.getCacheElement().getVal() );
+            log.debug("dumpingMap");
+            map.entrySet().forEach(e ->
+                log.debug("dumpMap> key=" + e.getKey() + ", val=" +
+                        e.getValue().getCacheElement().getVal()));
         }
     }
 

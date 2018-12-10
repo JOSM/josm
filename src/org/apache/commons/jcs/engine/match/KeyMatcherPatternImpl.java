@@ -1,5 +1,9 @@
 package org.apache.commons.jcs.engine.match;
 
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,11 +25,6 @@ package org.apache.commons.jcs.engine.match;
 
 import org.apache.commons.jcs.engine.match.behavior.IKeyMatcher;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /** This implementation of the KeyMatcher uses standard Java Pattern matching. */
 public class KeyMatcherPatternImpl<K>
     implements IKeyMatcher<K>
@@ -45,22 +44,8 @@ public class KeyMatcherPatternImpl<K>
     {
         Pattern compiledPattern = Pattern.compile( pattern );
 
-        Set<K> matchingKeys = new HashSet<K>();
-
-        // Look for matches
-        for (K key : keyArray)
-        {
-            // TODO we might want to match on the toString.
-            if ( key instanceof String )
-            {
-                Matcher matcher = compiledPattern.matcher( (String) key );
-                if ( matcher.matches() )
-                {
-                    matchingKeys.add( key );
-                }
-            }
-        }
-
-        return matchingKeys;
+        return keyArray.stream()
+                .filter(key -> compiledPattern.matcher(key.toString()).matches())
+                .collect(Collectors.toSet());
     }
 }

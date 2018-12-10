@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
@@ -62,9 +61,6 @@ public class LateralTCPCacheFactory
 
     /** Address to service map. */
     private ConcurrentHashMap<String, ICacheServiceNonLocal<?, ?>> csnlInstances;
-
-    /** Lock for initialization of address to service map */
-    private ReentrantLock csnlLock;
 
     /** Map of available discovery listener instances, keyed by port. */
     private ConcurrentHashMap<String, LateralTCPDiscoveryListener> lTCPDLInstances;
@@ -171,7 +167,6 @@ public class LateralTCPCacheFactory
     public void initialize()
     {
         this.csnlInstances = new ConcurrentHashMap<String, ICacheServiceNonLocal<?, ?>>();
-        this.csnlLock = new ReentrantLock();
         this.lTCPDLInstances = new ConcurrentHashMap<String, LateralTCPDiscoveryListener>();
 
         // Create the monitoring daemon thread
@@ -234,27 +229,21 @@ public class LateralTCPCacheFactory
     {
         String key = lca.getTcpServer();
 
-        ICacheServiceNonLocal<K, V> service = (ICacheServiceNonLocal<K, V>)csnlInstances.get( key );
-
-        if ( service == null || service instanceof ZombieCacheServiceNonLocal )
-        {
-            csnlLock.lock();
-
-            try
+        csnlInstances.computeIfPresent(key, (name, service) -> {
+            // If service creation did not succeed last time, force retry
+            if (service instanceof ZombieCacheServiceNonLocal)
             {
-                // double check
-                service = (ICacheServiceNonLocal<K, V>)csnlInstances.get( key );
+                log.info("Disposing of zombie service instance for [" + name + "]");
+                return null;
+            }
 
-                // If service creation did not succeed last time, force retry
-                if ( service instanceof ZombieCacheServiceNonLocal)
-                {
-                    service = null;
-                    log.info("Disposing of zombie service instance for [" + key + "]");
-                }
+            return service;
+        });
 
-                if ( service == null )
-                {
-                    log.info( "Instance for [" + key + "] is null, creating" );
+        ICacheServiceNonLocal<K, V> service =
+                (ICacheServiceNonLocal<K, V>) csnlInstances.computeIfAbsent(key, name -> {
+
+                    log.info( "Instance for [" + name + "] is null, creating" );
 
                     // Create the service
                     try
@@ -264,7 +253,7 @@ public class LateralTCPCacheFactory
                             log.info( "Creating TCP service, lca = " + lca );
                         }
 
-                        service = new LateralTCPService<K, V>( lca );
+                        return new LateralTCPService<K, V>( lca );
                     }
                     catch ( IOException ex )
                     {
@@ -273,21 +262,16 @@ public class LateralTCPCacheFactory
                         // "zombie" services.
                         log.error( "Failure, lateral instance will use zombie service", ex );
 
-                        service = new ZombieCacheServiceNonLocal<K, V>( lca.getZombieQueueMaxSize() );
+                        ICacheServiceNonLocal<K, V> zombieService =
+                                new ZombieCacheServiceNonLocal<K, V>( lca.getZombieQueueMaxSize() );
 
                         // Notify the cache monitor about the error, and kick off
                         // the recovery process.
                         monitor.notifyError();
-                    }
 
-                    csnlInstances.put( key, service );
-                }
-            }
-            finally
-            {
-                csnlLock.unlock();
-            }
-        }
+                        return zombieService;
+                    }
+                });
 
         return service;
     }
@@ -300,14 +284,14 @@ public class LateralTCPCacheFactory
      *
      * @return The instance value
      */
-    private LateralTCPDiscoveryListener getDiscoveryListener( ITCPLateralCacheAttributes ilca, ICompositeCacheManager cacheManager )
+    private LateralTCPDiscoveryListener getDiscoveryListener(ITCPLateralCacheAttributes ilca, ICompositeCacheManager cacheManager)
     {
         String key = ilca.getUdpDiscoveryAddr() + ":" + ilca.getUdpDiscoveryPort();
 
         LateralTCPDiscoveryListener ins = lTCPDLInstances.computeIfAbsent(key, key1 -> {
             if ( log.isInfoEnabled() )
             {
-                log.info( "Created new discovery listener for " + key1 + " cacheName for request " + ilca.getCacheName() );
+                log.info("Created new discovery listener for " + key1 + " cacheName for request " + ilca.getCacheName());
             }
             return new LateralTCPDiscoveryListener( this.getName(),  cacheManager);
         });
@@ -332,7 +316,7 @@ public class LateralTCPCacheFactory
             }
             catch ( IOException ioe )
             {
-                log.error( "Problem creating lateral listener", ioe );
+                log.error("Problem creating lateral listener", ioe);
             }
         }
         else
