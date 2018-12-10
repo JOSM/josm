@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -115,22 +116,26 @@ public abstract class AbstractMemoryCache<K, V>
     public Map<K, ICacheElement<K, V>> getMultiple( Set<K> keys )
         throws IOException
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-
-        if ( keys != null && !keys.isEmpty() )
+        if (keys != null)
         {
-            for (K key : keys)
-            {
-                ICacheElement<K, V> element = get( key );
-
-                if ( element != null )
-                {
-                    elements.put( key, element );
-                }
-            }
+            return keys.stream()
+                .map(key -> {
+                    try
+                    {
+                        return get(key);
+                    }
+                    catch (IOException e)
+                    {
+                        return null;
+                    }
+                })
+                .filter(element -> element != null)
+                .collect(Collectors.toMap(
+                        element -> element.getKey(),
+                        element -> element));
         }
 
-        return elements;
+        return new HashMap<K, ICacheElement<K, V>>();
     }
 
     /**

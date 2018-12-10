@@ -56,9 +56,9 @@ public abstract class AbstractAuxiliaryCache<K, V>
      */
     protected Map<K, ICacheElement<K, V>> processGetMultiple(Set<K> keys) throws IOException
     {
-        if ( keys != null && !keys.isEmpty() )
+        if (keys != null)
         {
-            Map<K, ICacheElement<K, V>> elements = keys.stream()
+            return keys.stream()
                 .map(key -> {
                     try
                     {
@@ -73,8 +73,6 @@ public abstract class AbstractAuxiliaryCache<K, V>
                 .collect(Collectors.toMap(
                         element -> element.getKey(),
                         element -> element));
-
-            return elements;
         }
 
         return new HashMap<K, ICacheElement<K, V>>();
