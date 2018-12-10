@@ -287,8 +287,9 @@ public class ImageryPreferenceTestIT {
     }
 
     private static ImageryInfo convertWmsEndpointToWms(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
-        return AddImageryLayerAction.getWMSLayerInfo(
-                info, wms -> new LayerSelection(firstLeafLayer(wms.getLayers()), wms.getPreferredFormat(), true));
+        return Optional.ofNullable(AddImageryLayerAction.getWMSLayerInfo(
+                info, wms -> new LayerSelection(firstLeafLayer(wms.getLayers()), wms.getPreferredFormat(), true)))
+                .orElseThrow(() -> new IllegalStateException("Unable to convert WMS_ENDPOINT to WMS"));
     }
 
     private static List<LayerDetails> firstLeafLayer(List<LayerDetails> layers) {
