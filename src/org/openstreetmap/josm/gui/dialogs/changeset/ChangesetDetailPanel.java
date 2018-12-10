@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -54,7 +55,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * {@link ChangesetCacheManager}.
  * @since 2689
  */
-public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener, ChangesetAware {
+public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener, ChangesetAware, Destroyable {
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     private final JosmTextField tfID        = new JosmTextField(10);
@@ -475,5 +476,11 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     @Override
     public Changeset getCurrentChangeset() {
         return currentChangeset;
+    }
+
+    @Override
+    public void destroy() {
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(actSelectInCurrentLayer);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(actZoomInCurrentLayerAction);
     }
 }
