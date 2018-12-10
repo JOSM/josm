@@ -224,7 +224,17 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      * @throws InvalidPathException if a Path object cannot be constructed for the capabilities cached file
      */
     protected static ImageryInfo getWMSLayerInfo(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
-        return getWMSLayerInfo(info, AddImageryLayerAction::askToSelectLayers);
+        try {
+            return getWMSLayerInfo(info, AddImageryLayerAction::askToSelectLayers);
+        } catch (MalformedURLException ex) {
+            handleException(ex, tr("Invalid service URL."), tr("WMS Error"), null);
+        } catch (IOException ex) {
+            handleException(ex, tr("Could not retrieve WMS layer list."), tr("WMS Error"), null);
+        } catch (WMSGetCapabilitiesException ex) {
+            handleException(ex, tr("Could not parse WMS layer list."), tr("WMS Error"),
+                    "Could not parse WMS layer list. Incoming data:\n" + ex.getIncomingData());
+        }
+        return null;
     }
 
     /**
@@ -239,40 +249,30 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      */
     public static ImageryInfo getWMSLayerInfo(ImageryInfo info, Function<WMSImagery, LayerSelection> choice)
             throws IOException, WMSGetCapabilitiesException {
-        try {
-            CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT == info.getImageryType(), "wms_endpoint imagery type expected");
-            final WMSImagery wms = new WMSImagery(info.getUrl(), info.getCustomHttpHeaders());
-            LayerSelection selection = choice.apply(wms);
-            if (selection == null) {
-                return null;
-            }
-
-            final String url = wms.buildGetMapUrl(
-                    selection.layers.stream().map(LayerDetails::getName).collect(Collectors.toList()),
-                    (List<String>) null,
-                    selection.format,
-                    selection.transparent
-                    );
-
-            String selectedLayers = selection.layers.stream()
-                    .map(LayerDetails::getName)
-                    .collect(Collectors.joining(", "));
-            // Use full copy of original Imagery info to copy all attributes. Only overwrite what's different
-            ImageryInfo ret = new ImageryInfo(info);
-            ret.setUrl(url);
-            ret.setImageryType(ImageryType.WMS);
-            ret.setName(info.getName() + selectedLayers);
-            ret.setServerProjections(wms.getServerProjections(selection.layers));
-            return ret;
-        } catch (MalformedURLException ex) {
-            handleException(ex, tr("Invalid service URL."), tr("WMS Error"), null);
-        } catch (IOException ex) {
-            handleException(ex, tr("Could not retrieve WMS layer list."), tr("WMS Error"), null);
-        } catch (WMSGetCapabilitiesException ex) {
-            handleException(ex, tr("Could not parse WMS layer list."), tr("WMS Error"),
-                    "Could not parse WMS layer list. Incoming data:\n" + ex.getIncomingData());
+        CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT == info.getImageryType(), "wms_endpoint imagery type expected");
+        final WMSImagery wms = new WMSImagery(info.getUrl(), info.getCustomHttpHeaders());
+        LayerSelection selection = choice.apply(wms);
+        if (selection == null) {
+            return null;
         }
-        return null;
+
+        final String url = wms.buildGetMapUrl(
+                selection.layers.stream().map(LayerDetails::getName).collect(Collectors.toList()),
+                (List<String>) null,
+                selection.format,
+                selection.transparent
+                );
+
+        String selectedLayers = selection.layers.stream()
+                .map(LayerDetails::getName)
+                .collect(Collectors.joining(", "));
+        // Use full copy of original Imagery info to copy all attributes. Only overwrite what's different
+        ImageryInfo ret = new ImageryInfo(info);
+        ret.setUrl(url);
+        ret.setImageryType(ImageryType.WMS);
+        ret.setName(info.getName() + selectedLayers);
+        ret.setServerProjections(wms.getServerProjections(selection.layers));
+        return ret;
     }
 
     private static void handleException(Exception ex, String uiMessage, String uiTitle, String logMessage) {
