@@ -10,8 +10,15 @@
 *[addr:street =~ /(?i).*Strasse.*/][addr:street !~ /(?i).*Strasser.*/][inside("DE,AT")],
 *[name =~ /(?i).*Strasse.*/][name !~ /(?i).*Strasser.*/][inside("DE,AT")] {
   throwError: tr("street name contains ss");
+  assertMatch: "way name=Hauptstrasse";
+  assertNoMatch: "way name=Hauptstraße";
+  assertNoMatch: "way name=Kapitän-Strasser-Straße";
+  assertNoMatch: "way name=Peter-Strasser-Platz";
+  
 }
 *[addr:street =~ /(?i).*Straße.*/][inside("LI,CH")],
 *[name =~ /(?i).*Straße.*/][inside("LI,CH")] {
   throwError: tr("street name contains ß");
+  assertMatch: "way name=Hauptstraße";
+  assertNoMatch: "way name=Hauptstrasse";
 }

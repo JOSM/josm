@@ -642,7 +642,7 @@
                             <!-- A description of the imagery source -->
                             <xs:element name="description" minOccurs="0" type="tns:description" />
                             <!-- A unique id for the imagery source -->
-                            <xs:element name="id" minOccurs="0" maxOccurs="1" type="tns:id" />
+                            <xs:element name="id" minOccurs="1" maxOccurs="1" type="tns:id" />
                             <!-- Historic id for the imagery source -->
                             <xs:element name="oldid" minOccurs="0" maxOccurs="unbounded" type="tns:oldid" />
                             <!-- The type. Can be tms, wms and html. In addition, there are the special types bing and scanex 
