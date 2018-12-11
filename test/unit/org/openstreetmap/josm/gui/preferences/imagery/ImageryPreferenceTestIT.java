@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.imagery;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -61,6 +62,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Integration tests of {@link ImageryPreference} class.
  */
 public class ImageryPreferenceTestIT {
+
+    private static final LatLon GREENWICH = new LatLon(51.47810, -0.00170);
+    private static final int DEFAULT_ZOOM = 12;
 
     /**
      * Setup rule
@@ -132,7 +136,7 @@ public class ImageryPreferenceTestIT {
         checkUrl(info, url).filter(x -> x.length == 0).ifPresent(x -> addError(info, url + " -> returned empty contents"));
     }
 
-    private void checkTileUrl(ImageryInfo info, AbstractTileSource tileSource, ICoordinate center, int zoom)
+    private boolean checkTileUrl(ImageryInfo info, AbstractTileSource tileSource, ICoordinate center, int zoom)
             throws IOException {
         TileXY xy = tileSource.latLonToTileXY(center, zoom);
         for (int i = 0; i < 3; i++) {
@@ -141,14 +145,17 @@ public class ImageryPreferenceTestIT {
                 checkUrl(info, url).ifPresent(data -> {
                     try (ByteArrayInputStream bais = new ByteArrayInputStream(data)) {
                         if (ImageIO.read(bais) == null) {
-                            addImageError(info, url, data, "did not return an image");
+                            addImageError(info, url, data, zoom, "did not return an image");
                         }
                     } catch (IOException e) {
-                        addImageError(info, url, data, e.toString());
+                        addImageError(info, url, data, zoom, e.toString());
                         Logging.trace(e);
                     }
                 });
-                return;
+                // Determines if this is a success (no error message with current zoom marker)
+                return errors.getOrDefault(info.getCountryCode(), Collections.emptyMap())
+                              .getOrDefault(info, Collections.emptyList())
+                              .stream().noneMatch(e -> e.contains(zoomMarker(zoom)));
             } catch (IOException e) {
                 // Try up to three times max to allow Bing source to initialize itself
                 // and avoid random network errors
@@ -163,12 +170,17 @@ public class ImageryPreferenceTestIT {
                 }
             }
         }
+        return false;
     }
 
-    private void addImageError(ImageryInfo info, String url, byte[] data, String defaultMessage) {
+    private static String zoomMarker(int zoom) {
+        return " -> zoom " + zoom + " -> ";
+    }
+
+    private void addImageError(ImageryInfo info, String url, byte[] data, int zoom, String defaultMessage) {
         // Check if we have received an error message
         String error = helper.detectErrorMessage(new String(data, StandardCharsets.UTF_8));
-        addError(info, url + " -> " + (error != null ? error.split("\\n")[0] : defaultMessage));
+        addError(info, url + zoomMarker(zoom) + (error != null ? error.split("\\n")[0] : defaultMessage));
     }
 
     private static LatLon getPointInShape(Shape shape) {
@@ -240,12 +252,18 @@ public class ImageryPreferenceTestIT {
         try {
             ImageryBounds bounds = info.getBounds();
             // Some imagery sources do not define tiles at (0,0). So pickup Greenwich Royal Observatory for global sources
-            ICoordinate center = CoordinateConversion.llToCoor(bounds != null ? getCenter(bounds) : new LatLon(51.47810, -0.00170));
+            ICoordinate center = CoordinateConversion.llToCoor(bounds != null ? getCenter(bounds) : GREENWICH);
             AbstractTileSource tileSource = getTileSource(info);
-            checkTileUrl(info, tileSource, center, info.getMinZoom());
+            // test min zoom and try to detect the correct value in case of error
+            int maxZoom = info.getMaxZoom() > 0 ? Math.min(DEFAULT_ZOOM, info.getMaxZoom()) : DEFAULT_ZOOM;
+            for (int zoom = info.getMinZoom(); zoom < maxZoom; zoom++) {
+                if (checkTileUrl(info, tileSource, center, zoom)) {
+                    break;
+                }
+            }
             // checking max zoom for real is complex, see https://josm.openstreetmap.de/ticket/16073#comment:27
             if (info.getMaxZoom() > 0 && info.getImageryType() != ImageryType.SCANEX) {
-                checkTileUrl(info, tileSource, center, Utils.clamp(12, info.getMinZoom() + 1, info.getMaxZoom()));
+                checkTileUrl(info, tileSource, center, Utils.clamp(DEFAULT_ZOOM, info.getMinZoom() + 1, info.getMaxZoom()));
             }
         } catch (IOException | RuntimeException | WMSGetCapabilitiesException | WMTSGetCapabilitiesException e) {
             addError(info, info.getUrl() + " -> " + e.toString());
@@ -313,5 +331,6 @@ public class ImageryPreferenceTestIT {
         ImageryLayerInfo.instance.getDefaultLayers().parallelStream().forEach(this::checkEntry);
         assertTrue(errors.toString().replaceAll("\\}, ", "\n\\}, ").replaceAll(", ImageryInfo\\{", "\n      ,ImageryInfo\\{"),
                 errors.isEmpty());
+        assertFalse(workingURLs.isEmpty());
     }
 }
