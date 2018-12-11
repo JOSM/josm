@@ -312,13 +312,14 @@ public class ImageryPreferenceTestIT {
 
     private static List<LayerDetails> firstLeafLayer(List<LayerDetails> layers) {
         for (LayerDetails layer : layers) {
-            if (layer.getChildren().isEmpty()) {
+            boolean hasNoChildren = layer.getChildren().isEmpty();
+            if (hasNoChildren && layer.getName() != null) {
                 return Collections.singletonList(layer);
-            } else {
+            } else if (!hasNoChildren) {
                 return firstLeafLayer(layer.getChildren());
             }
         }
-        return Collections.emptyList();
+        throw new IllegalArgumentException("Unable to find a valid WMS layer");
     }
 
     /**
