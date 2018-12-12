@@ -287,9 +287,13 @@ class SyncEditorLayerIndex {
                 + ("eli-best".equals(getQuality(e)) ? " eli-best=\"true\"" : "" )
                 + (getOverlay(e) ? " overlay=\"true\"" : "" )
                 + ">\n")
-            stream.write "        <name>${cdata(getName(e), true)}</name>\n"
-            stream.write "        <id>${getId(e)}</id>\n"
             def t
+            if((t = getName(e)))
+                stream.write "        <name>${cdata(t, true)}</name>\n"
+            if((t = getId(e)))
+                stream.write "        <id>$t</id>\n"
+            if((t = getCategory(e)))
+                stream.write "        <category>$t</category>\n"
             if((t = getDate(e)))
                 stream.write "        <date>$t</date>\n"
             if((t = getCountryCode(e)))
@@ -362,6 +366,14 @@ class SyncEditorLayerIndex {
         josmEntries = reader.parse()
 
         for (def e : josmEntries) {
+            if(!getUrl(e)) {
+              myprintln "+++ JOSM-Entry without URL: " + getDescription(e)
+              continue;
+            }
+            if(!getName(e)) {
+              myprintln "+++ JOSM-Entry without Name: " + getDescription(e)
+              continue;
+            }
             def url = getUrlStripped(e)
             if (url.contains("{z}")) {
                 myprintln "+++ JOSM-URL uses {z} instead of {zoom}: "+url
@@ -919,7 +931,9 @@ class SyncEditorLayerIndex {
                 }
             }
             def cat = getCategory(j)
-            if(cat != null && cat != "photo" && cat != "map" && cat != "historicmap" && cat != "osmbasedmap" && cat != "historicphoto" && cat != "other") {
+            if(cat == null) {
+                myprintln "* No category: ${getDescription(j)}"
+            } else if(cat != "photo" && cat != "map" && cat != "historicmap" && cat != "osmbasedmap" && cat != "historicphoto" && cat != "other") {
                 myprintln "* Strange category ${cat}: ${getDescription(j)}"
             }
         }
