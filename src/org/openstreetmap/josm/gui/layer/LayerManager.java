@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -476,6 +477,11 @@ public class LayerManager {
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
                 throw BugReport.intercept(t).put("listener", l).put("event", e).put("layer", layer);
             }
+        }
+        if (layer instanceof OsmDataLayer) {
+            DataSet data = ((OsmDataLayer)layer).data;
+            if (data != null && !data.isLocked())
+                data.clear();
         }
         return e.scheduleForRemoval;
     }
