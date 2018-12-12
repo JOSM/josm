@@ -10,8 +10,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
@@ -45,6 +43,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -54,7 +53,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * {@link ChangesetCacheManager}.
  * @since 2689
  */
-public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener, ChangesetAware {
+public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener, ChangesetAware, Destroyable {
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     private final JosmTextField tfID        = new JosmTextField(10);
@@ -103,23 +102,6 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         tb.add(actZoomInCurrentLayerAction);
         MainApplication.getLayerManager().addActiveLayerChangeListener(actZoomInCurrentLayerAction);
-
-        addComponentListener(
-                new ComponentAdapter() {
-                    @Override
-                    public void componentShown(ComponentEvent e) {
-                        MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(actSelectInCurrentLayer);
-                        MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(actZoomInCurrentLayerAction);
-                    }
-
-                    @Override
-                    public void componentHidden(ComponentEvent e) {
-                        // make sure the listener is unregistered when the panel becomes invisible
-                        MainApplication.getLayerManager().removeActiveLayerChangeListener(actSelectInCurrentLayer);
-                        MainApplication.getLayerManager().removeActiveLayerChangeListener(actZoomInCurrentLayerAction);
-                    }
-                }
-        );
 
         pnl.add(tb);
         return pnl;
@@ -475,5 +457,11 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     @Override
     public Changeset getCurrentChangeset() {
         return currentChangeset;
+    }
+
+    @Override
+    public void destroy() {
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(actSelectInCurrentLayer);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(actZoomInCurrentLayerAction);
     }
 }
