@@ -1035,6 +1035,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      */
     @Override
     public void clear() {
+        //TODO: Why can't we clear a dataset that is locked?
+        //TODO: Report listeners that are still active (should be none)
         checkModifiable();
         beginUpdate();
         try {

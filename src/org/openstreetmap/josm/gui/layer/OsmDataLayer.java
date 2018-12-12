@@ -358,6 +358,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      * The data behind this layer.
      */
     public final DataSet data;
+    private DataSetListenerAdapter dataSetListenerAdapter;
 
     /**
      * a texture for non-downloaded area
@@ -411,8 +412,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.data = data;
         this.data.setName(name);
+        this.dataSetListenerAdapter = new DataSetListenerAdapter(this);
         this.setAssociatedFile(associatedFile);
-        data.addDataSetListener(new DataSetListenerAdapter(this));
+        data.addDataSetListener(dataSetListenerAdapter);
         data.addDataSetListener(MultipolygonCache.getInstance());
         data.addHighlightUpdateListener(this);
         data.addSelectionListener(this);
@@ -1058,10 +1060,10 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         super.destroy();
         data.removeSelectionListener(this);
         data.removeHighlightUpdateListener(this);
+        data.removeDataSetListener(dataSetListenerAdapter);
+        data.removeDataSetListener(MultipolygonCache.getInstance());
         removeClipboardDataFor(this);
-        if (!data.isLocked()) {
-            data.clear();
-        }
+        recentRelations.clear();
     }
 
     protected static void removeClipboardDataFor(OsmDataLayer osm) {
