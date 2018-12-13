@@ -445,20 +445,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.33f));
                 }
                 g.setColor(color);
-                if (extent == null) {
-                    g.fill(area);
-                } else {
-                    Shape oldClip = g.getClip();
-                    Shape clip = area;
-                    if (pfClip != null) {
-                        clip = pfClip.createTransformedShape(mapState.getAffineTransform());
-                    }
-                    g.clip(clip);
-                    g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 4));
-                    g.draw(area);
-                    g.setClip(oldClip);
-                    g.setStroke(new BasicStroke());
-                }
+                computeFill(area, extent, pfClip, 4);
             } else {
                 // TexturePaint requires BufferedImage -> get base image from possible multi-resolution image
                 Image img = HiDPISupport.getBaseImage(fillImage.getImage(disabled));
@@ -472,22 +459,38 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (!Utils.equalsEpsilon(alpha, 1f)) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
                 }
-                if (extent == null) {
-                    g.fill(area);
-                } else {
-                    Shape oldClip = g.getClip();
-                    BasicStroke stroke = new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                    g.clip(stroke.createStrokedShape(area));
-                    Shape fill = area;
-                    if (pfClip != null) {
-                        fill = pfClip.createTransformedShape(mapState.getAffineTransform());
-                    }
-                    g.fill(fill);
-                    g.setClip(oldClip);
-                }
+                computeFill(area, extent, pfClip, 10);
                 g.setPaintMode();
             }
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasing);
+        }
+    }
+
+    /**
+     * Fill the given shape. If partial fill is used, computes the clipping.
+     * @param shape the given shape
+     * @param extent if not null, area will be filled partially; specifies, how
+     * far to fill from the boundary towards the center of the area;
+     * if null, area will be filled completely
+     * @param pfClip clipping area for partial fill (only needed for unclosed
+     * polygons)
+     * @param mitterLimit parameter for BasicStroke
+     *
+     */
+    private void computeFill(Shape shape, Float extent, Path2D.Double pfClip, float mitterLimit) {
+        if (extent == null) {
+            g.fill(shape);
+        } else {
+            Shape oldClip = g.getClip();
+            Shape clip = shape;
+            if (pfClip != null) {
+                clip = pfClip.createTransformedShape(mapState.getAffineTransform());
+            }
+            g.clip(clip);
+            g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, mitterLimit));
+            g.draw(shape);
+            g.setClip(oldClip);
+            g.setStroke(new BasicStroke());
         }
     }
 

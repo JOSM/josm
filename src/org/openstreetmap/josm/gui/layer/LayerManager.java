@@ -479,7 +479,7 @@ public class LayerManager {
             }
         }
         if (layer instanceof OsmDataLayer) {
-            DataSet data = ((OsmDataLayer)layer).data;
+            DataSet data = ((OsmDataLayer) layer).data;
             if (data != null && !data.isLocked())
                 data.clear();
         }
