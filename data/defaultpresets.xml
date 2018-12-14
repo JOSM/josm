@@ -6639,7 +6639,7 @@
                 <check key="lit" text="Lit" />
             </optional>
         </item> <!-- Advertising Column -->
-        <item name="Billboard" icon="presets/leisure/billboard.svg" type="node" preset_name_label="true">
+        <item name="Billboard" icon="presets/leisure/billboard.svg" type="node,way" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:advertising=billboard"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:advertising=billboard"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:advertising=billboard"
@@ -6650,7 +6650,7 @@
             <optional>
                 <check key="lit" text="Lit" />
             </optional>
-        </item> <!-- Billboard -->   
+        </item> <!-- Billboard -->
     </group> <!-- Facilities -->
   </group>  <!-- Facilities -->
   <group name="Sports" icon="presets/sport/soccer.svg">
