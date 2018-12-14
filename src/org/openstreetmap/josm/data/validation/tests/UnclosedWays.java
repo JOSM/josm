@@ -134,9 +134,13 @@ public class UnclosedWays extends Test {
 
     private static final UnclosedWaysCheck[] checks = {
         // CHECKSTYLE.OFF: SingleSpaceSeparator
-        new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"),
-                new HashSet<>(Arrays.asList("cave", "coastline", "cliff", "tree_row", "ridge", "valley", "arete", "gorge", "gully"))),
-        new UnclosedWaysCheck(1102, "landuse",   marktr("landuse type {0}")),
+        // list contains natural tag allowed on unclosed ways as well as those only allowed on nodes to avoid
+        // duplicate warnings
+        new UnclosedWaysCheck(1101, "natural", marktr("natural type {0}"),
+            new HashSet<>(Arrays.asList("arete", "cave", "cliff", "coastline", "gorge", "gully", "peak",
+                            "ridge", "saddle", "tree", "tree_row", "valley", "volcano"))),
+
+        new UnclosedWaysCheck(1102, "landuse", marktr("landuse type {0}")),
         new UnclosedWaysCheck(1103, "amenities", marktr("amenities type {0}")),
         new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"),
                 new HashSet<>(Arrays.asList("water_slide", "climbing", "skiing"))),
