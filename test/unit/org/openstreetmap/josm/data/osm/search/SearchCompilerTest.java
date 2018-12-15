@@ -500,6 +500,18 @@ public class SearchCompilerTest {
     }
 
     /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17112">Bug #17112</a>.
+     * @throws SearchParseError always
+     */
+    @Test(expected = SearchParseError.class)
+    public void testTicket17112() throws SearchParseError {
+        SearchSetting setting = new SearchSetting();
+        setting.mapCSSSearch = true;
+        setting.text = "w"; // partial input
+        SearchCompiler.compile(setting);
+    }
+
+    /**
      * Test empty values.
      * @throws SearchParseError never
      */

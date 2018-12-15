@@ -2008,7 +2008,7 @@ public class SearchCompiler {
                     return false;
                 }
             };
-        } catch (ParseException e) {
+        } catch (ParseException | IllegalArgumentException e) {
             throw new SearchParseError(tr("Failed to parse MapCSS selector"), e);
         }
     }
