@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -136,26 +137,26 @@ public class ImageryPreferenceTestIT {
         checkUrl(info, url).filter(x -> x.length == 0).ifPresent(x -> addError(info, url + " -> returned empty contents"));
     }
 
-    private boolean checkTileUrl(ImageryInfo info, AbstractTileSource tileSource, ICoordinate center, int zoom)
+    private String checkTileUrl(ImageryInfo info, AbstractTileSource tileSource, ICoordinate center, int zoom)
             throws IOException {
         TileXY xy = tileSource.latLonToTileXY(center, zoom);
         for (int i = 0; i < 3; i++) {
             try {
                 String url = tileSource.getTileUrl(zoom, xy.getXIndex(), xy.getYIndex());
-                checkUrl(info, url).ifPresent(data -> {
+                Optional<byte[]> optional = checkUrl(info, url);
+                String error = "";
+                if (optional.isPresent()) {
+                    byte[] data = optional.get();
                     try (ByteArrayInputStream bais = new ByteArrayInputStream(data)) {
                         if (ImageIO.read(bais) == null) {
-                            addImageError(info, url, data, zoom, "did not return an image");
+                            error = addImageError(info, url, data, zoom, "did not return an image");
                         }
                     } catch (IOException e) {
-                        addImageError(info, url, data, zoom, e.toString());
+                        error = addImageError(info, url, data, zoom, e.toString());
                         Logging.trace(e);
                     }
-                });
-                // Determines if this is a success (no error message with current zoom marker)
-                return errors.getOrDefault(info.getCountryCode(), Collections.emptyMap())
-                              .getOrDefault(info, Collections.emptyList())
-                              .stream().noneMatch(e -> e.contains(zoomMarker(zoom)));
+                }
+                return error;
             } catch (IOException e) {
                 // Try up to three times max to allow Bing source to initialize itself
                 // and avoid random network errors
@@ -170,17 +171,19 @@ public class ImageryPreferenceTestIT {
                 }
             }
         }
-        return false;
+        return "";
     }
 
     private static String zoomMarker(int zoom) {
         return " -> zoom " + zoom + " -> ";
     }
 
-    private void addImageError(ImageryInfo info, String url, byte[] data, int zoom, String defaultMessage) {
+    private String addImageError(ImageryInfo info, String url, byte[] data, int zoom, String defaultMessage) {
         // Check if we have received an error message
         String error = helper.detectErrorMessage(new String(data, StandardCharsets.UTF_8));
-        addError(info, url + zoomMarker(zoom) + (error != null ? error.split("\\n")[0] : defaultMessage));
+        String errorMsg = url + zoomMarker(zoom) + (error != null ? error.split("\\n")[0] : defaultMessage);
+        addError(info, errorMsg);
+        return errorMsg;
     }
 
     private static LatLon getPointInShape(Shape shape) {
@@ -257,7 +260,7 @@ public class ImageryPreferenceTestIT {
             // test min zoom and try to detect the correct value in case of error
             int maxZoom = info.getMaxZoom() > 0 ? Math.min(DEFAULT_ZOOM, info.getMaxZoom()) : DEFAULT_ZOOM;
             for (int zoom = info.getMinZoom(); zoom < maxZoom; zoom++) {
-                if (checkTileUrl(info, tileSource, center, zoom)) {
+                if (!isZoomError(checkTileUrl(info, tileSource, center, zoom))) {
                     break;
                 }
             }
@@ -272,6 +275,13 @@ public class ImageryPreferenceTestIT {
         for (ImageryInfo mirror : info.getMirrors()) {
             checkEntry(mirror);
         }
+    }
+
+    private static boolean isZoomError(String error) {
+        String[] parts = error.split(" -> ");
+        String lastPart = parts.length > 0 ? parts[parts.length - 1].toLowerCase(Locale.ENGLISH) : "";
+        return lastPart.contains("bbox")
+            || lastPart.contains("bounding box");
     }
 
     private static Projection getProjection(ImageryInfo info) {
