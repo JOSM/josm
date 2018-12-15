@@ -17,6 +17,8 @@
  */
 package org.apache.commons.compress.archivers.sevenz;
 
+import java.util.Objects;
+
 /**
  * Combines a SevenZMethod with configuration options for the method.
  *
@@ -78,4 +80,21 @@ public class SevenZMethodConfiguration {
         return options;
     }
 
+    @Override
+    public int hashCode() {
+        return method == null ? 0 : method.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final SevenZMethodConfiguration other = (SevenZMethodConfiguration) obj;
+        return Objects.equals(method, other.method)
+            && Objects.equals(options, other.options);
+    }
 }

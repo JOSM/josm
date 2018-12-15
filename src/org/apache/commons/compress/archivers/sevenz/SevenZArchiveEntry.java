@@ -20,7 +20,9 @@ package org.apache.commons.compress.archivers.sevenz;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -485,6 +487,42 @@ public class SevenZArchiveEntry implements ArchiveEntry {
         return contentMethods;
     }
 
+    @Override
+    public int hashCode() {
+        final String name = getName();
+        return name == null ? 0 : name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final SevenZArchiveEntry other = (SevenZArchiveEntry) obj;
+        return
+            Objects.equals(name, other.name) &&
+            hasStream == other.hasStream &&
+            isDirectory == other.isDirectory &&
+            isAntiItem == other.isAntiItem &&
+            hasCreationDate == other.hasCreationDate &&
+            hasLastModifiedDate == other.hasLastModifiedDate &&
+            hasAccessDate == other.hasAccessDate &&
+            creationDate == other.creationDate &&
+            lastModifiedDate == other.lastModifiedDate &&
+            accessDate == other.accessDate &&
+            hasWindowsAttributes == other.hasWindowsAttributes &&
+            windowsAttributes == other.windowsAttributes &&
+            hasCrc == other.hasCrc &&
+            crc == other.crc &&
+            compressedCrc == other.compressedCrc &&
+            size == other.size &&
+            compressedSize == other.compressedSize &&
+            equals(contentMethods, other.contentMethods);
+    }
+
     /**
      * Converts NTFS time (100 nanosecond units since 1 January 1601)
      * to Java time.
@@ -511,5 +549,29 @@ public class SevenZArchiveEntry implements ArchiveEntry {
         ntfsEpoch.set(1601, 0, 1, 0, 0, 0);
         ntfsEpoch.set(Calendar.MILLISECOND, 0);
         return ((date.getTime() - ntfsEpoch.getTimeInMillis())* 1000 * 10);
+    }
+
+    private boolean equals(Iterable<? extends SevenZMethodConfiguration> c1,
+        Iterable<? extends SevenZMethodConfiguration> c2) {
+        if (c1 == null) {
+            return c2 == null;
+        }
+        if (c2 == null) {
+            return false;
+        }
+        Iterator<? extends SevenZMethodConfiguration> i1 = c1.iterator();
+        Iterator<? extends SevenZMethodConfiguration> i2 = c2.iterator();
+        while (i1.hasNext()) {
+            if (!i2.hasNext()) {
+                return false;
+            }
+            if (!i1.next().equals(i2.next())) {
+                return false;
+            }
+        }
+        if (i2.hasNext()) {
+            return false;
+        }
+        return true;
     }
 }

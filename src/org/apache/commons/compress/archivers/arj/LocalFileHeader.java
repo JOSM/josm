@@ -18,6 +18,7 @@
 package org.apache.commons.compress.archivers.arj;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 class LocalFileHeader {
     int archiverVersionNumber;
@@ -120,4 +121,44 @@ class LocalFileHeader {
         builder.append("]");
         return builder.toString();
     }
+
+    @Override
+    public int hashCode() {
+        return name == null ? 0 : name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final LocalFileHeader other = (LocalFileHeader) obj;
+        return
+            archiverVersionNumber == other.archiverVersionNumber &&
+            minVersionToExtract == other.minVersionToExtract &&
+            hostOS == other.hostOS &&
+            arjFlags == other.arjFlags &&
+            method == other.method &&
+            fileType == other.fileType &&
+            reserved == other.reserved &&
+            dateTimeModified == other.dateTimeModified &&
+            compressedSize == other.compressedSize &&
+            originalSize == other.originalSize &&
+            originalCrc32 == other.originalCrc32 &&
+            fileSpecPosition == other.fileSpecPosition &&
+            fileAccessMode == other.fileAccessMode &&
+            firstChapter == other.firstChapter &&
+            lastChapter == other.lastChapter &&
+            extendedFilePosition == other.extendedFilePosition &&
+            dateTimeAccessed == other.dateTimeAccessed &&
+            dateTimeCreated == other.dateTimeCreated &&
+            originalSizeEvenForVolumes == other.originalSizeEvenForVolumes &&
+            Objects.equals(name, other.name) &&
+            Objects.equals(comment, other.comment) &&
+            Arrays.deepEquals(extendedHeaders, other.extendedHeaders);
+    }
+
 }

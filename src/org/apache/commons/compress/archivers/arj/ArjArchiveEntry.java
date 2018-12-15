@@ -143,6 +143,24 @@ public class ArjArchiveEntry implements ArchiveEntry {
         return localFileHeader.method;
     }
 
+    @Override
+    public int hashCode() {
+        final String name = getName();
+        return name == null ? 0 : name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final ArjArchiveEntry other = (ArjArchiveEntry) obj;
+        return localFileHeader.equals(other.localFileHeader);
+    }
+
     /**
      * The known values for HostOs.
      */
