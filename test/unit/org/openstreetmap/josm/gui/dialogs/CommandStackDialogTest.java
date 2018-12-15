@@ -72,4 +72,44 @@ public class CommandStackDialogTest {
             MainApplication.getLayerManager().removeLayer(layer);
         }
     }
+
+    /**
+     * Unit test of {@link CommandStackDialog} class - undo followed by addCommand should empty redo tree.
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/16911">Bug #16911</a>.
+     */
+    @Test
+    public void testCommandStackDialogUndoAddCommand() {
+        DataSet ds = new DataSet();
+        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
+        MainApplication.getLayerManager().addLayer(layer);
+        try {
+            Command cmd1 = TestUtils.newCommand(ds);
+            Command cmd2 = TestUtils.newCommand(ds);
+            Command cmd3 = TestUtils.newCommand(ds);
+            MapFrame map = MainApplication.getMap();
+            CommandStackDialog dlg = new CommandStackDialog();
+            map.addToggleDialog(dlg);
+            dlg.unfurlDialog();
+            assertTrue(dlg.isVisible());
+            assertTrue(dlg.redoTreeIsEmpty());
+            UndoRedoHandler.getInstance().add(cmd1);
+            assertTrue(dlg.redoTreeIsEmpty());
+            UndoRedoHandler.getInstance().add(cmd2);
+            assertTrue(dlg.redoTreeIsEmpty());
+            UndoRedoHandler.getInstance().undo(1);
+            assertFalse(dlg.redoTreeIsEmpty());
+            UndoRedoHandler.getInstance().add(cmd3);
+            assertTrue(dlg.redoTreeIsEmpty());
+
+            assertTrue(UndoRedoHandler.getInstance().hasUndoCommands());
+            assertFalse(UndoRedoHandler.getInstance().hasRedoCommands());
+
+            map.removeToggleDialog(dlg);
+            dlg.hideDialog();
+            assertFalse(dlg.isVisible());
+        } finally {
+            UndoRedoHandler.getInstance().clean();
+            MainApplication.getLayerManager().removeLayer(layer);
+        }
+    }
 }
