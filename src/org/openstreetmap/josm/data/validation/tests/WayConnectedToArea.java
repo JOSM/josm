@@ -89,6 +89,10 @@ public class WayConnectedToArea extends Test {
         if (w.hasKey(HIGHWAY) && wayNode.hasTag("leisure", "slipway") && area.hasTag("natural", "water")) {
             return;
         }
+        if (wayNode.hasTag("noexit", "yes")) {
+            // Avoid "legal" case (see #17036)
+            return;
+        }
         errors.add(TestError.builder(this, Severity.WARNING, 2301)
                 .message(tr("Way terminates on Area"))
                 .primitives(w, p)
