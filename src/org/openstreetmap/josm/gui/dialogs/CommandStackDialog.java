@@ -361,6 +361,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         );
     }
 
+    protected boolean redoTreeIsEmpty() {
+        return redoTree.getRowCount() == 0;
+    }
+
     @Override
     public void cleaned(CommandQueueCleanedEvent e) {
         if (isVisible()) {
@@ -373,6 +377,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         if (isVisible()) {
             undoRoot.add(getNodeForCommand(e.getCommand()));
             undoTreeModel.nodeStructureChanged(undoRoot);
+            // fix 16911: make sure that redo tree is rebuild with empty list
+            if (!redoTreeIsEmpty())
+                buildRedoTree();
             ensureTreesConsistency();
         }
     }
