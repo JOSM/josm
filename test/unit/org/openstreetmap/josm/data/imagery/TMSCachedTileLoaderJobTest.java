@@ -173,6 +173,15 @@ public class TMSCachedTileLoaderJobTest {
                 "]]>");
     }
 
+    /**
+     * Tests that {@code TMSCachedTileLoaderJob#JSON_PATTERN} is correct.
+     */
+    @Test
+    public void testJsonPattern() {
+        testJson("Tile does not exist",
+                "{\"message\":\"Tile does not exist\"}");
+    }
+
     private static void testServiceException(String expected, String xml) {
         test(TMSCachedTileLoaderJob.SERVICE_EXCEPTION_PATTERN, expected, xml);
     }
@@ -181,9 +190,13 @@ public class TMSCachedTileLoaderJobTest {
         test(TMSCachedTileLoaderJob.CDATA_PATTERN, expected, xml);
     }
 
-    private static void test(Pattern pattern, String expected, String xml) {
-        Matcher m = pattern.matcher(xml);
-        assertTrue(xml, m.matches());
+    private static void testJson(String expected, String json) {
+        test(TMSCachedTileLoaderJob.JSON_PATTERN, expected, json);
+    }
+
+    private static void test(Pattern pattern, String expected, String text) {
+        Matcher m = pattern.matcher(text);
+        assertTrue(text, m.matches());
         assertEquals(expected, Utils.strip(m.group(1)));
     }
 
