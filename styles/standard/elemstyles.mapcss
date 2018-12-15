@@ -1884,6 +1884,10 @@ node[advertising=billboard] {
     icon-image: "presets/leisure/billboard.svg";
     set icon_z17;
 }
+way[advertising=billboard] {
+    width: 2;
+    color: advertising#880000;
+}
 
 /*************/
 /* shop tags */
