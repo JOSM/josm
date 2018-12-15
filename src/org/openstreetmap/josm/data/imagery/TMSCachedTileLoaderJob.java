@@ -50,6 +50,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     public static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires", TimeUnit.HOURS.toMillis(1));
     static final Pattern SERVICE_EXCEPTION_PATTERN = Pattern.compile("(?s).+<ServiceException[^>]*>(.+)</ServiceException>.+");
     static final Pattern CDATA_PATTERN = Pattern.compile("(?s)\\s*<!\\[CDATA\\[(.+)\\]\\]>\\s*");
+    static final Pattern JSON_PATTERN = Pattern.compile("\\{\"message\":\"(.+)\"\\}");
     protected final Tile tile;
     private volatile URL url;
     private final TileJobOptions options;
@@ -320,8 +321,11 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     @Override
     public String detectErrorMessage(String data) {
-        Matcher m = SERVICE_EXCEPTION_PATTERN.matcher(data);
-        return m.matches() ? removeCdata(Utils.strip(m.group(1))) : super.detectErrorMessage(data);
+        Matcher xml = SERVICE_EXCEPTION_PATTERN.matcher(data);
+        Matcher json = JSON_PATTERN.matcher(data);
+        return xml.matches() ? removeCdata(Utils.strip(xml.group(1)))
+            : json.matches() ? Utils.strip(json.group(1))
+            : super.detectErrorMessage(data);
     }
 
     private static String removeCdata(String msg) {
