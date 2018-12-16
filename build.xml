@@ -990,6 +990,23 @@ Build-Date: ${build.tstamp}
         </java>
     </target>
     <!--
+      ** update projection test files after an update of projection definitions
+    -->
+    <target name="update-proj-files" depends="test-compile">
+        <java classname="org.openstreetmap.josm.data.projection.ProjectionRefTest" failonerror="true" fork="true">
+            <classpath>
+                <path refid="test.classpath"/>
+                <pathelement path="${test.dir}/build/unit"/>
+            </classpath>
+        </java>
+        <java classname="org.openstreetmap.josm.data.projection.ProjectionRegressionTest" failonerror="true" fork="true">
+            <classpath>
+                <path refid="test.classpath"/>
+                <pathelement path="${test.dir}/build/unit"/>
+            </classpath>
+        </java>
+    </target>
+    <!--
       ** generate jdeps dependency graph
     -->
     <target name="jdeps" depends="compile">
