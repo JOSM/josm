@@ -1243,7 +1243,6 @@ public final class DomainValidator extends AbstractValidator {
         "sony", // sony Sony Corporation
         "soy", // soy Charleston Road Registry Inc.
         "space", // space DotSpace Inc.
-        "spiegel", // spiegel SPIEGEL-Verlag Rudolf Augstein GmbH &amp; Co. KG
         "sport", // sport Global Association of International Sports Federations (GAISF)
         "spot", // spot Amazon Registry Services, Inc.
         "spreadbetting", // spreadbetting DOTSPREADBETTING REGISTRY LTD

@@ -72,7 +72,8 @@ public class ImageryPreferenceTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids().timeout(10000*120);
+    public JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids()
+                                                   .timeout((int) TimeUnit.MINUTES.toMillis(40));
 
     private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
     private final Map<String, byte[]> workingURLs = Collections.synchronizedMap(new TreeMap<>());
@@ -105,8 +106,8 @@ public class ImageryPreferenceTestIT {
             try {
                 Response response = HttpClient.create(new URL(url))
                         .setHeaders(info.getCustomHttpHeaders())
-                        .setConnectTimeout((int) TimeUnit.SECONDS.toMillis(30))
-                        .setReadTimeout((int) TimeUnit.SECONDS.toMillis(60))
+                        .setConnectTimeout((int) TimeUnit.MINUTES.toMillis(1))
+                        .setReadTimeout((int) TimeUnit.MINUTES.toMillis(2))
                         .connect();
                 if (response.getResponseCode() >= 400) {
                     addError(info, url + " -> HTTP " + response.getResponseCode());
