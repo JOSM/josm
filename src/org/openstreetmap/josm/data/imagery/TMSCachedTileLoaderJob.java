@@ -278,7 +278,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private boolean handleNoTileAtZoom() {
         if (isNoTileAtZoom()) {
             Logging.debug("JCS TMS - Tile valid, but no file, as no tiles at this level {0}", tile);
-            tile.setError(tr("No tile at this zoom level"));
+            tile.setError(tr("No tiles at this zoom level"));
             tile.putValue("tile-info", "no-tile");
             return true;
         }
