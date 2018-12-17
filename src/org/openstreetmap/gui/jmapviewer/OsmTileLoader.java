@@ -51,7 +51,7 @@ public class OsmTileLoader implements TileLoader {
                 }
                 loadTileMetadata(tile, conn);
                 if ("no-tile".equals(tile.getValue("tile-info"))) {
-                    tile.setError(tr("No tile at this zoom level"));
+                    tile.setError(tr("No tiles at this zoom level"));
                 } else {
                     input = conn.getInputStream();
                     try {
