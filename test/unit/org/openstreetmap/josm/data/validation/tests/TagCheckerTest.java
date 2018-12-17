@@ -153,6 +153,20 @@ public class TagCheckerTest {
     }
 
     /**
+     * Check for misspelled value.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testShortValNotInPreset2() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node shop=gas"));
+        assertEquals(1, errors.size());
+        assertEquals("Presets do not contain property value", errors.get(0).getMessage());
+        assertEquals("Value 'gas' for key 'shop' not in presets.", errors.get(0).getDescription());
+        assertEquals(Severity.OTHER, errors.get(0).getSeverity());
+        assertFalse(errors.get(0).isFixable());
+    }
+
+    /**
      * Checks that tags specifically ignored are effectively not in internal presets.
      * @throws IOException if any I/O error occurs
      */
