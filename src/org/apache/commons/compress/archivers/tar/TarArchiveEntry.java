@@ -1378,7 +1378,7 @@ public class TarArchiveEntry implements ArchiveEntry, TarConstants {
         if (lenient) {
             try {
                 return TarUtils.parseOctalOrBinary(header, offset, length);
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ex) { //NOSONAR
                 return UNKNOWN;
             }
         }

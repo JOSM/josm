@@ -489,8 +489,8 @@ public class SevenZArchiveEntry implements ArchiveEntry {
 
     @Override
     public int hashCode() {
-        final String name = getName();
-        return name == null ? 0 : name.hashCode();
+        final String n = getName();
+        return n == null ? 0 : n.hashCode();
     }
 
     @Override
@@ -520,7 +520,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
             compressedCrc == other.compressedCrc &&
             size == other.size &&
             compressedSize == other.compressedSize &&
-            equals(contentMethods, other.contentMethods);
+            equalSevenZMethods(contentMethods, other.contentMethods);
     }
 
     /**
@@ -551,7 +551,7 @@ public class SevenZArchiveEntry implements ArchiveEntry {
         return ((date.getTime() - ntfsEpoch.getTimeInMillis())* 1000 * 10);
     }
 
-    private boolean equals(Iterable<? extends SevenZMethodConfiguration> c1,
+    private boolean equalSevenZMethods(Iterable<? extends SevenZMethodConfiguration> c1,
         Iterable<? extends SevenZMethodConfiguration> c2) {
         if (c1 == null) {
             return c2 == null;

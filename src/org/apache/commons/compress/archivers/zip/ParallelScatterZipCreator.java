@@ -281,7 +281,7 @@ public class ParallelScatterZipCreator {
             for (final ScatterZipOutputStream scatterStream : streams) {
                 try {
                     scatterStream.close();
-                } catch (IOException ex) {
+                } catch (IOException ex) { //NOSONAR
                     // no way to properly log this
                 }
             }
