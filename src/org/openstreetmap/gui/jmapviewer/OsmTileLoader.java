@@ -1,6 +1,8 @@
 // License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
+import static org.openstreetmap.gui.jmapviewer.FeatureAdapter.tr;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -49,7 +51,7 @@ public class OsmTileLoader implements TileLoader {
                 }
                 loadTileMetadata(tile, conn);
                 if ("no-tile".equals(tile.getValue("tile-info"))) {
-                    tile.setError("No tile at this zoom level");
+                    tile.setError(tr("No tile at this zoom level"));
                 } else {
                     input = conn.getInputStream();
                     try {
