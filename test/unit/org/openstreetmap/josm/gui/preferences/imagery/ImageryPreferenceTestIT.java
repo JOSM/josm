@@ -286,8 +286,8 @@ public class ImageryPreferenceTestIT {
     }
 
     private static Projection getProjection(ImageryInfo info) {
-        if (!info.getServerProjections().isEmpty()) {
-            Projection proj = Projections.getProjectionByCode(info.getServerProjections().get(0));
+        for (String code : info.getServerProjections()) {
+            Projection proj = Projections.getProjectionByCode(code);
             if (proj != null) {
                 return proj;
             }
