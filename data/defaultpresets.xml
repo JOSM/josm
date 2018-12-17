@@ -7596,7 +7596,10 @@
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:man_made=crane" />
             <space />
             <key key="man_made" value="crane" />
-            <text key="name" text="Name" />
+            <optional>
+                <combo key="crane:type" text="Type" values="floor-mounted_crane,gantry_crane,portal_crane,travel_lift" />
+                <reference ref="name_operator" />
+            </optional>
         </item> <!-- Crane -->
         <item name="Mineshaft" icon="presets/landmark/mine.svg" type="node,closedway" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:man_made=mineshaft"
