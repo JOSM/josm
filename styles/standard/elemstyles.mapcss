@@ -1927,6 +1927,7 @@ area[shop=furniture],
 area[shop=fabric],
 area[shop=florist],
 area[shop=frame],
+area[shop=gas],
 area[shop=gift],
 area[shop=greengrocer],
 area[shop=garden_centre],
@@ -2115,6 +2116,10 @@ node[shop=florist] {
 }
 node[shop=frame] {
     icon-image: "presets/shop/frame.svg";
+    set icon_z17;
+}
+node[shop=gas] {
+    icon-image: "presets/shop/gas.svg";
     set icon_z17;
 }
 node[shop=gift] {
