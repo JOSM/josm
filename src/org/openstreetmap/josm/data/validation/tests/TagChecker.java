@@ -566,7 +566,8 @@ public class TagChecker extends TagTest {
                                 fixVals.add(possibleVal);
                             }
                         }
-                        if (minDist <= MAX_LEVENSHTEIN_DISTANCE && maxPresetValueLen > MAX_LEVENSHTEIN_DISTANCE) {
+                        if (minDist <= MAX_LEVENSHTEIN_DISTANCE && maxPresetValueLen > MAX_LEVENSHTEIN_DISTANCE
+                                && (harmonizedValue.length() > 3 || minDist < MAX_LEVENSHTEIN_DISTANCE)) {
                             if (fixVals.size() < 2) {
                                 fixedValue = closest;
                             } else {
@@ -574,9 +575,9 @@ public class TagChecker extends TagTest {
                                 // misspelled preset value with multiple good alternatives
                                 errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE_NO_FIX)
                                         .message(tr("Misspelled property value"),
-                                                marktr("Value ''{0}'' for key ''{1}'' looks like one of {2}."), prop.getValue(), key, fixVals)
-                                        .primitives(p)
-                                        .build());
+                                                marktr("Value ''{0}'' for key ''{1}'' looks like one of {2}."),
+                                                prop.getValue(), key, fixVals)
+                                        .primitives(p).build());
                                 withErrors.put(p, "WPV");
                                 continue;
                             }
