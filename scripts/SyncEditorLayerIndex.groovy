@@ -756,20 +756,59 @@ class SyncEditorLayerIndex {
             } else if(s.size() != js.size()) {
                 myprintln "* Different number of shapes (${s.size()} != ${js.size()}): ${getDescription(j)}"
             } else {
-                for(def nums = 0; nums < s.size(); ++nums) {
-                    def ep = s[nums].getPoints()
-                    def jp = js[nums].getPoints()
-                    if(ep.size() != jp.size()) {
-                        myprintln "* Different number of points for shape ${nums+1} (${ep.size()} ! = ${jp.size()})): ${getDescription(j)}"
-                    } else {
-                        for(def nump = 0; nump < ep.size(); ++nump) {
-                            def ept = ep[nump]
-                            def jpt = jp[nump]
-                            if(Math.abs(ept.getLat()-jpt.getLat()) > 0.00001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.00001) {
-                                myprintln "* Different coordinate for point ${nump+1} of shape ${nums+1}: ${getDescription(j)}"
-                                nump = ep.size()
-                                num = s.size()
+                boolean[] edone = new boolean[s.size()]
+                boolean[] jdone = new boolean[js.size()]
+                for(def enums = 0; enums < s.size(); ++enums) {
+                    def ep = s[enums].getPoints()
+                    for(def jnums = 0; jnums < js.size() && !edone[enums]; ++jnums) {
+                        def jp = js[jnums].getPoints()
+                        if(ep.size() == jp.size() && !jdone[jnums]) {
+                            boolean err = false;
+                            for(def nump = 0; nump < ep.size() && !err; ++nump) {
+                                def ept = ep[nump]
+                                def jpt = jp[nump]
+                                if(Math.abs(ept.getLat()-jpt.getLat()) > 0.00001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.00001)
+                                    err = true
                             }
+                            if(!err) {
+                                edone[enums] = true
+                                jdone[jnums] = true
+                                break
+                            }
+                        }
+                    }
+                }
+                for(def enums = 0; enums < s.size(); ++enums) {
+                    def ep = s[enums].getPoints()
+                    for(def jnums = 0; jnums < js.size() && !edone[enums]; ++jnums) {
+                        def jp = js[jnums].getPoints()
+                        if(ep.size() == jp.size() && !jdone[jnums]) {
+                            boolean err = false;
+                            for(def nump = 0; nump < ep.size() && !err; ++nump) {
+                                def ept = ep[nump]
+                                def jpt = jp[nump]
+                                if(Math.abs(ept.getLat()-jpt.getLat()) > 0.00001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.00001) {
+                                    def numtxt = ((enums == jnums) ? "${enums+1}" : "${enums+1}/${jnums+1}")
+                                    myprintln "* Different coordinate for point ${nump+1} of shape $numtxt: ${getDescription(j)}"
+                                    break
+                                }
+                            }
+                            edone[enums] = true
+                            jdone[jnums] = true
+                            break
+                        }
+                    }
+                }
+                for(def enums = 0; enums < s.size(); ++enums) {
+                    def ep = s[enums].getPoints()
+                    for(def jnums = 0; jnums < js.size() && !edone[enums]; ++jnums) {
+                        def jp = js[jnums].getPoints()
+                        if(!jdone[jnums]) {
+                            def numtxt = ((enums == jnums) ? "${enums+1}" : "${enums+1}/${jnums+1}")
+                            myprintln "* Different number of points for shape $numtxt (${ep.size()} ! = ${jp.size()})): ${getDescription(j)}"
+                            edone[enums] = true
+                            jdone[jnums] = true
+                            break
                         }
                     }
                 }
