@@ -31,6 +31,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.jcs.access.exception.ObjectNotFoundException;
@@ -729,39 +731,37 @@ public class CompositeCache<K, V>
     private Map<K, ICacheElement<K, V>> getMultipleFromMemory( Set<K> keys )
         throws IOException
     {
-        Map<K, ICacheElement<K, V>> elementsFromMemory = memCache.getMultiple( keys );
+        Map<K, ICacheElement<K, V>> elementsFromMemory = memCache.getMultiple(keys);
 
-        Iterator<ICacheElement<K, V>> elementFromMemoryIterator = new HashMap<K, ICacheElement<K, V>>( elementsFromMemory ).values().iterator();
+        Iterator<Map.Entry<K, ICacheElement<K, V>>> elementFromMemoryIterator = elementsFromMemory.entrySet().iterator();
 
-        while ( elementFromMemoryIterator.hasNext() )
+        while (elementFromMemoryIterator.hasNext())
         {
-            ICacheElement<K, V> element = elementFromMemoryIterator.next();
+            Map.Entry<K, ICacheElement<K, V>> entry = elementFromMemoryIterator.next();
+            ICacheElement<K, V> element = entry.getValue();
 
-            if ( element != null )
+            if (isExpired(element))
             {
-                // Found in memory cache
-                if ( isExpired( element ) )
+                if (log.isDebugEnabled())
                 {
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug( cacheAttr.getCacheName() + " - Memory cache hit, but element expired" );
-                    }
-
-                    doExpires(element);
-                    elementsFromMemory.remove( element.getKey() );
+                    log.debug(cacheAttr.getCacheName() + " - Memory cache hit, but element expired");
                 }
-                else
+
+                doExpires(element);
+                elementFromMemoryIterator.remove();
+            }
+            else
+            {
+                if (log.isDebugEnabled())
                 {
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug( cacheAttr.getCacheName() + " - Memory cache hit" );
-                    }
-
-                    // Update counters
-                    hitCountRam.incrementAndGet();
+                    log.debug(cacheAttr.getCacheName() + " - Memory cache hit");
                 }
+
+                // Update counters
+                hitCountRam.incrementAndGet();
             }
         }
+        
         return elementsFromMemory;
     }
 
@@ -870,8 +870,6 @@ public class CompositeCache<K, V>
      */
     protected Map<K, ICacheElement<K, V>> getMatching( String pattern, boolean localOnly )
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-
         if ( log.isDebugEnabled() )
         {
             log.debug( "get: pattern [" + pattern + "], localOnly = " + localOnly );
@@ -879,18 +877,21 @@ public class CompositeCache<K, V>
 
         try
         {
-            // First look in auxiliaries
-            elements.putAll( getMatchingFromAuxiliaryCaches( pattern, localOnly ) );
-
-            // then look in memory, override aux with newer memory items.
-            elements.putAll( getMatchingFromMemory( pattern ) );
+            return Stream.concat(
+                    getMatchingFromMemory(pattern).entrySet().stream(), 
+                    getMatchingFromAuxiliaryCaches(pattern, localOnly).entrySet().stream())
+                    .collect(Collectors.toMap(
+                            entry -> entry.getKey(),
+                            entry -> entry.getValue(),
+                            // Prefer memory entries
+                            (mem, aux) -> mem));
         }
-        catch ( Exception e )
+        catch (IOException e)
         {
             log.error( "Problem encountered getting elements.", e );
         }
 
-        return elements;
+        return new HashMap<K, ICacheElement<K, V>>();
     }
 
     /**

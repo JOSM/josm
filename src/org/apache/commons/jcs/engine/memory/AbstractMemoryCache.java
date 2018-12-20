@@ -113,7 +113,7 @@ public abstract class AbstractMemoryCache<K, V>
      * @throws IOException
      */
     @Override
-    public Map<K, ICacheElement<K, V>> getMultiple( Set<K> keys )
+    public Map<K, ICacheElement<K, V>> getMultiple(Set<K> keys)
         throws IOException
     {
         if (keys != null)
