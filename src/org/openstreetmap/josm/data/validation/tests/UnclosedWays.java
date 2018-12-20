@@ -152,6 +152,7 @@ public class UnclosedWays extends Test {
         new UnclosedWaysCheck(1108, "waterway",  marktr("waterway type {0}"),
                 new HashSet<>(Arrays.asList("riverbank")), false),
         new UnclosedWaysCheck(1109, "boundary", marktr("boundary type {0}")),
+        new UnclosedWaysCheck(1110, "area:highway", marktr("area:highway type {0}")),
         new UnclosedWaysBooleanCheck(1120, "building", marktr("building")),
         new UnclosedWaysBooleanCheck(1130, "area",     marktr("area")),
         // CHECKSTYLE.ON: SingleSpaceSeparator
