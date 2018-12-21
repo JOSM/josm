@@ -79,6 +79,9 @@ The Windows shortcut parsing code is from StackOverflow:
 - https://stackoverflow.com/a/9403438/2257172
 - https://github.com/codebling/WindowsShortcuts
 
+The gui/animation Christmas GPL code is from Jiri Vanek (Red Hat):
+- http://icedtea.classpath.org/hg/icedtea-web/rev/87d3081ab573
+
 ------------------------------- PROJECTION DATA -------------------------------
 
 Australian A66_National NTV2 grid: Source: Intergovernmental Committee on
