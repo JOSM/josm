@@ -158,10 +158,10 @@ public class TagCheckerTest {
      */
     @Test
     public void testShortValNotInPreset2() throws IOException {
-        final List<TestError> errors = test(OsmUtils.createPrimitive("node shop=gas"));
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node shop=abs"));
         assertEquals(1, errors.size());
         assertEquals("Presets do not contain property value", errors.get(0).getMessage());
-        assertEquals("Value 'gas' for key 'shop' not in presets.", errors.get(0).getDescription());
+        assertEquals("Value 'abs' for key 'shop' not in presets.", errors.get(0).getDescription());
         assertEquals(Severity.OTHER, errors.get(0).getSeverity());
         assertFalse(errors.get(0).isFixable());
     }
