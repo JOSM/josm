@@ -178,10 +178,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 break;
             case CANCEL:
                 if (yLayer != null) {
-                    if (yLayer.data != null) {
-                        for (ImageEntry ie : yLayer.data) {
-                            ie.discardTmp();
-                        }
+                    for (ImageEntry ie : yLayer.getImageData().getImages()) {
+                        ie.discardTmp();
                     }
                     yLayer.updateBufferAndRepaint();
                 }
@@ -216,10 +214,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     MainApplication.getMap().mapView.zoomTo(bbox);
                 }
 
-                if (yLayer.data != null) {
-                    for (ImageEntry ie : yLayer.data) {
-                        ie.applyTmp();
-                    }
+                for (ImageEntry ie : yLayer.getImageData().getImages()) {
+                    ie.applyTmp();
                 }
 
                 yLayer.updateBufferAndRepaint();
@@ -645,19 +641,20 @@ public class CorrelateGpxWithImages extends AbstractAction {
             JList<String> imgList = new JList<>(new AbstractListModel<String>() {
                 @Override
                 public String getElementAt(int i) {
-                    return yLayer.data.get(i).getFile().getName();
+                    return yLayer.getImageData().getImages().get(i).getFile().getName();
                 }
 
                 @Override
                 public int getSize() {
-                    return yLayer.data != null ? yLayer.data.size() : 0;
+                    return yLayer.getImageData().getImages().size();
                 }
             });
             imgList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             imgList.getSelectionModel().addListSelectionListener(evt -> {
                 int index = imgList.getSelectedIndex();
-                imgDisp.setImage(yLayer.data.get(index));
-                Date date = yLayer.data.get(index).getExifTime();
+                ImageEntry img = yLayer.getImageData().getImages().get(index);
+                imgDisp.setImage(img);
+                Date date = img.getExifTime();
                 if (date != null) {
                     DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
                     lbExifTime.setText(df.format(date));
@@ -1041,10 +1038,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             // The selection of images we are about to correlate may have changed.
             // So reset all images.
-            if (yLayer.data != null) {
-                for (ImageEntry ie: yLayer.data) {
-                    ie.discardTmp();
-                }
+            for (ImageEntry ie: yLayer.getImageData().getImages()) {
+                ie.discardTmp();
             }
 
             // Construct a list of images that have a date, and sort them on the date.
@@ -1300,11 +1295,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @return matching images
      */
     private List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
-        if (yLayer.data == null) {
-            return Collections.emptyList();
-        }
-        List<ImageEntry> dateImgLst = new ArrayList<>(yLayer.data.size());
-        for (ImageEntry e : yLayer.data) {
+        List<ImageEntry> dateImgLst = new ArrayList<>(yLayer.getImageData().getImages().size());
+        for (ImageEntry e : yLayer.getImageData().getImages()) {
             if (!e.hasExifTime()) {
                 continue;
             }

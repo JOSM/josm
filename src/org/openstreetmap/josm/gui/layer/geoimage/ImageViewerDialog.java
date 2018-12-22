@@ -13,14 +13,22 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.ImageData;
+import org.openstreetmap.josm.data.ImageData.ImageDataUpdateListener;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -31,13 +39,15 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Dialog to view and manipulate geo-tagged images from a {@link GeoImageLayer}.
  */
-public final class ImageViewerDialog extends ToggleDialog implements LayerChangeListener, ActiveLayerChangeListener {
+public final class ImageViewerDialog extends ToggleDialog implements LayerChangeListener, ActiveLayerChangeListener, ImageDataUpdateListener {
 
     private final ImageZoomAction imageZoomAction = new ImageZoomAction();
     private final ImageCenterViewAction imageCenterViewAction = new ImageCenterViewAction();
@@ -79,6 +89,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private JButton btnPrevious;
     private JButton btnFirst;
     private JButton btnCollapse;
+    private JButton btnDelete;
+    private JButton btnCopyPath;
+    private JButton btnDeleteFromDisk;
     private JToggleButton tbCentre;
 
     private ImageViewerDialog() {
@@ -87,6 +100,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         build();
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
         MainApplication.getLayerManager().addLayerChangeListener(this);
+        for (Layer l: MainApplication.getLayerManager().getLayers()) {
+            registerOnLayer(l);
+        }
     }
 
     private static JButton createNavigationButton(JosmAction action, Dimension buttonDim) {
@@ -106,13 +122,13 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnFirst = createNavigationButton(imageFirstAction, buttonDim);
         btnPrevious = createNavigationButton(imagePreviousAction, buttonDim);
 
-        JButton btnDelete = new JButton(imageRemoveAction);
+        btnDelete = new JButton(imageRemoveAction);
         btnDelete.setPreferredSize(buttonDim);
 
-        JButton btnDeleteFromDisk = new JButton(imageRemoveFromDiskAction);
+        btnDeleteFromDisk = new JButton(imageRemoveFromDiskAction);
         btnDeleteFromDisk.setPreferredSize(buttonDim);
 
-        JButton btnCopyPath = new JButton(imageCopyPathAction);
+        btnCopyPath = new JButton(imageCopyPathAction);
         btnCopyPath.setPreferredSize(buttonDim);
 
         btnNext = createNavigationButton(imageNextAction, buttonDim);
@@ -189,8 +205,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentLayer != null) {
-                currentLayer.showNextPhoto();
+            if (currentData != null) {
+                currentData.selectNextImage();
             }
         }
     }
@@ -204,8 +220,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentLayer != null) {
-                currentLayer.showPreviousPhoto();
+            if (currentData != null) {
+                currentData.selectPreviousImage();
             }
         }
     }
@@ -219,8 +235,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentLayer != null) {
-                currentLayer.showFirstPhoto();
+            if (currentData != null) {
+                currentData.selectFirstImage();
             }
         }
     }
@@ -234,8 +250,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentLayer != null) {
-                currentLayer.showLastPhoto();
+            if (currentData != null) {
+                currentData.selectLastImage();
             }
         }
     }
@@ -277,8 +293,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentLayer != null) {
-                currentLayer.removeCurrentPhoto();
+            if (currentData != null) {
+                currentData.removeSelectedImage();
             }
         }
     }
@@ -293,8 +309,37 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentLayer != null) {
-                currentLayer.removeCurrentPhotoFromDisk();
+            if (currentData != null && currentData.getSelectedImage() != null) {
+                ImageEntry toDelete = currentData.getSelectedImage();
+
+                int result = new ExtendedDialog(
+                        MainApplication.getMainFrame(),
+                        tr("Delete image file from disk"),
+                        tr("Cancel"), tr("Delete"))
+                        .setButtonIcons("cancel", "dialogs/delete")
+                        .setContent(new JLabel("<html><h3>" + tr("Delete the file {0} from disk?", toDelete.getFile().getName())
+                                + "<p>" + tr("The image file will be permanently lost!") + "</h3></html>",
+                                ImageProvider.get("dialogs/geoimage/deletefromdisk"), SwingConstants.LEFT))
+                        .toggleEnable("geoimage.deleteimagefromdisk")
+                        .setCancelButton(1)
+                        .setDefaultButton(2)
+                        .showDialog()
+                        .getValue();
+
+                if (result == 2) {
+                    currentData.removeSelectedImage();
+
+                    if (Utils.deleteFile(toDelete.getFile())) {
+                        Logging.info("File " + toDelete.getFile() + " deleted.");
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                MainApplication.getMainFrame(),
+                                tr("Image file could not be deleted."),
+                                tr("Error"),
+                                JOptionPane.ERROR_MESSAGE
+                                );
+                    }
+                }
             }
         }
     }
@@ -308,8 +353,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (currentLayer != null) {
-                currentLayer.copyCurrentPhotoPath();
+            if (currentData != null) {
+                ClipboardUtils.copyString(currentData.getSelectedImage().getFile().toString());
             }
         }
     }
@@ -328,36 +373,30 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     }
 
     /**
-     * Displays image for the given layer.
-     * @param layer geo image layer
+     * Displays image for the given data.
+     * @param data geo image data
      * @param entry image entry
      */
-    public static void showImage(GeoImageLayer layer, ImageEntry entry) {
-        getInstance().displayImage(layer, entry);
-        if (layer != null) {
-            layer.checkPreviousNextButtons();
-        } else {
-            setPreviousEnabled(false);
-            setNextEnabled(false);
-        }
+    public static void showImage(ImageData data, ImageEntry entry) {
+        getInstance().displayImage(data, entry);
     }
 
     /**
      * Enables (or disables) the "Previous" button.
      * @param value {@code true} to enable the button, {@code false} otherwise
      */
-    public static void setPreviousEnabled(boolean value) {
-        getInstance().btnFirst.setEnabled(value);
-        getInstance().btnPrevious.setEnabled(value);
+    public void setPreviousEnabled(boolean value) {
+        btnFirst.setEnabled(value);
+        btnPrevious.setEnabled(value);
     }
 
     /**
      * Enables (or disables) the "Next" button.
      * @param value {@code true} to enable the button, {@code false} otherwise
      */
-    public static void setNextEnabled(boolean value) {
-        getInstance().btnNext.setEnabled(value);
-        getInstance().btnLast.setEnabled(value);
+    public void setNextEnabled(boolean value) {
+        btnNext.setEnabled(value);
+        btnLast.setEnabled(value);
     }
 
     /**
@@ -373,15 +412,15 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         return wasEnabled;
     }
 
-    private transient GeoImageLayer currentLayer;
+    private transient ImageData currentData;
     private transient ImageEntry currentEntry;
 
     /**
      * Displays image for the given layer.
-     * @param layer geo image layer
+     * @param data the image data
      * @param entry image entry
      */
-    public void displayImage(GeoImageLayer layer, ImageEntry entry) {
+    public void displayImage(ImageData data, ImageEntry entry) {
         boolean imageChanged;
 
         synchronized (this) {
@@ -393,11 +432,17 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 MainApplication.getMap().mapView.zoomTo(entry.getPos());
             }
 
-            currentLayer = layer;
+            currentData = data;
             currentEntry = entry;
         }
 
         if (entry != null) {
+            setNextEnabled(data.hasNextImage());
+            setPreviousEnabled(data.hasPreviousImage());
+            btnDelete.setEnabled(true);
+            btnDeleteFromDisk.setEnabled(true);
+            btnCopyPath.setEnabled(true);
+
             if (imageChanged) {
                 // Set only if the image is new to preserve zoom and position if the same image is redisplayed
                 // (e.g. to update the OSD).
@@ -436,6 +481,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             setTitle(tr("Geotagged Images"));
             imgDisplay.setImage(null);
             imgDisplay.setOsdText("");
+            setNextEnabled(false);
+            setPreviousEnabled(false);
+            btnDelete.setEnabled(false);
+            btnDeleteFromDisk.setEnabled(false);
+            btnCopyPath.setEnabled(false);
             return;
         }
         if (!isDialogShowing()) {
@@ -488,15 +538,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     }
 
     /**
-     * Returns the layer associated with the image.
-     * @return Layer associated with the image
-     * @since 6392
-     */
-    public static GeoImageLayer getCurrentLayer() {
-        return getInstance().currentLayer;
-    }
-
-    /**
      * Returns whether the center view is currently active.
      * @return {@code true} if the center view is active, {@code false} otherwise
      * @since 9416
@@ -507,18 +548,18 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     @Override
     public void layerAdded(LayerAddEvent e) {
+        registerOnLayer(e.getAddedLayer());
         showLayer(e.getAddedLayer());
     }
 
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
-        // Clear current image and layer if current layer is deleted
-        if (currentLayer != null && currentLayer.equals(e.getRemovedLayer())) {
-            showImage(null, null);
-        }
-        // Check buttons state in case of layer merging
-        if (currentLayer != null && e.getRemovedLayer() instanceof GeoImageLayer) {
-            currentLayer.checkPreviousNextButtons();
+        if (e.getRemovedLayer() instanceof GeoImageLayer) {
+            ImageData removedData = ((GeoImageLayer) e.getRemovedLayer()).getImageData();
+            if (removedData == currentData) {
+                displayImage(null, null);
+            }
+            removedData.removeImageDataUpdateListener(this);
         }
     }
 
@@ -532,9 +573,25 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         showLayer(e.getSource().getActiveLayer());
     }
 
-    private void showLayer(Layer newLayer) {
-        if (currentLayer == null && newLayer instanceof GeoImageLayer) {
-            ((GeoImageLayer) newLayer).showFirstPhoto();
+    private void registerOnLayer(Layer layer) {
+        if (layer instanceof GeoImageLayer) {
+            ((GeoImageLayer) layer).getImageData().addImageDataUpdateListener(this);
         }
+    }
+
+    private void showLayer(Layer newLayer) {
+        if (currentData == null && newLayer instanceof GeoImageLayer) {
+            ((GeoImageLayer) newLayer).getImageData().selectFirstImage();
+        }
+    }
+
+    @Override
+    public void selectedImageChanged(ImageData data) {
+        showImage(data, data.getSelectedImage());
+    }
+
+    @Override
+    public void imageDataUpdated(ImageData data) {
+        showImage(data, data.getSelectedImage());
     }
 }

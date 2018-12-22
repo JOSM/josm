@@ -702,8 +702,10 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      * @param text text to display on top of the image
      */
     public void setOsdText(String text) {
-        this.osdText = text;
-        repaint();
+        if (!text.equals(this.osdText)) {
+            this.osdText = text;
+            repaint();
+        }
     }
 
     @Override
