@@ -107,7 +107,7 @@ public class TagCheckerTest {
         assertEquals("Misspelled property value", errors.get(0).getMessage());
         assertEquals("Value 'forrest' for key 'landuse' looks like 'forest'.", errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
-        assertTrue(errors.get(0).isFixable());
+        assertFalse(errors.get(0).isFixable());
     }
 
     /**
@@ -135,7 +135,7 @@ public class TagCheckerTest {
         assertEquals("Misspelled property value", errors.get(0).getMessage());
         assertEquals("Value 'residentail' for key 'highway' looks like 'residential'.", errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
-        assertTrue(errors.get(0).isFixable());
+        assertFalse(errors.get(0).isFixable());
     }
 
     /**
@@ -207,7 +207,7 @@ public class TagCheckerTest {
         assertEquals("Misspelled property value", errors.get(0).getMessage());
         assertEquals("Value 'Residential' for key 'highway' looks like 'residential'.", errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
-        assertTrue(errors.get(0).isFixable());
+        assertFalse(errors.get(0).isFixable());
     }
 
 }
