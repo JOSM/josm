@@ -3,8 +3,8 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,6 +41,7 @@ public abstract class AbstractMapRendererPerformanceTestParent {
     protected static NavigatableComponent nc;
     private static DataSet dsRestriction;
     private static DataSet dsMultipolygon;
+    private static DataSet dsOverpass;
     private static DataSet dsCity;
 
     /**
@@ -78,14 +79,14 @@ public abstract class AbstractMapRendererPerformanceTestParent {
         StyledMapRenderer.PREFERENCE_ANTIALIASING_USE.put(true);
         StyledMapRenderer.PREFERENCE_TEXT_ANTIALIASING.put("gasp");
 
-        try (
-            InputStream fisR = new FileInputStream("data_nodist/restriction.osm");
-            InputStream fisM = new FileInputStream("data_nodist/multipolygon.osm");
-            InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
-        ) {
+        try (InputStream fisR = new FileInputStream("data_nodist/restriction.osm");
+                InputStream fisM = new FileInputStream("data_nodist/multipolygon.osm");
+                InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
+                InputStream fisO = Compression.getUncompressedFileInputStream(new File("data_nodist/overpass-download.osm.bz2"));) {
             dsRestriction = OsmReader.parseDataSet(fisR, NullProgressMonitor.INSTANCE);
             dsMultipolygon = OsmReader.parseDataSet(fisM, NullProgressMonitor.INSTANCE);
             dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
+            dsOverpass = OsmReader.parseDataSet(fisO, NullProgressMonitor.INSTANCE);
         }
     }
 
@@ -126,6 +127,14 @@ public abstract class AbstractMapRendererPerformanceTestParent {
     @Test
     public void testMultipolygonSmall() throws Exception {
         test(850, dsMultipolygon, new Bounds(-90, -180, 90, 180));
+    }
+
+    @Test
+    /**
+     * Complex polygon (Lake Ontario) with small download area.
+     */
+    public void testOverpassDownload() throws Exception {
+        test(20, dsOverpass, new Bounds(43.4510496, -76.536684, 43.4643202, -76.4954853));
     }
 
     @Test

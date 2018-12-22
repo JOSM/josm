@@ -87,6 +87,7 @@ import org.openstreetmap.josm.tools.HiDPISupport;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.ShapeClipper;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -436,7 +437,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param disabled If this should be drawn with a special disabled style.
      */
     protected void drawArea(MapViewPath path, Color color,
-            MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled) {
+            MapImage fillImage, Float extent, MapViewPath pfClip, boolean disabled) {
         if (!isOutlineOnly && color.getAlpha() != 0) {
             Shape area = path;
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -477,14 +478,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param mitterLimit parameter for BasicStroke
      *
      */
-    private void computeFill(Shape shape, Float extent, Path2D.Double pfClip, float mitterLimit) {
+    private void computeFill(Shape shape, Float extent, MapViewPath pfClip, float mitterLimit) {
         if (extent == null) {
             g.fill(shape);
         } else {
             Shape oldClip = g.getClip();
             Shape clip = shape;
             if (pfClip != null) {
-                clip = pfClip.createTransformedShape(mapState.getAffineTransform());
+                clip = pfClip;
             }
             g.clip(clip);
             g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, mitterLimit));
@@ -514,15 +515,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (!isAreaVisible(pd.get())) {
                     continue;
                 }
-                MapViewPath p = new MapViewPath(mapState);
-                p.appendFromEastNorth(pd.get());
-                p.setWindingRule(Path2D.WIND_EVEN_ODD);
-                Path2D.Double pfClip = null;
+                MapViewPath p = shapeEastNorthToMapView(pd.get());
+                MapViewPath pfClip = null;
                 if (extent != null) {
                     if (!usePartialFill(pd.getAreaAndPerimeter(null), extent, extentThreshold)) {
                         extent = null;
                     } else if (!pd.isClosed()) {
-                        pfClip = getPFClip(pd, extent * scale);
+                        pfClip = shapeEastNorthToMapView(getPFClip(pd, extent * scale));
                     }
                 }
                 drawArea(p,
@@ -530,6 +529,32 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         fillImage, extent, pfClip, disabled);
             }
         }
+    }
+
+    /**
+     * Convert shape in EastNorth coordinates to MapViewPath and remove invisible parts.
+     * For complex shapes this improves performance drastically because the methods in Graphics2D.clip() and Graphics2D.draw() are rather slow.
+     * @param shape the shape to convert
+     * @return the converted shape
+     */
+    private MapViewPath shapeEastNorthToMapView(Path2D.Double shape) {
+        MapViewPath convertedShape = null;
+        if (shape != null) {
+            convertedShape = new MapViewPath(mapState);
+            convertedShape.appendFromEastNorth(shape);
+            convertedShape.setWindingRule(Path2D.WIND_EVEN_ODD);
+
+            Rectangle2D extViewBBox = mapState.getViewClipRectangle().getInView();
+            if (!extViewBBox.contains(convertedShape.getBounds2D())) {
+                // remove invisible parts of shape
+                Path2D.Double clipped = ShapeClipper.clipShape(convertedShape, extViewBBox);
+                if (clipped != null) {
+                    convertedShape.reset();
+                    convertedShape.append(clipped, false);
+                }
+            }
+        }
+        return convertedShape;
     }
 
     /**
@@ -546,12 +571,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @since 12285
      */
     public void drawArea(IWay<?> w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled) {
-        Path2D.Double pfClip = null;
+        MapViewPath pfClip = null;
         if (extent != null) {
             if (!usePartialFill(Geometry.getAreaAndPerimeter(w.getNodes()), extent, extentThreshold)) {
                 extent = null;
             } else if (!w.isClosed()) {
-                pfClip = getPFClip(w, extent * scale);
+                pfClip = shapeEastNorthToMapView(getPFClip(w, extent * scale));
             }
         }
         drawArea(getPath(w), color, fillImage, extent, pfClip, disabled);
