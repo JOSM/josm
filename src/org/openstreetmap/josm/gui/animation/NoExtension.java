@@ -16,13 +16,16 @@ public class NoExtension implements AnimationExtension {
 
     @Override
     public void adjustForSize(int w, int h) {
+        // No-op
     }
 
     @Override
     public void animate() {
+        // No-op
     }
 
     @Override
     public void paint(Graphics g) {
+        // No-op
     }
 }
