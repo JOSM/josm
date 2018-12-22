@@ -223,11 +223,6 @@ public abstract class CrossingWays extends Test {
         }
 
         @Override
-        MessageHelper createMessage(Way w1, Way w2) {
-            return new MessageHelper(tr("Crossing boundaries"), CROSSING_BOUNDARIES);
-        }
-
-        @Override
         public void visit(Relation r) {
             for (Way w : r.getMemberPrimitives(Way.class)) {
                 visit(w);
@@ -259,10 +254,6 @@ public abstract class CrossingWays extends Test {
             return !Objects.equals(OsmUtils.getLayer(w1), OsmUtils.getLayer(w2));
         }
 
-        @Override
-        MessageHelper createMessage(Way w1, Way w2) {
-            return new MessageHelper(tr("Crossing barriers"), CROSSING_BARRIERS);
-        }
     }
 
     /**
@@ -280,7 +271,7 @@ public abstract class CrossingWays extends Test {
          * Constructs a new SelfIntersection test.
          */
         public SelfCrossing() {
-            super(tr("Self crossing"), CROSSING_SELF);
+            super(tr("Self crossing ways"), CROSSING_SELF);
         }
 
         @Override
@@ -292,11 +283,6 @@ public abstract class CrossingWays extends Test {
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
             return w1 != w2; // should not happen
-        }
-
-        @Override
-        MessageHelper createMessage(Way w1, Way w2) {
-            return new MessageHelper(tr("Self-crossing ways"), CROSSING_SELF);
         }
     }
 
@@ -350,7 +336,9 @@ public abstract class CrossingWays extends Test {
 
     abstract boolean ignoreWaySegmentCombination(Way w1, Way w2);
 
-    abstract MessageHelper createMessage(Way w1, Way w2);
+    MessageHelper createMessage(Way w1, Way w2) {
+        return new MessageHelper(this.name, this.code);
+    }
 
     @Override
     public void visit(Way w) {
