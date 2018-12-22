@@ -68,8 +68,8 @@ public final class ShapeClipper {
                 }
                 points[num++] = x;
                 points[num++] = y;
-            } else if (type != PathIterator.SEG_CLOSE) {
-                    //Logging.warn("unhandled path iterator");
+                // } else if (type != PathIterator.SEG_CLOSE) {
+                //Logging.warn("unhandled path iterator");
             }
             pit.next();
         }
@@ -115,8 +115,9 @@ public final class ShapeClipper {
     private static Path2D.Double pointsToPath2D(double[] points, int num) {
         if (num < 2)
             return null;
-        if (points[0] == points[num - 2] && points[1] == points[num - 1])
+        if (Double.compare(points[0], points[num - 2]) == 0 && Double.compare(points[1], points[num - 1]) == 0) {
             num -= 2;
+        }
         if (num < 6)
             return null;
         Path2D.Double path = new Path2D.Double();
@@ -153,9 +154,10 @@ public final class ShapeClipper {
         }
 
         int countVals = num;
-        if (points[0] == points[num - 2] && points[1] == points[num - 1]) {
+        if (Double.compare(points[0], points[num - 2]) == 0 && Double.compare(points[1], points[num - 1]) == 0) {
             countVals -= 2;
         }
+
         double[] outputList = points;
         double[] input;
 
