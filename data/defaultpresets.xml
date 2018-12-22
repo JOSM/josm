@@ -6989,7 +6989,7 @@
             <key key="sport" value="climbing" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="sports_centre" />
-              <reference ref="climbing_styles" />
+            <reference ref="climbing_styles" />
             <text key="climbing:routes" text="Number of routes" />
             <text key="ele" text="Usual elevation at the bottom of the routes" />
             <space />
@@ -7021,7 +7021,7 @@
             <key key="sport" value="climbing" />
             <key key="climbing" value="route" />
             <text key="name" text="Name" />
-               <reference ref="climbing_styles" />
+            <reference ref="climbing_styles" />
             <combo key="climbing:bolted" text="Bolts" values="yes,no,1 m,2 m,3 m,4 m,5 m,6 m" values_sort="false"/>
             <combo key="climbing:pitches" values="1,2,3,4,5,6,7,8" default="1" />
             <combo key="climbing:length" text="Route length (m)" values="8 m,10 m,12 m,15 m,20 m,25 m,30 m,35 m,40 m"/>
