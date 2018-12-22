@@ -51,7 +51,7 @@ public class ThumbsLoader implements Runnable {
      * @param layer geoimage layer
      */
     public ThumbsLoader(GeoImageLayer layer) {
-        this(new ArrayList<>(layer.data), layer);
+        this(new ArrayList<>(layer.getImageData().getImages()), layer);
     }
 
     /**
