@@ -126,7 +126,7 @@ public final class ShapeClipper {
         int numOut = 1;
         for (int i = 2; i < num;) {
             double x = points[i++], y = points[i++];
-            if (x != lastX || y != lastY) {
+            if (Double.compare(x, lastX) != 0 || Double.compare(y, lastY) != 0) {
                 path.lineTo(x, y);
                 lastX = x;
                 lastY = y;
@@ -189,60 +189,61 @@ public final class ShapeClipper {
 
             input = outputList;
             outputList = new double[countVals + 16];
-            double sLon = 0, sLat = 0;
-            double pLon = 0, pLat = 0; // intersection
+            double sx = 0, sy = 0;
+            double px = 0, py = 0; // intersection
             int posIn = countVals - 2;
             int posOut = 0;
             for (int i = 0; i < countVals + 2; i += 2) {
                 if (posIn >= countVals)
                     posIn = 0;
-                double eLon = input[posIn++];
-                double eLat = input[posIn++];
+                double ex = input[posIn++];
+                double ey = input[posIn++];
                 switch (side) {
                 case LEFT:
-                    eIsIn = (eLon >= leftX);
+                    eIsIn = (ex >= leftX);
                     break;
                 case TOP:
-                    eIsIn = (eLat < upperY);
+                    eIsIn = (ey < upperY);
                     break;
                 case RIGHT:
-                    eIsIn = (eLon < rightX);
+                    eIsIn = (ex < rightX);
                     break;
                 default:
-                    eIsIn = (eLat >= lowerY);
+                    eIsIn = (ey >= lowerY);
                 }
                 if (i > 0) {
                     if (eIsIn != sIsIn) {
                         // compute intersection
                         double slope;
-                        if (eLon != sLon)
-                            slope = (eLat - sLat) / (eLon - sLon);
+                        boolean isNotZero = Math.abs(ex - sx) > 1e-12;
+                        if (isNotZero)
+                            slope = (ey - sy) / (ex - sx);
                         else
                             slope = 1;
 
                         switch (side) {
                         case LEFT:
-                            pLon = leftX;
-                            pLat = slope * (leftX - sLon) + sLat;
+                            px = leftX;
+                            py = slope * (leftX - sx) + sy;
                             break;
                         case RIGHT:
-                            pLon = rightX;
-                            pLat = slope * (rightX - sLon) + sLat;
+                            px = rightX;
+                            py = slope * (rightX - sx) + sy;
                             break;
 
                         case TOP:
-                            if (eLon != sLon)
-                                pLon = sLon + (upperY - sLat) / slope;
+                            if (isNotZero)
+                                px = sx + (upperY - sy) / slope;
                             else
-                                pLon = sLon;
-                            pLat = upperY;
+                                px = sx;
+                            py = upperY;
                             break;
                         default: // BOTTOM
-                            if (eLon != sLon)
-                                pLon = sLon + (lowerY - sLat) / slope;
+                            if (isNotZero)
+                                px = sx + (lowerY - sy) / slope;
                             else
-                                pLon = sLon;
-                            pLat = lowerY;
+                                px = sx;
+                            py = lowerY;
                             break;
 
                         }
@@ -264,21 +265,21 @@ public final class ShapeClipper {
                     }
                     if (eIsIn) {
                         if (!sIsIn) {
-                            outputList[posOut++] = pLon;
-                            outputList[posOut++] = pLat;
+                            outputList[posOut++] = px;
+                            outputList[posOut++] = py;
                         }
-                        outputList[posOut++] = eLon;
-                        outputList[posOut++] = eLat;
+                        outputList[posOut++] = ex;
+                        outputList[posOut++] = ey;
                     } else {
                         if (sIsIn) {
-                            outputList[posOut++] = pLon;
-                            outputList[posOut++] = pLat;
+                            outputList[posOut++] = px;
+                            outputList[posOut++] = py;
                         }
                     }
                 }
                 // S = E
-                sLon = eLon;
-                sLat = eLat;
+                sx = ex;
+                sy = ey;
                 sIsIn = eIsIn;
             }
             countVals = posOut;
