@@ -469,6 +469,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         }
         Config.getPref().removePreferenceChangeListener(this);
         GuiHelper.destroyComponents(this, false);
+        titleBar.destroy();
+        titleBar = null;
+        this.buttonActions.clear();
     }
 
     /**
@@ -500,7 +503,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     /**
      * The title bar displayed in docked mode
      */
-    protected class TitleBar extends JPanel {
+    protected class TitleBar extends JPanel implements Destroyable {
         /** the label which shows whether the toggle dialog is expanded or collapsed */
         private final JLabel lblMinimized;
         /** the label which displays the dialog's title **/
@@ -510,6 +513,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         private final JButton buttonsHide;
         /** the contextual menu **/
         private DialogPopupMenu popupMenu;
+
+        private MouseEventHandler mouseEventHandler;
 
         @SuppressWarnings("unchecked")
         public TitleBar(String toggleDialogName, String iconName) {
@@ -632,7 +637,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
          */
         public final void registerMouseListener() {
             popupMenu = new DialogPopupMenu();
-            addMouseListener(new MouseEventHandler());
+            mouseEventHandler = new MouseEventHandler();
+            addMouseListener(mouseEventHandler);
         }
 
         class MouseEventHandler extends PopupMenuLauncher {
@@ -655,6 +661,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     }
                 }
             }
+        }
+
+        @Override
+        public void destroy() {
+            removeMouseListener(mouseEventHandler);
+            this.mouseEventHandler = null;
+            this.popupMenu = null;
         }
     }
 
@@ -753,7 +766,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * @param title The dialog's title
      */
     public void setTitle(String title) {
-        titleBar.setTitle(title);
+        if (titleBar != null) {
+            titleBar.setTitle(title);
+        }
         if (detachedDialog != null) {
             detachedDialog.setTitle(title);
         }
