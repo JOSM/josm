@@ -11,7 +11,7 @@ import java.util.Arrays;
  * Tools to clip a shape based on the Sutherland-Hodgman algorithm.
  * See https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm
  * @author Gerd Petermann
- * @since xxx
+ * @since 14583
  */
 public final class ShapeClipper {
     private static final int LEFT = 0;
