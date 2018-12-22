@@ -590,7 +590,6 @@ public class TagChecker extends TagTest {
                                 .message(tr("Misspelled property value"),
                                         marktr("Value ''{0}'' for key ''{1}'' looks like ''{2}''."), prop.getValue(), key, newValue)
                                 .primitives(p)
-                                .fix(() -> new ChangePropertyCommand(p, key, newValue))
                                 .build());
                         withErrors.put(p, "WPV");
                     } else {
@@ -780,7 +779,7 @@ public class TagChecker extends TagTest {
         if (testError.getTester() instanceof TagChecker) {
             int code = testError.getCode();
             return code == INVALID_KEY || code == EMPTY_VALUES || code == INVALID_SPACE ||
-                   code == INVALID_KEY_SPACE || code == INVALID_HTML || code == MISSPELLED_VALUE ||
+                   code == INVALID_KEY_SPACE || code == INVALID_HTML ||
                    code == MULTIPLE_SPACES;
         }
 
