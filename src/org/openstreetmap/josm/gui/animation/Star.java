@@ -103,7 +103,7 @@ class Star {
         }
     }
 
-    private int createRadius() {
+    private static int createRadius() {
         return averageStarWidth / 2 + seed.nextInt(averageStarWidth);
     }
 
