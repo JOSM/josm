@@ -248,7 +248,7 @@ public class TagChecker extends TagTest {
                             }
                         }
                         } catch (IllegalArgumentException e) {
-                            Logging.error("Invalid line in {0} : {1}",source, e.getMessage());
+                            Logging.error("Invalid line in {0} : {1}", source, e.getMessage());
                         }
                     } else if (tagcheckerfile) {
                         if (!line.isEmpty()) {
