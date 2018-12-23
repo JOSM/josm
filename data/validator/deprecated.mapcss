@@ -1337,3 +1337,37 @@ node[telecom=outdoor_dslam] {
   fixAdd: "telecom=service_device";
   group: tr("deprecated tagging");
 }
+
+/* #15774 */
+node[amenity=fire_hydrant] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "emergency=fire_hydrant";
+  fixChangeKey: "amenity => emergency";
+  group: tr("deprecated tagging");
+}
+node[fire_hydrant:type=pond] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "water_source=pond";
+  fixAdd: "water_source=pond";
+  fixRemove: "{0.key}";
+  group: tr("deprecated tagging");
+}
+node[fire_hydrant:flow_capacity] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "flow_rate";
+  group: tr("deprecated tagging");
+}
+node[emergency=fire_hydrant][in_service=no] {
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "disused:emergency=fire_hydrant";
+  fixAdd: "disused:emergency=fire_hydrant";
+  fixRemove: "{1.key}";
+  fixRemove: "{0.key}";
+  group: tr("deprecated tagging");
+}
+node[fire_hydrant:water_source] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "water_source";
+  fixChangeKey: "fire_hydrant:water_source => water_source";
+  group: tr("deprecated tagging");
+}

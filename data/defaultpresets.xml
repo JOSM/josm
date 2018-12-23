@@ -6055,20 +6055,61 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:emergency=fire_hydrant"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=fire_hydrant"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:emergency=fire_hydrant"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=fire_hydrant"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:emergency=fire_hydrant"
                   uk.href="https://wiki.openstreetmap.org/wiki/Uk:Tag:emergency=fire_hydrant" />
             <space />
             <key key="emergency" value="fire_hydrant" />
-            <combo key="fire_hydrant:type" text="Type" values="underground,pillar,wall,pond" values_context="pipeline" default="pillar" />
-            <combo key="fire_hydrant:diameter" text="Diameter (in mm)" values="50,80,100,150,200,250,300,400" />
-            <space />
-            <reference ref="name_ref" />
-            <text key="operator" text="Operator" />
-            <space />
-            <combo key="fire_hydrant:position" text="Hydrant Position" values="lane,parking_lot,sidewalk,green" values_context="hydrant position" />
-            <combo key="fire_hydrant:pressure" text="Pressure (in bar)" values="5,6,8,suction" />
-            <text key="fire_hydrant:count" text="Count" />
+            <combo key="fire_hydrant:type" text="Shape" values_searchable="true" values_context="pipeline" >
+                <list_entry value="pillar" short_description="A pillar type hydrant." />
+                <list_entry value="underground" short_description="A fire hydrant simple outlet located underground." />
+                <list_entry value="wall" short_description="A wall-mounted fire hydrant." />
+                <list_entry value="pipe" short_description="A simple capped pipe, without the usual hydrant shape." />
+            </combo>
+            <combo key="fire_hydrant:diameter" text="Diameter (mm)" values="50,70,75,80,100,110,125,150,200,250,300,400" />
+            <combo key="fire_hydrant:pressure" text="Pressure (bar) or suction" values_searchable="true" values_sort="false">
+                <list_entry value="#" short_description="Pressure in bar." />
+                <list_entry value="yes" short_description="Pressure but value unknown." />
+                <list_entry value="suction" short_description="Water is not pressurized, a pump is needed." />
+            </combo>
+            <optional>
+                <text key="ref" text="Reference" />
+                <combo key="water_source" text="Water source">
+                    <list_entry value="main" short_description="Hydrant is fed by the local distribution network." />
+                    <list_entry value="groundwater" short_description="A water well." />
+                    <list_entry value="stream" />
+                    <list_entry value="river" />
+                    <list_entry value="canal" />
+                    <list_entry value="drain" />
+                    <list_entry value="ditch" />
+                    <list_entry value="pond" />
+                    <list_entry value="lake" />
+                    <list_entry value="water_tank" />
+                    <list_entry value="swimming_pool" />
+                </combo>
+                <combo key="fire_hydrant:position" text="Hydrant Position" values_context="hydrant position" >
+                    <list_entry value="lane" short_description="on the side of a road lane" />
+                    <list_entry value="parking_lot" short_description="in a parking lot" />
+                    <list_entry value="sidewalk" short_description="on a sidewalk" />
+                    <list_entry value="green" short_description="in a grassy area" />
+                </combo>
+                <text key="flow_rate" text="Flow rate with unit of measure" />
+                <combo key="pillar:type" text="Pillar type">
+                    <list_entry value="dry_barrel" short_description="A style of pillar hydrant where the water shutoff valve is below ground." />
+                    <list_entry value="wet_barrel" short_description="A style of pillar hydrant where the barrel is pressurized at all times, with individual valves for each outlet." />
+                </combo>
+                <space />
+                <combo key="couplings" text="Number of couplings" values="1,2,3" />
+                <combo key="couplings:type" text="Coupling standard" values="Bayonet,Barcelona,Guillemin,Klaue,Sprawny,Storz,UNI" />
+                <text key="couplings:diameters" text="Each coupling diameter (separated by ;)" />
+                <space />
+                <combo key="colour" text="Colour" values="blue,green,red,yellow,grey" />
+                <combo key="bonnet:colour" text="Colour of the top section (bonnet)" values="blue,green,red,yellow,grey" />
+                <combo key="cap:colour" text="Colour of the caps" values="blue,green,red,yellow,grey" />
+                <space />
+                <text key="manufacturer" text="Manufacturer" />
+                <text key="operator" text="Operator" />
+                <text key="name" text="Name" />
+                </optional>
         </item> <!-- Fire Hydrant -->
         <item name="Water Tank" icon="presets/emergency/water_tank.svg" type="node,closedway" preset_name_label="true">
             <link href="https://wiki.openstreetmap.org/wiki/Tag:emergency=water_tank"

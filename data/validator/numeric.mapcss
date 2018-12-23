@@ -333,7 +333,7 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertNoMatch: "node ele=3.5";
   assertNoMatch: "node ele=4";
 }
-*[ele][ele !~ /^-?[0-9]+(\.[0-9]+)?$/]!.ele_meter_remove_autofix!.ele_separator_autofix{
+*[ele][ele !~ /^-?[0-9]+(\.[0-9]+)?$/]!.ele_meter_remove_autofix!.ele_separator_autofix {
   throwWarning: tr("{0} must be a numeric value, in meters and without units", "{0.key}");
   assertNoMatch: "node ele=12m";
   assertNoMatch: "node ele=12 m";
@@ -342,4 +342,9 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertNoMatch: "node ele=-12.1 m";
   assertNoMatch: "node ele=12";
   assertMatch: "node ele=high";
+}
+
+/* #15774 */
+node[fire_hydrant:pressure="#"] {
+  throwError: tr("unusual value of {0}", "{0.key}");
 }
