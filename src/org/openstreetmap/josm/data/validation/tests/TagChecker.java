@@ -225,7 +225,7 @@ public class TagChecker extends TagTest {
                         if (line.length() < 4) {
                             continue;
                         }
-
+                        try {
                         String key = line.substring(0, 2);
                         line = line.substring(2);
 
@@ -246,6 +246,9 @@ public class TagChecker extends TagTest {
                             if (!key.startsWith(";")) {
                                 Logging.warn("Unsupported TagChecker key: " + key);
                             }
+                        }
+                        } catch (IllegalArgumentException e) {
+                            Logging.error("Invalid line in {0} : {1}",source, e.getMessage());
                         }
                     } else if (tagcheckerfile) {
                         if (!line.isEmpty()) {
