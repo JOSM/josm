@@ -319,8 +319,8 @@ public class XMLParseUtil
                 continue;
             }
 
-            String key = styles[i].substring(0, colon).trim();
-            String value = quoteMatch.reset(styles[i].substring(colon + 1).trim()).replaceAll("");
+            String key = styles[i].substring(0, colon).trim().intern();
+            String value = quoteMatch.reset(styles[i].substring(colon + 1).trim()).replaceAll("").intern();
 
             map.put(key, new StyleAttribute(key, value));
         }
