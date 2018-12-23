@@ -87,6 +87,7 @@ way[lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1],
 }
 
 /* {0.key} without {1.tag} */
+node[fire_hydrant:type         ][emergency!=fire_hydrant][disused:emergency!=fire_hydrant],
 *[transformer                  ][!power],
 way[fence_type                 ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
@@ -115,6 +116,7 @@ way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
 }
 
 /* {0.tag} without {1.key} (warning level) */
+node[emergency=fire_hydrant][!fire_hydrant:type],
 way[boundary=administrative][!admin_level],
 relation[boundary=administrative][!admin_level],
 relation[route=bicycle][!network][type=route],
@@ -524,4 +526,9 @@ way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][ju
   assertNoMatch: "way highway=primary lanes=3 oneway=-1";
   assertNoMatch: "way highway=primary lanes=4";
   assertMatch: "way highway=primary lanes=3";
+}
+
+/* #15774 */
+node[emergency=fire_hydrant][fire_hydrant:count][fire_hydrant:count!=1] {
+  throwOther: tr("{0} together with {1}. Tag each hydrant separately.", "{0.tag}", "{1.tag}");
 }

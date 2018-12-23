@@ -64,3 +64,10 @@ way[waterway][oneway=-1] {
   throwWarning: tr("{0} is unnecessary for {1}. The flow direction is defined by the way direction.", "{1.key}", "{0.key}");
   group: tr("unnecessary tag");
 }
+
+/* #15774 */
+node[emergency=fire_hydrant][fire_hydrant:count=1] {
+  throwWarning: tr("{0} is unnecessary for {1}", "{1.tag}", "{0.tag}");
+  group: tr("unnecessary tag");
+  fixRemove: "{1.key}";
+}
