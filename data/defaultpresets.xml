@@ -489,7 +489,7 @@
       <check key="outdoor" text="Climbing routes outdoor" />           
       <text key="website" text="Official web site (e.g. operator)" />
       <text key="url" text="Unofficial web site" />
-      <combo key="opening_hours" text="Opening hours" values="24/7,sunset-sunrise open; sunrise-sunset closed,Mar-Jun: closed; Jul-Feb: open,Mo-Fr 15:00-22:00; Sa-Su 11:00-22:00" values_no_i18n="true"/>
+      <combo key="opening_hours" text="Opening hours" values="24/7,sunset-sunrise open; sunrise-sunset closed,Mar-Jun closed; Jul-Feb open,Mo-Fr 15:00-22:00; Sa-Su 11:00-22:00" values_no_i18n="true"/>
       <combo key="fee" text="Fee" values="yes,no,Sa-Su 08:00-20:00"/>
       <combo key="access" text="Access" values="yes,no,customers,private" />
     </optional>
@@ -7064,7 +7064,7 @@
             <text key="name" text="Name" />
             <reference ref="climbing_styles" />
             <combo key="climbing:bolted" text="Bolts" values="yes,no,1 m,2 m,3 m,4 m,5 m,6 m" values_sort="false"/>
-            <combo key="climbing:pitches" values="1,2,3,4,5,6,7,8" default="1" />
+            <combo key="climbing:pitches" text="Pitches" values="1,2,3,4,5,6,7,8" default="1" />
             <combo key="climbing:length" text="Route length (m)" values="8 m,10 m,12 m,15 m,20 m,25 m,30 m,35 m,40 m"/>
             <space />
             <combo key="climbing:grade:UIAA" text="UIAA grading" values="4,4+,5-,5,5+,6-,6,6+,7-,7,7+,8-,8,8+,9-,9,9+,10-,10,10+,11-,11,11+,12-" />
