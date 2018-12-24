@@ -76,6 +76,8 @@ public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
     /** the start time to compute elapsed time when test finishes */
     protected long startTime;
 
+    private boolean showElementCount;
+
     /**
      * Constructor
      * @param name Name of the test
@@ -202,6 +204,7 @@ public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
         if (progressMonitor != null) {
             progressMonitor.setTicksCount(selection.size());
         }
+        long cnt = 0;
         for (OsmPrimitive p : selection) {
             if (isCanceled()) {
                 break;
@@ -211,6 +214,12 @@ public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
             }
             if (progressMonitor != null) {
                 progressMonitor.worked(1);
+                cnt++;
+                // add frequently changing info to progress monitor so that it
+                // doesn't seem to hang when test takes long
+                if (showElementCount && cnt % 1000 == 0) {
+                    progressMonitor.setExtraText(tr("{0} of {1} elements done", cnt, selection.size()));
+                }
             }
         }
     }
@@ -379,5 +388,9 @@ public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
      */
     public void clear() {
         errors.clear();
+    }
+
+    protected void setShowElements(boolean b) {
+        showElementCount = b;
     }
 }
