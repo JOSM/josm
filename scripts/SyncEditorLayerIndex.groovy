@@ -434,7 +434,7 @@ class SyncEditorLayerIndex {
                             le.remove(urle)
                             lj.remove(urlj)
                             /* replace key for this entry with JOSM URL */
-                            eliUrls.remove(e)
+                            eliUrls.remove(urle)
                             eliUrls.put(urlj,e)
                             break
                         }
