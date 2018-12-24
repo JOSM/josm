@@ -170,6 +170,7 @@ public class ValidateAction extends JosmAction {
             }
             tests = null;
             if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
+                getProgressMonitor().setCustomText("");
                 getProgressMonitor().subTask(tr("Updating ignored errors ..."));
                 for (TestError error : errors) {
                     if (canceled) return;

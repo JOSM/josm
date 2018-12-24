@@ -1092,6 +1092,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     @Override
     public void startTest(ProgressMonitor progressMonitor) {
         super.startTest(progressMonitor);
+        super.setShowElements(true);
         if (indexData == null) {
             indexData = new IndexData(checks);
         }
