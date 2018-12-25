@@ -42,6 +42,7 @@ public class PreferenceDialog extends JDialog {
 
     private final PreferenceTabbedPane tpPreferences = new PreferenceTabbedPane();
     private final ContextSensitiveHelpAction helpAction = new ContextSensitiveHelpAction();
+    private final WindowEventHandler windowEventHandler = new WindowEventHandler();
     private boolean canceled;
 
     /**
@@ -83,8 +84,7 @@ public class PreferenceDialog extends JDialog {
         tpPreferences.buildGui();
         tpPreferences.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         c.add(buildActionPanel(), BorderLayout.SOUTH);
-
-        addWindowListener(new WindowEventHandler());
+        addWindowListener(windowEventHandler);
 
         InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
         setHelpContext(HelpUtil.ht("/Action/Preferences"));
@@ -176,8 +176,7 @@ public class PreferenceDialog extends JDialog {
 
         public void cancel() {
             setCanceled(true);
-            setVisible(false);
-            tpPreferences.validationListeners.clear();
+            dispose();
         }
 
         @Override
@@ -201,9 +200,8 @@ public class PreferenceDialog extends JDialog {
             }
 
             tpPreferences.savePreferences();
-            tpPreferences.validationListeners.clear();
             setCanceled(false);
-            setVisible(false);
+            dispose();
         }
     }
 
@@ -212,5 +210,11 @@ public class PreferenceDialog extends JDialog {
         public void windowClosing(WindowEvent arg0) {
             new CancelAction().cancel();
         }
+    }
+
+    @Override
+    public void dispose() {
+        removeWindowListener(windowEventHandler);
+        super.dispose();
     }
 }
