@@ -102,7 +102,7 @@ public class ChangesetCacheManager extends JFrame {
      */
     public static void destroyInstance() {
         if (instance != null) {
-            instance.setVisible(true);
+            instance.setVisible(false);
             instance.dispose();
             for (Component c : instance.pnlChangesetDetailTabs.getComponents()) {
                 if (c instanceof Destroyable) {
