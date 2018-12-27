@@ -81,7 +81,7 @@
                 <include name="**/*.jar"/>
             </fileset>
             <pathelement path="${dist.jar}"/>
-            <pathelement path="${pmd.dir}/commons-lang3-3.7.jar"/>
+            <pathelement path="${pmd.dir}/commons-lang3-3.8.1.jar"/>
             <pathelement path="${spotbugs.dir}/spotbugs-annotations.jar"/>
         </path>
         <path id="pmd.classpath">
@@ -496,7 +496,7 @@ Build-Date: ${build.tstamp}
                 inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}">
                 <junit printsummary="${junit.printsummary}" fork="true" forkmode="once" failureproperty="test.@{testfamily}@{testITsuffix}.failed">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
-                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit-1.43.jar"/>
+                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
                     <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
                     <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
                     <jvmarg value="--add-exports" if:set="isJava9" />
