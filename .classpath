@@ -22,7 +22,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/jmockit-1.43.jar">
+	<classpathentry kind="lib" path="test/lib/jmockit.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
@@ -37,7 +37,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="test/lib/equalsverifier-2.5.1.jar">
+	<classpathentry exported="true" kind="lib" path="test/lib/equalsverifier-3.1.2.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
@@ -57,7 +57,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/system-rules-1.16.1.jar">
+	<classpathentry kind="lib" path="test/lib/system-rules-1.19.0.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
@@ -67,12 +67,12 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="test/lib/wiremock-standalone-2.18.0.jar">
+	<classpathentry exported="true" kind="lib" path="test/lib/wiremock-standalone-2.20.0.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="test/lib/awaitility-3.1.2.jar">
+	<classpathentry exported="true" kind="lib" path="test/lib/awaitility-3.1.5.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
@@ -83,7 +83,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="tools/pmd/commons-lang3-3.7.jar">
+	<classpathentry kind="lib" path="tools/pmd/commons-lang3-3.8.1.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
@@ -98,12 +98,12 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="tools/groovy/groovy-cli-commons-2.5.1.jar">
+	<classpathentry kind="lib" path="tools/groovy/groovy-cli-commons-2.5.5.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="tools/groovy/groovy-xml-2.5.1.jar">
+	<classpathentry kind="lib" path="tools/groovy/groovy-xml-2.5.5.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>

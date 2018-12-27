@@ -54,9 +54,11 @@
     <exclude name="DefaultPackage"/>
     <exclude name="EmptyMethodInAbstractClassShouldBeAbstract"/>
     <exclude name="FieldDeclarationsShouldBeAtStartOfClass"/>
+    <exclude name="FieldNamingConventions"/>
     <exclude name="ForLoopsMustUseBraces"/>
     <exclude name="IfElseStmtsMustUseBraces"/>
     <exclude name="IfStmtsMustUseBraces"/>
+    <exclude name="LinguisticNaming"/>
     <exclude name="LocalVariableCouldBeFinal"/>
     <exclude name="LongVariable"/>
     <exclude name="MethodArgumentCouldBeFinal"/>
@@ -69,6 +71,7 @@
     <exclude name="TooManyStaticImports"/>
     <exclude name="UnnecessaryConstructor"/>
     <exclude name="UselessParentheses"/>
+    <exclude name="UseUnderscoresInNumericLiterals"/>
     <exclude name="VariableNamingConventions"/>
     <exclude name="WhileLoopsMustUseBraces"/>
   </rule>
@@ -84,8 +87,9 @@
         <property name="violationSuppressXPath" value="//MethodDeclarator/../../../..[@Image='Functions' or @Image='PseudoClasses' or @Image='Role' or @Image='TaggingPreset']"/>
     </properties>
   </rule>
-  <rule ref="category/java/codestyle.xml/VariableNamingConventions">
+  <rule ref="category/java/codestyle.xml/FieldNamingConventions">
     <properties>
+        <property name="enumConstantPattern" value="[A-Za-z][A-Za-z_0-9]*"/>
         <property name="violationSuppressXPath" value="//FieldDeclaration[@Public='true']
           | //FieldDeclaration/../Annotation/MarkerAnnotation/Name[@Image='pref']
           | //FieldDeclaration/Type/ReferenceType/ClassOrInterfaceType[@Image!='Boolean' and 

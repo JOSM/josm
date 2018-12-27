@@ -17,6 +17,7 @@ import org.openstreetmap.josm.tools.Logging;
 import mockit.Deencapsulation;
 import mockit.Invocation;
 import mockit.Mock;
+import mockit.internal.reflection.FieldReflection;
 
 /**
  * MockUp for {@link ExtendedDialog} allowing a test to pre-seed uses of {@link ExtendedDialog}
@@ -156,7 +157,7 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
                 this.act(instance);
                 final int mockResult = this.getMockResult(instance);
                 // TODO check validity of mockResult?
-                Deencapsulation.setField(instance, "result", mockResult);
+                FieldReflection.setField(instance.getClass(), instance, "result", mockResult);
                 Logging.info(
                     "{0} answering {1} to ExtendedDialog with content {2}",
                     this.getClass().getName(),
