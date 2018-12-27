@@ -51,12 +51,12 @@ public class ImageDataTest {
 
     @Test
     public void testmageEntryWithImages() {
-        assertEquals(1, new ImageData(this.getOneImage()).getImages().size());
+        assertEquals(1, new ImageData(getOneImage()).getImages().size());
     }
 
     @Test
     public void testSortData() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
 
         new Expectations(Collections.class) {{
             Collections.sort(list);
@@ -67,12 +67,12 @@ public class ImageDataTest {
 
     @Test
     public void testIsModifiedFalse() {
-        assertFalse(new ImageData(this.getOneImage()).isModified());
+        assertFalse(new ImageData(getOneImage()).isModified());
     }
 
     @Test
     public void testIsModifiedTrue() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
 
         new Expectations(list.get(0)) {{
             list.get(0).hasNewGpsData(); result = true;
@@ -83,7 +83,7 @@ public class ImageDataTest {
 
     @Test
     public void testSelectFirstImage() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
 
         ImageData data = new ImageData(list);
         data.selectFirstImage();
@@ -92,7 +92,7 @@ public class ImageDataTest {
 
     @Test
     public void testSelectLastImage() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry());
 
         ImageData data = new ImageData(list);
@@ -102,7 +102,7 @@ public class ImageDataTest {
 
     @Test
     public void testSelectNextImage() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
 
         ImageData data = new ImageData(list);
         assertTrue(data.hasNextImage());
@@ -115,7 +115,7 @@ public class ImageDataTest {
 
     @Test
     public void testSelectPreviousImage() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry());
 
         ImageData data = new ImageData(list);
@@ -130,7 +130,7 @@ public class ImageDataTest {
 
     @Test
     public void testSetSelectedImage() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
 
         ImageData data = new ImageData(list);
         data.setSelectedImage(list.get(0));
@@ -139,7 +139,7 @@ public class ImageDataTest {
 
     @Test
     public void testClearSelectedImage() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
 
         ImageData data = new ImageData(list);
         data.setSelectedImage(list.get(0));
@@ -149,7 +149,7 @@ public class ImageDataTest {
 
     @Test
     public void testSelectionListener() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         ImageData data = new ImageData(list);
         ImageDataUpdateListener listener = new ImageDataUpdateListener() {
             @Override
@@ -168,7 +168,7 @@ public class ImageDataTest {
 
     @Test
     public void testRemoveSelectedImage() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         ImageData data = new ImageData(list);
         data.selectFirstImage();
         data.removeSelectedImage();
@@ -178,7 +178,7 @@ public class ImageDataTest {
 
     @Test
     public void testRemoveSelectedWithImageTriggerListener() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry());
         ImageData data = new ImageData(list);
         ImageDataUpdateListener listener = new ImageDataUpdateListener() {
@@ -198,7 +198,7 @@ public class ImageDataTest {
 
     @Test
     public void testRemoveImageAndTriggerListener() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         ImageData data = new ImageData(list);
         ImageDataUpdateListener listener = new ImageDataUpdateListener() {
             @Override
@@ -218,9 +218,9 @@ public class ImageDataTest {
     @Test
     public void testMergeFrom() {
         ImageEntry image = new ImageEntry(new File("test2"));
-        List<ImageEntry> list1 = this.getOneImage();
+        List<ImageEntry> list1 = getOneImage();
         list1.add(image);
-        List<ImageEntry> list2 = this.getOneImage();
+        List<ImageEntry> list2 = getOneImage();
         list2.add(new ImageEntry(new File("test3")));
 
         ImageData data = new ImageData(list1);
@@ -243,9 +243,9 @@ public class ImageDataTest {
     @Test
     public void testMergeFromSelectedImage() {
         ImageEntry image = new ImageEntry(new File("test2"));
-        List<ImageEntry> list1 = this.getOneImage();
+        List<ImageEntry> list1 = getOneImage();
         list1.add(image);
-        List<ImageEntry> list2 = this.getOneImage();
+        List<ImageEntry> list2 = getOneImage();
 
         ImageData data = new ImageData(list1);
         ImageData data2 = new ImageData(list2);
@@ -258,7 +258,7 @@ public class ImageDataTest {
 
     @Test
     public void testUpdatePosition() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         ImageData data = new ImageData(list);
 
         new Expectations(list.get(0)) {{
@@ -270,7 +270,7 @@ public class ImageDataTest {
 
     @Test
     public void testUpdateDirection() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         ImageData data = new ImageData(list);
 
         new Expectations(list.get(0)) {{
@@ -282,7 +282,7 @@ public class ImageDataTest {
 
     @Test
     public void testTriggerListenerOnUpdate() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         ImageData data = new ImageData(list);
 
         ImageDataUpdateListener listener = new ImageDataUpdateListener() {
@@ -302,7 +302,7 @@ public class ImageDataTest {
 
     @Test
     public void testManuallyTriggerUpdateListener() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         ImageData data = new ImageData(list);
 
         ImageDataUpdateListener listener = new ImageDataUpdateListener() {

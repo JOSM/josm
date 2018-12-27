@@ -295,6 +295,7 @@ public class ImageryPreferenceTestIT {
         return ProjectionRegistry.getProjection();
     }
 
+    @SuppressWarnings("fallthrough")
     private static AbstractTileSource getTileSource(ImageryInfo info)
             throws IOException, WMTSGetCapabilitiesException, WMSGetCapabilitiesException {
         switch (info.getImageryType()) {
