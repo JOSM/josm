@@ -13,16 +13,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.jcs.access.CacheAccess;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.model.Statement;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -52,6 +58,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.ParallelParameterized;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
@@ -62,6 +69,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link ImageryPreference} class.
  */
+@RunWith(ParallelParameterized.class)
 public class ImageryPreferenceTestIT {
 
     private static final LatLon GREENWICH = new LatLon(51.47810, -0.00170);
@@ -70,25 +78,61 @@ public class ImageryPreferenceTestIT {
     /**
      * Setup rule
      */
-    @Rule
+    @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids()
+    public static JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids()
                                                    .timeout((int) TimeUnit.MINUTES.toMillis(40));
 
-    private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
-    private final Map<String, byte[]> workingURLs = Collections.synchronizedMap(new TreeMap<>());
+    static {
+        try {
+            test.apply(new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    // Do nothing. Hack needed because @Parameters are computed before anything else
+                }
+            }, Description.createSuiteDescription(ImageryPreferenceTestIT.class)).evaluate();
+        } catch (Throwable e) {
+            Logging.error(e);
+        }
+    }
 
-    private TMSCachedTileLoaderJob helper;
-    private List<String> ignoredErrors;
+    /** Entry to test */
+    private final ImageryInfo info;
+    private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
+    private static final Map<String, byte[]> workingURLs = Collections.synchronizedMap(new TreeMap<>());
+
+    private static TMSCachedTileLoaderJob helper;
+    private static List<String> ignoredErrors;
 
     /**
      * Setup test
      * @throws IOException in case of I/O error
      */
-    @Before
-    public void before() throws IOException {
+    @BeforeClass
+    public static void beforeClass() throws IOException {
         helper = new TMSCachedTileLoaderJob(null, null, new CacheAccess<>(null), new TileJobOptions(0, 0, null, 0), null);
         ignoredErrors = TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class);
+    }
+
+    /**
+     * Returns list of imagery entries to test.
+     * @return list of imagery entries to test
+     */
+    @Parameters(name = "{0}")
+    public static List<Object[]> data() {
+        ImageryLayerInfo.instance.load(false);
+        return ImageryLayerInfo.instance.getDefaultLayers()
+                .stream().map(x -> new Object[] {x.getId(), x})
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Constructs a new {@code ImageryPreferenceTestIT} instance.
+     * @param id entry ID, used only to name tests
+     * @param info entry to test
+     */
+    public ImageryPreferenceTestIT(String id, ImageryInfo info) {
+        this.info = Objects.requireNonNull(info);
     }
 
     private boolean addError(ImageryInfo info, String error) {
@@ -335,13 +379,11 @@ public class ImageryPreferenceTestIT {
     }
 
     /**
-     * Test that available imagery entries are valid.
-     * @throws Exception in case of error
+     * Test that available imagery entry is valid.
      */
     @Test
-    public void testValidityOfAvailableImageryEntries() throws Exception {
-        ImageryLayerInfo.instance.load(false);
-        ImageryLayerInfo.instance.getDefaultLayers().parallelStream().forEach(this::checkEntry);
+    public void testValidityOfAvailableImageryEntry() {
+        checkEntry(info);
         assertTrue(errors.toString().replaceAll("\\}, ", "\n\\}, ").replaceAll(", ImageryInfo\\{", "\n      ,ImageryInfo\\{"),
                 errors.isEmpty());
         assertFalse(workingURLs.isEmpty());
