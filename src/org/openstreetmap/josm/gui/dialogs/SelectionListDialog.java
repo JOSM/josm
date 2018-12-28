@@ -141,6 +141,7 @@ public class SelectionListDialog extends ToggleDialog {
         lstPrimitives.setTransferHandler(null);
         super.destroy();
     }
+
     /**
      * Constructs a new {@code SelectionListDialog}.
      */
