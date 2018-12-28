@@ -44,6 +44,8 @@
   <suppress checks="HeaderCheck" files="MenuScroller\.java" />
   <suppress checks="HeaderCheck" files="MultiSplitLayout\.java" />
   <suppress checks="HeaderCheck" files="MultiSplitPane\.java" />
+  <suppress checks="HeaderCheck" files="ParallelParameterized\.java" />
+  <suppress checks="HeaderCheck" files="ParallelScheduler\.java" />
   <suppress checks="FileLengthCheck" files="DomainValidator\.java" />
   <suppress checks="org.openstreetmap.josm.TopLevelJavadocCheck" files="package-info\.java" />
   <suppress checks="org.openstreetmap.josm.TopLevelJavadocCheck" files="[\\/]test[\\/]" />
