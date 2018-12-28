@@ -389,6 +389,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         MultikeyActionsHandler.getInstance().removeAction(activateLayerAction);
         MultikeyActionsHandler.getInstance().removeAction(showHideLayerAction);
         JumpToMarkerActions.unregisterActions();
+        layerList.setTransferHandler(null);
         super.destroy();
         instance = null;
     }
