@@ -6099,7 +6099,7 @@
                 </combo>
                 <space />
                 <combo key="couplings" text="Number of couplings" values="1,2,3" />
-                <combo key="couplings:type" text="Coupling standard" values="Bayonet,Barcelona,Guillemin,Klaue,Sprawny,Storz,UNI" />
+                <!-- <combo key="couplings:type" text="Coupling standard" values="Bayonet,Barcelona,Guillemin,Klaue,Sprawny,Storz,UNI" /> capitalized values which is contrary to general tagging conventions -->
                 <text key="couplings:diameters" text="Each coupling diameter (separated by ;)" />
                 <space />
                 <combo key="colour" text="Colour" values="blue,green,red,yellow,grey" />
