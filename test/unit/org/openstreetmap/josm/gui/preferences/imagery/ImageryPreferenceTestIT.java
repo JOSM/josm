@@ -80,7 +80,7 @@ public class ImageryPreferenceTestIT {
      */
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https().preferences().projection().projectionNadGrids()
+    public static JOSMTestRules test = new JOSMTestRules().https().i18n().preferences().projection().projectionNadGrids()
                                                    .timeout((int) TimeUnit.MINUTES.toMillis(40));
 
     static {
@@ -122,7 +122,8 @@ public class ImageryPreferenceTestIT {
     public static List<Object[]> data() {
         ImageryLayerInfo.instance.load(false);
         return ImageryLayerInfo.instance.getDefaultLayers()
-                .stream().map(x -> new Object[] {x.getId(), x})
+                .stream()
+                .map(x -> new Object[] {x.getId(), x})
                 .collect(Collectors.toList());
     }
 
@@ -136,10 +137,11 @@ public class ImageryPreferenceTestIT {
     }
 
     private boolean addError(ImageryInfo info, String error) {
-        return !ignoredErrors.contains(error) &&
+        String errorMsg = error.replace('\n', ' ');
+        return !ignoredErrors.contains(errorMsg) &&
                errors.computeIfAbsent(info.getCountryCode(), x -> Collections.synchronizedMap(new TreeMap<>()))
                      .computeIfAbsent(info, x -> Collections.synchronizedList(new ArrayList<>()))
-                     .add(error);
+                     .add(errorMsg);
     }
 
     private Optional<byte[]> checkUrl(ImageryInfo info, String url) {
