@@ -808,6 +808,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
         nonChangedLayersBuffer = null;
         offscreenBuffer = null;
+        setTransferHandler(null);
         GuiHelper.destroyComponents(this, false);
     }
 

@@ -136,6 +136,11 @@ public class SelectionListDialog extends ToggleDialog {
         ));
     }
 
+    @Override
+    public void destroy() {
+        lstPrimitives.setTransferHandler(null);
+        super.destroy();
+    }
     /**
      * Constructs a new {@code SelectionListDialog}.
      */
