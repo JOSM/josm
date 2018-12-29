@@ -153,7 +153,7 @@ public class ImageryPreferenceTestIT {
                 Response response = HttpClient.create(new URL(url))
                         .setHeaders(info.getCustomHttpHeaders())
                         .setConnectTimeout((int) TimeUnit.MINUTES.toMillis(1))
-                        .setReadTimeout((int) TimeUnit.MINUTES.toMillis(2))
+                        .setReadTimeout((int) TimeUnit.MINUTES.toMillis(3))
                         .connect();
                 if (response.getResponseCode() >= 400) {
                     addError(info, url + " -> HTTP " + response.getResponseCode());
@@ -384,7 +384,7 @@ public class ImageryPreferenceTestIT {
      * Test that available imagery entry is valid.
      */
     @Test
-    public void testValidityOfAvailableImageryEntry() {
+    public void testImageryEntryValidity() {
         checkEntry(info);
         assertTrue(errors.toString().replaceAll("\\}, ", "\n\\}, ").replaceAll(", ImageryInfo\\{", "\n      ,ImageryInfo\\{"),
                 errors.isEmpty());
