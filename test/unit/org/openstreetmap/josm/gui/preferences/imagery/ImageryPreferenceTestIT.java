@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -99,10 +100,11 @@ public class ImageryPreferenceTestIT {
     /** Entry to test */
     private final ImageryInfo info;
     private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
+    private final Map<String, Map<ImageryInfo, List<String>>> ignoredErrors = Collections.synchronizedMap(new TreeMap<>());
     private static final Map<String, byte[]> workingURLs = Collections.synchronizedMap(new TreeMap<>());
 
     private static TMSCachedTileLoaderJob helper;
-    private static List<String> ignoredErrors;
+    private static List<String> errorsToIgnore;
 
     /**
      * Setup test
@@ -111,7 +113,7 @@ public class ImageryPreferenceTestIT {
     @BeforeClass
     public static void beforeClass() throws IOException {
         helper = new TMSCachedTileLoaderJob(null, null, new CacheAccess<>(null), new TileJobOptions(0, 0, null, 0), null);
-        ignoredErrors = TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class);
+        errorsToIgnore = TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class);
     }
 
     /**
@@ -138,10 +140,13 @@ public class ImageryPreferenceTestIT {
 
     private boolean addError(ImageryInfo info, String error) {
         String errorMsg = error.replace('\n', ' ');
-        return !ignoredErrors.contains(errorMsg) &&
-               errors.computeIfAbsent(info.getCountryCode(), x -> Collections.synchronizedMap(new TreeMap<>()))
-                     .computeIfAbsent(info, x -> Collections.synchronizedList(new ArrayList<>()))
-                     .add(errorMsg);
+        return addError(errorsToIgnore.contains(errorMsg) ? ignoredErrors : errors, info, errorMsg);
+    }
+
+    private static boolean addError(Map<String, Map<ImageryInfo, List<String>>> map, ImageryInfo info, String errorMsg) {
+        return map.computeIfAbsent(info.getCountryCode(), x -> Collections.synchronizedMap(new TreeMap<>()))
+                  .computeIfAbsent(info, x -> Collections.synchronizedList(new ArrayList<>()))
+                  .add(errorMsg);
     }
 
     private Optional<byte[]> checkUrl(ImageryInfo info, String url) {
@@ -380,14 +385,18 @@ public class ImageryPreferenceTestIT {
         throw new IllegalArgumentException("Unable to find a valid WMS layer");
     }
 
+    private static String format(Map<String, Map<ImageryInfo, List<String>>> map) {
+        return map.toString().replaceAll("\\}, ", "\n\\}, ").replaceAll(", ImageryInfo\\{", "\n      ,ImageryInfo\\{");
+    }
+
     /**
      * Test that available imagery entry is valid.
      */
     @Test
     public void testImageryEntryValidity() {
         checkEntry(info);
-        assertTrue(errors.toString().replaceAll("\\}, ", "\n\\}, ").replaceAll(", ImageryInfo\\{", "\n      ,ImageryInfo\\{"),
-                errors.isEmpty());
+        assertTrue(format(errors), errors.isEmpty());
         assertFalse(workingURLs.isEmpty());
+        assumeTrue(format(ignoredErrors), ignoredErrors.isEmpty());
     }
 }
