@@ -334,7 +334,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private void buildMembershipTable() {
         membershipData.setColumnIdentifiers(new String[]{tr("Member Of"), tr("Role"), tr("Position")});
         membershipTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        membershipTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         TableColumnModel mod = membershipTable.getColumnModel();
         membershipTable.getTableHeader().setReorderingAllowed(false);
@@ -676,7 +675,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         // resize tables to fit content
         TableHelper.computeColumnsWidth(tagTable);
-        TableHelper.computeColumnsWidth(membershipTable);
 
         int selectedIndex;
         if (selectedTag != null && (selectedIndex = findViewRow(tagTable, tagData, selectedTag)) != -1) {
