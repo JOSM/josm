@@ -158,7 +158,7 @@ public class ImageryPreferenceTestIT {
                 Response response = HttpClient.create(new URL(url))
                         .setHeaders(info.getCustomHttpHeaders())
                         .setConnectTimeout((int) TimeUnit.MINUTES.toMillis(1))
-                        .setReadTimeout((int) TimeUnit.MINUTES.toMillis(3))
+                        .setReadTimeout((int) TimeUnit.MINUTES.toMillis(5))
                         .connect();
                 if (response.getResponseCode() >= 400) {
                     addError(info, url + " -> HTTP " + response.getResponseCode());
