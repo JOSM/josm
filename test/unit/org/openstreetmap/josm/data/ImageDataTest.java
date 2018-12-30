@@ -50,7 +50,7 @@ public class ImageDataTest {
     }
 
     @Test
-    public void testmageEntryWithImages() {
+    public void testImageEntryWithImages() {
         assertEquals(1, new ImageData(getOneImage()).getImages().size());
     }
 

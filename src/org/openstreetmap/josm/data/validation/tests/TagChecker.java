@@ -226,29 +226,30 @@ public class TagChecker extends TagTest {
                             continue;
                         }
                         try {
-                        String key = line.substring(0, 2);
-                        line = line.substring(2);
+                            String key = line.substring(0, 2);
+                            line = line.substring(2);
 
-                        switch (key) {
-                        case "S:":
-                            ignoreDataStartsWith.add(line);
-                            break;
-                        case "E:":
-                            ignoreDataEquals.add(line);
-                            break;
-                        case "F:":
-                            ignoreDataEndsWith.add(line);
-                            break;
-                        case "K:":
-                            ignoreDataTag.add(Tag.ofString(line));
-                            break;
-                        default:
-                            if (!key.startsWith(";")) {
-                                Logging.warn("Unsupported TagChecker key: " + key);
+                            switch (key) {
+                            case "S:":
+                                ignoreDataStartsWith.add(line);
+                                break;
+                            case "E:":
+                                ignoreDataEquals.add(line);
+                                break;
+                            case "F:":
+                                ignoreDataEndsWith.add(line);
+                                break;
+                            case "K:":
+                                ignoreDataTag.add(Tag.ofString(line));
+                                break;
+                            default:
+                                if (!key.startsWith(";")) {
+                                    Logging.warn("Unsupported TagChecker key: " + key);
+                                }
                             }
-                        }
                         } catch (IllegalArgumentException e) {
                             Logging.error("Invalid line in {0} : {1}", source, e.getMessage());
+                            Logging.trace(e);
                         }
                     } else if (tagcheckerfile) {
                         if (!line.isEmpty()) {
