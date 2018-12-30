@@ -68,8 +68,6 @@ public final class ShapeClipper {
                 }
                 points[num++] = x;
                 points[num++] = y;
-                // } else if (type != PathIterator.SEG_CLOSE) {
-                //Logging.warn("unhandled path iterator");
             }
             pit.next();
         }
@@ -124,8 +122,8 @@ public final class ShapeClipper {
         double lastX = points[0], lastY = points[1];
         path.moveTo(lastX, lastY);
         int numOut = 1;
-        for (int i = 2; i < num;) {
-            double x = points[i++], y = points[i++];
+        for (int i = 2; i < num; i += 2) {
+            double x = points[i], y = points[i+1];
             if (Double.compare(x, lastX) != 0 || Double.compare(y, lastY) != 0) {
                 path.lineTo(x, y);
                 lastX = x;

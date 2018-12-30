@@ -513,65 +513,62 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         }
 
         ImageEntry e = data.getSelectedImage();
-        if (e != null) {
-            if (e.getPos() != null) {
-                Point p = mv.getPoint(e.getPos());
+        if (e != null && e.getPos() != null) {
+            Point p = mv.getPoint(e.getPos());
 
-                int imgWidth;
-                int imgHeight;
-                if (useThumbs && e.hasThumbnail()) {
-                    Dimension d = scaledDimension(e.getThumbnail());
-                    if (d != null) {
-                        imgWidth = d.width;
-                        imgHeight = d.height;
-                    } else {
-                        imgWidth = -1;
-                        imgHeight = -1;
-                    }
+            int imgWidth;
+            int imgHeight;
+            if (useThumbs && e.hasThumbnail()) {
+                Dimension d = scaledDimension(e.getThumbnail());
+                if (d != null) {
+                    imgWidth = d.width;
+                    imgHeight = d.height;
                 } else {
-                    imgWidth = selectedIcon.getIconWidth();
-                    imgHeight = selectedIcon.getIconHeight();
+                    imgWidth = -1;
+                    imgHeight = -1;
                 }
+            } else {
+                imgWidth = selectedIcon.getIconWidth();
+                imgHeight = selectedIcon.getIconHeight();
+            }
 
-                if (e.getExifImgDir() != null) {
-                    // Multiplier must be larger than sqrt(2)/2=0.71.
-                    double arrowlength = Math.max(25, Math.max(imgWidth, imgHeight) * 0.85);
-                    double arrowwidth = arrowlength / 1.4;
+            if (e.getExifImgDir() != null) {
+                // Multiplier must be larger than sqrt(2)/2=0.71.
+                double arrowlength = Math.max(25, Math.max(imgWidth, imgHeight) * 0.85);
+                double arrowwidth = arrowlength / 1.4;
 
-                    double dir = e.getExifImgDir();
-                    // Rotate 90 degrees CCW
-                    double headdir = (dir < 90) ? dir + 270 : dir - 90;
-                    double leftdir = (headdir < 90) ? headdir + 270 : headdir - 90;
-                    double rightdir = (headdir > 270) ? headdir - 270 : headdir + 90;
+                double dir = e.getExifImgDir();
+                // Rotate 90 degrees CCW
+                double headdir = (dir < 90) ? dir + 270 : dir - 90;
+                double leftdir = (headdir < 90) ? headdir + 270 : headdir - 90;
+                double rightdir = (headdir > 270) ? headdir - 270 : headdir + 90;
 
-                    double ptx = p.x + Math.cos(Utils.toRadians(headdir)) * arrowlength;
-                    double pty = p.y + Math.sin(Utils.toRadians(headdir)) * arrowlength;
+                double ptx = p.x + Math.cos(Utils.toRadians(headdir)) * arrowlength;
+                double pty = p.y + Math.sin(Utils.toRadians(headdir)) * arrowlength;
 
-                    double ltx = p.x + Math.cos(Utils.toRadians(leftdir)) * arrowwidth/2;
-                    double lty = p.y + Math.sin(Utils.toRadians(leftdir)) * arrowwidth/2;
+                double ltx = p.x + Math.cos(Utils.toRadians(leftdir)) * arrowwidth/2;
+                double lty = p.y + Math.sin(Utils.toRadians(leftdir)) * arrowwidth/2;
 
-                    double rtx = p.x + Math.cos(Utils.toRadians(rightdir)) * arrowwidth/2;
-                    double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
+                double rtx = p.x + Math.cos(Utils.toRadians(rightdir)) * arrowwidth/2;
+                double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
 
-                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g.setColor(new Color(255, 255, 255, 192));
-                    int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
-                    int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
-                    g.fillPolygon(xar, yar, 4);
-                    g.setColor(Color.black);
-                    g.setStroke(new BasicStroke(1.2f));
-                    g.drawPolyline(xar, yar, 3);
-                }
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g.setColor(new Color(255, 255, 255, 192));
+                int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
+                int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
+                g.fillPolygon(xar, yar, 4);
+                g.setColor(Color.black);
+                g.setStroke(new BasicStroke(1.2f));
+                g.drawPolyline(xar, yar, 3);
+            }
 
-                if (useThumbs && e.hasThumbnail()) {
-                    g.setColor(new Color(128, 0, 0, 122));
-                    g.fillRect(p.x - imgWidth / 2, p.y - imgHeight / 2, imgWidth, imgHeight);
-                } else {
-                    selectedIcon.paintIcon(mv, g,
-                            p.x - imgWidth / 2,
-                            p.y - imgHeight / 2);
-
-                }
+            if (useThumbs && e.hasThumbnail()) {
+                g.setColor(new Color(128, 0, 0, 122));
+                g.fillRect(p.x - imgWidth / 2, p.y - imgHeight / 2, imgWidth, imgHeight);
+            } else {
+                selectedIcon.paintIcon(mv, g,
+                        p.x - imgWidth / 2,
+                        p.y - imgHeight / 2);
             }
         }
     }
