@@ -11,6 +11,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.jcs.access.CacheAccess;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -105,6 +107,7 @@ public class ImageryPreferenceTestIT {
 
     private static TMSCachedTileLoaderJob helper;
     private static List<String> errorsToIgnore;
+    private static List<String> notIgnoredErrors;
 
     /**
      * Setup test
@@ -114,6 +117,17 @@ public class ImageryPreferenceTestIT {
     public static void beforeClass() throws IOException {
         helper = new TMSCachedTileLoaderJob(null, null, new CacheAccess<>(null), new TileJobOptions(0, 0, null, 0), null);
         errorsToIgnore = TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class);
+        notIgnoredErrors = new LinkedList<>(errorsToIgnore);
+    }
+
+    /**
+     * Cleanup test
+     */
+    @AfterClass
+    public static void afterClass() {
+        for (String e : notIgnoredErrors) {
+            Logging.warn("Ignore line unused: " + e);
+        }
     }
 
     /**
@@ -140,6 +154,8 @@ public class ImageryPreferenceTestIT {
 
     private boolean addError(ImageryInfo info, String error) {
         String errorMsg = error.replace('\n', ' ');
+        if (notIgnoredErrors.contains(errorMsg))
+            notIgnoredErrors.remove(errorMsg);
         return addError(errorsToIgnore.contains(errorMsg) ? ignoredErrors : errors, info, errorMsg);
     }
 
