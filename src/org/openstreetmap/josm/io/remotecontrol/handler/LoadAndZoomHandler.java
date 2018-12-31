@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -317,7 +316,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             toSelect.clear();
             for (String item : args.get("select").split(",")) {
                 if (!item.isEmpty()) {
-                    if (CURRENT_SELECTION.equals(item.toLowerCase(Locale.ENGLISH))) {
+                    if (CURRENT_SELECTION.equalsIgnoreCase(item)) {
                         isKeepingCurrentSelection = true;
                         continue;
                     }

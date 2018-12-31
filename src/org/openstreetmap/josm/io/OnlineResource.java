@@ -40,8 +40,8 @@ public enum OnlineResource {
      * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
      */
     public final void checkOfflineAccess(String downloadString, String resourceString) {
-        if (NetworkManager.isOffline(this) && downloadString.substring(downloadString.indexOf("://"))
-                .startsWith(resourceString.substring(resourceString.indexOf("://")))) {
+        if (NetworkManager.isOffline(this) && downloadString
+                .startsWith(resourceString.substring(resourceString.indexOf("://")), downloadString.indexOf("://"))) {
             throw new OfflineAccessException(tr("Unable to access ''{0}'': {1} not available (offline mode)", downloadString, getLocName()));
         }
     }

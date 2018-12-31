@@ -326,25 +326,6 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             return createNewLayer(dataSet, layerName);
         }
 
-        /**
-         * @param layerName the name of the new layer
-         * @deprecated Use {@link #createNewLayer(DataSet, Optional)}
-         * @return a newly constructed layer
-         */
-        @Deprecated
-        protected OsmDataLayer createNewLayer(final String layerName) {
-            return createNewLayer(Optional.ofNullable(layerName).filter(it -> !Utils.isStripEmpty(it)));
-        }
-
-        /**
-         * @deprecated Use {@link #createNewLayer(Optional)}
-         * @return a newly constructed layer
-         */
-        @Deprecated
-        protected OsmDataLayer createNewLayer() {
-            return createNewLayer(Optional.empty());
-        }
-
         protected Optional<ProjectionBounds> computeBbox(Bounds bounds) {
             BoundingXYVisitor v = new BoundingXYVisitor();
             if (bounds != null) {
@@ -360,7 +341,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             if (settings.isNewLayer() || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
                 // the user explicitly wants a new layer, we don't have any layer at all
                 // or it is not clear which layer to merge to
-                final OsmDataLayer layer = createNewLayer(newLayerName);
+                final OsmDataLayer layer = createNewLayer(Optional.ofNullable(newLayerName).filter(it -> !Utils.isStripEmpty(it)));
                 MainApplication.getLayerManager().addLayer(layer, zoomAfterDownload);
                 return layer;
             }

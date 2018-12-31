@@ -229,9 +229,7 @@ public abstract class UnconnectedWays extends Test {
                 if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
                     continue;
                 }
-                if (!s.highway && endnodesHighway.contains(en) && !s.w.concernsArea()) {
-                    map.put(en, s.w);
-                } else if (endnodes.contains(en) && !s.w.concernsArea()) {
+                if (((!s.highway && endnodesHighway.contains(en)) || endnodes.contains(en)) && !s.w.concernsArea()) {
                     map.put(en, s.w);
                 }
             }

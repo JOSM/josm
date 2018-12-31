@@ -238,6 +238,15 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         super.actionPerformed(e);
     }
 
+    private static final class ConfirmOverwriteBookmarkDialog extends ExtendedDialog {
+        ConfirmOverwriteBookmarkDialog() {
+            super(MainApplication.getMainFrame(), tr("Overwrite"), new String[] {tr("Overwrite"), tr("Cancel")});
+            contentInsets = new Insets(10, 15, 10, 15);
+            setContent(tr("Offset bookmark already exists. Overwrite?"));
+            setButtonIcons("ok", "cancel");
+        }
+    }
+
     private class ImageryOffsetDialog extends ExtendedDialog implements FocusListener {
         private final JosmTextField tOffset = new JosmTextField();
         private final JosmTextField tBookmarkName = new JosmTextField();
@@ -325,18 +334,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         }
 
         private boolean confirmOverwriteBookmark() {
-            ExtendedDialog dialog = new ExtendedDialog(
-                    MainApplication.getMainFrame(),
-                    tr("Overwrite"),
-                    tr("Overwrite"), tr("Cancel")
-            ) { {
-                contentInsets = new Insets(10, 15, 10, 15);
-            } };
-            dialog.setContent(tr("Offset bookmark already exists. Overwrite?"));
-            dialog.setButtonIcons("ok", "cancel");
-            dialog.setupDialog();
-            dialog.setVisible(true);
-            return dialog.getValue() == 1;
+            return new ConfirmOverwriteBookmarkDialog().showDialog().getValue() == 1;
         }
 
         @Override

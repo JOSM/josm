@@ -9,7 +9,9 @@ import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Platform;
 import org.openstreetmap.josm.tools.PlatformVisitor;
@@ -73,14 +75,19 @@ public final class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileS
         return null;
     }
 
+    private static List<File> visit(String prefSuffix, String... defaults) {
+        return Config.getPref().getList("ntv2.proj4.grid.dir." + prefSuffix, Arrays.asList(defaults))
+                               .stream().map(File::new).collect(Collectors.toList());
+    }
+
     @Override
     public List<File> visitUnixoid() {
-        return Arrays.asList(new File("/usr/local/share/proj"), new File("/usr/share/proj"));
+        return visit("unix", "/usr/local/share/proj", "/usr/share/proj");
     }
 
     @Override
     public List<File> visitWindows() {
-        return Arrays.asList(new File("C:\\PROJ\\NAD"));
+        return visit("windows", "C:\\PROJ\\NAD");
     }
 
     @Override

@@ -357,7 +357,7 @@ public final class CustomConfigurator {
                     }
                     for (PluginInformation pi4: toDeletePlugins) {
                         pls.remove(pi4.name);
-                        new File(Preferences.main().getPluginsDirectory(), pi4.name+".jar").deleteOnExit();
+                        Utils.deleteFile(new File(Preferences.main().getPluginsDirectory(), pi4.name+".jar"));
                     }
                     Config.getPref().putList("plugins", pls);
                 });

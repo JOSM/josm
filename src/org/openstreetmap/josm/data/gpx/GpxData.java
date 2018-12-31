@@ -488,7 +488,8 @@ public class GpxData extends WithAttributes implements Data {
                 HashMap<String, Object> attrs = new HashMap<>(trk.getAttributes());
                 GpxData d = new GpxData();
                 d.addTrack(trk);
-                return new GpxLayer(d, ensureUniqueName(attrs, counts)); })
+                return new GpxLayer(d, ensureUniqueName(attrs, counts));
+            })
             .forEachOrdered(layer -> MainApplication.getLayerManager().addLayer(layer));
     }
 
@@ -508,7 +509,7 @@ public class GpxData extends WithAttributes implements Data {
      * @since 13210
      */
     public synchronized int getTrackSegsCount() {
-        return privateTracks.stream().collect(Collectors.summingInt(t -> t.getSegments().size()));
+        return privateTracks.stream().mapToInt(t -> t.getSegments().size()).sum();
     }
 
     /**
