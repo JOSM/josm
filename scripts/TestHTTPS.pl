@@ -9,15 +9,10 @@ use XML::LibXML;
 my %urls;
 
 my %known = map {$_ => 1} qw(
-  ge.ch
-  gis.mapa.lodz.pl
-  osmdata.asitvd.ch
   siglon.londrina.pr.gov.br
   tiles.itoworld.com
   tms.cadastre.openstreetmap.fr
-  wms.openstreetmap.de
   www.jgoodies.com
-  www.osm-tools.org
   zibi.openstreetmap.org.pl
 );
 
@@ -71,6 +66,14 @@ sub getfile($$)
 
 print "Options: PLUGIN STYLE RULE PRESET MAP GETPLUGIN GETSTYLE GETRULE GETPRESET GETMAP LOCAL\n" if !@ARGV;
 
+open OUTFILE,">>","josm_https.txt" or die "Could not open output file";
+
+sub doprint($)
+{
+  print OUTFILE $_[0];
+  print $_[0];
+}
+
 my $local = 0;
 for my $ARG (@ARGV)
 {
@@ -92,7 +95,7 @@ for my $url (sort keys %urls)
   my $i = join(" # ", sort keys %{$urls{$url}});
   if($local) # skip test
   {
-    print "* ".($known{$url} ? "~~" : "")."$url:$i\n";
+    doprint "* ".($known{$url} ? "~~" : "")."$url:$i\n";
     next;
   }
   eval
@@ -104,13 +107,13 @@ for my $url (sort keys %urls)
     $s->write_request(GET => "/", 'User-Agent' => "TestHTTPS/1.0");
     my($code, $mess, %h) = $s->read_response_headers;
     alarm(0);
-    print "* ".($known{$url} ? "~~" : "")."$url [$code $mess]: $i\n";
+    doprint "* ".($known{$url} ? "~~" : "")."$url [$code $mess]: $i\n";
   };
   if($@ && $@ !~ "(--Alarm--|Connection refused)")
   {
     my $e = $@;
     $e =~ s/[\r\n]//g;
     $e =~ s/ at scripts\/TestHTTPS.pl .*//;
-    print "* ".($known{$url} ? "~~" : "")."$url [Error $e] :$i\n";
+    doprint "* ".($known{$url} ? "~~" : "")."$url [Error $e] :$i\n";
   }
 }
