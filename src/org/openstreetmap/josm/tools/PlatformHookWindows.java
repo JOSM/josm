@@ -195,10 +195,12 @@ public class PlatformHookWindows implements PlatformHook {
 
     @Override
     public void openUrl(String url) throws IOException {
-        final String customBrowser = Config.getPref().get("browser.windows", null);
-        if (customBrowser != null) {
-            Runtime.getRuntime().exec(new String[]{customBrowser, url});
-            return;
+        if (!url.startsWith("file:/")) {
+            final String customBrowser = Config.getPref().get("browser.windows", "");
+            if (!customBrowser.isEmpty()) {
+                Runtime.getRuntime().exec(new String[]{customBrowser, url});
+                return;
+            }
         }
         try {
             // Desktop API works fine under Windows
