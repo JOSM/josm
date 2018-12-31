@@ -31,9 +31,9 @@ import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -127,8 +127,7 @@ public class MinimapDialogTest {
                 fail();
             });
         } catch (Throwable e) {
-            // need to turn this *back* into an AssertionFailedError
-            fail(String.format("Failed to find menu item with label %s: %s", label, e));
+            throw new RuntimeException(String.format("Failed to find menu item with label %s: %s", label, e), e);
         }
     }
 

@@ -26,7 +26,7 @@ import com.drew.metadata.jpeg.JpegDirectory;
  * Stores info about each image
  * @since 14205 (extracted from gui.layer.geoimage.ImageEntry)
  */
-public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
+public class GpxImageEntry implements Comparable<GpxImageEntry> {
     private File file;
     private Integer exifOrientation;
     private LatLon exifCoor;
@@ -70,6 +70,28 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
      * Constructs a new {@code GpxImageEntry}.
      */
     public GpxImageEntry() {}
+
+    /**
+     * Constructs a new {@code GpxImageEntry} from an existing instance.
+     * @param other existing instance
+     * @since 14624
+     */
+    public GpxImageEntry(GpxImageEntry other) {
+        file = other.file;
+        exifOrientation = other.exifOrientation;
+        exifCoor = other.exifCoor;
+        exifImgDir = other.exifImgDir;
+        exifTime = other.exifTime;
+        isNewGpsData = other.isNewGpsData;
+        exifGpsTime = other.exifGpsTime;
+        pos = other.pos;
+        speed = other.speed;
+        elevation = other.elevation;
+        gpsTime = other.gpsTime;
+        width = other.width;
+        height = other.height;
+        tmp = other.tmp;
+    }
 
     /**
      * Constructs a new {@code GpxImageEntry}.
@@ -313,15 +335,6 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
     }
 
     @Override
-    public GpxImageEntry clone() {
-        try {
-            return (GpxImageEntry) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @Override
     public int compareTo(GpxImageEntry image) {
         if (exifTime != null && image.exifTime != null)
             return exifTime.compareTo(image.exifTime);
@@ -369,7 +382,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, Cloneable {
      * is not needed anymore.
      */
     public void createTmp() {
-        tmp = clone();
+        tmp = new GpxImageEntry(this);
         tmp.tmp = null;
     }
 
