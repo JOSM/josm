@@ -4667,7 +4667,7 @@
             <key key="information" value="map" />
             <text key="name" text="Name" />
             <combo key="map_type" text="Detail Grade" values="topo,street,scheme,toposcope" />
-            <combo key="map_size" text="Shown Area" values="site,city,region" />
+            <combo key="map_size" text="Shown Area" values="site,city,region" values_sort="false" />
             <text key="description" text="Closer description" />
             <optional text="Routes shown for:">
                 <check key="hiking" text="Hiking" />

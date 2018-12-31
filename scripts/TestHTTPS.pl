@@ -66,7 +66,7 @@ sub getfile($$)
 
 print "Options: PLUGIN STYLE RULE PRESET MAP GETPLUGIN GETSTYLE GETRULE GETPRESET GETMAP LOCAL\n" if !@ARGV;
 
-open OUTFILE,">>","josm_https.txt" or die "Could not open output file";
+open OUTFILE,">","josm_https.txt" or die "Could not open output file";
 
 sub doprint($)
 {
