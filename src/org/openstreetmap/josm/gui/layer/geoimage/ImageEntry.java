@@ -23,6 +23,16 @@ public final class ImageEntry extends GpxImageEntry {
     }
 
     /**
+     * Constructs a new {@code ImageEntry} from an existing instance.
+     * @param other existing instance
+     * @since 14625
+     */
+    public ImageEntry(ImageEntry other) {
+        super(other);
+        thumbnail = other.thumbnail;
+    }
+
+    /**
      * Constructs a new {@code ImageEntry}.
      * @param file Path to image file on disk
      */
