@@ -53,18 +53,37 @@ sub getfile($$)
   my $name;
   for my $line (<FILE>)
   {
-    if($line =~ /^([^ \t].*);/)
+    if($line =~ /^([^ \t].*);(.*)/)
     {
-      $name = $1;
+      my ($n, $url) = ($1, $2);
+      if($url =~ /josm\.openstreetmap\.de/)
+      {
+        $name = "WIKI$type:$n";
+      }
+      else
+      {
+        $name = "$type:$n";
+      }
     }
     if($line =~ /http:\/\/(.*?)[\/]/)
     {
-      $urls{$1}{"$type:$name"}++;
+      $urls{$1}{$name}++;
     }
   }
+  close FILE;
 }
 
-print "Options: PLUGIN STYLE RULE PRESET MAP GETPLUGIN GETSTYLE GETRULE GETPRESET GETMAP LOCAL\n" if !@ARGV;
+sub getdump()
+{
+  open FILE,"<:encoding(utf-8)","josm_dump.txt" or die;
+  local $/;
+  undef $/;
+  my $file = <FILE>;
+  close FILE;
+  eval $file;
+}
+
+print "Options: \n PLUGIN STYLE RULE PRESET MAP DUMP\n GETPLUGIN GETSTYLE GETRULE GETPRESET GETMAP GETDUMP\n LOCAL\n ALL GETALL\n" if !@ARGV;
 
 open OUTFILE,">","josm_https.txt" or die "Could not open output file";
 
@@ -77,7 +96,15 @@ sub doprint($)
 my $local = 0;
 for my $ARG (@ARGV)
 {
+  if($ARG eq "ALL") {push(@ARGV, "PLUGIN", "STYLE", "RULE", "PRESET", "MAP", "DUMP");}
+  if($ARG eq "GETALL") {push(@ARGV, "GETPLUGIN", "GETSTYLE", "GETRULE", "GETPRESET", "GETMAP", "GETDUMP");}
+}
+my %ARGS = map {$_ => 1} @ARGV; # prevent double arguments by passing through a hash
+for my $ARG (sort keys %ARGS)
+{
   if($ARG eq "LOCAL") {$local = 1; }
+  if($ARG eq "GETDUMP") { system "scp josm\@josm.openstreetmap.de:auto/httpinfo.dump josm_dump.txt"; getdump();}
+  if($ARG eq "DUMP") { getdump(); }
   if($ARG eq "GETMAP") { system "curl https://josm.openstreetmap.de/maps -o imagery_josm.imagery.xml"; getmaps();}
   if($ARG eq "MAP") { getmaps(); }
   for my $x ("PLUGIN", "STYLE", "RULE", "PRESET")
