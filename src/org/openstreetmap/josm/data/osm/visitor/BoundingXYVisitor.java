@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm.visitor;
 
 import java.util.Collection;
+import java.util.function.DoubleUnaryOperator;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -18,8 +19,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -140,12 +139,13 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
     }
 
     /**
-     * Enlarges the calculated bounding box by 0.002 degrees.
+     * Enlarges the calculated bounding box by 0.001 degrees.
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
      */
     public void enlargeBoundingBox() {
-        enlargeBoundingBox(Config.getPref().getDouble("edit.zoom-enlarge-bbox", 0.002));
+        final double enlarge = Config.getPref().getDouble("edit.zoom-enlarge-bbox", 0.001);
+        enlargeBoundingBox(enlarge, enlarge);
     }
 
     /**
@@ -153,80 +153,45 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
      *
-     * @param enlargeDegree number of degrees to enlarge on each side
+     * @param enlargeDegreeX number of degrees to enlarge on each side along X
+     * @param enlargeDegreeY number of degrees to enlarge on each side along Y
      */
-    public void enlargeBoundingBox(double enlargeDegree) {
+    public void enlargeBoundingBox(double enlargeDegreeX, double enlargeDegreeY) {
         if (bounds == null)
             return;
         LatLon minLatlon = ProjectionRegistry.getProjection().eastNorth2latlon(bounds.getMin());
         LatLon maxLatlon = ProjectionRegistry.getProjection().eastNorth2latlon(bounds.getMax());
         bounds = new ProjectionBounds(new LatLon(
-                        Math.max(-90, minLatlon.lat() - enlargeDegree),
-                        Math.max(-180, minLatlon.lon() - enlargeDegree)).getEastNorth(ProjectionRegistry.getProjection()),
+                        Math.max(-90, minLatlon.lat() - enlargeDegreeY),
+                        Math.max(-180, minLatlon.lon() - enlargeDegreeX)).getEastNorth(ProjectionRegistry.getProjection()),
                 new LatLon(
-                        Math.min(90, maxLatlon.lat() + enlargeDegree),
-                        Math.min(180, maxLatlon.lon() + enlargeDegree)).getEastNorth(ProjectionRegistry.getProjection()));
+                        Math.min(90, maxLatlon.lat() + enlargeDegreeY),
+                        Math.min(180, maxLatlon.lon() + enlargeDegreeX)).getEastNorth(ProjectionRegistry.getProjection()));
     }
 
     /**
-     * Enlarges the bounding box up to <code>maxEnlargePercent</code>, depending on
+     * Enlarges the bounding box up to 0.001 degrees, depending on
      * its size. If the bounding box is small, it will be enlarged more in relation
      * to its beginning size. The larger the bounding box, the smaller the change,
-     * down to the minimum of 1% enlargement.
-     *
-     * Warning: if the bounding box only contains a single node, no expansion takes
-     * place because a node has no width/height. Use {@link #enlargeBoundingBox(double)}
-     * instead.
-     *
-     * Example: You specify enlargement to be up to 100%.
-     *
-     *          Bounding box is a small house: enlargement will be 95–100%, i.e.
-     *          making enough space so that the house fits twice on the screen in
-     *          each direction.
-     *
-     *          Bounding box is a large landuse, like a forest: Enlargement will
-     *          be 1–10%, i.e. just add a little border around the landuse.
+     * down to 0.0 degrees.
      *
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
-     *
-     * @param maxEnlargePercent maximum enlargement in percentage (100.0 for 100%)
      */
-    public void enlargeBoundingBoxLogarithmically(double maxEnlargePercent) {
+    public void enlargeBoundingBoxLogarithmically() {
         if (bounds == null)
             return;
-
-        double diffEast = bounds.getMax().east() - bounds.getMin().east();
-        double diffNorth = bounds.getMax().north() - bounds.getMin().north();
-
-        double enlargeEast = Math.min(maxEnlargePercent - 10*Math.log(diffEast), 1)/100;
-        double enlargeNorth = Math.min(maxEnlargePercent - 10*Math.log(diffNorth), 1)/100;
-
-        visit(bounds.getMin().add(-enlargeEast/2, -enlargeNorth/2));
-        visit(bounds.getMax().add(+enlargeEast/2, +enlargeNorth/2));
-    }
-
-    /**
-     * Specify a degree larger than 0 in order to make the bounding box at least
-     * the specified size in width and height. The value is ignored if the
-     * bounding box is already larger than the specified amount.
-     *
-     * If the bounding box has not been set (<code>min</code> or <code>max</code>
-     * equal <code>null</code>) this method does not do anything.
-     *
-     * If the bounding box contains objects and is to be enlarged, the objects
-     * will be centered within the new bounding box.
-     *
-     * @param size minimum width and height in meter
-     */
-    public void enlargeToMinSize(double size) {
-        if (bounds == null)
-            return;
-        // convert size from meters to east/north units
-        MapFrame map = MainApplication.getMap();
-        double enSize = size * map.mapView.getScale() / map.mapView.getDist100Pixel() * 100;
-        visit(bounds.getMin().add(-enSize/2, -enSize/2));
-        visit(bounds.getMax().add(+enSize/2, +enSize/2));
+        final LatLon min = ProjectionRegistry.getProjection().eastNorth2latlon(bounds.getMin());
+        final LatLon max = ProjectionRegistry.getProjection().eastNorth2latlon(bounds.getMax());
+        final double deltaLat = max.lat() - min.lat();
+        final double deltaLon = max.lon() - min.lon();
+        // [0.001, 0.1] degree -> [0.001, 0.0] degree enlargement
+        final DoubleUnaryOperator enlargement = deg -> deg < 0.001
+                ? 0.001
+                : deg < 0.1
+                ? 0.001 - deg / 100
+                : 0.0;
+        enlargeBoundingBox(enlargement.applyAsDouble(deltaLon), enlargement.applyAsDouble(deltaLat));
     }
 
     @Override
