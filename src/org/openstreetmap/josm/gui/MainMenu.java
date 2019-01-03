@@ -782,7 +782,7 @@ public class MainMenu extends JMenuBar {
         presetsMenu.addSeparator();
 
         add(imageryMenu, reorderImageryLayersAction);
-        add(imageryMenu, PreferencesAction.forPreferenceTab(tr("Imagery preferences"),
+        add(imageryMenu, PreferencesAction.forPreferenceTab(tr("Imagery preferences..."),
                 tr("Click to open the imagery tab in the preferences"), ImageryPreference.class));
 
         add(selectionMenu, selectAll);
