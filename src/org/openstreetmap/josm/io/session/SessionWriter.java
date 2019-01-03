@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ public class SessionWriter {
     private final MultiMap<Layer, Layer> dependencies;
     private final boolean zip;
 
+    private Path output;
     private ZipOutputStream zipOut;
 
     static {
@@ -194,6 +196,15 @@ public class SessionWriter {
          */
         public boolean isZip() {
             return zip;
+        }
+
+        /**
+         * Returns the path of the output file.
+         *
+         * @return the path of the output file
+         */
+        public Path getOutput() {
+            return output;
         }
     }
 
@@ -328,7 +339,8 @@ public class SessionWriter {
      * @throws IOException if any I/O error occurs
      */
     public void write(File f) throws IOException {
-        try (OutputStream out = Files.newOutputStream(f.toPath())) {
+        output = f.toPath();
+        try (OutputStream out = Files.newOutputStream(output)) {
             write(out);
         }
     }
