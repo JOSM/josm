@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.gui.widgets.ButtonColumn;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Panel for cache content management.
@@ -59,10 +61,11 @@ public class CacheContentsPanel extends JPanel {
 
     private void addToPanel(final CacheAccess<String, BufferedImageCacheEntry> cache, final String name) {
         final Long cacheSize = getCacheSize(cache);
+        final String sizeString = Utils.getSizeString(cacheSize, Locale.getDefault());
         final TableModel tableModel = getTableModel(cache);
 
         GuiHelper.runInEDT(() -> {
-            add(new JLabel(tr("{0} cache, total cache size: {1} bytes", name, cacheSize)),
+            add(new JLabel(tr("{0} cache, total cache size: {1}", name, sizeString)),
                 GBC.eol().insets(5, 5, 0, 0));
             add(new JScrollPane(getTableForCache(cache, tableModel)),
                 GBC.eol().fill(GBC.BOTH));
