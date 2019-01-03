@@ -291,14 +291,25 @@ public class AutoScaleAction extends JosmAction {
             case NEXT:
                 mapView.zoomNext();
                 break;
-            default:
-                BoundingXYVisitor bbox = getBoundingBox();
-                if (bbox != null && bbox.getBounds() != null) {
-                    mapView.zoomTo(bbox);
-                }
+            case PROBLEM:
+                modeProblem(new ValidatorBoundingXYVisitor());
+                break;
+            case DATA:
+                modeData(new BoundingXYVisitor());
+                break;
+            case LAYER:
+                modeLayer(new BoundingXYVisitor());
+                break;
+            case SELECTION:
+            case CONFLICT:
+                modeSelectionOrConflict(new BoundingXYVisitor());
+                break;
+            case DOWNLOAD:
+                modeDownload(new BoundingXYVisitor());
+                break;
             }
+            putValue("active", Boolean.TRUE);
         }
-        putValue("active", Boolean.TRUE);
     }
 
     @Override
@@ -327,52 +338,33 @@ public class AutoScaleAction extends JosmAction {
         return null;
     }
 
-    private BoundingXYVisitor getBoundingBox() {
-        switch (mode) {
-        case PROBLEM:
-            return modeProblem(new ValidatorBoundingXYVisitor());
-        case DATA:
-            return modeData(new BoundingXYVisitor());
-        case LAYER:
-            return modeLayer(new BoundingXYVisitor());
-        case SELECTION:
-        case CONFLICT:
-            return modeSelectionOrConflict(new BoundingXYVisitor());
-        case DOWNLOAD:
-            return modeDownload(new BoundingXYVisitor());
-        default:
-            return new BoundingXYVisitor();
-        }
-    }
-
-    private static BoundingXYVisitor modeProblem(ValidatorBoundingXYVisitor v) {
+    private static void modeProblem(ValidatorBoundingXYVisitor v) {
         TestError error = MainApplication.getMap().validatorDialog.getSelectedError();
         if (error == null)
-            return null;
+            return;
         v.visit(error);
         if (v.getBounds() == null)
-            return null;
-        v.enlargeBoundingBox(Config.getPref().getDouble("validator.zoom-enlarge-bbox", 0.0002));
-        return v;
+            return;
+        MainApplication.getMap().mapView.zoomTo(v);
     }
 
-    private static BoundingXYVisitor modeData(BoundingXYVisitor v) {
+    private static void modeData(BoundingXYVisitor v) {
         for (Layer l : MainApplication.getLayerManager().getLayers()) {
             l.visitBoundingBox(v);
         }
-        return v;
+        MainApplication.getMap().mapView.zoomTo(v);
     }
 
-    private BoundingXYVisitor modeLayer(BoundingXYVisitor v) {
+    private void modeLayer(BoundingXYVisitor v) {
         // try to zoom to the first selected layer
         Layer l = getFirstSelectedLayer();
         if (l == null)
-            return null;
+            return;
         l.visitBoundingBox(v);
-        return v;
+        MainApplication.getMap().mapView.zoomTo(v);
     }
 
-    private BoundingXYVisitor modeSelectionOrConflict(BoundingXYVisitor v) {
+    private void modeSelectionOrConflict(BoundingXYVisitor v) {
         Collection<IPrimitive> sel = new HashSet<>();
         if (AutoScaleMode.SELECTION == mode) {
             OsmData<?, ?, ?, ?> dataSet = getLayerManager().getActiveData();
@@ -394,21 +386,29 @@ public class AutoScaleAction extends JosmAction {
                     AutoScaleMode.SELECTION == mode ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE);
-            return null;
+            return;
         }
         for (IPrimitive osm : sel) {
             osm.accept(v);
         }
+        if (v.getBounds() == null) {
+            return;
+        }
 
-        // Increase the bounding box by up to 100% to give more context.
-        v.enlargeBoundingBoxLogarithmically(100);
-        // Make the bounding box at least 100 meter wide to
-        // ensure reasonable zoom level when zooming onto single nodes.
-        v.enlargeToMinSize(Config.getPref().getDouble("zoom_to_selection_min_size_in_meter", 100));
-        return v;
+        // Do not zoom if the current scale covers the selection, #16706
+        final MapView mapView = MainApplication.getMap().mapView;
+        final double mapScale = mapView.getScale();
+        final double minScale = v.getBounds().getScale(mapView.getWidth(), mapView.getHeight());
+        v.enlargeBoundingBoxLogarithmically();
+        final double maxScale = v.getBounds().getScale(mapView.getWidth(), mapView.getHeight());
+        if (minScale <= mapScale && mapScale < maxScale) {
+            mapView.zoomTo(v.getBounds().getCenter());
+        } else {
+            mapView.zoomTo(v);
+        }
     }
 
-    private BoundingXYVisitor modeDownload(BoundingXYVisitor v) {
+    private void modeDownload(BoundingXYVisitor v) {
         if (lastZoomTime > 0 &&
                 System.currentTimeMillis() - lastZoomTime > Config.getPref().getLong("zoom.bounds.reset.time", TimeUnit.SECONDS.toMillis(10))) {
             lastZoomTime = -1;
@@ -437,7 +437,7 @@ public class AutoScaleAction extends JosmAction {
                 lastZoomArea = -1;
             }
         }
-        return v;
+        MainApplication.getMap().mapView.zoomTo(v);
     }
 
     @Override

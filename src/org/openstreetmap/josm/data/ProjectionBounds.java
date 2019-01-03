@@ -191,4 +191,34 @@ public class ProjectionBounds {
     public boolean hasExtend() {
         return !Utils.equalsEpsilon(minEast, maxEast) || !Utils.equalsEpsilon(minNorth, maxNorth);
     }
+
+    /**
+     * Computes the scale of this bounds with respect to the given width/height.
+     * @param width the width
+     * @param height the height
+     * @return the computed scale
+     */
+    public double getScale(final int width, final int height) {
+        // -20 to leave some border
+        int w = width - 20;
+        if (w < 20) {
+            w = 20;
+        }
+        int h = height - 20;
+        if (h < 20) {
+            h = 20;
+        }
+
+        double scaleX = getDeltaEast() / w;
+        double scaleY = getDeltaNorth() / h;
+        return Math.max(scaleX, scaleY);
+    }
+
+    private double getDeltaNorth() {
+        return maxNorth - minNorth;
+    }
+
+    private double getDeltaEast() {
+        return maxEast - minEast;
+    }
 }

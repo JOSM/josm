@@ -789,20 +789,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param box new projection bounds
      */
     public void zoomTo(ProjectionBounds box) {
-        // -20 to leave some border
-        int w = getWidth()-20;
-        if (w < 20) {
-            w = 20;
-        }
-        int h = getHeight()-20;
-        if (h < 20) {
-            h = 20;
-        }
-
-        double scaleX = (box.maxEast-box.minEast)/w;
-        double scaleY = (box.maxNorth-box.minNorth)/h;
-        double newScale = Math.max(scaleX, scaleY);
-
+        double newScale = box.getScale(getWidth(), getHeight());
         newScale = scaleFloor(newScale);
         zoomTo(box.getCenter(), newScale);
     }
