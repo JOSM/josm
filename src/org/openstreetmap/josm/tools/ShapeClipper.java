@@ -46,8 +46,12 @@ public final class ShapeClipper {
             int type = pit.currentSegment(res);
             if (num > 0 && (type == PathIterator.SEG_CLOSE || type == PathIterator.SEG_MOVETO || pit.isDone())) {
                 // we have extracted a single segment, maybe unclosed
-                hasData |= addToResult(result, points, num,
+                boolean hasPath = addToResult(result, points, num,
                         new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY), clippingRect);
+                hasData |= hasPath;
+                if (hasPath && type == PathIterator.SEG_CLOSE) {
+                    result.closePath();
+                }
                 num = 0;
                 minX = minY = Double.POSITIVE_INFINITY;
                 maxX = maxY = Double.NEGATIVE_INFINITY;
