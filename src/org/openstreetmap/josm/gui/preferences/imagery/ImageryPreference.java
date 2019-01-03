@@ -89,6 +89,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     private final CommonSettingsPanel commonSettings = new CommonSettingsPanel();
     private final WMSSettingsPanel wmsSettings = new WMSSettingsPanel();
     private final TMSSettingsPanel tmsSettings = new TMSSettingsPanel();
+    private final CacheSettingsPanel cacheSettingsPanel = new CacheSettingsPanel();
 
     /**
      * Factory used to create a new {@code ImageryPreference}.
@@ -142,7 +143,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         pane.addTab(tr("Imagery providers"), imageryProviders);
         pane.addTab(tr("Settings"), buildSettingsPanel());
         pane.addTab(tr("Offset bookmarks"), new OffsetBookmarksPanel(gui));
-        pane.addTab(tr("Cache contents"), new CacheContentsPanel());
+        pane.addTab(tr("Cache"), cacheSettingsPanel);
         loadSettings();
         p.add(pane, GBC.std().fill(GBC.BOTH));
     }
@@ -159,6 +160,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         commonSettings.loadSettings();
         wmsSettings.loadSettings();
         tmsSettings.loadSettings();
+        cacheSettingsPanel.loadSettings();
     }
 
     @Override
@@ -176,8 +178,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         boolean commonRestartRequired = commonSettings.saveSettings();
         boolean wmsRestartRequired = wmsSettings.saveSettings();
         boolean tmsRestartRequired = tmsSettings.saveSettings();
+        boolean cacheRestartRequired = cacheSettingsPanel.saveSettings();
 
-        return commonRestartRequired || wmsRestartRequired || tmsRestartRequired;
+        return commonRestartRequired || wmsRestartRequired || tmsRestartRequired || cacheRestartRequired;
     }
 
     /**
