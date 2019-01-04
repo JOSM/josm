@@ -37,6 +37,7 @@
         <property name="javacc.home" location="${tools.dir}"/>
         <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
         <property name="proj-build.dir" location="${base.dir}/build2"/>
+        <property name="taginfo-build.dir" location="${base.dir}/build2"/>
         <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="error_prone_core.jar" location="${tools.dir}/error_prone_core.jar"/>
@@ -825,29 +826,37 @@ Build-Date: ${build.tstamp}
         </as:check-signature>
     </target>
 
+    <target name="taginfo-compile" depends="dist">
+        <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="TagInfoExtract.java"
+               destdir="${taginfo-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
+               includeantruntime="false" createMissingPackageInfoClass="false"
+               encoding="UTF-8" classpath="${build.dir}">
+        </javac>
+    </target>
+
     <macrodef name="_taginfo">
         <attribute name="type"/>
         <attribute name="output"/>
         <sequential>
             <echo message="Generating Taginfo for type @{type} to @{output}"/>
-            <groovy src="${taginfoextract}" classpath="${dist.jar};${toString:groovy.classpath};${spotbugs.dir}/spotbugs-annotations.jar">
-                <arg value="-t"/>
+            <java classname="TagInfoExtract" failonerror="true" fork="false">
+                <sysproperty key="java.awt.headless" value="true"/>
+                <classpath>
+                    <pathelement path="${dist.jar}"/>
+                    <pathelement path="${taginfo-build.dir}"/>
+                </classpath>
+                <arg value="--type"/>
                 <arg value="@{type}"/>
                 <arg value="--noexit"/>
-                <arg value="--svnweb"/>
                 <arg value="--imgurlprefix"/>
-                <arg value="${imgurlprefix}"/>
-                <arg value="-o"/>
+                <arg value="http://josm.openstreetmap.de/download/taginfo/taginfo-img"/>
+                <arg value="--output"/>
                 <arg value="@{output}"/>
-            </groovy>
+            </java>
         </sequential>
     </macrodef>
 
-    <target name="taginfo" depends="dist">
-        <!-- http://docs.groovy-lang.org/2.5.1/html/documentation/#_the_groovy_ant_task -->
-        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="groovy.classpath"/>
-        <property name="taginfoextract" value="scripts/TagInfoExtract.groovy"/>
-        <property name="imgurlprefix" value="http://josm.openstreetmap.de/download/taginfo/taginfo-img"/>
+    <target name="taginfo" depends="taginfo-compile">
         <_taginfo type="mappaint" output="taginfo_style.json"/>
         <_taginfo type="presets" output="taginfo_presets.json"/>
         <_taginfo type="external_presets" output="taginfo_external_presets.json"/>
