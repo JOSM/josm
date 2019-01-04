@@ -88,7 +88,7 @@ import org.xml.sax.SAXException;
  * java -cp dist/josm-custom.jar TagInfoExtract --type presets
  * java -cp dist/josm-custom.jar TagInfoExtract --type external_presets
  */
-class TagInfoExtract {
+public class TagInfoExtract {
 
     /**
      * Main method.
@@ -96,15 +96,16 @@ class TagInfoExtract {
     public static void main(String[] args) throws Exception {
         TagInfoExtract script = new TagInfoExtract();
         script.parseCommandLineArguments(args);
+        script.init();
         switch (script.options.mode) {
             case MAPPAINT:
-                script.runStyleSheet();
+                script.new StyleSheet().run();
                 break;
             case PRESETS:
-                script.runPresets();
+                script.new Presets().run();
                 break;
             case EXTERNAL_PRESETS:
-                script.runExternalPresets();
+                script.new ExternalPresets().run();
                 break;
             default:
                 throw new IllegalStateException("Invalid type " + script.options.mode);
@@ -119,7 +120,6 @@ class TagInfoExtract {
     }
 
     private final Options options = new Options();
-    private MapCSSStyleSource styleSource;
 
     /**
      * Parse command line arguments.
@@ -199,69 +199,317 @@ class TagInfoExtract {
         void setNoExit() {
             noexit = true;
         }
-    }
-    private void runPresets() throws IOException, SAXException {
-        init();
-        try (BufferedReader reader = options.inputFile.getContentReader()) {
-            Collection<TaggingPreset> presets = TaggingPresetReader.readAll(reader, true);
-            List<TagInfoTag> tags = convertPresets(presets, "", true);
-            writeJson("JOSM main presets", "Tags supported by the default presets in the OSM editor JOSM", tags);
+
+        /**
+         * Determine full image url (can refer to JOSM or OSM repository).
+         * @param path the image path
+         */
+        private String findImageUrl(String path) {
+            final Path f = baseDir.resolve("images").resolve(path);
+            if (Files.exists(f)) {
+                return "https://josm.openstreetmap.de/export/" + josmSvnRevision + "/josm/trunk/images/" + path;
+            }
+            throw new IllegalStateException("Cannot find image url for " + path);
         }
     }
 
-    private List<TagInfoTag> convertPresets(Iterable<TaggingPreset> presets, String descriptionPrefix, boolean addImages) {
-        final List<TagInfoTag> tags = new ArrayList<>();
-        for (TaggingPreset preset : presets) {
-            for (KeyedItem item : Utils.filteredCollection(preset.data, KeyedItem.class)) {
-                final Iterable<String> values = item.isKeyRequired()
-                        ? item.getValues()
-                        : Collections.emptyList();
-                for (String value : values) {
-                    final Set<TagInfoTag.Type> types = preset.types.stream()
-                            .map(it -> it.equals(TaggingPresetType.CLOSEDWAY) ? TagInfoTag.Type.AREA : it.equals(TaggingPresetType.MULTIPOLYGON) ? TagInfoTag.Type.RELATION : TagInfoTag.Type.valueOf(it.toString()))
-                            .collect(Collectors.toCollection(() -> EnumSet.noneOf(TagInfoTag.Type.class)));
-                    tags.add(new TagInfoTag(descriptionPrefix + preset.getName(), item.key, value, types,
-                            addImages && preset.iconName != null ? findImageUrl(preset.iconName) : null));
+    private abstract class Extractor {
+        abstract void run() throws Exception;
+
+        void writeJson(String name, String description, Iterable<TagInfoTag> tags) throws IOException {
+            try (Writer writer = options.outputFile != null ? Files.newBufferedWriter(options.outputFile) : new StringWriter();
+                 JsonWriter json = Json
+                         .createWriterFactory(Collections.singletonMap(JsonGenerator.PRETTY_PRINTING, true))
+                         .createWriter(writer)) {
+                JsonObjectBuilder project = Json.createObjectBuilder()
+                        .add("name", name)
+                        .add("description", description)
+                        .add("project_url", "https://josm.openstreetmap.de/")
+                        .add("icon_url", "https://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png")
+                        .add("contact_name", "JOSM developer team")
+                        .add("contact_email", "josm-dev@openstreetmap.org");
+                final JsonArrayBuilder jsonTags = Json.createArrayBuilder();
+                for (TagInfoTag t : tags) {
+                    jsonTags.add(t.toJson());
+                }
+                json.writeObject(Json.createObjectBuilder()
+                        .add("data_format", 1)
+                        .add("data_updated", DateTimeFormatter.ofPattern("yyyyMMdd'T'hhmmss'Z'").withZone(ZoneId.of("Z")).format(Instant.now()))
+                        .add("project", project)
+                        .add("tags", jsonTags)
+                        .build());
+                if (options.outputFile == null) {
+                    System.out.println(writer.toString());
                 }
             }
         }
 
-        return tags;
     }
 
-    private void runExternalPresets() throws IOException, OsmTransferException, SAXException {
-        init();
-        TaggingPresetReader.setLoadIcons(false);
-        final Collection<ExtendedSourceEntry> sources = new TaggingPresetPreference.TaggingPresetSourceEditor().loadAndGetAvailableSources();
-        final List<TagInfoTag> tags = new ArrayList<>();
-        for (SourceEntry source : sources) {
-            if (source.url.startsWith("resource")) {
-                // default presets
-                continue;
+    private class Presets extends Extractor {
+
+        @Override
+        void run() throws IOException, OsmTransferException, SAXException {
+            try (BufferedReader reader = options.inputFile.getContentReader()) {
+                Collection<TaggingPreset> presets = TaggingPresetReader.readAll(reader, true);
+                List<TagInfoTag> tags = convertPresets(presets, "", true);
+                writeJson("JOSM main presets", "Tags supported by the default presets in the OSM editor JOSM", tags);
             }
-            try {
-                System.out.println("Loading " + source.url);
-                Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, false);
-                final List<TagInfoTag> t = convertPresets(presets, source.title + " ", false);
-                System.out.println("Converting " + t.size() + " presets of " + source.title);
-                tags.addAll(t);
-            } catch (Exception ex) {
-                System.err.println("Skipping " + source.url + " due to error");
-                ex.printStackTrace();
+        }
+
+        List<TagInfoTag> convertPresets(Iterable<TaggingPreset> presets, String descriptionPrefix, boolean addImages) {
+            final List<TagInfoTag> tags = new ArrayList<>();
+            for (TaggingPreset preset : presets) {
+                for (KeyedItem item : Utils.filteredCollection(preset.data, KeyedItem.class)) {
+                    final Iterable<String> values = item.isKeyRequired()
+                            ? item.getValues()
+                            : Collections.emptyList();
+                    for (String value : values) {
+                        final Set<TagInfoTag.Type> types = preset.types == null ? Collections.emptySet() : preset.types.stream()
+                                .map(it -> TaggingPresetType.CLOSEDWAY.equals(it)
+                                        ? TagInfoTag.Type.AREA
+                                        : TaggingPresetType.MULTIPOLYGON.equals(it)
+                                        ? TagInfoTag.Type.RELATION
+                                        : TagInfoTag.Type.valueOf(it.toString()))
+                                .collect(Collectors.toCollection(() -> EnumSet.noneOf(TagInfoTag.Type.class)));
+                        tags.add(new TagInfoTag(descriptionPrefix + preset.getName(), item.key, value, types,
+                                addImages && preset.iconName != null ? options.findImageUrl(preset.iconName) : null));
+                    }
+                }
+            }
+            return tags;
+        }
+
+    }
+
+    private class ExternalPresets extends Presets {
+
+        @Override
+        void run() throws IOException, OsmTransferException, SAXException {
+            TaggingPresetReader.setLoadIcons(false);
+            final Collection<ExtendedSourceEntry> sources = new TaggingPresetPreference.TaggingPresetSourceEditor().loadAndGetAvailableSources();
+            final List<TagInfoTag> tags = new ArrayList<>();
+            for (SourceEntry source : sources) {
+                if (source.url.startsWith("resource")) {
+                    // default presets
+                    continue;
+                }
+                try {
+                    System.out.println("Loading " + source.url);
+                    Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, false);
+                    final List<TagInfoTag> t = convertPresets(presets, source.title + " ", false);
+                    System.out.println("Converting " + t.size() + " presets of " + source.title);
+                    tags.addAll(t);
+                } catch (Exception ex) {
+                    System.err.println("Skipping " + source.url + " due to error");
+                    ex.printStackTrace();
+                }
+
+            }
+            writeJson("JOSM user presets", "Tags supported by the user contributed presets in the OSM editor JOSM", tags);
+        }
+    }
+
+    private class StyleSheet extends Extractor {
+        private MapCSSStyleSource styleSource;
+
+        @Override
+        void run() throws IOException, ParseException {
+            init();
+            parseStyleSheet();
+            final List<TagInfoTag> tags = convertStyleSheet();
+            writeJson("JOSM main mappaint style", "Tags supported by the main mappaint style in the OSM editor JOSM", tags);
+        }
+
+        /**
+         * Read the style sheet file and parse the MapCSS code.
+         */
+        private void parseStyleSheet() throws IOException, ParseException {
+            try (InputStream stream = options.inputFile.getInputStream()) {
+                MapCSSParser parser = new MapCSSParser(stream, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
+                styleSource = new MapCSSStyleSource("");
+                styleSource.url = "";
+                parser.sheet(styleSource);
+            }
+        }
+
+        /**
+         * Collect all the tag from the style sheet.
+         */
+        private List<TagInfoTag> convertStyleSheet() {
+            return styleSource.rules.stream()
+                    .map(rule -> rule.selector)
+                    .filter(Selector.GeneralSelector.class::isInstance)
+                    .map(Selector.GeneralSelector.class::cast)
+                    .map(Selector.AbstractSelector::getConditions)
+                    .flatMap(Collection::stream)
+                    .filter(ConditionFactory.SimpleKeyValueCondition.class::isInstance)
+                    .map(ConditionFactory.SimpleKeyValueCondition.class::cast)
+                    .map(condition -> condition.asTag(null))
+                    .distinct()
+                    .map(tag -> {
+                        String iconUrl = null;
+                        final EnumSet<TagInfoTag.Type> types = EnumSet.noneOf(TagInfoTag.Type.class);
+                        Optional<String> nodeUrl = new NodeChecker(tag).findUrl(true);
+                        if (nodeUrl.isPresent()) {
+                            iconUrl = nodeUrl.get();
+                            types.add(TagInfoTag.Type.NODE);
+                        }
+                        Optional<String> wayUrl = new WayChecker(tag).findUrl(iconUrl == null);
+                        if (wayUrl.isPresent()) {
+                            if (iconUrl == null) {
+                                iconUrl = wayUrl.get();
+                            }
+                            types.add(TagInfoTag.Type.WAY);
+                        }
+                        Optional<String> areaUrl = new AreaChecker(tag).findUrl(iconUrl == null);
+                        if (areaUrl.isPresent()) {
+                            if (iconUrl == null) {
+                                iconUrl = areaUrl.get();
+                            }
+                            types.add(TagInfoTag.Type.AREA);
+                        }
+                        return new TagInfoTag(null, tag.getKey(), tag.getValue(), types, iconUrl);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        /**
+         * Check if a certain tag is supported by the style as node / way / area.
+         */
+        private abstract class Checker {
+            Checker(Tag tag) {
+                this.tag = tag;
+            }
+
+            Environment applyStylesheet(OsmPrimitive osm) {
+                osm.put(tag);
+                MultiCascade mc = new MultiCascade();
+
+                Environment env = new Environment(osm, mc, null, styleSource);
+                for (MapCSSRule r : styleSource.rules) {
+                    env.clearSelectorMatchingInformation();
+                    if (r.selector.matches(env)) {
+                        // ignore selector range
+                        if (env.layer == null) {
+                            env.layer = "default";
+                        }
+                        r.execute(env);
+                    }
+                }
+                env.layer = "default";
+                return env;
+            }
+
+            /**
+             * Create image file from StyleElement.
+             *
+             * @return the URL
+             */
+            String createImage(StyleElement elem_style, final String type, NavigatableComponent nc) {
+                BufferedImage img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = img.createGraphics();
+                g.setClip(0, 0, 16, 16);
+                StyledMapRenderer renderer = new StyledMapRenderer(g, nc, false);
+                renderer.getSettings(false);
+                elem_style.paintPrimitive(osm, MapPaintSettings.INSTANCE, renderer, false, false, false);
+                final String imageName = type + "_" + tag + ".png";
+                try (OutputStream out = Files.newOutputStream(options.imageDir.resolve(imageName))) {
+                    ImageIO.write(img, "png", out);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                final String baseUrl = options.imageUrlPrefix != null ? options.imageUrlPrefix : options.imageDir.toString();
+                return baseUrl + "/" + imageName;
+            }
+
+            /**
+             * Checks, if tag is supported and find URL for image icon in this case.
+             *
+             * @param generateImage if true, create or find a suitable image icon and return URL,
+             *                       if false, just check if tag is supported and return true or false
+             */
+            abstract Optional<String> findUrl(boolean generateImage);
+
+            protected Tag tag;
+            protected OsmPrimitive osm;
+        }
+
+        private class NodeChecker extends Checker {
+            NodeChecker(Tag tag) {
+                super(tag);
+            }
+
+            @Override
+            Optional<String> findUrl(boolean generateImage) {
+                this.osm = new Node(LatLon.ZERO);
+                Environment env = applyStylesheet(osm);
+                Cascade c = env.mc.getCascade("default");
+                Object image = c.get("icon-image");
+                if (image instanceof MapPaintStyles.IconReference && !((MapPaintStyles.IconReference) image).isDeprecatedIcon()) {
+                    return Optional.of(options.findImageUrl(((MapPaintStyles.IconReference) image).iconName));
+                }
+                return Optional.empty();
             }
 
         }
 
-        writeJson("JOSM user presets", "Tags supported by the user contributed presets in the OSM editor JOSM", tags);
+        private class WayChecker extends Checker {
+            WayChecker(Tag tag) {
+                super(tag);
+            }
+
+            @Override
+            Optional<String> findUrl(boolean generateImage) {
+                this.osm = new Way();
+                NavigatableComponent nc = new NavigatableComponent();
+                Node n1 = new Node(nc.getLatLon(2, 8));
+                Node n2 = new Node(nc.getLatLon(14, 8));
+                ((Way) osm).addNode(n1);
+                ((Way) osm).addNode(n2);
+                Environment env = applyStylesheet(osm);
+                LineElement les = LineElement.createLine(env);
+                if (les != null) {
+                    if (!generateImage) return Optional.of("");
+                    return Optional.of(createImage(les, "way", nc));
+                }
+                return Optional.empty();
+            }
+
+        }
+
+        private class AreaChecker extends Checker {
+            AreaChecker(Tag tag) {
+                super(tag);
+            }
+
+            @Override
+            Optional<String> findUrl(boolean generateImage) {
+                this.osm = new Way();
+                NavigatableComponent nc = new NavigatableComponent();
+                Node n1 = new Node(nc.getLatLon(2, 2));
+                Node n2 = new Node(nc.getLatLon(14, 2));
+                Node n3 = new Node(nc.getLatLon(14, 14));
+                Node n4 = new Node(nc.getLatLon(2, 14));
+                ((Way) osm).addNode(n1);
+                ((Way) osm).addNode(n2);
+                ((Way) osm).addNode(n3);
+                ((Way) osm).addNode(n4);
+                ((Way) osm).addNode(n1);
+                Environment env = applyStylesheet(osm);
+                AreaElement aes = AreaElement.create(env);
+                if (aes != null) {
+                    if (!generateImage) return Optional.of("");
+                    return Optional.of(createImage(aes, "area", nc));
+                }
+                return Optional.empty();
+            }
+        }
     }
 
-    private void runStyleSheet() throws IOException, ParseException {
-        init();
-        parseStyleSheet();
-        final List<TagInfoTag> tags = convertStyleSheet();
-        writeJson("JOSM main mappaint style", "Tags supported by the main mappaint style in the OSM editor JOSM", tags);
-    }
-
+    /**
+     * POJO representing a <a href="https://wiki.openstreetmap.org/wiki/Taginfo/Projects">Taginfo tag</a>.
+     */
     private static class TagInfoTag {
         final String description;
         final String key;
@@ -300,34 +548,6 @@ class TagInfoExtract {
         }
     }
 
-    private void writeJson(String name, String description, Iterable<TagInfoTag> tags) throws IOException {
-        try (Writer writer = options.outputFile != null ? Files.newBufferedWriter(options.outputFile) : new StringWriter();
-             JsonWriter json = Json
-                .createWriterFactory(Collections.singletonMap(JsonGenerator.PRETTY_PRINTING, true))
-                .createWriter(writer)) {
-            JsonObjectBuilder project = Json.createObjectBuilder()
-                    .add("name", name)
-                    .add("description", description)
-                    .add("project_url", "https://josm.openstreetmap.de/")
-                    .add("icon_url", "https://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png")
-                    .add("contact_name", "JOSM developer team")
-                    .add("contact_email", "josm-dev@openstreetmap.org");
-            final JsonArrayBuilder jsonTags = Json.createArrayBuilder();
-            for (TagInfoTag t : tags) {
-                jsonTags.add(t.toJson());
-            }
-            json.writeObject(Json.createObjectBuilder()
-                    .add("data_format", 1)
-                    .add("data_updated", DateTimeFormatter.ofPattern("yyyyMMdd'T'hhmmss'Z'").withZone(ZoneId.of("Z")).format(Instant.now()))
-                    .add("project", project)
-                    .add("tags", jsonTags)
-                    .build());
-            if (options.outputFile == null) {
-                System.out.println(writer.toString());
-            }
-        }
-    }
-
     /**
      * Initialize the script.
      */
@@ -344,202 +564,5 @@ class TagInfoExtract {
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
         Territories.initialize();
         RightAndLefthandTraffic.initialize();
-    }
-
-    /**
-     * Determine full image url (can refer to JOSM or OSM repository).
-     */
-    private String findImageUrl(String path) {
-        final Path f = options.baseDir.resolve("images").resolve(path);
-        if (Files.exists(f)) {
-            return "https://josm.openstreetmap.de/export/" + options.josmSvnRevision + "/josm/trunk/images/" + path;
-        }
-        throw new IllegalStateException("Cannot find image url for " + path);
-    }
-
-    /**
-     * Read the style sheet file and parse the MapCSS code.
-     */
-    private void parseStyleSheet() throws IOException, ParseException {
-        try (InputStream stream = options.inputFile.getInputStream()) {
-            MapCSSParser parser = new MapCSSParser(stream, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
-            styleSource = new MapCSSStyleSource("");
-            styleSource.url = "";
-            parser.sheet(styleSource);
-        }
-    }
-
-    /**
-     * Collect all the tag from the style sheet.
-     */
-    private List<TagInfoTag> convertStyleSheet() {
-        return styleSource.rules.stream()
-                .map(rule -> rule.selector)
-                .filter(Selector.GeneralSelector.class::isInstance)
-                .map(Selector.GeneralSelector.class::cast)
-                .map(Selector.AbstractSelector::getConditions)
-                .flatMap(Collection::stream)
-                .filter(ConditionFactory.SimpleKeyValueCondition.class::isInstance)
-                .map(ConditionFactory.SimpleKeyValueCondition.class::cast)
-                .map(condition -> condition.asTag(null))
-                .distinct()
-                .map(tag -> {
-                    String iconUrl = null;
-                    final EnumSet<TagInfoTag.Type> types = EnumSet.noneOf(TagInfoTag.Type.class);
-                    Optional<String> nodeUrl = new NodeChecker(tag).findUrl(true);
-                    if (nodeUrl.isPresent()) {
-                        iconUrl = nodeUrl.get();
-                        types.add(TagInfoTag.Type.NODE);
-                    }
-                    Optional<String> wayUrl = new WayChecker(tag).findUrl(iconUrl == null);
-                    if (wayUrl.isPresent()) {
-                        if (iconUrl == null) {
-                            iconUrl = wayUrl.get();
-                        }
-                        types.add(TagInfoTag.Type.WAY);
-                    }
-                    Optional<String> areaUrl = new AreaChecker(tag).findUrl(iconUrl == null);
-                    if (areaUrl.isPresent()) {
-                        if (iconUrl == null) {
-                            iconUrl = areaUrl.get();
-                        }
-                        types.add(TagInfoTag.Type.AREA);
-                    }
-                    return new TagInfoTag(null, tag.getKey(), tag.getValue(), types, iconUrl);
-                })
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Check if a certain tag is supported by the style as node / way / area.
-     */
-    private abstract class Checker {
-        Checker(Tag tag) {
-            this.tag = tag;
-        }
-
-        Environment applyStylesheet(OsmPrimitive osm) {
-            osm.put(tag);
-            MultiCascade mc = new MultiCascade();
-
-            Environment env = new Environment(osm, mc, null, styleSource);
-            for (MapCSSRule r : styleSource.rules) {
-                env.clearSelectorMatchingInformation();
-                if (r.selector.matches(env)) {
-                    // ignore selector range
-                    if (env.layer == null) {
-                        env.layer = "default";
-                    }
-                    r.execute(env);
-                }
-            }
-            env.layer = "default";
-            return env;
-        }
-
-        /**
-         * Create image file from StyleElement.
-         *
-         * @return the URL
-         */
-        String createImage(StyleElement elem_style, final String type, NavigatableComponent nc) {
-            BufferedImage img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = img.createGraphics();
-            g.setClip(0, 0, 16, 16);
-            StyledMapRenderer renderer = new StyledMapRenderer(g, nc, false);
-            renderer.getSettings(false);
-            elem_style.paintPrimitive(osm, MapPaintSettings.INSTANCE, renderer, false, false, false);
-            final String imageName = type + "_" + tag + ".png";
-            try (OutputStream out = Files.newOutputStream(options.imageDir.resolve(imageName))) {
-                ImageIO.write(img, "png", out);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-            final String baseUrl = options.imageUrlPrefix != null ? options.imageUrlPrefix : options.imageDir.toString();
-            return baseUrl + "/" + imageName;
-        }
-
-        /**
-         * Checks, if tag is supported and find URL for image icon in this case.
-         *
-         * @param generateImage if true, create or find a suitable image icon and return URL,
-         *                       if false, just check if tag is supported and return true or false
-         */
-        abstract Optional<String> findUrl(boolean generateImage);
-
-        protected Tag tag;
-        protected OsmPrimitive osm;
-    }
-
-    private class NodeChecker extends Checker {
-        NodeChecker(Tag tag) {
-            super(tag);
-        }
-
-        @Override
-        Optional<String> findUrl(boolean generateImage) {
-            this.osm = new Node(LatLon.ZERO);
-            Environment env = applyStylesheet(osm);
-            Cascade c = env.mc.getCascade("default");
-            Object image = c.get("icon-image");
-            if (image instanceof MapPaintStyles.IconReference && !((MapPaintStyles.IconReference) image).isDeprecatedIcon()) {
-                    return Optional.of(findImageUrl(((MapPaintStyles.IconReference) image).iconName));
-            }
-            return Optional.empty();
-        }
-
-    }
-
-    private class WayChecker extends Checker {
-        WayChecker(Tag tag) {
-            super(tag);
-        }
-
-        @Override
-        Optional<String> findUrl(boolean generateImage) {
-            this.osm = new Way();
-            NavigatableComponent nc = new NavigatableComponent();
-            Node n1 = new Node(nc.getLatLon(2, 8));
-            Node n2 = new Node(nc.getLatLon(14, 8));
-            ((Way) osm).addNode(n1);
-            ((Way) osm).addNode(n2);
-            Environment env = applyStylesheet(osm);
-            LineElement les = LineElement.createLine(env);
-            if (les != null) {
-                if (!generateImage) return Optional.of("");
-                return Optional.of(createImage(les, "way", nc));
-            }
-            return Optional.empty();
-        }
-
-    }
-
-    private class AreaChecker extends Checker {
-        AreaChecker(Tag tag) {
-            super(tag);
-        }
-
-        @Override
-        Optional<String> findUrl(boolean generateImage) {
-            this.osm = new Way();
-            NavigatableComponent nc = new NavigatableComponent();
-            Node n1 = new Node(nc.getLatLon(2, 2));
-            Node n2 = new Node(nc.getLatLon(14, 2));
-            Node n3 = new Node(nc.getLatLon(14, 14));
-            Node n4 = new Node(nc.getLatLon(2, 14));
-            ((Way) osm).addNode(n1);
-            ((Way) osm).addNode(n2);
-            ((Way) osm).addNode(n3);
-            ((Way) osm).addNode(n4);
-            ((Way) osm).addNode(n1);
-            Environment env = applyStylesheet(osm);
-            AreaElement aes = AreaElement.create(env);
-            if (aes != null) {
-                if (!generateImage) return Optional.of("");
-                return Optional.of(createImage(aes, "area", nc));
-            }
-            return Optional.empty();
-        }
-
     }
 }
