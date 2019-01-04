@@ -40,10 +40,14 @@ public final class LanguageInfo {
      * @since 5915
      */
     public static String getWikiLanguagePrefix(LocaleType type) {
+        return getWikiLanguagePrefix(Locale.getDefault(), type);
+    }
+
+    static String getWikiLanguagePrefix(Locale locale, LocaleType type) {
         if (type == LocaleType.ENGLISH)
           return "";
 
-        String code = getJOSMLocaleCode();
+        String code = getJOSMLocaleCode(locale);
         if (type == LocaleType.BASELANGUAGE) {
             if (code.matches("[^_]+_[^_]+")) {
                 code = code.substring(0, 2);
