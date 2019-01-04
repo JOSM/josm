@@ -921,6 +921,7 @@ Build-Date: ${build.tstamp}
             <fileset dir="${base.dir}/src/org/openstreetmap/josm" includes="**/*.java"
                 excludes="gui/mappaint/mapcss/parsergen/*.java"/>
             <fileset dir="${base.dir}/test" includes="**/*.java"/>
+            <fileset dir="${base.dir}/scripts" includes="**/*.java"/>
             <formatter type="plain"/>
             <formatter type="xml" toFile="checkstyle-josm.xml"/>
         </checkstyle>

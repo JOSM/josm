@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.projection.proj.Proj;
  * Generates the list of projections by combining two sources: The list from the
  * proj.4 project and a list maintained by the JOSM team.
  */
-public class BuildProjectionDefinitions {
+public final class BuildProjectionDefinitions {
 
     private static final String PROJ_DIR = "data_nodist/projection";
     private static final String JOSM_EPSG_FILE = "josm-epsg";
@@ -63,6 +63,9 @@ public class BuildProjectionDefinitions {
 
     private static List<String> knownGeoidgrids;
     private static List<String> knownNadgrids;
+
+    private BuildProjectionDefinitions() {
+    }
 
     /**
      * Program entry point
@@ -163,7 +166,8 @@ public class BuildProjectionDefinitions {
                 System.out.println("   in particular: " + nadgridMap);
             }
             if (noOmercNoBounds > 0) {
-                System.out.println(String.format(" * projection is Oblique Mercator (requires bounds), but no bounds specified: %d entries", noOmercNoBounds));
+                System.out.println(String.format(
+                        " * projection is Oblique Mercator (requires bounds), but no bounds specified: %d entries", noOmercNoBounds));
             }
             if (noEquatorStereo > 0) {
                 System.out.println(String.format(" * projection is Equatorial Stereographic (see #15970): %d entries", noEquatorStereo));
@@ -208,6 +212,7 @@ public class BuildProjectionDefinitions {
         }
 
         // exclude projections failing
+        // CHECKSTYLE.OFF: LineLength
         if (Arrays.asList(
                 // Unsuitable parameters 'lat_1' and 'lat_2' for two point method
                 "EPSG:53025", "EPSG:54025", "EPSG:65062",
@@ -234,6 +239,7 @@ public class BuildProjectionDefinitions {
                 ).contains(pd.code)) {
             result = false;
         }
+        // CHECKSTYLE.ON: LineLength
 
         Map<String, String> parameters;
         try {
