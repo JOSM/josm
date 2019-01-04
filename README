@@ -136,7 +136,7 @@ This is an overview of the files and directories in the JOSM code repository:
   - SyncEditorLayerIndex.groovy
                             script to compare and analyse the differences of the editor layer index and the
                             JOSM imagery list (see https://josm.openstreetmap.de/wiki/ImageryCompare)
-  - TagInfoExtract.groovy   extracts tag information for the taginfo project
+  - TagInfoExtract.java     extracts tag information for the taginfo project
 - src/                      the source code of the application
 - start.html                HTML page to run the applet version of JOSM
 - styles/                   map styles included in JOSM

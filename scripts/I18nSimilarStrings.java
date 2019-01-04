@@ -1,3 +1,5 @@
+// License: GPL. For details, see LICENSE file.
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,9 @@ import org.openstreetmap.josm.tools.Utils;
  * Finds similar strings in lang files to find potential duplicates in order to reduce translation workload.
  */
 public final class I18nSimilarStrings {
+
+    private I18nSimilarStrings() {
+    }
 
     /**
      * Main.
