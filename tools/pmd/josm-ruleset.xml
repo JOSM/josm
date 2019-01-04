@@ -63,6 +63,7 @@
     <exclude name="LongVariable"/>
     <exclude name="MethodArgumentCouldBeFinal"/>
     <exclude name="MethodNamingConventions"/>
+    <exclude name="NoPackage"/>
     <exclude name="OnlyOneReturn"/>
     <exclude name="PrematureDeclaration"/>
     <exclude name="ShortClassName"/>

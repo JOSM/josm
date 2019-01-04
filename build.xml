@@ -961,6 +961,7 @@ Build-Date: ${build.tstamp}
                 <include name="org/openstreetmap/josm/**/*.java"/>
                 <exclude name="org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/*.java" />
             </fileset>
+            <fileset dir="${base.dir}/scripts" includes="**/*.java"/>
         </pmd>
     </target>
 

@@ -406,13 +406,13 @@ public class TagInfoExtract {
              *
              * @return the URL
              */
-            String createImage(StyleElement elem_style, final String type, NavigatableComponent nc) {
+            String createImage(StyleElement element, final String type, NavigatableComponent nc) {
                 BufferedImage img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = img.createGraphics();
                 g.setClip(0, 0, 16, 16);
                 StyledMapRenderer renderer = new StyledMapRenderer(g, nc, false);
                 renderer.getSettings(false);
-                elem_style.paintPrimitive(osm, MapPaintSettings.INSTANCE, renderer, false, false, false);
+                element.paintPrimitive(osm, MapPaintSettings.INSTANCE, renderer, false, false, false);
                 final String imageName = type + "_" + tag + ".png";
                 try (OutputStream out = Files.newOutputStream(options.imageDir.resolve(imageName))) {
                     ImageIO.write(img, "png", out);
