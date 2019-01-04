@@ -165,6 +165,15 @@ public abstract class KeyedItem extends TaggingPresetItem {
     }
 
     /**
+     * Determines whether key or key+value are required.
+     * @return whether key or key+value are required
+     */
+    public boolean isKeyRequired() {
+        final MatchType type = MatchType.ofString(match);
+        return MatchType.KEY_REQUIRED.equals(type) || MatchType.KEY_VALUE_REQUIRED.equals(type);
+    }
+
+    /**
      * Returns the default match.
      * @return the default match
      */
