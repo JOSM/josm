@@ -181,11 +181,11 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         gui.addValidationListener(validationListener);
     }
 
-    static class TaggingPresetSourceEditor extends SourceEditor {
+    public static class TaggingPresetSourceEditor extends SourceEditor {
 
         private static final String ICONPREF = "taggingpreset.icon.sources";
 
-        TaggingPresetSourceEditor() {
+        public TaggingPresetSourceEditor() {
             super(SourceType.TAGGING_PRESET, Config.getUrls().getJOSMWebsite()+"/presets", presetSourceProviders, true);
         }
 
