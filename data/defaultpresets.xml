@@ -664,7 +664,6 @@
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Link_(highway)"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Link_(highway)"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Link_(highway)"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Link_(highway)"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Link_(highway)"
                   uk.href="https://wiki.openstreetmap.org/wiki/Uk:Link_(highway)" />
             <key key="highway" value="primary_link" />
@@ -708,7 +707,6 @@
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Link_(highway)"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Link_(highway)"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Link_(highway)"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Link_(highway)"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Link_(highway)"
                   uk.href="https://wiki.openstreetmap.org/wiki/Uk:Link_(highway)" />
             <key key="highway" value="secondary_link" />
@@ -753,7 +751,6 @@
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Link_(highway)"
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Link_(highway)"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Link_(highway)"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Link_(highway)"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Link_(highway)"
                   uk.href="https://wiki.openstreetmap.org/wiki/Uk:Link_(highway)" />
             <key key="highway" value="tertiary_link" />
@@ -1549,7 +1546,6 @@
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
                       pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
                       pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                       ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
                 <space />
                 <key key="traffic_calming" value="chicane" />
@@ -1565,7 +1561,6 @@
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
                       pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
                       pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                       ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
                 <space />
                 <key key="traffic_calming" value="choker" />
@@ -1581,7 +1576,6 @@
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
                       pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
                       pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                       ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
                 <space />
                 <key key="traffic_calming" value="cushion" />
@@ -1597,7 +1591,6 @@
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
                       pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
                       pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                       ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
                 <space />
                 <key key="traffic_calming" value="hump" />
@@ -1613,7 +1606,6 @@
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
                       pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
                       pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                       ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
                 <space />
                 <key key="traffic_calming" value="island" />
@@ -1629,7 +1621,6 @@
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
                       pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
                       pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                       ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
                 <space />
                 <key key="traffic_calming" value="rumble_strip" />
@@ -1645,7 +1636,6 @@
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
                       pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
                       pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                       ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
                 <space />
                 <key key="traffic_calming" value="table" />
@@ -2219,7 +2209,7 @@
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Key:tunnel"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Key:tunnel"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:tunnel"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:tunnel"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:tunnel"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:tunnel"
                   uk.href="https://wiki.openstreetmap.org/wiki/Uk:Key:tunnel" />
             <key key="tunnel" value="building_passage" />
@@ -2274,7 +2264,7 @@
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Key:tunnel"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Key:tunnel"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:tunnel"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:tunnel"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:tunnel"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:tunnel"
                   uk.href="https://wiki.openstreetmap.org/wiki/Uk:Key:tunnel" />
             <space />
@@ -5295,7 +5285,7 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
                   no.href="https://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=place_of_worship"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
                   sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
                   zh_TW.href="https://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
@@ -5320,7 +5310,7 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
                   no.href="https://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=place_of_worship"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
                   sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
                   zh_TW.href="https://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
@@ -5345,7 +5335,7 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
                   no.href="https://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=place_of_worship"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
                   sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
                   zh_TW.href="https://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
@@ -5369,7 +5359,7 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
                   no.href="https://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=place_of_worship"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
                   sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
                   zh_TW.href="https://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
@@ -5393,7 +5383,7 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
                   no.href="https://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=place_of_worship"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
                   sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
                   zh_TW.href="https://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
@@ -5416,7 +5406,7 @@
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
                   no.href="https://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=place_of_worship"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
                   sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
                   zh_TW.href="https://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
@@ -6304,7 +6294,7 @@
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:amenity=recycling"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:amenity=recycling"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=recycling"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=recycling"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=recycling"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=recycling"
                   sv.href="https://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=recycling" />
             <space />
@@ -6450,7 +6440,8 @@
                   nl.href="https://wiki.openstreetmap.org/wiki/NL:Tag:amenity=drinking_water"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=drinking_water"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=drinking_water"
-                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=drinking_water" />
+                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:amenity=drinking_water"
+                  uk.href="https://wiki.openstreetmap.org/wiki/Uk:Tag:amenity=drinking_water" />
             <space />
             <key key="amenity" value="drinking_water" />
             <check key="indoor" text="Indoor" />
@@ -6643,8 +6634,7 @@
                       es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
                       fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="tee" />
             </item> <!-- Tee -->
@@ -6654,8 +6644,7 @@
                       es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
                       fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="hole" />
                 <text key="ref" text="Reference" />
@@ -6671,8 +6660,7 @@
                       es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
                       fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="pin" />
                 <text key="ref" text="Reference" />
@@ -6692,8 +6680,7 @@
                       es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
                       fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="water_hazard" />
                 <key key="natural" value="water" match="keyvalue" />
@@ -6704,8 +6691,7 @@
                       es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
                       fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="lateral_water_hazard" />
                 <key key="natural" value="water" match="keyvalue" />
@@ -6717,8 +6703,7 @@
                       es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
                       fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="green" />
             </item> <!-- Green -->
@@ -6736,8 +6721,7 @@
                       es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
                       fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="rough" />
             </item> <!-- Rough -->
@@ -6748,8 +6732,7 @@
                       es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
                       fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
                       ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                      pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                      pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course" />
                 <space />
                 <key key="golf" value="driving_range" />
             </item> <!-- Driving range -->
@@ -7290,7 +7273,7 @@
                   nl.href="https://wiki.openstreetmap.org/wiki/NL:Key:building"
                   no.href="https://wiki.openstreetmap.org/wiki/No:Key:building"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:building"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:building"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:building"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="https://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
@@ -8322,7 +8305,7 @@
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:power=pole"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:power=pole"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:power=pole"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=pole" />
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:power=pole" />
             <space />
             <key key="power" value="pole" />
             <label text="Pole Attributes:" />
@@ -8343,7 +8326,7 @@
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:power=pole"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:power=pole"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:power=pole"
-                  pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=pole" />
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:power=pole" />
             <space />
             <key key="power" value="pole" />
             <label text="Pole Attributes:" />
@@ -9022,6 +9005,7 @@
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:shop=laundry"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:shop=laundry"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:shop=laundry"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:shop=laundry"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:shop=laundry"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:shop=laundry"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:shop=laundry"
@@ -10307,6 +10291,7 @@
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=winery"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=winery"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=winery"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:craft=winery"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:craft=winery"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=winery"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:craft=winery"
@@ -10338,6 +10323,7 @@
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=upholsterer"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=upholsterer"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:craft=upholsterer"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:craft=upholsterer"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:craft=upholsterer"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=upholsterer"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:craft=upholsterer" />
@@ -10434,6 +10420,7 @@
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=tiler"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=tiler"
                   es.href="https://wiki.openstreetmap.org/wiki/ES:Tag:craft=tiler"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:craft=tiler"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:craft=tiler"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=tiler"
                   pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:craft=tiler" />
@@ -10446,6 +10433,7 @@
         <link href="https://wiki.openstreetmap.org/wiki/Tag:craft=window_construction"
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:craft=window_construction"
                   de.href="https://wiki.openstreetmap.org/wiki/DE:Tag:craft=window_construction"
+                  fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:craft=window_construction"
                   it.href="https://wiki.openstreetmap.org/wiki/IT:Tag:craft=window_construction"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:craft=window_construction"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:craft=window_construction" />
@@ -10864,6 +10852,7 @@
                   cs.href="https://wiki.openstreetmap.org/wiki/Cs:Tag:place=quarter"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:place=quarter"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:place=quarter"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:place=quarter"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:place=quarter" />
             <space />
             <key key="place" value="quarter" />
@@ -10879,6 +10868,7 @@
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:place=neighbourhood"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:place=neighbourhood"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:place=neighbourhood"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:place=neighbourhood"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:place=neighbourhood" />
             <space />
             <key key="place" value="neighbourhood" />
@@ -10921,6 +10911,7 @@
                   fr.href="https://wiki.openstreetmap.org/wiki/FR:Tag:place=square"
                   ja.href="https://wiki.openstreetmap.org/wiki/JA:Tag:place=square"
                   pl.href="https://wiki.openstreetmap.org/wiki/Pl:Tag:place=square"
+                  pt.href="https://wiki.openstreetmap.org/wiki/Pt:Tag:place=square"
                   ru.href="https://wiki.openstreetmap.org/wiki/RU:Tag:place=square" />
             <space />
             <key key="place" value="square" />
@@ -11894,7 +11885,7 @@
                  ja.href="https://wiki.openstreetmap.org/wiki/JA:Key:addr"
                  nl.href="https://wiki.openstreetmap.org/wiki/NL:Key:addr"
                  pl.href="https://wiki.openstreetmap.org/wiki/Pl:Key:addr"
-                 pt_BR.href="https://wiki.openstreetmap.org/wiki/Pt-br:Key:addr"
+                 pt.href="https://wiki.openstreetmap.org/wiki/Pt:Key:addr"
                  ru.href="https://wiki.openstreetmap.org/wiki/RU:Key:addr" />
             <space />
             <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" match="key" />
