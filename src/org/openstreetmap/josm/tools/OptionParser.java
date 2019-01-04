@@ -41,10 +41,10 @@ public class OptionParser {
     */
     public OptionParser addShortAlias(String optionName, String shortName) {
         if (!shortName.matches("\\w")) {
-            throw new IllegalArgumentException("Short name " + shortName + " must be one character");
+            throw new IllegalArgumentException("Short name '" + shortName + "' must be one character");
         }
         if (availableOptions.containsKey("-" + shortName)) {
-            throw new IllegalArgumentException("Short name " + shortName + " is already used");
+            throw new IllegalArgumentException("Short name '" + shortName + "' is already used");
         }
         AvailableOption longDefinition = availableOptions.get("--" + optionName);
         if (longDefinition == null) {
@@ -69,10 +69,10 @@ public class OptionParser {
 
     private void checkOptionName(String optionName) {
         if (!optionName.matches("\\w([\\w-]*\\w)?")) {
-            throw new IllegalArgumentException("Illegal option name: " + optionName);
+            throw new IllegalArgumentException("Illegal option name: '" + optionName + "'");
         }
         if (availableOptions.containsKey("--" + optionName)) {
-            throw new IllegalArgumentException("The option --" + optionName + " is already registered");
+            throw new IllegalArgumentException("The option '--" + optionName + "' is already registered");
         }
     }
 
@@ -163,7 +163,7 @@ public class OptionParser {
                         parameter = split[1];
                     } else {
                         if (toHandle.isEmpty() || "--".equals(toHandle.getFirst())) {
-                            throw new OptionParseException(tr("{0}: option ''{1}'' requires an argument", program));
+                            throw new OptionParseException(tr("{0}: option ''{1}'' requires an argument", program, optionName));
                         }
                         parameter = toHandle.removeFirst();
                     }
@@ -178,12 +178,17 @@ public class OptionParser {
         // Count how often they are used
         availableOptions.values().stream().distinct().forEach(def -> {
             long count = options.stream().filter(p -> def.equals(p.option)).count();
+            String optionName = availableOptions.entrySet().stream()
+                    .filter(entry -> def.equals(entry.getValue()))
+                    .map(Entry::getKey)
+                    .findFirst()
+                    .orElse("?");
             if (count < def.getRequiredCount().min) {
                 // min may be 0 or 1 at the moment
-                throw new OptionParseException(tr("{0}: option ''{1}'' is required"));
+                throw new OptionParseException(tr("{0}: option ''{1}'' is required", program, optionName));
             } else if (count > def.getRequiredCount().max) {
                 // max may be 1 or MAX_INT at the moment
-                throw new OptionParseException(tr("{0}: option ''{1}'' may not appear multiple times"));
+                throw new OptionParseException(tr("{0}: option ''{1}'' may not appear multiple times", program, optionName));
             }
         });
 
@@ -221,7 +226,7 @@ public class OptionParser {
             if (alternatives.size() == 1) {
                 return alternatives.get(0);
             } else if (alternatives.size() > 1) {
-                throw new OptionParseException(tr("{0}: option ''{1}'' is ambiguous", program));
+                throw new OptionParseException(tr("{0}: option ''{1}'' is ambiguous", program, optionName));
             }
         }
         throw new OptionParseException(tr("{0}: unrecognized option ''{1}''", program, optionName));
