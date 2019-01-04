@@ -11,7 +11,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.OptionParser.OptionCount;
 import org.openstreetmap.josm.tools.OptionParser.OptionParseException;
 
@@ -21,25 +25,46 @@ import org.openstreetmap.josm.tools.OptionParser.OptionParseException;
  */
 public class OptionParserTest {
 
+    /**
+     * Rule used for tests throwing exceptions.
+     */
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    /**
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().i18n();
+
     // A reason for moving to jupiter...
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testEmptyParserRejectsLongopt() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: unrecognized option '--long'");
         new OptionParser("test").parseOptions(Arrays.asList("--long"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testEmptyParserRejectsShortopt() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: unrecognized option '-s'");
         new OptionParser("test").parseOptions(Arrays.asList("-s"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testParserRejectsWrongShortopt() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: unrecognized option '-s'");
         new OptionParser("test").addFlagParameter("test", this::nop).addShortAlias("test", "t")
                 .parseOptions(Arrays.asList("-s"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testParserRejectsWrongLongopt() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: unrecognized option '--wrong'");
         new OptionParser("test").addFlagParameter("test", this::nop).parseOptions(Arrays.asList("--wrong"));
     }
 
@@ -53,8 +78,10 @@ public class OptionParserTest {
         assertEquals("arg", argFound.get());
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testParserOptionFailsIfMissing() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: unrecognized option '--test2'");
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -62,8 +89,10 @@ public class OptionParserTest {
         parser.parseOptions(Arrays.asList("--test2", "arg"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testParserOptionFailsIfMissingArgument() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: unrecognized option '--test2'");
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -71,8 +100,10 @@ public class OptionParserTest {
         parser.parseOptions(Arrays.asList("--test2", "--other"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testParserOptionFailsIfMissing2() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '--test' is required");
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -80,8 +111,10 @@ public class OptionParserTest {
         parser.parseOptions(Arrays.asList("--", "--test", "arg"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testParserOptionFailsIfTwice() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '--test' may not appear multiple times");
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set);
@@ -89,8 +122,10 @@ public class OptionParserTest {
         parser.parseOptions(Arrays.asList("--test", "arg", "--test", "arg"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testParserOptionFailsIfTwiceForAlias() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '-t' may not appear multiple times");
         AtomicReference<String> argFound = new AtomicReference<>();
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, argFound::set)
@@ -99,23 +134,29 @@ public class OptionParserTest {
         parser.parseOptions(Arrays.asList("--test", "arg", "-t", "arg"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testOptionalOptionFailsIfTwice() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '--test' may not appear multiple times");
         OptionParser parser = new OptionParser("test")
                 .addFlagParameter("test", this::nop);
         parser.parseOptions(Arrays.asList("--test", "--test"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testOptionalOptionFailsIfTwiceForAlias() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '-t' may not appear multiple times");
         OptionParser parser = new OptionParser("test")
                 .addFlagParameter("test", this::nop)
                 .addShortAlias("test", "t");
         parser.parseOptions(Arrays.asList("-t", "-t"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testOptionalOptionFailsIfTwiceForAlias2() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '-t' may not appear multiple times");
         OptionParser parser = new OptionParser("test")
                 .addFlagParameter("test", this::nop)
                 .addShortAlias("test", "t");
@@ -144,24 +185,30 @@ public class OptionParserTest {
         assertEquals("with space and=equals", argFound.get());
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testLongArgumentsMissingOption() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '--test' requires an argument");
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, this::nop);
 
         parser.parseOptions(Arrays.asList("--test"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testLongArgumentsMissingOption2() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '--test' requires an argument");
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, this::nop);
 
         parser.parseOptions(Arrays.asList("--test", "--", "x"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testShortArgumentsMissingOption() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '-t' requires an argument");
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, this::nop)
                 .addShortAlias("test", "t");
@@ -169,8 +216,10 @@ public class OptionParserTest {
         parser.parseOptions(Arrays.asList("-t"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testShortArgumentsMissingOption2() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '-t' requires an argument");
         OptionParser parser = new OptionParser("test")
                 .addArgumentParameter("test", OptionCount.REQUIRED, this::nop)
                 .addShortAlias("test", "t");
@@ -178,16 +227,20 @@ public class OptionParserTest {
         parser.parseOptions(Arrays.asList("-t", "--", "x"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testLongFlagHasOption() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '--test' does not allow an argument");
         OptionParser parser = new OptionParser("test")
                 .addFlagParameter("test", this::nop);
 
         parser.parseOptions(Arrays.asList("--test=arg"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testShortFlagHasOption() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '-t' does not allow an argument");
         OptionParser parser = new OptionParser("test")
                 .addFlagParameter("test", this::nop)
                 .addShortAlias("test", "t");
@@ -250,8 +303,10 @@ public class OptionParserTest {
         assertFalse(unusedFlag.get());
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testAmbiguousAlternatives() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: option '--fl' is ambiguous");
         AtomicReference<String> argFound = new AtomicReference<>();
         AtomicBoolean usedFlag = new AtomicBoolean();
         AtomicBoolean unusedFlag = new AtomicBoolean();
@@ -264,8 +319,10 @@ public class OptionParserTest {
         parser.parseOptions(Arrays.asList("--te=arg", "--fl"));
     }
 
-    @Test(expected = OptionParseException.class)
+    @Test
     public void testMultipleShort() {
+        thrown.expect(OptionParseException.class);
+        thrown.expectMessage("test: unrecognized option '-ft'");
         AtomicReference<String> argFound = new AtomicReference<>();
         AtomicBoolean usedFlag = new AtomicBoolean();
         AtomicBoolean unusedFlag = new AtomicBoolean();
@@ -299,62 +356,85 @@ public class OptionParserTest {
         assertFalse(unusedFlag.get());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalOptionName() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Illegal option name: ''");
         new OptionParser("test").addFlagParameter("", this::nop);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalOptionName2() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Illegal option name: '-'");
         new OptionParser("test").addFlagParameter("-", this::nop);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalOptionName3() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Illegal option name: '-test'");
         new OptionParser("test").addFlagParameter("-test", this::nop);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalOptionName4() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Illegal option name: '$'");
         new OptionParser("test").addFlagParameter("$", this::nop);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDuplicateOptionName() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("The option '--test' is already registered");
         new OptionParser("test").addFlagParameter("test", this::nop).addFlagParameter("test", this::nop);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDuplicateOptionName2() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("The option '--test' is already registered");
         new OptionParser("test").addFlagParameter("test", this::nop)
             .addArgumentParameter("test", OptionCount.OPTIONAL, this::nop);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidShortAlias() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Short name '$' must be one character");
         new OptionParser("test").addFlagParameter("test", this::nop).addShortAlias("test", "$");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidShortAlias2() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Short name '' must be one character");
         new OptionParser("test").addFlagParameter("test", this::nop).addShortAlias("test", "");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidShortAlias3() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Short name 'xx' must be one character");
         new OptionParser("test").addFlagParameter("test", this::nop).addShortAlias("test", "xx");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDuplicateShortAlias() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Short name 't' is already used");
         new OptionParser("test").addFlagParameter("test", this::nop)
         .addFlagParameter("test2", this::nop)
         .addShortAlias("test", "t")
         .addShortAlias("test2", "t");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidShortNoLong() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("No long definition for test2 was defined. " +
+                "Define the long definition first before creating a short definition for it.");
         new OptionParser("test").addFlagParameter("test", this::nop).addShortAlias("test2", "t");
     }
 
