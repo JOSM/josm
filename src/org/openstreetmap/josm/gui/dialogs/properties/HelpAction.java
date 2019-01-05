@@ -6,37 +6,28 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Mediawiki;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.XmlUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
@@ -163,32 +154,9 @@ public class HelpAction extends AbstractAction {
      */
     public static void displayHelp(final List<String> pages) {
         try {
-            // find a page that actually exists in the wiki
-            // API documentation: https://wiki.openstreetmap.org/w/api.php?action=help&modules=query
-            final URL url = new URL(Config.getUrls().getOSMWiki() + "/w/api.php?action=query&format=xml&titles=" + pages.stream()
-                    .map(Utils::encodeUrl)
-                    .collect(Collectors.joining("|"))
-            );
-            final HttpClient.Response conn = HttpClient.create(url).connect();
-            final Document document;
-            try (InputStream content = conn.getContent()) {
-                document = XmlUtils.parseSafeDOM(content);
-            }
-            conn.disconnect();
-            final XPath xPath = XPathFactory.newInstance().newXPath();
-            for (String page : pages) {
-                String normalized = xPath.evaluate("/api/query/normalized/n[@from='" + page + "']/@to", document);
-                if (normalized == null || normalized.isEmpty()) {
-                    normalized = page;
-                }
-                final Node node = (Node) xPath.evaluate("/api/query/pages/page[@title='" + normalized + "']", document, XPathConstants.NODE);
-                if (node != null
-                        && node.getAttributes().getNamedItem("missing") == null
-                        && node.getAttributes().getNamedItem("invalid") == null) {
-                    OpenBrowser.displayUrl(Config.getUrls().getOSMWiki() + "/wiki/" + page);
-                    break;
-                }
-            }
+            new Mediawiki(Config.getUrls().getOSMWiki())
+                    .findExistingPage(pages)
+                    .ifPresent(page -> OpenBrowser.displayUrl(Config.getUrls().getOSMWiki() + "/wiki/" + page));
         } catch (IOException | ParserConfigurationException | XPathExpressionException | SAXException e1) {
             Logging.error(e1);
         }
