@@ -140,7 +140,8 @@
     </complexType>
 
     <complexType name="link">
-        <attribute name="href" type="string" use="required" />
+        <attribute name="wiki" type="string" />
+        <attribute name="href" type="string" />
         <attribute name="text" type="string" />
         <attribute name="text_context" type="string" />
 
