@@ -46,7 +46,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.actions.HatchAreaOutsideDownloadAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
@@ -107,6 +106,7 @@ import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadLayerTask;
 import org.openstreetmap.josm.gui.io.importexport.OsmImporter;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -480,7 +480,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
         // draw the hatched area for non-downloaded region. only draw if we're the active
         // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
-        if (active && Config.getPref().getBoolean("draw.data.downloaded_area", true) && !data.getDataSources().isEmpty()) {
+        if (active && DrawingPreference.SOURCE_BOUNDS_PROP.get() && !data.getDataSources().isEmpty()) {
             // initialize area with current viewport
             Rectangle b = mv.getBounds();
             // on some platforms viewport bounds seem to be offset from the left,
@@ -507,9 +507,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
                 g.setPaint(new TexturePaint(hatched, anchorRect));
             }
             try {
-                if (HatchAreaOutsideDownloadAction.isHatchEnabled()) {
-                    g.fill(a);
-                }
+                g.fill(a);
             } catch (ArrayIndexOutOfBoundsException e) {
                 // #16686 - AIOOBE in java.awt.TexturePaintContext$Int.setRaster
                 Logging.error(e);

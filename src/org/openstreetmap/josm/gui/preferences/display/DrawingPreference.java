@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterRule;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -40,6 +41,12 @@ public class DrawingPreference implements SubPreferenceSetting {
             return new DrawingPreference();
         }
     }
+
+    /**
+     * Property controlling whether to draw boundaries of downloaded data
+     * @since 14648
+     */
+    public static final BooleanProperty SOURCE_BOUNDS_PROP = new BooleanProperty("draw.data.downloaded_area", true);
 
     private GPXSettingsPanel gpxPanel;
     private final JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
@@ -106,7 +113,7 @@ public class DrawingPreference implements SubPreferenceSetting {
 
         // downloaded area
         sourceBounds.setToolTipText(tr("Draw the boundaries of data loaded from the server."));
-        sourceBounds.setSelected(Config.getPref().getBoolean("draw.data.downloaded_area", true));
+        sourceBounds.setSelected(SOURCE_BOUNDS_PROP.get());
 
         // virtual nodes
         virtualNodes.setToolTipText(tr("Draw virtual nodes in select mode for easy way modification."));
@@ -209,7 +216,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         Config.getPref().putBoolean("draw.oneway", onewayArrow.isSelected());
         Config.getPref().putBoolean("draw.segment.order_number", segmentOrderNumber.isSelected());
         Config.getPref().putBoolean("draw.segment.order_number.on_selected", segmentOrderNumberOnSelectedWay.isSelected());
-        Config.getPref().putBoolean("draw.data.downloaded_area", sourceBounds.isSelected());
+        SOURCE_BOUNDS_PROP.put(sourceBounds.isSelected());
         Config.getPref().putBoolean("draw.data.inactive_color", inactive.isSelected());
         Config.getPref().putBoolean("mappaint.use-antialiasing", useAntialiasing.isSelected());
         Config.getPref().putBoolean("mappaint.wireframe.use-antialiasing", useWireframeAntialiasing.isSelected());
