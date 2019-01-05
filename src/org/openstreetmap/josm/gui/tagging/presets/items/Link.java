@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JPanel;
@@ -42,7 +43,10 @@ public class Link extends TextItem {
                 public void mouseClicked(MouseEvent e) {
                     if (SwingUtilities.isLeftMouseButton(e)) {
                         // Open localized page if exists
-                        HelpAction.displayHelp(Arrays.asList(LanguageInfo.getWikiLanguagePrefix() + wiki, wiki));
+                        final List<String> pages = Arrays.asList(
+                                LanguageInfo.getWikiLanguagePrefix(LanguageInfo.LocaleType.OSM_WIKI) + wiki,
+                                wiki);
+                        HelpAction.displayHelp(pages);
                     } else {
                         super.mouseClicked(e);
                     }
