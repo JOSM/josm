@@ -585,9 +585,10 @@ abstract public class SVGElement implements Serializable
         return presAttribs.get(styName);
     }
 
+    private static final Pattern TRANSFORM_PATTERN = Pattern.compile("\\w+\\([^)]*\\)");
     static protected AffineTransform parseTransform(String val) throws SVGException
     {
-        final Matcher matchExpression = Pattern.compile("\\w+\\([^)]*\\)").matcher("");
+        final Matcher matchExpression = TRANSFORM_PATTERN.matcher("");
 
         AffineTransform retXform = new AffineTransform();
 
@@ -600,9 +601,10 @@ abstract public class SVGElement implements Serializable
         return retXform;
     }
 
+    private static final Pattern WORD_PATTERN = Pattern.compile("([a-zA-Z]+|-?\\d+(\\.\\d+)?(e-?\\d+)?|-?\\.\\d+(e-?\\d+)?)");
     static public AffineTransform parseSingleTransform(String val) throws SVGException
     {
-        final Matcher matchWord = Pattern.compile("([a-zA-Z]+|-?\\d+(\\.\\d+)?(e-?\\d+)?|-?\\.\\d+(e-?\\d+)?)").matcher("");
+        final Matcher matchWord = WORD_PATTERN.matcher("");
 
         AffineTransform retXform = new AffineTransform();
 
@@ -681,9 +683,10 @@ abstract public class SVGElement implements Serializable
         return Float.parseFloat(s);
     }
 
+    private static final Pattern COMMAND_PATTERN = Pattern.compile("([MmLlHhVvAaQqTtCcSsZz])|([-+]?((\\d*\\.\\d+)|(\\d+))([eE][-+]?\\d+)?)");
     static protected PathCommand[] parsePathList(String list)
     {
-        final Matcher matchPathCmd = Pattern.compile("([MmLlHhVvAaQqTtCcSsZz])|([-+]?((\\d*\\.\\d+)|(\\d+))([eE][-+]?\\d+)?)").matcher(list);
+        final Matcher matchPathCmd = COMMAND_PATTERN.matcher(list);
 
         //Tokenize
         LinkedList<String> tokens = new LinkedList<>();
