@@ -26,7 +26,9 @@ public final class LanguageInfo {
         /** The base language (i.e. pt for pt_BR) */
         BASELANGUAGE,
         /** The standard english texts */
-        ENGLISH
+        ENGLISH,
+        /** The locale prefix on the OSM wiki */
+        OSM_WIKI,
     }
 
     /**
@@ -44,8 +46,17 @@ public final class LanguageInfo {
     }
 
     static String getWikiLanguagePrefix(Locale locale, LocaleType type) {
-        if (type == LocaleType.ENGLISH)
-          return "";
+        if (type == LocaleType.ENGLISH) {
+            return "";
+        } else if (type == LocaleType.OSM_WIKI && Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+            return "";
+        } else if (type == LocaleType.OSM_WIKI && Locale.SIMPLIFIED_CHINESE.equals(locale)) {
+            return "Zh-hans:";
+        } else if (type == LocaleType.OSM_WIKI && Locale.TRADITIONAL_CHINESE.equals(locale)) {
+            return "Zh-hant:";
+        } else if (type == LocaleType.OSM_WIKI) {
+            return locale.getLanguage() + ':';
+        }
 
         String code = getJOSMLocaleCode(locale);
         if (type == LocaleType.BASELANGUAGE) {
@@ -59,8 +70,12 @@ public final class LanguageInfo {
         } else if (type == LocaleType.DEFAULTNOTENGLISH && "en".equals(code)) {
             return null;
         } else if (code.matches(".+@.+")) {
-          return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1, 2)
-          + '-' + code.substring(3, 4).toUpperCase(Locale.ENGLISH) + code.substring(4) + ':';
+            return code.substring(0, 1).toUpperCase(Locale.ENGLISH)
+                    + code.substring(1, 2)
+                    + '-'
+                    + code.substring(3, 4).toUpperCase(Locale.ENGLISH)
+                    + code.substring(4)
+                    + ':';
         }
         return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ':';
     }

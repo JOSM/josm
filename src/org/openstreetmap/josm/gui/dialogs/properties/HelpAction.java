@@ -99,7 +99,7 @@ public class HelpAction extends AbstractAction {
      * @since 14208
      */
     public static void displayTagHelp(String key, String val) {
-        final String lang = LanguageInfo.getWikiLanguagePrefix();
+        final String lang = LanguageInfo.getWikiLanguagePrefix(LanguageInfo.LocaleType.OSM_WIKI);
         final List<String> pages = Arrays.asList(
                 String.format("%sTag:%s=%s", lang, key, val),
                 String.format("Tag:%s=%s", key, val),
@@ -117,7 +117,7 @@ public class HelpAction extends AbstractAction {
      * @since 14208
      */
     public static void displayRelationHelp(IRelation<?> rel) {
-        final String lang = LanguageInfo.getWikiLanguagePrefix();
+        final String lang = LanguageInfo.getWikiLanguagePrefix(LanguageInfo.LocaleType.OSM_WIKI);
         final List<String> pages = new ArrayList<>();
         String type = rel.get("type");
         if (type != null) {
@@ -139,7 +139,7 @@ public class HelpAction extends AbstractAction {
      * @since 14208
      */
     public static void displayGenericHelp() {
-        final String lang = LanguageInfo.getWikiLanguagePrefix();
+        final String lang = LanguageInfo.getWikiLanguagePrefix(LanguageInfo.LocaleType.OSM_WIKI);
         final List<String> pages = Arrays.asList(
                 String.format("%sMap_Features", lang),
                 "Map_Features"
