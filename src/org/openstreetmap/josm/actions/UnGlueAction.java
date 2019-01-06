@@ -36,7 +36,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.PropertiesMembershipChoiceDialog;
-import org.openstreetmap.josm.gui.dialogs.PropertiesMembershipChoiceDialog.ExistingBothNewChoice;
+import org.openstreetmap.josm.gui.dialogs.PropertiesMembershipChoiceDialog.ExistingBothNew;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -179,22 +179,22 @@ public class UnGlueAction extends JosmAction {
         updateProperties(dialog.getTags(), existingNode, newNodes, cmds);
     }
 
-    private static void updateProperties(ExistingBothNewChoice tags, Node existingNode, Iterable<Node> newNodes, Collection<Command> cmds) {
-        if (tags != null && tags.newNode.isSelected()) {
+    private static void updateProperties(ExistingBothNew tags, Node existingNode, Iterable<Node> newNodes, Collection<Command> cmds) {
+        if (ExistingBothNew.NEW.equals(tags)) {
             final Node newSelectedNode = new Node(existingNode);
             newSelectedNode.removeAll();
             cmds.add(new ChangeCommand(existingNode, newSelectedNode));
-        } else if (tags != null && tags.oldNode.isSelected()) {
+        } else if (ExistingBothNew.OLD.equals(tags)) {
             for (Node newNode : newNodes) {
                 newNode.removeAll();
             }
         }
     }
 
-    private static void updateMemberships(ExistingBothNewChoice memberships, Node existingNode, List<Node> newNodes, Collection<Command> cmds) {
-        if (memberships != null && memberships.bothNodes.isSelected()) {
+    private static void updateMemberships(ExistingBothNew memberships, Node existingNode, List<Node> newNodes, Collection<Command> cmds) {
+        if (ExistingBothNew.BOTH.equals(memberships)) {
             fixRelations(existingNode, cmds, newNodes, false);
-        } else if (memberships != null && memberships.newNode.isSelected()) {
+        } else if (ExistingBothNew.NEW.equals(memberships)) {
             fixRelations(existingNode, cmds, newNodes, true);
         }
     }
@@ -202,7 +202,7 @@ public class UnGlueAction extends JosmAction {
     /**
      * Assumes there is one tagged Node stored in selectedNode that it will try to unglue.
      * (i.e. copy node and remove all tags from the old one. Relations will not be removed)
-     * @param e event that trigerred the action
+     * @param e event that triggered the action
      */
     private void unglueOneNodeAtMostOneWay(ActionEvent e) {
         final PropertiesMembershipChoiceDialog dialog;

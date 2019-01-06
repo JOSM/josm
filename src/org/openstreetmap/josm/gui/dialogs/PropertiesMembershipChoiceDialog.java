@@ -30,16 +30,20 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
     private final transient ExistingBothNewChoice tags;
     private final transient ExistingBothNewChoice memberships;
 
+    public enum ExistingBothNew {
+        OLD, BOTH, NEW
+    }
+
     /**
      * Provides toggle buttons to allow the user choose the existing node, the new nodes, or all of them.
      */
-    public static class ExistingBothNewChoice {
+    private static class ExistingBothNewChoice {
         /** The "Existing node" button */
-        public final AbstractButton oldNode = new JToggleButton(tr("Existing node"), ImageProvider.get("dialogs/conflict/tagkeeptheir"));
+        final AbstractButton oldNode = new JToggleButton(tr("Existing node"), ImageProvider.get("dialogs/conflict/tagkeeptheir"));
         /** The "Both nodes" button */
-        public final AbstractButton bothNodes = new JToggleButton(tr("Both nodes"), ImageProvider.get("dialogs/conflict/tagundecide"));
+        final AbstractButton bothNodes = new JToggleButton(tr("Both nodes"), ImageProvider.get("dialogs/conflict/tagundecide"));
         /** The "New node" button */
-        public final AbstractButton newNode = new JToggleButton(tr("New node"), ImageProvider.get("dialogs/conflict/tagkeepmine"));
+        final AbstractButton newNode = new JToggleButton(tr("New node"), ImageProvider.get("dialogs/conflict/tagkeepmine"));
 
         ExistingBothNewChoice(final boolean preselectNew) {
             final ButtonGroup tagsGroup = new ButtonGroup();
@@ -47,6 +51,24 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
             tagsGroup.add(bothNodes);
             tagsGroup.add(newNode);
             tagsGroup.setSelected((preselectNew ? newNode : oldNode).getModel(), true);
+        }
+
+        void add(JPanel content, int gridy) {
+            content.add(oldNode, GBC.std(1, gridy));
+            content.add(bothNodes, GBC.std(2, gridy));
+            content.add(newNode, GBC.std(3, gridy));
+        }
+
+        ExistingBothNew getSelected() {
+            if (oldNode.isSelected()) {
+                return ExistingBothNew.OLD;
+            } else if (bothNodes.isEnabled()) {
+                return ExistingBothNew.BOTH;
+            } else if (newNode.isSelected()) {
+                return ExistingBothNew.NEW;
+            } else {
+                throw new IllegalStateException();
+            }
         }
     }
 
@@ -59,9 +81,7 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
         if (queryTags) {
             content.add(new JLabel(tr("Where should the tags of the node be put?")), GBC.std(1, 1).span(3).insets(0, 20, 0, 0));
             tags = new ExistingBothNewChoice(preselectNew);
-            content.add(tags.oldNode, GBC.std(1, 2));
-            content.add(tags.bothNodes, GBC.std(2, 2));
-            content.add(tags.newNode, GBC.std(3, 2));
+            tags.add(content, 2);
         } else {
             tags = null;
         }
@@ -69,9 +89,7 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
         if (queryMemberships) {
             content.add(new JLabel(tr("Where should the memberships of this node be put?")), GBC.std(1, 3).span(3).insets(0, 20, 0, 0));
             memberships = new ExistingBothNewChoice(preselectNew);
-            content.add(memberships.oldNode, GBC.std(1, 4));
-            content.add(memberships.bothNodes, GBC.std(2, 4));
-            content.add(memberships.newNode, GBC.std(3, 4));
+            memberships.add(content, 4);
         } else {
             memberships = null;
         }
@@ -84,16 +102,16 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
      * Returns the tags choice.
      * @return the tags choice (can be null)
      */
-    public ExistingBothNewChoice getTags() {
-        return tags;
+    public ExistingBothNew getTags() {
+        return tags.getSelected();
     }
 
     /**
      * Returns the memberships choice.
      * @return the memberships choice (can be null)
      */
-    public ExistingBothNewChoice getMemberships() {
-        return memberships;
+    public ExistingBothNew getMemberships() {
+        return memberships.getSelected();
     }
 
     /**
