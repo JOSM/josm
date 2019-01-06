@@ -62,7 +62,7 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
         ExistingBothNew getSelected() {
             if (oldNode.isSelected()) {
                 return ExistingBothNew.OLD;
-            } else if (bothNodes.isEnabled()) {
+            } else if (bothNodes.isSelected()) {
                 return ExistingBothNew.BOTH;
             } else if (newNode.isSelected()) {
                 return ExistingBothNew.NEW;
