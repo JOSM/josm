@@ -195,11 +195,12 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
          */
         public SessionSaveAsDialog() {
             super(MainApplication.getMainFrame(), tr("Save Session"), tr("Save As"), tr("Cancel"));
+            configureContextsensitiveHelp("Action/SessionSaveAs", true /* show help button */);
             initialize();
             setButtonIcons("save_as", "cancel");
             setDefaultButton(1);
             setRememberWindowGeometry(getClass().getName() + ".geometry",
-                    WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(350, 450)));
+                    WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(450, 450)));
             setContent(build(), false);
         }
 
