@@ -95,7 +95,7 @@ public class UploadSelectionDialog extends JDialog {
         lstSelectedPrimitives.getSelectionModel().addListSelectionListener(continueAction);
 
         pnl.add(new JButton(new CancelAction()));
-        pnl.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/UploadSelection"))));
+        pnl.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Action/UploadSelection"))));
         return pnl;
     }
 
@@ -121,7 +121,7 @@ public class UploadSelectionDialog extends JDialog {
                 }
         );
         setTitle(tr("Select objects to upload"));
-        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/UploadSelection"));
+        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Action/UploadSelection"));
     }
 
     public void populate(Collection<OsmPrimitive> selected, Collection<OsmPrimitive> deleted) {
@@ -174,7 +174,7 @@ public class UploadSelectionDialog extends JDialog {
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             MainApplication.getMainFrame(),
-                            new Dimension(200, 400)
+                            new Dimension(400, 400)
                     )
             ).applySafe(this);
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775

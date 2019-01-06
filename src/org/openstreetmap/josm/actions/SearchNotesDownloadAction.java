@@ -58,6 +58,7 @@ public class SearchNotesDownloadAction extends JosmAction {
         ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), tr("Search for notes"), tr("Search for notes"), tr("Cancel"))
             .setContent(contentPanel)
             .setButtonIcons("note_search", "cancel");
+        ed.configureContextsensitiveHelp("/Action/SearchNotesDownload", true /* show help button */);
         if (ed.showDialog().getValue() != 1) {
             return;
         }
