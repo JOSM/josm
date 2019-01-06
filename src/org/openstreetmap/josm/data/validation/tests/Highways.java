@@ -114,7 +114,7 @@ public class Highways extends Test {
         // Count all highways (per type) connected to this roundabout, except correct links
         // As roundabouts are closed ways, take care of not processing the first/last node twice
         for (Node n : new HashSet<>(w.getNodes())) {
-            for (Way h : Utils.filteredCollection(n.getReferrers(), Way.class)) {
+            for (Way h : (Iterable<Way>) n.referrers(Way.class)::iterator) {
                 String value = h.get(HIGHWAY);
                 if (h != w && value != null) {
                     boolean link = value.endsWith("_link");

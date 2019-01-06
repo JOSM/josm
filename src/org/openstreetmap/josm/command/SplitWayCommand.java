@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -296,7 +297,7 @@ public class SplitWayCommand extends SequenceCommand {
         boolean warnme = false;
         // now copy all relations to new way also
 
-        for (Relation r : OsmPrimitive.getFilteredList(way.getReferrers(), Relation.class)) {
+        for (Relation r : OsmPrimitive.getParentRelations(Collections.singleton(way))) {
             if (!r.isUsable()) {
                 continue;
             }

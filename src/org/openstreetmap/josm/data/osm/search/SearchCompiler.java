@@ -47,7 +47,6 @@ import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -1472,7 +1471,7 @@ public class SearchCompiler {
         @Override
         protected Long getNumber(OsmPrimitive osm) {
             if (osm instanceof Node) {
-                return (long) Utils.filteredCollection(osm.getReferrers(), Way.class).size();
+                return osm.referrers(Way.class).count();
             } else if (osm instanceof Relation) {
                 return (long) ((Relation) osm).getMemberPrimitives(Way.class).size();
             } else {

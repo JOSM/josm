@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -16,7 +17,6 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * One node data, consisting of one world coordinate waypoint.
@@ -369,7 +369,7 @@ public final class Node extends OsmPrimitive implements INode {
         }
         if (hops > 0 && visited != null) {
             visited.add(this);
-            for (final Way w : Utils.filteredCollection(this.getReferrers(), Way.class)) {
+            for (final Way w : getParentWays()) {
                 for (final Node n : w.getNodes()) {
                     final boolean containsN = visited.contains(n);
                     visited.add(n);
@@ -400,6 +400,6 @@ public final class Node extends OsmPrimitive implements INode {
      * @since 12031
      */
     public List<Way> getParentWays() {
-        return getFilteredList(getReferrers(), Way.class);
+        return referrers(Way.class).collect(Collectors.toList());
     }
 }

@@ -389,7 +389,7 @@ public class UnGlueAction extends JosmAction {
             return;
         }
         // modify all relations containing the node
-        for (Relation r : OsmPrimitive.getFilteredList(originalNode.getReferrers(), Relation.class)) {
+        for (Relation r : OsmPrimitive.getParentRelations(Collections.singleton(originalNode))) {
             if (r.isDeleted()) {
                 continue;
             }

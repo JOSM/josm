@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -266,7 +267,7 @@ public class DuplicateWay extends Test {
         Way wayWithRelations = null;
         List<Relation> relations = null;
         for (Way w : wayz) {
-            List<Relation> rel = OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class);
+            List<Relation> rel = w.referrers(Relation.class).collect(Collectors.toList());
             if (!rel.isEmpty()) {
                 if (wayWithRelations != null)
                     throw new AssertionError("Cannot fix duplicate Ways: More than one way is relation member.");
@@ -327,7 +328,7 @@ public class DuplicateWay extends Test {
 
         int waysWithRelations = 0;
         for (Way w : wayz) {
-            List<Relation> rel = OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class);
+            List<Relation> rel = w.referrers(Relation.class).collect(Collectors.toList());
             if (!rel.isEmpty()) {
                 ++waysWithRelations;
             }

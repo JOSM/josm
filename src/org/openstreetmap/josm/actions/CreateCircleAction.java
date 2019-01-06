@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -138,16 +137,15 @@ public final class CreateCircleAction extends JosmAction {
      * @since 14542
      */
     public static void runOn(DataSet ds) {
-        Collection<OsmPrimitive> sel = ds.getSelected();
-        List<Node> nodes = OsmPrimitive.getFilteredList(sel, Node.class);
-        List<Way> ways = OsmPrimitive.getFilteredList(sel, Way.class);
+        List<Node> nodes = new ArrayList<>(ds.getSelectedNodes());
+        Collection<Way> ways = ds.getSelectedWays();
 
         Way existingWay = null;
 
         // special case if no single nodes are selected and exactly one way is:
         // then use the way's nodes
         if (nodes.isEmpty() && (ways.size() == 1)) {
-            existingWay = ways.get(0);
+            existingWay = ways.iterator().next();
             for (Node n : existingWay.getNodes()) {
                 if (!nodes.contains(n)) {
                     nodes.add(n);
@@ -202,11 +200,10 @@ public final class CreateCircleAction extends JosmAction {
         }
 
         // Order nodes by angle
-        PolarNode[] angles = new PolarNode[nodes.size()];
-        for (int i = 0; i < nodes.size(); i++) {
-            angles[i] = new PolarNode(center, nodes.get(i));
-        }
-        Arrays.sort(angles, new PolarNodeComparator());
+        final PolarNode[] angles = nodes.stream()
+                .map(n -> new PolarNode(center, n))
+                .sorted()
+                .toArray(PolarNode[]::new);
         int[] count = distributeNodes(angles,
                 numberOfNodesInCircle >= nodes.size() ? (numberOfNodesInCircle - nodes.size()) : 0);
 

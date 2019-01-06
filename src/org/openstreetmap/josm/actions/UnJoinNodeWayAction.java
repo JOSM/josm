@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.RemoveNodesCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -45,10 +46,9 @@ public class UnJoinNodeWayAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Collection<OsmPrimitive> selection = getLayerManager().getEditDataSet().getSelected();
-
-        List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
-        List<Way> selectedWays = OsmPrimitive.getFilteredList(selection, Way.class);
+        final DataSet dataSet = getLayerManager().getEditDataSet();
+        List<Node> selectedNodes = new ArrayList<>(dataSet.getSelectedNodes());
+        List<Way> selectedWays = new ArrayList<>(dataSet.getSelectedWays());
 
         selectedNodes = cleanSelectedNodes(selectedWays, selectedNodes);
 

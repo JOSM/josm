@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
@@ -27,7 +27,7 @@ public interface RotationAngle {
                 return 0;
             }
             final Node n = (Node) p;
-            final SubclassFilteredCollection<OsmPrimitive, Way> ways = Utils.filteredCollection(n.getReferrers(), Way.class);
+            final List<Way> ways = n.getParentWays();
             if (ways.isEmpty()) {
                 return 0;
             }

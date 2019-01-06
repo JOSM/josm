@@ -5,18 +5,19 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
@@ -90,16 +91,14 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * @param list  the original list
      * @param type the type to filter for
      * @return the sub-list of OSM primitives of type <code>type</code>
+     * @deprecated Use {@link Stream} or {@link Utils#filteredCollection(Collection, Class)} instead.
      */
+    @Deprecated
     public static <T extends OsmPrimitive> List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
-        if (list == null) return Collections.emptyList();
-        List<T> ret = new LinkedList<>();
-        for (OsmPrimitive p: list) {
-            if (type.isInstance(p)) {
-                ret.add(type.cast(p));
-            }
-        }
-        return ret;
+        return (list != null ? list.stream() : Stream.empty())
+                .filter(type::isInstance)
+                .map(type::cast)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -112,17 +111,14 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * @param set  the original collection
      * @param type the type to filter for
      * @return the sub-set of OSM primitives of type <code>type</code>
+     * @deprecated Use {@link Stream} instead
      */
+    @Deprecated
     public static <T extends OsmPrimitive> Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
-        Set<T> ret = new LinkedHashSet<>();
-        if (set != null) {
-            for (OsmPrimitive p: set) {
-                if (type.isInstance(p)) {
-                    ret.add(type.cast(p));
-                }
-            }
-        }
-        return ret;
+        return (set != null ? set.stream() : Stream.empty())
+                .filter(type::isInstance)
+                .map(type::cast)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -133,12 +129,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * empty set if primitives is null or if there are no referring primitives
      */
     public static Set<OsmPrimitive> getReferrer(Collection<? extends OsmPrimitive> primitives) {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        if (primitives == null || primitives.isEmpty()) return ret;
-        for (OsmPrimitive p: primitives) {
-            ret.addAll(p.getReferrers());
-        }
-        return ret;
+        return (primitives != null ? primitives.stream() : Stream.<OsmPrimitive>empty())
+                .flatMap(p -> p.referrers(OsmPrimitive.class))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -815,32 +808,42 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
-    @Override
-    public final List<OsmPrimitive> getReferrers(boolean allowWithoutDataset) {
+    private <T extends OsmPrimitive> Stream<T> referrers(boolean allowWithoutDataset, Class<T> filter) {
         // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
 
-        if (dataSet == null && allowWithoutDataset)
-            return Collections.emptyList();
-
-        checkDataset();
-        Object referrers = this.referrers;
-        List<OsmPrimitive> result = new ArrayList<>();
-        if (referrers != null) {
-            if (referrers instanceof OsmPrimitive) {
-                OsmPrimitive ref = (OsmPrimitive) referrers;
-                if (ref.dataSet == dataSet) {
-                    result.add(ref);
-                }
-            } else {
-                for (OsmPrimitive o:(OsmPrimitive[]) referrers) {
-                    if (dataSet == o.dataSet) {
-                        result.add(o);
-                    }
-                }
-            }
+        if (dataSet == null && allowWithoutDataset) {
+            return Stream.empty();
         }
-        return result;
+        checkDataset();
+        final Object referrers = this.referrers;
+        if (referrers == null) {
+            return Stream.empty();
+        }
+        final Stream<OsmPrimitive> stream = referrers instanceof OsmPrimitive
+                ? Stream.of((OsmPrimitive) referrers)
+                : Arrays.stream((OsmPrimitive[]) referrers);
+        return stream
+                .filter(p -> p.dataSet == dataSet)
+                .filter(filter::isInstance)
+                .map(filter::cast);
+    }
+
+    /**
+     * Gets all primitives in the current dataset that reference this primitive.
+     * @param filter restrict primitives to subclasses
+     * @param <T> type of primitives
+     * @return the referrers as Stream
+     * @since 14654
+     */
+    public final <T extends OsmPrimitive> Stream<T> referrers(Class<T> filter) {
+        return referrers(false, filter);
+    }
+
+    @Override
+    public final List<OsmPrimitive> getReferrers(boolean allowWithoutDataset) {
+        return referrers(allowWithoutDataset, OsmPrimitive.class)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -1158,11 +1161,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * @return the set of referring relations
      */
     public static Set<Relation> getParentRelations(Collection<? extends OsmPrimitive> primitives) {
-        Set<Relation> ret = new HashSet<>();
-        for (OsmPrimitive w : primitives) {
-            ret.addAll(OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class));
-        }
-        return ret;
+        return primitives.stream()
+                .flatMap(p -> p.referrers(Relation.class))
+                .collect(Collectors.toSet());
     }
 
     /**

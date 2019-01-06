@@ -189,7 +189,7 @@ public class CreateMultipolygonAction extends JosmAction {
         } else {
             final Set<Relation> relatedRelations = new HashSet<>();
             for (final Way w : selectedWays) {
-                relatedRelations.addAll(Utils.filteredCollection(w.getReferrers(), Relation.class));
+                w.referrers(Relation.class).forEach(relatedRelations::add);
             }
             return relatedRelations.size() == 1 ? relatedRelations.iterator().next() : null;
         }

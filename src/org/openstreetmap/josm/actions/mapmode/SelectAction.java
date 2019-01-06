@@ -58,7 +58,6 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Move is an action that can move all kind of OsmPrimitives (except keys for now).
@@ -883,18 +882,13 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
     private boolean movesHiddenWay() {
         DataSet ds = getLayerManager().getEditDataSet();
-        final Collection<OsmPrimitive> elementsToTest = new HashSet<>(ds.getSelected());
+        final Collection<Node> elementsToTest = new HashSet<>(ds.getSelectedNodes());
         for (Way osm : ds.getSelectedWays()) {
             elementsToTest.addAll(osm.getNodes());
         }
-        for (OsmPrimitive node : Utils.filteredCollection(elementsToTest, Node.class)) {
-            for (Way ref : Utils.filteredCollection(node.getReferrers(), Way.class)) {
-                if (ref.isDisabledAndHidden()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return elementsToTest.stream()
+                .flatMap(n -> n.referrers(Way.class))
+                .anyMatch(Way::isDisabledAndHidden);
     }
 
     /**

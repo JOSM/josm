@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -153,6 +154,6 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
 
     private static boolean isUsedInRelations(final Collection<Node> existingNodes) {
         return existingNodes.stream().anyMatch(
-                selectedNode -> selectedNode.getReferrers().stream().anyMatch(Relation.class::isInstance));
+                selectedNode -> selectedNode.referrers(Relation.class).anyMatch(Objects::nonNull));
     }
 }
