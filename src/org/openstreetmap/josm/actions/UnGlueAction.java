@@ -24,8 +24,10 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -191,14 +193,6 @@ public class UnGlueAction extends JosmAction {
         }
     }
 
-    private static void updateMemberships(ExistingBothNew memberships, Node existingNode, List<Node> newNodes, Collection<Command> cmds) {
-        if (ExistingBothNew.BOTH.equals(memberships)) {
-            fixRelations(existingNode, cmds, newNodes, false);
-        } else if (ExistingBothNew.NEW.equals(memberships)) {
-            fixRelations(existingNode, cmds, newNodes, true);
-        }
-    }
-
     /**
      * Assumes there is one tagged Node stored in selectedNode that it will try to unglue.
      * (i.e. copy node and remove all tags from the old one. Relations will not be removed)
@@ -213,22 +207,37 @@ public class UnGlueAction extends JosmAction {
             return;
         }
 
-        final Node n = new Node(selectedNode, true);
+        final Node unglued = new Node(selectedNode, true);
+        boolean moveSelectedNode = false;
 
         List<Command> cmds = new LinkedList<>();
-        cmds.add(new AddCommand(selectedNode.getDataSet(), n));
-        if (dialog != null) {
-            update(dialog, selectedNode, Collections.singletonList(n), cmds);
+        cmds.add(new AddCommand(selectedNode.getDataSet(), unglued));
+        if (dialog != null && ExistingBothNew.NEW.equals(dialog.getTags())) {
+            // unglued node gets the ID and history, thus replace way node with a fresh one
+            final Way way = selectedNode.getParentWays().get(0);
+            final List<Node> newWayNodes = way.getNodes();
+            newWayNodes.replaceAll(n -> selectedNode.equals(n) ? unglued : n);
+            cmds.add(new ChangeNodesCommand(way, newWayNodes));
+            updateMemberships(dialog.getMemberships().opposite(), selectedNode, Collections.singletonList(unglued), cmds);
+            updateProperties(dialog.getTags().opposite(), selectedNode, Collections.singletonList(unglued), cmds);
+            moveSelectedNode = true;
+        } else if (dialog != null) {
+            update(dialog, selectedNode, Collections.singletonList(unglued), cmds);
         }
 
         // If this wasn't called from menu, place it where the cursor is/was
         MapView mv = MainApplication.getMap().mapView;
         if (e.getSource() instanceof JPanel) {
-            n.setCoor(mv.getLatLon(mv.lastMEvent.getX(), mv.lastMEvent.getY()));
+            final LatLon latLon = mv.getLatLon(mv.lastMEvent.getX(), mv.lastMEvent.getY());
+            if (moveSelectedNode) {
+                cmds.add(new MoveCommand(selectedNode, latLon));
+            } else {
+                unglued.setCoor(latLon);
+            }
         }
 
         UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Unglued Node"), cmds));
-        getLayerManager().getEditDataSet().setSelected(n);
+        getLayerManager().getEditDataSet().setSelected(moveSelectedNode ? selectedNode : unglued);
         mv.repaint();
     }
 
@@ -370,12 +379,15 @@ public class UnGlueAction extends JosmAction {
 
     /**
      * put all newNodes into the same relation(s) that originalNode is in
+     * @param memberships where the memberships should be places
      * @param originalNode original node to duplicate
      * @param cmds List of commands that will contain the new "change relation" commands
      * @param newNodes List of nodes that contain the new node
-     * @param removeOldMember whether the membership of the "old node" should be removed
      */
-    private static void fixRelations(Node originalNode, Collection<Command> cmds, List<Node> newNodes, boolean removeOldMember) {
+    private static void updateMemberships(ExistingBothNew memberships, Node originalNode, List<Node> newNodes, Collection<Command> cmds) {
+        if (ExistingBothNew.OLD.equals(memberships)) {
+            return;
+        }
         // modify all relations containing the node
         for (Relation r : OsmPrimitive.getFilteredList(originalNode.getReferrers(), Relation.class)) {
             if (r.isDeleted()) {
@@ -402,7 +414,8 @@ public class UnGlueAction extends JosmAction {
                         for (Node n : newNodes) {
                             newRel.addMember(role.getValue() + 1, new RelationMember(role.getKey(), n));
                         }
-                        if (removeOldMember) {
+                        if (ExistingBothNew.NEW.equals(memberships)) {
+                            // remove old member
                             newRel.removeMember(role.getValue());
                         }
                     }

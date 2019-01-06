@@ -30,8 +30,19 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
     private final transient ExistingBothNewChoice tags;
     private final transient ExistingBothNewChoice memberships;
 
+    /**
+     * Represents the user choice: the existing node, the new nodes, or all of them
+     */
     public enum ExistingBothNew {
-        OLD, BOTH, NEW
+        OLD, BOTH, NEW;
+
+        /**
+         * Returns the opposite/inverted user choice.
+         * @return the opposite/inverted user choice
+         */
+        public ExistingBothNew opposite() {
+            return equals(OLD) ? NEW : equals(NEW) ? OLD : this;
+        }
     }
 
     /**
