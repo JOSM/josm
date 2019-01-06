@@ -53,7 +53,7 @@ public class Link extends TextItem {
                 }
             };
             p.add(label, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL));
-        } else {
+        } else if (href != null || locale_href != null) {
             final String url = Optional.ofNullable(locale_href).orElse(href);
             final UrlLabel label = new UrlLabel(url, locale_text, 2);
             p.add(label, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL));
