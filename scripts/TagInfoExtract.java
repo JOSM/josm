@@ -185,11 +185,6 @@ public class TagInfoExtract {
 
         void setImageDir(String value) {
             imageDir = Paths.get(value);
-            try {
-                Files.createDirectories(imageDir);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
         }
 
         void setImageUrlPrefix(String value) {
@@ -564,5 +559,6 @@ public class TagInfoExtract {
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
         Territories.initialize();
         RightAndLefthandTraffic.initialize();
+        Files.createDirectories(options.imageDir);
     }
 }
