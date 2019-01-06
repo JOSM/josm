@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.Icon;
 
@@ -360,7 +361,7 @@ public class DeleteCommand extends Command {
      */
     protected static Collection<Node> computeNodesToDelete(Collection<OsmPrimitive> primitivesToDelete) {
         Collection<Node> nodesToDelete = new HashSet<>();
-        for (Way way : OsmPrimitive.getFilteredList(primitivesToDelete, Way.class)) {
+        for (Way way : Utils.filteredCollection(primitivesToDelete, Way.class)) {
             for (Node n : way.getNodes()) {
                 if (n.isTagged()) {
                     continue;
@@ -434,12 +435,14 @@ public class DeleteCommand extends Command {
                 primitivesToDelete, Utils.filteredCollection(primitivesToDelete, Way.class)))
             return null;
 
-        Collection<Way> waysToBeChanged = new HashSet<>(OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Way.class));
+        Collection<Way> waysToBeChanged = primitivesToDelete.stream()
+                .flatMap(p -> p.referrers(Way.class))
+                .collect(Collectors.toSet());
 
         Collection<Command> cmds = new LinkedList<>();
         for (Way w : waysToBeChanged) {
             Way wnew = new Way(w);
-            wnew.removeNodes(OsmPrimitive.getFilteredSet(primitivesToDelete, Node.class));
+            wnew.removeNodes(new HashSet<>(Utils.filteredCollection(primitivesToDelete, Node.class)));
             if (wnew.getNodesCount() < 2) {
                 primitivesToDelete.add(w);
             } else {
@@ -459,7 +462,10 @@ public class DeleteCommand extends Command {
 
         // remove the objects from their parent relations
         //
-        for (Relation cur : OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Relation.class)) {
+        final Set<Relation> relationsToBeChanged = primitivesToDelete.stream()
+                .flatMap(p -> p.referrers(Relation.class))
+                .collect(Collectors.toSet());
+        for (Relation cur : relationsToBeChanged) {
             Relation rel = new Relation(cur);
             rel.removeMembersFor(primitivesToDelete);
             cmds.add(new ChangeCommand(cur, rel));

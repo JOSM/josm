@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is an extension of {@link RelationMember} that stores the parent relation and the index in it in addition to the role/child.
@@ -18,7 +19,7 @@ public class RelationToChildReference {
      * @return  a set of all {@link RelationToChildReference}s for a given child primitive
      */
     public static Set<RelationToChildReference> getRelationToChildReferences(OsmPrimitive child) {
-        Set<Relation> parents = OsmPrimitive.getFilteredSet(child.getReferrers(), Relation.class);
+        Set<Relation> parents = child.referrers(Relation.class).collect(Collectors.toSet());
         Set<RelationToChildReference> references = new HashSet<>();
         for (Relation parent: parents) {
             for (int i = 0; i < parent.getMembersCount(); i++) {

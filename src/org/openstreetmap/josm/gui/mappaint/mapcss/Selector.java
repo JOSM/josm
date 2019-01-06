@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -353,15 +353,15 @@ public interface Selector {
                 try {
                     // if right selector also matches relations and if matched primitive is a way which is part of a multipolygon,
                     // use the multipolygon for further analysis
-                    if (!(e.osm instanceof IWay)
+                    if (!(e.osm instanceof Way)
                             || (right instanceof OptimizedGeneralSelector
                             && !((OptimizedGeneralSelector) right).matchesBase(OsmPrimitiveType.RELATION))) {
                         throw new NoSuchElementException();
                     }
-                    final Collection<Relation> multipolygons = Utils.filteredCollection(SubclassFilteredCollection.filter(
-                            e.osm.getReferrers(), p -> p.hasTag("type", "multipolygon")), Relation.class);
-                    final Relation multipolygon = multipolygons.iterator().next();
-                    if (multipolygon == null) throw new NoSuchElementException();
+                    final Relation multipolygon = ((Way) e.osm).referrers(Relation.class)
+                            .filter(p -> p.hasTag("type", "multipolygon"))
+                            .findFirst()
+                            .orElseThrow(NoSuchElementException::new);
                     final Set<OsmPrimitive> members = multipolygon.getMemberPrimitives();
                     containsFinder = new ContainsFinder(new Environment(multipolygon)) {
                         @Override

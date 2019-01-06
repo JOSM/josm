@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -260,9 +261,9 @@ public class DuplicateRelation extends Test {
         Relation relationToKeep = relFix.iterator().next();
         // Find the relation that is member of one or more relations. (If any)
         Relation relationWithRelations = null;
-        List<Relation> relRef = null;
+        Collection<Relation> relRef = null;
         for (Relation w : relFix) {
-            List<Relation> rel = OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class);
+            Collection<Relation> rel = w.referrers(Relation.class).collect(Collectors.toList());
             if (!rel.isEmpty()) {
                 if (relationWithRelations != null)
                     throw new AssertionError("Cannot fix duplicate relations: More than one relation is member of another relation.");
@@ -317,13 +318,10 @@ public class DuplicateRelation extends Test {
         if (rels.size() < 2)
             return false;
 
-        int relationsWithRelations = 0;
-        for (Relation w : rels) {
-            List<Relation> rel = OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class);
-            if (!rel.isEmpty()) {
-                ++relationsWithRelations;
-            }
-        }
-        return relationsWithRelations <= 1;
+        // count relations with relations
+        return rels.stream()
+                .filter(x -> x.referrers(Relation.class).anyMatch(y -> true))
+                .limit(2)
+                .count() <= 1;
     }
 }

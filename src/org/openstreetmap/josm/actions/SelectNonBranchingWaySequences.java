@@ -88,8 +88,7 @@ public class SelectNonBranchingWaySequences {
     private static Way findWay(Collection<OsmPrimitive> selection, Node node) {
         Way foundWay = null;
 
-        for (Way way : OsmPrimitive.getFilteredList(node.getReferrers(),
-                Way.class)) {
+        for (Way way : node.getParentWays()) {
             if (way.getNodesCount() < 2 || !way.isFirstLastNode(node)
                     || !way.isSelectable()
                     || selection.contains(way))

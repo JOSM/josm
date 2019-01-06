@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -74,9 +75,9 @@ public class MergeNodesAction extends JosmAction {
     public void actionPerformed(ActionEvent event) {
         if (!isEnabled())
             return;
-        Collection<OsmPrimitive> selection = getLayerManager().getEditDataSet().getAllSelected();
-        List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
-        selectedNodes.removeIf(n -> n.isDeleted() || n.isIncomplete());
+        final List<Node> selectedNodes = getLayerManager().getEditDataSet().getSelectedNodes().stream()
+                .filter(n -> !n.isDeleted() && !n.isIncomplete())
+                .collect(Collectors.toList());
 
         if (selectedNodes.size() == 1) {
             MapView mapView = MainApplication.getMap().mapView;
@@ -202,7 +203,7 @@ public class MergeNodesAction extends JosmAction {
         List<Command> cmds = new ArrayList<>();
         Set<Way> waysToDelete = new HashSet<>();
 
-        for (Way w: OsmPrimitive.getFilteredList(OsmPrimitive.getReferrer(nodesToDelete), Way.class)) {
+        for (Way w: (Iterable<Way>) nodesToDelete.stream().flatMap(p -> p.referrers(Way.class))::iterator) {
             List<Node> newNodes = new ArrayList<>(w.getNodesCount());
             for (Node n: w.getNodes()) {
                 if (!nodesToDelete.contains(n) && !n.equals(targetNode)) {

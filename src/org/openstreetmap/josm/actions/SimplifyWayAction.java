@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -97,8 +98,9 @@ public class SimplifyWayAction extends JosmAction {
         DataSet ds = getLayerManager().getEditDataSet();
         ds.beginUpdate();
         try {
-            List<Way> ways = OsmPrimitive.getFilteredList(ds.getSelected(), Way.class);
-            ways.removeIf(OsmPrimitive::isIncomplete);
+            List<Way> ways = ds.getSelectedWays().stream()
+                    .filter(p -> !p.isIncomplete())
+                    .collect(Collectors.toList());
             if (ways.isEmpty()) {
                 alertSelectAtLeastOneWay();
                 return;

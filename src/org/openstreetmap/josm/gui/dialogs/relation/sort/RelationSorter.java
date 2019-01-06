@@ -16,7 +16,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.tools.AlphanumComparator;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class sorts the relation members by connectivity.
@@ -95,12 +94,13 @@ public class RelationSorter {
         }
 
         private static String getStopName(OsmPrimitive p) {
-            for (Relation ref : Utils.filteredCollection(p.getReferrers(), Relation.class)) {
-                if (ref.hasTag("type", "public_transport") && ref.hasTag("public_transport", "stop_area") && ref.getName() != null) {
-                    return ref.getName();
-                }
-            }
-            return p.getName();
+            return p.referrers(Relation.class)
+                    .filter(ref -> ref.hasTag("type", "public_transport")
+                            && ref.hasTag("public_transport", "stop_area")
+                            && ref.getName() != null)
+                    .map(Relation::getName)
+                    .findFirst()
+                    .orElse(p.getName());
         }
 
         @Override

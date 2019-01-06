@@ -1023,12 +1023,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
      */
     public static Way getWayForNode(Node n) {
         Way way = null;
-        for (Way w : Utils.filteredCollection(n.getReferrers(), Way.class)) {
+        for (Way w : (Iterable<Way>) n.referrers(Way.class)::iterator) {
             if (!w.isUsable() || w.getNodesCount() < 1) {
                 continue;
             }
-            Node firstNode = w.getNode(0);
-            Node lastNode = w.getNode(w.getNodesCount() - 1);
+            Node firstNode = w.firstNode();
+            Node lastNode = w.lastNode();
             if ((firstNode == n || lastNode == n) && (firstNode != lastNode)) {
                 if (way != null)
                     return null;

@@ -7,22 +7,20 @@ import static org.openstreetmap.josm.data.validation.tests.CrossingWays.WATERWAY
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Hash;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -311,11 +309,12 @@ public class DuplicateNode extends Test {
      */
     @Override
     public Command fixError(TestError testError) {
-        Collection<OsmPrimitive> sel = new LinkedList<>(testError.getPrimitives());
-        Set<Node> nodes = new LinkedHashSet<>(OsmPrimitive.getFilteredList(sel, Node.class));
-
-        // Filter nodes that have already been deleted (see #5764 and #5773)
-        nodes.removeIf(AbstractPrimitive::isDeleted);
+        final Set<Node> nodes = testError.getPrimitives().stream()
+                .filter(Node.class::isInstance)
+                .map(Node.class::cast)
+                // Filter nodes that have already been deleted (see #5764 and #5773)
+                .filter(n -> !n.isDeleted())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         // Merge only if at least 2 nodes remain
         if (nodes.size() >= 2) {

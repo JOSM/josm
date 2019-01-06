@@ -31,7 +31,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -82,10 +81,8 @@ public class SplitWayAction extends JosmAction {
             return;
         }
 
-        Collection<OsmPrimitive> selection = ds.getSelected();
-
-        List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
-        List<Way> selectedWays = OsmPrimitive.getFilteredList(selection, Way.class);
+        List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
+        List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
         List<Way> applicableWays = getApplicableWays(selectedWays, selectedNodes);
 
         if (applicableWays == null) {
@@ -138,10 +135,8 @@ public class SplitWayAction extends JosmAction {
         final Way selectedWay = applicableWays.get(0);
         final List<List<Node>> wayChunks = SplitWayCommand.buildSplitChunks(selectedWay, selectedNodes);
         if (wayChunks != null) {
-            List<Relation> selectedRelations = OsmPrimitive.getFilteredList(selection, Relation.class);
-            final List<OsmPrimitive> sel = new ArrayList<>(selectedWays.size() + selectedRelations.size());
+            final List<OsmPrimitive> sel = new ArrayList<>(ds.getSelectedRelations());
             sel.addAll(selectedWays);
-            sel.addAll(selectedRelations);
 
             final List<Way> newWays = SplitWayCommand.createNewWaysFromChunks(selectedWay, wayChunks);
             final Way wayToKeep = SplitWayCommand.Strategy.keepLongestChunk().determineWayToKeep(newWays);

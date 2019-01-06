@@ -75,8 +75,9 @@ public class Addresses extends Test {
     }
 
     protected List<Relation> getAndCheckAssociatedStreets(OsmPrimitive p) {
-        List<Relation> list = OsmPrimitive.getFilteredList(p.getReferrers(), Relation.class);
-        list.removeIf(r -> !r.hasTag("type", ASSOCIATED_STREET));
+        final List<Relation> list = p.referrers(Relation.class)
+                .filter(r -> r.hasTag("type", ASSOCIATED_STREET))
+                .collect(Collectors.toList());
         if (list.size() > 1) {
             Severity level;
             // warning level only if several relations have different names, see #10945
@@ -106,10 +107,8 @@ public class Addresses extends Test {
                     return;
                 }
             }
-            for (Way w : OsmPrimitive.getFilteredList(p.getReferrers(), Way.class)) {
-                if (w.hasKey(ADDR_INTERPOLATION) && w.hasKey(ADDR_STREET)) {
-                    return;
-                }
+            if (p.referrers(Way.class).anyMatch(w -> w.hasKey(ADDR_INTERPOLATION) && w.hasKey(ADDR_STREET))) {
+                return;
             }
             // No street found
             errors.add(TestError.builder(this, Severity.WARNING, HOUSE_NUMBER_WITHOUT_STREET)

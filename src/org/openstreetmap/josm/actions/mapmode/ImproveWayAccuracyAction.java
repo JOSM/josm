@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -431,15 +432,9 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                         mousePos.y));
                 virtualCmds.add(new AddCommand(ds, virtualNode));
 
-                // Looking for candidateSegment copies in ways that are
-                // referenced
-                // by candidateSegment nodes
-                List<Way> firstNodeWays = OsmPrimitive.getFilteredList(
-                        candidateSegment.getFirstNode().getReferrers(),
-                        Way.class);
-                List<Way> secondNodeWays = OsmPrimitive.getFilteredList(
-                        candidateSegment.getFirstNode().getReferrers(),
-                        Way.class);
+                // Looking for candidateSegment copies in ways that are referenced by candidateSegment nodes
+                List<Way> firstNodeWays = candidateSegment.getFirstNode().referrers(Way.class).collect(Collectors.toList());
+                List<Way> secondNodeWays = candidateSegment.getFirstNode().referrers(Way.class).collect(Collectors.toList());
 
                 Collection<WaySegment> virtualSegments = new LinkedList<>();
                 for (Way w : firstNodeWays) {
@@ -483,9 +478,9 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 // Deleting the highlighted node
 
                 //check to see if node is in use by more than one object
-                List<OsmPrimitive> referrers = candidateNode.getReferrers();
-                List<Way> ways = OsmPrimitive.getFilteredList(referrers, Way.class);
-                if (referrers.size() != 1 || ways.size() != 1) {
+                long referrersCount = candidateNode.referrers(OsmPrimitive.class).count();
+                long referrerWayCount = candidateNode.referrers(Way.class).count();
+                if (referrersCount != 1 || referrerWayCount != 1) {
                     // detach node from way
                     final Way newWay = new Way(targetWay);
                     final List<Node> nodes = newWay.getNodes();
