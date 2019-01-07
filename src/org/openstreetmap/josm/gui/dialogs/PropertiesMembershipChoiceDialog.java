@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -112,18 +113,18 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
 
     /**
      * Returns the tags choice.
-     * @return the tags choice (can be null)
+     * @return the tags choice
      */
-    public ExistingBothNew getTags() {
-        return tags.getSelected();
+    public Optional<ExistingBothNew> getTags() {
+        return Optional.ofNullable(tags).map(ExistingBothNewChoice::getSelected);
     }
 
     /**
      * Returns the memberships choice.
-     * @return the memberships choice (can be null)
+     * @return the memberships choice
      */
-    public ExistingBothNew getMemberships() {
-        return memberships.getSelected();
+    public Optional<ExistingBothNew> getMemberships() {
+        return Optional.ofNullable(memberships).map(ExistingBothNewChoice::getSelected);
     }
 
     /**
