@@ -479,7 +479,7 @@
       <check key="outdoor" text="Climbing routes outdoor" />           
       <text key="website" text="Official web site (e.g. operator)" />
       <text key="url" text="Unofficial web site" />
-      <combo key="opening_hours" text="Opening Hours" values="24/7,sunset-sunrise open; sunrise-sunset closed,Mar-Jun closed; Jul-Feb open,Mo-Fr 15:00-22:00; Sa-Su 11:00-22:00" values_no_i18n="true"/>
+      <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|sunset-sunrise open; sunrise-sunset closed|Mar-Jun closed; Jul-Feb Mo-Su,PH sunrise-sunset|Mo-Fr 15:00-22:00; Sa-Su 11:00-22:00" values_no_i18n="true"/>
       <combo key="fee" text="Fee" values="yes,no,Sa-Su 08:00-20:00"/>
       <combo key="access" text="Access" values="yes,no,customers,private" />
     </optional>
