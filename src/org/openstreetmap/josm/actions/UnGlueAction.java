@@ -177,8 +177,8 @@ public class UnGlueAction extends JosmAction {
     }
 
     static void update(PropertiesMembershipChoiceDialog dialog, Node existingNode, List<Node> newNodes, Collection<Command> cmds) {
-        updateMemberships(dialog.getMemberships(), existingNode, newNodes, cmds);
-        updateProperties(dialog.getTags(), existingNode, newNodes, cmds);
+        updateMemberships(dialog.getMemberships().orElse(null), existingNode, newNodes, cmds);
+        updateProperties(dialog.getTags().orElse(null), existingNode, newNodes, cmds);
     }
 
     private static void updateProperties(ExistingBothNew tags, Node existingNode, Iterable<Node> newNodes, Collection<Command> cmds) {
@@ -212,14 +212,16 @@ public class UnGlueAction extends JosmAction {
 
         List<Command> cmds = new LinkedList<>();
         cmds.add(new AddCommand(selectedNode.getDataSet(), unglued));
-        if (dialog != null && ExistingBothNew.NEW.equals(dialog.getTags())) {
+        if (dialog != null && ExistingBothNew.NEW.equals(dialog.getTags().orElse(null))) {
             // unglued node gets the ID and history, thus replace way node with a fresh one
             final Way way = selectedNode.getParentWays().get(0);
             final List<Node> newWayNodes = way.getNodes();
             newWayNodes.replaceAll(n -> selectedNode.equals(n) ? unglued : n);
             cmds.add(new ChangeNodesCommand(way, newWayNodes));
-            updateMemberships(dialog.getMemberships().opposite(), selectedNode, Collections.singletonList(unglued), cmds);
-            updateProperties(dialog.getTags().opposite(), selectedNode, Collections.singletonList(unglued), cmds);
+            updateMemberships(dialog.getMemberships().map(ExistingBothNew::opposite).orElse(null),
+                    selectedNode, Collections.singletonList(unglued), cmds);
+            updateProperties(dialog.getTags().map(ExistingBothNew::opposite).orElse(null),
+                    selectedNode, Collections.singletonList(unglued), cmds);
             moveSelectedNode = true;
         } else if (dialog != null) {
             update(dialog, selectedNode, Collections.singletonList(unglued), cmds);
@@ -385,7 +387,7 @@ public class UnGlueAction extends JosmAction {
      * @param newNodes List of nodes that contain the new node
      */
     private static void updateMemberships(ExistingBothNew memberships, Node originalNode, List<Node> newNodes, Collection<Command> cmds) {
-        if (ExistingBothNew.OLD.equals(memberships)) {
+        if (memberships == null || ExistingBothNew.OLD.equals(memberships)) {
             return;
         }
         // modify all relations containing the node
