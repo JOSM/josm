@@ -6,11 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -102,7 +100,7 @@ public final class CreateCircleAction extends JosmAction {
     /**
      * Class designed to create a couple between a node and its angle relative to the center of the circle.
      */
-    private static class PolarNode {
+    private static class PolarNode implements Comparable<PolarNode> {
         private final double a;
         private final Node node;
 
@@ -110,17 +108,10 @@ public final class CreateCircleAction extends JosmAction {
             this.a = PolarCoor.computeAngle(n.getEastNorth(), center);
             this.node = n;
         }
-    }
-
-    /**
-     * Comparator used to order PolarNode relative to their angle.
-     */
-    private static class PolarNodeComparator implements Comparator<PolarNode>, Serializable {
-        private static final long serialVersionUID = 1L;
 
         @Override
-        public int compare(PolarNode pc1, PolarNode pc2) {
-            return Double.compare(pc1.a, pc2.a);
+        public int compareTo(PolarNode o) {
+            return Double.compare(a, o.a);
         }
     }
 
