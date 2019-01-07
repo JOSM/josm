@@ -54,11 +54,29 @@ public final class LanguageInfo {
             return "Zh-hans:";
         } else if (type == LocaleType.OSM_WIKI && Locale.TRADITIONAL_CHINESE.equals(locale)) {
             return "Zh-hant:";
-        } else if (type == LocaleType.OSM_WIKI) {
-            return locale.getLanguage() + ':';
         }
 
         String code = getJOSMLocaleCode(locale);
+
+        if (type == LocaleType.OSM_WIKI) {
+            if (code.matches("[^_@]+[_@][^_]+")) {
+                code = code.substring(0, 2);
+                if ("en".equals(code))
+                    return "";
+            }
+            if (code.equals("nb")) { /* OSM-Wiki has "no", but no "nb" */
+              return "No:";
+            }
+            else if (code.equals("de") || code.equals("es") || code.equals("fr") ||
+            code.equals("it") || code.equals("nl") || code.equals("ru")
+            || code.equals("ja")) {
+                return code.toUpperCase(Locale.ENGLISH) + ":";
+            } else {
+                return code.substring(0, 1).toUpperCase(Locale.ENGLISH)
+                    + code.substring(1) + ":";
+            }
+        }
+
         if (type == LocaleType.BASELANGUAGE) {
             if (code.matches("[^_]+_[^_]+")) {
                 code = code.substring(0, 2);

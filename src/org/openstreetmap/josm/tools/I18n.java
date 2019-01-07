@@ -91,6 +91,7 @@ public final class I18n {
     private static volatile Map<String, String[]> pstrings;
     private static Locale originalLocale = Locale.getDefault();
     private static Map<String, PluralMode> languages = new HashMap<>();
+    // NOTE: check also WikiLanguage handling in LanguageInfo.java when adding new languages
     static {
         //languages.put("ar", PluralMode.MODE_AR);
         languages.put("ast", PluralMode.MODE_NOTONE);
