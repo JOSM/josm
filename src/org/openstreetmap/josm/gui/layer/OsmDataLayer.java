@@ -104,7 +104,10 @@ import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.AbstractUploadDialog;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadLayerTask;
+import org.openstreetmap.josm.gui.io.importexport.NoteExporter;
 import org.openstreetmap.josm.gui.io.importexport.OsmImporter;
+import org.openstreetmap.josm.gui.io.importexport.ValidatorErrorExporter;
+import org.openstreetmap.josm.gui.io.importexport.WMSLayerImporter;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -1186,7 +1189,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             .title(tr("Save OSM file"))
             .extension(extension)
             .file(file)
-            .allTypes(true)
+            .additionalTypes(t -> t != WMSLayerImporter.FILE_FILTER && t != NoteExporter.FILE_FILTER && t != ValidatorErrorExporter.FILE_FILTER)
             .getFileForSave();
     }
 

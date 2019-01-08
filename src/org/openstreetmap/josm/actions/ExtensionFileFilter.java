@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceConfigurationError;
+import java.util.function.Predicate;
 
 import javax.swing.filechooser.FileFilter;
 
@@ -315,14 +316,14 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      *
      * @param fileChooser the file chooser
      * @param extension the default extension
-     * @param allTypes If true, all the files types known by JOSM will be proposed in the "file type" combobox.
-     *                 If false, only the file filters that include {@code extension} will be proposed
-     * @since 5438
+     * @param additionalTypes matching types will additionally be added to the "file type" combobox.
+     * @since 14668 (signature)
      */
-    public static void applyChoosableImportFileFilters(AbstractFileChooser fileChooser, String extension, boolean allTypes) {
+    public static void applyChoosableImportFileFilters(
+            AbstractFileChooser fileChooser, String extension, Predicate<ExtensionFileFilter> additionalTypes) {
         for (ExtensionFileFilter filter: getImportExtensionFileFilters()) {
 
-            if (allTypes || filter.acceptName("file."+extension)) {
+            if (additionalTypes.test(filter) || filter.acceptName("file."+extension)) {
                 fileChooser.addChoosableFileFilter(filter);
             }
         }
@@ -335,13 +336,13 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      *
      * @param fileChooser the file chooser
      * @param extension the default extension
-     * @param allTypes If true, all the files types known by JOSM will be proposed in the "file type" combobox.
-     *                 If false, only the file filters that include {@code extension} will be proposed
-     * @since 5438
+     * @param additionalTypes matching types will additionally be added to the "file type" combobox.
+     * @since 14668 (signature)
      */
-    public static void applyChoosableExportFileFilters(AbstractFileChooser fileChooser, String extension, boolean allTypes) {
+    public static void applyChoosableExportFileFilters(
+            AbstractFileChooser fileChooser, String extension, Predicate<ExtensionFileFilter> additionalTypes) {
         for (ExtensionFileFilter filter: getExportExtensionFileFilters()) {
-            if (allTypes || filter.acceptName("file."+extension)) {
+            if (additionalTypes.test(filter) || filter.acceptName("file."+extension)) {
                 fileChooser.addChoosableFileFilter(filter);
             }
         }
