@@ -31,6 +31,10 @@ public class LanguageInfoTest {
     private static final Locale CA_ES_VALENCIA = new Locale("ca", "ES", "valencia");
     private static final Locale ZN_CN = Locale.SIMPLIFIED_CHINESE;
     private static final Locale ZN_TW = Locale.TRADITIONAL_CHINESE;
+    private static final Locale EN_GB = new Locale("en", "GB");
+    private static final Locale RU = new Locale("ru");
+    private static final Locale NB = new Locale("nb");
+    private static final Locale AST = new Locale("ast");
 
     /**
      * Unit test of {@link LanguageInfo#getWikiLanguagePrefix}.
@@ -38,19 +42,19 @@ public class LanguageInfoTest {
     @Test
     public void getWikiLanguagePrefix() {
         testWikiLanguagePrefixes(LanguageInfo.LocaleType.DEFAULT,
-                "En:", "De:", "Pt_BR:", "Ca-Valencia:", "Zh_CN:", "Zh_TW:");
+                "En:", "De:", "Pt_BR:", "Ca-Valencia:", "Zh_CN:", "Zh_TW:", "Ast:", "En_GB:", "Ru:", "Nb:");
         testWikiLanguagePrefixes(LanguageInfo.LocaleType.DEFAULTNOTENGLISH,
-                null, "De:", "Pt_BR:", "Ca-Valencia:", "Zh_CN:", "Zh_TW:");
+                null, "De:", "Pt_BR:", "Ca-Valencia:", "Zh_CN:", "Zh_TW:", "Ast:", "En_GB:", "Ru:", "Nb:");
         testWikiLanguagePrefixes(LanguageInfo.LocaleType.BASELANGUAGE,
-                null, null, "Pt:", null, "Zh:", "Zh:");
+                null, null, "Pt:", null, "Zh:", "Zh:", null, null, null, null);
         testWikiLanguagePrefixes(LanguageInfo.LocaleType.ENGLISH,
-                "", "", "", "", "", "");
+                "", "", "", "", "", "", "", "", "", "");
         testWikiLanguagePrefixes(LanguageInfo.LocaleType.OSM_WIKI,
-                "", "de:", "pt:", "ca:", "Zh-hans:", "Zh-hant:");
+                "", "DE:", "Pt:", "Ca:", "Zh-hans:", "Zh-hant:", "Ast:", "", "RU:", "No:");
     }
 
     private static void testWikiLanguagePrefixes(LanguageInfo.LocaleType type, String...expected) {
-        final List<String> actual = Stream.of(EN_CA, DE_DE, PT_BR, CA_ES_VALENCIA, ZN_CN, ZN_TW)
+        final List<String> actual = Stream.of(EN_CA, DE_DE, PT_BR, CA_ES_VALENCIA, ZN_CN, ZN_TW, AST, EN_GB, RU, NB)
                 .map(locale -> LanguageInfo.getWikiLanguagePrefix(locale, type))
                 .collect(Collectors.toList());
         Assert.assertEquals(Arrays.asList(expected), actual);
