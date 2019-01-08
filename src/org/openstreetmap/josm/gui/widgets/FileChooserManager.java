@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -45,7 +46,7 @@ public class FileChooserManager {
     private FileFilter defaultFilter;
     private int selectionMode = JFileChooser.FILES_ONLY;
     private String extension;
-    private boolean allTypes;
+    private Predicate<ExtensionFileFilter> additionalTypes = ignore -> false;
     private File file;
 
     private AbstractFileChooser fc;
@@ -260,13 +261,23 @@ public class FileChooserManager {
     }
 
     /**
+     * Builder method to set {@code additionalTypes} property.
+     * @param value matching types will additionally be added to the "file type" combobox.
+     * @return this
+     */
+    public FileChooserManager additionalTypes(Predicate<ExtensionFileFilter> value) {
+        additionalTypes = value;
+        return this;
+    }
+
+    /**
      * Builder method to set {@code allTypes} property.
      * @param value If true, all the files types known by JOSM will be proposed in the "file type" combobox.
      *              If false, only the file filters that include {@code extension} will be proposed
      * @return this
      */
     public FileChooserManager allTypes(boolean value) {
-        allTypes = value;
+        additionalTypes = ignore -> value;
         return this;
     }
 
@@ -310,9 +321,9 @@ public class FileChooserManager {
                 fc.setFileFilter(defaultFilter);
             }
         } else if (open) {
-            ExtensionFileFilter.applyChoosableImportFileFilters(fc, extension, allTypes);
+            ExtensionFileFilter.applyChoosableImportFileFilters(fc, extension, additionalTypes);
         } else {
-            ExtensionFileFilter.applyChoosableExportFileFilters(fc, extension, allTypes);
+            ExtensionFileFilter.applyChoosableExportFileFilters(fc, extension, additionalTypes);
         }
         return this;
     }
