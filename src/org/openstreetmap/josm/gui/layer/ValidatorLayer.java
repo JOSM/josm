@@ -140,6 +140,16 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     }
 
     @Override
+    public boolean isSavable() {
+        return true; // With ValidatorErrorExporter
+    }
+
+    @Override
+    public boolean checkSaveConditions() {
+        return true;
+    }
+
+    @Override
     public File createAndOpenSaveFileChooser() {
         return SaveActionBase.createAndOpenSaveFileChooser(tr("Save Validation errors file"), ValidatorErrorExporter.FILE_FILTER);
     }
