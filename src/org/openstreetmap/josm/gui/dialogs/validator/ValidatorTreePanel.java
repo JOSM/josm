@@ -24,7 +24,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -41,7 +40,6 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -409,10 +407,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     @Override
     public void destroy() {
         DatasetEventManager.getInstance().removeDatasetListener(this);
-        DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-        if (ds != null) {
-            ds.removeDataSetListener(this);
-        }
+        ToolTipManager.sharedInstance().unregisterComponent(this);
         clearErrors();
     }
 
