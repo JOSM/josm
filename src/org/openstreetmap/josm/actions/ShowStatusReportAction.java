@@ -15,12 +15,9 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,7 +36,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformManager;
@@ -276,19 +272,23 @@ public final class ShowStatusReportAction extends JosmAction {
         StringBuilder text = new StringBuilder();
         String reportHeader = getReportHeader();
         text.append(reportHeader);
-        Map<String, Setting<?>> settings = Preferences.main().getAllSettings();
-        Set<String> keys = new HashSet<>(settings.keySet());
-        for (String key : keys) {
-            // Remove sensitive information from status report
-            if (key.startsWith("marker.show") || key.contains("username") || key.contains("password") || key.contains("access-token")) {
-                settings.remove(key);
+
+        Preferences.main().getAllSettings().forEach((key, setting) -> {
+            if (key.startsWith("marker.show")
+                    || key.equals("file-open.history")
+                    || key.equals("download.overpass.query")
+                    || key.equals("download.overpass.queries")
+                    || key.contains("username")
+                    || key.contains("password")
+                    || key.contains("access-token")) {
+                // Remove sensitive information from status report
+                return;
             }
-        }
-        for (Entry<String, Setting<?>> entry : settings.entrySet()) {
-            text.append(paramCleanup(entry.getKey()))
-                .append('=')
-                .append(paramCleanup(entry.getValue().getValue().toString())).append('\n');
-        }
+            text.append(paramCleanup(key))
+                    .append('=')
+                    .append(paramCleanup(setting.getValue().toString()))
+                    .append('\n');
+        });
 
         DebugTextDisplay ta = new DebugTextDisplay(text.toString());
 
