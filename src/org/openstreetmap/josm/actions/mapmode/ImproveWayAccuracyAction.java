@@ -15,9 +15,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -422,42 +423,26 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             }
 
             if (ctrl && !alt && candidateSegment != null) {
-                // Adding a new node to the highlighted segment
-                // Important: If there are other ways containing the same
-                // segment, a node must added to all of that ways.
-                Collection<Command> virtualCmds = new LinkedList<>();
-
-                // Creating a new node
-                Node virtualNode = new Node(mv.getEastNorth(mousePos.x,
-                        mousePos.y));
-                virtualCmds.add(new AddCommand(ds, virtualNode));
-
-                // Looking for candidateSegment copies in ways that are referenced by candidateSegment nodes
-                List<Way> firstNodeWays = candidateSegment.getFirstNode().referrers(Way.class).collect(Collectors.toList());
-                List<Way> secondNodeWays = candidateSegment.getFirstNode().referrers(Way.class).collect(Collectors.toList());
-
+                // Add a new node to the highlighted segment.
                 Collection<WaySegment> virtualSegments = new LinkedList<>();
-                for (Way w : firstNodeWays) {
-                    List<Pair<Node, Node>> wpps = w.getNodePairs(true);
-                    for (Way w2 : secondNodeWays) {
-                        if (!w.equals(w2)) {
-                            continue;
-                        }
-                        // A way is referenced in both nodes.
-                        // Checking if there is such segment
-                        int i = -1;
-                        for (Pair<Node, Node> wpp : wpps) {
-                            ++i;
-                            boolean ab = wpp.a.equals(candidateSegment.getFirstNode())
-                                    && wpp.b.equals(candidateSegment.getSecondNode());
-                            boolean ba = wpp.b.equals(candidateSegment.getFirstNode())
-                                    && wpp.a.equals(candidateSegment.getSecondNode());
-                            if (ab || ba) {
-                                virtualSegments.add(new WaySegment(w, i));
-                            }
+
+                // Check if other ways have the same segment.
+                // We have to make sure that we add the new node to all of them.
+                Set<Way> commonParentWays = new HashSet<>(candidateSegment.getFirstNode().getParentWays());
+                commonParentWays.retainAll(candidateSegment.getSecondNode().getParentWays());
+                for (Way w : commonParentWays) {
+                    for (int i = 0; i < w.getNodesCount() - 1; i++) {
+                        WaySegment testWS = new WaySegment(w, i);
+                        if (testWS.isSimilar(candidateSegment)) {
+                            virtualSegments.add(testWS);
                         }
                     }
                 }
+
+                Collection<Command> virtualCmds = new LinkedList<>();
+                // Create the new node
+                Node virtualNode = new Node(mv.getEastNorth(mousePos.x, mousePos.y));
+                virtualCmds.add(new AddCommand(ds, virtualNode));
 
                 // Adding the node to all segments found
                 for (WaySegment virtualSegment : virtualSegments) {
