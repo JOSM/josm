@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -1097,6 +1098,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
      * Action handling add button press in properties dialog.
      */
     class AddAction extends JosmAction {
+        AtomicBoolean isPerforming = new AtomicBoolean(false);
         AddAction() {
             super(tr("Add"), /* ICON() */ "dialogs/add", tr("Add a new key/value pair to all objects"),
                     Shortcut.registerShortcut("properties:add", tr("Add Tag"), KeyEvent.VK_A,
@@ -1104,15 +1106,15 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
 
         @Override
-        public synchronized void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
+        public void actionPerformed(ActionEvent e) {
+            if (isPerforming.get())
                 return;
-            setEnabled(false);
+            isPerforming.set(true);
             try {
                 editHelper.addTag();
                 btnAdd.requestFocusInWindow();
             } finally {
-                setEnabled(true);
+                isPerforming.set(false);
             }
         }
     }
@@ -1121,6 +1123,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
      * Action handling edit button press in properties dialog.
      */
     class EditAction extends JosmAction implements ListSelectionListener {
+        AtomicBoolean isPerforming = new AtomicBoolean(false);
         EditAction() {
             super(tr("Edit"), /* ICON() */ "dialogs/edit", tr("Edit the value of the selected key for all objects"),
                     Shortcut.registerShortcut("properties:edit", tr("Edit Tags"), KeyEvent.VK_S,
@@ -1129,10 +1132,10 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
 
         @Override
-        public synchronized void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
+        public void actionPerformed(ActionEvent e) {
+            if (isPerforming.get())
                 return;
-            setEnabled(false);
+            isPerforming.set(true);
             try {
                 if (tagTable.getSelectedRowCount() == 1) {
                     int row = tagTable.getSelectedRow();
@@ -1142,7 +1145,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                     editMembership(row);
                 }
             } finally {
-                setEnabled(true);
+                isPerforming.set(false);
             }
         }
 
