@@ -567,8 +567,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     public void selectionChanged(SelectionChangeEvent event) {
         if (!isVisible())
             return;
-        if (event != null && event.getSelection().isEmpty())
-            editHelper.resetSelection();
         if (tagTable == null)
             return; // selection changed may be received in base class constructor before init
         if (tagTable.getCellEditor() != null) {
