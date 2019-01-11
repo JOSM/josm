@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.OsmIdTextField;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitiveTypesComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -207,7 +208,12 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
     @Override
     public void setupDialog() {
         setContent(panel, false);
-        cbType.setSelectedIndex(Config.getPref().getInt("downloadprimitive.lasttype", 0));
+        try {
+            cbType.setSelectedIndex(Config.getPref().getInt("downloadprimitive.lasttype", 0));
+        } catch (IllegalArgumentException e) {
+            cbType.setSelectedIndex(0);
+            Logging.warn(e);
+        }
         tfId.setType(cbType.getType());
         if (Config.getPref().getBoolean("downloadprimitive.autopaste", true)) {
             tryToPasteFromClipboard(tfId, cbType);
