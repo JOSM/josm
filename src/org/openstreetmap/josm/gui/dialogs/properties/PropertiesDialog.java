@@ -80,6 +80,7 @@ import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -242,6 +243,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
     private final transient TaggingPresetHandler presetHandler = new TaggingPresetCommandHandler();
 
+    private static final BooleanProperty PROP_AUTORESIZE_TAGS_TABLE = new BooleanProperty("propertiesdialog.autoresizeTagsTable", false);
+
     /**
      * Create a new PropertiesDialog
      */
@@ -310,7 +313,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         // setting up the tags table
         tagData.setColumnIdentifiers(new String[]{tr("Key"), tr("Value")});
         tagTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tagTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tagTable.getTableHeader().setReorderingAllowed(false);
 
         tagTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
@@ -672,8 +674,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         selectSth.setVisible(!hasSelection);
         pluginHook.setVisible(hasSelection);
 
-        // resize tables to fit content
-        TableHelper.computeColumnsWidth(tagTable);
+        autoresizeTagTable();
 
         int selectedIndex;
         if (selectedTag != null && (selectedIndex = findViewRow(tagTable, tagData, selectedTag)) != -1) {
@@ -696,6 +697,13 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             }
         } else {
             setTitle(tr("Tags/Memberships"));
+        }
+    }
+
+    private void autoresizeTagTable() {
+        if (PROP_AUTORESIZE_TAGS_TABLE.get()) {
+            // resize table's columns to fit content
+            TableHelper.computeColumnsWidth(tagTable);
         }
     }
 
