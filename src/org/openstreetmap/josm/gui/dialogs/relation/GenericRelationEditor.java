@@ -104,6 +104,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -277,6 +278,7 @@ public class GenericRelationEditor extends RelationEditor {
                     }
                 }
         );
+        InputMapUtils.addCtrlEnterAction(getRootPane(), okAction);
         // CHECKSTYLE.OFF: LineLength
         registerCopyPasteAction(tagEditorPanel.getPasteAction(), "PASTE_TAGS",
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.CTRL_SHIFT).getKeyStroke(),
