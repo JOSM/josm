@@ -33,17 +33,14 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.actions.IPrimitiveAction;
 import org.openstreetmap.josm.actions.relation.AddSelectionToRelations;
 import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
-import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
-import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.DuplicateRelationAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.ExportRelationToGpxAction;
 import org.openstreetmap.josm.actions.relation.ExportRelationToGpxAction.Mode;
 import org.openstreetmap.josm.actions.relation.RecentRelationsAction;
-import org.openstreetmap.josm.actions.relation.SelectMembersAction;
+import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -72,6 +69,7 @@ import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.RelationPopupMenus;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -98,7 +96,7 @@ import org.openstreetmap.josm.tools.Utils;
  * objects are visible on the map and can be selected there. Relations are not.
  */
 public class RelationListDialog extends ToggleDialog
-        implements DataSetListener, NavigatableComponent.ZoomChangeListener, ExpertToggleAction.ExpertModeChangeListener {
+        implements DataSetListener, NavigatableComponent.ZoomChangeListener {
     /** The display list. */
     private final JList<IRelation<?>> displaylist;
     /** the list model used */
@@ -119,16 +117,10 @@ public class RelationListDialog extends ToggleDialog
     private final DeleteRelationsAction deleteRelationsAction = new DeleteRelationsAction();
     /** the duplicate action */
     private final DuplicateRelationAction duplicateAction = new DuplicateRelationAction();
-    private final DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
-    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction =
-            new DownloadSelectedIncompleteMembersAction();
-    private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
-    private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
+    /** the select relation action */
     private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);
-    private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
     /** add all selected primitives to the given relations */
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
-    private transient JMenuItem addSelectionToRelationMenuItem;
 
     /** export relation to GPX track action */
     private final ExportRelationToGpxAction exportRelationFromFirstAction =
@@ -244,8 +236,6 @@ public class RelationListDialog extends ToggleDialog
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
         SelectionEventManager.getInstance().addSelectionListener(addSelectionToRelations);
         dataChanged(null);
-        ExpertToggleAction.addExpertModeChangeListener(this);
-        expertChanged(ExpertToggleAction.isExpert());
     }
 
     @Override
@@ -255,7 +245,6 @@ public class RelationListDialog extends ToggleDialog
         MapView.removeZoomChangeListener(this);
         DatasetEventManager.getInstance().removeDatasetListener(this);
         SelectionEventManager.getInstance().removeSelectionListener(addSelectionToRelations);
-        ExpertToggleAction.removeExpertModeChangeListener(this);
     }
 
     private void resetFilter() {
@@ -631,18 +620,7 @@ public class RelationListDialog extends ToggleDialog
     private void setupPopupMenuHandler() {
         List<JMenuItem> checkDisabled = new ArrayList<>();
 
-        // -- select action
-        popupMenuHandler.addAction(selectRelationAction);
-        popupMenuHandler.addAction(addRelationToSelectionAction);
-
-        // -- select members action
-        popupMenuHandler.addAction(selectMembersAction);
-        popupMenuHandler.addAction(addMembersToSelectionAction);
-
-        // -- download members action
-        popupMenuHandler.addSeparator();
-        popupMenuHandler.addAction(downloadMembersAction);
-        popupMenuHandler.addAction(downloadSelectedIncompleteMembersAction);
+        RelationPopupMenus.setupHandler(popupMenuHandler, SelectInRelationListAction.class);
 
         // -- export relation to gpx action
         popupMenuHandler.addSeparator();
@@ -657,16 +635,14 @@ public class RelationListDialog extends ToggleDialog
         popupMenuHandler.addAction(duplicateAction).setVisible(false);
         popupMenuHandler.addAction(deleteRelationsAction).setVisible(false);
 
-        addSelectionToRelationMenuItem = popupMenuHandler.addAction(addSelectionToRelations);
+        ExpertToggleAction.addVisibilitySwitcher(popupMenuHandler.addAction(addSelectionToRelations));
 
         popupMenuHandler.addListener(new PopupMenuListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 for (JMenuItem mi: checkDisabled) {
-                    mi.setVisible(((IPrimitiveAction) mi.getAction()).isEnabled());
-
-                    Component sep = popupMenu.getComponent(
-                            Math.max(0, popupMenu.getComponentIndex(mi)-1));
+                    mi.setVisible(mi.getAction().isEnabled());
+                    Component sep = popupMenu.getComponent(Math.max(0, popupMenu.getComponentIndex(mi) - 1));
                     if (!(sep instanceof JMenuItem)) {
                         sep.setVisible(mi.isVisible());
                     }
@@ -768,10 +744,5 @@ public class RelationListDialog extends ToggleDialog
         if (model.filter != null) {
             model.setFilter(model.filter);
         }
-    }
-
-    @Override
-    public void expertChanged(boolean isExpert) {
-        addSelectionToRelationMenuItem.setVisible(isExpert);
     }
 }

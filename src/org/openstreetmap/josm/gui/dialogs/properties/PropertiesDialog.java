@@ -49,11 +49,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
-import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
-import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
-import org.openstreetmap.josm.actions.relation.SelectMembersAction;
-import org.openstreetmap.josm.actions.relation.SelectRelationAction;
+import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
+import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -89,6 +86,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.RelationPopupMenus;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
@@ -196,18 +194,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final EditAction editAction = new EditAction();
     private final DeleteAction deleteAction = new DeleteAction();
     private final JosmAction[] josmActions = new JosmAction[]{addAction, editAction, deleteAction};
-
-    // relation actions
-    private final SelectInRelationListAction setRelationSelectionAction = new SelectInRelationListAction();
-    private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);
-    private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
-
-    private final DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
-    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction =
-            new DownloadSelectedIncompleteMembersAction();
-
-    private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
-    private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
 
     private final transient HighlightHelper highlightHelper = new HighlightHelper();
 
@@ -370,14 +356,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             membershipMenuHandler.addAction(deleteAction);
             membershipMenu.addSeparator();
         }
-        membershipMenuHandler.addAction(setRelationSelectionAction);
-        membershipMenuHandler.addAction(selectRelationAction);
-        membershipMenuHandler.addAction(addRelationToSelectionAction);
-        membershipMenuHandler.addAction(selectMembersAction);
-        membershipMenuHandler.addAction(addMembersToSelectionAction);
-        membershipMenu.addSeparator();
-        membershipMenuHandler.addAction(downloadMembersAction);
-        membershipMenuHandler.addAction(downloadSelectedIncompleteMembersAction);
+        RelationPopupMenus.setupHandler(membershipMenuHandler, EditRelationAction.class, DeleteRelationsAction.class);
         membershipMenu.addSeparator();
         membershipMenu.add(helpAction);
         membershipMenu.add(taginfoAction);
