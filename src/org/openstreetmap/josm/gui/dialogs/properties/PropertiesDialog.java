@@ -1113,9 +1113,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (isPerforming.get())
+            if (!/*successful*/isPerforming.compareAndSet(false, true)) {
                 return;
-            isPerforming.set(true);
+            }
             try {
                 editHelper.addTag();
                 btnAdd.requestFocusInWindow();
@@ -1139,9 +1139,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (isPerforming.get())
+            if (!/*successful*/isPerforming.compareAndSet(false, true)) {
                 return;
-            isPerforming.set(true);
+            }
             try {
                 if (tagTable.getSelectedRowCount() == 1) {
                     int row = tagTable.getSelectedRow();
