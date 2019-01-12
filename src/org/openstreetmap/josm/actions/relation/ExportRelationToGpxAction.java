@@ -139,7 +139,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
         } while (!stack.isEmpty());
 
         GpxData gpxData = new GpxData();
-        String layerName = " (GPX export)";
+        final String layerName;
         long time = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - 24*3600;
 
         if (!flat.isEmpty()) {
@@ -185,7 +185,9 @@ public class ExportRelationToGpxAction extends GpxExportAction
             String lprefix = relations.iterator().next().getName();
             if (lprefix == null || relations.size() > 1)
                 lprefix = tr("Selected Relations");
-            layerName = lprefix + layerName;
+            layerName = tr("{0} (GPX export)", lprefix);
+        } else {
+            layerName = "";
         }
 
         return new GpxLayer(gpxData, layerName, true);
