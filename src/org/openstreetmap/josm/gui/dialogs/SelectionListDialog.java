@@ -39,9 +39,7 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
-import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
-import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -71,6 +69,7 @@ import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
+import org.openstreetmap.josm.gui.dialogs.relation.RelationPopupMenus;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
@@ -99,9 +98,6 @@ public class SelectionListDialog extends ToggleDialog {
     private final ShowHistoryAction actShowHistory = new ShowHistoryAction();
     private final ZoomToJOSMSelectionAction actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
     private final ZoomToListSelection actZoomToListSelection = new ZoomToListSelection();
-    private final SelectInRelationListAction actSetRelationSelection = new SelectInRelationListAction();
-    private final EditRelationAction actEditRelationSelection = new EditRelationAction();
-    private final DownloadSelectedIncompleteMembersAction actDownloadSelIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
 
     /** the popup menu and its handler */
     private final ListPopupMenu popupMenu;
@@ -215,7 +211,7 @@ public class SelectionListDialog extends ToggleDialog {
                     ds.setSelected(Collections.singleton(osm));
                 } else if (osm instanceof Relation) {
                     // else open relation editor if applicable
-                    actEditRelationSelection.actionPerformed(null);
+                    EditRelationAction.launchEditor((Relation) osm);
                 }
             } else if (highlightEnabled && MainApplication.isDisplayingMapView() && helper.highlightOnly(model.getElementAt(idx))) {
                 MainApplication.getMap().mapView.repaint();
@@ -234,11 +230,7 @@ public class SelectionListDialog extends ToggleDialog {
         handler.addAction(actZoomToJOSMSelection);
         handler.addAction(actZoomToListSelection);
         handler.addSeparator();
-        handler.addAction(actSetRelationSelection);
-        handler.addAction(actEditRelationSelection);
-        handler.addSeparator();
-        handler.addAction(actDownloadSelIncompleteMembers);
-        return handler;
+        return RelationPopupMenus.setupHandler(handler);
     }
 
     /**

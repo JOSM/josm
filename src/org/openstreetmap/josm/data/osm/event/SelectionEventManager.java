@@ -77,7 +77,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
     }
 
     private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<>();
-    private final CopyOnWriteArrayList<ListenerInfo> immedatelyListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<ListenerInfo> immediatelyListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Constructs a new {@code SelectionEventManager}.
@@ -95,7 +95,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      * @since 12098
      */
     public void addSelectionListener(DataSelectionListener listener) {
-        immedatelyListeners.addIfAbsent(new DataListenerInfo(listener));
+        immediatelyListeners.addIfAbsent(new DataListenerInfo(listener));
     }
 
     /**
@@ -119,7 +119,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
 
     private void remove(ListenerInfo searchListener) {
         inEDTListeners.remove(searchListener);
-        immedatelyListeners.remove(searchListener);
+        immediatelyListeners.remove(searchListener);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
 
     @Override
     public void selectionChanged(SelectionChangeEvent event) {
-        fireEvent(immedatelyListeners, event);
+        fireEvent(immediatelyListeners, event);
         try {
             GuiHelper.runInEDTAndWaitWithException(() -> fireEvent(inEDTListeners, event));
         } catch (ReportedException e) {
@@ -169,7 +169,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      */
     public void resetState() {
         inEDTListeners.clear();
-        immedatelyListeners.clear();
+        immediatelyListeners.clear();
         MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(this);
     }
 }
