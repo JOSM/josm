@@ -13,6 +13,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
@@ -123,7 +124,7 @@ public class VersionTable extends JTable implements ChangeListener, Destroyable 
 
     final class MouseListener extends PopupMenuLauncher {
         private MouseListener() {
-            super(popupMenu);
+            super(Objects.requireNonNull(popupMenu));
         }
 
         @Override

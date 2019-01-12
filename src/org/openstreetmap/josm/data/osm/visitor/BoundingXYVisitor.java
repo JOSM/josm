@@ -177,6 +177,8 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
      *
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
+     *
+     * @since 14628
      */
     public void enlargeBoundingBoxLogarithmically() {
         if (bounds == null)
