@@ -15,8 +15,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -31,7 +31,6 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionTypeCalculator;
@@ -110,48 +109,15 @@ public class ExportRelationToGpxAction extends GpxExportAction
         }
     }
 
-    private static final class BidiIterableList {
-        private final List<RelationMember> l;
-
-        private BidiIterableList(List<RelationMember> l) {
-            this.l = l;
-        }
-
-        public Iterator<RelationMember> iterator() {
-            return l.iterator();
-        }
-
-        public Iterator<RelationMember> reverseIterator() {
-            ListIterator<RelationMember> li = l.listIterator(l.size());
-            return new Iterator<RelationMember>() {
-                @Override
-                public boolean hasNext() {
-                    return li.hasPrevious();
-                }
-
-                @Override
-                public RelationMember next() {
-                    return li.previous();
-                }
-
-                @Override
-                public void remove() {
-                    li.remove();
-                }
-            };
-        }
-    }
-
     @Override
     protected Layer getLayer() {
         List<RelationMember> flat = new ArrayList<>();
 
         List<RelationMember> init = new ArrayList<>();
         relations.forEach(t -> init.add(new RelationMember("", t)));
-        BidiIterableList l = new BidiIterableList(init);
 
         Stack<Iterator<RelationMember>> stack = new Stack<>();
-        stack.push(mode.contains(FROM_FIRST_MEMBER) ? l.iterator() : l.reverseIterator());
+        stack.push(modeAwareIterator(init));
 
         List<Relation> relsFound = new ArrayList<>();
         do {
@@ -161,8 +127,8 @@ public class ExportRelationToGpxAction extends GpxExportAction
             while (i.hasNext()) {
                 RelationMember m = i.next();
                 if (m.isRelation() && !m.getRelation().isIncomplete()) {
-                    l = new BidiIterableList(m.getRelation().getMembers());
-                    stack.push(mode.contains(FROM_FIRST_MEMBER) ? l.iterator() : l.reverseIterator());
+                    final List<RelationMember> members = m.getRelation().getMembers();
+                    stack.push(modeAwareIterator(members));
                     relsFound.add(m.getRelation());
                     break;
                 }
@@ -195,12 +161,13 @@ public class ExportRelationToGpxAction extends GpxExportAction
                             trk.add(trkseg);
                         }
                         if (trkAttr.isEmpty()) {
-                            Relation r = Way.getParentRelations(Arrays.asList(flat.get(i).getWay()))
-                                    .stream().filter(relsFound::contains).findFirst().orElseGet(null);
-                            if (r != null) {
-                                trkAttr.put("name", r.getName() != null ? r.getName() : r.getId());
-                                trkAttr.put("desc", tr("based on osm route relation data, timestamps are synthetic"));
-                            }
+                            flat.get(i).getWay().referrers(Relation.class)
+                                    .filter(relsFound::contains)
+                                    .findFirst()
+                                    .ifPresent(r -> {
+                                        trkAttr.put("name", r.getName() != null ? r.getName() : r.getId());
+                                        trkAttr.put("desc", tr("based on osm route relation data, timestamps are synthetic"));
+                                    });
                             GpxData.ensureUniqueName(trkAttr, names);
                         }
                         List<Node> ln = flat.get(i).getWay().getNodes();
@@ -222,6 +189,12 @@ public class ExportRelationToGpxAction extends GpxExportAction
         }
 
         return new GpxLayer(gpxData, layerName, true);
+    }
+
+    private <T> Iterator<T> modeAwareIterator(List<T> list) {
+        return mode.contains(FROM_FIRST_MEMBER)
+                ? list.iterator()
+                : new LinkedList<>(list).descendingIterator();
     }
 
     /**
