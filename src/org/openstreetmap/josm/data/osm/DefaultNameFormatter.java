@@ -87,8 +87,25 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     /** The default list of tags which are used as naming tags in relations.
      * A ? prefix indicates a boolean value, for which the key (instead of the value) is used.
      */
-    private static final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
-        "leisure", "amenity", "public_transport", ":LocationCode", "note", "?building", "?building:part"};
+    private static final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {
+            "name",
+            "ref",
+            //
+            "amenity",
+            "landuse",
+            "leisure",
+            "natural",
+            "public_transport",
+            "restriction",
+            "water",
+            "waterway",
+            "wetland",
+            //
+            ":LocationCode",
+            "note",
+            "?building",
+            "?building:part",
+    };
 
     /** the current list of tags used as naming tags in relations */
     private static List<String> namingTagsForRelations;
