@@ -36,24 +36,19 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
 
     @Override
     protected JTable buildReferenceTable() {
-        JTable table = new JTable(
-                model.getRelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME),
-                new RelationMemberTableColumnModel()
-                );
-        table.setName("table.referencememberlisttable");
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
-        table.getModel().addTableModelListener(new MemberModelChanged(table));
-        return table;
+        return buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME, "table.referencememberlisttable");
     }
 
     @Override
     protected JTable buildCurrentTable() {
+        return buildTable(PointInTimeType.CURRENT_POINT_IN_TIME, "table.currentmemberlisttable");
+    }
+
+    private JTable buildTable(PointInTimeType pointInTimeType, String name) {
         JTable table = new JTable(
-                model.getRelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME),
-                new RelationMemberTableColumnModel()
-                );
-        table.setName("table.currentmemberlisttable");
+                model.getRelationMemberTableModel(pointInTimeType),
+                new RelationMemberTableColumnModel());
+        table.setName(name);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.getModel().addTableModelListener(new MemberModelChanged(table));
