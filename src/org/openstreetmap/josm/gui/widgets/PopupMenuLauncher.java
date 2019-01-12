@@ -15,6 +15,8 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
+import org.openstreetmap.josm.tools.Logging;
+
 /**
  * Utility class that helps to display popup menus on mouse events.
  * @since 2688
@@ -112,6 +114,8 @@ public class PopupMenuLauncher extends MouseAdapter {
             if (component.isShowing()) {
                 menu.show(component, evt.getX(), evt.getY());
             }
+        } else {
+            Logging.warn("Unable to display menu {0} - {1}", menu, evt);
         }
     }
 

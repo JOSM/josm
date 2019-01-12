@@ -42,8 +42,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class NodeListViewer extends HistoryViewerPanel {
 
-    private final NodeListPopupMenu popupMenu = new NodeListPopupMenu();
-
     /**
      * Constructs a new {@code NodeListViewer}.
      * @param model history browser model
@@ -217,13 +215,13 @@ public class NodeListViewer extends HistoryViewerPanel {
 
     class InternalPopupMenuLauncher extends PopupMenuLauncher {
         InternalPopupMenuLauncher() {
-            super(popupMenu);
+            super(new NodeListPopupMenu());
         }
 
         @Override
         protected int checkTableSelection(JTable table, Point p) {
             int row = super.checkTableSelection(table, p);
-            popupMenu.prepare(primitiveIdAtRow((DiffTableModel) table.getModel(), row));
+            ((NodeListPopupMenu) menu).prepare(primitiveIdAtRow((DiffTableModel) table.getModel(), row));
             return row;
         }
     }
