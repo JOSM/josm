@@ -54,25 +54,20 @@ public class NodeListViewer extends HistoryViewerPanel {
 
     @Override
     protected JTable buildReferenceTable() {
-        final DiffTableModel tableModel = model.getNodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
-        final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
-        final JTable table = new JTable(tableModel, columnModel);
-        tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel));
-        table.setName("table.referencenodelisttable");
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
-        table.addMouseListener(new InternalPopupMenuLauncher());
-        table.addMouseListener(new DoubleClickAdapter(table));
-        return table;
+        return buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME, "table.referencenodelisttable");
     }
 
     @Override
     protected JTable buildCurrentTable() {
-        final DiffTableModel tableModel = model.getNodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
+        return buildTable(PointInTimeType.CURRENT_POINT_IN_TIME, "table.currentnodelisttable");
+    }
+
+    private JTable buildTable(PointInTimeType pointInTimeType, String name) {
+        final DiffTableModel tableModel = model.getNodeListTableModel(pointInTimeType);
         final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
         tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel));
-        table.setName("table.currentnodelisttable");
+        table.setName(name);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.addMouseListener(new InternalPopupMenuLauncher());
