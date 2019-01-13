@@ -102,7 +102,7 @@ public final class AboutAction extends JosmAction {
                 "<p style='font-size:50%'></p>" +
                 "<p>" + tr("Last change at {0}", version.getTime()) + "</p>" +
                 "<p style='font-size:50%'></p>" +
-                "<p>" + tr("Java Version {0}", Utils.getSystemProperty("java.version")) + "</p>" +
+                "<p>" + tr("Java Version {0}", getSystemProperty("java.version")) + "</p>" +
                 "<p style='font-size:50%'></p>" +
                 "</html>");
         info.add(label, GBC.eol().fill(GBC.HORIZONTAL).insets(10, 0, 0, 10));
