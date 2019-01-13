@@ -213,7 +213,7 @@ public class NodeListViewer extends HistoryViewerPanel {
         return id == null ? null : new SimplePrimitiveId(id, OsmPrimitiveType.NODE);
     }
 
-    class InternalPopupMenuLauncher extends PopupMenuLauncher {
+    static class InternalPopupMenuLauncher extends PopupMenuLauncher {
         InternalPopupMenuLauncher() {
             super(new NodeListPopupMenu());
         }
