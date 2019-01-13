@@ -36,7 +36,6 @@ import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -294,8 +293,10 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @param tooltip The text to display in tooltip. Can be {@code null}
      */
     public final void setTooltip(String tooltip) {
-        if (tooltip != null) {
-            putValue(SHORT_DESCRIPTION, PlatformManager.getPlatform().makeTooltip(tooltip, sc));
+        if (tooltip != null && sc != null) {
+            sc.setTooltip(this, tooltip);
+        } else if (tooltip != null) {
+            putValue(SHORT_DESCRIPTION, tooltip);
         }
     }
 

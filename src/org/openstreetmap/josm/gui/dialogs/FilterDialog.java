@@ -49,7 +49,6 @@ import org.openstreetmap.josm.gui.util.MultikeyShortcutAction;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
-import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -103,8 +102,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             KeyEvent.VK_H, Shortcut.ALT_CTRL);
 
     private static final String[] COLUMN_TOOLTIPS = {
-            PlatformManager.getPlatform().makeTooltip(tr("Enable filter"), ENABLE_FILTER_SHORTCUT),
-            PlatformManager.getPlatform().makeTooltip(tr("Hiding filter"), HIDING_FILTER_SHORTCUT),
+            Shortcut.makeTooltip(tr("Enable filter"), ENABLE_FILTER_SHORTCUT.getKeyStroke()),
+            Shortcut.makeTooltip(tr("Hiding filter"), HIDING_FILTER_SHORTCUT.getKeyStroke()),
             null,
             tr("Inverse filter"),
             tr("Filter mode")

@@ -75,7 +75,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -1259,7 +1258,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 if (tt.startsWith("<html>") && tt.endsWith("</html>")) {
                     tt = tt.substring(6, tt.length()-6);
                 }
-                tt = PlatformManager.getPlatform().makeTooltip(tt, sc);
+                tt = Shortcut.makeTooltip(tt, sc.getKeyStroke());
             }
         }
 

@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -27,7 +26,7 @@ public class MoveUpAction extends AbstractRelationEditorAction {
         new ImageProvider("dialogs", "moveup").getResource().attachImageIcon(this, true);
         Shortcut sc = Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"), KeyEvent.VK_UP, Shortcut.ALT);
         sc.setAccelerator(this);
-        putValue(SHORT_DESCRIPTION, PlatformManager.getPlatform().makeTooltip(tr("Move the currently selected members up"), sc));
+        sc.setTooltip(this, tr("Move the currently selected members up"));
         setEnabled(false);
     }
 
