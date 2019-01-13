@@ -136,9 +136,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         pnlMessage.setText(tr(
                         "<html><body>"
                         + "<p class=\"warning-body\">"
-                        + "<strong>Warning:</strong> The password is stored in plain text in the JOSM preferences file. "
-                        + "Furthermore, it is transferred <strong>unencrypted</strong> in every request sent to the OSM server. "
-                        + "<strong>Do not use a valuable password.</strong>"
+                        + "<strong>Note:</strong> The password is stored in plain text in the JOSM preferences file on your computer. "
                         + "</p>"
                         + "</body></html>"
                 )
