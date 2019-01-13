@@ -2,21 +2,28 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
+import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,6 +44,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -112,12 +120,20 @@ public final class AboutAction extends JosmAction {
         info.add(logos, GBC.eol().insets(0, 10, 0, 0));
         info.add(GBC.glue(0, 5), GBC.eol());
 
+        JPanel inst = new JPanel(new GridBagLayout());
+        addInstallationLine(inst, getSystemEnv("JAVA_HOME"), PlatformManager.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}");
+        addInstallationLine(inst, getSystemProperty("java.home"), "java.home");
+        addInstallationLine(inst, Config.getDirs().getPreferencesDirectory(false).toString(), null);
+        addInstallationLine(inst, Config.getDirs().getUserDataDirectory(false).toString(), null);
+        addInstallationLine(inst, Config.getDirs().getCacheDirectory(false).toString(), null);
+
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
         about.addTab(tr("Revision"), createScrollPane(revision));
         about.addTab(tr("Contribution"), createScrollPane(contribution));
         about.addTab(tr("License"), createScrollPane(license));
         about.addTab(tr("Plugins"), new JScrollPane(PluginHandler.getInfoPanel()));
+        about.addTab(tr("Installation Details"), inst);
 
         // Get the list of Launchpad contributors using customary msgid “translator-credits”
         String translators = tr("translator-credits");
@@ -133,13 +149,62 @@ public final class AboutAction extends JosmAction {
         panel.add(about, GBC.std().fill());
 
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
-        int ret = new ExtendedDialog(MainApplication.getMainFrame(), tr("About JOSM..."), tr("OK"), tr("Report bug"))
-            .setButtonIcons("ok", "bug")
-            .setContent(panel, false)
-            .showDialog().getValue();
+        ExtendedDialog dlg = new ExtendedDialog(MainApplication.getMainFrame(), tr("About JOSM..."), tr("OK"), tr("Report bug"));
+        int ret = dlg.setButtonIcons("ok", "bug")
+                .setContent(panel, false)
+                .showDialog().getValue();
         if (2 == ret) {
             MainApplication.getMenu().reportbug.actionPerformed(null);
         }
+        GuiHelper.destroyComponents(panel, false);
+        dlg.dispose();
+    }
+
+    private static class OpenDirAction extends AbstractAction {
+        final String dir;
+
+        OpenDirAction(String dir) {
+            super();
+            putValue(Action.NAME, "...");
+            this.dir = dir;
+            setEnabled(dir != null && new File(dir).isDirectory());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            OpenBrowser.displayUrl(new File(dir).toURI());
+        }
+    }
+
+    /**
+     * Add line to installation details showing symbolic name used in status report and actual directory.
+     * @param inst the panel
+     * @param dir the actual path represented by a symbol
+     * @param source source for symbol
+     */
+    private void addInstallationLine(JPanel inst, String dir, String source) {
+        if (dir == null && source == null)
+            return;
+        JLabel symbol = new JLabel();
+        JosmTextArea dirLabel = new JosmTextArea();
+        if (dir != null && !dir.isEmpty()) {
+            symbol.setText(ShowStatusReportAction.paramCleanup(dir));
+            dirLabel.setText(dir);
+            dirLabel.setEditable(false);
+        } else {
+            symbol.setText(source);
+            dirLabel.setText(tr("(unset)"));
+            dirLabel.setFont(dirLabel.getFont().deriveFont(Font.ITALIC));
+        }
+        symbol.setFont(GuiHelper.getMonospacedFont(symbol));
+        inst.add(symbol, GBC.std().insets(5, 0, 0, 0));
+        inst.add(GBC.glue(10, 0), GBC.std());
+        dirLabel.setFont(GuiHelper.getMonospacedFont(dirLabel));
+        dirLabel.setOpaque(false);
+        inst.add(dirLabel, GBC.std().fill(GBC.HORIZONTAL));
+        JButton btn = new JButton(new OpenDirAction(dir));
+        btn.setToolTipText(tr("Open directory"));
+        inst.add(btn, GBC.eol().insets(0, 0, 5, 0));
     }
 
     private static JLabel createImageLink(String tooltip, String icon, final String link) {
