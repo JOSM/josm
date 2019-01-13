@@ -104,8 +104,8 @@ public class TagCheckerTest {
     public void testMisspelledTag() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node landuse=forrest"));
         assertEquals(1, errors.size());
-        assertEquals("Misspelled property value", errors.get(0).getMessage());
-        assertEquals("Value 'forrest' for key 'landuse' looks like 'forest'.", errors.get(0).getDescription());
+        assertEquals("Unknown property value", errors.get(0).getMessage());
+        assertEquals("Value 'forrest' for key 'landuse' is unknown, maybe 'forest' is meant?", errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
         assertFalse(errors.get(0).isFixable());
     }
@@ -118,8 +118,10 @@ public class TagCheckerTest {
     public void testMisspelledTag2() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=servics"));
         assertEquals(1, errors.size());
-        assertEquals("Misspelled property value", errors.get(0).getMessage());
-        assertEquals("Value 'servics' for key 'highway' looks like one of [service, services].", errors.get(0).getDescription());
+        assertEquals("Unknown property value", errors.get(0).getMessage());
+        assertEquals(
+                "Value 'servics' for key 'highway' is unknown, maybe one of [service, services] is meant?",
+                errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
         assertFalse(errors.get(0).isFixable());
     }
@@ -132,23 +134,10 @@ public class TagCheckerTest {
     public void testMisspelledTag3() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=residentail"));
         assertEquals(1, errors.size());
-        assertEquals("Misspelled property value", errors.get(0).getMessage());
-        assertEquals("Value 'residentail' for key 'highway' looks like 'residential'.", errors.get(0).getDescription());
+        assertEquals("Unknown property value", errors.get(0).getMessage());
+        assertEquals("Value 'residentail' for key 'highway' is unknown, maybe 'residential' is meant?",
+                errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
-        assertFalse(errors.get(0).isFixable());
-    }
-
-    /**
-     * Check for misspelled value.
-     * @throws IOException if any I/O error occurs
-     */
-    @Test
-    public void testShortValNotInPreset() throws IOException {
-        final List<TestError> errors = test(OsmUtils.createPrimitive("node layer=6"));
-        assertEquals(1, errors.size());
-        assertEquals("Presets do not contain property value", errors.get(0).getMessage());
-        assertEquals("Value '6' for key 'layer' not in presets.", errors.get(0).getDescription());
-        assertEquals(Severity.OTHER, errors.get(0).getSeverity());
         assertFalse(errors.get(0).isFixable());
     }
 
@@ -204,8 +193,9 @@ public class TagCheckerTest {
     public void testValueDifferentCase() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=Residential"));
         assertEquals(1, errors.size());
-        assertEquals("Misspelled property value", errors.get(0).getMessage());
-        assertEquals("Value 'Residential' for key 'highway' looks like 'residential'.", errors.get(0).getDescription());
+        assertEquals("Unknown property value", errors.get(0).getMessage());
+        assertEquals("Value 'Residential' for key 'highway' is unknown, maybe 'residential' is meant?",
+                errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
         assertFalse(errors.get(0).isFixable());
     }
