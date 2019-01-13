@@ -361,7 +361,7 @@ public final class I18n {
     static String setupJavaLocaleProviders() {
         // Look up SPI providers first (for JosmDecimalFormatSymbolsProvider).
         // Enable CLDR locale provider on Java 8 to get additional languages, such as Khmer.
-        // http://docs.oracle.com/javase/8/docs/technotes/guides/intl/enhancements.8.html#cldr
+        // https://docs.oracle.com/javase/8/docs/technotes/guides/intl/enhancements.8.html#cldr
         // FIXME: This must be updated after we switch to Java 9.
         // See https://docs.oracle.com/javase/9/docs/api/java/util/spi/LocaleServiceProvider.html
         try {

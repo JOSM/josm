@@ -189,7 +189,7 @@ public final class GuiHelper {
 
     /**
      * Executes asynchronously a runnable in
-     * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
+     * <a href="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
      * @param task The runnable to execute
      * @see SwingUtilities#invokeLater
      */
@@ -207,7 +207,7 @@ public final class GuiHelper {
 
     /**
      * Executes synchronously a runnable in
-     * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
+     * <a href="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
      * @param task The runnable to execute
      * @see SwingUtilities#invokeAndWait
      */
@@ -225,7 +225,7 @@ public final class GuiHelper {
 
     /**
      * Executes synchronously a runnable in
-     * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
+     * <a href="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
      * <p>
      * Passes on the exception that was thrown to the thread calling this.
      * The exception is wrapped using a {@link ReportedException}.
@@ -247,7 +247,7 @@ public final class GuiHelper {
 
     /**
      * Executes synchronously a callable in
-     * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>
+     * <a href="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>
      * and return a value.
      * @param <V> the result type of method <code>call</code>
      * @param callable The callable to execute

@@ -1903,7 +1903,7 @@ public class ImageProvider {
      * @param reader The image reader
      * @return the {@code TransparentColor} defined in image reader metadata, or {@code null}
      * @throws IOException if an error occurs during reading
-     * @see <a href="http://docs.oracle.com/javase/8/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
+     * @see <a href="https://docs.oracle.com/javase/8/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
      * @since 7499
      */
     public static Color getTransparentColor(ColorModel model, ImageReader reader) throws IOException {
