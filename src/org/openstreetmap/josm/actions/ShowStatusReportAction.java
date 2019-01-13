@@ -223,7 +223,7 @@ public final class ShowStatusReportAction extends JosmAction {
      * @param param parameter to cleanup
      * @return shortened/anonymized parameter
      */
-    private static String paramCleanup(String param) {
+    static String paramCleanup(String param) {
         final String envJavaHome = getSystemEnv("JAVA_HOME");
         final String envJavaHomeAlt = PlatformManager.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
         final String propJavaHome = getSystemProperty("java.home");
@@ -240,7 +240,6 @@ public final class ShowStatusReportAction extends JosmAction {
         final String userNameAlt = "<user.name>";
 
         String val = param;
-        val = paramReplace(val, envJavaHome, envJavaHomeAlt);
         val = paramReplace(val, envJavaHome, envJavaHomeAlt);
         val = paramReplace(val, propJavaHome, propJavaHomeAlt);
         val = paramReplace(val, prefDir, prefDirAlt);
