@@ -75,6 +75,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @RunWith(ParallelParameterized.class)
 public class ImageryPreferenceTestIT {
 
+    private static final String ERROR_SEP = " -> ";
     private static final LatLon GREENWICH = new LatLon(51.47810, -0.00170);
     private static final int DEFAULT_ZOOM = 12;
 
@@ -156,7 +157,12 @@ public class ImageryPreferenceTestIT {
         String errorMsg = error.replace('\n', ' ');
         if (notIgnoredErrors.contains(errorMsg))
             notIgnoredErrors.remove(errorMsg);
-        return addError(errorsToIgnore.contains(errorMsg) ? ignoredErrors : errors, info, errorMsg);
+        return addError(isIgnoredError(errorMsg) ? ignoredErrors : errors, info, errorMsg);
+    }
+
+    private boolean isIgnoredError(String errorMsg) {
+        int idx = errorMsg.lastIndexOf(ERROR_SEP);
+        return errorsToIgnore.contains(errorMsg) || (idx > -1 && errorsToIgnore.contains(errorMsg.substring(idx + ERROR_SEP.length())));
     }
 
     private static boolean addError(Map<String, Map<ImageryInfo, List<String>>> map, ImageryInfo info, String errorMsg) {
@@ -189,13 +195,13 @@ public class ImageryPreferenceTestIT {
                     return Optional.of(data);
                 } catch (IOException e) {
                     if (response.getResponseCode() < 300) {
-                        addError(info, url + " -> " + e);
+                        addError(info, url + ERROR_SEP + e);
                     }
                 } finally {
                     response.disconnect();
                 }
             } catch (IOException e) {
-                addError(info, url + " -> " + e);
+                addError(info, url + ERROR_SEP + e);
             }
         }
         return Optional.empty();
@@ -243,7 +249,7 @@ public class ImageryPreferenceTestIT {
     }
 
     private static String zoomMarker(int zoom) {
-        return " -> zoom " + zoom + " -> ";
+        return " -> zoom " + zoom + ERROR_SEP;
     }
 
     private String addImageError(ImageryInfo info, String url, byte[] data, int zoom, String defaultMessage) {
@@ -337,7 +343,7 @@ public class ImageryPreferenceTestIT {
                 checkTileUrl(info, tileSource, center, Utils.clamp(DEFAULT_ZOOM, info.getMinZoom() + 1, info.getMaxZoom()));
             }
         } catch (IOException | RuntimeException | WMSGetCapabilitiesException | WMTSGetCapabilitiesException e) {
-            addError(info, info.getUrl() + " -> " + e.toString());
+            addError(info, info.getUrl() + ERROR_SEP + e.toString());
         }
 
         for (ImageryInfo mirror : info.getMirrors()) {
@@ -346,7 +352,7 @@ public class ImageryPreferenceTestIT {
     }
 
     private static boolean isZoomError(String error) {
-        String[] parts = error.split(" -> ");
+        String[] parts = error.split(ERROR_SEP);
         String lastPart = parts.length > 0 ? parts[parts.length - 1].toLowerCase(Locale.ENGLISH) : "";
         return lastPart.contains("bbox")
             || lastPart.contains("bounding box");

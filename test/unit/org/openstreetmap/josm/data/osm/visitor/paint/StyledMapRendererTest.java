@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -84,6 +85,7 @@ public class StyledMapRendererTest {
      */
     @Test
     public void testEqualsContract() {
+        TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(StyleRecord.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
