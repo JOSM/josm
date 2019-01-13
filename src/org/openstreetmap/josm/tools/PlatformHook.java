@@ -134,16 +134,12 @@ public interface PlatformHook {
      * @param name Tooltip text to display
      * @param sc Shortcut associated (to display accelerator between parenthesis)
      * @return Full tooltip text (name + accelerator)
+     * @since 1084
+     * @deprecated Use {@link Shortcut#makeTooltip} instead.
       */
+    @Deprecated
     default String makeTooltip(String name, Shortcut sc) {
-        StringBuilder result = new StringBuilder();
-        result.append("<html>").append(name);
-        if (sc != null && !sc.getKeyText().isEmpty()) {
-            result.append(" <font size='-2'>(")
-                  .append(sc.getKeyText())
-                  .append(")</font>");
-        }
-        return result.append("&nbsp;</html>").toString();
+        return Shortcut.makeTooltip(name, sc != null ? sc.getKeyStroke() : null);
     }
 
     /**
