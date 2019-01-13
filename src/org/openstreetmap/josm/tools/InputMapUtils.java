@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.Optional;
 
 import javax.swing.Action;
 import javax.swing.InputMap;
@@ -127,5 +128,8 @@ public final class InputMapUtils {
         final KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK);
         c.getActionMap().put("ctrl_enter", a);
         c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "ctrl_enter");
+        Optional.ofNullable(a.getValue(Action.SHORT_DESCRIPTION))
+                .map(String::valueOf)
+                .ifPresent(text -> Shortcut.setTooltip(a, text, stroke));
     }
 }

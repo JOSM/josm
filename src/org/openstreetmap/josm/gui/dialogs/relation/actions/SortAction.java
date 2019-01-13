@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -27,7 +26,7 @@ public class SortAction extends AbstractRelationEditorAction {
         putValue(NAME, tr("Sort"));
         Shortcut sc = Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_END, Shortcut.ALT);
         sc.setAccelerator(this);
-        putValue(SHORT_DESCRIPTION, PlatformManager.getPlatform().makeTooltip(tr("Sort the relation members"), sc));
+        sc.setTooltip(this, tr("Sort the relation members"));
         updateEnabledState();
     }
 

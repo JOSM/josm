@@ -17,8 +17,10 @@ import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
+import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.Preferences;
@@ -267,6 +269,30 @@ public final class Shortcut {
         String modifText = KeyEvent.getModifiersExText(keyStroke.getModifiers());
         if ("".equals(modifText)) return KeyEvent.getKeyText(keyStroke.getKeyCode());
         return modifText + '+' + KeyEvent.getKeyText(keyStroke.getKeyCode());
+    }
+
+    /**
+     * Sets the action tooltip to the tooltip text plus the {@linkplain #getKeyText(KeyStroke) key stroke text}
+     * this shortcut represents.
+     *
+     * @param action action
+     * @param tooltip Tooltip text to display
+     * @since 14689
+     */
+    public void setTooltip(Action action, String tooltip) {
+        setTooltip(action, tooltip, getKeyStroke());
+    }
+
+    /**
+     * Sets the action tooltip to the tooltip text plus the {@linkplain #getKeyText(KeyStroke) key stroke text}.
+     *
+     * @param action action
+     * @param tooltip Tooltip text to display
+     * @param keyStroke Key stroke associated (to display accelerator between parenthesis)
+     * @since 14689
+     */
+    public static void setTooltip(Action action, String tooltip, KeyStroke keyStroke) {
+        action.putValue(Action.SHORT_DESCRIPTION, makeTooltip(tooltip, keyStroke));
     }
 
     @Override
@@ -594,4 +620,48 @@ public final class Shortcut {
                 .map(Shortcut::getKeyStroke)
                 .orElse(null);
     }
+
+    /**
+     * Returns the tooltip text plus the {@linkplain #getKeyText(KeyStroke) key stroke text}.
+     *
+     * Tooltips are usually not system dependent, unless the
+     * JVM is too dumb to provide correct names for all the keys.
+     *
+     * Some LAFs don't understand HTML, such as the OSX LAFs.
+     *
+     * @param tooltip Tooltip text to display
+     * @param keyStroke Key stroke associated (to display accelerator between parenthesis)
+     * @return Full tooltip text (tooltip + accelerator)
+     * @since 14689
+     */
+    public static String makeTooltip(String tooltip, KeyStroke keyStroke) {
+        final Optional<String> keyStrokeText = Optional.ofNullable(keyStroke)
+                .map(Shortcut::getKeyText)
+                .filter(text -> !text.isEmpty());
+
+        final String laf = UIManager.getLookAndFeel().getID();
+        // "Mac" is the native LAF, "Aqua" is Quaqua. Both use native menus with native tooltips.
+        final boolean canHtml = !(PlatformManager.isPlatformOsx() && (laf.contains("Mac") || laf.contains("Aqua")));
+
+        StringBuilder result = new StringBuilder(48);
+        if (canHtml) {
+            result.append("<html>");
+        }
+        result.append(tooltip);
+        if (keyStrokeText.isPresent()) {
+            result.append(' ');
+            if (canHtml) {
+                result.append("<font size='-2'>");
+            }
+            result.append('(').append(keyStrokeText.get()).append(')');
+            if (canHtml) {
+                result.append("</font>");
+            }
+        }
+        if (canHtml) {
+            result.append("&nbsp;</html>");
+        }
+        return result.toString();
+    }
+
 }

@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.UIManager;
-
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
@@ -351,35 +349,6 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         if (sc != null) {
             sc.setAutomatic();
         }
-    }
-
-    @Override
-    public String makeTooltip(String name, Shortcut sc) {
-        String lafid = UIManager.getLookAndFeel().getID();
-        boolean canHtml = true;
-        // "Mac" is the native LAF, "Aqua" is Quaqua. Both use native menus with native tooltips.
-        if (lafid.contains("Mac") || lafid.contains("Aqua")) {
-            canHtml = false;
-        }
-        StringBuilder result = new StringBuilder(48);
-        if (canHtml) {
-            result.append("<html>");
-        }
-        result.append(name);
-        if (sc != null && !sc.getKeyText().isEmpty()) {
-            result.append(' ');
-            if (canHtml) {
-                result.append("<font size='-2'>");
-            }
-            result.append('(').append(sc.getKeyText()).append(')');
-            if (canHtml) {
-                result.append("</font>");
-            }
-        }
-        if (canHtml) {
-            result.append("&nbsp;</html>");
-        }
-        return result.toString();
     }
 
     @Override
