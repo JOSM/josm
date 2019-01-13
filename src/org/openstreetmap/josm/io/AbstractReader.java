@@ -290,7 +290,7 @@ public abstract class AbstractReader {
         progressMonitor.addCancelListener(cancelListener);
         CheckParameterUtil.ensureParameterNotNull(source, "source");
         try {
-            progressMonitor.beginTask(tr("Prepare OSM data..."), 4); // read, prepare, post-process, render
+            progressMonitor.beginTask(tr("Prepare OSM data...", 2));
             progressMonitor.indeterminateSubTask(tr("Parsing OSM data..."));
 
             try (InputStreamReader ir = UTFInputStreamReader.create(source)) {
@@ -309,12 +309,10 @@ public abstract class AbstractReader {
                 getDataSet().lock();
             }
             progressMonitor.worked(1);
-            progressMonitor.indeterminateSubTask(tr("Postprocessing data set..."));
+
             // iterate over registered postprocessors and give them each a chance
             // to modify the dataset we have just loaded.
             callPostProcessors(progressMonitor);
-            progressMonitor.worked(1);
-            progressMonitor.indeterminateSubTask(tr("Rendering data set..."));
             // Make sure postprocessors did not change the read-only state
             if (readOnly && !getDataSet().isLocked()) {
                 getDataSet().lock();
@@ -329,7 +327,7 @@ public abstract class AbstractReader {
             if (minId.isPresent() && minId.getAsLong() < AbstractPrimitive.currentUniqueId()) {
                 AbstractPrimitive.advanceUniqueId(minId.getAsLong());
             }
-            // don't call progressMonitor.finishTask() here, let caller do it
+            progressMonitor.finishTask();
             progressMonitor.removeCancelListener(cancelListener);
         }
     }

@@ -806,7 +806,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     all = ds.getPrimitives(p -> p.isSelectable()); // Do not use method reference before Java 11!
                 }
                 final ProgressMonitor subMonitor = getProgressMonitor().createSubTaskMonitor(all.size(), false);
-                subMonitor.beginTask(trn("Searching in {0} object", "Searching in {0} objects", all.size(), all.size()),all.size());
+                subMonitor.beginTask(trn("Searching in {0} object", "Searching in {0} objects", all.size(), all.size()));
 
                 for (IPrimitive osm : all) {
                     if (canceled) {
