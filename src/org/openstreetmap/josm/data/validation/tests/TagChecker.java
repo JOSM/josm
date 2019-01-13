@@ -74,12 +74,17 @@ public class TagChecker extends TagTest {
     private static final Map<String, String> harmonizedKeys = new HashMap<>();
     /** The spell check preset values which are not stored in TaggingPresets */
     private static volatile MultiMap<String, String> additionalPresetsValueData;
+    /** The spell check preset values which are not stored in TaggingPresets */
+    private static volatile MultiMap<String, String> oftenUsedValueData = new MultiMap<>();
+
     /** The TagChecker data */
     private static final List<CheckerData> checkerData = new ArrayList<>();
     private static final List<String> ignoreDataStartsWith = new ArrayList<>();
     private static final Set<String> ignoreDataEquals = new HashSet<>();
     private static final List<String> ignoreDataEndsWith = new ArrayList<>();
     private static final List<Tag> ignoreDataTag = new ArrayList<>();
+    /** tag keys that have only numerical values in the presets */
+    private static final Set<String> ignoreForLevenshtein = new HashSet<>();
 
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPrefHelper.PREFIX + "." + TagChecker.class.getSimpleName();
@@ -177,6 +182,30 @@ public class TagChecker extends TagTest {
     public void initialize() throws IOException {
         initializeData();
         initializePresets();
+        analysePresets();
+    }
+
+    /**
+     * Add presets that contain only numerical values to the ignore list
+     */
+    private void analysePresets() {
+        for (String key : TaggingPresets.getPresetKeys()) {
+            if (isKeyIgnored(key))
+                continue;
+            boolean allNumerical = true;
+            Set<String> values = TaggingPresets.getPresetValues(key);
+            if (values.isEmpty())
+                allNumerical = false;
+            for (String val : values) {
+                if (!isNum(val)) {
+                    allNumerical = false;
+                    break;
+                }
+            }
+            if (allNumerical) {
+                ignoreForLevenshtein.add(key);
+            }
+        }
     }
 
     /**
@@ -194,6 +223,7 @@ public class TagChecker extends TagTest {
         ignoreDataEndsWith.clear();
         ignoreDataTag.clear();
         harmonizedKeys.clear();
+        ignoreForLevenshtein.clear();
 
         StringBuilder errorSources = new StringBuilder();
         for (String source : Config.getPref().getList(PREF_SOURCES, DEFAULT_SOURCES)) {
@@ -240,7 +270,9 @@ public class TagChecker extends TagTest {
                                 ignoreDataEndsWith.add(line);
                                 break;
                             case "K:":
-                                ignoreDataTag.add(Tag.ofString(line));
+                                Tag tag = Tag.ofString(line);
+                                ignoreDataTag.add(tag);
+                                oftenUsedValueData.put(tag.getKey(), tag.getValue());
                                 break;
                             default:
                                 if (!key.startsWith(";")) {
@@ -388,13 +420,11 @@ public class TagChecker extends TagTest {
     }
 
     /**
-     * Determines if the given tag is ignored for checks "key/tag not in presets".
+     * Determines if the given tag key is ignored for checks "key/tag not in presets".
      * @param key key
-     * @param value value
-     * @return {@code true} if the given tag is ignored
-     * @since 9023
+     * @return true if the given key is ignored
      */
-    public static boolean isTagIgnored(String key, String value) {
+    private static boolean isKeyIgnored(String key) {
         if (ignoreDataEquals.contains(key)) {
             return true;
         }
@@ -408,7 +438,19 @@ public class TagChecker extends TagTest {
                 return true;
             }
         }
+        return false;
+    }
 
+    /**
+     * Determines if the given tag is ignored for checks "key/tag not in presets".
+     * @param key key
+     * @param value value
+     * @return {@code true} if the given tag is ignored
+     * @since 9023
+     */
+    public static boolean isTagIgnored(String key, String value) {
+        if (isKeyIgnored(key))
+            return true;
         if (!isTagInPresets(key, value)) {
             for (Tag a : ignoreDataTag) {
                 if (key.equals(a.getKey()) && value.equals(a.getValue())) {
@@ -535,85 +577,108 @@ public class TagChecker extends TagTest {
                         withErrors.put(p, "UPK");
                     }
                 } else if (!isTagInPresets(key, value)) {
-                    // try to fix common typos and check again if value is still unknown
-                    final String harmonizedValue = harmonizeValue(prop.getValue());
-                    String fixedValue = null;
-                    Set<String> possibleValues = getPresetValues(key);
-                    List<String> fixVals = new ArrayList<>();
-                    int maxPresetValueLen = 0;
-                    if (possibleValues.contains(harmonizedValue)) {
-                        fixedValue = harmonizedValue;
-                    } else {
-                        // use Levenshtein distance to find typical typos
-                        int minDist = MAX_LEVENSHTEIN_DISTANCE + 1;
-                        String closest = null;
-                        for (String possibleVal : possibleValues) {
-                            if (possibleVal.isEmpty())
-                                continue;
-                            maxPresetValueLen = Math.max(maxPresetValueLen, possibleVal.length());
-                            if (harmonizedValue.length() < 3 && possibleVal.length() >= harmonizedValue.length() + MAX_LEVENSHTEIN_DISTANCE) {
-                                // don't suggest fix value when given value is short and lengths are too different
-                                // for example surface=u would result in surface=mud
-                                continue;
-                            }
-                            int dist = Utils.getLevenshteinDistance(possibleVal, harmonizedValue);
-                            if (dist >= harmonizedValue.length()) {
-                                // short value, all characters are different. Don't warn, might say Value '10' for key 'fee' looks like 'no'.
-                                continue;
-                            }
-                            if (dist < minDist) {
-                                closest = possibleVal;
-                                minDist = dist;
-                                fixVals.clear();
-                                fixVals.add(possibleVal);
-                            } else if (dist == minDist) {
-                                fixVals.add(possibleVal);
-                            }
-                        }
-                        if (minDist <= MAX_LEVENSHTEIN_DISTANCE && maxPresetValueLen > MAX_LEVENSHTEIN_DISTANCE
-                                && (harmonizedValue.length() > 3 || minDist < MAX_LEVENSHTEIN_DISTANCE)) {
-                            if (fixVals.size() < 2) {
-                                fixedValue = closest;
-                            } else {
-                                Collections.sort(fixVals);
-                                // misspelled preset value with multiple good alternatives
-                                errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE_NO_FIX)
-                                        .message(tr("Misspelled property value"),
-                                                marktr("Value ''{0}'' for key ''{1}'' looks like one of {2}."),
-                                                prop.getValue(), key, fixVals)
-                                        .primitives(p).build());
-                                withErrors.put(p, "WPV");
-                                continue;
-                            }
-                        }
-                    }
-                    if (fixedValue != null && possibleValues.contains(fixedValue)) {
-                        final String newValue = fixedValue;
-                        // misspelled preset value
-                        errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
-                                .message(tr("Misspelled property value"),
-                                        marktr("Value ''{0}'' for key ''{1}'' looks like ''{2}''."), prop.getValue(), key, newValue)
-                                .primitives(p)
-                                .build());
-                        withErrors.put(p, "WPV");
-                    } else {
-                        // unknown preset value
-                        errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
-                                .message(tr("Presets do not contain property value"),
-                                        marktr("Value ''{0}'' for key ''{1}'' not in presets."), prop.getValue(), key)
-                                .primitives(p)
-                                .build());
-                        withErrors.put(p, "UPV");
-                    }
+                    tryGuess(p, key, value, withErrors);
                 }
             }
             if (checkFixmes && key != null && value != null && !value.isEmpty() && isFixme(key, value) && !withErrors.contains(p, "FIXME")) {
-               errors.add(TestError.builder(this, Severity.OTHER, FIXME)
-                .message(tr("FIXMES"))
-                .primitives(p)
-                .build());
-               withErrors.put(p, "FIXME");
+                errors.add(TestError.builder(this, Severity.OTHER, FIXME)
+                        .message(tr("FIXMES"))
+                        .primitives(p)
+                        .build());
+                withErrors.put(p, "FIXME");
             }
+        }
+    }
+
+    private void tryGuess(OsmPrimitive p, String key, String value, MultiMap<OsmPrimitive, String> withErrors) {
+        // try to fix common typos and check again if value is still unknown
+        final String harmonizedValue = harmonizeValue(value);
+        String fixedValue = null;
+        Set<String> presetValues = getPresetValues(key);
+        Set<String> oftenUsedValues = oftenUsedValueData.get(key);
+        for (Set<String> possibleValues: Arrays.asList(presetValues, oftenUsedValues)) {
+            if (possibleValues != null && possibleValues.contains(harmonizedValue)) {
+                fixedValue = harmonizedValue;
+                break;
+            }
+        }
+        if (fixedValue == null && !ignoreForLevenshtein.contains(key)) {
+            int maxPresetValueLen = 0;
+            List<String> fixVals = new ArrayList<>();
+            // use Levenshtein distance to find typical typos
+            int minDist = MAX_LEVENSHTEIN_DISTANCE + 1;
+            String closest = null;
+            for (Set<String> possibleValues: Arrays.asList(presetValues, oftenUsedValues)) {
+                if (possibleValues == null)
+                    continue;
+                for (String possibleVal : possibleValues) {
+                    if (possibleVal.isEmpty())
+                        continue;
+                    maxPresetValueLen = Math.max(maxPresetValueLen, possibleVal.length());
+                    if (harmonizedValue.length() < 3 && possibleVal.length() >= harmonizedValue.length() + MAX_LEVENSHTEIN_DISTANCE) {
+                        // don't suggest fix value when given value is short and lengths are too different
+                        // for example surface=u would result in surface=mud
+                        continue;
+                    }
+                    int dist = Utils.getLevenshteinDistance(possibleVal, harmonizedValue);
+                    if (dist >= harmonizedValue.length()) {
+                        // short value, all characters are different. Don't warn, might say Value '10' for key 'fee' looks like 'no'.
+                        continue;
+                    }
+                    if (dist < minDist) {
+                        closest = possibleVal;
+                        minDist = dist;
+                        fixVals.clear();
+                        fixVals.add(possibleVal);
+                    } else if (dist == minDist) {
+                        fixVals.add(possibleVal);
+                    }
+                }
+            }
+
+            if (minDist <= MAX_LEVENSHTEIN_DISTANCE && maxPresetValueLen > MAX_LEVENSHTEIN_DISTANCE
+                    && (harmonizedValue.length() > 3 || minDist < MAX_LEVENSHTEIN_DISTANCE)) {
+                if (fixVals.size() < 2) {
+                    fixedValue = closest;
+                } else {
+                    Collections.sort(fixVals);
+                    // misspelled preset value with multiple good alternatives
+                    errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE_NO_FIX)
+                            .message(tr("Unknown property value"),
+                                    marktr("Value ''{0}'' for key ''{1}'' is unknown, maybe one of {2} is meant?"),
+                                    value, key, fixVals)
+                            .primitives(p).build());
+                    withErrors.put(p, "WPV");
+                    return;
+                }
+            }
+        }
+        if (fixedValue != null) {
+            final String newValue = fixedValue;
+            // misspelled preset value
+            errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
+                    .message(tr("Unknown property value"),
+                            marktr("Value ''{0}'' for key ''{1}'' is unknown, maybe ''{2}'' is meant?"), value, key, newValue)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "WPV");
+        } else {
+            // unknown preset value
+            errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
+                    .message(tr("Presets do not contain property value"),
+                            marktr("Value ''{0}'' for key ''{1}'' not in presets."), value, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "UPV");
+        }
+    }
+
+    private boolean isNum(String harmonizedValue) {
+        try {
+            Double.parseDouble(harmonizedValue);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 
