@@ -610,7 +610,7 @@ public abstract class AbstractReader {
         return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
-    private OsmPrimitive buildPrimitive(PrimitiveData pd) {
+    protected OsmPrimitive buildPrimitive(PrimitiveData pd) {
         OsmPrimitive p;
         if (pd.getUniqueId() < AbstractPrimitive.currentUniqueId()) {
             p = pd.getType().newInstance(pd.getUniqueId(), true);

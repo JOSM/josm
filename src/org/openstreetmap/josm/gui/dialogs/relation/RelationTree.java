@@ -39,6 +39,7 @@ public class RelationTree extends JTree {
      */
     protected void build() {
         setRootVisible(false);
+        setShowsRootHandles(true);
         setCellRenderer(new RelationTreeCellRenderer());
         addTreeWillExpandListener(new LazyRelationLoader());
     }
