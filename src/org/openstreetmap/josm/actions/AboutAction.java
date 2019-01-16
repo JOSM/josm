@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.Utils.getSystemEnv;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.Color;
@@ -19,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -44,7 +45,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -121,11 +121,15 @@ public final class AboutAction extends JosmAction {
         info.add(GBC.glue(0, 5), GBC.eol());
 
         JPanel inst = new JPanel(new GridBagLayout());
-        addInstallationLine(inst, getSystemEnv("JAVA_HOME"), PlatformManager.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}");
-        addInstallationLine(inst, getSystemProperty("java.home"), "java.home");
-        addInstallationLine(inst, Config.getDirs().getPreferencesDirectory(false).toString(), null);
-        addInstallationLine(inst, Config.getDirs().getUserDataDirectory(false).toString(), null);
-        addInstallationLine(inst, Config.getDirs().getCacheDirectory(false).toString(), null);
+        final String pathToPreferences = ShowStatusReportAction
+                .paramCleanup(Preferences.main().getPreferenceFile().getAbsolutePath());
+        inst.add(new JLabel(tr("Preferences are stored in {0}", pathToPreferences)), GBC.eol().insets(0, 0, 0, 10));
+        inst.add(new JLabel(tr("Symbolic names for directories and the actual paths:")),
+                GBC.eol().insets(0, 0, 0, 10));
+        for (Entry<String, String> entry : ShowStatusReportAction.getAnonimicDirectorySymbolMap().entrySet()) {
+            addInstallationLine(inst, entry.getValue(), entry.getKey());
+        }
+
 
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
@@ -183,20 +187,18 @@ public final class AboutAction extends JosmAction {
      * @param source source for symbol
      */
     private void addInstallationLine(JPanel inst, String dir, String source) {
-        if (dir == null && source == null)
+        if (source == null)
             return;
-        JLabel symbol = new JLabel();
+        JLabel symbol = new JLabel(source);
+        symbol.setFont(GuiHelper.getMonospacedFont(symbol));
         JosmTextArea dirLabel = new JosmTextArea();
         if (dir != null && !dir.isEmpty()) {
-            symbol.setText(ShowStatusReportAction.paramCleanup(dir));
             dirLabel.setText(dir);
             dirLabel.setEditable(false);
         } else {
-            symbol.setText(source);
             dirLabel.setText(tr("(unset)"));
             dirLabel.setFont(dirLabel.getFont().deriveFont(Font.ITALIC));
         }
-        symbol.setFont(GuiHelper.getMonospacedFont(symbol));
         inst.add(symbol, GBC.std().insets(5, 0, 0, 0));
         inst.add(GBC.glue(10, 0), GBC.std());
         dirLabel.setFont(GuiHelper.getMonospacedFont(dirLabel));

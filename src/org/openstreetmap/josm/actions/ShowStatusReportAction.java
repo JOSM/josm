@@ -15,9 +15,12 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -219,33 +222,34 @@ public final class ShowStatusReportAction extends JosmAction {
     }
 
     /**
+     * Fill map with anonymized name to the actual used path.
+     * @return map that maps shortened name to full directory path
+     */
+    static Map<String, String> getAnonimicDirectorySymbolMap() {
+        /** maps the anonymized name to the actual used path */
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put(PlatformManager.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}", getSystemEnv("JAVA_HOME"));
+        map.put("<java.home>", getSystemProperty("java.home"));
+        map.put("<josm.pref>", Config.getDirs().getPreferencesDirectory(false).toString());
+        map.put("<josm.userdata>", Config.getDirs().getUserDataDirectory(false).toString());
+        map.put("<josm.cache>", Config.getDirs().getCacheDirectory(false).toString());
+        map.put(PlatformManager.isPlatformWindows() ? "%UserProfile%" : "${HOME}", getSystemProperty("user.home"));
+        return map;
+    }
+
+    /**
      * Shortens and removes private informations from a parameter used for status report.
      * @param param parameter to cleanup
      * @return shortened/anonymized parameter
      */
     static String paramCleanup(String param) {
-        final String envJavaHome = getSystemEnv("JAVA_HOME");
-        final String envJavaHomeAlt = PlatformManager.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
-        final String propJavaHome = getSystemProperty("java.home");
-        final String propJavaHomeAlt = "<java.home>";
-        final String prefDir = Config.getDirs().getPreferencesDirectory(false).toString();
-        final String prefDirAlt = "<josm.pref>";
-        final String userDataDir = Config.getDirs().getUserDataDirectory(false).toString();
-        final String userDataDirAlt = "<josm.userdata>";
-        final String userCacheDir = Config.getDirs().getCacheDirectory(false).toString();
-        final String userCacheDirAlt = "<josm.cache>";
-        final String userHomeDir = getSystemProperty("user.home");
-        final String userHomeDirAlt = PlatformManager.isPlatformWindows() ? "%UserProfile%" : "${HOME}";
         final String userName = getSystemProperty("user.name");
         final String userNameAlt = "<user.name>";
 
         String val = param;
-        val = paramReplace(val, envJavaHome, envJavaHomeAlt);
-        val = paramReplace(val, propJavaHome, propJavaHomeAlt);
-        val = paramReplace(val, prefDir, prefDirAlt);
-        val = paramReplace(val, userDataDir, userDataDirAlt);
-        val = paramReplace(val, userCacheDir, userCacheDirAlt);
-        val = paramReplace(val, userHomeDir, userHomeDirAlt);
+        for (Entry<String, String> entry : getAnonimicDirectorySymbolMap().entrySet()) {
+            val = paramReplace(val, entry.getValue(), entry.getKey());
+        }
         if (userName != null && userName.length() >= 3) {
             val = paramReplace(val, userName, userNameAlt);
         }
@@ -302,7 +306,8 @@ public final class ShowStatusReportAction extends JosmAction {
         switch (ed.showDialog().getValue()) {
             case 1: ta.copyToClipboard(); break;
             case 2: BugReportSender.reportBug(reportHeader); break;
-            default: // Do nothing
+            default: // do nothing
         }
+        GuiHelper.destroyComponents(ed, false);
     }
 }
