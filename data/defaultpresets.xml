@@ -2903,7 +2903,7 @@
         </item> <!-- Viewpoint -->
         <separator/>
         <item name="Information Office" icon="presets/misc/information/informationoffice.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Key:information" />
+            <link wiki="Tag:information=office" />
             <label text="An office where you can get information about a town or region." />
             <space />
             <key key="tourism" value="information" />
@@ -2913,7 +2913,7 @@
             <reference ref="link_contact_address_payment" />
         </item> <!-- Information Office -->
         <item name="Map" icon="presets/misc/information/map.svg" type="node" preset_name_label="true">
-            <link wiki="Key:information" />
+            <link wiki="Tag:information=map" />
             <label text="A board with a map." />
             <space />
             <key key="tourism" value="information" />
@@ -2933,7 +2933,7 @@
             </optional>
         </item> <!-- Map -->
         <item name="Information Board" icon="presets/misc/information/board.svg" type="node" preset_name_label="true">
-            <link wiki="Key:information" />
+            <link wiki="Tag:information=board" />
             <space />
             <label text="A board with information." />
             <key key="tourism" value="information" />
@@ -2961,7 +2961,7 @@
             </optional>
         </item> <!-- Guidepost -->
         <item name="Information Terminal" icon="presets/misc/information/information.svg" type="node" preset_name_label="true">
-            <link wiki="Key:information" />
+            <link wiki="Tag:information=terminal" />
             <label text="Information access via electronic methods." />
             <space />
             <key key="tourism" value="information" />
@@ -2974,7 +2974,7 @@
             <reference ref="internet" />
         </item> <!-- Information Terminal -->
         <item name="Audio Guide" icon="presets/misc/information/information.svg" type="node" preset_name_label="true">
-            <link wiki="Key:information" />
+            <link wiki="Tag:information=audioguide" />
             <label text="Information using headphones or a mobile phone." />
             <space />
             <key key="tourism" value="information" />
