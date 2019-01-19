@@ -182,11 +182,11 @@ public class UnGlueAction extends JosmAction {
     }
 
     private static void updateProperties(ExistingBothNew tags, Node existingNode, Iterable<Node> newNodes, Collection<Command> cmds) {
-        if (ExistingBothNew.NEW.equals(tags)) {
+        if (ExistingBothNew.NEW == tags) {
             final Node newSelectedNode = new Node(existingNode);
             newSelectedNode.removeAll();
             cmds.add(new ChangeCommand(existingNode, newSelectedNode));
-        } else if (ExistingBothNew.OLD.equals(tags)) {
+        } else if (ExistingBothNew.OLD == tags) {
             for (Node newNode : newNodes) {
                 newNode.removeAll();
             }
@@ -212,7 +212,7 @@ public class UnGlueAction extends JosmAction {
 
         List<Command> cmds = new LinkedList<>();
         cmds.add(new AddCommand(selectedNode.getDataSet(), unglued));
-        if (dialog != null && ExistingBothNew.NEW.equals(dialog.getTags().orElse(null))) {
+        if (dialog != null && ExistingBothNew.NEW == dialog.getTags().orElse(null)) {
             // unglued node gets the ID and history, thus replace way node with a fresh one
             final Way way = selectedNode.getParentWays().get(0);
             final List<Node> newWayNodes = way.getNodes();
@@ -387,7 +387,7 @@ public class UnGlueAction extends JosmAction {
      * @param newNodes List of nodes that contain the new node
      */
     private static void updateMemberships(ExistingBothNew memberships, Node originalNode, List<Node> newNodes, Collection<Command> cmds) {
-        if (memberships == null || ExistingBothNew.OLD.equals(memberships)) {
+        if (memberships == null || ExistingBothNew.OLD == memberships) {
             return;
         }
         // modify all relations containing the node
@@ -416,7 +416,7 @@ public class UnGlueAction extends JosmAction {
                         for (Node n : newNodes) {
                             newRel.addMember(role.getValue() + 1, new RelationMember(role.getKey(), n));
                         }
-                        if (ExistingBothNew.NEW.equals(memberships)) {
+                        if (ExistingBothNew.NEW == memberships) {
                             // remove old member
                             newRel.removeMember(role.getValue());
                         }

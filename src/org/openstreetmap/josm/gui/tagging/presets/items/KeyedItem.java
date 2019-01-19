@@ -170,7 +170,7 @@ public abstract class KeyedItem extends TaggingPresetItem {
      */
     public boolean isKeyRequired() {
         final MatchType type = MatchType.ofString(match);
-        return MatchType.KEY_REQUIRED.equals(type) || MatchType.KEY_VALUE_REQUIRED.equals(type);
+        return MatchType.KEY_REQUIRED == type || MatchType.KEY_VALUE_REQUIRED == type;
     }
 
     /**

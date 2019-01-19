@@ -65,11 +65,11 @@ public final class LanguageInfo {
                     return "";
                 }
             }
-            if (code.equals("nb")) { /* OSM-Wiki has "no", but no "nb" */
+            if ("nb".equals(code)) { /* OSM-Wiki has "no", but no "nb" */
                 return "No:";
-            } else if (code.equals("de") || code.equals("es") || code.equals("fr")
-                    || code.equals("it") || code.equals("nl") || code.equals("ru")
-                    || code.equals("ja")) {
+            } else if ("de".equals(code) || "es".equals(code) || "fr".equals(code)
+                    || "it".equals(code) || "nl".equals(code) || "ru".equals(code)
+                    || "ja".equals(code)) {
                 return code.toUpperCase(Locale.ENGLISH) + ":";
             } else {
                 return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ":";

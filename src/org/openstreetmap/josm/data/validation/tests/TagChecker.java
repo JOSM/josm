@@ -189,7 +189,7 @@ public class TagChecker extends TagTest {
     /**
      * Add presets that contain only numerical values to the ignore list
      */
-    private void analysePresets() {
+    private static void analysePresets() {
         for (String key : TaggingPresets.getPresetKeys()) {
             if (isKeyIgnored(key))
                 continue;
