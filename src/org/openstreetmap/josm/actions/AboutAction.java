@@ -196,8 +196,9 @@ public final class AboutAction extends JosmAction {
             dirLabel.setText(dir);
             dirLabel.setEditable(false);
         } else {
-            dirLabel.setText(tr("(unset)"));
+            dirLabel.setText("<" + tr("unset") + ">");
             dirLabel.setFont(dirLabel.getFont().deriveFont(Font.ITALIC));
+            dirLabel.setEditable(false);
         }
         inst.add(symbol, GBC.std().insets(5, 0, 0, 0));
         inst.add(GBC.glue(10, 0), GBC.std());
