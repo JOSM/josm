@@ -186,7 +186,7 @@ public final class AboutAction extends JosmAction {
      * @param dir the actual path represented by a symbol
      * @param source source for symbol
      */
-    private void addInstallationLine(JPanel inst, String dir, String source) {
+    private static void addInstallationLine(JPanel inst, String dir, String source) {
         if (source == null)
             return;
         JLabel symbol = new JLabel(source);

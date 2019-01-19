@@ -278,9 +278,9 @@ public final class ShowStatusReportAction extends JosmAction {
 
         Preferences.main().getAllSettings().forEach((key, setting) -> {
             if (key.startsWith("marker.show")
-                    || key.equals("file-open.history")
-                    || key.equals("download.overpass.query")
-                    || key.equals("download.overpass.queries")
+                    || "file-open.history".equals(key)
+                    || "download.overpass.query".equals(key)
+                    || "download.overpass.queries".equals(key)
                     || key.contains("username")
                     || key.contains("password")
                     || key.contains("access-token")) {
