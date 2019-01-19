@@ -73,9 +73,9 @@ public class TagChecker extends TagTest {
     /** Normalized keys: the key should be substituted by the value if the key was not found in presets */
     private static final Map<String, String> harmonizedKeys = new HashMap<>();
     /** The spell check preset values which are not stored in TaggingPresets */
-    private static volatile MultiMap<String, String> additionalPresetsValueData;
-    /** The spell check preset values which are not stored in TaggingPresets */
-    private static volatile MultiMap<String, String> oftenUsedValueData = new MultiMap<>();
+    private static volatile HashSet<String> additionalPresetsValueData;
+    /** often used tags which are not in presets */
+    private static volatile MultiMap<String, String> oftenUsedTags = new MultiMap<>();
 
     /** The TagChecker data */
     private static final List<CheckerData> checkerData = new ArrayList<>();
@@ -112,22 +112,23 @@ public class TagChecker extends TagTest {
      */
     public static final String PREF_SOURCES = PREFIX + ".source";
 
+    private static final String BEFORE_UPLOAD = "BeforeUpload";
     /**
      * The preference key to check keys - used before upload
      */
-    public static final String PREF_CHECK_KEYS_BEFORE_UPLOAD = PREF_CHECK_KEYS + "BeforeUpload";
+    public static final String PREF_CHECK_KEYS_BEFORE_UPLOAD = PREF_CHECK_KEYS + BEFORE_UPLOAD;
     /**
      * The preference key to check values - used before upload
      */
-    public static final String PREF_CHECK_VALUES_BEFORE_UPLOAD = PREF_CHECK_VALUES + "BeforeUpload";
+    public static final String PREF_CHECK_VALUES_BEFORE_UPLOAD = PREF_CHECK_VALUES + BEFORE_UPLOAD;
     /**
      * The preference key to run complex tests - used before upload
      */
-    public static final String PREF_CHECK_COMPLEX_BEFORE_UPLOAD = PREF_CHECK_COMPLEX + "BeforeUpload";
+    public static final String PREF_CHECK_COMPLEX_BEFORE_UPLOAD = PREF_CHECK_COMPLEX + BEFORE_UPLOAD;
     /**
      * The preference key to search for fixmes - used before upload
      */
-    public static final String PREF_CHECK_FIXMES_BEFORE_UPLOAD = PREF_CHECK_FIXMES + "BeforeUpload";
+    public static final String PREF_CHECK_FIXMES_BEFORE_UPLOAD = PREF_CHECK_FIXMES + BEFORE_UPLOAD;
 
     private static final int MAX_LEVENSHTEIN_DISTANCE = 2;
 
@@ -165,7 +166,7 @@ public class TagChecker extends TagTest {
     protected static final int MULTIPLE_SPACES          = 1214;
     protected static final int MISSPELLED_VALUE_NO_FIX  = 1215;
     // CHECKSTYLE.ON: SingleSpaceSeparator
-    // 1250 and up is used by tagcheck
+    // 1250 and up is used by TagCheckLevel in class CheckerData
 
     protected EditableList sourcesList;
 
@@ -209,7 +210,7 @@ public class TagChecker extends TagTest {
     }
 
     /**
-     * Reads the spellcheck file into a HashMap.
+     * Reads the spell-check file into a HashMap.
      * The data file is a list of words, beginning with +/-. If it starts with +,
      * the word is valid, but if it starts with -, the word should be replaced
      * by the nearest + word before this.
@@ -224,6 +225,7 @@ public class TagChecker extends TagTest {
         ignoreDataTag.clear();
         harmonizedKeys.clear();
         ignoreForLevenshtein.clear();
+        oftenUsedTags.clear();
 
         StringBuilder errorSources = new StringBuilder();
         for (String source : Config.getPref().getList(PREF_SOURCES, DEFAULT_SOURCES)) {
@@ -251,38 +253,7 @@ public class TagChecker extends TagTest {
                             }
                         }
                     } else if (ignorefile) {
-                        line = line.trim();
-                        if (line.length() < 4) {
-                            continue;
-                        }
-                        try {
-                            String key = line.substring(0, 2);
-                            line = line.substring(2);
-
-                            switch (key) {
-                            case "S:":
-                                ignoreDataStartsWith.add(line);
-                                break;
-                            case "E:":
-                                ignoreDataEquals.add(line);
-                                break;
-                            case "F:":
-                                ignoreDataEndsWith.add(line);
-                                break;
-                            case "K:":
-                                Tag tag = Tag.ofString(line);
-                                ignoreDataTag.add(tag);
-                                oftenUsedValueData.put(tag.getKey(), tag.getValue());
-                                break;
-                            default:
-                                if (!key.startsWith(";")) {
-                                    Logging.warn("Unsupported TagChecker key: " + key);
-                                }
-                            }
-                        } catch (IllegalArgumentException e) {
-                            Logging.error("Invalid line in {0} : {1}", source, e.getMessage());
-                            Logging.trace(e);
-                        }
+                        parseIgnoreFileLine(source, line);
                     } else if (tagcheckerfile) {
                         if (!line.isEmpty()) {
                             CheckerData d = new CheckerData();
@@ -298,10 +269,8 @@ public class TagChecker extends TagTest {
                         okValue = line.substring(1);
                     } else if (line.charAt(0) == '-' && okValue != null) {
                         String hk = harmonizeKey(line.substring(1));
-                        if (!okValue.equals(hk)) {
-                            if (harmonizedKeys.put(hk, okValue) != null) {
-                                Logging.debug(tr("Line was ignored: {0}", line));
-                            }
+                        if (!okValue.equals(hk) && harmonizedKeys.put(hk, okValue) != null) {
+                            Logging.debug(tr("Line was ignored: {0}", line));
                         }
                     } else {
                         Logging.error(tr("Invalid spellcheck line: {0}", line));
@@ -324,6 +293,46 @@ public class TagChecker extends TagTest {
     }
 
     /**
+     * Parse a line found in a configuration file
+     * @param source name of configuration file
+     * @param line the line to parse
+     */
+    private static void parseIgnoreFileLine(String source, String line) {
+        line = line.trim();
+        if (line.length() < 4) {
+            return;
+        }
+        try {
+            String key = line.substring(0, 2);
+            line = line.substring(2);
+
+            switch (key) {
+            case "S:":
+                ignoreDataStartsWith.add(line);
+                break;
+            case "E:":
+                ignoreDataEquals.add(line);
+                break;
+            case "F:":
+                ignoreDataEndsWith.add(line);
+                break;
+            case "K:":
+                Tag tag = Tag.ofString(line);
+                ignoreDataTag.add(tag);
+                oftenUsedTags.put(tag.getKey(), tag.getValue());
+                break;
+            default:
+                if (!key.startsWith(";")) {
+                    Logging.warn("Unsupported TagChecker key: " + key);
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            Logging.error("Invalid line in {0} : {1}", source, e.getMessage());
+            Logging.trace(e);
+        }
+    }
+
+    /**
      * Reads the presets data.
      *
      */
@@ -334,15 +343,7 @@ public class TagChecker extends TagTest {
 
         Collection<TaggingPreset> presets = TaggingPresets.getTaggingPresets();
         if (!presets.isEmpty()) {
-            additionalPresetsValueData = new MultiMap<>();
-            for (String a : AbstractPrimitive.getUninterestingKeys()) {
-                additionalPresetsValueData.putVoid(a);
-            }
-            // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)
-            for (String a : Config.getPref().getList(ValidatorPrefHelper.PREFIX + ".knownkeys",
-                    Arrays.asList("is_in", "int_ref", "fixme", "population"))) {
-                additionalPresetsValueData.putVoid(a);
-            }
+            initAdditionalPresetsValueData();
             for (TaggingPreset p : presets) {
                 for (TaggingPresetItem i : p.data) {
                     if (i instanceof KeyedItem) {
@@ -354,6 +355,17 @@ public class TagChecker extends TagTest {
                     }
                 }
             }
+        }
+    }
+
+    private static void initAdditionalPresetsValueData() {
+        additionalPresetsValueData = new HashSet<>();
+        for (String a : AbstractPrimitive.getUninterestingKeys()) {
+            additionalPresetsValueData.add(a);
+        }
+        for (String a : Config.getPref().getList(ValidatorPrefHelper.PREFIX + ".knownkeys",
+                Arrays.asList("is_in", "int_ref", "fixme", "population"))) {
+            additionalPresetsValueData.add(a);
         }
     }
 
@@ -385,7 +397,9 @@ public class TagChecker extends TagTest {
         Set<String> res = TaggingPresets.getPresetValues(key);
         if (res != null)
             return res;
-        return additionalPresetsValueData.get(key);
+        if (additionalPresetsValueData.contains(key))
+            return Collections.emptySet();
+        return null;
     }
 
     /**
@@ -493,95 +507,13 @@ public class TagChecker extends TagTest {
             String s = marktr("Tag ''{0}'' invalid.");
             String key = prop.getKey();
             String value = prop.getValue();
-            if (checkValues && (containsLow(value)) && !withErrors.contains(p, "ICV")) {
-                errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_VALUE)
-                        .message(tr("Tag value contains character with code less than 0x20"), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "ICV");
+
+            if (checkKeys) {
+                checkSingleTagKeySimple(withErrors, p, s, key);
             }
-            if (checkKeys && (containsLow(key)) && !withErrors.contains(p, "ICK")) {
-                errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_KEY)
-                        .message(tr("Tag key contains character with code less than 0x20"), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "ICK");
-            }
-            if (checkValues && (value != null && value.length() > Tagged.MAX_TAG_LENGTH) && !withErrors.contains(p, "LV")) {
-                errors.add(TestError.builder(this, Severity.ERROR, LONG_VALUE)
-                        .message(tr("Tag value longer than {0} characters ({1} characters)", Tagged.MAX_TAG_LENGTH, value.length()), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "LV");
-            }
-            if (checkKeys && (key != null && key.length() > Tagged.MAX_TAG_LENGTH) && !withErrors.contains(p, "LK")) {
-                errors.add(TestError.builder(this, Severity.ERROR, LONG_KEY)
-                        .message(tr("Tag key longer than {0} characters ({1} characters)", Tagged.MAX_TAG_LENGTH, key.length()), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "LK");
-            }
-            if (checkValues && (value == null || value.trim().isEmpty()) && !withErrors.contains(p, "EV")) {
-                errors.add(TestError.builder(this, Severity.WARNING, EMPTY_VALUES)
-                        .message(tr("Tags with empty values"), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "EV");
-            }
-            if (checkKeys && key != null && key.indexOf(' ') >= 0 && !withErrors.contains(p, "IPK")) {
-                errors.add(TestError.builder(this, Severity.WARNING, INVALID_KEY_SPACE)
-                        .message(tr("Invalid white space in property key"), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "IPK");
-            }
-            if (checkValues && value != null && (value.startsWith(" ") || value.endsWith(" ")) && !withErrors.contains(p, "SPACE")) {
-                errors.add(TestError.builder(this, Severity.WARNING, INVALID_SPACE)
-                        .message(tr("Property values start or end with white space"), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "SPACE");
-            }
-            if (checkValues && value != null && value.contains("  ") && !withErrors.contains(p, "SPACE")) {
-                errors.add(TestError.builder(this, Severity.WARNING, MULTIPLE_SPACES)
-                        .message(tr("Property values contain multiple white spaces"), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "SPACE");
-            }
-            if (checkValues && value != null && !value.equals(Entities.unescape(value)) && !withErrors.contains(p, "HTML")) {
-                errors.add(TestError.builder(this, Severity.OTHER, INVALID_HTML)
-                        .message(tr("Property values contain HTML entity"), s, key)
-                        .primitives(p)
-                        .build());
-                withErrors.put(p, "HTML");
-            }
-            if (checkValues && key != null && value != null && !value.isEmpty() && additionalPresetsValueData != null
-                    && !isTagIgnored(key, value)) {
-                if (!isKeyInPresets(key)) {
-                    String prettifiedKey = harmonizeKey(key);
-                    String fixedKey = isKeyInPresets(prettifiedKey) ? prettifiedKey : harmonizedKeys.get(prettifiedKey);
-                    if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
-                        // misspelled preset key
-                        final TestError.Builder error = TestError.builder(this, Severity.WARNING, MISSPELLED_KEY)
-                                .message(tr("Misspelled property key"), marktr("Key ''{0}'' looks like ''{1}''."), key, fixedKey)
-                                .primitives(p);
-                        if (p.hasKey(fixedKey)) {
-                            errors.add(error.build());
-                        } else {
-                            errors.add(error.fix(() -> new ChangePropertyKeyCommand(p, key, fixedKey)).build());
-                        }
-                        withErrors.put(p, "WPK");
-                    } else {
-                        errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
-                                .message(tr("Presets do not contain property key"), marktr("Key ''{0}'' not in presets."), key)
-                                .primitives(p)
-                                .build());
-                        withErrors.put(p, "UPK");
-                    }
-                } else if (!isTagInPresets(key, value)) {
-                    tryGuess(p, key, value, withErrors);
-                }
+            if (checkValues) {
+                checkSingleTagValueSimple(withErrors, p, s, key, value);
+                checkSingleTagComplex(withErrors, p, key, value);
             }
             if (checkFixmes && key != null && value != null && !value.isEmpty() && isFixme(key, value) && !withErrors.contains(p, "FIXME")) {
                 errors.add(TestError.builder(this, Severity.OTHER, FIXME)
@@ -593,12 +525,133 @@ public class TagChecker extends TagTest {
         }
     }
 
+    private void checkSingleTagValueSimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key, String value) {
+        if (!checkValues || value == null)
+            return;
+        if ((containsLow(value)) && !withErrors.contains(p, "ICV")) {
+            errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_VALUE)
+                    .message(tr("Tag value contains character with code less than 0x20"), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "ICV");
+        }
+        if ((value.length() > Tagged.MAX_TAG_LENGTH) && !withErrors.contains(p, "LV")) {
+            errors.add(TestError.builder(this, Severity.ERROR, LONG_VALUE)
+                    .message(tr("Tag value longer than {0} characters ({1} characters)", Tagged.MAX_TAG_LENGTH, value.length()), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "LV");
+        }
+        if ((value.trim().isEmpty()) && !withErrors.contains(p, "EV")) {
+            errors.add(TestError.builder(this, Severity.WARNING, EMPTY_VALUES)
+                    .message(tr("Tags with empty values"), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "EV");
+        }
+        final String ERR_TYPE_SPACE = "SPACE";
+        if ((value.startsWith(" ") || value.endsWith(" ")) && !withErrors.contains(p, ERR_TYPE_SPACE)) {
+            errors.add(TestError.builder(this, Severity.WARNING, INVALID_SPACE)
+                    .message(tr("Property values start or end with white space"), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, ERR_TYPE_SPACE);
+        }
+        if (value.contains("  ") && !withErrors.contains(p, ERR_TYPE_SPACE)) {
+            errors.add(TestError.builder(this, Severity.WARNING, MULTIPLE_SPACES)
+                    .message(tr("Property values contain multiple white spaces"), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, ERR_TYPE_SPACE);
+        }
+        if (!value.equals(Entities.unescape(value)) && !withErrors.contains(p, "HTML")) {
+            errors.add(TestError.builder(this, Severity.OTHER, INVALID_HTML)
+                    .message(tr("Property values contain HTML entity"), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "HTML");
+        }
+    }
+
+    private void checkSingleTagKeySimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key) {
+        if (!checkKeys || key == null)
+            return;
+        if ((containsLow(key)) && !withErrors.contains(p, "ICK")) {
+            errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_KEY)
+                    .message(tr("Tag key contains character with code less than 0x20"), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "ICK");
+        }
+        if (key.length() > Tagged.MAX_TAG_LENGTH && !withErrors.contains(p, "LK")) {
+            errors.add(TestError.builder(this, Severity.ERROR, LONG_KEY)
+                    .message(tr("Tag key longer than {0} characters ({1} characters)", Tagged.MAX_TAG_LENGTH, key.length()), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "LK");
+        }
+        if (key.indexOf(' ') >= 0 && !withErrors.contains(p, "IPK")) {
+            errors.add(TestError.builder(this, Severity.WARNING, INVALID_KEY_SPACE)
+                    .message(tr("Invalid white space in property key"), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "IPK");
+        }
+    }
+
+    private void checkSingleTagComplex(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String key, String value) {
+        if (!checkValues || key == null || value == null || value.isEmpty())
+            return;
+        if (additionalPresetsValueData != null && !isTagIgnored(key, value)) {
+            if (!isKeyInPresets(key)) {
+                spellCheckKey(withErrors, p, key);
+            } else if (!isTagInPresets(key, value)) {
+                if (oftenUsedTags.contains(key, value)) {
+                    // tag is quite often used but not in presets
+                    errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
+                            .message(tr("Presets do not contain property value"),
+                                    marktr("Value ''{0}'' for key ''{1}'' not in presets, but is known."), value, key)
+                            .primitives(p)
+                            .build());
+                    withErrors.put(p, "UPV");
+                } else {
+                    tryGuess(p, key, value, withErrors);
+                }
+            }
+        }
+    }
+
+    private void spellCheckKey(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String key) {
+        String prettifiedKey = harmonizeKey(key);
+        String fixedKey = isKeyInPresets(prettifiedKey) ? prettifiedKey : harmonizedKeys.get(prettifiedKey);
+        if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
+            // misspelled preset key
+            final TestError.Builder error = TestError.builder(this, Severity.WARNING, MISSPELLED_KEY)
+                    .message(tr("Misspelled property key"), marktr("Key ''{0}'' looks like ''{1}''."), key, fixedKey)
+                    .primitives(p);
+            if (p.hasKey(fixedKey)) {
+                errors.add(error.build());
+            } else {
+                errors.add(error.fix(() -> new ChangePropertyKeyCommand(p, key, fixedKey)).build());
+            }
+            withErrors.put(p, "WPK");
+        } else {
+            errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
+                    .message(tr("Presets do not contain property key"), marktr("Key ''{0}'' not in presets."), key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "UPK");
+        }
+    }
+
     private void tryGuess(OsmPrimitive p, String key, String value, MultiMap<OsmPrimitive, String> withErrors) {
         // try to fix common typos and check again if value is still unknown
         final String harmonizedValue = harmonizeValue(value);
+        if (harmonizedValue == null || harmonizedValue.isEmpty())
+            return;
         String fixedValue = null;
         Set<String> presetValues = getPresetValues(key);
-        Set<String> oftenUsedValues = oftenUsedValueData.get(key);
+        Set<String> oftenUsedValues = oftenUsedTags.get(key);
         for (Set<String> possibleValues: Arrays.asList(presetValues, oftenUsedValues)) {
             if (possibleValues != null && possibleValues.contains(harmonizedValue)) {
                 fixedValue = harmonizedValue;
@@ -656,7 +709,7 @@ public class TagChecker extends TagTest {
                 }
             }
         }
-        if (fixedValue != null) {
+        if (fixedValue != null && !fixedValue.equals(value)) {
             final String newValue = fixedValue;
             // misspelled preset value
             errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
@@ -676,7 +729,7 @@ public class TagChecker extends TagTest {
         }
     }
 
-    private boolean isNum(String harmonizedValue) {
+    private static boolean isNum(String harmonizedValue) {
         try {
             Double.parseDouble(harmonizedValue);
             return true;
@@ -878,12 +931,12 @@ public class TagChecker extends TagTest {
         }
 
         protected static class CheckerElement {
-            public Object tag;
-            public Object value;
-            public boolean noMatch;
-            public boolean tagAll;
-            public boolean valueAll;
-            public boolean valueBool;
+            Object tag;
+            Object value;
+            boolean noMatch;
+            boolean tagAll;
+            boolean valueAll;
+            boolean valueBool;
 
             private static Pattern getPattern(String str) {
                 if (str.endsWith("/i"))
@@ -894,7 +947,7 @@ public class TagChecker extends TagTest {
                 throw new IllegalStateException();
             }
 
-            public CheckerElement(String exp) {
+            CheckerElement(String exp) {
                 Matcher m = Pattern.compile("(.+)([!=]=)(.+)").matcher(exp);
                 m.matches();
 
@@ -906,21 +959,23 @@ public class TagChecker extends TagTest {
                     tag = n.startsWith("/") ? getPattern(n) : n;
                     noMatch = "!=".equals(m.group(2));
                     n = m.group(3).trim();
-                    if ("*".equals(n)) {
-                        valueAll = true;
-                    } else if ("BOOLEAN_TRUE".equals(n)) {
+                    switch (n) {
+                    case "*": valueAll = true; break;
+                    case "BOOLEAN_TRUE":
                         valueBool = true;
                         value = OsmUtils.TRUE_VALUE;
-                    } else if ("BOOLEAN_FALSE".equals(n)) {
+                        break;
+                    case "BOOLEAN_FALSE":
                         valueBool = true;
                         value = OsmUtils.FALSE_VALUE;
-                    } else {
+                        break;
+                    default:
                         value = n.startsWith("/") ? getPattern(n) : n;
                     }
                 }
             }
 
-            public boolean match(Map<String, String> keys) {
+            boolean match(Map<String, String> keys) {
                 for (Entry<String, String> prop: keys.entrySet()) {
                     String key = prop.getKey();
                     String val = valueBool ? OsmUtils.getNamedOsmBoolean(prop.getValue()) : prop.getValue();
