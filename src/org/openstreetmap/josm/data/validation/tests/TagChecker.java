@@ -395,7 +395,7 @@ public class TagChecker extends TagTest {
      * @since 9023
      */
     public static boolean isKeyInPresets(String key) {
-        return getPresetValues(key) != null;
+        return TaggingPresets.getPresetValues(key) != null;
     }
 
     /**
@@ -407,7 +407,7 @@ public class TagChecker extends TagTest {
      */
     public static boolean isTagInPresets(String key, String value) {
         final Set<String> values = getPresetValues(key);
-        return values != null && (values.isEmpty() || values.contains(value));
+        return values != null && values.contains(value);
     }
 
     /**
@@ -450,6 +450,9 @@ public class TagChecker extends TagTest {
      */
     public static boolean isTagIgnored(String key, String value) {
         if (isKeyIgnored(key))
+            return true;
+        final Set<String> values = getPresetValues(key);
+        if (values != null && values.isEmpty())
             return true;
         if (!isTagInPresets(key, value)) {
             for (Tag a : ignoreDataTag) {
