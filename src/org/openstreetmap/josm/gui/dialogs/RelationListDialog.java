@@ -217,6 +217,7 @@ public class RelationListDialog extends ToggleDialog
     private void updateActionsRelationLists() {
         List<IRelation<?>> sel = model.getSelectedRelations();
         popupMenuHandler.setPrimitives(sel);
+        selectRelationAction.setPrimitives(sel);
 
         Component focused = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
 
