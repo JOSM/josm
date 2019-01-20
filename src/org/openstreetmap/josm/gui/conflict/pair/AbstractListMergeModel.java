@@ -398,11 +398,13 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
         for (int row: rows) {
             T entry = source.get(row);
             OsmPrimitive primitive = getMyPrimitive(entry);
-            if (!primitive.isDeleted()) {
-                T clone = cloneEntryForMergedList(entry);
-                newItems.add(clone);
-            } else {
-                deletedIds.add(primitive.getPrimitiveId());
+            if (primitive != null) {
+                if (!primitive.isDeleted()) {
+                    T clone = cloneEntryForMergedList(entry);
+                    newItems.add(clone);
+                } else {
+                    deletedIds.add(primitive.getPrimitiveId());
+                }
             }
         }
         getMergedEntries().addAll(position, newItems);
