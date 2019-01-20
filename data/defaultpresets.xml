@@ -1113,6 +1113,32 @@
                 <space />
                 <key key="traffic_calming" value="bump" />
             </item> <!-- Bump -->
+            <item name="Hump" icon="presets/vehicle/hump.svg" type="node,way" preset_name_label="true">
+                <link wiki="Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="hump" />
+            </item> <!-- Hump -->
+            <item name="Table" icon="presets/vehicle/table.svg" type="node,way" preset_name_label="true">
+                <link wiki="Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="table" />
+            </item> <!-- Table -->
+            <item name="Cushion" icon="presets/vehicle/cushion.svg" type="node,way" preset_name_label="true">
+                <link wiki="Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="cushion" />
+            </item> <!-- Cushion -->
+            <item name="Rumble strip" icon="presets/vehicle/rumble_strip.svg" type="node,way" preset_name_label="true">
+                <link wiki="Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="rumble_strip" />
+            </item> <!-- Rumble strip -->
+            <item name="Dip" icon="presets/vehicle/dip.svg" type="node,way" preset_name_label="true">
+                <link wiki="Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="dip" />
+            </item> <!-- Dip -->
+            <separator/>
             <item name="Chicane" icon="presets/vehicle/chicane.svg" type="node,way" preset_name_label="true">
                 <link wiki="Key:traffic_calming" />
                 <space />
@@ -1123,31 +1149,11 @@
                 <space />
                 <key key="traffic_calming" value="choker" />
             </item> <!-- Choker -->
-            <item name="Cushion" icon="presets/vehicle/cushion.svg" type="node,way" preset_name_label="true">
-                <link wiki="Key:traffic_calming" />
-                <space />
-                <key key="traffic_calming" value="cushion" />
-            </item> <!-- Cushion -->
-            <item name="Hump" icon="presets/vehicle/hump.svg" type="node,way" preset_name_label="true">
-                <link wiki="Key:traffic_calming" />
-                <space />
-                <key key="traffic_calming" value="hump" />
-            </item> <!-- Hump -->
             <item name="Island" name_context="traffic_calming" icon="presets/vehicle/island.svg" type="node,way" preset_name_label="true">
                 <link wiki="Key:traffic_calming" />
                 <space />
                 <key key="traffic_calming" value="island" />
             </item> <!-- Island -->
-            <item name="Rumble strip" icon="presets/vehicle/rumble_strip.svg" type="node,way" preset_name_label="true">
-                <link wiki="Key:traffic_calming" />
-                <space />
-                <key key="traffic_calming" value="rumble_strip" />
-            </item> <!-- Rumble strip -->
-            <item name="Table" icon="presets/vehicle/table.svg" type="node,way" preset_name_label="true">
-                <link wiki="Key:traffic_calming" />
-                <space />
-                <key key="traffic_calming" value="table" />
-            </item> <!-- Table -->
         </group> <!-- Traffic Calming -->
         <item name="Passing Place" icon="presets/vehicle/passing_place.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=passing_place" />
