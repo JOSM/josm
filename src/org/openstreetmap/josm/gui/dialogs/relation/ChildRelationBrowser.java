@@ -8,22 +8,26 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -32,15 +36,18 @@ import javax.swing.tree.TreePath;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
@@ -87,9 +94,13 @@ public class ChildRelationBrowser extends JPanel {
         JScrollPane pane = new JScrollPane(childTree);
         add(pane, BorderLayout.CENTER);
 
+        final JPopupMenu popupMenu = new JPopupMenu();
+        final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
+        RelationPopupMenus.setupHandler(popupMenuHandler);
+
         add(buildButtonPanel(), BorderLayout.SOUTH);
         childTree.setToggleClickCount(0);
-        childTree.addMouseListener(new MouseAdapter() {
+        childTree.addMouseListener(new PopupMenuLauncher(popupMenu) {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2
@@ -102,6 +113,21 @@ public class ChildRelationBrowser extends JPanel {
                         editAction.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, null));
                     }
                 }
+            }
+
+            @Override
+            protected TreePath checkTreeSelection(JTree tree, Point p) {
+                final TreePath treeSelection = super.checkTreeSelection(tree, p);
+                final TreePath[] selectionPaths = tree.getSelectionPaths();
+                if (selectionPaths == null) {
+                    return treeSelection;
+                }
+                final List<OsmPrimitive> relations = Arrays.stream(selectionPaths)
+                        .map(TreePath::getLastPathComponent)
+                        .map(OsmPrimitive.class::cast)
+                        .collect(Collectors.toList());
+                popupMenuHandler.setPrimitives(relations);
+                return treeSelection;
             }
         });
     }
