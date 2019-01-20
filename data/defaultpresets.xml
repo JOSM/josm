@@ -455,6 +455,7 @@
     <text key="network" text="Network" />
     <text key="description" text="Description" />
     <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+    <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120" values_no_i18n="true" />
   </chunk>
   <chunk id="climbing_styles">
     <label text="Climbing styles:" />

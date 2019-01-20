@@ -86,6 +86,7 @@ node[source:outline] {
 
 /* {0} on a node, should be a relation; Error level; see #10252, #10769, #14288 */
 node[type=multipolygon],
+node[interval],
 node[route],
 node[restriction] {
   throwError: tr("{0} on a node. Should be used in a relation", "{0.tag}"); 
@@ -123,6 +124,7 @@ way[highway=motorway_junction] {
 /* {0} on a way, should be a relation; see #15642, #10252, #14288 */
 way[restriction][restriction =~ /^(no_right_turn|no_left_turn|no_u_turn|no_straight_on|only_right_turn|only_left_turn|only_straight_on|no_entry|no_exit)$/],
 way[type=multipolygon],
+way[interval][route!=ferry],
 way[route=bus] {
   throwError: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
 }
