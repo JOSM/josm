@@ -3029,6 +3029,7 @@
             <space />
             <key key="tourism" value="zoo" />
             <reference ref="name_oh_wheelchair" />
+            <combo key="zoo" text="Type" values="aviary,birds,butterfly,enclosure,falconry,petting_zoo,reptile,safari_park,wildlife_park" />
             <text key="wikipedia" text="Wikipedia" />
             <space />
             <reference ref="link_contact_address_payment" />
