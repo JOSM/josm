@@ -890,6 +890,10 @@ node[traffic_calming=rumble_strip] {
     icon-image: "presets/vehicle/rumble_strip.svg";
     set icon_z17;
 }
+node[traffic_calming=dip] {
+    icon-image: "presets/vehicle/dip.svg";
+    set icon_z17;
+}
 /****************/
 /* junction tag */
 /****************/
