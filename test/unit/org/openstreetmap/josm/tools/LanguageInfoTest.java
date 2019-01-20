@@ -7,11 +7,12 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link LanguageInfo}.
@@ -40,20 +41,20 @@ public class LanguageInfoTest {
      * Unit test of {@link LanguageInfo#getWikiLanguagePrefix}.
      */
     @Test
-    public void getWikiLanguagePrefix() {
-        testWikiLanguagePrefixes(LanguageInfo.LocaleType.DEFAULT,
+    public void testWikiLanguagePrefix() {
+        testGetWikiLanguagePrefixes(LanguageInfo.LocaleType.DEFAULT,
                 "En:", "De:", "Pt_BR:", "Ca-Valencia:", "Zh_CN:", "Zh_TW:", "Ast:", "En_GB:", "Ru:", "Nb:");
-        testWikiLanguagePrefixes(LanguageInfo.LocaleType.DEFAULTNOTENGLISH,
+        testGetWikiLanguagePrefixes(LanguageInfo.LocaleType.DEFAULTNOTENGLISH,
                 null, "De:", "Pt_BR:", "Ca-Valencia:", "Zh_CN:", "Zh_TW:", "Ast:", "En_GB:", "Ru:", "Nb:");
-        testWikiLanguagePrefixes(LanguageInfo.LocaleType.BASELANGUAGE,
+        testGetWikiLanguagePrefixes(LanguageInfo.LocaleType.BASELANGUAGE,
                 null, null, "Pt:", null, "Zh:", "Zh:", null, null, null, null);
-        testWikiLanguagePrefixes(LanguageInfo.LocaleType.ENGLISH,
+        testGetWikiLanguagePrefixes(LanguageInfo.LocaleType.ENGLISH,
                 "", "", "", "", "", "", "", "", "", "");
-        testWikiLanguagePrefixes(LanguageInfo.LocaleType.OSM_WIKI,
+        testGetWikiLanguagePrefixes(LanguageInfo.LocaleType.OSM_WIKI,
                 "", "DE:", "Pt:", "Ca:", "Zh-hans:", "Zh-hant:", "Ast:", "", "RU:", "No:");
     }
 
-    private static void testWikiLanguagePrefixes(LanguageInfo.LocaleType type, String...expected) {
+    private static void testGetWikiLanguagePrefixes(LanguageInfo.LocaleType type, String...expected) {
         final List<String> actual = Stream.of(EN_CA, DE_DE, PT_BR, CA_ES_VALENCIA, ZN_CN, ZN_TW, AST, EN_GB, RU, NB)
                 .map(locale -> LanguageInfo.getWikiLanguagePrefix(locale, type))
                 .collect(Collectors.toList());
@@ -64,7 +65,7 @@ public class LanguageInfoTest {
      * Unit test of {@link LanguageInfo#getJOSMLocaleCode}.
      */
     @Test
-    public void getJOSMLocaleCode() {
+    public void testGetJOSMLocaleCode() {
         Assert.assertEquals("de", LanguageInfo.getJOSMLocaleCode(DE_DE));
         Assert.assertEquals("pt_BR", LanguageInfo.getJOSMLocaleCode(PT_BR));
         Assert.assertEquals("ca@valencia", LanguageInfo.getJOSMLocaleCode(CA_ES_VALENCIA));
@@ -74,7 +75,7 @@ public class LanguageInfoTest {
      * Unit test of {@link LanguageInfo#getJavaLocaleCode}.
      */
     @Test
-    public void getJavaLocaleCode() {
+    public void testGetJavaLocaleCode() {
         Assert.assertEquals("ca__valencia", LanguageInfo.getJavaLocaleCode("ca@valencia"));
     }
 
@@ -82,7 +83,7 @@ public class LanguageInfoTest {
      * Unit test of {@link LanguageInfo#getLanguageCodeXML}.
      */
     @Test
-    public void getLanguageCodeXML() {
+    public void testGetLanguageCodeXML() {
         Assert.assertEquals("ca-valencia.", LanguageInfo.getLanguageCodeXML());
     }
 
@@ -90,7 +91,7 @@ public class LanguageInfoTest {
      * Unit test of {@link LanguageInfo#getLanguageCodeManifest}.
      */
     @Test
-    public void getLanguageCodeManifest() {
+    public void testGetLanguageCodeManifest() {
         Assert.assertEquals("ca-valencia_", LanguageInfo.getLanguageCodeManifest());
     }
 
@@ -98,7 +99,7 @@ public class LanguageInfoTest {
      * Unit test of {@link LanguageInfo#getLanguageCodes}.
      */
     @Test
-    public void getLanguageCodes() {
+    public void testGetLanguageCodes() {
         Assert.assertEquals(Arrays.asList("ca_ES@valencia", "ca@valencia", "ca_ES", "ca"), LanguageInfo.getLanguageCodes(CA_ES_VALENCIA));
     }
 }
