@@ -314,6 +314,7 @@ public abstract class AbstractReader {
             // to modify the dataset we have just loaded.
             callPostProcessors(progressMonitor);
             progressMonitor.worked(1);
+            progressMonitor.indeterminateSubTask(tr("Rendering data set..."));
             // Make sure postprocessors did not change the read-only state
             if (readOnly && !getDataSet().isLocked()) {
                 getDataSet().lock();

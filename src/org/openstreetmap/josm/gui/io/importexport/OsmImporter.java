@@ -121,7 +121,6 @@ public class OsmImporter extends FileImporter {
         if (dataSet == null) {
             throw new IllegalDataException(tr("Invalid dataset"));
         }
-        progressMonitor.indeterminateSubTask(tr("Creating data layer ..."));
         OsmDataLayer layer = createLayer(dataSet, associatedFile, layerName);
         Runnable postLayerTask = createPostLayerTask(dataSet, associatedFile, layerName, layer);
         return new OsmImporterData(layer, postLayerTask);
