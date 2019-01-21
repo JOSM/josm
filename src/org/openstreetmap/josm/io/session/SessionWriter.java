@@ -206,6 +206,24 @@ public class SessionWriter {
         public Path getOutput() {
             return output;
         }
+
+        /**
+         * Returns a relative path w.r.t. the {@linkplain #getOutput output} directory
+         * @param path the path to relativize
+         * @return the relative path
+         * @see Path#relativize(Path)
+         */
+        String relativize(final Path path) {
+            if (getOutput() == null) {
+                return path.toString();
+            }
+            final Path sessionDirectory = getOutput().getParent();
+            if (path.startsWith(sessionDirectory)) {
+                return sessionDirectory.relativize(path).toString();
+            } else {
+                return path.toString();
+            }
+        }
     }
 
     /**

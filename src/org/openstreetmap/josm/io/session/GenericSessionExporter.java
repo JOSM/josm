@@ -12,7 +12,6 @@ import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -193,13 +192,7 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
         } else {
             File f = layer.getAssociatedFile();
             if (f != null) {
-                final Path sessionDirectory = support.getOutput().getParent();
-                final String fileString;
-                if (f.toPath().startsWith(sessionDirectory)) {
-                    fileString = sessionDirectory.relativize(f.toPath()).toString();
-                } else {
-                    fileString = f.toPath().toString();
-                }
+                final String fileString = support.relativize(f.toPath());
                 file.appendChild(support.createTextNode(fileString));
             }
         }
