@@ -27,7 +27,7 @@ public class ValidatorTagCheckerRulesPreferenceTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https();
+    public JOSMTestRules test = new JOSMTestRules().https().timeout(20_000);
 
     /**
      * Test that available tag checker rules are valid.
