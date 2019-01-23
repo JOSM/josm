@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlUtils;
 import org.w3c.dom.Document;
@@ -213,16 +215,15 @@ public class SessionWriter {
          * @return the relative path
          * @see Path#relativize(Path)
          */
-        String relativize(final Path path) {
-            if (getOutput() == null) {
-                return path.toString();
+        String relativize(Path path) {
+            final Path output = getOutput();
+            if (output != null && path.startsWith(output.getParent())) {
+                path = output.getParent().relativize(path);
             }
-            final Path sessionDirectory = getOutput().getParent();
-            if (path.startsWith(sessionDirectory)) {
-                return sessionDirectory.relativize(path).toString();
-            } else {
-                return path.toString();
-            }
+            // path.toString() returns backslashes on Windows, see #17228
+            return StreamUtils.toStream(path)
+                    .map(Object::toString)
+                    .collect(Collectors.joining("/"));
         }
     }
 
