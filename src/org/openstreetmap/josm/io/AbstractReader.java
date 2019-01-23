@@ -329,7 +329,7 @@ public abstract class AbstractReader {
             if (minId.isPresent() && minId.getAsLong() < AbstractPrimitive.currentUniqueId()) {
                 AbstractPrimitive.advanceUniqueId(minId.getAsLong());
             }
-            // don't call progressMonitor.finishTask() here, let caller do it
+            progressMonitor.finishTask();
             progressMonitor.removeCancelListener(cancelListener);
         }
     }
