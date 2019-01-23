@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
 public class HtmlPanel extends JPanel {
 
     private static final HyperlinkListener defaultHyperlinkListener = e -> {
-        if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
+        if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType()) && e.getURL() != null) {
             OpenBrowser.displayUrl(e.getURL().toString());
         }
     };
