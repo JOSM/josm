@@ -549,20 +549,20 @@ public class TagChecker extends TagTest {
                     .build());
             withErrors.put(p, "EV");
         }
-        final String ERR_TYPE_SPACE = "SPACE";
-        if ((value.startsWith(" ") || value.endsWith(" ")) && !withErrors.contains(p, ERR_TYPE_SPACE)) {
+        final String errTypeSpace = "SPACE";
+        if ((value.startsWith(" ") || value.endsWith(" ")) && !withErrors.contains(p, errTypeSpace)) {
             errors.add(TestError.builder(this, Severity.WARNING, INVALID_SPACE)
                     .message(tr("Property values start or end with white space"), s, key)
                     .primitives(p)
                     .build());
-            withErrors.put(p, ERR_TYPE_SPACE);
+            withErrors.put(p, errTypeSpace);
         }
-        if (value.contains("  ") && !withErrors.contains(p, ERR_TYPE_SPACE)) {
+        if (value.contains("  ") && !withErrors.contains(p, errTypeSpace)) {
             errors.add(TestError.builder(this, Severity.WARNING, MULTIPLE_SPACES)
                     .message(tr("Property values contain multiple white spaces"), s, key)
                     .primitives(p)
                     .build());
-            withErrors.put(p, ERR_TYPE_SPACE);
+            withErrors.put(p, errTypeSpace);
         }
         if (!value.equals(Entities.unescape(value)) && !withErrors.contains(p, "HTML")) {
             errors.add(TestError.builder(this, Severity.OTHER, INVALID_HTML)
