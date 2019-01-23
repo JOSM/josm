@@ -1,39 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
-import org.openstreetmap.josm.actions.JoinAreasAction;
-import org.openstreetmap.josm.actions.JoinAreasAction.JoinAreasResult;
-import org.openstreetmap.josm.actions.JoinAreasAction.Multipolygon;
-import org.openstreetmap.josm.command.PurgeCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.io.OsmWriter;
-import org.openstreetmap.josm.io.OsmWriterFactory;
-import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Look up, if there is right- or left-hand traffic at a certain place.
@@ -67,31 +45,19 @@ public final class RightAndLefthandTraffic {
      * TODO: Synchronization can be refined inside the {@link GeoPropertyIndex} as most look-ups are read-only.
      */
     public static synchronized void initialize() {
-        Collection<Way> optimizedWays = loadOptimizedBoundaries();
-        if (optimizedWays.isEmpty()) {
-            optimizedWays = computeOptimizedBoundaries();
-            try {
-                saveOptimizedBoundaries(optimizedWays);
-            } catch (IOException | SecurityException e) {
-                Logging.log(Logging.LEVEL_ERROR, "Unable to save optimized boundaries", e);
-            }
-        }
-        rlCache = new GeoPropertyIndex<>(new DefaultGeoProperty(optimizedWays), 24);
+        rlCache = new GeoPropertyIndex<>(computeLeftDrivingBoundaries(), 24);
     }
 
-    private static Collection<Way> computeOptimizedBoundaries() {
+    private static DefaultGeoProperty computeLeftDrivingBoundaries() {
         Collection<Way> ways = new ArrayList<>();
-        Collection<OsmPrimitive> toPurge = new ArrayList<>();
         // Find all outer ways of left-driving countries. Many of them are adjacent (African and Asian states)
         DataSet data = Territories.getDataSet();
-        Collection<Relation> allRelations = data.getRelations();
-        Collection<Way> allWays = data.getWays();
-        for (Way w : allWays) {
+        for (Way w : data.getWays()) {
             if (LEFT.equals(w.get(DRIVING_SIDE))) {
                 addWayIfNotInner(ways, w);
             }
         }
-        for (Relation r : allRelations) {
+        for (Relation r : data.getRelations()) {
             if (r.isMultipolygon() && LEFT.equals(r.get(DRIVING_SIDE))) {
                 for (RelationMember rm : r.getMembers()) {
                     if (rm.isWay() && "outer".equals(rm.getRole()) && !RIGHT.equals(rm.getMember().get(DRIVING_SIDE))) {
@@ -100,43 +66,8 @@ public final class RightAndLefthandTraffic {
                 }
             }
         }
-        toPurge.addAll(allRelations);
-        toPurge.addAll(allWays);
-        toPurge.removeAll(ways);
-        // Remove ways from parent relations for following optimizations
-        for (Relation r : OsmPrimitive.getParentRelations(ways)) {
-            r.setMembers(null);
-        }
-        // Remove all tags to avoid any conflict
-        for (Way w : ways) {
-            w.removeAll();
-        }
-        // Purge all other ways and relations so dataset only contains lefthand traffic data
-        PurgeCommand.build(toPurge, null).executeCommand();
         // Combine adjacent countries into a single polygon
-        Collection<Way> optimizedWays = new ArrayList<>();
-        List<Multipolygon> areas = JoinAreasAction.collectMultipolygons(ways);
-        if (areas != null) {
-            try {
-                JoinAreasResult result = new JoinAreasAction(false).joinAreas(areas);
-                if (result.hasChanges()) {
-                    for (Multipolygon mp : result.getPolygons()) {
-                        optimizedWays.add(mp.getOuterWay());
-                    }
-                }
-            } catch (UserCancelException ex) {
-                Logging.warn(ex);
-            } catch (JosmRuntimeException ex) {
-                // Workaround to #10511 / #14185. To remove when #10511 is solved
-                Logging.error(ex);
-            }
-        }
-        if (optimizedWays.isEmpty()) {
-            // Problem: don't optimize
-            Logging.warn("Unable to join left-driving countries polygons");
-            optimizedWays.addAll(ways);
-        }
-        return optimizedWays;
+        return new DefaultGeoProperty(ways);
     }
 
     /**
@@ -157,27 +88,5 @@ public final class RightAndLefthandTraffic {
             }
         }
         ways.add(w);
-    }
-
-    private static void saveOptimizedBoundaries(Collection<Way> optimizedWays) throws IOException {
-        DataSet ds = optimizedWays.iterator().next().getDataSet();
-        File file = new File(Config.getDirs().getCacheDirectory(true), "left-right-hand-traffic.osm");
-        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
-             OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, ds.getVersion())
-            ) {
-            w.header(DownloadPolicy.NORMAL, UploadPolicy.DISCOURAGED);
-            w.writeContent(ds);
-            w.footer();
-        }
-    }
-
-    private static Collection<Way> loadOptimizedBoundaries() {
-        try (InputStream is = Files.newInputStream(Paths.get(
-                Config.getDirs().getCacheDirectory(false).getPath(), "left-right-hand-traffic.osm"))) {
-           return OsmReader.parseDataSet(is, null).getWays();
-        } catch (IllegalDataException | IOException | InvalidPathException | SecurityException ex) {
-            Logging.trace(ex);
-            return Collections.emptyList();
-        }
     }
 }
