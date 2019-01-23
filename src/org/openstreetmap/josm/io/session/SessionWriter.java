@@ -221,7 +221,7 @@ public class SessionWriter {
                 path = output.getParent().relativize(path);
             }
             // path.toString() returns backslashes on Windows, see #17228
-            return StreamUtils.toStream(path)
+            return (isZip() ? "../" : "") + StreamUtils.toStream(path)
                     .map(Object::toString)
                     .collect(Collectors.joining("/"));
         }
