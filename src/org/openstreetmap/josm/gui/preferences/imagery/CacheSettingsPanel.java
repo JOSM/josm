@@ -85,6 +85,7 @@ public class CacheSettingsPanel extends JPanel {
         final TableModel tableModel = getTableModel(cache);
 
         GuiHelper.runInEDT(() -> {
+            /* I18n: {0} is cache name (TMS/WMS/WMTS), {1} is size string */
             add(new JLabel(tr("{0} cache, total cache size: {1}", name, sizeString)),
                 GBC.eol().insets(5, 5, 0, 0));
             add(new JScrollPane(getTableForCache(cache, tableModel)),
