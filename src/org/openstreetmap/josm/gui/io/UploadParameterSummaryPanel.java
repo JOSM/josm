@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -19,6 +20,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -160,13 +162,16 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected void updateSummary() {
-        StringBuilder sb = new StringBuilder(32);
-        sb.append("<html>")
-          .append(buildStrategySummary())
-          .append("<br><br>")
-          .append(buildChangesetSummary())
-          .append("</html>");
-        jepMessage.setText(sb.toString());
+        jepMessage.setText("<html>"
+                + buildStrategySummary()
+                + "<br>"
+                + Optional.of(OsmApi.getOsmApi().getServerUrl())
+                .filter(url -> !Config.getUrls().getDefaultOsmApiUrl().equals(url))
+                .map(url -> tr("… to server: <strong>{0}</strong>", url))
+                .orElse("")
+                + "<br><br>"
+                + buildChangesetSummary()
+                + "</html>");
     }
 
     /* --------------------------------------------------------------------- */
