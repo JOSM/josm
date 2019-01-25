@@ -200,4 +200,19 @@ public class TagCheckerTest {
         assertFalse(errors.get(0).isFixable());
     }
 
+    /**
+     * Key in presets but not in ignored.cfg. Caused a NPE with r14727.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testRegression17246() throws IOException {
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node access=privat"));
+        assertEquals(1, errors.size());
+        assertEquals("Unknown property value", errors.get(0).getMessage());
+        assertEquals("Value 'privat' for key 'access' is unknown, maybe 'private' is meant?",
+                errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertFalse(errors.get(0).isFixable());
+    }
+
 }

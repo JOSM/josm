@@ -630,7 +630,9 @@ public class TagChecker extends TagTest {
         Set<String> presetValues = getPresetValues(key);
         if (presetValues != null)
             sets.add(presetValues);
-        sets.add(oftenUsedTags.get(key));
+        Set<String> usedValues = oftenUsedTags.get(key);
+        if (usedValues != null)
+            sets.add(usedValues);
         for (Set<String> possibleValues: sets) {
             if (possibleValues.contains(harmonizedValue)) {
                 fixedValue = harmonizedValue;
