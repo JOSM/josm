@@ -200,15 +200,15 @@ way[usage=penstock][waterway!=pressurised] {
   group: tr("missing tag");
 }
 
-/* {0.key} without {1.key}, {2.key} or {3.key} */
-way[oneway][!highway][!railway][!aerialway],
-*[snowplowing                  ][!highway][!amenity][!leisure] {
+/* {0.key} without {1.key}, {2.key} or {3.key}, #17253 */
+way[oneway   ][!highway][!railway][!aerialway][attraction!=summer_toboggan],
+*[snowplowing][!highway][!amenity][!leisure] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.key}");
   group: tr("missing tag");
 }
 
-/* {0.key} without {1.key}, {2.key} or {3.tag} */
-way[incline                    ][!highway][!railway][aeroway!~/^(runway|taxiway)$/],
+/* {0.key} without {1.key}, {2.key} or {3.tag}, #17255 */
+way[incline                    ][!highway][!railway][aeroway!~/^(runway|taxiway)$/][attraction!=summer_toboggan],
 *[toll                         ][!highway][!barrier][route!~/^(ferry|road)$/] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.tag}");
   group: tr("missing tag");
@@ -376,8 +376,8 @@ way[highway][natural][natural!=ridge],
   fixRemove: "natural";
 }
 
-/* #9593, #11183, #12418, #12761 */
-*[sport][sport!=skiing][!building][!club][tourism != hotel][highway != raceway][!leisure][natural !~ /^(beach|bare_rock|cliff|peak|water)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"][shop!=sports] {
+/* #9593, #11183, #12418, #12761, #17254  */
+*[sport][sport!=skiing][!building][!club][tourism != hotel][highway != raceway][!leisure][natural !~ /^(beach|bare_rock|cliff|peak|water)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"][shop!=sports][attraction!=summer_toboggan] {
     throwWarning: tr("sport without physical feature");
     group: tr("missing tag");
     assertMatch: "node sport=tennis";
