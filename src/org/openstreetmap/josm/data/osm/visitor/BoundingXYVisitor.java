@@ -27,6 +27,8 @@ import org.openstreetmap.josm.spi.preferences.Config;
  * @author imi
  */
 public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor {
+    /** default value for setting "edit.zoom-enlarge-bbox" */
+    private static final double ENLARGE_DEFAULT = 0.0002;
 
     private ProjectionBounds bounds;
 
@@ -139,12 +141,13 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
     }
 
     /**
-     * Enlarges the calculated bounding box by 0.001 degrees.
+     * Enlarges the calculated bounding box by 0.0002 degrees or user value
+     * given in edit.zoom-enlarge-bbox.
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
      */
     public void enlargeBoundingBox() {
-        final double enlarge = Config.getPref().getDouble("edit.zoom-enlarge-bbox", 0.001);
+        final double enlarge = Config.getPref().getDouble("edit.zoom-enlarge-bbox", ENLARGE_DEFAULT);
         enlargeBoundingBox(enlarge, enlarge);
     }
 
@@ -170,8 +173,8 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
     }
 
     /**
-     * Enlarges the bounding box up to 0.001 degrees, depending on
-     * its size. If the bounding box is small, it will be enlarged more in relation
+     * Enlarges the bounding box up to 0.0002 degrees, depending on its size and user
+     * settings in edit.zoom-enlarge-bbox. If the bounding box is small, it will be enlarged more in relation
      * to its beginning size. The larger the bounding box, the smaller the change,
      * down to 0.0 degrees.
      *
@@ -187,12 +190,18 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
         final LatLon max = ProjectionRegistry.getProjection().eastNorth2latlon(bounds.getMax());
         final double deltaLat = max.lat() - min.lat();
         final double deltaLon = max.lon() - min.lon();
-        // [0.001, 0.1] degree -> [0.001, 0.0] degree enlargement
-        final DoubleUnaryOperator enlargement = deg -> deg < 0.001
-                ? 0.001
-                : deg < 0.1
-                ? 0.001 - deg / 100
-                : 0.0;
+        final double enlarge = Config.getPref().getDouble("edit.zoom-enlarge-bbox", ENLARGE_DEFAULT);
+
+        final DoubleUnaryOperator enlargement = deltaDegress -> {
+            if (deltaDegress < enlarge) {
+                // delta is very small, use configured minimum value
+                return enlarge;
+            }
+            if (deltaDegress < 0.1) {
+                return enlarge - deltaDegress / 100;
+            }
+            return 0.0;
+        };
         enlargeBoundingBox(enlargement.applyAsDouble(deltaLon), enlargement.applyAsDouble(deltaLat));
     }
 

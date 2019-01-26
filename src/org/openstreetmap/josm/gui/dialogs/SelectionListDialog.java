@@ -432,14 +432,13 @@ public class SelectionListDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            BoundingXYVisitor box = new BoundingXYVisitor();
+            BoundingXYVisitor v = new BoundingXYVisitor();
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty()) return;
-            box.computeBoundingBox(sel);
-            if (box.getBounds() == null)
+            v.computeBoundingBox(sel);
+            if (v.getBounds() == null)
                 return;
-            box.enlargeBoundingBox();
-            MainApplication.getMap().mapView.zoomTo(box);
+            MainApplication.getMap().mapView.zoomTo(v);
         }
 
         protected void updateEnabledState() {

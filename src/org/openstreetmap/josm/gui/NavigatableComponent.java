@@ -810,9 +810,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void zoomTo(ViewportData viewport) {
         if (viewport == null) return;
         if (viewport.getBounds() != null) {
-            BoundingXYVisitor box = new BoundingXYVisitor();
-            box.visit(viewport.getBounds());
-            zoomTo(box);
+            BoundingXYVisitor v = new BoundingXYVisitor();
+            v.visit(viewport.getBounds());
+            zoomTo(v);
         } else {
             zoomTo(viewport.getCenter(), viewport.getScale(), true);
         }
@@ -820,20 +820,30 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Set the new dimension to the view.
-     * @param box box to zoom to
+     * @param v box to zoom to
      */
-    public void zoomTo(BoundingXYVisitor box) {
-        if (box == null) {
-            box = new BoundingXYVisitor();
+    public void zoomTo(BoundingXYVisitor v) {
+        if (v == null) {
+            v = new BoundingXYVisitor();
         }
-        if (box.getBounds() == null) {
-            box.visit(getProjection().getWorldBoundsLatLon());
-        }
-        if (!box.hasExtend()) {
-            box.enlargeBoundingBox();
+        if (v.getBounds() == null) {
+            v.visit(getProjection().getWorldBoundsLatLon());
         }
 
-        zoomTo(box.getBounds());
+        // increase bbox. This is required
+        // especially if the bbox contains one single node, but helpful
+        // in most other cases as well.
+        // Do not zoom if the current scale covers the selection, #16706
+        final MapView mapView = MainApplication.getMap().mapView;
+        final double mapScale = mapView.getScale();
+        final double minScale = v.getBounds().getScale(mapView.getWidth(), mapView.getHeight());
+        v.enlargeBoundingBoxLogarithmically();
+        final double maxScale = v.getBounds().getScale(mapView.getWidth(), mapView.getHeight());
+        if (minScale <= mapScale && mapScale < maxScale) {
+            mapView.zoomTo(v.getBounds().getCenter());
+        } else {
+            zoomTo(v.getBounds());
+        }
     }
 
     private static class ZoomData {
