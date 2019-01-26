@@ -163,10 +163,6 @@ public class AutoScaleAction extends JosmAction {
     public static void zoomTo(Collection<? extends IPrimitive> sel) {
         BoundingXYVisitor bboxCalculator = new BoundingXYVisitor();
         bboxCalculator.computeBoundingBox(sel);
-        // increase bbox. This is required
-        // especially if the bbox contains one single node, but helpful
-        // in most other cases as well.
-        bboxCalculator.enlargeBoundingBox();
         if (bboxCalculator.getBounds() != null) {
             MainApplication.getMap().mapView.zoomTo(bboxCalculator);
         }
@@ -395,17 +391,7 @@ public class AutoScaleAction extends JosmAction {
             return;
         }
 
-        // Do not zoom if the current scale covers the selection, #16706
-        final MapView mapView = MainApplication.getMap().mapView;
-        final double mapScale = mapView.getScale();
-        final double minScale = v.getBounds().getScale(mapView.getWidth(), mapView.getHeight());
-        v.enlargeBoundingBoxLogarithmically();
-        final double maxScale = v.getBounds().getScale(mapView.getWidth(), mapView.getHeight());
-        if (minScale <= mapScale && mapScale < maxScale) {
-            mapView.zoomTo(v.getBounds().getCenter());
-        } else {
-            mapView.zoomTo(v);
-        }
+        MainApplication.getMap().mapView.zoomTo(v);
     }
 
     private void modeDownload(BoundingXYVisitor v) {
