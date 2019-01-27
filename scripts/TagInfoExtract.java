@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
@@ -320,8 +319,8 @@ public class TagInfoExtract {
          * Read the style sheet file and parse the MapCSS code.
          */
         private void parseStyleSheet() throws IOException, ParseException {
-            try (InputStream stream = options.inputFile.getInputStream()) {
-                MapCSSParser parser = new MapCSSParser(stream, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
+            try (BufferedReader reader = options.inputFile.getContentReader()) {
+                MapCSSParser parser = new MapCSSParser(reader, MapCSSParser.LexicalState.DEFAULT);
                 styleSource = new MapCSSStyleSource("");
                 styleSource.url = "";
                 parser.sheet(styleSource);

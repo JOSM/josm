@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
@@ -235,8 +236,7 @@ public final class AboutAction extends JosmAction {
         if (is == null) {
             displayErrorMessage(ta, tr("Failed to locate resource ''{0}''.", filePath));
         } else {
-            try (InputStreamReader reader = new InputStreamReader(is, "UTF-8");
-                 BufferedReader br = new BufferedReader(reader)) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     ta.append(line+'\n');

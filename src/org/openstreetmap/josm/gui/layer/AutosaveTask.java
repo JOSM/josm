@@ -9,12 +9,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashSet;
@@ -222,8 +222,9 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
     private static void createNewPidFile(File autosaveDir, String filename) {
         File pidFile = new File(autosaveDir, filename+".pid");
-        try (PrintStream ps = new PrintStream(pidFile, "UTF-8")) {
-            ps.println(ManagementFactory.getRuntimeMXBean().getName());
+        try {
+            final String content = ManagementFactory.getRuntimeMXBean().getName();
+            Files.write(pidFile.toPath(), Collections.singleton(content), StandardCharsets.UTF_8);
         } catch (IOException | SecurityException t) {
             Logging.error(t);
         }

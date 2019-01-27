@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools.bugreport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
@@ -115,7 +114,7 @@ public class BugReportSender extends Thread {
         try {
             String text = Utils.strip(statusText);
             String pdata = Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
-            String postQuery = "pdata=" + URLEncoder.encode(pdata, "UTF-8");
+            String postQuery = "pdata=" + Utils.encodeUrl(pdata);
             HttpClient client = HttpClient.create(new URL(getJOSMTicketURL()), "POST")
                     .setHeader("Content-Type", "application/x-www-form-urlencoded")
                     .setRequestBody(postQuery.getBytes(StandardCharsets.UTF_8));
