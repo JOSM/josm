@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -34,6 +35,8 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
         this.selector.setDblClickListener(e -> buttonAction(0, null));
         setContent(selector, false);
         setPreferredSize(new Dimension(600, 300));
+        setButtonIcons("ok", "cancel");
+        configureContextsensitiveHelp(ht("Action/SearchMenuItems"), true);
     }
 
     /**
@@ -130,6 +133,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
             super(tr("Search menu items"), "dialogs/search", null,
                     SHORTCUT,
                     true, "dialogs/search-items", false);
+            setHelpId(ht("Action/SearchMenuItems"));
         }
 
         @Override
