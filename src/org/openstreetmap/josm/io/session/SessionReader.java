@@ -12,19 +12,20 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -149,9 +150,9 @@ public class SessionReader {
 
     private static final Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<>();
 
-    private Path sessionFile;
+    private URI sessionFileURI;
     private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
-    private FileSystem zipFile;
+    private ZipFile zipFile;
     private List<Layer> layers = new ArrayList<>();
     private int active = -1;
     private final List<Runnable> postLoadTasks = new ArrayList<>();
@@ -306,7 +307,10 @@ public class SessionReader {
                     throw new IOException(tr("File ''{0}'' does not exist.", file.getPath()), e);
                 }
             } else if (inZipPath != null) {
-                return Files.newInputStream(zipFile.getPath(inZipPath));
+                ZipEntry entry = zipFile.getEntry(inZipPath);
+                if (entry != null) {
+                    return zipFile.getInputStream(entry);
+                }
             }
             throw new IOException(tr("Unable to locate file  ''{0}''.", uriStr));
         }
@@ -340,14 +344,14 @@ public class SessionReader {
                             if (uri.getPath().startsWith("../")) {
                                 // relative to session file - "../" step out of the archive
                                 String relPath = uri.getPath().substring(3);
-                                return sessionFile.resolveSibling(relPath).toFile();
+                                return new File(sessionFileURI.resolve(relPath));
                             } else {
                                 // file inside zip archive
                                 inZipPath = uriStr;
                                 return null;
                             }
                         } else
-                            return sessionFile.resolveSibling(uriStr).toFile();
+                            return new File(sessionFileURI.resolve(uri));
                     }
                 } else
                     throw new IOException(tr("Unsupported scheme ''{0}'' in URI ''{1}''.", uri.getScheme(), uriStr));
@@ -699,34 +703,43 @@ public class SessionReader {
      */
     public void loadSession(File sessionFile, boolean zip, ProgressMonitor progressMonitor) throws IllegalDataException, IOException {
         try (InputStream josIS = createInputStream(sessionFile, zip)) {
-            loadSession(josIS, sessionFile.toPath(), zip, progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE);
+            loadSession(josIS, sessionFile.toURI(), zip, progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE);
         }
     }
 
     private InputStream createInputStream(File sessionFile, boolean zip) throws IOException, IllegalDataException {
         if (zip) {
             try {
-                // read zip using ZipFileSystem/ZipFileSystemProvider
-                zipFile = FileSystems.newFileSystem(new URI("jar:" + sessionFile.toURI()), Collections.emptyMap());
-                try (Stream<Path> content = Files.list(zipFile.getPath("/"))) {
-                    final Path jos = content
-                            .filter(path -> Utils.hasExtension(path.getFileName().toString(), "jos"))
-                            .findFirst()
-                            .orElseThrow(() -> new IllegalDataException(tr("expected .jos file inside .joz archive")));
-                    return Files.newInputStream(jos);
-                }
-            } catch (URISyntaxException e) {
-                throw new IOException(e);
+                zipFile = new ZipFile(sessionFile, StandardCharsets.UTF_8);
+                return getZipInputStream(zipFile);
+            } catch (ZipException ex) {
+                throw new IOException(ex);
             }
         } else {
             return Files.newInputStream(sessionFile.toPath());
         }
     }
 
-    private void loadSession(InputStream josIS, Path sessionFile, boolean zip, ProgressMonitor progressMonitor)
+    private static InputStream getZipInputStream(ZipFile zipFile) throws IOException, IllegalDataException {
+        ZipEntry josEntry = null;
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            if (Utils.hasExtension(entry.getName(), "jos")) {
+                josEntry = entry;
+                break;
+            }
+        }
+        if (josEntry == null) {
+            error(tr("expected .jos file inside .joz archive"));
+        }
+        return zipFile.getInputStream(josEntry);
+    }
+
+    private void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor)
             throws IOException, IllegalDataException {
 
-        this.sessionFile = sessionFile;
+        this.sessionFileURI = sessionFileURI;
         this.zip = zip;
 
         try {

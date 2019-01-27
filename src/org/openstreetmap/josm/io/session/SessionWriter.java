@@ -8,14 +8,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -45,7 +43,6 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlUtils;
 import org.w3c.dom.Document;
@@ -66,7 +63,6 @@ public class SessionWriter {
     private final MultiMap<Layer, Layer> dependencies;
     private final boolean zip;
 
-    private Path output;
     private ZipOutputStream zipOut;
 
     static {
@@ -198,32 +194,6 @@ public class SessionWriter {
          */
         public boolean isZip() {
             return zip;
-        }
-
-        /**
-         * Returns the path of the output file.
-         *
-         * @return the path of the output file
-         */
-        public Path getOutput() {
-            return output;
-        }
-
-        /**
-         * Returns a relative path w.r.t. the {@linkplain #getOutput output} directory
-         * @param path the path to relativize
-         * @return the relative path
-         * @see Path#relativize(Path)
-         */
-        String relativize(Path path) {
-            final Path output = getOutput();
-            if (output != null && path.startsWith(output.getParent())) {
-                path = output.getParent().relativize(path);
-            }
-            // path.toString() returns backslashes on Windows, see #17228
-            return (isZip() ? "../" : "") + StreamUtils.toStream(path)
-                    .map(Object::toString)
-                    .collect(Collectors.joining("/"));
         }
     }
 
@@ -358,8 +328,7 @@ public class SessionWriter {
      * @throws IOException if any I/O error occurs
      */
     public void write(File f) throws IOException {
-        output = f.toPath();
-        try (OutputStream out = Files.newOutputStream(output)) {
+        try (OutputStream out = Files.newOutputStream(f.toPath())) {
             write(out);
         }
     }
