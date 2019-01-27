@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.commons.jcs.JCS;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
@@ -202,6 +203,29 @@ public class PartitionedCacheAccess<K, V>
         int partition = getPartitionNumberForKey( key );
 
         return partitions[partition].get( key );
+    }
+
+    /**
+     * Retrieve an object from the cache region this instance provides access to.
+     * If the object cannot be found in the cache, it will be retrieved by
+     * calling the supplier and subsequently storing it in the cache.
+     * <p>
+     * @param name
+     * @param supplier supplier to be called if the value is not found
+     * @return Object.
+     */
+    @Override
+    public V get(K name, Supplier<V> supplier)
+    {
+        V value = get(name);
+
+        if (value == null)
+        {
+            value = supplier.get();
+            put(name, value);
+        }
+
+        return value;
     }
 
     /**

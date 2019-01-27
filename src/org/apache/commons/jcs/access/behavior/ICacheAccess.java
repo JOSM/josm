@@ -1,5 +1,9 @@
 package org.apache.commons.jcs.access.behavior;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,9 +27,6 @@ import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.IElementAttributes;
 
-import java.util.Map;
-import java.util.Set;
-
 /**
  * ICacheAccess defines the behavior for client access.
  */
@@ -38,7 +39,17 @@ public interface ICacheAccess<K, V>
      * @param name
      * @return Object or null if not found.
      */
-    V get( K name );
+    V get(K name);
+
+    /**
+     * Basic get method. If the object cannot be found in the cache, it will be
+     * retrieved by calling the supplier and subsequently storing it in the cache.
+     * <p>
+     * @param name
+     * @param supplier supplier to be called if the value is not found
+     * @return Object.
+     */
+    V get(K name, Supplier<V> supplier);
 
     /**
      * Retrieve matching objects from the cache region this instance provides access to.
@@ -46,7 +57,7 @@ public interface ICacheAccess<K, V>
      * @param pattern - a key pattern for the objects stored
      * @return A map of key to values. These are stripped from the wrapper.
      */
-    Map<K, V> getMatching( String pattern );
+    Map<K, V> getMatching(String pattern);
 
     /**
      * Puts in cache if an item does not exist with the name in that region.
@@ -55,7 +66,7 @@ public interface ICacheAccess<K, V>
      * @param obj
      * @throws CacheException
      */
-    void putSafe( K name, V obj )
+    void putSafe(K name, V obj)
         throws CacheException;
 
     /**
@@ -65,7 +76,7 @@ public interface ICacheAccess<K, V>
      * @param obj
      * @throws CacheException
      */
-    void put( K name, V obj )
+    void put(K name, V obj)
         throws CacheException;
 
     /**
@@ -76,7 +87,7 @@ public interface ICacheAccess<K, V>
      * @param attr
      * @throws CacheException
      */
-    void put( K name, V obj, IElementAttributes attr )
+    void put(K name, V obj, IElementAttributes attr)
         throws CacheException;
 
     /**
@@ -94,7 +105,7 @@ public interface ICacheAccess<K, V>
      * @param name Key the object is stored as
      * @return The ICacheElement&lt;K, V&gt; if the object is found or null
      */
-    ICacheElement<K, V> getCacheElement( K name );
+    ICacheElement<K, V> getCacheElement(K name);
 
     /**
      * Get multiple elements from the cache based on a set of cache keys.
@@ -114,7 +125,7 @@ public interface ICacheAccess<K, V>
      * @return a map of Object key to ICacheElement&lt;K, V&gt; element, or empty map if none of the keys are
      *         present
      */
-    Map<K, ICacheElement<K, V>> getCacheElements( Set<K> names );
+    Map<K, ICacheElement<K, V>> getCacheElements(Set<K> names);
 
     /**
      * Get multiple elements from the cache based on a set of cache keys.
@@ -134,7 +145,7 @@ public interface ICacheAccess<K, V>
      * @return a map of Object key to ICacheElement&lt;K, V&gt; element, or empty map if no keys match the
      *         pattern
      */
-    Map<K, ICacheElement<K, V>> getMatchingCacheElements( String pattern );
+    Map<K, ICacheElement<K, V>> getMatchingCacheElements(String pattern);
 
     /**
      * Remove an object for this key if one exists, else do nothing.
@@ -142,7 +153,7 @@ public interface ICacheAccess<K, V>
      * @param name
      * @throws CacheException
      */
-    void remove( K name )
+    void remove(K name)
         throws CacheException;
 
     /**
@@ -152,7 +163,7 @@ public interface ICacheAccess<K, V>
      * @param attributes
      * @throws CacheException
      */
-    void resetElementAttributes( K name, IElementAttributes attributes )
+    void resetElementAttributes(K name, IElementAttributes attributes)
         throws CacheException;
 
     /**
@@ -162,6 +173,6 @@ public interface ICacheAccess<K, V>
      * @return The elementAttributes value
      * @throws CacheException
      */
-    IElementAttributes getElementAttributes( K name )
+    IElementAttributes getElementAttributes(K name)
         throws CacheException;
 }
