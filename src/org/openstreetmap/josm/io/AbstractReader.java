@@ -614,6 +614,7 @@ public abstract class AbstractReader {
         OsmPrimitive p;
         if (pd.getUniqueId() < AbstractPrimitive.currentUniqueId()) {
             p = pd.getType().newInstance(pd.getUniqueId(), true);
+            AbstractPrimitive.advanceUniqueId(pd.getUniqueId());
         } else {
             p = pd.getType().newVersionedInstance(pd.getId(), pd.getVersion());
         }
