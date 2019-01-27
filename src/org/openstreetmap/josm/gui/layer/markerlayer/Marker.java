@@ -83,31 +83,21 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
         public static TemplateEntryProperty forMarker(String layerName) {
             String key = "draw.rawgps.layer.wpt.pattern";
             if (layerName != null) {
-                key += '.' + layerName;
+                return CACHE.computeIfAbsent(key + '.' + layerName, k -> new TemplateEntryProperty(k, "", forMarker(null)));
+            } else {
+                return CACHE.computeIfAbsent(key, k -> new TemplateEntryProperty(k, LABEL_PATTERN_AUTO, null));
             }
-            TemplateEntryProperty result = CACHE.get(key);
-            if (result == null) {
-                String defaultValue = layerName == null ? LABEL_PATTERN_AUTO : "";
-                TemplateEntryProperty parent = layerName == null ? null : forMarker(null);
-                result = new TemplateEntryProperty(key, defaultValue, parent);
-                CACHE.put(key, result);
-            }
-            return result;
         }
 
         public static TemplateEntryProperty forAudioMarker(String layerName) {
             String key = "draw.rawgps.layer.audiowpt.pattern";
             if (layerName != null) {
-                key += '.' + layerName;
+                return CACHE.computeIfAbsent(key + '.' + layerName, k ->
+                        new TemplateEntryProperty(k, "", forAudioMarker(null)));
+            } else {
+                return CACHE.computeIfAbsent(key, k ->
+                        new TemplateEntryProperty(k, "?{ '{name}' | '{desc}' | '{" + MARKER_FORMATTED_OFFSET + "}' }", null));
             }
-            TemplateEntryProperty result = CACHE.get(key);
-            if (result == null) {
-                String defaultValue = layerName == null ? "?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }" : "";
-                TemplateEntryProperty parent = layerName == null ? null : forAudioMarker(null);
-                result = new TemplateEntryProperty(key, defaultValue, parent);
-                CACHE.put(key, result);
-            }
-            return result;
         }
 
         private final TemplateEntryProperty parent;
