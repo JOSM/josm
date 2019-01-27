@@ -67,7 +67,9 @@ public class OsmWriterTest {
             writer.header(download, upload);
         }
         assertEquals("<?xml version='1.0' encoding='UTF-8'?>" + expected,
-                baos.toString("UTF-8").replaceAll("\r", "").replaceAll("\n", ""));
+                new String(baos.toByteArray(), StandardCharsets.UTF_8)
+                        .replaceAll("\r", "")
+                        .replaceAll("\n", ""));
     }
 
     /**
@@ -84,6 +86,8 @@ public class OsmWriterTest {
             writer.write(ds);
         }
         assertEquals("<?xml version='1.0' encoding='UTF-8'?><osm version='0.6' locked='true' generator='JOSM'></osm>",
-                baos.toString("UTF-8").replaceAll("\r", "").replaceAll("\n", ""));
+                new String(baos.toByteArray(), StandardCharsets.UTF_8)
+                        .replaceAll("\r", "")
+                        .replaceAll("\n", ""));
     }
 }

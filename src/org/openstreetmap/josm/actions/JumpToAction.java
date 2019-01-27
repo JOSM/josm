@@ -56,6 +56,8 @@ public class JumpToAction extends JosmAction {
     static class JumpToPositionDialog extends ExtendedDialog {
         JumpToPositionDialog(String[] buttons, JPanel panel) {
             super(MainApplication.getMainFrame(), tr("Jump to Position"), buttons);
+            setButtonIcons("ok", "cancel");
+            configureContextsensitiveHelp(ht("/Action/JumpToPosition"), true);
             setContent(panel);
             setCancelButton(2);
         }

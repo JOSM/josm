@@ -4,10 +4,13 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -61,6 +64,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -425,14 +429,14 @@ public class MapCSSStyleSource extends StyleSource {
             multipolygonRules.clear();
             canvasRules.clear();
             try (InputStream in = getSourceInputStream()) {
-                try {
+                try (Reader reader = new BufferedReader(UTFInputStreamReader.create(in))) {
                     // evaluate @media { ... } blocks
-                    MapCSSParser preprocessor = new MapCSSParser(in, "UTF-8", MapCSSParser.LexicalState.PREPROCESSOR);
+                    MapCSSParser preprocessor = new MapCSSParser(reader, MapCSSParser.LexicalState.PREPROCESSOR);
                     String mapcss = preprocessor.pp_root(this);
 
                     // do the actual mapcss parsing
-                    InputStream in2 = new ByteArrayInputStream(mapcss.getBytes(StandardCharsets.UTF_8));
-                    MapCSSParser parser = new MapCSSParser(in2, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
+                    Reader in2 = new StringReader(mapcss);
+                    MapCSSParser parser = new MapCSSParser(in2, MapCSSParser.LexicalState.DEFAULT);
                     parser.sheet(this);
 
                     loadMeta();

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +58,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
             URL u = getAttributionUrl();
             final String r = HttpClient.create(u).connect().fetchContent();
             Logging.info("Successfully loaded Bing attribution data.");
-            return r.getBytes("UTF-8");
+            return r.getBytes(StandardCharsets.UTF_8);
         }
 
         @Override

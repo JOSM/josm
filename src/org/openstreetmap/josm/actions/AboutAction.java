@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
@@ -155,6 +157,7 @@ public final class AboutAction extends JosmAction {
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
         ExtendedDialog dlg = new ExtendedDialog(MainApplication.getMainFrame(), tr("About JOSM..."), tr("OK"), tr("Report bug"));
         int ret = dlg.setButtonIcons("ok", "bug")
+                .configureContextsensitiveHelp(ht("Action/About"), true)
                 .setContent(panel, false)
                 .showDialog().getValue();
         if (2 == ret) {
@@ -233,8 +236,7 @@ public final class AboutAction extends JosmAction {
         if (is == null) {
             displayErrorMessage(ta, tr("Failed to locate resource ''{0}''.", filePath));
         } else {
-            try (InputStreamReader reader = new InputStreamReader(is, "UTF-8");
-                 BufferedReader br = new BufferedReader(reader)) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     ta.append(line+'\n');

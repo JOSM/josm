@@ -168,6 +168,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 tr("Add Rectified Image"),
                 tr("Add Rectified Image"), tr("Cancel"))
             .setContent(panel)
+            .configureContextsensitiveHelp(ht("/Menu/Imagery"), true)
             .setButtonIcons("OLmarker", "cancel");
 
         // This repeatedly shows the dialog in case there has been an error.

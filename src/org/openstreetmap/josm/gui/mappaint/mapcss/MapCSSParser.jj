@@ -88,11 +88,13 @@ public class MapCSSParser {
      * @param encoding contents encoding
      * @param initState initial state
      */
+    @Deprecated
     public MapCSSParser(InputStream in, String encoding, LexicalState initState) {
         this(createTokenManager(in, encoding, initState));
         declarationCounter = 0;
     }
 
+    @Deprecated
     protected static MapCSSParserTokenManager createTokenManager(InputStream in, String encoding, LexicalState initState) {
         SimpleCharStream scs;
         try {
