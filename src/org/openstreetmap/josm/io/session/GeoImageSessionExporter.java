@@ -68,8 +68,8 @@ public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLay
                 Logging.warn("No file attribute for image - skipping entry");
                 break;
             }
-            final String fileString = support.relativize(entry.getFile().toPath());
-            addAttr("file", fileString, imgElem, support);
+            addAttr("file", entry.getFile().getPath(), imgElem, support);
+            // FIXME: relative filenames as option
             // FIXME: include images as option (?)
 
             addAttr("thumbnail", Boolean.toString(entry.hasThumbnail()), imgElem, support);

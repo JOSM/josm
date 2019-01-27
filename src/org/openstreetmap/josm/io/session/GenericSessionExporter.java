@@ -12,6 +12,7 @@ import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -190,10 +191,13 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
             file.appendChild(support.createTextNode(zipPath));
             addDataFile(support.getOutputStreamZip(zipPath));
         } else {
-            File f = layer.getAssociatedFile();
-            if (f != null) {
-                final String fileString = support.relativize(f.toPath());
-                file.appendChild(support.createTextNode(fileString));
+            try {
+                File f = layer.getAssociatedFile();
+                if (f != null) {
+                    file.appendChild(support.createTextNode(f.toURI().toURL().toString()));
+                }
+            } catch (MalformedURLException e) {
+                throw new IOException(e);
             }
         }
         return layerEl;
