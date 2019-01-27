@@ -2296,7 +2296,7 @@
     </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/transport/bus.svg">
         <item name="Public Transport Route (Rail)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
-            <link wiki="Proposed_features/Public_Transport#Route" />
+            <link wiki="Public_transport#Service_routes" />
             <space />
             <key key="type" value="route" />
             <combo key="route" text="Route type" values="train,subway,monorail,tram,light_rail" values_searchable="true" match="keyvalue!" />
@@ -2316,7 +2316,7 @@
             </roles>
         </item> <!-- Public Transport Route (Rail) -->
         <item name="Public Transport Route (Bus)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
-            <link wiki="Proposed_features/Public_Transport#Route" />
+            <link wiki="Public_transport#Service_routes" />
             <space />
             <key key="type" value="route" />
             <combo key="route" text="Route type" values="bus,trolleybus" values_searchable="true" match="keyvalue!" />
@@ -2336,7 +2336,7 @@
             </roles>
         </item> <!-- Public Transport Route (Bus) -->
         <item name="Route Master" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
-            <link wiki="Proposed_features/Public_Transport#Route_master" />
+            <link wiki="Public_transport#Route_Master_relations" />
             <space />
             <key key="type" value="route_master" />
             <combo key="route_master" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" />
@@ -2351,7 +2351,7 @@
             </roles>
         </item> <!-- Route Master -->
         <item name="Stop Area" type="relation" icon="presets/misc/interpolation.svg" preset_name_label="true">
-            <link wiki="Proposed_features/Public_Transport#Stop_area" />
+            <link wiki="Tag:public_transport=stop_area" />
             <space />
             <key key="type" value="public_transport" />
             <key key="public_transport" value="stop_area" />
@@ -2372,7 +2372,7 @@
         </item> <!-- Stop Area -->
         <separator/>
         <item name="Stop Position" type="node" icon="presets/transport/stop_position.svg" preset_name_label="true">
-            <link wiki="Proposed_features/Public_Transport#Stop_position" />
+            <link wiki="Tag:public_transport=stop_position" />
             <space />
             <key key="public_transport" value="stop_position" />
             <text key="name" text="Name" />
@@ -2403,7 +2403,7 @@
             <check key="ferry" text="Ferry" />
         </item> <!-- Stop Position -->
         <item name="Platform" type="node,way,closedway,multipolygon" icon="presets/transport/platform.svg" preset_name_label="true">
-            <link wiki="Proposed_features/Public_Transport#Platform" />
+            <link wiki="Tag:public_transport=platform" />
             <space />
             <key key="public_transport" value="platform" />
             <text key="name" text="Name" />
