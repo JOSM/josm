@@ -349,10 +349,11 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
 
     @Override
     public void paint(MapViewGraphics graphics) {
-        List<WayPoint> visibleSegments = listVisibleSegments(graphics.getClipBounds().getLatLonBoundsBox());
+        Bounds clipBounds = graphics.getClipBounds().getLatLonBoundsBox();
+        List<WayPoint> visibleSegments = listVisibleSegments(clipBounds);
         if (!visibleSegments.isEmpty()) {
             readPreferences(layer.getName());
-            drawAll(graphics.getDefaultGraphics(), graphics.getMapView(), visibleSegments);
+            drawAll(graphics.getDefaultGraphics(), graphics.getMapView(), visibleSegments, clipBounds);
             if (graphics.getMapView().getLayerManager().getActiveLayer() == layer) {
                 drawColorBar(graphics.getDefaultGraphics(), graphics.getMapView());
             }
@@ -410,8 +411,11 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      * @param g               the common draw object to use
      * @param mv              the meta data to current displayed area
      * @param visibleSegments segments visible in the current scope of mv
+     * @param clipBounds      the clipping rectangle for the current view
+     * @since 14748 : new parameter clipBounds
      */
-    public void drawAll(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
+
+    public void drawAll(Graphics2D g, MapView mv, List<WayPoint> visibleSegments, Bounds clipBounds) {
 
         final long timeStart = System.currentTimeMillis();
 
@@ -420,6 +424,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         // STEP 2b - RE-COMPUTE CACHE DATA *********************
         if (!computeCacheInSync) { // don't compute if the cache is good
             calculateColors();
+            // update the WaiPoint.drawline attributes
+            visibleSegments.clear();
+            visibleSegments.addAll(listVisibleSegments(clipBounds));
         }
 
         fixColors(visibleSegments);
