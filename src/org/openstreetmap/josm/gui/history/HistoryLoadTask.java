@@ -164,7 +164,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         loadedData = new HistoryDataSet();
         try {
-            progressMonitor.setTicksCount(toLoad.size());
+            progressMonitor.setTicksCount(2 * toLoad.size());
             for (PrimitiveId pid: toLoad) {
                 if (canceled) {
                     break;
