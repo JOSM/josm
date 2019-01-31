@@ -231,8 +231,10 @@ public class TagChecker extends TagTest {
                 boolean ignorefile = false;
                 boolean isFirstLine = true;
                 String line;
-                while ((line = reader.readLine()) != null && (tagcheckerfile || !line.isEmpty())) {
-                    if (line.startsWith("#")) {
+                while ((line = reader.readLine()) != null) {
+                    if (line.isEmpty()) {
+                        // ignore
+                    } else if (line.startsWith("#")) {
                         if (line.startsWith("# JOSM TagChecker")) {
                             tagcheckerfile = true;
                             Logging.error(tr("Ignoring {0}. Support was dropped", source));
