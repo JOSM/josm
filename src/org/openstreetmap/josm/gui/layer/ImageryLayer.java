@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.awt.image.ImagingOpException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract base class for background imagery layers ({@link WMSLayer}, {@link TMSLayer}, {@link WMTSLayer}).
@@ -314,7 +316,11 @@ public abstract class ImageryLayer extends Layer {
      */
     public BufferedImage applyImageProcessors(BufferedImage img) {
         for (ImageProcessor processor : imageProcessors) {
-            img = processor.process(img);
+            try {
+                img = processor.process(img);
+            } catch (ImagingOpException e) {
+                Logging.error(e);
+            }
         }
         return img;
     }
