@@ -11,10 +11,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.ImageIcon;
 
@@ -78,7 +78,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
         // so per layer settings is useless. Anyway it's possible to specify marker layer pattern in Einstein preferences and maybe somebody
         // will make gui for it so I'm keeping it here
 
-        private static final Map<String, TemplateEntryProperty> CACHE = new HashMap<>();
+        private static final Map<String, TemplateEntryProperty> CACHE = new ConcurrentHashMap<>();
 
         public static TemplateEntryProperty forMarker(String layerName) {
             String key = "draw.rawgps.layer.wpt.pattern";
