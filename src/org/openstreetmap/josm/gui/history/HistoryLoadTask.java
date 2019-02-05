@@ -26,7 +26,6 @@ import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -253,6 +252,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     /**
      * Determine if changeset information is needed. By default it is retrieved.
      * @param b false means don't retrieve changeset data.
+     * @since 14763
      */
     public void setChangesetDataNeeded(boolean b) {
         getChangesetData = b;
