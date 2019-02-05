@@ -62,16 +62,17 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 GpxReader reader = new GpxReader(in);
                 gpxParsedProperly = reader.parse(false);
                 GpxData currentGpx = reader.getGpxData();
+                long count = 0;
+                if (currentGpx.hasTrackPoints()) {
+                    count = currentGpx.getTrackPoints().count();
+                }
+                if (count < pointsPerPage)
+                    done = true;
+                Logging.debug("got {0} gpx points", count);
                 if (result == null) {
                     result = currentGpx;
-                } else if (currentGpx.hasTrackPoints()) {
-                    long count = currentGpx.getTrackPoints().count();
-                    Logging.debug("got {0} gpx points", count);
-                    if (count < pointsPerPage)
-                        done = true;
-                    result.mergeFrom(currentGpx);
                 } else {
-                    done = true;
+                    result.mergeFrom(currentGpx);
                 }
             } catch (OsmApiException ex) {
                 throw ex; // this avoids infinite loop in case of API error such as bad request (ex: bbox too large, see #12853)
