@@ -50,9 +50,10 @@ public class BoundingBoxDownloader extends OsmServerReader {
     private GpxData downloadRawGps(Bounds b, ProgressMonitor progressMonitor) throws IOException, OsmTransferException, SAXException {
         boolean done = false;
         GpxData result = null;
+        final int pointsPerPage = 5000; // see https://wiki.openstreetmap.org/wiki/API_v0.6#GPS_traces
         String url = "trackpoints?bbox="+b.getMinLon()+','+b.getMinLat()+','+b.getMaxLon()+','+b.getMaxLat()+"&page=";
         for (int i = 0; !done && !isCanceled(); ++i) {
-            progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, (i + 1) * 5000));
+            progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * pointsPerPage, (i + 1) * pointsPerPage));
             try (InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true))) {
                 if (in == null) {
                     break;
@@ -64,6 +65,10 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 if (result == null) {
                     result = currentGpx;
                 } else if (currentGpx.hasTrackPoints()) {
+                    long count = currentGpx.getTrackPoints().count();
+                    Logging.debug("got {0} gpx points", count);
+                    if (count < pointsPerPage)
+                        done = true;
                     result.mergeFrom(currentGpx);
                 } else {
                     done = true;

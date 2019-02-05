@@ -15,10 +15,8 @@ import java.util.stream.Stream;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Bounds.ParseMethod;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter.GpxImporterData;
@@ -160,10 +158,6 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             } else {
                 mergeLayer.mergeFrom(layer);
                 mergeLayer.invalidate();
-                MapFrame map = MainApplication.getMap();
-                if (map != null && zoomAfterDownload && layer instanceof GpxLayer) {
-                    map.mapView.scheduleZoomTo(new ViewportData(layer.getViewProjectionBounds()));
-                }
                 return mergeLayer;
             }
         }
