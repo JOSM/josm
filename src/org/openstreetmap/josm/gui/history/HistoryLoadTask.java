@@ -26,6 +26,7 @@ import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -52,6 +53,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     private final Set<PrimitiveId> toLoad = new HashSet<>();
     private HistoryDataSet loadedData;
     private OsmServerHistoryReader reader;
+    private boolean getChangesetData = true;
 
     /**
      * Constructs a new {@code HistoryLoadTask}.
@@ -163,8 +165,11 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         loadedData = new HistoryDataSet();
+        int ticks = toLoad.size();
+        if (getChangesetData)
+            ticks *= 2;
         try {
-            progressMonitor.setTicksCount(2 * toLoad.size());
+            progressMonitor.setTicksCount(ticks);
             for (PrimitiveId pid: toLoad) {
                 if (canceled) {
                     break;
@@ -183,7 +188,11 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         HistoryDataSet ds;
         try {
             reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
-            ds = loadHistory(reader, progressMonitor);
+            if (getChangesetData) {
+                ds = loadHistory(reader, progressMonitor);
+            } else {
+                ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
+            }
         } catch (OsmTransferException e) {
             if (canceled)
                 return;
@@ -239,5 +248,13 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      */
     public Exception getLastException() {
         return lastException;
+    }
+
+    /**
+     * Determine if changeset information is needed. By default it is retrieved.
+     * @param b false means don't retrieve changeset data.
+     */
+    public void setChangesetDataNeeded(boolean b) {
+        getChangesetData = b;
     }
 }
