@@ -59,8 +59,8 @@ public class OsmServerHistoryReader extends OsmServerReader {
     public HistoryDataSet parseHistory(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask("");
         try {
-            progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
             final String urlStr = primitiveType.getAPIName() + '/' + id + "/history";
+            progressMonitor.indeterminateSubTask(tr("Contacting OSM Server for {0}", urlStr));
 
             try (InputStream in = getInputStream(urlStr, progressMonitor.createSubTaskMonitor(1, true))) {
                 if (in == null)
