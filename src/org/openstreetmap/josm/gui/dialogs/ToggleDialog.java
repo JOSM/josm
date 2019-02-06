@@ -687,9 +687,10 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     if (dockWhenClosingDetachedDlg()) {
                         dock();
                         if (isDialogInCollapsedView()) {
-                            expand();
+                            dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                        } else {
+                            dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                         }
-                        dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                     } else {
                         hideDialog();
                         hideNotify();
