@@ -37,14 +37,14 @@ public class DialogsPanel extends JPanel implements Destroyable {
      */
     public boolean initialized;
 
-    private final JSplitPane parent;
+    private final JSplitPane myParent;
 
     /**
      * Creates a new {@link DialogsPanel}.
      * @param parent The parent split pane that allows this panel to change it's size.
      */
     public DialogsPanel(JSplitPane parent) {
-        this.parent = parent;
+        this.myParent = parent;
     }
 
     /**
@@ -191,21 +191,11 @@ public class DialogsPanel extends JPanel implements Destroyable {
         /**
          * Determine the panel geometry
          */
-        if (action == Action.RESTORE_SAVED) {
+        if (action == Action.RESTORE_SAVED || action == Action.ELEMENT_SHRINKS) {
             for (int i = 0; i < n; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView()) {
-                    final int ph = dlg.getLastHeight();
-                    final int ah = dlg.getSize().height;
-                    dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, ah < 20 ? ph : ah));
-                }
-            }
-
-        } else if (action == Action.ELEMENT_SHRINKS) {
-            for (int i = 0; i < n; ++i) {
-                final ToggleDialog dlg = allDialogs.get(i);
-                if (dlg.isDialogInDefaultView()) {
-                    final int ph = dlg.getPreferredHeight();
+                    final int ph = action == Action.RESTORE_SAVED ? dlg.getLastHeight() : dlg.getPreferredHeight();
                     final int ah = dlg.getSize().height;
                     dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, ah < 20 ? ph : ah));
                 }
@@ -323,15 +313,15 @@ public class DialogsPanel extends JPanel implements Destroyable {
          * Hide the Panel, if there is nothing to show
          */
         if (numPanels == 1 && panels.get(n-1).getComponents().length == 0) {
-            parent.setDividerSize(0);
+            myParent.setDividerSize(0);
             this.setVisible(false);
         } else {
             if (this.getWidth() != 0) { // only if josm started with hidden panel
                 this.setPreferredSize(new Dimension(this.getWidth(), 0));
             }
             this.setVisible(true);
-            parent.setDividerSize(5);
-            parent.resetToPreferredSizes();
+            myParent.setDividerSize(5);
+            myParent.resetToPreferredSizes();
         }
     }
 
