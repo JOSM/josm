@@ -31,7 +31,7 @@ public class ConditionalKeys extends Test.TagTest {
             "maxstay", "maxweight", "maxaxleload", "maxheight", "maxwidth", "maxlength", "overtaking", "maxgcweight", "maxgcweightrating",
             "fee", "restriction"));
     private static final Set<String> RESTRICTION_VALUES = new HashSet<>(Arrays.asList("yes", "official", "designated", "destination",
-            "delivery", "permissive", "private", "agricultural", "forestry", "no"));
+            "delivery", "customer", "permissive", "private", "agricultural", "forestry", "no"));
     private static final Set<String> TRANSPORT_MODES = new HashSet<>(Arrays.asList("access", "foot", "ski", "inline_skates", "ice_skates",
             "horse", "vehicle", "bicycle", "carriage", "trailer", "caravan", "motor_vehicle", "motorcycle", "moped", "mofa",
             "motorcar", "motorhome", "psv", "bus", "taxi", "tourist_bus", "goods", "hgv", "agricultural", "atv", "snowmobile"
