@@ -39,10 +39,11 @@ import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -114,9 +115,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
 
             if (nodeInfo instanceof TestError) {
                 TestError error = (TestError) nodeInfo;
-                MultipleNameVisitor v = new MultipleNameVisitor();
-                v.visit(error.getPrimitives());
-                res = "<html>" + v.getText() + "<br>" + error.getMessage();
+                res = "<html>" + error.getNameVisitor().getText() + "<br>" + error.getMessage();
                 String d = error.getDescription();
                 if (d != null)
                     res += "<br>" + d;
@@ -155,7 +154,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             return;
         }
         // Sort validation errors - #8517
-        Collections.sort(errors);
+        sortErrors(errors);
 
         // Remember the currently expanded rows
         Set<Object> oldSelectedRows = new HashSet<>();
@@ -266,6 +265,27 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         }
 
         invalidationListeners.fireEvent(Runnable::run);
+    }
+
+    /**
+     * Sort list or errors in place.
+     * @param errors error list to be sorted
+     */
+    static void sortErrors(List<TestError> errors) {
+        // Calculate the string to sort only once for each element
+        // Avoids to call TestError.compare() which costly
+        List<Pair<String, TestError>> toSort = new ArrayList<>();
+        for (int i = 0; i < errors.size(); i++) {
+            TestError e = errors.get(i);
+            toSort.add(new Pair<>(e.getNameVisitor().getText(), e));
+        }
+        toSort.sort((o1,o2) -> AlphanumComparator.getInstance().compare(o1.a, o2.a));
+        List<TestError> sortedErrors = new ArrayList<>(errors.size());
+        for (Pair<String, TestError> p : toSort) {
+            sortedErrors.add(p.b);
+        }
+        errors.clear();
+        errors.addAll(sortedErrors);
     }
 
     /**

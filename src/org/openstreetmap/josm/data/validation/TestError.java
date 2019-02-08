@@ -428,12 +428,16 @@ public class TestError implements Comparable<TestError> {
     public int compareTo(TestError o) {
         if (equals(o)) return 0;
 
-        MultipleNameVisitor v1 = new MultipleNameVisitor();
-        MultipleNameVisitor v2 = new MultipleNameVisitor();
+        return AlphanumComparator.getInstance().compare(getNameVisitor().toString(), o.getNameVisitor().toString());
+    }
 
-        v1.visit(getPrimitives());
-        v2.visit(o.getPrimitives());
-        return AlphanumComparator.getInstance().compare(v1.toString(), v2.toString());
+    /**
+     * @return Name visitor (used in cell renderer and for sorting)
+     */
+    public MultipleNameVisitor getNameVisitor() {
+        MultipleNameVisitor v = new MultipleNameVisitor();
+        v.visit(getPrimitives());
+        return v;
     }
 
     @Override

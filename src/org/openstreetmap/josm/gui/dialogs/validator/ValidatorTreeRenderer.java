@@ -32,8 +32,7 @@ public class ValidatorTreeRenderer extends DefaultTreeCellRenderer {
             setIcon(ImageProvider.get("data", s.getIcon()));
         } else if (nodeInfo instanceof TestError) {
             TestError error = (TestError) nodeInfo;
-            MultipleNameVisitor v = new MultipleNameVisitor();
-            v.visit(error.getPrimitives());
+            MultipleNameVisitor v = error.getNameVisitor();
             setText(v.getText());
             setIcon(v.getIcon());
         }
