@@ -279,7 +279,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             TestError e = errors.get(i);
             toSort.add(new Pair<>(e.getNameVisitor().getText(), e));
         }
-        toSort.sort((o1,o2) -> AlphanumComparator.getInstance().compare(o1.a, o2.a));
+        toSort.sort((o1, o2) -> AlphanumComparator.getInstance().compare(o1.a, o2.a));
         List<TestError> sortedErrors = new ArrayList<>(errors.size());
         for (Pair<String, TestError> p : toSort) {
             sortedErrors.add(p.b);
