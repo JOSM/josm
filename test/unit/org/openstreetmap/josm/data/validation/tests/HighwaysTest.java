@@ -116,11 +116,6 @@ public class HighwaysTest {
             if (!test.getErrors().isEmpty()) {
                 fail(test.getErrors().get(0).getMessage());
             }
-            Way w1 = ways.stream().filter(w -> 28508494 == w.getId()).findFirst().get();
-            Way w2 = ways.stream().filter(w -> 28508493 == w.getId()).findFirst().get();
-            test.visit(w1);
-            test.visit(w2);
-            assertEquals(2, test.getErrors().size());
         }
     }
 }
