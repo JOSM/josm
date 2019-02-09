@@ -249,10 +249,8 @@ public class Highways extends Test {
     private static boolean isSharpAngle(Way way, int nodePos, Way otherWay) {
         Node n = way.getNode(nodePos);
         int oneway = way.isOneway();
-        if (oneway == 0) {
-            if ("roundabout".equals(way.get("junction"))) {
-                oneway = 1;
-            }
+        if (oneway == 0 && "roundabout".equals(way.get("junction"))) {
+            oneway = 1;
         }
 
         if (oneway != 1) {
@@ -290,10 +288,8 @@ public class Highways extends Test {
 
     private static boolean onlySharpAngle(Node common, Node from, Way toWay) {
         int oneway = toWay.isOneway();
-        if (oneway == 0) {
-            if ("roundabout".equals(toWay.get("junction"))) {
-                oneway = 1;
-            }
+        if (oneway == 0 && "roundabout".equals(toWay.get("junction"))) {
+            oneway = 1;
         }
 
         for (int i = 0; i < toWay.getNodesCount(); i++) {
