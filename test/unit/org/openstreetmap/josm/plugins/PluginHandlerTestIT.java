@@ -147,7 +147,7 @@ public class PluginHandlerTestIT {
             Throwable root = ExceptionUtils.getRootCause(t);
             root.printStackTrace();
             // Ignore HeadlessException with JavaFX components. Issue hard to solve and we're not interested by that
-            if (!(t instanceof HeadlessException)) {
+            if (!(root instanceof HeadlessException)) {
                 layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
             }
         }
