@@ -6,7 +6,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.GraphicsEnvironment;
-import java.awt.HeadlessException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -115,13 +114,13 @@ public class PluginHandlerTestIT {
             }
         }
 
-        // On Java 9/10 and headless mode, filter plugins requiring JavaFX as Monocle is not available
+        // On Java < 11 and headless mode, filter plugins requiring JavaFX as Monocle is not available
         int javaVersion = Utils.getJavaVersion();
-        if (GraphicsEnvironment.isHeadless() && javaVersion >= 9 && javaVersion <= 10) {
+        if (GraphicsEnvironment.isHeadless() && javaVersion < 11) {
             for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
                 PluginInformation pi = it.next();
                 if (pi.getRequiredPlugins().contains("openjfx")) {
-                    System.out.println("Ignoring " + pi.name + " (requiring JavaFX and we're using Java 9/10 in headless mode)");
+                    System.out.println("Ignoring " + pi.name + " (requiring JavaFX and we're using Java < 11 in headless mode)");
                     it.remove();
                 }
             }
@@ -146,10 +145,7 @@ public class PluginHandlerTestIT {
         } catch (Exception | LinkageError t) {
             Throwable root = ExceptionUtils.getRootCause(t);
             root.printStackTrace();
-            // Ignore HeadlessException with JavaFX components. Issue hard to solve and we're not interested by that
-            if (!(root instanceof HeadlessException)) {
-                layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
-            }
+            layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
         }
     }
 
