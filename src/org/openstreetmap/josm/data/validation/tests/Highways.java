@@ -217,7 +217,7 @@ public class Highways extends Test {
             otherWays.addAll(Utils.filteredCollection(n.getReferrers(), Way.class));
             if (otherWays.size() == 1)
                 continue;
-            otherWays.removeIf(w -> w == way || !highway.startsWith(w.get(HIGHWAY)) || !LINK_TO_HIGHWAYS.contains(w.get(HIGHWAY)));
+            otherWays.removeIf(w -> w == way || !w.hasTag("highway") || !highway.startsWith(w.get(HIGHWAY)) || !LINK_TO_HIGHWAYS.contains(w.get(HIGHWAY)));
             if (otherWays.isEmpty())
                 continue;
 
