@@ -84,6 +84,8 @@
                 <include name="**/*.jar"/>
             </fileset>
             <pathelement path="${dist.jar}"/>
+            <pathelement path="${failureaccess.jar}"/>
+            <pathelement path="${guava.jar}"/>
             <pathelement path="${pmd.dir}/commons-lang3-3.8.1.jar"/>
             <pathelement path="${spotbugs.dir}/spotbugs-annotations.jar"/>
         </path>
