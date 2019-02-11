@@ -119,7 +119,7 @@ public class PluginHandlerTestIT {
         if (GraphicsEnvironment.isHeadless() && javaVersion < 11) {
             for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
                 PluginInformation pi = it.next();
-                if (pi.getRequiredPlugins().contains("openjfx")) {
+                if (pi.getRequiredPlugins().contains("javafx")) {
                     System.out.println("Ignoring " + pi.name + " (requiring JavaFX and we're using Java < 11 in headless mode)");
                     it.remove();
                 }
