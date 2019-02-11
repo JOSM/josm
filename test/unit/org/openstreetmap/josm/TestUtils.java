@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,13 +55,15 @@ import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
-import org.reflections.Reflections;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.common.io.ByteStreams;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.ScanResult;
 import mockit.integration.TestRunnerDecorator;
 
 /**
@@ -570,7 +573,11 @@ public final class TestUtils {
      * @return all JOSM subtypes of the given class
      */
     public static <T> Set<Class<? extends T>> getJosmSubtypes(Class<T> superClass) {
-        return new Reflections("org.openstreetmap.josm").getSubTypesOf(superClass);
+        try (ScanResult scan = new ClassGraph().whitelistPackages("org.openstreetmap.josm").ignoreClassVisibility().scan()) {
+            Function<String, ClassInfoList> lambda = superClass.isInterface() ? scan::getClassesImplementing : scan::getSubclasses;
+            return lambda.apply(superClass.getName())
+                    .asMap().values().stream().map(x -> x.loadClass(superClass)).collect(Collectors.toSet());
+        }
     }
 
     /**

@@ -42,17 +42,12 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/reflections/reflections-0.9.11.jar">
+	<classpathentry kind="lib" path="test/lib/classgraph-4.6.32.jar" sourcepath="C:/Users/vippy/.m2/repository/io/github/classgraph/classgraph/4.6.32/classgraph-4.6.32-sources.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/reflections/guava-21.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/reflections/javassist-3.21.0-GA.jar">
+	<classpathentry kind="lib" path="tools/guava.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
