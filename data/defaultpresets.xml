@@ -5027,9 +5027,9 @@
                 <reference ref="power_generator" />
                 <combo key="generator:method" text="Method" values_context="generator method" values="barrage,stream" />
                 <combo key="generator:type" text="Generator Type" values_searchable="true">
-                    <list_entry value="horizontal_axis" short_description="steam" />
+                    <list_entry value="horizontal_axis" short_description="stream" />
                     <list_entry value="kaplan_turbine" short_description="barrage" />
-                    <list_entry value="vertical_axis" short_description="steam" />
+                    <list_entry value="vertical_axis" short_description="stream" />
                 </combo>
                 <reference ref="power_output" />
             </item> <!-- Tidal Water Turbine -->
