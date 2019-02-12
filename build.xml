@@ -42,6 +42,8 @@
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="error_prone_core.jar" location="${tools.dir}/error_prone_core.jar"/>
         <property name="error_prone_javac.jar" location="${tools.dir}/error_prone_javac.jar"/>
+        <property name="dataflow.jar" location="${tools.dir}/dataflow.jar"/>
+        <property name="javacutil.jar" location="${tools.dir}/javacutil.jar"/>
         <property name="failureaccess.jar" location="${tools.dir}/failureaccess.jar"/>
         <property name="guava.jar" location="${tools.dir}/guava.jar"/>
         <property name="jformatstring.jar" location="${spotbugs.dir}/jFormatString-3.0.0.jar"/>
@@ -96,6 +98,8 @@
         </path>
         <path id="processor.path">
             <pathelement location="${error_prone_core.jar}"/>
+            <pathelement location="${dataflow.jar}"/>
+            <pathelement location="${javacutil.jar}"/>
             <pathelement location="${failureaccess.jar}"/>
             <pathelement location="${guava.jar}"/>
             <pathelement location="${jformatstring.jar}"/>
