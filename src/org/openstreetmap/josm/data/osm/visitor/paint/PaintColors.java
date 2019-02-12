@@ -78,19 +78,12 @@ public enum PaintColors {
      */
     AREA_TEXT(marktr("areatext"), Color.LIGHT_GRAY);
 
-    /**
-     * The name of the color
-     */
-    private final String name;
-    private final Color defaultColor;
     private final NamedColorProperty baseProperty;
     private final CachingProperty<Color> property;
 
     PaintColors(String name, Color defaultColor) {
         baseProperty = new NamedColorProperty(name, defaultColor);
         property = baseProperty.cached();
-        this.name = name;
-        this.defaultColor = defaultColor;
     }
 
     /**
