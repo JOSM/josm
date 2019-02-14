@@ -160,9 +160,13 @@ public class ImageryPreferenceTestIT {
         return addError(isIgnoredError(errorMsg) ? ignoredErrors : errors, info, errorMsg);
     }
 
-    private boolean isIgnoredError(String errorMsg) {
+    private static boolean isIgnoredError(String errorMsg) {
         int idx = errorMsg.lastIndexOf(ERROR_SEP);
-        return errorsToIgnore.contains(errorMsg) || (idx > -1 && errorsToIgnore.contains(errorMsg.substring(idx + ERROR_SEP.length())));
+        return isIgnoredSubstring(errorMsg) || (idx > -1 && isIgnoredSubstring(errorMsg.substring(idx + ERROR_SEP.length())));
+    }
+
+    private static boolean isIgnoredSubstring(String substring) {
+        return errorsToIgnore.parallelStream().anyMatch(x -> x.contains(substring));
     }
 
     private static boolean addError(Map<String, Map<ImageryInfo, List<String>>> map, ImageryInfo info, String errorMsg) {
