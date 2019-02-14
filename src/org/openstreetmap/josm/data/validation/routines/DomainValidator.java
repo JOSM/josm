@@ -415,7 +415,6 @@ public final class DomainValidator extends AbstractValidator {
         "biz", // biz Neustar, Inc.
         "black", // black Afilias Limited
         "blackfriday", // blackfriday Uniregistry, Corp.
-        "blanco", // blanco BLANCO GmbH + Co KG
         "blockbuster", // blockbuster Dish DBS Corporation
         "blog", // blog Knock Knock WHOIS There, LLC
         "bloomberg", // bloomberg Bloomberg IP Holdings LLC

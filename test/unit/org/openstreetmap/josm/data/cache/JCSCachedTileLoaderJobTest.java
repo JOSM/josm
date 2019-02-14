@@ -100,7 +100,7 @@ public class JCSCachedTileLoaderJobTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
+    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20_000);
 
     /**
      * Always clear cache before tests
