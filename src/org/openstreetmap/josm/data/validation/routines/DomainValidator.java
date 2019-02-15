@@ -622,7 +622,6 @@ public final class DomainValidator extends AbstractValidator {
         "engineer", // engineer United TLD Holdco Ltd.
         "engineering", // engineering Romeo Canyon
         "enterprises", // enterprises Snow Oaks, LLC
-        "epost", // epost Deutsche Post AG
         "epson", // epson Seiko Epson Corporation
         "equipment", // equipment Corn Station, LLC
         "ericsson", // ericsson Telefonaktiebolaget L M Ericsson
@@ -1535,7 +1534,6 @@ public final class DomainValidator extends AbstractValidator {
         "zara", // zara Industria de Diseño Textil, S.A. (INDITEX, S.A.)
         "zero", // zero Amazon Registry Services, Inc.
         "zip", // zip Charleston Road Registry Inc.
-        "zippo", // zippo Zadco Company
         "zone", // zone Outer Falls, LLC
         "zuerich", // zuerich Kanton Zürich (Canton of Zurich)
     };
