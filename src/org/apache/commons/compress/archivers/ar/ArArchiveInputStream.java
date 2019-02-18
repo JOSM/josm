@@ -121,13 +121,12 @@ public class ArArchiveInputStream extends ArchiveInputStream {
             trackReadBytes(1);
         }
 
-        if (input.available() == 0) {
-            return null;
-        }
-
         {
             final int read = IOUtils.readFully(input, metaData);
             trackReadBytes(read);
+            if (read == 0) {
+                return null;
+            }
             if (read < metaData.length) {
                 throw new IOException("truncated ar archive");
             }
