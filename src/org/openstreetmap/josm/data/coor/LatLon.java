@@ -234,7 +234,7 @@ public class LatLon extends Coordinate implements ILatLon {
         // rounding errors could make the argument of asin greater than 1
         // (This should almost never happen.)
         if (Double.isNaN(d)) {
-            Logging.error("NaN in greatCircleDistance");
+            Logging.error("NaN in greatCircleDistance: {0} {1}", this, other);
             d = PI * WGS84.a;
         }
         return d;

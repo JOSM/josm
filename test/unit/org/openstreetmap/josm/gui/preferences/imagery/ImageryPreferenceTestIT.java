@@ -11,7 +11,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -107,8 +106,8 @@ public class ImageryPreferenceTestIT {
     private static final Map<String, byte[]> workingURLs = Collections.synchronizedMap(new TreeMap<>());
 
     private static TMSCachedTileLoaderJob helper;
-    private static List<String> errorsToIgnore;
-    private static List<String> notIgnoredErrors;
+    private static final List<String> errorsToIgnore = new ArrayList<>();
+    private static final List<String> notIgnoredErrors = new ArrayList<>();
 
     /**
      * Setup test
@@ -117,8 +116,8 @@ public class ImageryPreferenceTestIT {
     @BeforeClass
     public static void beforeClass() throws IOException {
         helper = new TMSCachedTileLoaderJob(null, null, new CacheAccess<>(null), new TileJobOptions(0, 0, null, 0), null);
-        errorsToIgnore = TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class);
-        notIgnoredErrors = new LinkedList<>(errorsToIgnore);
+        errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class));
+        notIgnoredErrors.addAll(errorsToIgnore);
     }
 
     /**
