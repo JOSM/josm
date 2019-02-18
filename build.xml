@@ -212,7 +212,7 @@ Build-Date: ${build.tstamp}
     <!-- Mac OS X target -->
     <target name="mac" depends="init-properties">
         <!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
-        <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="${tools.dir}/appbundler-1.0ea.jar"/>
+        <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="${tools.dir}/appbundler.jar"/>
         <!-- create MacOS X application bundle -->
         <bundleapp outputdirectory="${bundle.outdir}" name="JOSM" displayname="JOSM" executablename="JOSM" identifier="org.openstreetmap.josm"
                    mainclassname="org.openstreetmap.josm.gui.MainApplication"
