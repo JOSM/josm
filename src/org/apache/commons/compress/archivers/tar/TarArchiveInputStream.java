@@ -94,7 +94,8 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * Constructor for TarInputStream.
      * @param is the input stream to use
      * @param lenient when set to true illegal values for group/userid, mode, device numbers and timestamp will be
-     * ignored and the fields set to {@link #UNKNOWN}. When set to false such illegal fields cause an exception instead.
+     * ignored and the fields set to {@link TarArchiveEntry#UNKNOWN}. When set to false such illegal fields cause an
+     * exception instead.
      * @since 1.19
      */
     public TarArchiveInputStream(final InputStream is, boolean lenient) {
@@ -163,7 +164,8 @@ public class TarArchiveInputStream extends ArchiveInputStream {
      * @param recordSize the record size to use
      * @param encoding name of the encoding to use for file names
      * @param lenient when set to true illegal values for group/userid, mode, device numbers and timestamp will be
-     * ignored and the fields set to {@link #UNKNOWN}. When set to false such illegal fields cause an exception instead.
+     * ignored and the fields set to {@link TarArchiveEntry#UNKNOWN}. When set to false such illegal fields cause an
+     * exception instead.
      * @since 1.19
      */
     public TarArchiveInputStream(final InputStream is, final int blockSize, final int recordSize,
