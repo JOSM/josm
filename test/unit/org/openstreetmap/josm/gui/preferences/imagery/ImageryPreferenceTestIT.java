@@ -165,7 +165,7 @@ public class ImageryPreferenceTestIT {
     }
 
     private static boolean isIgnoredSubstring(String substring) {
-        return errorsToIgnore.parallelStream().anyMatch(x -> x.contains(substring));
+        return errorsToIgnore.parallelStream().anyMatch(x -> substring.contains(x));
     }
 
     private static boolean addError(Map<String, Map<ImageryInfo, List<String>>> map, ImageryInfo info, String errorMsg) {
