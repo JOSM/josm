@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context.PRIMITIVE;
 
 import java.awt.Color;
 import java.io.StringReader;
@@ -25,9 +26,11 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.PseudoClassCondition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.RegexpKeyValueRegexpCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ColorHelper;
 
@@ -108,7 +111,7 @@ public class MapCSSParserTest {
 
     @Test
     public void testEqualCondition() throws Exception {
-        Condition condition = getParser("[surface=paved]").condition(Condition.Context.PRIMITIVE);
+        Condition condition = getParser("[surface=paved]").condition(PRIMITIVE);
         assertTrue(condition instanceof SimpleKeyValueCondition);
         assertEquals("surface", ((SimpleKeyValueCondition) condition).k);
         assertEquals("paved", ((SimpleKeyValueCondition) condition).v);
@@ -118,7 +121,7 @@ public class MapCSSParserTest {
 
     @Test
     public void testNotEqualCondition() throws Exception {
-        KeyValueCondition condition = (KeyValueCondition) getParser("[surface!=paved]").condition(Condition.Context.PRIMITIVE);
+        KeyValueCondition condition = (KeyValueCondition) getParser("[surface!=paved]").condition(PRIMITIVE);
         assertEquals(Op.NEQ, condition.op);
         assertFalse(condition.applies(getEnvironment("surface", "paved")));
         assertTrue(condition.applies(getEnvironment("surface", "unpaved")));
@@ -126,7 +129,7 @@ public class MapCSSParserTest {
 
     @Test
     public void testRegexCondition() throws Exception {
-        KeyValueCondition condition = (KeyValueCondition) getParser("[surface=~/paved|unpaved/]").condition(Condition.Context.PRIMITIVE);
+        KeyValueCondition condition = (KeyValueCondition) getParser("[surface=~/paved|unpaved/]").condition(PRIMITIVE);
         assertEquals(Op.REGEX, condition.op);
         assertTrue(condition.applies(getEnvironment("surface", "unpaved")));
         assertFalse(condition.applies(getEnvironment("surface", "grass")));
@@ -134,7 +137,7 @@ public class MapCSSParserTest {
 
     @Test
     public void testRegexConditionParenthesis() throws Exception {
-        KeyValueCondition condition = (KeyValueCondition) getParser("[name =~ /^\\(foo\\)/]").condition(Condition.Context.PRIMITIVE);
+        KeyValueCondition condition = (KeyValueCondition) getParser("[name =~ /^\\(foo\\)/]").condition(PRIMITIVE);
         assertTrue(condition.applies(getEnvironment("name", "(foo)")));
         assertFalse(condition.applies(getEnvironment("name", "foo")));
         assertFalse(condition.applies(getEnvironment("name", "((foo))")));
@@ -142,7 +145,7 @@ public class MapCSSParserTest {
 
     @Test
     public void testNegatedRegexCondition() throws Exception {
-        KeyValueCondition condition = (KeyValueCondition) getParser("[surface!~/paved|unpaved/]").condition(Condition.Context.PRIMITIVE);
+        KeyValueCondition condition = (KeyValueCondition) getParser("[surface!~/paved|unpaved/]").condition(PRIMITIVE);
         assertEquals(Op.NREGEX, condition.op);
         assertFalse(condition.applies(getEnvironment("surface", "unpaved")));
         assertTrue(condition.applies(getEnvironment("surface", "grass")));
@@ -150,12 +153,12 @@ public class MapCSSParserTest {
 
     @Test
     public void testBeginsEndsWithCondition() throws Exception {
-        KeyValueCondition condition = (KeyValueCondition) getParser("[foo ^= bar]").condition(Condition.Context.PRIMITIVE);
+        KeyValueCondition condition = (KeyValueCondition) getParser("[foo ^= bar]").condition(PRIMITIVE);
         assertEquals(Op.BEGINS_WITH, condition.op);
         assertTrue(condition.applies(getEnvironment("foo", "bar123")));
         assertFalse(condition.applies(getEnvironment("foo", "123bar")));
         assertFalse(condition.applies(getEnvironment("foo", "123bar123")));
-        condition = (KeyValueCondition) getParser("[foo $= bar]").condition(Condition.Context.PRIMITIVE);
+        condition = (KeyValueCondition) getParser("[foo $= bar]").condition(PRIMITIVE);
         assertEquals(Op.ENDS_WITH, condition.op);
         assertFalse(condition.applies(getEnvironment("foo", "bar123")));
         assertTrue(condition.applies(getEnvironment("foo", "123bar")));
@@ -164,7 +167,7 @@ public class MapCSSParserTest {
 
     @Test
     public void testOneOfCondition() throws Exception {
-        Condition condition = getParser("[vending~=stamps]").condition(Condition.Context.PRIMITIVE);
+        Condition condition = getParser("[vending~=stamps]").condition(PRIMITIVE);
         assertTrue(condition.applies(getEnvironment("vending", "stamps")));
         assertTrue(condition.applies(getEnvironment("vending", "bar;stamps;foo")));
         assertFalse(condition.applies(getEnvironment("vending", "every;thing;else")));
@@ -173,11 +176,11 @@ public class MapCSSParserTest {
 
     @Test
     public void testStandardKeyCondition() throws Exception {
-        KeyCondition c1 = (KeyCondition) getParser("[ highway ]").condition(Condition.Context.PRIMITIVE);
+        KeyCondition c1 = (KeyCondition) getParser("[ highway ]").condition(PRIMITIVE);
         assertEquals(KeyMatchType.EQ, c1.matchType);
         assertTrue(c1.applies(getEnvironment("highway", "unclassified")));
         assertFalse(c1.applies(getEnvironment("railway", "rail")));
-        KeyCondition c2 = (KeyCondition) getParser("[\"/slash/\"]").condition(Condition.Context.PRIMITIVE);
+        KeyCondition c2 = (KeyCondition) getParser("[\"/slash/\"]").condition(PRIMITIVE);
         assertEquals(KeyMatchType.EQ, c2.matchType);
         assertTrue(c2.applies(getEnvironment("/slash/", "yes")));
         assertFalse(c2.applies(getEnvironment("\"slash\"", "no")));
@@ -185,10 +188,10 @@ public class MapCSSParserTest {
 
     @Test
     public void testYesNoKeyCondition() throws Exception {
-        KeyCondition c1 = (KeyCondition) getParser("[oneway?]").condition(Condition.Context.PRIMITIVE);
-        KeyCondition c2 = (KeyCondition) getParser("[oneway?!]").condition(Condition.Context.PRIMITIVE);
-        KeyCondition c3 = (KeyCondition) getParser("[!oneway?]").condition(Condition.Context.PRIMITIVE);
-        KeyCondition c4 = (KeyCondition) getParser("[!oneway?!]").condition(Condition.Context.PRIMITIVE);
+        KeyCondition c1 = (KeyCondition) getParser("[oneway?]").condition(PRIMITIVE);
+        KeyCondition c2 = (KeyCondition) getParser("[oneway?!]").condition(PRIMITIVE);
+        KeyCondition c3 = (KeyCondition) getParser("[!oneway?]").condition(PRIMITIVE);
+        KeyCondition c4 = (KeyCondition) getParser("[!oneway?!]").condition(PRIMITIVE);
         Environment yes = getEnvironment("oneway", "yes");
         Environment no = getEnvironment("oneway", "no");
         Environment none = getEnvironment("no-oneway", "foo");
@@ -208,12 +211,21 @@ public class MapCSSParserTest {
 
     @Test
     public void testRegexKeyCondition() throws Exception {
-        KeyCondition c1 = (KeyCondition) getParser("[/.*:(backward|forward)$/]").condition(Condition.Context.PRIMITIVE);
+        KeyCondition c1 = (KeyCondition) getParser("[/.*:(backward|forward)$/]").condition(PRIMITIVE);
         assertEquals(KeyMatchType.REGEX, c1.matchType);
         assertFalse(c1.applies(getEnvironment("lanes", "3")));
         assertTrue(c1.applies(getEnvironment("lanes:forward", "3")));
         assertTrue(c1.applies(getEnvironment("lanes:backward", "3")));
         assertFalse(c1.applies(getEnvironment("lanes:foobar", "3")));
+    }
+
+    @Test
+    public void testRegexKeyValueRegexpCondition() throws Exception {
+        RegexpKeyValueRegexpCondition c1 = (RegexpKeyValueRegexpCondition) getParser("[/^name/=~/Test/]").condition(PRIMITIVE);
+        assertEquals("^name", c1.keyPattern.pattern());
+        assertEquals("Test", c1.pattern.pattern());
+        assertTrue(c1.applies(getEnvironment("name", "Test St")));
+        assertFalse(c1.applies(getEnvironment("alt_name", "Test St")));
     }
 
     @Test
@@ -229,14 +241,14 @@ public class MapCSSParserTest {
 
     @Test
     public void testKeyKeyCondition() throws Exception {
-        KeyValueCondition c1 = (KeyValueCondition) getParser("[foo = *bar]").condition(Condition.Context.PRIMITIVE);
+        KeyValueCondition c1 = (KeyValueCondition) getParser("[foo = *bar]").condition(PRIMITIVE);
         Way w1 = new Way();
         w1.put("foo", "123");
         w1.put("bar", "456");
         assertFalse(c1.applies(new Environment(w1)));
         w1.put("bar", "123");
         assertTrue(c1.applies(new Environment(w1)));
-        KeyValueCondition c2 = (KeyValueCondition) getParser("[foo =~ */bar/]").condition(Condition.Context.PRIMITIVE);
+        KeyValueCondition c2 = (KeyValueCondition) getParser("[foo =~ */bar/]").condition(PRIMITIVE);
         Way w2 = new Way(w1);
         w2.put("bar", "[0-9]{3}");
         assertTrue(c2.applies(new Environment(w2)));
@@ -449,16 +461,20 @@ public class MapCSSParserTest {
         assertEquals(Float.valueOf(56f), mc.getCascade(Environment.DEFAULT_LAYER).get("max_split", -777f, Float.class));
     }
 
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12549">Bug #12549</a>.
+     * @throws ParseException if a parsing error occurs
+     */
     @Test
-    public void testTicket12549() throws Exception {
-        Condition condition = getParser("[name =~ /^(?i)(?u)fóo$/]").condition(Condition.Context.PRIMITIVE);
-        assertTrue(condition.applies(new Environment(OsmUtils.createPrimitive("way name=fóo"))));
-        assertTrue(condition.applies(new Environment(OsmUtils.createPrimitive("way name=fÓo"))));
-        condition = getParser("[name =~ /^(\\p{Lower})+$/]").condition(Condition.Context.PRIMITIVE);
-        assertFalse(condition.applies(new Environment(OsmUtils.createPrimitive("way name=fóo"))));
-        condition = getParser("[name =~ /^(?U)(\\p{Lower})+$/]").condition(Condition.Context.PRIMITIVE);
-        assertTrue(condition.applies(new Environment(OsmUtils.createPrimitive("way name=fóo"))));
-        assertFalse(condition.applies(new Environment(OsmUtils.createPrimitive("way name=fÓo"))));
+    public void testTicket12549() throws ParseException {
+        Condition condition = getParser("[name =~ /^(?i)(?u)fóo$/]").condition(PRIMITIVE);
+        assertTrue(condition.applies(getEnvironment("name", "fóo")));
+        assertTrue(condition.applies(getEnvironment("name", "fÓo")));
+        condition = getParser("[name =~ /^(\\p{Lower})+$/]").condition(PRIMITIVE);
+        assertFalse(condition.applies(getEnvironment("name", "fóo")));
+        condition = getParser("[name =~ /^(?U)(\\p{Lower})+$/]").condition(PRIMITIVE);
+        assertTrue(condition.applies(getEnvironment("name", "fóo")));
+        assertFalse(condition.applies(getEnvironment("name", "fÓo")));
     }
 
     /**

@@ -325,4 +325,18 @@ public class MapCSSTagCheckerTest {
                 "  throwWarning: eval(count(parent_tags(public_transport)));" +
                 "}"));
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17358">Bug #17358</a>.
+     * @throws ParseException if an error occurs
+     */
+    @Test
+    @Ignore("not fixed yet")
+    public void testTicket17358() throws ParseException {
+        final Collection<TestError> errors = buildTagChecker(
+                "*[/^name/=~/Test/]{" +
+                "  throwWarning: \"Key value match\";" +
+                "}").getErrorsForPrimitive(OsmUtils.createPrimitive("way name=Test St"), false);
+        assertEquals(1, errors.size());
+    }
 }
