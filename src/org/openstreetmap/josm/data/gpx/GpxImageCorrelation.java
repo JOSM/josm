@@ -175,13 +175,15 @@ public final class GpxImageCorrelation {
         return ret;
     }
 
-    private static Double getElevation(WayPoint wp) {
-        String value = wp.getString(GpxConstants.PT_ELE);
-        if (value != null && !value.isEmpty()) {
-            try {
-                return Double.valueOf(value);
-            } catch (NumberFormatException e) {
-                Logging.warn(e);
+    static Double getElevation(WayPoint wp) {
+        if (wp != null) {
+            String value = wp.getString(GpxConstants.PT_ELE);
+            if (value != null && !value.isEmpty()) {
+                try {
+                    return Double.valueOf(value);
+                } catch (NumberFormatException e) {
+                    Logging.warn(e);
+                }
             }
         }
         return null;

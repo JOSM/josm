@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.gpx;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IPreferences;
@@ -265,5 +267,21 @@ public class GpxImageCorrelationTest {
             i.discardTmp();
             i.createTmp();
         }
+    }
+
+    /**
+     * Unit test of {@link GpxImageCorrelation#getElevation}
+     */
+    @Test
+    public void testGetElevation() {
+        assertNull(GpxImageCorrelation.getElevation(null));
+        WayPoint wp = new WayPoint(LatLon.ZERO);
+        assertNull(GpxImageCorrelation.getElevation(wp));
+        wp.put(GpxConstants.PT_ELE, "");
+        assertNull(GpxImageCorrelation.getElevation(wp));
+        wp.put(GpxConstants.PT_ELE, "not a number");
+        assertNull(GpxImageCorrelation.getElevation(wp));
+        wp.put(GpxConstants.PT_ELE, "150.0");
+        assertEquals(Double.valueOf(150.0d), GpxImageCorrelation.getElevation(wp));
     }
 }
