@@ -12,10 +12,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.AsynchronousUploadPrimitivesTask;
+import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -540,5 +542,22 @@ public class MainLayerManager extends LayerManager {
             osmDataLayer = layer;
             fireActiveLayerChange(layerChangeEvent);
         }
+    }
+
+    /**
+     * Returns all {@link GpxData} we can get from current layers.
+     * @return all {@code GpxData} we can get from current layers
+     * @since 14802
+     */
+    public List<GpxData> getAllGpxData() {
+        List<GpxData> result = new ArrayList<>();
+        for (Layer layer : getLayers()) {
+            if (layer instanceof GpxLayer) {
+                result.add(((GpxLayer) layer).data);
+            } else if (layer instanceof GeoImageLayer) {
+                result.add(((GeoImageLayer) layer).getFauxGpxLayer().data);
+            }
+        }
+        return result;
     }
 }
