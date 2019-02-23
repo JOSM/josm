@@ -24,12 +24,15 @@ import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxDistance;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -516,6 +519,22 @@ public final class ExpressionFactory {
          */
         public static Long parent_osm_id(final Environment env) { // NO_UCD (unused code)
             return env.parent == null ? null : env.parent.getUniqueId();
+        }
+
+        /**
+         * Returns the lowest distance between the OSM object and a GPX point
+         * <p>
+         * @param env the environment
+         * @return the distance between the object and the closest gpx point or {@code Double.MAX_VALUE}
+         * @since 14802
+         */
+        public static double gpx_distance(final Environment env) { // NO_UCD (unused code)
+            if (env.osm instanceof OsmPrimitive) {
+                return MainApplication.getLayerManager().getAllGpxData().stream()
+                        .mapToDouble(gpx -> GpxDistance.getLowestDistance((OsmPrimitive) env.osm, gpx))
+                        .min().orElse(Double.MAX_VALUE);
+            }
+            return Double.MAX_VALUE;
         }
 
         /**

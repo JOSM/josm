@@ -42,6 +42,8 @@ import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.ImageData.ImageDataUpdateListener;
+import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -75,6 +77,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     private final ImageData data;
     GpxLayer gpxLayer;
+    GpxLayer gpxFauxLayer;
 
     private final Icon icon = ImageProvider.get("dialogs/geoimage/photo-marker");
     private final Icon selectedIcon = ImageProvider.get("dialogs/geoimage/photo-marker-selected");
@@ -922,6 +925,25 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      */
     public GpxLayer getGpxLayer() {
         return gpxLayer;
+    }
+
+    /**
+     * Returns a faux GPX layer built from the images or the associated GPX layer.
+     * @return A faux GPX layer or the associated GPX layer
+     * @since 14802
+     */
+    public synchronized GpxLayer getFauxGpxLayer() {
+        if (gpxLayer != null) return getGpxLayer();
+        if (gpxFauxLayer == null) {
+            GpxData gpxData = new GpxData();
+            List<ImageEntry> imageList = data.getImages();
+            for (ImageEntry image : imageList) {
+                WayPoint twaypoint = new WayPoint(image.getPos());
+                gpxData.addWaypoint(twaypoint);
+            }
+            gpxFauxLayer = new GpxLayer(gpxData);
+        }
+        return gpxFauxLayer;
     }
 
     @Override
