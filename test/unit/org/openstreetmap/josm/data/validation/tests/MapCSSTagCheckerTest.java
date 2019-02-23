@@ -331,7 +331,6 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if an error occurs
      */
     @Test
-    @Ignore("not fixed yet")
     public void testTicket17358() throws ParseException {
         final Collection<TestError> errors = buildTagChecker(
                 "*[/^name/=~/Test/]{" +

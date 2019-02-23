@@ -315,6 +315,15 @@ public final class ConditionFactory {
             this.considerValAsKey = considerValAsKey;
         }
 
+        /**
+         * Determines if this condition requires an exact key match.
+         * @return {@code true} if this condition requires an exact key match.
+         * @since 14801
+         */
+        public boolean requiresExactKeyMatch() {
+            return !Op.NEGATED_OPS.contains(op);
+        }
+
         @Override
         public boolean applies(Environment env) {
             return op.eval(env.osm.get(k), considerValAsKey ? env.osm.get(v) : v);
@@ -387,6 +396,11 @@ public final class ConditionFactory {
         public RegexpKeyValueRegexpCondition(String k, String v, Op op) {
             super(k, v, op, false);
             this.keyPattern = Pattern.compile(k);
+        }
+
+        @Override
+        public boolean requiresExactKeyMatch() {
+            return false;
         }
 
         @Override
