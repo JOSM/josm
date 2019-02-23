@@ -41,6 +41,7 @@ way[canal                      ][!waterway],
 way[have_riverbank             ][!waterway],
 *[border_type                  ][!boundary],
 *[piste:difficulty             ][!piste:type],
+*[place                        ][!name],
 *[source:date                  ][!source],
 *[source:name                  ][!name],
 *[source:maxspeed:forward      ][!maxspeed:forward][!maxspeed],
@@ -117,19 +118,28 @@ way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
 
 /* {0.tag} without {1.key} (warning level) */
 node[emergency=fire_hydrant][!fire_hydrant:type],
-way[boundary=administrative][!admin_level],
+way     [boundary=administrative][!admin_level],
 relation[boundary=administrative][!admin_level],
-relation[route=bicycle][!network][type=route],
-relation[route=hiking][!network][type=route],
-relation[route=foot][!network][type=route],
-relation[route=horse][!network][type=route],
+relation[route=bicycle ][!network][type=route],
+relation[route=hiking  ][!network][type=route],
+relation[route=foot    ][!network][type=route],
+relation[route=horse   ][!network][type=route],
 relation[route=piste][!piste:type][type=route],
-relation[route=ski][!piste:type][type=route],
+relation[route=ski  ][!piste:type][type=route],
 *[tourism=information][!information],
 *[leisure=pitch][!sport],
 *[aeroway=terminal][!building],
 *[power=generator][!generator:source],
+*[amenity=bank     ][!operator],
+*[amenity=cafe     ][!operator],
+*[amenity=cinema   ][!operator],
+*[amenity=fast_food][!operator],
+*[amenity=fuel     ][!operator],
+*[amenity=pharmacy ][!operator],
+*[mountain_pass=yes][!ele],
+*[natural=peak     ][!ele],
 *[amenity=social_facility][!social_facility],
+*[amenity=place_of_worship][!denomination],
 *[amenity=place_of_worship][!religion] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
   group: tr("missing tag");
@@ -351,7 +361,7 @@ way[highway=footway][cycleway=lane] {
   group: tr("suspicious tag combination");
 }
 
-node[amenity][amenity =~ /^(restaurant|cafe|fast_food)$/][!name][noname!=yes] {
+*[amenity][amenity =~ /^(restaurant|cafe|fast_food|pub|place_of_worship|school|university|hospital|library|theatre|courthouse|bank|cinema|pharmacy|fuel)$/][!name][noname!=yes] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{2.key}");
   group: tr("missing tag");
   assertMatch: "node amenity=restaurant";
