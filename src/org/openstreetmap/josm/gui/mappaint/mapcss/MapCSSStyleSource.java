@@ -52,7 +52,6 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyValueCondition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.PseudoClassCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
@@ -332,7 +331,7 @@ public class MapCSSStyleSource extends StyleSource {
                     }
                 } else if (c instanceof KeyValueCondition) {
                     KeyValueCondition keyValueCondition = (KeyValueCondition) c;
-                    if (!Op.NEGATED_OPS.contains(keyValueCondition.op)) {
+                    if (keyValueCondition.requiresExactKeyMatch()) {
                         key = keyValueCondition.k;
                     }
                 }
