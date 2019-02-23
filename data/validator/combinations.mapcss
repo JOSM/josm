@@ -118,7 +118,7 @@ way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
 
 /* {0.tag} without {1.key} (warning level) */
 node[emergency=fire_hydrant][!fire_hydrant:type],
-way     [boundary=administrative][!admin_level],
+way[     boundary=administrative][!admin_level],
 relation[boundary=administrative][!admin_level],
 relation[route=bicycle ][!network][type=route],
 relation[route=hiking  ][!network][type=route],
