@@ -14,6 +14,13 @@ interface IHelpBrowser {
     String getUrl();
 
     /**
+     * Sets the current URL.
+     * @param url the current URL
+     * @since 14807
+     */
+    void setUrl(String url);
+
+    /**
      * Replies the browser history.
      * @return the browser history
      */
