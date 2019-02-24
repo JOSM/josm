@@ -60,6 +60,11 @@ public class HelpBrowserTest {
             }
 
             @Override
+            public void setUrl(String url) {
+                this.url = url;
+            }
+
+            @Override
             public HelpBrowserHistory getHistory() {
                 return history;
             }
