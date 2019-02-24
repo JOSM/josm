@@ -452,6 +452,7 @@ way[type=palm] {
 *[amenity=yes],
 *[leisure=yes],
 *[shop="*"],
+*[shop=yes][amenity!=fuel],
 *[craft=yes],
 *[service=yes],
 *[place=yes] {
