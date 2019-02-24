@@ -469,7 +469,7 @@ way[type=palm] {
   fixRemove: "{1.key}";
 }
 
-way[footway=/both|right|left|no|none/] {
+way[footway =~ /^(both|right|left|no|none)$/] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   group: tr("deprecated tagging");
   fixChangeKey: "footway => sidewalk";
