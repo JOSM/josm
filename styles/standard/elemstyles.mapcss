@@ -4498,9 +4498,14 @@ node[mountain_pass?] {
 /* boundary tags */
 /*****************/
 
+relation[boundary=protected_area] > way::core_boundary,
+relation[boundary=administrative] > way::core_boundary,
+relation[boundary=postal_code] > way::core_boundary,
+relation[boundary=political] > way::core_boundary,
+relation[boundary=maritime] > way::core_boundary,
+relation[boundary=national_park] > way::core_boundary,
 way[boundary=protected_area]::core_boundary,
 way[boundary=administrative]::core_boundary,
-relation[boundary=administrative] > way::core_boundary,
 way[boundary=postal_code]::core_boundary,
 way[boundary=political]::core_boundary,
 way[boundary=maritime]::core_boundary,
