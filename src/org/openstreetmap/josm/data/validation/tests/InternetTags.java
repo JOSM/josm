@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -64,11 +66,7 @@ public class InternetTags extends Test {
     private boolean doTest(OsmPrimitive p, String k, String[] keys, AbstractValidator validator, int code) {
         for (String i : keys) {
             if (i.equals(k)) {
-                TestError error = validateTag(p, k, validator, code);
-                if (error != null) {
-                    errors.add(error);
-                }
-                break;
+                return errors.addAll(validateTag(p, k, validator, code));
             }
         }
         return false;
@@ -82,8 +80,9 @@ public class InternetTags extends Test {
      * @param code The error code to set if the validation fails
      * @return The error if the validation fails, {@code null} otherwise
      * @since 7824
+     * @since 14803 (return type)
      */
-    public TestError validateTag(OsmPrimitive p, String k, AbstractValidator validator, int code) {
+    public List<TestError> validateTag(OsmPrimitive p, String k, AbstractValidator validator, int code) {
         return doValidateTag(p, k, null, validator, code);
     }
 
@@ -96,29 +95,31 @@ public class InternetTags extends Test {
      * @param code The error code to set if the validation fails
      * @return The error if the validation fails, {@code null} otherwise
      */
-    private TestError doValidateTag(OsmPrimitive p, String k, String v, AbstractValidator validator, int code) {
-        TestError error = null;
-        String value = v != null ? v : p.get(k);
-        if (!validator.isValid(value)) {
-            Supplier<Command> fix = null;
-            String errMsg = validator.getErrorMessage();
-            if (tr("URL contains an invalid protocol: {0}", (String) null).equals(errMsg)) {
-                // Special treatment to allow URLs without protocol. See UrlValidator#isValid
-                String proto = validator instanceof EmailValidator ? "mailto://" : "http://";
-                return doValidateTag(p, k, proto+value, validator, code);
-            } else if (tr("URL contains an invalid authority: {0}", (String) null).equals(errMsg)
-                    && value.contains("\\") && validator.isValid(value.replaceAll("\\\\", "/"))) {
-                // Special treatment to autofix URLs with backslashes. See UrlValidator#isValid
-                errMsg = tr("URL contains backslashes instead of slashes");
-                fix = () -> new ChangePropertyCommand(p, k, value.replaceAll("\\\\", "/"));
+    private List<TestError> doValidateTag(OsmPrimitive p, String k, String v, AbstractValidator validator, int code) {
+        List<TestError> errors = new ArrayList<>();
+        String values = v != null ? v : p.get(k);
+        for (String value : values.split(";")) {
+            if (!validator.isValid(value)) {
+                Supplier<Command> fix = null;
+                String errMsg = validator.getErrorMessage();
+                if (tr("URL contains an invalid protocol: {0}", (String) null).equals(errMsg)) {
+                    // Special treatment to allow URLs without protocol. See UrlValidator#isValid
+                    String proto = validator instanceof EmailValidator ? "mailto://" : "http://";
+                    return doValidateTag(p, k, proto+value, validator, code);
+                } else if (tr("URL contains an invalid authority: {0}", (String) null).equals(errMsg)
+                        && value.contains("\\") && validator.isValid(value.replaceAll("\\\\", "/"))) {
+                    // Special treatment to autofix URLs with backslashes. See UrlValidator#isValid
+                    errMsg = tr("URL contains backslashes instead of slashes");
+                    fix = () -> new ChangePropertyCommand(p, k, value.replaceAll("\\\\", "/"));
+                }
+                errors.add(TestError.builder(this, Severity.WARNING, code)
+                            .message(validator.getValidatorName(), marktr("''{0}'': {1}"), k, errMsg)
+                            .primitives(p)
+                            .fix(fix)
+                            .build());
             }
-            error = TestError.builder(this, Severity.WARNING, code)
-                    .message(validator.getValidatorName(), marktr("''{0}'': {1}"), k, errMsg)
-                    .primitives(p)
-                    .fix(fix)
-                    .build();
         }
-        return error;
+        return errors;
     }
 
     private void test(OsmPrimitive p) {
