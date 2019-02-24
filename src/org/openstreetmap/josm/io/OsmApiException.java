@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Exception thrown when a communication error occurs when accessing the <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">OSM API</a>.
@@ -31,10 +32,11 @@ public class OsmApiException extends OsmTransferException {
     public OsmApiException(int responseCode, String errorHeader, String errorBody, String accessedUrl, String login, String contentType) {
         this.responseCode = responseCode;
         this.errorHeader = errorHeader;
-        this.errorBody = errorBody;
+        this.errorBody = Utils.strip(errorBody);
         this.accessedUrl = accessedUrl;
         this.login = login;
         this.contentType = contentType;
+        checkHtmlBody();
     }
 
     /**
@@ -110,6 +112,15 @@ public class OsmApiException extends OsmTransferException {
      */
     public OsmApiException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    private void checkHtmlBody() {
+        if (errorBody != null && errorBody.matches("^<.*>.*<.*>$")) {
+            setContentType("text/html");
+            if (!errorBody.contains("<html>")) {
+                errorBody = "<html>" + errorBody + "</html>";
+            }
+        }
     }
 
     /**
@@ -266,5 +277,14 @@ public class OsmApiException extends OsmTransferException {
      */
     public final String getContentType() {
         return contentType;
+    }
+
+    /**
+     * Determines if the exception has {@code text/html} as content type.
+     * @return {@code true} if the exception has {@code text/html} as content type.
+     * @since xxx
+     */
+    public final boolean isHtml() {
+        return "text/html".equals(contentType);
     }
 }

@@ -334,7 +334,7 @@ public final class ExceptionDialogUtil {
     public static void explainGenericHttpException(OsmApiException e) {
         String body = e.getErrorBody();
         Object msg = null;
-        if ("text/html".equals(e.getContentType()) && body != null && body.startsWith("<") && body.contains("<html>")) {
+        if (e.isHtml() && body != null && body.startsWith("<") && body.contains("<html>")) {
             msg = new HtmlPanel(body);
         } else {
             msg = ExceptionUtil.explainGeneric(e);
