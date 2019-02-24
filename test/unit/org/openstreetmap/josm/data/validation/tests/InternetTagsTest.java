@@ -2,9 +2,12 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,6 +53,14 @@ public class InternetTagsTest {
     }
 
     /**
+     * Test multiple URLs.
+     */
+    @Test
+    public void testMultipleUrls() {
+        testUrl("url", "http://www.domain-a.com;https://www.domain-b.com", true); // multiple values
+    }
+
+    /**
      * Test of invalid URLs.
      */
     @Test
@@ -81,26 +92,27 @@ public class InternetTagsTest {
      */
     @Test
     public void testInvalidSlashes() {
-        TestError error = testUrl("website", "http:\\\\www.sjoekurs.no", false);
+        TestError error = testUrl("website", "http:\\\\www.sjoekurs.no", false).get(0);
         assertEquals(tr("''{0}'': {1}", "website", tr("URL contains backslashes instead of slashes")), error.getDescription());
         assertNotNull(error.getFix());
     }
 
-    private static TestError testKey(String key, String value, boolean valid, AbstractValidator validator, int code) {
-        TestError error = TEST.validateTag(TestUtils.addFakeDataSet(TestUtils.newNode(key+"="+value+"")), key, validator, code);
+    private static List<TestError> testKey(String key, String value, boolean valid, AbstractValidator validator, int code) {
+        List<TestError> errors = TEST.validateTag(TestUtils.addFakeDataSet(TestUtils.newNode(key+"="+value+"")), key, validator, code);
         if (valid) {
-            assertNull(error != null ? error.getMessage() : null, error);
+            assertTrue(errors.isEmpty());
         } else {
-            assertNotNull(error);
+            assertFalse(errors.isEmpty());
+            assertNotNull(errors.get(0));
         }
-        return error;
+        return errors;
     }
 
-    private static TestError testUrl(String key, String value, boolean valid) {
+    private static List<TestError> testUrl(String key, String value, boolean valid) {
         return testKey(key, value, valid, UrlValidator.getInstance(), InternetTags.INVALID_URL);
     }
 
-    private static TestError testEmail(String key, String value, boolean valid) {
+    private static List<TestError> testEmail(String key, String value, boolean valid) {
         return testKey(key, value, valid, EmailValidator.getInstance(), InternetTags.INVALID_EMAIL);
     }
 }
