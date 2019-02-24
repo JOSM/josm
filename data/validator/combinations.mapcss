@@ -252,6 +252,12 @@ way[highway=footway][bicycle=designated] {
   group: tr("suspicious tag combination");
 }
 
+/* {0.tag} together with {1.tag} (error level) */
+relation[type=multipolygon][area=no] {
+  throwError: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+}
+
 /* {0.key} together with {1.key} (info level) */
 *[addr:street][addr:place] {
   throwOther: tr("{0} together with {1}", "{0.key}", "{1.key}");

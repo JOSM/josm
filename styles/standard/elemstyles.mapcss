@@ -1709,12 +1709,13 @@ node[leisure=water_park] {
     icon-image: "presets/leisure/water_park.svg";
     set icon_z17;
 }
-area[leisure=track][!area?!]:closed {
-    fill-color: leisuretrack#d4f4b9;
-}
 way[leisure=track] {
     width: 2;
     color: leisuretrack#d4f4b9;
+}
+way[leisure=track][area?],
+relation[leisure=track][!area?!]:closed {
+    fill-color: leisuretrack#d4f4b9;
 }
 node[leisure=track] {
     icon-image: "presets/sport/track.svg";
