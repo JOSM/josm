@@ -1377,3 +1377,11 @@ node[fire_hydrant:water_source] {
   fixChangeKey: "fire_hydrant:water_source => water_source";
   group: tr("deprecated tagging");
 }
+
+/* #17383 */
+node[natural=waterfall] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "waterway=waterfall";
+  fixChangeKey: "natural => waterway";
+  group: tr("deprecated tagging");
+}
