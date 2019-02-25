@@ -469,11 +469,6 @@ way[type=palm] {
   fixRemove: "{1.key}";
 }
 
-way[footway =~ /^(both|right|left|no|none)$/] {
-  throwWarning: tr("{0} is deprecated", "{0.tag}");
-  group: tr("deprecated tagging");
-  fixChangeKey: "footway => sidewalk";
-}
 way[sidewalk=yes] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by ''left'', ''right'' or ''both''.", "{0.key}", "{0.value}");
 }
@@ -978,10 +973,18 @@ node[type][pipeline=marker] {
   group: tr("deprecated tagging");
 }
 
-/* #12431, #17379 */
-*[amenity=swimming_pool],
+/* #12431 */
+*[amenity=swimming_pool] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leisure=swimming_pool";
+  group: tr("deprecated tagging");
+  fixChangeKey: "amenity => leisure";
+}
+
+/* #17379 */
 *[amenity=sauna] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leisure=sauna";
   group: tr("deprecated tagging");
   fixChangeKey: "amenity => leisure";
 }
@@ -1379,7 +1382,7 @@ node[fire_hydrant:water_source] {
 }
 
 /* #17383 */
-node[natural=waterfall] {
+*[natural=waterfall] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "waterway=waterfall";
   fixChangeKey: "natural => waterway";
