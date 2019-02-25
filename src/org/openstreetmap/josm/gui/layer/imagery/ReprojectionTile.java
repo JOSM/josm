@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageWarp;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Tile class that stores a reprojected version of the original tile.
@@ -165,14 +166,18 @@ public class ReprojectionTile extends Tile {
         } else {
             transform = pointTransform;
         }
-        BufferedImage imageOut = ImageWarp.warp(
-                imageIn, getDimension(pbTargetAligned, scale),
-                transform, interpolation);
-        synchronized (this) {
-            this.image = imageOut;
-            this.anchor = new TileAnchor(p00Img, p11Img);
-            this.nativeScale = scale;
-            this.maxZoomReached = scaleFix != null;
+        Dimension targetDim = getDimension(pbTargetAligned, scale);
+        try {
+            BufferedImage imageOut = ImageWarp.warp(imageIn, targetDim, transform, interpolation);
+            synchronized (this) {
+                this.image = imageOut;
+                this.anchor = new TileAnchor(p00Img, p11Img);
+                this.nativeScale = scale;
+                this.maxZoomReached = scaleFix != null;
+            }
+        } catch (NegativeArraySizeException e) {
+            // See #17387 - https://bugs.openjdk.java.net/browse/JDK-4690476
+            throw BugReport.intercept(e).put("targetDim", targetDim);
         }
     }
 

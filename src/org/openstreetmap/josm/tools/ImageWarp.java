@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -180,7 +181,7 @@ public final class ImageWarp {
                             }
                             break;
                         default:
-                            throw new AssertionError();
+                            throw new AssertionError(Objects.toString(interpolation));
                     }
                     imgTarget.setRGB(i, j, rgba);
                 }
