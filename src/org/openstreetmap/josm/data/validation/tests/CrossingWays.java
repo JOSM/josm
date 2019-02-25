@@ -37,7 +37,7 @@ public abstract class CrossingWays extends Test {
     static final String WATERWAY = "waterway";
     static final String LANDUSE = "landuse";
 
-    private static final class MessageHelper {
+    static final class MessageHelper {
         final String message;
         final int code;
 
