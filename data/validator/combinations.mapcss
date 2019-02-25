@@ -131,7 +131,6 @@ relation[route=ski  ][!piste:type][type=route],
 *[aeroway=terminal][!building],
 *[power=generator][!generator:source],
 *[amenity=social_facility][!social_facility],
-*[amenity=place_of_worship][!denomination],
 *[amenity=place_of_worship][!religion] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
   group: tr("missing tag");
@@ -158,6 +157,7 @@ way[power=cable                ][!voltage],
 *[amenity=fuel                 ][!operator],
 *[mountain_pass=yes            ][!ele],
 *[natural=peak                 ][!ele],
+*[amenity=place_of_worship     ][!denomination],
 *[amenity=parking              ][!parking],
 *[amenity=parking_entrance     ][!parking] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
