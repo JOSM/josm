@@ -34,7 +34,7 @@ public class AllFormatsImporter extends FileImporter {
         StringBuilder ext = new StringBuilder();
         while (imp.hasNext()) {
             FileImporter fi = imp.next();
-            if (fi instanceof AllFormatsImporter) {
+            if (fi instanceof AllFormatsImporter || fi.filter == null) {
                 continue;
             }
             ext.append(fi.filter.getExtensions()).append(',');
