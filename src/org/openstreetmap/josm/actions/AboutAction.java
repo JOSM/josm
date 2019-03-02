@@ -12,8 +12,6 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -68,8 +66,7 @@ public final class AboutAction extends JosmAction {
             KeyEvent.VK_F1, Shortcut.SHIFT), true);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    protected JPanel buildAboutPanel() {
         final JTabbedPane about = new JTabbedPane();
 
         Version version = Version.getInstance();
@@ -132,7 +129,6 @@ public final class AboutAction extends JosmAction {
             addInstallationLine(inst, entry.getValue(), entry.getKey());
         }
 
-
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
         about.addTab(tr("Revision"), createScrollPane(revision));
@@ -153,6 +149,12 @@ public final class AboutAction extends JosmAction {
         panel.add(new JLabel("", ImageProvider.get("logo.svg", ImageProvider.ImageSizes.ABOUT_LOGO),
                 JLabel.CENTER), GBC.std().insets(0, 5, 0, 0));
         panel.add(about, GBC.std().fill());
+        return panel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JPanel panel = buildAboutPanel();
 
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
         ExtendedDialog dlg = new ExtendedDialog(MainApplication.getMainFrame(), tr("About JOSM..."), tr("OK"), tr("Report bug"));
@@ -171,7 +173,6 @@ public final class AboutAction extends JosmAction {
         final String dir;
 
         OpenDirAction(String dir) {
-            super();
             putValue(Action.NAME, "...");
             this.dir = dir;
             setEnabled(dir != null && new File(dir).isDirectory());
@@ -214,15 +215,7 @@ public final class AboutAction extends JosmAction {
     }
 
     private static JLabel createImageLink(String tooltip, String icon, final String link) {
-        JLabel label = new JLabel(ImageProvider.get("dialogs/about", icon, ImageSizes.LARGEICON));
-        label.setToolTipText(tooltip);
-        label.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                OpenBrowser.displayUrl(link);
-            }
-        });
-        return label;
+        return new UrlLabel(link, tooltip, ImageProvider.get("dialogs/about", icon, ImageSizes.LARGEICON));
     }
 
     /**

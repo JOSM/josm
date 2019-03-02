@@ -7,6 +7,7 @@ import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -27,8 +28,7 @@ public class UrlLabel extends JLabel implements MouseListener {
      * Constructs a new empty {@code UrlLabel}.
      */
     public UrlLabel() {
-        addMouseListener(this);
-        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        init("", "", 0);
     }
 
     /**
@@ -61,10 +61,26 @@ public class UrlLabel extends JLabel implements MouseListener {
      * Constructs a new {@code UrlLabel} for the given URL, description and font increase.
      * @param url The URL to use
      * @param description The description to display
+     * @param image The image to be displayed by the label instead of text
+     * @since 14822
+     */
+    public UrlLabel(String url, String description, Icon image) {
+        super(image);
+        init(url, description, 0);
+    }
+
+    /**
+     * Constructs a new {@code UrlLabel} for the given URL, description and font increase.
+     * @param url The URL to use
+     * @param description The description to display
      * @param fontPlus The font increase in 1/72 of an inch units.
      */
     public UrlLabel(String url, String description, int fontPlus) {
-        this();
+        init(url, description, fontPlus);
+    }
+
+    private void init(String url, String description, int fontPlus) {
+        addMouseListener(this);
         setUrl(url);
         setDescription(description);
         if (fontPlus != 0) {
@@ -75,14 +91,21 @@ public class UrlLabel extends JLabel implements MouseListener {
 
     protected final void refresh() {
         if (url != null && !url.isEmpty()) {
-            setText("<html><a href=\""+url+"\">"+description+"</a></html>");
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            setToolTipText(String.format("<html>%s<br/>%s</html>", url, tr("Right click = copy to clipboard")));
+            refresh("<html><a href=\""+url+"\">"+description+"</a></html>",
+                    Cursor.getPredefinedCursor(Cursor.HAND_CURSOR),
+                    String.format("<html>%s<br/>%s</html>", url, tr("Right click = copy to clipboard")));
         } else {
-            setText("<html>" + description + "</html>");
-            setCursor(null);
-            setToolTipText(null);
+            refresh("<html>" + description + "</html>", null, null);
         }
+    }
+
+    private void refresh(String text, Cursor cursor, String tooltip) {
+        boolean hasImage = getIcon() != null;
+        if (!hasImage) {
+            setText(text);
+        }
+        setCursor(cursor);
+        setToolTipText(tooltip);
     }
 
     /**
