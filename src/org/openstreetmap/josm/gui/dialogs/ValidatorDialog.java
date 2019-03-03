@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -125,23 +126,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
         selectButton.setEnabled(false);
         buttons.add(selectButton);
 
-        lookupButton = new SideButton(new AbstractAction() {
-            {
-                putValue(NAME, tr("Lookup"));
-                putValue(SHORT_DESCRIPTION, tr("Looks up the selected primitives in the error list."));
-                new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-                if (ds == null) {
-                    return;
-                }
-                tree.selectRelatedErrors(ds.getSelected());
-            }
-        });
-
+        lookupButton = new SideButton(new LookupAction());
         buttons.add(lookupButton);
 
         buttons.add(new SideButton(validateAction));
@@ -178,6 +163,47 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             ignoreButton = null;
         }
         createLayout(tree, true, buttons);
+    }
+
+    /**
+     * The action to lookup the selection in the error tree.
+     */
+     class LookupAction extends AbstractAction implements DataSelectionListener {
+
+        LookupAction() {
+            putValue(NAME, tr("Lookup"));
+            putValue(SHORT_DESCRIPTION, tr("Looks up the selected primitives in the error list."));
+            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
+            SelectionEventManager.getInstance().addSelectionListener(this);
+            updateEnabledState();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds == null) {
+                return;
+            }
+            tree.selectRelatedErrors(ds.getSelected());
+        }
+
+        protected void updateEnabledState() {
+            boolean found = false;
+            for (TestError e : tree.getErrors()) {
+                for (OsmPrimitive p : e.getPrimitives()) {
+                    if (p.isSelected()) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            setEnabled(found);
+        }
+
+        @Override
+        public void selectionChanged(SelectionChangeEvent event) {
+            updateEnabledState();
+        }
     }
 
     @Override
@@ -608,5 +634,14 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
 
     private static void invalidateValidatorLayers() {
         MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
+    }
+
+    @Override
+    public void destroy() {
+        if (lookupButton != null && lookupButton.getAction() instanceof DataSelectionListener) {
+            Action a = lookupButton.getAction();
+            SelectionEventManager.getInstance().removeSelectionListener((DataSelectionListener) a);
+        }
+        super.destroy();
     }
 }

@@ -348,12 +348,16 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * @param primitives collection of primitives
      */
     public void selectRelatedErrors(final Collection<OsmPrimitive> primitives) {
-        final Collection<TreePath> paths = new ArrayList<>();
+        final List<TreePath> paths = new ArrayList<>();
         walkAndSelectRelatedErrors(new TreePath(getRoot()), new HashSet<>(primitives)::contains, paths);
         getSelectionModel().clearSelection();
         for (TreePath path : paths) {
             expandPath(path);
             getSelectionModel().addSelectionPath(path);
+        }
+        // make sure that first path is visible
+        if (!paths.isEmpty()) {
+            scrollPathToVisible(paths.get(0));
         }
     }
 
