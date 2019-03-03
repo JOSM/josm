@@ -3621,9 +3621,9 @@
                 <!-- <combo key="couplings:type" text="Coupling standard" values="Bayonet,Barcelona,Guillemin,Klaue,Sprawny,Storz,UNI" /> capitalized values which is contrary to general tagging conventions -->
                 <text key="couplings:diameters" text="Each coupling diameter (separated by ;)" />
                 <space />
-                <combo key="colour" text="Colour" values="blue,green,red,yellow,grey" />
-                <combo key="bonnet:colour" text="Colour of the top section (bonnet)" values="blue,green,red,yellow,grey" />
-                <combo key="cap:colour" text="Colour of the caps" values="blue,green,red,yellow,grey" />
+                <combo key="colour" text="Colour" values="blue,green,red,yellow,grey" values_context="color" />
+                <combo key="bonnet:colour" text="Colour of the top section (bonnet)" values="blue,green,red,yellow,grey" values_context="color" />
+                <combo key="cap:colour" text="Colour of the caps" values="blue,green,red,yellow,grey" values_context="color" />
                 <space />
                 <text key="manufacturer" text="Manufacturer" />
                 <text key="operator" text="Operator" />
