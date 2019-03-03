@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -63,6 +64,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
@@ -85,6 +87,8 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
     private final SideButton fixButton;
     /** The ignore button */
     private final SideButton ignoreButton;
+    /** The reset ignorelist button */
+    private final SideButton ignorelistManagement;
     /** The select button */
     private final SideButton selectButton;
     /** The lookup button */
@@ -125,23 +129,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
         selectButton.setEnabled(false);
         buttons.add(selectButton);
 
-        lookupButton = new SideButton(new AbstractAction() {
-            {
-                putValue(NAME, tr("Lookup"));
-                putValue(SHORT_DESCRIPTION, tr("Looks up the selected primitives in the error list."));
-                new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-                if (ds == null) {
-                    return;
-                }
-                tree.selectRelatedErrors(ds.getSelected());
-            }
-        });
-
+        lookupButton = new SideButton(new LookupAction());
         buttons.add(lookupButton);
 
         buttons.add(new SideButton(validateAction));
@@ -174,10 +162,67 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             });
             ignoreButton.setEnabled(false);
             buttons.add(ignoreButton);
+
+            ignorelistManagement = new SideButton(new AbstractAction() {
+                {
+                    putValue(NAME, tr("Manage Ignore"));
+                    putValue(SHORT_DESCRIPTION, tr("Manage the ignore list"));
+                    new ImageProvider("dialogs", "fix").getResource().attachImageIcon(this, true);
+                }
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new ValidatorListManagementDialog("Ignore");
+                }
+            });
+            buttons.add(ignorelistManagement);
         } else {
             ignoreButton = null;
+            ignorelistManagement = null;
         }
+
         createLayout(tree, true, buttons);
+    }
+
+    /**
+     * The action to lookup the selection in the error tree.
+     */
+    class LookupAction extends AbstractAction implements DataSelectionListener {
+
+        LookupAction() {
+            putValue(NAME, tr("Lookup"));
+            putValue(SHORT_DESCRIPTION, tr("Looks up the selected primitives in the error list."));
+            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
+            SelectionEventManager.getInstance().addSelectionListener(this);
+            updateEnabledState();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds == null) {
+                return;
+            }
+            tree.selectRelatedErrors(ds.getSelected());
+        }
+
+        protected void updateEnabledState() {
+            boolean found = false;
+            for (TestError e : tree.getErrors()) {
+                for (OsmPrimitive p : e.getPrimitives()) {
+                    if (p.isSelected()) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            setEnabled(found);
+        }
+
+        @Override
+        public void selectionChanged(SelectionChangeEvent event) {
+            updateEnabledState();
+        }
     }
 
     @Override
@@ -244,38 +289,41 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             }
 
             Object mainNodeInfo = node.getUserObject();
-            if (!(mainNodeInfo instanceof TestError)) {
-                Set<String> state = new HashSet<>();
-                // ask if the whole set should be ignored
-                if (asked == JOptionPane.DEFAULT_OPTION) {
-                    String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
-                    asked = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), tr("Ignore whole group or individual elements?"),
-                            tr("Ignoring elements"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                            a, a[1]);
-                }
-                if (asked == JOptionPane.YES_NO_OPTION) {
-                    ValidatorTreePanel.visitTestErrors(node, err -> {
-                        err.setIgnored(true);
-                        changed.set(true);
-                        state.add(node.getDepth() == 1 ? err.getIgnoreSubGroup() : err.getIgnoreGroup());
-                    }, processedNodes);
-                    for (String s : state) {
-                        OsmValidator.addIgnoredError(s);
+            final int depth = node.getDepth();
+            if (depth <= 1) {
+                if (!(mainNodeInfo instanceof TestError)) {
+                    Set<Pair<String, String>> state = new HashSet<>();
+                    // ask if the whole set should be ignored
+                    if (asked == JOptionPane.DEFAULT_OPTION) {
+                        String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
+                        asked = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), tr("Ignore whole group or individual elements?"),
+                                tr("Ignoring elements"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
+                                a, a[1]);
                     }
-                    continue;
-                } else if (asked == JOptionPane.CANCEL_OPTION || asked == JOptionPane.CLOSED_OPTION) {
-                    continue;
+                    if (asked == JOptionPane.YES_NO_OPTION) {
+                        ValidatorTreePanel.visitTestErrors(node, err -> {
+                            err.setIgnored(true);
+                            changed.set(true);
+                            state.add(new Pair<>(node.getDepth() == 1 ? err.getIgnoreSubGroup() : err.getIgnoreGroup(), err.getMessage()));
+                        }, processedNodes);
+                        for (Pair<String, String> s : state) {
+                            OsmValidator.addIgnoredError(s.a, s.b);
+                        }
+                        continue;
+                    } else if (asked == JOptionPane.CANCEL_OPTION || asked == JOptionPane.CLOSED_OPTION) {
+                        continue;
+                    }
                 }
-            }
 
-            ValidatorTreePanel.visitTestErrors(node, error -> {
-                String state = error.getIgnoreState();
-                if (state != null) {
-                    OsmValidator.addIgnoredError(state);
-                }
-                changed.set(true);
-                error.setIgnored(true);
-            }, processedNodes);
+                ValidatorTreePanel.visitTestErrors(node, error -> {
+                    String state = error.getIgnoreState();
+                    if (state != null) {
+                        OsmValidator.addIgnoredError(state, error.getMessage());
+                    }
+                    changed.set(true);
+                    error.setIgnored(true);
+                }, processedNodes);
+            }
         }
         if (changed.get()) {
             tree.resetErrors();
@@ -287,7 +335,6 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
     /**
      * Sets the selection of the map to the current selected items.
      */
-    @SuppressWarnings("unchecked")
     private void setSelectedItems() {
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (tree == null || ds == null)
@@ -347,7 +394,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             });
             selectButton.setEnabled(true);
             if (ignoreButton != null) {
-                ignoreButton.setEnabled(true);
+                ignoreButton.setEnabled(node.getDepth() <= 1);
             }
         }
 
@@ -605,5 +652,14 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
 
     private static void invalidateValidatorLayers() {
         MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
+    }
+
+    @Override
+    public void destroy() {
+        if (lookupButton != null && lookupButton.getAction() instanceof DataSelectionListener) {
+            Action a = lookupButton.getAction();
+            SelectionEventManager.getInstance().removeSelectionListener((DataSelectionListener) a);
+        }
+        super.destroy();
     }
 }
