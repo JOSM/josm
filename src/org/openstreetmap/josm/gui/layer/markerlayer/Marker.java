@@ -11,10 +11,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.ImageIcon;
 
@@ -78,26 +78,36 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
         // so per layer settings is useless. Anyway it's possible to specify marker layer pattern in Einstein preferences and maybe somebody
         // will make gui for it so I'm keeping it here
 
-        private static final Map<String, TemplateEntryProperty> CACHE = new ConcurrentHashMap<>();
+        private static final Map<String, TemplateEntryProperty> CACHE = new HashMap<>();
 
         public static TemplateEntryProperty forMarker(String layerName) {
             String key = "draw.rawgps.layer.wpt.pattern";
             if (layerName != null) {
-                return CACHE.computeIfAbsent(key + '.' + layerName, k -> new TemplateEntryProperty(k, "", forMarker(null)));
-            } else {
-                return CACHE.computeIfAbsent(key, k -> new TemplateEntryProperty(k, LABEL_PATTERN_AUTO, null));
+                key += '.' + layerName;
             }
+            TemplateEntryProperty result = CACHE.get(key);
+            if (result == null) {
+                String defaultValue = layerName == null ? LABEL_PATTERN_AUTO : "";
+                TemplateEntryProperty parent = layerName == null ? null : forMarker(null);
+                result = new TemplateEntryProperty(key, defaultValue, parent);
+                CACHE.put(key, result);
+            }
+            return result;
         }
 
         public static TemplateEntryProperty forAudioMarker(String layerName) {
             String key = "draw.rawgps.layer.audiowpt.pattern";
             if (layerName != null) {
-                return CACHE.computeIfAbsent(key + '.' + layerName, k ->
-                        new TemplateEntryProperty(k, "", forAudioMarker(null)));
-            } else {
-                return CACHE.computeIfAbsent(key, k ->
-                        new TemplateEntryProperty(k, "?{ '{name}' | '{desc}' | '{" + MARKER_FORMATTED_OFFSET + "}' }", null));
+                key += '.' + layerName;
             }
+            TemplateEntryProperty result = CACHE.get(key);
+            if (result == null) {
+                String defaultValue = layerName == null ? "?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }" : "";
+                TemplateEntryProperty parent = layerName == null ? null : forAudioMarker(null);
+                result = new TemplateEntryProperty(key, defaultValue, parent);
+                CACHE.put(key, result);
+            }
+            return result;
         }
 
         private final TemplateEntryProperty parent;
