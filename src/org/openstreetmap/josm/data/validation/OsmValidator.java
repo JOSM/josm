@@ -7,7 +7,6 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,9 +16,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -27,6 +29,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -88,8 +94,7 @@ public final class OsmValidator {
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     private static double griddetail;
 
-    private static final Collection<String> ignoredErrors = new TreeSet<>();
-
+    private static final SortedMap<String, String> ignoredErrors = new TreeMap<>();
     /**
      * All registered tests
      */
@@ -169,7 +174,7 @@ public final class OsmValidator {
     public static void initialize() {
         checkValidatorDir();
         initializeGridDetail();
-        loadIgnoredErrors(); //FIXME: load only when needed
+        loadIgnoredErrors();
     }
 
     /**
@@ -204,11 +209,18 @@ public final class OsmValidator {
     private static void loadIgnoredErrors() {
         ignoredErrors.clear();
         if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
+            Config.getPref().getListOfMaps(ValidatorPrefHelper.PREF_IGNORELIST).forEach(ignoredErrors::putAll);
             Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
             try {
                 if (path.toFile().exists()) {
                     try {
-                        ignoredErrors.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
+                        TreeSet<String> treeSet = new TreeSet<>();
+                        treeSet.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
+                        treeSet.forEach(ignore -> ignoredErrors.putIfAbsent(ignore, ""));
+
+                        saveIgnoredErrors();
+                        Files.deleteIfExists(path);
+
                     } catch (FileNotFoundException e) {
                         Logging.debug(Logging.getErrorMessage(e));
                     } catch (IOException e) {
@@ -228,7 +240,47 @@ public final class OsmValidator {
      * @see TestError#getIgnoreSubGroup()
      */
     public static void addIgnoredError(String s) {
-        ignoredErrors.add(s);
+        addIgnoredError(s, "");
+    }
+
+    /**
+     * Adds an ignored error
+     * @param s The ignore group / sub group name
+     * @param description What the error actually is
+     * @see TestError#getIgnoreGroup()
+     * @see TestError#getIgnoreSubGroup()
+     */
+    public static void addIgnoredError(String s, String description) {
+        if (description == null) description = "";
+        ignoredErrors.put(s, description);
+    }
+
+    /**
+     *  Make sure that we don't keep single entries for a "group ignore" or
+     *  multiple different entries for the single entries that are in the same group.
+     */
+    private static void cleanupIgnoredErrors() {
+        if (ignoredErrors.size() > 1) {
+            List<String> toRemove = new ArrayList<>();
+
+            Iterator<Entry<String, String>> iter = ignoredErrors.entrySet().iterator();
+            Entry<String, String> last = iter.next();
+            while (iter.hasNext()) {
+                Entry<String, String> entry = iter.next();
+                if (entry.getKey().startsWith(last.getKey())) {
+                    toRemove.add(entry.getKey());
+                } else {
+                    last = entry;
+                }
+            }
+            toRemove.forEach(ignoredErrors::remove);
+        }
+
+        Map<String, String> tmap = buildIgnore(buildJTreeList());
+        if (tmap != null && !tmap.isEmpty()) {
+            ignoredErrors.clear();
+            ignoredErrors.putAll(tmap);
+        }
     }
 
     /**
@@ -237,20 +289,147 @@ public final class OsmValidator {
      * @return <code>true</code> to ignore that error
      */
     public static boolean hasIgnoredError(String s) {
-        return ignoredErrors.contains(s);
+        return ignoredErrors.containsKey(s);
     }
 
     /**
-     * Saves the names of the ignored errors to a file
+     * Get the list of all ignored errors
+     * @return The <code>Collection&ltString&gt</code> of errors that are ignored
+     */
+    public static SortedMap<String, String> getIgnoredErrors() {
+        return ignoredErrors;
+    }
+
+    /**
+     * Build a JTree with a list
+     * @return &lttype&gtlist as a {@code JTree}
+     */
+    public static JTree buildJTreeList() {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(tr("Ignore list"));
+        for (Entry<String, String> e: ignoredErrors.entrySet()) {
+            String key = e.getKey();
+            String value = e.getValue();
+            ArrayList<String> ignoredWayList = new ArrayList<>();
+            String[] osmobjects = key.split(":(r|w|n)_");
+            for (int i = 1; i < osmobjects.length; i++) {
+                String osmid = osmobjects[i];
+                if (osmid.matches("^[0-9]+$")) {
+                    osmid = '_' + osmid;
+                    int index = key.indexOf(osmid);
+                    if (index < key.lastIndexOf(']')) continue;
+                    char type = key.charAt(index - 1);
+                    ignoredWayList.add(type + osmid);
+                }
+            }
+            for (String osmignore : ignoredWayList) {
+                key = key.replace(':' + osmignore, "");
+            }
+
+            DefaultMutableTreeNode trunk;
+            DefaultMutableTreeNode branch;
+
+            if (value != null && !value.isEmpty()) {
+                trunk = inTree(root, value);
+                branch = inTree(trunk, key);
+                trunk.add(branch);
+            } else {
+                trunk = inTree(root, key);
+                branch = trunk;
+            }
+            ignoredWayList.forEach(osmignore -> branch.add(new DefaultMutableTreeNode(osmignore)));
+
+            root.add(trunk);
+        }
+        return new JTree(root);
+    }
+
+    private static DefaultMutableTreeNode inTree(DefaultMutableTreeNode root, String name) {
+        @SuppressWarnings("unchecked")
+        Enumeration<TreeNode> trunks = root.children();
+        while (trunks.hasMoreElements()) {
+            TreeNode ttrunk = trunks.nextElement();
+            if (ttrunk instanceof DefaultMutableTreeNode) {
+                DefaultMutableTreeNode trunk = (DefaultMutableTreeNode) ttrunk;
+                if (name.equals(trunk.getUserObject())) {
+                    return trunk;
+                }
+            }
+        }
+        return new DefaultMutableTreeNode(name);
+    }
+
+    /**
+     * Build a {@code HashMap} from a tree of ignored errors
+     * @param tree The JTree of ignored errors
+     * @return A {@code HashMap} of the ignored errors for comparison
+     */
+    public static Map<String, String> buildIgnore(JTree tree) {
+        TreeModel model = tree.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+        return buildIgnore(model, root);
+    }
+
+    private static Map<String, String> buildIgnore(TreeModel model, DefaultMutableTreeNode node) {
+        HashMap<String, String> rHashMap = new HashMap<>();
+
+        String osmids = node.getUserObject().toString();
+        String description = "";
+
+        if (!model.getRoot().equals(node)) {
+            description = ((DefaultMutableTreeNode) node.getParent()).getUserObject().toString();
+        } else {
+            description = node.getUserObject().toString();
+        }
+        if (tr("Ignore list").equals(description)) description = "";
+        if (!osmids.matches("^[0-9]+(_.*|$)")) {
+            description = osmids;
+            osmids = "";
+        }
+
+
+        for (int i = 0; i < model.getChildCount(node); i++) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) model.getChild(node, i);
+            if (model.getChildCount(child) == 0) {
+                String ignoreName = child.getUserObject().toString();
+                if (ignoreName.matches("^(r|w|n)_.*")) {
+                    osmids += ":" + child.getUserObject().toString();
+                } else if (ignoreName.matches("^[0-9]+(_.*|)$")) {
+                    rHashMap.put(ignoreName, description);
+                }
+            } else {
+                rHashMap.putAll(buildIgnore(model, child));
+            }
+        }
+        if (!osmids.isEmpty() && osmids.indexOf(':') != 0) rHashMap.put(osmids, description);
+        return rHashMap;
+    }
+
+    /**
+     * Reset the error list by deleting {@code validator.ignorelist}
+     */
+    public static void resetErrorList() {
+        saveIgnoredErrors();
+        Config.getPref().putListOfMaps(ValidatorPrefHelper.PREF_IGNORELIST, null);
+        OsmValidator.initialize();
+    }
+
+    /**
+     * Saves the names of the ignored errors to a preference
      */
     public static void saveIgnoredErrors() {
-        try (PrintWriter out = new PrintWriter(new File(getValidatorDir(), "ignorederrors"), StandardCharsets.UTF_8.name())) {
-            for (String e : ignoredErrors) {
-                out.println(e);
+        List<Map<String, String>> list = new ArrayList<>();
+        cleanupIgnoredErrors();
+        list.add(ignoredErrors);
+        int i = 0;
+        while (i < list.size()) {
+            if (list.get(i) == null || list.get(i).isEmpty()) {
+                list.remove(i);
+                continue;
             }
-        } catch (IOException e) {
-            Logging.error(e);
+            i++;
         }
+        if (list.isEmpty()) list = null;
+        Config.getPref().putListOfMaps(ValidatorPrefHelper.PREF_IGNORELIST, list);
     }
 
     /**

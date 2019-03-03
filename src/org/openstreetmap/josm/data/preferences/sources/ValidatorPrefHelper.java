@@ -44,6 +44,9 @@ public class ValidatorPrefHelper extends SourcePrefHelper {
     /** The preferences for ignored severity other */
     public static final BooleanProperty PREF_OTHER = new BooleanProperty(PREFIX + ".other", false);
 
+    /** The preferences key for the ignorelist */
+    public static final String PREF_IGNORELIST = PREFIX + ".ignorelist";
+
     /**
      * The preferences key for enabling the permanent filtering
      * of the displayed errors in the tree regarding the current selection

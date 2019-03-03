@@ -64,6 +64,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
@@ -86,6 +87,8 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
     private final SideButton fixButton;
     /** The ignore button */
     private final SideButton ignoreButton;
+    /** The reset ignorelist button */
+    private final SideButton ignorelistManagement;
     /** The select button */
     private final SideButton selectButton;
     /** The lookup button */
@@ -159,16 +162,32 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             });
             ignoreButton.setEnabled(false);
             buttons.add(ignoreButton);
+
+            ignorelistManagement = new SideButton(new AbstractAction() {
+                {
+                    putValue(NAME, tr("Manage Ignore"));
+                    putValue(SHORT_DESCRIPTION, tr("Manage the ignore list"));
+                    new ImageProvider("dialogs", "fix").getResource().attachImageIcon(this, true);
+                }
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new ValidatorListManagementDialog("Ignore");
+                }
+            });
+            buttons.add(ignorelistManagement);
         } else {
             ignoreButton = null;
+            ignorelistManagement = null;
         }
+
         createLayout(tree, true, buttons);
     }
 
     /**
      * The action to lookup the selection in the error tree.
      */
-     class LookupAction extends AbstractAction implements DataSelectionListener {
+    class LookupAction extends AbstractAction implements DataSelectionListener {
 
         LookupAction() {
             putValue(NAME, tr("Lookup"));
@@ -273,7 +292,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             final int depth = node.getDepth();
             if (depth <= 1) {
                 if (!(mainNodeInfo instanceof TestError)) {
-                    Set<String> state = new HashSet<>();
+                    Set<Pair<String, String>> state = new HashSet<>();
                     // ask if the whole set should be ignored
                     if (asked == JOptionPane.DEFAULT_OPTION) {
                         String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
@@ -285,10 +304,10 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                         ValidatorTreePanel.visitTestErrors(node, err -> {
                             err.setIgnored(true);
                             changed.set(true);
-                            state.add(depth == 1 ? err.getIgnoreSubGroup() : err.getIgnoreGroup());
+                            state.add(new Pair<>(node.getDepth() == 1 ? err.getIgnoreSubGroup() : err.getIgnoreGroup(), err.getMessage()));
                         }, processedNodes);
-                        for (String s : state) {
-                            OsmValidator.addIgnoredError(s);
+                        for (Pair<String, String> s : state) {
+                            OsmValidator.addIgnoredError(s.a, s.b);
                         }
                         continue;
                     } else if (asked == JOptionPane.CANCEL_OPTION || asked == JOptionPane.CLOSED_OPTION) {
@@ -299,7 +318,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                 ValidatorTreePanel.visitTestErrors(node, error -> {
                     String state = error.getIgnoreState();
                     if (state != null) {
-                        OsmValidator.addIgnoredError(state);
+                        OsmValidator.addIgnoredError(state, error.getMessage());
                     }
                     changed.set(true);
                     error.setIgnored(true);
@@ -316,7 +335,6 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
     /**
      * Sets the selection of the map to the current selected items.
      */
-    @SuppressWarnings("unchecked")
     private void setSelectedItems() {
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (tree == null || ds == null)
