@@ -244,38 +244,41 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             }
 
             Object mainNodeInfo = node.getUserObject();
-            if (!(mainNodeInfo instanceof TestError)) {
-                Set<String> state = new HashSet<>();
-                // ask if the whole set should be ignored
-                if (asked == JOptionPane.DEFAULT_OPTION) {
-                    String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
-                    asked = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), tr("Ignore whole group or individual elements?"),
-                            tr("Ignoring elements"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                            a, a[1]);
-                }
-                if (asked == JOptionPane.YES_NO_OPTION) {
-                    ValidatorTreePanel.visitTestErrors(node, err -> {
-                        err.setIgnored(true);
-                        changed.set(true);
-                        state.add(node.getDepth() == 1 ? err.getIgnoreSubGroup() : err.getIgnoreGroup());
-                    }, processedNodes);
-                    for (String s : state) {
-                        OsmValidator.addIgnoredError(s);
+            final int depth = node.getDepth();
+            if (depth <= 1) {
+                if (!(mainNodeInfo instanceof TestError)) {
+                    Set<String> state = new HashSet<>();
+                    // ask if the whole set should be ignored
+                    if (asked == JOptionPane.DEFAULT_OPTION) {
+                        String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
+                        asked = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), tr("Ignore whole group or individual elements?"),
+                                tr("Ignoring elements"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
+                                a, a[1]);
                     }
-                    continue;
-                } else if (asked == JOptionPane.CANCEL_OPTION || asked == JOptionPane.CLOSED_OPTION) {
-                    continue;
+                    if (asked == JOptionPane.YES_NO_OPTION) {
+                        ValidatorTreePanel.visitTestErrors(node, err -> {
+                            err.setIgnored(true);
+                            changed.set(true);
+                            state.add(depth == 1 ? err.getIgnoreSubGroup() : err.getIgnoreGroup());
+                        }, processedNodes);
+                        for (String s : state) {
+                            OsmValidator.addIgnoredError(s);
+                        }
+                        continue;
+                    } else if (asked == JOptionPane.CANCEL_OPTION || asked == JOptionPane.CLOSED_OPTION) {
+                        continue;
+                    }
                 }
-            }
 
-            ValidatorTreePanel.visitTestErrors(node, error -> {
-                String state = error.getIgnoreState();
-                if (state != null) {
-                    OsmValidator.addIgnoredError(state);
-                }
-                changed.set(true);
-                error.setIgnored(true);
-            }, processedNodes);
+                ValidatorTreePanel.visitTestErrors(node, error -> {
+                    String state = error.getIgnoreState();
+                    if (state != null) {
+                        OsmValidator.addIgnoredError(state);
+                    }
+                    changed.set(true);
+                    error.setIgnored(true);
+                }, processedNodes);
+            }
         }
         if (changed.get()) {
             tree.resetErrors();
@@ -347,7 +350,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             });
             selectButton.setEnabled(true);
             if (ignoreButton != null) {
-                ignoreButton.setEnabled(true);
+                ignoreButton.setEnabled(node.getDepth() <= 1);
             }
         }
 
