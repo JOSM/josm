@@ -1761,10 +1761,6 @@ node[leisure=bird_hide] {
     icon-image: "presets/leisure/bird_hide.svg";
     set icon_z17;
 }
-node[leisure=nature_reserve] {
-    icon-image: "presets/leisure/nature_reserve.svg";
-    set icon_z17;
-}
 node[leisure=park] {
     icon-image: "presets/misc/deprecated.svg";
     set icon_z17;

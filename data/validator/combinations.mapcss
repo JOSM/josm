@@ -546,3 +546,28 @@ way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][ju
 node[emergency=fire_hydrant][fire_hydrant:count][fire_hydrant:count!=1] {
   throwOther: tr("{0} together with {1}. Tag each hydrant separately.", "{0.tag}", "{1.tag}");
 }
+
+/* #12502 */
+node[leisure=park][natural=tree] {
+  throwWarning: tr("{0} together with {1} on a node. Remove {0}.", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+  fixRemove: "leisure";
+}
+
+/* #17305 */
+area[boundary=administrative][landuse=residential] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+}
+
+/* #17391 */
+way[highway=pedestrian][width][width<=2] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "highway=footway";
+  group: tr("suspicious tag combination");
+  fixAdd: "highway=footway";
+  assertMatch: "way highway=pedestrian width=0.8";
+  assertMatch: "way highway=pedestrian width=1";
+  assertNoMatch: "way highway=pedestrian width=2";
+  assertNoMatch: "way highway=pedestrian width=5.5";
+}
