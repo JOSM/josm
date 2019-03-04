@@ -546,3 +546,10 @@ way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][ju
 node[emergency=fire_hydrant][fire_hydrant:count][fire_hydrant:count!=1] {
   throwOther: tr("{0} together with {1}. Tag each hydrant separately.", "{0.tag}", "{1.tag}");
 }
+
+/* #12502 */
+node[leisure=park][natural=tree] {
+  throwWarning: tr("{0} together with {1} on a node. Remove {0}.", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+  fixRemove: "leisure";
+}

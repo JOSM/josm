@@ -52,7 +52,7 @@ node[boundary=administrative] {
   throwWarning: tr("{0} on a node. Should be used on a way or relation.", "{0.tag}");
 }
 
-/* {0} on a node, should be an area; #10679 #16528 #16792 */
+/* {0} on a node, should be an area; #10679 #16528 #16792 #12502 #17402*/
 node[golf=green],
 node[golf=bunker],
 node[golf=fairway],
@@ -73,6 +73,8 @@ node[natural=sand],
 node[natural=wood],
 node[natural=bare_rock],
 node[natural=glacier],
+node[leisure=park][natural!=tree], /* For nodes with both tags another warning is created in combinations.mapcss */
+node[leisure=nature_reserve],
 node[waterway=riverbank],
 node[man_made=bridge],
 node[man_made=breakwater],
@@ -145,16 +147,6 @@ way[building][building!=no] > node.node_in_highway!.first_last_node {
 node[man_made!=monitoring_station][at(0.0,0.0)] {
   throwError: tr("Object at Position 0.00E 0.00N. There is nothing at this position except an already mapped weather buoy.");
   fixDeleteObject: this;
-}
-
-/* #12502 */
-node[leisure=park][natural=tree] {
-  throwWarning: tr("{0} together with {1} on a node. Remove {0}.", "{0.tag}", "{1.tag}");
-  group: tr("suspicious tag combination");
-  fixRemove: "leisure";
-}
-node[leisure=park][natural!=tree] {
-  throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");
 }
 
 /* see ticket:#10125 */
