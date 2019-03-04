@@ -553,3 +553,21 @@ node[leisure=park][natural=tree] {
   group: tr("suspicious tag combination");
   fixRemove: "leisure";
 }
+
+/* #17305 */
+area[boundary=administrative][landuse=residential] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+}
+
+/* #17391 */
+way[highway=pedestrian][width][width<=2] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "highway=footway";
+  group: tr("suspicious tag combination");
+  fixAdd: "highway=footway";
+  assertMatch: "way highway=pedestrian width=0.8";
+  assertMatch: "way highway=pedestrian width=1";
+  assertNoMatch: "way highway=pedestrian width=2";
+  assertNoMatch: "way highway=pedestrian width=5.5";
+}
