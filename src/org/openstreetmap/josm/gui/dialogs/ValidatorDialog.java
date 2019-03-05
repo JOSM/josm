@@ -541,8 +541,8 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
         public void visit(WaySegment ws) {
             if (ws.lowerIndex < 0 || ws.lowerIndex + 1 >= ws.way.getNodesCount())
                 return;
-            visit(ws.way.getNodes().get(ws.lowerIndex));
-            visit(ws.way.getNodes().get(ws.lowerIndex + 1));
+            visit(ws.getFirstNode());
+            visit(ws.getSecondNode());
         }
 
         @Override
