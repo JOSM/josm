@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -94,7 +95,8 @@ public class ValidateAction extends JosmAction {
 
     @Override
     public void updateEnabledState() {
-        setEnabled(getLayerManager().getActiveDataSet() != null);
+        DataSet ds = getLayerManager().getActiveDataSet() ;
+        setEnabled(ds != null && !ds.isEmpty());
     }
 
     @Override
