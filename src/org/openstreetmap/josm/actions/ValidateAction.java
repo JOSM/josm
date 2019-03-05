@@ -95,7 +95,7 @@ public class ValidateAction extends JosmAction {
 
     @Override
     public void updateEnabledState() {
-        DataSet ds = getLayerManager().getActiveDataSet() ;
+        DataSet ds = getLayerManager().getActiveDataSet();
         setEnabled(ds != null && !ds.isEmpty());
     }
 

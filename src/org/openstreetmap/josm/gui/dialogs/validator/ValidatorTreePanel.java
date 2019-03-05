@@ -351,7 +351,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         final List<TreePath> paths = new ArrayList<>();
         walkAndSelectRelatedErrors(new TreePath(getRoot()), new HashSet<>(primitives)::contains, paths);
         getSelectionModel().clearSelection();
-        getSelectionModel().setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
+        getSelectionModel().setSelectionPaths(paths.toArray(new TreePath[0]));
         // make sure that first path is visible
         if (!paths.isEmpty()) {
             scrollPathToVisible(paths.get(0));

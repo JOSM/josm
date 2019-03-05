@@ -161,7 +161,7 @@ public class ValidatorListManagementDialog extends ExtendedDialog {
                     Rectangle bounds = tree.getUI().getPathBounds(tree, paths[0]);
                     if (bounds != null) {
                         JPopupMenu menu = new JPopupMenu();
-                        JMenuItem delete = new JMenuItem(new AbstractAction(tr("Don't ignore")) {
+                        JMenuItem delete = new JMenuItem(new AbstractAction(tr("Don''t ignore")) {
                             @Override
                             public void actionPerformed(ActionEvent e1) {
                                 deleteAction(tree, paths);
