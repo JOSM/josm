@@ -561,7 +561,7 @@ area[boundary=administrative][landuse=residential] {
 }
 
 /* #17391 */
-way[highway=pedestrian][width][width<=2] {
+way[highway=pedestrian][width][width<2] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   suggestAlternative: "highway=footway";
   group: tr("suspicious tag combination");
