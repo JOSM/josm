@@ -1516,8 +1516,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
             int maxWaySegLenSq = 3*PROP_SNAP_DISTANCE.get();
             maxWaySegLenSq *= maxWaySegLenSq;
 
-            Point2D wp1 = getPoint2D(ws.way.getNode(ws.lowerIndex));
-            Point2D wp2 = getPoint2D(ws.way.getNode(ws.lowerIndex+1));
+            Point2D wp1 = getPoint2D(ws.getFirstNode());
+            Point2D wp2 = getPoint2D(ws.getSecondNode());
 
             // is wayseg shorter than maxWaySegLenSq and
             // is p closer to the middle of wayseg  than  to the nearest node?

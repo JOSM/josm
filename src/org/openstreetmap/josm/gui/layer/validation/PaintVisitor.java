@@ -208,9 +208,7 @@ public class PaintVisitor implements OsmPrimitiveVisitor, ValidatorVisitor {
     public void visit(WaySegment ws) {
         if (ws.lowerIndex < 0 || ws.lowerIndex + 1 >= ws.way.getNodesCount())
             return;
-        Node a = ws.way.getNodes().get(ws.lowerIndex);
-        Node b = ws.way.getNodes().get(ws.lowerIndex + 1);
-        drawSegment(a, b, color);
+        drawSegment(ws.getFirstNode(), ws.getSecondNode(), color);
     }
 
     @Override
