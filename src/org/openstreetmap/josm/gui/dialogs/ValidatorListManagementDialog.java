@@ -117,9 +117,7 @@ public class ValidatorListManagementDialog extends ExtendedDialog {
                 answer = rerunValidatorPrompt();
                 if (answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION) {
                     OsmValidator.resetErrorList();
-                    tree.forEach((ignore, description) -> {
-                        OsmValidator.addIgnoredError(ignore, description);
-                    });
+                    tree.forEach(OsmValidator::addIgnoredError);
                     OsmValidator.saveIgnoredErrors();
                     OsmValidator.initialize();
                 }
@@ -199,7 +197,7 @@ public class ValidatorListManagementDialog extends ExtendedDialog {
         return tree;
     }
 
-    private void deleteAction(JTree tree, TreePath[] paths) {
+    private static void deleteAction(JTree tree, TreePath[] paths) {
         for (TreePath path : paths) {
             tree.clearSelection();
             tree.addSelectionPath(path);
