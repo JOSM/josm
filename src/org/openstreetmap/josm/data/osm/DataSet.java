@@ -1200,4 +1200,12 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+    /**
+     * @return true if this Dataset contains no primitives
+     * @since 14835
+     */
+    public boolean isEmpty() {
+        return allPrimitives.isEmpty();
+    }
 }
