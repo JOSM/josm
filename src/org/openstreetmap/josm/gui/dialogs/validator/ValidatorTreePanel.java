@@ -525,7 +525,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     /**
      * Can be called to suppress execution of buildTree() while doing multiple updates. Caller must
      * call resetErrors() to end this state.
-     * @since 14848
+     * @since 14849
      */
     public void setResetScheduled() {
         resetScheduled = true;
