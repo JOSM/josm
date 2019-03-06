@@ -1,4 +1,5 @@
 autoEnabled=true
 eclipse.preferences.version=1
 extraProperties=
-fileExclusions=
+moduleKey=josm
+serverId=josm
