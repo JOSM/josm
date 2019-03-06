@@ -34,6 +34,7 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -603,10 +604,12 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
 
         protected void fixError(TestError error) throws InterruptedException, InvocationTargetException {
             if (error.isFixable()) {
-                final Command fixCommand = error.getFix();
-                if (fixCommand != null) {
-                    SwingUtilities.invokeAndWait(() -> UndoRedoHandler.getInstance().addNoRedraw(fixCommand));
-                    fixCommands.add(fixCommand);
+                if (error.getPrimitives().stream().noneMatch(OsmPrimitive::isDeleted)) {
+                    final Command fixCommand = error.getFix();
+                    if (fixCommand != null) {
+                        SwingUtilities.invokeAndWait(fixCommand::executeCommand);
+                        fixCommands.add(fixCommand);
+                    }
                 }
                 // It is wanted to ignore an error if it said fixable, even if fixCommand was null
                 // This is to fix #5764 and #5773:
@@ -637,17 +640,40 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                 }
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(() -> {
-                    UndoRedoHandler.getInstance().afterAdd(fixCommands);
+                    if (!fixCommands.isEmpty()) {
+                        UndoRedoHandler.getInstance().add(
+                                fixCommands.size() > 1 ? new AutofixCommand(fixCommands) : fixCommands.get(0), false);
+                    }
                     invalidateValidatorLayers();
                     tree.resetErrors();
                 });
-            } catch (InterruptedException | InvocationTargetException e) {
+            } catch (InterruptedException e) {
+                tryUndo();
+                throw new JosmRuntimeException(e);
+            } catch (InvocationTargetException e) {
                 // FIXME: signature of realRun should have a generic checked exception we could throw here
                 throw new JosmRuntimeException(e);
             } finally {
+                if (monitor.isCanceled()) {
+                    tryUndo();
+                }
                 monitor.finishTask();
             }
         }
+
+        /**
+         * Undo commands as they were not yet added to the UndoRedo Handler
+         */
+        private void tryUndo() {
+            final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            int i = fixCommands.size() - 1;
+            ds.beginUpdate();
+            for (; i >= 0; i--) {
+                fixCommands.get(i).undoCommand();
+            }
+            ds.endUpdate();
+        }
+
     }
 
     private static void invalidateValidatorLayers() {
@@ -661,5 +687,27 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             SelectionEventManager.getInstance().removeSelectionListener((DataSelectionListener) a);
         }
         super.destroy();
+    }
+
+    private class AutofixCommand extends SequenceCommand {
+        AutofixCommand(Collection<Command> sequenz) {
+            super(tr("auto-fixed validator issues"), sequenz, true);
+            setSequenceComplete(true);
+        }
+
+        @Override
+        public void undoCommand() {
+            getAffectedDataSet().beginUpdate();
+            super.undoCommand();
+            getAffectedDataSet().endUpdate();
+        }
+
+        @Override
+        public boolean executeCommand() {
+            getAffectedDataSet().beginUpdate();
+            boolean rc = super.executeCommand();
+            getAffectedDataSet().endUpdate();
+            return rc;
+        }
     }
 }
