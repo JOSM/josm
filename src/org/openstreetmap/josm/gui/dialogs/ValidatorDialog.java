@@ -26,7 +26,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.actions.AbstractSelectAction;
@@ -41,6 +40,10 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
@@ -76,7 +79,8 @@ import org.xml.sax.SAXException;
  *
  * @author frsantos
  */
-public class ValidatorDialog extends ToggleDialog implements DataSelectionListener, ActiveLayerChangeListener {
+public class ValidatorDialog extends ToggleDialog
+        implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdapter.Listener {
 
     /** The display tree */
     public ValidatorTreePanel tree;
@@ -84,19 +88,20 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
     /** The validate action */
     public static final ValidateAction validateAction = new ValidateAction();
 
-    /** The fix button */
-    private final SideButton fixButton;
-    /** The ignore button */
-    private final SideButton ignoreButton;
-    /** The reset ignorelist button */
-    private final SideButton ignorelistManagement;
-    /** The select button */
-    private final SideButton selectButton;
-    /** The lookup button */
-    private final SideButton lookupButton;
+    /** The fix action */
+    private final transient Action fixAction;
+    /** The ignore action */
+    private final transient Action ignoreAction;
+    /** The ignore-list management action */
+    private final transient Action ignorelistManagementAction;
+    /** The select action */
+    private final transient Action selectAction;
+    /** The lookup action */
+    private final transient LookupAction lookupAction;
 
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
+    private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
 
     /** Last selected element */
     private DefaultMutableTreeNode lastSelectedNode;
@@ -119,23 +124,22 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
 
         List<SideButton> buttons = new LinkedList<>();
 
-        selectButton = new SideButton(new AbstractSelectAction() {
+        selectAction = new AbstractSelectAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setSelectedItems();
             }
-        });
-        InputMapUtils.addEnterAction(tree, selectButton.getAction());
+        };
+        selectAction.setEnabled(false);
+        InputMapUtils.addEnterAction(tree, selectAction);
+        buttons.add(new SideButton(selectAction));
 
-        selectButton.setEnabled(false);
-        buttons.add(selectButton);
-
-        lookupButton = new SideButton(new LookupAction());
-        buttons.add(lookupButton);
+        lookupAction = new LookupAction();
+        buttons.add(new SideButton(lookupAction));
 
         buttons.add(new SideButton(validateAction));
 
-        fixButton = new SideButton(new AbstractAction() {
+        fixAction = new AbstractAction() {
             {
                 putValue(NAME, tr("Fix"));
                 putValue(SHORT_DESCRIPTION, tr("Fix the selected issue."));
@@ -145,12 +149,12 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             public void actionPerformed(ActionEvent e) {
                 fixErrors();
             }
-        });
-        fixButton.setEnabled(false);
-        buttons.add(fixButton);
+        };
+        fixAction.setEnabled(false);
+        buttons.add(new SideButton(fixAction));
 
         if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
-            ignoreButton = new SideButton(new AbstractAction() {
+            ignoreAction = new AbstractAction() {
                 {
                     putValue(NAME, tr("Ignore"));
                     putValue(SHORT_DESCRIPTION, tr("Ignore the selected issue next time."));
@@ -160,41 +164,44 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                 public void actionPerformed(ActionEvent e) {
                     ignoreErrors();
                 }
-            });
-            ignoreButton.setEnabled(false);
-            buttons.add(ignoreButton);
+            };
+            ignoreAction.setEnabled(false);
+            buttons.add(new SideButton(ignoreAction));
 
-            ignorelistManagement = new SideButton(new AbstractAction() {
-                {
-                    putValue(NAME, tr("Manage Ignore"));
-                    putValue(SHORT_DESCRIPTION, tr("Manage the ignore list"));
-                    new ImageProvider("dialogs", "fix").getResource().attachImageIcon(this, true);
-                }
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new ValidatorListManagementDialog("Ignore");
-                }
-            });
-            buttons.add(ignorelistManagement);
+            ignorelistManagementAction = new IgnorelistManagementAction();
+            buttons.add(new SideButton(ignorelistManagementAction));
         } else {
-            ignoreButton = null;
-            ignorelistManagement = null;
+            ignoreAction = null;
+            ignorelistManagementAction = null;
         }
 
         createLayout(tree, true, buttons);
     }
 
     /**
+     * The action to manage the ignore list.
+     */
+    static class IgnorelistManagementAction extends AbstractAction {
+        IgnorelistManagementAction() {
+            putValue(NAME, tr("Manage Ignore"));
+            putValue(SHORT_DESCRIPTION, tr("Manage the ignore list"));
+            new ImageProvider("dialogs", "fix").getResource().attachImageIcon(this, true);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            new ValidatorListManagementDialog("Ignore");
+        }
+    }
+
+    /**
      * The action to lookup the selection in the error tree.
      */
-    class LookupAction extends AbstractAction implements DataSelectionListener {
-
+    class LookupAction extends AbstractAction {
         LookupAction() {
             putValue(NAME, tr("Lookup"));
             putValue(SHORT_DESCRIPTION, tr("Looks up the selected primitives in the error list."));
             new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
-            SelectionEventManager.getInstance().addSelectionListener(this);
             updateEnabledState();
         }
 
@@ -207,7 +214,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             tree.selectRelatedErrors(ds.getSelected());
         }
 
-        protected void updateEnabledState() {
+        public void updateEnabledState() {
             boolean found = false;
             for (TestError e : tree.getErrors()) {
                 for (OsmPrimitive p : e.getPrimitives()) {
@@ -219,25 +226,23 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
             }
             setEnabled(found);
         }
-
-        @Override
-        public void selectionChanged(SelectionChangeEvent event) {
-            updateEnabledState();
-        }
     }
 
     @Override
     public void showNotify() {
+        DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(this);
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (ds != null) {
             updateSelection(ds.getAllSelected());
         }
         MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(this);
+
     }
 
     @Override
     public void hideNotify() {
+        DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
         SelectionEventManager.getInstance().removeSelectionListener(this);
     }
@@ -348,7 +353,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
         Collection<OsmPrimitive> sel = new HashSet<>(40);
         for (TreePath path : selectedPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            Enumeration<TreeNode> children = node.breadthFirstEnumeration();
+            Enumeration<?> children = node.breadthFirstEnumeration();
             while (children.hasMoreElements()) {
                 DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
                 Object nodeInfo = childNode.getUserObject();
@@ -393,9 +398,9 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                             .forEach(sel::add);
                 }
             });
-            selectButton.setEnabled(true);
-            if (ignoreButton != null) {
-                ignoreButton.setEnabled(node.getDepth() <= 1);
+            selectAction.setEnabled(true);
+            if (ignoreAction != null) {
+                ignoreAction.setEnabled(node.getDepth() <= 1);
             }
         }
 
@@ -471,18 +476,18 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
                 tree.clearSelection();
             }
 
-            fixButton.setEnabled(false);
-            if (ignoreButton != null) {
-                ignoreButton.setEnabled(false);
+            fixAction.setEnabled(false);
+            if (ignoreAction != null) {
+                ignoreAction.setEnabled(false);
             }
-            selectButton.setEnabled(false);
+            selectAction.setEnabled(false);
 
             boolean isDblClick = isDoubleClick(e);
 
             Collection<OsmPrimitive> sel = isDblClick ? new HashSet<>(40) : null;
 
             boolean hasFixes = setSelection(sel, isDblClick);
-            fixButton.setEnabled(hasFixes);
+            fixAction.setEnabled(hasFixes);
 
             if (isDblClick) {
                 DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
@@ -513,15 +518,14 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
     public class SelectionWatch implements TreeSelectionListener {
         @Override
         public void valueChanged(TreeSelectionEvent e) {
-            fixButton.setEnabled(false);
-            if (ignoreButton != null) {
-                ignoreButton.setEnabled(false);
+            if (ignoreAction != null) {
+                ignoreAction.setEnabled(false);
             }
-            selectButton.setEnabled(false);
+            selectAction.setEnabled(false);
 
             Collection<OsmPrimitive> sel = new HashSet<>();
             boolean hasFixes = setSelection(sel, true);
-            fixButton.setEnabled(hasFixes);
+            fixAction.setEnabled(hasFixes);
             popupMenuHandler.setPrimitives(sel);
             invalidateValidatorLayers();
         }
@@ -577,6 +581,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
     @Override
     public void selectionChanged(SelectionChangeEvent event) {
         updateSelection(event.getSelection());
+        lookupAction.updateEnabledState();
     }
 
     /**
@@ -681,12 +686,8 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
     }
 
     @Override
-    public void destroy() {
-        if (lookupButton != null && lookupButton.getAction() instanceof DataSelectionListener) {
-            Action a = lookupButton.getAction();
-            SelectionEventManager.getInstance().removeSelectionListener((DataSelectionListener) a);
-        }
-        super.destroy();
+    public void processDatasetEvent(AbstractDatasetChangedEvent event) {
+        validateAction.updateEnabledState();
     }
 
     private static class AutofixCommand extends SequenceCommand {
