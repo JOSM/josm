@@ -80,7 +80,10 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      */
     private transient Set<? extends OsmPrimitive> filter;
 
-    private final ListenerList<Runnable> invalidationListeners = ListenerList.create();
+    private final transient ListenerList<Runnable> invalidationListeners = ListenerList.create();
+
+    /** if true, buildTree() does nothing */
+    private boolean resetScheduled;
 
     /**
      * Constructor
@@ -147,6 +150,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * Builds the errors tree
      */
     public void buildTree() {
+        if (resetScheduled)
+            return;
         final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
         if (errors == null || errors.isEmpty()) {
@@ -401,6 +406,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * Updates the current errors list
      */
     public void resetErrors() {
+        resetScheduled = false;
+        filterRemovedPrimitives();
         setErrors(new ArrayList<>(errors));
     }
 
@@ -480,9 +487,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
 
     @Override public void primitivesRemoved(PrimitivesRemovedEvent event) {
         // Remove purged primitives (fix #8639)
-        if (errors != null) {
-            final Set<? extends OsmPrimitive> deletedPrimitives = new HashSet<>(event.getPrimitives());
-            errors.removeIf(error -> error.getPrimitives().stream().anyMatch(deletedPrimitives::contains));
+        if (filterRemovedPrimitives()) {
+            buildTree();
         }
     }
 
@@ -511,6 +517,27 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     }
 
     @Override public void dataChanged(DataChangedEvent event) {
-        // Do nothing
+        if (filterRemovedPrimitives()) {
+            buildTree();
+        }
     }
+
+    /**
+     * Can be called to suppress execution of buildTree() while doing multiple updates. Caller must
+     * call resetErrors() to end this state.
+     * @since 14848
+     */
+    public void setResetScheduled() {
+        resetScheduled = true;
+    }
+
+    /**
+     * Remove errors which refer to removed or purged primitives.
+     * @return true if error list was changed
+     */
+    private boolean filterRemovedPrimitives() {
+        return errors != null && errors.removeIf(
+                error -> error.getPrimitives().stream().anyMatch(p -> p.isDeleted() || p.getDataSet() == null));
+    }
+
 }

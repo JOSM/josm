@@ -62,6 +62,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -609,7 +610,7 @@ public class ValidatorDialog extends ToggleDialog
 
         protected void fixError(TestError error) throws InterruptedException, InvocationTargetException {
             if (error.isFixable()) {
-                if (error.getPrimitives().stream().noneMatch(OsmPrimitive::isDeleted)) {
+                if (error.getPrimitives().stream().noneMatch(p -> p.isDeleted() || p.getDataSet() == null)) {
                     final Command fixCommand = error.getFix();
                     if (fixCommand != null) {
                         SwingUtilities.invokeAndWait(fixCommand::executeCommand);
@@ -631,6 +632,7 @@ public class ValidatorDialog extends ToggleDialog
                 final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
                 int i = 0;
                 SwingUtilities.invokeAndWait(ds::beginUpdate);
+                tree.setResetScheduled();
                 try {
                     for (TestError error: testErrors) {
                         i++;
@@ -650,7 +652,6 @@ public class ValidatorDialog extends ToggleDialog
                                 fixCommands.size() > 1 ? new AutofixCommand(fixCommands) : fixCommands.get(0), false);
                     }
                     invalidateValidatorLayers();
-                    tree.resetErrors();
                 });
             } catch (InterruptedException e) {
                 tryUndo();
@@ -662,6 +663,7 @@ public class ValidatorDialog extends ToggleDialog
                 if (monitor.isCanceled()) {
                     tryUndo();
                 }
+                GuiHelper.runInEDTAndWait(tree::resetErrors);
                 monitor.finishTask();
             }
         }
