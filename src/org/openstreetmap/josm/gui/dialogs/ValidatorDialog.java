@@ -689,7 +689,7 @@ public class ValidatorDialog extends ToggleDialog implements DataSelectionListen
         super.destroy();
     }
 
-    private class AutofixCommand extends SequenceCommand {
+    private static class AutofixCommand extends SequenceCommand {
         AutofixCommand(Collection<Command> sequenz) {
             super(tr("auto-fixed validator issues"), sequenz, true);
             setSequenceComplete(true);
