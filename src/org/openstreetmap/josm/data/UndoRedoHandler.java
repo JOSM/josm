@@ -280,10 +280,20 @@ public final class UndoRedoHandler {
         return !redoCommands.isEmpty();
     }
 
+
+    /**
+     * Executes the command and add it to the intern command queue.
+     * @param c The command to execute. Must not be {@code null}.
+     */
+    public void addNoRedraw(final Command c) {
+        addNoRedraw(c, true);
+    }
+
     /**
      * Executes the command and add it to the intern command queue.
      * @param c The command to execute. Must not be {@code null}.
      * @param execute true: Execute, else it is assumed that the command was already executed
+     * @since 14845
      */
     public void addNoRedraw(final Command c, boolean execute) {
         CheckParameterUtil.ensureParameterNotNull(c, "c");
