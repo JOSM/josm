@@ -283,10 +283,13 @@ public final class UndoRedoHandler {
     /**
      * Executes the command and add it to the intern command queue.
      * @param c The command to execute. Must not be {@code null}.
+     * @param execute true: Execute, else it is assumed that the command was already executed
      */
-    public void addNoRedraw(final Command c) {
+    public void addNoRedraw(final Command c, boolean execute) {
         CheckParameterUtil.ensureParameterNotNull(c, "c");
-        c.executeCommand();
+        if (execute) {
+            c.executeCommand();
+        }
         commands.add(c);
         // Limit the number of commands in the undo list.
         // Currently you have to undo the commands one by one. If
@@ -324,11 +327,22 @@ public final class UndoRedoHandler {
     }
 
     /**
+     * Executes the command only if wanted and add it to the intern command queue.
+     * @param c The command to execute. Must not be {@code null}.
+     * @param execute true: Execute, else it is assumed that the command was already executed
+     */
+    public void add(final Command c, boolean execute) {
+        addNoRedraw(c, execute);
+        afterAdd(c);
+
+    }
+
+    /**
      * Executes the command and add it to the intern command queue.
      * @param c The command to execute. Must not be {@code null}.
      */
     public synchronized void add(final Command c) {
-        addNoRedraw(c);
+        addNoRedraw(c, true);
         afterAdd(c);
     }
 
