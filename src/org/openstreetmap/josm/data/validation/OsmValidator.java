@@ -26,6 +26,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -277,7 +278,7 @@ public final class OsmValidator {
         }
 
         Map<String, String> tmap = buildIgnore(buildJTreeList());
-        if (tmap != null && !tmap.isEmpty()) {
+        if (!tmap.isEmpty()) {
             ignoredErrors.clear();
             ignoredErrors.putAll(tmap);
         }
@@ -302,18 +303,20 @@ public final class OsmValidator {
 
     /**
      * Build a JTree with a list
-     * @return &lttype&gtlist as a {@code JTree}
+     * @return &lt;type&gt;list as a {@code JTree}
      */
     public static JTree buildJTreeList() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(tr("Ignore list"));
+        final Pattern elemId1Pattern = Pattern.compile(":(r|w|n)_");
+        final Pattern elemId2Pattern = Pattern.compile("^[0-9]+$");
         for (Entry<String, String> e: ignoredErrors.entrySet()) {
             String key = e.getKey();
             String value = e.getValue();
             ArrayList<String> ignoredWayList = new ArrayList<>();
-            String[] osmobjects = key.split(":(r|w|n)_");
+            String[] osmobjects = elemId1Pattern.split(key);
             for (int i = 1; i < osmobjects.length; i++) {
                 String osmid = osmobjects[i];
-                if (osmid.matches("^[0-9]+$")) {
+                if (elemId2Pattern.matcher(osmid).matches()) {
                     osmid = '_' + osmid;
                     int index = key.indexOf(osmid);
                     if (index < key.lastIndexOf(']')) continue;
@@ -387,12 +390,13 @@ public final class OsmValidator {
         }
 
 
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < model.getChildCount(node); i++) {
             DefaultMutableTreeNode child = (DefaultMutableTreeNode) model.getChild(node, i);
             if (model.getChildCount(child) == 0) {
                 String ignoreName = child.getUserObject().toString();
                 if (ignoreName.matches("^(r|w|n)_.*")) {
-                    osmids += ":" + child.getUserObject().toString();
+                    sb.append(":").append(child.getUserObject().toString());
                 } else if (ignoreName.matches("^[0-9]+(_.*|)$")) {
                     rHashMap.put(ignoreName, description);
                 }
@@ -400,6 +404,7 @@ public final class OsmValidator {
                 rHashMap.putAll(buildIgnore(model, child));
             }
         }
+        osmids += sb.toString();
         if (!osmids.isEmpty() && osmids.indexOf(':') != 0) rHashMap.put(osmids, description);
         return rHashMap;
     }
