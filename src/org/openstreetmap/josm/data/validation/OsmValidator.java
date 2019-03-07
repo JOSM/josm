@@ -295,7 +295,7 @@ public final class OsmValidator {
 
     /**
      * Get the list of all ignored errors
-     * @return The <code>Collection&ltString&gt</code> of errors that are ignored
+     * @return The <code>Collection&lt;String&gt;</code> of errors that are ignored
      */
     public static SortedMap<String, String> getIgnoredErrors() {
         return ignoredErrors;
