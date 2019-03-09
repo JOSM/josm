@@ -24,6 +24,8 @@ public class MultipleNameVisitor extends NameVisitor {
      * Maximum displayed length, in characters.
      */
     public static final IntegerProperty MULTIPLE_NAME_MAX_LENGTH = new IntegerProperty("multiple.name.max.length", 140);
+    private static final String MULTI_CLASS_NAME = "object";
+    private static final Icon MULTI_CLASS_ICON = ImageProvider.get("data", MULTI_CLASS_NAME);
 
     /** The class name of the combined primitives */
     private String multipleClassname;
@@ -56,7 +58,7 @@ public class MultipleNameVisitor extends NameVisitor {
                 multipleClassname = className;
                 multiplePluralClassname = classNamePlural;
             } else if (!multipleClassname.equals(className)) {
-                multipleClassname = "object";
+                multipleClassname = MULTI_CLASS_NAME;
                 multiplePluralClassname = trn("object", "objects", 2);
             }
         }
@@ -64,6 +66,9 @@ public class MultipleNameVisitor extends NameVisitor {
         if (size <= 1) {
             displayName = name;
         } else {
+            if (MULTI_CLASS_NAME.equals(multipleClassname)) {
+                icon = MULTI_CLASS_ICON;
+            }
             StringBuilder sb = new StringBuilder().append(size).append(' ').append(trn(multipleClassname, multiplePluralClassname, size));
             if (multipleName.length() > 0) {
                 sb.append(": ");
@@ -95,10 +100,7 @@ public class MultipleNameVisitor extends NameVisitor {
      * @return the icon of the items
      */
     public Icon getIcon() {
-        if (size <= 1)
-            return icon;
-        else
-            return ImageProvider.get("data", multipleClassname);
+        return icon;
     }
 
     @Override
