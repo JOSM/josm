@@ -161,6 +161,10 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         // Sort validation errors - #8517
         sortErrors(errors);
 
+        // Remember first selected tree row
+        TreePath selPath = getSelectionPath();
+        int selRow = selPath == null ? -1 : getRowForPath(selPath);
+
         // Remember the currently expanded rows
         Set<Object> oldSelectedRows = new HashSet<>();
         Enumeration<TreePath> expanded = getExpandedDescendants(new TreePath(getRoot()));
@@ -267,6 +271,11 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         valTreeModel.setRoot(rootNode);
         for (TreePath path : expandedPaths) {
             this.expandPath(path);
+        }
+
+        if (selRow >= 0 && selRow < getRowCount()) {
+            setSelectionRow(selRow);
+            scrollRowToVisible(selRow);
         }
 
         invalidationListeners.fireEvent(Runnable::run);
