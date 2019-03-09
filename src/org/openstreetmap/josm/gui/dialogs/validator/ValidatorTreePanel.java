@@ -211,7 +211,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                     severityNode.add(messageNode);
 
                     if (oldExpandedRows.contains(description)) {
-                        expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode, messageNode }));
+                        expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, messageNode}));
                     }
                     // add the matching errors to the current node
                     noDescriptionErrors.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
