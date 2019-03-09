@@ -7,7 +7,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -71,8 +70,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      */
     protected DefaultTreeModel valTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
 
-    /** The list of errors shown in the tree */
-    private transient List<TestError> errors = new ArrayList<>();
+    /** The list of errors shown in the tree, normally identical to field validationErrors in current edit layer*/
+    private transient List<TestError> errors;
 
     /**
      * If {@link #filter} is not <code>null</code> only errors are displayed
@@ -90,6 +89,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * @param errors The list of errors
      */
     public ValidatorTreePanel(List<TestError> errors) {
+        setErrorList(errors);
         ToolTipManager.sharedInstance().registerComponent(this);
         this.setModel(valTreeModel);
         this.setRootVisible(false);
@@ -98,7 +98,6 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         this.setVisibleRowCount(8);
         this.setCellRenderer(new ValidatorTreeRenderer());
         this.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-        setErrorList(errors);
         for (KeyListener keyListener : getKeyListeners()) {
             // Fix #3596 - Remove default keyListener to avoid conflicts with JOSM commands
             if ("javax.swing.plaf.basic.BasicTreeUI$Handler".equals(keyListener.getClass().getName())) {
@@ -158,8 +157,6 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             GuiHelper.runInEDTAndWait(() -> valTreeModel.setRoot(rootNode));
             return;
         }
-        // Sort validation errors - #8517
-        sortErrors(errors);
 
         // Remember first selected tree row
         TreePath selPath = getSelectionPath();
@@ -263,6 +260,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                         }
                     }
 
+                 // add the matching errors to the current node
                     errors.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
                 });
             });
@@ -282,12 +280,13 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     }
 
     /**
-     * Sort list or errors in place.
-     * @param errors error list to be sorted
+     * Sort list of errors in place (#8517).
      */
-    static void sortErrors(List<TestError> errors) {
+    void sortErrors() {
+        if (errors.isEmpty())
+            return;
         // Calculate the string to sort only once for each element
-        // Avoids to call TestError.compare() which costly
+        // Avoids to call TestError.compare() which is costly
         List<Pair<String, TestError>> toSort = new ArrayList<>();
         for (int i = 0; i < errors.size(); i++) {
             TestError e = errors.get(i);
@@ -324,7 +323,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * @param errors The error list that is used by a data layer
      */
     public final void setErrorList(List<TestError> errors) {
-        this.errors = errors;
+        this.errors = errors != null ? errors : new ArrayList<>();
+        sortErrors();
         if (isVisible()) {
             buildTree();
         }
@@ -335,14 +335,13 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * @param newerrors The validation errors
      */
     public void setErrors(List<TestError> newerrors) {
-        if (errors == null)
-            return;
-        clearErrors();
+        errors.clear();
         for (TestError error : newerrors) {
             if (!error.isIgnored()) {
                 errors.add(error);
             }
         }
+        sortErrors();
         if (isVisible()) {
             buildTree();
         }
@@ -353,7 +352,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * @return the errors of the tree
      */
     public List<TestError> getErrors() {
-        return errors != null ? errors : Collections.<TestError>emptyList();
+        return errors;
     }
 
     /**
@@ -435,17 +434,11 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         return (DefaultMutableTreeNode) valTreeModel.getRoot();
     }
 
-    private void clearErrors() {
-        if (errors != null) {
-            errors.clear();
-        }
-    }
-
     @Override
     public void destroy() {
         DatasetEventManager.getInstance().removeDatasetListener(this);
         ToolTipManager.sharedInstance().unregisterComponent(this);
-        clearErrors();
+        errors.clear();
     }
 
     /**
@@ -545,7 +538,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * @return true if error list was changed
      */
     private boolean filterRemovedPrimitives() {
-        return errors != null && errors.removeIf(
+        return errors.removeIf(
                 error -> error.getPrimitives().stream().anyMatch(p -> p.isDeleted() || p.getDataSet() == null));
     }
 
