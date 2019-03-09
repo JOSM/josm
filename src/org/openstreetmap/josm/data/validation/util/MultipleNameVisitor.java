@@ -27,12 +27,8 @@ public class MultipleNameVisitor extends NameVisitor {
     private static final String MULTI_CLASS_NAME = "object";
     private static final Icon MULTI_CLASS_ICON = ImageProvider.get("data", MULTI_CLASS_NAME);
 
-    /** The class name of the combined primitives */
-    private String multipleClassname;
     /** Name to be displayed */
     private String displayName;
-    /** Size of the collection */
-    private int size;
 
     /**
      * Visits a collection of primitives
@@ -41,9 +37,10 @@ public class MultipleNameVisitor extends NameVisitor {
     public void visit(Collection<? extends OsmPrimitive> data) {
         StringBuilder multipleName = new StringBuilder();
         String multiplePluralClassname = null;
-        size = data.size();
+        int size = data.size();
 
-        multipleClassname = null;
+        // The class name of the combined primitives
+        String multipleClassname = null;
         for (OsmPrimitive osm : data) {
             String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
             if (name != null && !name.isEmpty() && multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH.get()) {
