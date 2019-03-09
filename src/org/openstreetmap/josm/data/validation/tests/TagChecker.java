@@ -614,7 +614,7 @@ public class TagChecker extends TagTest {
             }
             withErrors.put(p, "WPK");
         } else {
-            errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
+            errors.add(TestError.builder(this, Severity.OTHER, INVALID_KEY)
                     .message(tr("Presets do not contain property key"), marktr("Key ''{0}'' not in presets."), key)
                     .primitives(p)
                     .build());
