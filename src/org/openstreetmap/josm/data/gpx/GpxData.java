@@ -425,7 +425,10 @@ public class GpxData extends WithAttributes implements Data {
         Map<String, Object> attrs = new HashMap<>(privateTracks.get(0).getAttributes());
 
         // do not let the name grow if split / combine operations are called iteratively
-        attrs.put("name", attrs.get("name").toString().replaceFirst(" #\\d+$", ""));
+        Object name = attrs.get("name");
+        if (name != null) {
+            attrs.put("name", name.toString().replaceFirst(" #\\d+$", ""));
+        }
 
         clearTracks();
         addTrack(new ImmutableGpxTrack(segs, attrs));
