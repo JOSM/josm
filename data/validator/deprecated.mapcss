@@ -1388,3 +1388,11 @@ node[fire_hydrant:water_source] {
   fixChangeKey: "natural => waterway";
   group: tr("deprecated tagging");
 }
+
+/* #17249 */
+*[religion=unitarian] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "religion=unitarian_universalist";
+  fixAdd: "religion=unitarian_universalist";
+  group: tr("deprecated tagging");
+}
