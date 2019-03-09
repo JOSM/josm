@@ -43,11 +43,10 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 3715
  */
 public class ImageryAdjustAction extends MapMode implements AWTEventListener {
-    private static volatile ImageryOffsetDialog offsetDialog;
-    private static Cursor cursor = ImageProvider.getCursor("normal", "move");
+    private static ImageryOffsetDialog offsetDialog;
 
-    private OffsetBookmark old;
-    private OffsetBookmark tempOffset;
+    private transient OffsetBookmark old;
+    private transient OffsetBookmark tempOffset;
     private EastNorth prevEastNorth;
     private transient AbstractTileSourceLayer<?> layer;
     private MapMode oldMapMode;
@@ -59,7 +58,8 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
      * @param layer The imagery layer
      */
     public ImageryAdjustAction(AbstractTileSourceLayer<?> layer) {
-        super(tr("New offset"), "adjustimg", tr("Adjust the position of this imagery layer"), cursor);
+        super(tr("New offset"), "adjustimg", tr("Adjust the position of this imagery layer"),
+                ImageProvider.getCursor("normal", "move"));
         putValue("toolbar", Boolean.FALSE);
         this.layer = layer;
     }
@@ -117,12 +117,6 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         // do not restore old mode here - this is called when the new mode is already known.
         restoreOldMode = false;
         doExitMode();
-    }
-
-    private void exitModeAndRestoreOldMode() {
-        restoreOldMode = true;
-        doExitMode();
-        restoreOldMode = false;
     }
 
     private void doExitMode() {
@@ -240,7 +234,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
 
     private static final class ConfirmOverwriteBookmarkDialog extends ExtendedDialog {
         ConfirmOverwriteBookmarkDialog() {
-            super(MainApplication.getMainFrame(), tr("Overwrite"), new String[] {tr("Overwrite"), tr("Cancel")});
+            super(MainApplication.getMainFrame(), tr("Overwrite"), tr("Overwrite"), tr("Cancel"));
             contentInsets = new Insets(10, 15, 10, 15);
             setContent(tr("Offset bookmark already exists. Overwrite?"));
             setButtonIcons("ok", "cancel");
@@ -379,6 +373,12 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 exitModeAndRestoreOldMode();
                 map.mapMode = null;
             }
+        }
+
+        private void exitModeAndRestoreOldMode() {
+            restoreOldMode = true;
+            doExitMode();
+            restoreOldMode = false;
         }
     }
 

@@ -66,7 +66,7 @@ public final class AboutAction extends JosmAction {
             KeyEvent.VK_F1, Shortcut.SHIFT), true);
     }
 
-    protected JPanel buildAboutPanel() {
+    JPanel buildAboutPanel() {
         final JTabbedPane about = new JTabbedPane();
 
         Version version = Version.getInstance();
