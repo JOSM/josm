@@ -215,7 +215,7 @@ public class ValidatorDialog extends ToggleDialog
             tree.selectRelatedErrors(ds.getSelected());
         }
 
-        public void updateEnabledState() {
+        void updateEnabledState() {
             boolean found = false;
             for (TestError e : tree.getErrors()) {
                 for (OsmPrimitive p : e.getPrimitives()) {
@@ -690,6 +690,7 @@ public class ValidatorDialog extends ToggleDialog
     @Override
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         validateAction.updateEnabledState();
+        lookupAction.updateEnabledState();
     }
 
     private static class AutofixCommand extends SequenceCommand {
