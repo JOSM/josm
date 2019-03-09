@@ -49,6 +49,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
+import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.ValidatorVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -297,40 +298,38 @@ public class ValidatorDialog extends ToggleDialog
 
             Object mainNodeInfo = node.getUserObject();
             final int depth = node.getDepth();
-            if (depth <= 1) {
-                if (!(mainNodeInfo instanceof TestError)) {
-                    Set<Pair<String, String>> state = new HashSet<>();
-                    // ask if the whole set should be ignored
-                    if (asked == JOptionPane.DEFAULT_OPTION) {
-                        String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
-                        asked = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), tr("Ignore whole group or individual elements?"),
-                                tr("Ignoring elements"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                                a, a[1]);
-                    }
-                    if (asked == JOptionPane.YES_NO_OPTION) {
-                        ValidatorTreePanel.visitTestErrors(node, err -> {
-                            err.setIgnored(true);
-                            changed.set(true);
-                            state.add(new Pair<>(node.getDepth() == 1 ? err.getIgnoreSubGroup() : err.getIgnoreGroup(), err.getMessage()));
-                        }, processedNodes);
-                        for (Pair<String, String> s : state) {
-                            OsmValidator.addIgnoredError(s.a, s.b);
-                        }
-                        continue;
-                    } else if (asked == JOptionPane.CANCEL_OPTION || asked == JOptionPane.CLOSED_OPTION) {
-                        continue;
-                    }
+            if (!(mainNodeInfo instanceof TestError)) {
+                Set<Pair<String, String>> state = new HashSet<>();
+                // ask if the whole set should be ignored
+                if (asked == JOptionPane.DEFAULT_OPTION) {
+                    String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
+                    asked = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), tr("Ignore whole group or individual elements?"),
+                            tr("Ignoring elements"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
+                            a, a[1]);
                 }
-
-                ValidatorTreePanel.visitTestErrors(node, error -> {
-                    String state = error.getIgnoreState();
-                    if (state != null) {
-                        OsmValidator.addIgnoredError(state, error.getMessage());
+                if (asked == JOptionPane.YES_NO_OPTION) {
+                    ValidatorTreePanel.visitTestErrors(node, err -> {
+                        err.setIgnored(true);
+                        changed.set(true);
+                        state.add(new Pair<>(depth == 1 ? err.getIgnoreSubGroup() : err.getIgnoreGroup(), err.getMessage()));
+                    }, processedNodes);
+                    for (Pair<String, String> s : state) {
+                        OsmValidator.addIgnoredError(s.a, s.b);
                     }
-                    changed.set(true);
-                    error.setIgnored(true);
-                }, processedNodes);
+                    continue;
+                } else if (asked == JOptionPane.CANCEL_OPTION || asked == JOptionPane.CLOSED_OPTION) {
+                    continue;
+                }
             }
+
+            ValidatorTreePanel.visitTestErrors(node, error -> {
+                String state = error.getIgnoreState();
+                if (state != null) {
+                    OsmValidator.addIgnoredError(state, error.getMessage());
+                }
+                changed.set(true);
+                error.setIgnored(true);
+            }, processedNodes);
         }
         if (changed.get()) {
             tree.resetErrors();
@@ -401,7 +400,7 @@ public class ValidatorDialog extends ToggleDialog
             });
             selectAction.setEnabled(true);
             if (ignoreAction != null) {
-                ignoreAction.setEnabled(node.getDepth() <= 1);
+                ignoreAction.setEnabled(!(node.getUserObject() instanceof Severity));
             }
         }
 
