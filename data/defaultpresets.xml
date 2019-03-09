@@ -280,11 +280,35 @@
             <list_entry value="semi_evergreen" short_description="Plants that lose most, but not all, of their foliage for a fraction of the year." />
         </combo>
     </chunk>
-    <chunk id="religious">
-        <text key="name" text="Name" />
-        <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" />
-        <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,greek_catholic,jehovahs_witness,lutheran,methodist,mormon,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,shia,sunni" />
-    </chunk>
+    <!-- start of religions and denominations -->
+        <chunk id="religious"> <!-- all religions and denominations -->
+            <combo key="religion" text="Religion" values="bahai,buddhist,caodaism,christian,confucian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" values_searchable="true" />
+            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,conservative,evangelical,greek_catholic,greek_orthodox,ibadi,iglesia_ni_cristo,jehovahs_witness,lutheran,mahayana,methodist,mormon,new_apostolic,nondenominational,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,reform,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,shaivism,shaktism,shia,smartism,spiritist,sunni,tibetan,theravada,united,united_methodist,vaishnavism,vajrayana" values_searchable="true" />
+        </chunk>
+        <chunk id="religious_catholic_christian"> <!-- special case for wayside_shrine and wayside_cross: all religions and catholic denominations with default to catholic christian -->
+            <combo key="religion" text="Religion" values="bahai,buddhist,caodaism,christian,confucian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" default="christian" values_searchable="true" />
+            <combo key="denomination" text="Denomination" values="catholic,greek_catholic,old_catholic,orthodox,roman_catholic" default="catholic" values_searchable="true" />
+        </chunk>
+        <chunk id="other_religions"> <!-- religions which don't have an own preset -->
+            <combo key="religion" text="Religion" values="bahai,caodaism,confucian,jain,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" match="keyvalue!" values_searchable="true" />
+        </chunk> 
+        <chunk id="christian_denominations"> <!-- christian denominations -->
+            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,evangelical,greek_catholic,greek_orthodox,iglesia_ni_cristo,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,nondenominational,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,spiritist,united,united_methodist" values_searchable="true" />
+        </chunk>
+        <chunk id="muslim_denominations"> <!-- muslim denominations -->
+            <combo key="denomination" text="Denomination" values="ibadi,nondenominational,shia,sunni" values_searchable="true" />
+        </chunk>
+        <chunk id="jewish_denominations"> <!-- jewish denominations -->
+            <combo key="denomination" text="Denomination" values="orthodox,conservative,nondenominational,reform" values_context="jewish" values_searchable="true" /> <!-- values_context because of orthodox, #9629 -->
+        </chunk>
+        <chunk id="buddhist_denominations"> <!-- buddhist denominations -->
+            <combo key="denomination" text="Denomination" values="tibetan,theravada,mahayana,vajrayana" values_searchable="true" />
+        </chunk>
+        <chunk id="hindu_denominations"> <!-- hindu denominations -->
+            <combo key="denomination" text="Denomination" values="vaishnavism,shaivism,shaktism,smartism" values_searchable="true" />
+        </chunk>
+        <!-- shinto and the religions which don't have an own preset don't have denominations (yet) -->
+    <!-- end of religions and denominations --> 
     <chunk id="voltage">
         <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,22000,20000,15000;200000,110000;20000" />
     </chunk>
@@ -3272,7 +3296,7 @@
             <key key="religion" value="christian" />
             <text key="name" text="Name" />
             <combo key="building" text="Building type" values="basilica,cathedral,chapel,church,temple" values_searchable="true" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,evangelical,greek_catholic,greek_orthodox,iglesia_ni_cristo,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,nondenominational,orthodox,pentecostal,presbyterian,protestant,quaker,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,spiritist,united,united_methodist" values_context="christian" values_searchable="true" />
+            <reference ref="christian_denominations" />
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
@@ -3285,7 +3309,7 @@
             <key key="religion" value="muslim" />
             <text key="name" text="Name" />
             <combo key="building" text="Building type" values="mosque" values_searchable="true" />
-            <combo key="denomination" text="Denomination" values="ibadi,nondenominational,shia,sunni" values_searchable="true" />
+            <reference ref="muslim_denominations" />
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
@@ -3298,7 +3322,7 @@
             <key key="religion" value="jewish" />
             <text key="name" text="Name" />
             <combo key="building" text="Building type" values="synagogue" values_searchable="true" />
-            <combo key="denomination" text="Denomination" values="orthodox,conservative,nondenominational,reform" values_context="jewish" values_searchable="true" />
+            <reference ref="jewish_denominations" />
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
@@ -3310,7 +3334,7 @@
             <key key="amenity" value="place_of_worship" />
             <key key="religion" value="buddhist" />
             <text key="name" text="Name" />
-            <combo key="denomination" text="Denomination" values="tibetan,theravada,mahayana,vajrayana" values_searchable="true" />
+            <reference ref="buddhist_denominations" />
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
@@ -3322,7 +3346,7 @@
             <key key="amenity" value="place_of_worship" />
             <key key="religion" value="hindu" />
             <text key="name" text="Name" />
-            <combo key="denomination" text="Denomination" values="vaishnavism,shaivism,shaktism,smartism" values_searchable="true" />
+            <reference ref="hindu_denominations" />
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
@@ -3344,7 +3368,7 @@
             <space />
             <key key="amenity" value="place_of_worship" />
             <text key="name" text="Name" />
-            <combo key="religion" text="Religion" values="bahai,jain,sikh,spiritualist,taoist,unitarian,zoroastrian" match="keyvalue!" values_searchable="true" />
+            <reference ref="other_religions" />
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
@@ -5353,8 +5377,7 @@
             <space />
             <key key="historic" value="wayside_cross" />
             <text key="name" text="Name" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" default="christian" />
-            <combo key="denomination" text="Denomination" values="catholic,greek_catholic,old_catholic,orthodox,roman_catholic" default="catholic" />
+            <reference ref="religious_catholic_christian" />
             <text key="start_date" text="Start date" />
             <text key="inscription" text="Inscription" />
         </item> <!-- Wayside Cross -->
@@ -5363,8 +5386,7 @@
             <space />
             <key key="historic" value="wayside_shrine" />
             <text key="name" text="Name" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" default="christian" />
-            <combo key="denomination" text="Denomination" values="catholic,greek_catholic,old_catholic,orthodox,roman_catholic" default="catholic" />
+            <reference ref="religious_catholic_christian" />
             <check key="amenity" text="Place of worship" value_on="place_of_worship" disable_off="true" />
             <combo key="building" text="Building" values="wayside_shrine,yes" values_context="building" />
             <text key="start_date" text="Start date" />
@@ -5980,8 +6002,7 @@
             <key key="shop" value="gift" />
             <reference ref="name_operator_oh_wheelchair" />
             <optional>
-                <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" />
-                <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
+                <reference ref="religious" />
             </optional>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Gift/Souvenir -->
@@ -6236,6 +6257,7 @@
         <link wiki="Tag:office=religion" />
         <space />
         <key key="office" value="religion" />
+        <text key="name" text="Name" />
         <reference ref="religious" />
         <reference ref="oh_wheelchair" />
         <reference ref="link_contact_address" />
@@ -6953,18 +6975,21 @@
             <link wiki="Tag:amenity=grave_yard" />
             <space />
             <key key="amenity" value="grave_yard" />
+            <text key="name" text="Name" />
             <reference ref="religious" />
         </item> <!-- Graveyard -->
         <item name="Cemetery" icon="presets/landuse/cemetery.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=cemetery" />
             <space />
             <key key="landuse" value="cemetery" />
+            <text key="name" text="Name" />
             <reference ref="religious" />
         </item> <!-- Cemetery -->
         <item name="Religious" icon="presets/religion/religion.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=religious" />
             <space />
             <key key="landuse" value="religious" />
+            <text key="name" text="Name" />
             <reference ref="religious" />
         </item> <!-- Religious -->
         <item name="Retail" icon="presets/shop/mall.svg" type="closedway,multipolygon" preset_name_label="true">

@@ -8,7 +8,7 @@
   assertNoMatch: "node religion=foobar";
 }
 
-*[religion=christian][denomination][denomination !~ /^(anglican|apostolic|baptist|catholic|christian_community|christian_scientist|coptic_orthodox|czechoslovak_hussite|dutch_reformed|evangelical|foursquare|greek_catholic|greek_orthodox|jehovahs_witness|kabbalah|karaite|living_waters_church|lutheran|maronite|mennonite|methodist|mormon|new_apostolic|nondenominational|old_catholic|orthodox|pentecostal|presbyterian|protestant|quaker|roman_catholic|russian_orthodox|salvation_army|serbian_orthodox|seventh_day_adventist|spiritist|united|united_reformed|uniting)$/] {
+*[religion=christian][denomination][denomination !~ /^(anglican|apostolic|baptist|catholic|church_of_scotland|christian_community|christian_scientist|coptic_orthodox|czechoslovak_hussite|dutch_reformed|evangelical|foursquare|greek_catholic|greek_orthodox|iglesia_ni_cristo|jehovahs_witness|kabbalah|karaite|living_waters_church|lutheran|maronite|mennonite|methodist|mormon|new_apostolic|nondenominational|old_catholic|orthodox|pentecostal|presbyterian|protestant|quaker|reformed|roman_catholic|romanian_orthodox|russian_orthodox|salvation_army|serbian_orthodox|seventh_day_adventist|spiritist|united|united_reformed|united|united_methodist|united_reformed|uniting)$/] {
   throwOther: tr("unknown christian denomination");
   assertMatch: "node religion=christian denomination=foobar";
   assertNoMatch: "node religion=christian denomination=catholic";
@@ -27,4 +27,11 @@
   assertMatch: "node religion=jewish denomination=foobar";
   assertNoMatch: "node religion=jewish denomination=alternative";
   assertNoMatch: "node religion=jewish";
+}
+
+*[religion=catholic] {
+  throwWarning: tr("{0}", "{0.tag}");
+  suggestAlternative: "religion=christian + denomination=catholic";
+  fixChangeKey: "religion => denomination";
+  fixAdd: "religion=christian";
 }

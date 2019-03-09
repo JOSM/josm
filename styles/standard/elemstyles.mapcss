@@ -2660,8 +2660,16 @@ node[amenity=place_of_worship][religion=buddhist] {
     icon-image: "presets/religion/buddhism.svg";
     set icon_z17;
 }
+node[amenity=place_of_worship][religion=caodaism][!is_prop_set(icon-image)] {
+    icon-image: "presets/misc/no_icon.svg";
+    set icon_z17;
+}
 node[amenity=place_of_worship][religion=christian] {
     icon-image: "presets/religion/church.svg";
+    set icon_z17;
+}
+node[amenity=place_of_worship][religion=confucian] {
+    icon-image: "presets/religion/confucian.svg";
     set icon_z17;
 }
 node[amenity=place_of_worship][religion=hindu] {
@@ -2680,12 +2688,12 @@ node[amenity=place_of_worship][religion=muslim] {
     icon-image: "presets/religion/muslim.svg";
     set icon_z17;
 }
-node[amenity=place_of_worship][religion=sikh] {
-    icon-image: "presets/religion/sikhism.svg";
-    set icon_z17;
-}
 node[amenity=place_of_worship][religion=shinto] {
     icon-image: "presets/religion/shinto.svg";
+    set icon_z17;
+}
+node[amenity=place_of_worship][religion=sikh] {
+    icon-image: "presets/religion/sikhism.svg";
     set icon_z17;
 }
 node[amenity=place_of_worship][religion=spiritualist][!is_prop_set(icon-image)] {
@@ -2696,7 +2704,11 @@ node[amenity=place_of_worship][religion=taoist] {
     icon-image: "presets/religion/taoism.svg";
     set icon_z17;
 }
-node[amenity=place_of_worship][religion=unitarian][!is_prop_set(icon-image)] {
+node[amenity=place_of_worship][religion=tenrikyo] {
+    icon-image: "presets/religion/tenrikyo.svg";
+    set icon_z17;
+}
+node[amenity=place_of_worship][religion=unitarian_universalist][!is_prop_set(icon-image)] {
     icon-image: "presets/misc/no_icon.svg";
     set icon_z17;
 }
