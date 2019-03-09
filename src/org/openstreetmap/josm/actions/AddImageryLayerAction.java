@@ -283,11 +283,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
     @Override
     protected void updateEnabledState() {
-        if (info.isBlacklisted()) {
-            setEnabled(false);
-        } else {
-            setEnabled(true);
-        }
+        setEnabled(!info.isBlacklisted());
     }
 
     @Override
