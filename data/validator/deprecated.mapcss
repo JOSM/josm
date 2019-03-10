@@ -1396,3 +1396,10 @@ node[fire_hydrant:water_source] {
   fixAdd: "religion=unitarian_universalist";
   group: tr("deprecated tagging");
 }
+
+*[shop=shopping_centre] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=mall";
+  fixAdd: "shop=mall";
+  group: tr("deprecated tagging");
+}
