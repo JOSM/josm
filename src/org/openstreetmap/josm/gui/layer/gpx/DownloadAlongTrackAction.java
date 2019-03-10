@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
 import org.openstreetmap.josm.actions.DownloadAlongAction;
@@ -103,7 +104,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
 
         class CalculateDownloadArea extends PleaseWaitRunnable {
 
-            private final Area a = new Area();
+            private final Path2D path = new Path2D.Double();
             private boolean cancel;
             private int ticks;
             private final Rectangle2D r = new Rectangle2D.Double();
@@ -127,7 +128,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
                 if (cancel) {
                     return;
                 }
-                confirmAndDownloadAreas(a, maxArea, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
+                confirmAndDownloadAreas(new Area(path), maxArea, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
                         tr("Download from OSM along this track"), progressMonitor);
             }
 
@@ -151,7 +152,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
                 if (previous == null || c.greatCircleDistance(previous) > bufferDist) {
                     // we add a buffer around the point.
                     r.setRect(c.lon() - bufferX, c.lat() - bufferY, 2 * bufferX, 2 * bufferY);
-                    a.add(new Area(r));
+                    path.append(r, false);
                     return c;
                 }
                 return previous;
