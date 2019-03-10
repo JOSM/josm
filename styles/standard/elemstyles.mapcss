@@ -1940,6 +1940,7 @@ area[shop=houseware],
 area[shop=jewelry],
 area[shop=kitchen],
 area[shop=mall],
+area[shop=massage],
 area[shop=mobile_phone],
 area[shop=motorcycle],
 area[shop=musical_instrument],
@@ -1963,7 +1964,6 @@ area[shop=charity],
 area[shop=video],
 area[shop=bookmaker],
 area[shop=lottery],
-area[shop=shopping_centre],
 area[shop=pet],
 area[shop=photo],
 area[shop=ticket],
@@ -2167,6 +2167,10 @@ node[shop=mall] {
     icon-image: "presets/shop/mall.svg";
     set icon_z17;
 }
+node[shop=massage] {
+    icon-image: "presets/shop/massage.svg";
+    set icon_z17;
+}
 node[shop=mobile_phone] {
     icon-image: "presets/shop/mobile_phone.svg";
     set icon_z17;
@@ -2257,11 +2261,6 @@ node[shop=bookmaker] {
 }
 node[shop=lottery] {
     icon-image: "presets/shop/lottery.svg";
-    set icon_z17;
-}
-/* duplicate of shopping_centre? */
-node[shop=shopping_centre] {
-    icon-image: "presets/shop/mall.svg";
     set icon_z17;
 }
 node[shop=pet] {

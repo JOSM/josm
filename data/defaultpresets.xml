@@ -5870,6 +5870,13 @@
             </checkgroup>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Hairdresser/Barber -->
+        <item name="Massage" icon="presets/shop/massage.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=massage" />
+            <space />
+            <key key="shop" value="massage" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Massage -->
         <item name="Tattoo" icon="presets/shop/tattoo.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=tattoo" />
             <space />
