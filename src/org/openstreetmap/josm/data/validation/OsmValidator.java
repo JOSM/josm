@@ -396,7 +396,7 @@ public final class OsmValidator {
             if (model.getChildCount(child) == 0) {
                 String ignoreName = child.getUserObject().toString();
                 if (ignoreName.matches("^(r|w|n)_.*")) {
-                    sb.append(":").append(child.getUserObject().toString());
+                    sb.append(':').append(child.getUserObject().toString());
                 } else if (ignoreName.matches("^[0-9]+(_.*|)$")) {
                     rHashMap.put(ignoreName, description);
                 }
