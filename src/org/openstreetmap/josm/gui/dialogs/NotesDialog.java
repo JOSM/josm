@@ -136,17 +136,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
             reopenAction.setEnabled(true);
         }
         openInBrowserAction.setEnabled(noteData != null && noteData.getSelectedNote() != null && noteData.getSelectedNote().getId() > 0);
-        if (noteData == null || !noteData.isModified()) {
-            uploadAction.setEnabled(false);
-        } else {
-            uploadAction.setEnabled(true);
-        }
+        uploadAction.setEnabled(noteData != null && noteData.isModified());
         //enable sort button if any notes are loaded
-        if (noteData == null || noteData.getNotes().isEmpty()) {
-            sortAction.setEnabled(false);
-        } else {
-            sortAction.setEnabled(true);
-        }
+        sortAction.setEnabled(noteData != null && !noteData.getNotes().isEmpty());
     }
 
     @Override

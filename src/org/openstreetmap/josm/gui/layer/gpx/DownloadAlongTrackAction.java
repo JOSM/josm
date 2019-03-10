@@ -100,7 +100,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
         final double bufferX = bufferY / scale;
         final int totalTicks = latcnt;
         // guess if a progress bar might be useful.
-        final boolean displayProgress = totalTicks > 200000 && bufferY < 0.01;
+        final boolean displayProgress = totalTicks > 200_000 && bufferY < 0.01;
 
         class CalculateDownloadArea extends PleaseWaitRunnable {
 
