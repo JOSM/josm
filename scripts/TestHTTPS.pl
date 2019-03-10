@@ -7,14 +7,20 @@ use Net::HTTPS;
 use XML::LibXML;
 
 my %urls;
+my %known;
 
-my %known = map {$_ => 1} qw(
-  siglon.londrina.pr.gov.br
-  tiles.itoworld.com
-  tms.cadastre.openstreetmap.fr
-  www.jgoodies.com
-  zibi.openstreetmap.org.pl
-);
+sub getignores
+{
+  open FILE,"<:encoding(utf-8)","josm_httpsignores.txt" or die;
+  for my $line (<FILE>)
+  {
+    if($line =~ /\|\| TestHTTPS \|\| \{\{\{(.*)\}\}\} \|\|/)
+    {
+      $known{$1}++;
+    }
+  }
+  close FILE;
+}
 
 sub getmaps
 {
@@ -83,25 +89,32 @@ sub getdump()
   eval $file;
 }
 
-print "Options: \n PLUGIN STYLE RULE PRESET MAP DUMP\n GETPLUGIN GETSTYLE GETRULE GETPRESET GETMAP GETDUMP\n LOCAL\n ALL GETALL\n" if !@ARGV;
+print "Options: \n PLUGIN STYLE RULE PRESET MAP DUMP\n GETPLUGIN GETSTYLE GETRULE GETPRESET GETMAP GETDUMP\n LOCAL\n IGNORES GETIGNORES\n ALL GETALL\n" if !@ARGV;
 
 open OUTFILE,">","josm_https.txt" or die "Could not open output file";
 
 sub doprint($)
 {
-  print OUTFILE $_[0];
-  print $_[0];
+  my $t = $_[0];
+  for my $k (sort keys %known)
+  {
+    $t =~ s/(\Q$k\E)/~~$1~~/g;
+  }
+  print OUTFILE $t;
+  print $t;
 }
 
 my $local = 0;
 for my $ARG (@ARGV)
 {
-  if($ARG eq "ALL") {push(@ARGV, "PLUGIN", "STYLE", "RULE", "PRESET", "MAP", "DUMP");}
-  if($ARG eq "GETALL") {push(@ARGV, "GETPLUGIN", "GETSTYLE", "GETRULE", "GETPRESET", "GETMAP", "GETDUMP");}
+  if($ARG eq "ALL") {push(@ARGV, "PLUGIN", "STYLE", "RULE", "PRESET", "MAP", "DUMP", "IGNORES");}
+  if($ARG eq "GETALL") {push(@ARGV, "GETPLUGIN", "GETSTYLE", "GETRULE", "GETPRESET", "GETMAP", "GETDUMP", "GETIGNORES");}
 }
 my %ARGS = map {$_ => 1} @ARGV; # prevent double arguments by passing through a hash
 for my $ARG (sort keys %ARGS)
 {
+  if($ARG eq "GETIGNORES") { system "curl https://josm.openstreetmap.de/wiki/IntegrationTestIgnores?format=txt -o josm_httpsignores.txt"; getignores();}
+  if($ARG eq "IGNORES") { getignores(); }
   if($ARG eq "LOCAL") {$local = 1; }
   if($ARG eq "GETDUMP") { system "scp josm\@josm.openstreetmap.de:auto/httpinfo.dump josm_dump.txt"; getdump();}
   if($ARG eq "DUMP") { getdump(); }
@@ -122,7 +135,7 @@ for my $url (sort keys %urls)
   my $i = join(" # ", sort keys %{$urls{$url}});
   if($local) # skip test
   {
-    doprint "* ".($known{$url} ? "~~" : "")."$url:$i\n";
+    doprint "* $url:$i\n";
     next;
   }
   eval
@@ -134,13 +147,13 @@ for my $url (sort keys %urls)
     $s->write_request(GET => "/", 'User-Agent' => "TestHTTPS/1.0");
     my($code, $mess, %h) = $s->read_response_headers;
     alarm(0);
-    doprint "* ".($known{$url} ? "~~" : "")."$url [$code $mess]: $i\n";
+    doprint "* $url [$code $mess]: $i\n";
   };
   if($@ && $@ !~ "(--Alarm--|Connection refused)")
   {
     my $e = $@;
     $e =~ s/[\r\n]//g;
     $e =~ s/ at scripts\/TestHTTPS.pl .*//;
-    doprint "* ".($known{$url} ? "~~" : "")."$url [Error $e] :$i\n";
+    doprint "* $url [Error $e] :$i\n";
   }
 }
