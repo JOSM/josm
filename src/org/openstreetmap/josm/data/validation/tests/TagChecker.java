@@ -884,7 +884,7 @@ public class TagChecker extends TagTest {
     public boolean isFixable(TestError testError) {
         if (testError.getTester() instanceof TagChecker) {
             int code = testError.getCode();
-            return code == INVALID_KEY || code == EMPTY_VALUES || code == INVALID_SPACE ||
+            return code == EMPTY_VALUES || code == INVALID_SPACE ||
                    code == INVALID_KEY_SPACE || code == INVALID_HTML ||
                    code == MULTIPLE_SPACES;
         }
