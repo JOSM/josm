@@ -219,11 +219,7 @@ public class TagTable extends JosmTable implements EndEditListener {
         }
 
         protected final void updateEnabledState() {
-            if (getSelectedColumnCount() >= 1 && getSelectedRowCount() >= 1) {
-                setEnabled(true);
-            } else {
-                setEnabled(false);
-            }
+            setEnabled(getSelectedColumnCount() >= 1 && getSelectedRowCount() >= 1);
         }
     }
 
