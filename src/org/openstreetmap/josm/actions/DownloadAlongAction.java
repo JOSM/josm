@@ -68,8 +68,8 @@ public abstract class DownloadAlongAction extends JosmAction {
                 r2 = new Rectangle2D.Double(bounds.getX(), bounds.getY() + bounds.getHeight() / 2, bounds.getWidth(),
                         bounds.getHeight() / 2);
             }
-            addToDownload(a, r1, results, maxArea);
-            addToDownload(a, r2, results, maxArea);
+            addToDownload(tmp, r1, results, maxArea);
+            addToDownload(tmp, r2, results, maxArea);
         } else {
             results.add(bounds);
         }
