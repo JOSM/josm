@@ -203,6 +203,10 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             final DefaultMutableTreeNode severityNode = new GroupTreeNode(severity);
             rootNode.add(severityNode);
 
+            if (oldExpandedRows.contains(severity)) {
+                expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode}));
+            }
+
             final Map<String, List<TestError>> errorsWithEmptyMessageByDescription = errorsByMessageDescription.get("");
             if (errorsWithEmptyMessageByDescription != null) {
                 errorsWithEmptyMessageByDescription.forEach((description, noDescriptionErrors) -> {
