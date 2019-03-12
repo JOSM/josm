@@ -278,7 +278,6 @@ public class TestError implements Comparable<TestError> {
      */
     public String getIgnoreState() {
         Collection<String> strings = new TreeSet<>();
-        StringBuilder ignorestring = new StringBuilder(getIgnoreSubGroup());
         for (OsmPrimitive o : primitives) {
             // ignore data not yet uploaded
             if (o.isNew())
@@ -293,10 +292,32 @@ public class TestError implements Comparable<TestError> {
             }
             strings.add(type + '_' + o.getId());
         }
+        StringBuilder ignorestring = new StringBuilder(getIgnoreSubGroup());
         for (String o : strings) {
             ignorestring.append(':').append(o);
         }
         return ignorestring.toString();
+    }
+
+    /**
+     * Check if this error matches an entry in the ignore list and
+     * set the ignored flag if it is.
+     * @return the new ignored state
+     */
+    public boolean updateIgnored() {
+        setIgnored(calcIgnored());
+        return isIgnored();
+    }
+
+    private boolean calcIgnored() {
+        String state = getIgnoreGroup();
+        if (state != null && OsmValidator.hasIgnoredError(state))
+            return true;
+        state = getIgnoreSubGroup();
+        if (state != null && OsmValidator.hasIgnoredError(state))
+            return true;
+        state = getIgnoreState();
+        return state != null && OsmValidator.hasIgnoredError(state);
     }
 
     /**

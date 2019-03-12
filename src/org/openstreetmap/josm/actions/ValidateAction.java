@@ -176,15 +176,7 @@ public class ValidateAction extends JosmAction {
                 getProgressMonitor().subTask(tr("Updating ignored errors ..."));
                 for (TestError error : errors) {
                     if (canceled) return;
-                    List<String> s = new ArrayList<>();
-                    s.add(error.getIgnoreState());
-                    s.add(error.getIgnoreGroup());
-                    s.add(error.getIgnoreSubGroup());
-                    for (String state : s) {
-                        if (state != null && OsmValidator.hasIgnoredError(state)) {
-                            error.setIgnored(true);
-                        }
-                    }
+                    error.updateIgnored();
                 }
             }
         }

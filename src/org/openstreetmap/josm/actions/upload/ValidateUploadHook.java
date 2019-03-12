@@ -43,6 +43,8 @@ public class ValidateUploadHook implements UploadHook {
 
     /**
      * Validate the modified data before uploading
+     * @param apiDataSet contains primitives to be uploaded
+     * @return true if upload should continue, else false
      */
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
@@ -76,22 +78,13 @@ public class ValidateUploadHook implements UploadHook {
         }
 
         if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
-            int nume = 0;
+            boolean allIgnored = true;
             for (TestError error : errors) {
-                List<String> s = new ArrayList<>();
-                s.add(error.getIgnoreState());
-                s.add(error.getIgnoreGroup());
-                s.add(error.getIgnoreSubGroup());
-                for (String state : s) {
-                    if (state != null && OsmValidator.hasIgnoredError(state)) {
-                        error.setIgnored(true);
-                    }
-                }
-                if (!error.isIgnored()) {
-                    ++nume;
+                if (!error.updateIgnored()) {
+                    allIgnored = false;
                 }
             }
-            if (nume == 0)
+            if (allIgnored)
                 return true;
         }
 
