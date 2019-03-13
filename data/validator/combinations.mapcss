@@ -491,12 +491,9 @@ way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered
   fixAdd: "unisex=yes";
 }
 
-/* {1.key} without {2.tag} see #13138, 14468 */
-area:closed[water][natural!~/water|bay|strait/][water!=intermittent] { /* water=intermittent is deprecated and has an own warning */
-  throwWarning: tr("{0} without {1}", "{1.key}", "{2.tag}");
-  group: tr("missing tag");
-}
-way!:closed[water][natural!~/water|bay|strait/][water!=intermittent] {
+/* {1.key} without {2.tag} see #13138, #14468 */
+way!:closed[water][natural!~/water|bay|strait/][water!=intermittent][amenity!=lavoir], /* water=intermittent is deprecated and has an own warning */
+area:closed[water][natural!~/water|bay|strait/][water!=intermittent][amenity!=lavoir] {
   throwWarning: tr("{0} without {1}", "{1.key}", "{2.tag}");
   group: tr("missing tag");
 }
