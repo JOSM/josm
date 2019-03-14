@@ -73,17 +73,13 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 }
 
 /* #17100 */
-*[name][name=~/^(?i)(parking)$/][amenity=parking],
-*[name][name=~/^(?i)(parkplatz)$/][amenity=parking],
-*[name][name=~/^(?i)(playground)$/][leisure=playground],
-*[name][name=~/^(?i)(spielplatz)$/][leisure=playground],
+*[name][name=~/^(?i)(parking|parkplatz)$/][amenity=parking],
+*[name][name=~/^(?i)(playground|spielplatz)$/][leisure=playground],
 *[name][name=~/^(?i)(shop)$/][shop][shop!=no],
-*[name][name=~/^(?i)(building)$/][building][building!=no],
+*[name][name=~/^(?i)(building|house)$/][building][building!=no],
 *[name][name=~/^(?i)(kiosk)$/][shop=kiosk],
-*[name][name=~/^(?i)(cemetery)$/][amenity=graveyard],
-*[name][name=~/^(?i)(cemetery)$/][amenity=cemetery],
-*[name][name=~/^(?i)(cmentarz)$/][amenity=graveyard],
-*[name][name=~/^(?i)(cmentarz)$/][amenity=cemetery] {
+*[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=graveyard],
+*[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=cemetery] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
   fixRemove: "name";
