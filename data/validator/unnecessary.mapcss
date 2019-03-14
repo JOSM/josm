@@ -71,3 +71,43 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   group: tr("unnecessary tag");
   fixRemove: "{1.key}";
 }
+
+/* #17100 */
+*[name][name=~/^(?i)(parking)$/][amenity=parking],
+*[name][name=~/^(?i)(parkplatz)$/][amenity=parking],
+*[name][name=~/^(?i)(playground)$/][leisure=playground],
+*[name][name=~/^(?i)(spielplatz)$/][leisure=playground],
+*[name][name=~/^(?i)(shop)$/][shop][shop!=no],
+*[name][name=~/^(?i)(building)$/][building][building!=no],
+*[name][name=~/^(?i)(kiosk)$/][shop=kiosk],
+*[name][name=~/^(?i)(cemetery)$/][amenity=graveyard],
+*[name][name=~/^(?i)(cemetery)$/][amenity=cemetery],
+*[name][name=~/^(?i)(cmentarz)$/][amenity=graveyard],
+*[name][name=~/^(?i)(cmentarz)$/][amenity=cemetery] {
+  throwWarning: tr("{0}", "{0.tag}");
+  group: tr("descriptive name");
+  fixRemove: "name";
+  assertMatch: "way name=parking amenity=parking";
+  assertMatch: "way name=Parking amenity=parking";
+  assertMatch: "node name=parking amenity=parking";
+  assertMatch: "node name=Parking amenity=parking";
+  assertNoMatch: "node name=Parking_with_suffix amenity=parking";
+  assertNoMatch: "node name=Megaparking amenity=parking";
+  assertMatch: "relation name=parking amenity=parking type=multipolygon";
+  assertMatch: "relation name=Parking amenity=parking type=multipolygon";
+  assertNoMatch: "way name=parking";
+  assertMatch: "relation name=PLAYGROUND leisure=playground type=multipolygon";
+  assertMatch: "node name=PLaYGrOUNd leisure=playground";
+  assertNoMatch: "way name=playground";
+  assertMatch: "node name=shop shop=whatever";
+  assertNoMatch: "node name=shop shop=no";
+  assertNoMatch: "way name=shop leisure=playground";
+  assertMatch: "way name=building building=yes";
+  assertNoMatch: "way building=yes";
+  assertMatch: "way name=kiosk building=yes shop=kiosk";
+  assertNoMatch: "way name=kiosk building=yes";
+  assertMatch: "way name=cemetery amenity=graveyard";
+  assertMatch: "way name=cmentarz amenity=graveyard";
+  assertMatch: "way name=Cmentarz amenity=graveyard";
+  assertNoMatch: "way name=kiosk amenity=graveyard";
+} 
