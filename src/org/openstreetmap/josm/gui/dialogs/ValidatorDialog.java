@@ -218,11 +218,14 @@ public class ValidatorDialog extends ToggleDialog
 
         void updateEnabledState() {
             boolean found = false;
-            for (TestError e : tree.getErrors()) {
-                for (OsmPrimitive p : e.getPrimitives()) {
-                    if (p.isSelected()) {
-                        found = true;
-                        break;
+            final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
+            if (ds != null && !ds.selectionEmpty()) {
+                for (TestError e : tree.getErrors()) {
+                    for (OsmPrimitive p : e.getPrimitives()) {
+                        if (p.isSelected()) {
+                            found = true;
+                            break;
+                        }
                     }
                 }
             }
