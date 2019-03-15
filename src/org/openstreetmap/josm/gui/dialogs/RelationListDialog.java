@@ -50,6 +50,7 @@ import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent.DatasetEventType;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
@@ -736,7 +737,10 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-        /* ignore */
+        if (event.getType() == DatasetEventType.PRIMITIVE_FLAGS_CHANGED
+                && event.getPrimitives().stream().anyMatch(Relation.class::isInstance)) {
+            initFromData(MainApplication.getLayerManager().getActiveData());
+        }
     }
 
     @Override
