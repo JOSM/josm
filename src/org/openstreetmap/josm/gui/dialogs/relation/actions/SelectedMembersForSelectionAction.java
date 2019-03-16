@@ -29,13 +29,6 @@ public class SelectedMembersForSelectionAction extends AddFromSelectionAction {
     protected void updateEnabledState() {
         boolean enabled = getSelectionTableModel().getRowCount() > 0
         && !editorAccess.getMemberTableModel().getChildPrimitives(getLayer().data.getSelected()).isEmpty();
-
-        if (enabled) {
-            putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to {0} objects in the current selection",
-                    editorAccess.getMemberTableModel().getChildPrimitives(getLayer().data.getSelected()).size()));
-        } else {
-            putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
-        }
         setEnabled(enabled);
     }
 
