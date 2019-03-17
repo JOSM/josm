@@ -453,6 +453,7 @@ way[type=palm] {
 *[leisure=yes],
 *[shop="*"],
 *[shop=yes][amenity!=fuel],
+*[name=A3C][amenity=fuel],
 *[craft=yes],
 *[service=yes],
 *[place=yes] {
