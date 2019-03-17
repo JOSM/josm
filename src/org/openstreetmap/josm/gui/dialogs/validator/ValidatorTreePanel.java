@@ -150,6 +150,13 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * Builds the errors tree
      */
     public void buildTree() {
+        buildTree(true);
+    }
+    /**
+     * Builds the errors tree
+     * @param expandAgain if true, try to expand the same rows as before
+     */
+    public void buildTree(boolean expandAgain) {
         if (resetScheduled)
             return;
         final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
@@ -163,26 +170,28 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         TreePath selPath = getSelectionPath();
         int selRow = selPath == null ? -1 : getRowForPath(selPath);
 
-        // Remember the currently expanded rows
-        Set<Object> oldExpandedRows = new HashSet<>();
-        Enumeration<TreePath> expanded = getExpandedDescendants(new TreePath(getRoot()));
-        if (expanded != null) {
-            while (expanded.hasMoreElements()) {
-                TreePath path = expanded.nextElement();
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                Object userObject = node.getUserObject();
-                if (userObject instanceof Severity) {
-                    oldExpandedRows.add(userObject);
-                } else if (userObject instanceof String) {
-                    String msg = (String) userObject;
-                    int index = msg.lastIndexOf(" (");
-                    if (index > 0) {
-                        msg = msg.substring(0, index);
+            // Remember the currently expanded rows
+            Set<Object> oldExpandedRows = new HashSet<>();
+            if (expandAgain) {
+                Enumeration<TreePath> expanded = getExpandedDescendants(new TreePath(getRoot()));
+                if (expanded != null) {
+                    while (expanded.hasMoreElements()) {
+                        TreePath path = expanded.nextElement();
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        Object userObject = node.getUserObject();
+                        if (userObject instanceof Severity) {
+                            oldExpandedRows.add(userObject);
+                        } else if (userObject instanceof String) {
+                            String msg = (String) userObject;
+                            int index = msg.lastIndexOf(" (");
+                            if (index > 0) {
+                                msg = msg.substring(0, index);
+                            }
+                            oldExpandedRows.add(msg);
+                        }
                     }
-                    oldExpandedRows.add(msg);
                 }
             }
-        }
 
         Predicate<TestError> filterToUse = e -> !e.isIgnored();
         if (!ValidatorPrefHelper.PREF_OTHER.get()) {
@@ -275,7 +284,51 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             this.expandPath(path);
         }
 
-        if (selRow >= 0 && selRow < getRowCount()) {
+        if (selPath != null) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+            Object userObject = node.getUserObject();
+            if (userObject instanceof TestError && ((TestError) userObject).isIgnored()) {
+                // don't try to find ignored error
+                selPath = null;
+            }
+        }
+        if (selPath != null) {
+            // try to reselect previously selected row. May not work if tree structure changed too much.
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+            Object searchObject = node.getUserObject();
+            String msg = null;
+            if (searchObject instanceof String) {
+                msg = (String) searchObject;
+                int index = msg.lastIndexOf(" (");
+                if (index > 0) {
+                    msg = msg.substring(0, index);
+                }
+            }
+            String searchString = msg;
+            visitTreeNodes(getRoot(), n -> {
+                boolean found = false;
+                final Object userInfo = n.getUserObject();
+                if (searchObject instanceof TestError && userInfo instanceof TestError) {
+                    TestError e1 = (TestError) searchObject;
+                    TestError e2 = (TestError) userInfo;
+                    found |= e1.getCode() == e2.getCode() && e1.getMessage().equals(e2.getMessage())
+                            && e1.getPrimitives().size() == e2.getPrimitives().size()
+                            && e1.getPrimitives().containsAll(e2.getPrimitives());
+                } else if (searchObject instanceof String && userInfo instanceof String) {
+                    found |= ((String) userInfo).startsWith(searchString);
+                } else if (searchObject instanceof Severity) {
+                    found |= searchObject.equals(userInfo);
+                }
+
+                if (found) {
+                    TreePath path = new TreePath(n.getPath());
+                    setSelectionPath(path);
+                    scrollPathToVisible(path);
+                }
+            });
+        }
+        if (selRow >= 0 && selRow < getRowCount() && getSelectionCount() == 0) {
+            // fall back: if we cannot find the previously selected entry, select the row by position
             setSelectionRow(selRow);
             scrollRowToVisible(selRow);
         }
@@ -327,10 +380,15 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
      * @param errors The error list that is used by a data layer
      */
     public final void setErrorList(List<TestError> errors) {
+        if (errors != null && errors == this.errors)
+            return;
         this.errors = errors != null ? errors : new ArrayList<>();
         sortErrors();
         if (isVisible()) {
-            buildTree();
+            //TODO: If list is changed because another layer was activated it would be good to store/restore
+            // the expanded / selected paths.
+            clearSelection();
+            buildTree(false);
         }
     }
 
@@ -367,8 +425,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     public void selectRelatedErrors(final Collection<OsmPrimitive> primitives) {
         final List<TreePath> paths = new ArrayList<>();
         walkAndSelectRelatedErrors(new TreePath(getRoot()), new HashSet<>(primitives)::contains, paths);
-        getSelectionModel().clearSelection();
-        getSelectionModel().setSelectionPaths(paths.toArray(new TreePath[0]));
+        clearSelection();
+        setSelectionPaths(paths.toArray(new TreePath[0]));
         // make sure that first path is visible
         if (!paths.isEmpty()) {
             scrollPathToVisible(paths.get(0));
