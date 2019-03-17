@@ -122,11 +122,13 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- ISO3166-1, taken from http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm + "EU" for Europe -->
+    <!-- ISO3166-1, taken from https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Current_codes + "EU" for Europe -->
     <xs:simpleType name="iso3166">
         <xs:restriction base="xs:string">
             <!-- EUROPE (JOSM ONLY) -->
             <xs:enumeration value="EU" />
+            <!-- KOSOVO (TEMPORARY USER-ASSIGNED CODE) -->
+            <xs:enumeration value="XK" />
             <!-- AFGHANISTAN -->
             <xs:enumeration value="AF" />
             <!-- ÅLAND ISLANDS -->
