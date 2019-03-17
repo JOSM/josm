@@ -258,6 +258,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             @Override
             public String getToolTipText(MouseEvent e) {
                 int index = columnModel.getColumnIndexAtX(e.getPoint().x);
+                if (index == -1)
+                    return null;
                 int realIndex = columnModel.getColumn(index).getModelIndex();
                 return COLUMN_TOOLTIPS[realIndex];
             }
