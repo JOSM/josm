@@ -118,8 +118,8 @@ public class ValidatorDialog extends ToggleDialog
 
         Action removeProblemAction = new AbstractAction() {
             {
-                putValue(NAME, tr("Remove"));
-                putValue(SHORT_DESCRIPTION, tr("Remove from tree."));
+                putValue(NAME, tr("Ignore for now"));
+                putValue(SHORT_DESCRIPTION, tr("Ignore and remove from tree."));
                 new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
             }
 
