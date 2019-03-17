@@ -116,8 +116,24 @@ public class ValidatorDialog extends ToggleDialog
                 Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation Results")),
                         KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150, false, ValidatorPreference.class);
 
+        Action removeProblemAction = new AbstractAction() {
+            {
+                putValue(NAME, tr("Remove"));
+                putValue(SHORT_DESCRIPTION, tr("Remove from tree."));
+                new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TestError error = getSelectedError();
+                error.setIgnored(true);
+                tree.resetErrors();
+            }
+        };
+
         popupMenuHandler.addAction(MainApplication.getMenu().autoScaleActions.get("problem"));
         popupMenuHandler.addAction(new EditRelationAction());
+        popupMenuHandler.addAction(removeProblemAction);
 
         tree = new ValidatorTreePanel();
         tree.addMouseListener(new MouseEventHandler());
