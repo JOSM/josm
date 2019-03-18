@@ -900,7 +900,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private TileSet getVisibleTileSet() {
-        ProjectionBounds bounds = MainApplication.getMap().mapView.getState().getViewArea().getProjectionBounds();
+        if (!MainApplication.isDisplayingMapView())
+            return new TileSet();
+        ProjectionBounds bounds = MainApplication.getMap().mapView.getProjectionBounds();
         return getTileSet(bounds, currentZoomLevel);
     }
 
