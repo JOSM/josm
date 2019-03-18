@@ -296,6 +296,7 @@ public class TagChecker extends TagTest {
                 break;
             case "E:":
                 ignoreDataEquals.add(line);
+                addToKeyDictionary(line);
                 break;
             case "F:":
                 ignoreDataEndsWith.add(line);
@@ -304,6 +305,7 @@ public class TagChecker extends TagTest {
                 Tag tag = Tag.ofString(line);
                 ignoreDataTag.add(tag);
                 oftenUsedTags.put(tag.getKey(), tag.getValue());
+                addToKeyDictionary(tag.getKey());
                 break;
             default:
                 if (!key.startsWith(";")) {
@@ -313,6 +315,15 @@ public class TagChecker extends TagTest {
         } catch (IllegalArgumentException e) {
             Logging.error("Invalid line in {0} : {1}", source, e.getMessage());
             Logging.trace(e);
+        }
+    }
+
+    private static void addToKeyDictionary(String key) {
+        if (key != null) {
+            String hk = harmonizeKey(key);
+            if (!key.equals(hk)) {
+                harmonizedKeys.put(hk, key);
+            }
         }
     }
 
@@ -355,10 +366,7 @@ public class TagChecker extends TagTest {
 
     private static void addPresetValue(KeyedItem ky) {
         if (ky.key != null && ky.getValues() != null) {
-            String hk = harmonizeKey(ky.key);
-            if (!ky.key.equals(hk)) {
-                harmonizedKeys.put(hk, ky.key);
-            }
+            addToKeyDictionary(ky.key);
         }
     }
 
@@ -601,16 +609,31 @@ public class TagChecker extends TagTest {
 
     private void spellCheckKey(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String key) {
         String prettifiedKey = harmonizeKey(key);
-        String fixedKey = isKeyInPresets(prettifiedKey) ? prettifiedKey : harmonizedKeys.get(prettifiedKey);
+        String fixedKey;
+        if (ignoreDataEquals.contains(prettifiedKey)) {
+            fixedKey = prettifiedKey;
+        } else {
+            fixedKey = isKeyInPresets(prettifiedKey) ? prettifiedKey : harmonizedKeys.get(prettifiedKey);
+        }
+        if (fixedKey == null) {
+            for (Tag a : ignoreDataTag) {
+                if (a.getKey().equals(prettifiedKey)) {
+                    fixedKey = prettifiedKey;
+                    break;
+                }
+            }
+        }
+
         if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
+            final String proposedKey = fixedKey;
             // misspelled preset key
             final TestError.Builder error = TestError.builder(this, Severity.WARNING, MISSPELLED_KEY)
-                    .message(tr("Misspelled property key"), marktr("Key ''{0}'' looks like ''{1}''."), key, fixedKey)
+                    .message(tr("Misspelled property key"), marktr("Key ''{0}'' looks like ''{1}''."), key, proposedKey)
                     .primitives(p);
             if (p.hasKey(fixedKey)) {
                 errors.add(error.build());
             } else {
-                errors.add(error.fix(() -> new ChangePropertyKeyCommand(p, key, fixedKey)).build());
+                errors.add(error.fix(() -> new ChangePropertyKeyCommand(p, key, proposedKey)).build());
             }
             withErrors.put(p, "WPK");
         } else {
