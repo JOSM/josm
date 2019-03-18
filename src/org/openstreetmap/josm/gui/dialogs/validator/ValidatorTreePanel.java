@@ -152,6 +152,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     public void buildTree() {
         buildTree(true);
     }
+
     /**
      * Builds the errors tree
      * @param expandAgain if true, try to expand the same rows as before
@@ -170,28 +171,28 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         TreePath selPath = getSelectionPath();
         int selRow = selPath == null ? -1 : getRowForPath(selPath);
 
-            // Remember the currently expanded rows
-            Set<Object> oldExpandedRows = new HashSet<>();
-            if (expandAgain) {
-                Enumeration<TreePath> expanded = getExpandedDescendants(new TreePath(getRoot()));
-                if (expanded != null) {
-                    while (expanded.hasMoreElements()) {
-                        TreePath path = expanded.nextElement();
-                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                        Object userObject = node.getUserObject();
-                        if (userObject instanceof Severity) {
-                            oldExpandedRows.add(userObject);
-                        } else if (userObject instanceof String) {
-                            String msg = (String) userObject;
-                            int index = msg.lastIndexOf(" (");
-                            if (index > 0) {
-                                msg = msg.substring(0, index);
-                            }
-                            oldExpandedRows.add(msg);
+        // Remember the currently expanded rows
+        Set<Object> oldExpandedRows = new HashSet<>();
+        if (expandAgain) {
+            Enumeration<TreePath> expanded = getExpandedDescendants(new TreePath(getRoot()));
+            if (expanded != null) {
+                while (expanded.hasMoreElements()) {
+                    TreePath path = expanded.nextElement();
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                    Object userObject = node.getUserObject();
+                    if (userObject instanceof Severity) {
+                        oldExpandedRows.add(userObject);
+                    } else if (userObject instanceof String) {
+                        String msg = (String) userObject;
+                        int index = msg.lastIndexOf(" (");
+                        if (index > 0) {
+                            msg = msg.substring(0, index);
                         }
+                        oldExpandedRows.add(msg);
                     }
                 }
             }
+        }
 
         Predicate<TestError> filterToUse = e -> !e.isIgnored();
         if (!ValidatorPrefHelper.PREF_OTHER.get()) {
