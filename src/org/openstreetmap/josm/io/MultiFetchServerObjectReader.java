@@ -59,12 +59,12 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MultiFetchServerObjectReader extends OsmServerReader {
     /**
-     * the max. number of primitives retrieved in one step. Assuming IDs with 7 digits,
-     * this leads to a max. request URL of ~ 1600 Bytes ((7 digits +  1 Separator) * 200),
+     * the max. number of primitives retrieved in one step. Assuming IDs with 10 digits,
+     * this leads to a max. request URL of ~ 1900 Bytes ((10 digits +  1 Separator) * 170),
      * which should be safe according to the
      * <a href="http://www.boutell.com/newfaq/misc/urllength.html">WWW FAQ</a>.
      */
-    private static final int MAX_IDS_PER_REQUEST = 200;
+    private static final int MAX_IDS_PER_REQUEST = 170;
 
     private final Set<Long> nodes;
     private final Set<Long> ways;
@@ -334,6 +334,12 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
             progressMonitor.subTask(msg + "... " + progressMonitor.getTicks() + '/' + progressMonitor.getTicksCount());
             try {
                 FetchResult result = ecs.take().get();
+                if (result.rc404 != null) {
+                    List<Long> toSplit = new ArrayList<>(result.rc404);
+                    int n = toSplit.size() / 2;
+                    jobs.add(ecs.submit(new Fetcher(type, new HashSet<>(toSplit.subList(0, n)), progressMonitor)));
+                    jobs.add(ecs.submit(new Fetcher(type, new HashSet<>(toSplit.subList(n, toSplit.size())), progressMonitor)));
+                }
                 if (result.missingPrimitives != null) {
                     missingPrimitives.addAll(result.missingPrimitives);
                 }
@@ -427,6 +433,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
          */
         public final Set<PrimitiveId> missingPrimitives;
 
+        private Set<Long> rc404;
+
         /**
          * Constructs a {@code FetchResult}
          * @param dataSet The resulting data set
@@ -486,6 +494,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 return multiGetIdPackage(type, pkg, progressMonitor);
             } catch (OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                    if (pkg.size() > 4) {
+                        FetchResult res = new FetchResult(null, null);
+                        res.rc404 = pkg;
+                        return res;
+                    }
                     Logging.info(tr("Server replied with response code 404, retrying with an individual request for each object."));
                     return singleGetIdPackage(type, pkg, progressMonitor);
                 } else {
