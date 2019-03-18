@@ -83,6 +83,38 @@ public class TagCheckerTest {
     }
 
     /**
+     * Check for misspelled key where the suggested alternative is given with prefix E: in ignoreTags.cfg.
+     * The error should be fixable.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testUpperCaseIgnoredKey() throws IOException {
+        // ticket 17468
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node wheelchair:Description=bla"));
+        assertEquals(1, errors.size());
+        assertEquals("Misspelled property key", errors.get(0).getMessage());
+        assertEquals("Key 'wheelchair:Description' looks like 'wheelchair:description'.", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertTrue(errors.get(0).isFixable());
+    }
+
+    /**
+     * Check for misspelled key where the suggested alternative is given with prefix K: in ignoreTags.cfg.
+     * The error should be fixable.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testUpperCaseInKeyIgnoredTag() throws IOException {
+        // ticket 17468
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node land_Area=administrative"));
+        assertEquals(1, errors.size());
+        assertEquals("Misspelled property key", errors.get(0).getMessage());
+        assertEquals("Key 'land_Area' looks like 'land_area'.", errors.get(0).getDescription());
+        assertEquals(Severity.WARNING, errors.get(0).getSeverity());
+        assertTrue(errors.get(0).isFixable());
+    }
+
+    /**
      * Check for unknown key.
      * @throws IOException if any I/O error occurs
      */
