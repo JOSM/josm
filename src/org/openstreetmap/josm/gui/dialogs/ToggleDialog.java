@@ -887,7 +887,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     protected boolean dockWhenClosingDetachedDlg() {
-        return true;
+        return dialogsPanel != null && titleBar != null;
     }
 
     /**

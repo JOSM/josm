@@ -506,7 +506,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     protected boolean dockWhenClosingDetachedDlg() {
         if (collapseButtonClicked) {
             collapseButtonClicked = false;
-            return true;
+            return super.dockWhenClosingDetachedDlg();
         }
         return false;
     }
