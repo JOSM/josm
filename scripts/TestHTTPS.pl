@@ -16,7 +16,7 @@ sub getignores
   {
     if($line =~ /\|\| TestHTTPS \|\| \{\{\{(.*)\}\}\} \|\|/)
     {
-      $known{$1}++;
+      $known{$1} = 1;
     }
   }
   close FILE;
@@ -98,7 +98,7 @@ sub doprint($)
   my $t = $_[0];
   for my $k (sort keys %known)
   {
-    $t =~ s/(\Q$k\E)/~~$1~~/g;
+    $known{$k}++ if($t =~ s/(\Q$k\E)/~~$1~~/g);
   }
   print OUTFILE $t;
   print $t;
@@ -156,4 +156,9 @@ for my $url (sort keys %urls)
     $e =~ s/ at scripts\/TestHTTPS.pl .*//;
     doprint "* $url [Error $e] :$i\n";
   }
+}
+
+for my $k (sort keys %known)
+{
+  print "Unused ignores $k\n" if $known{$k} == 1;
 }
