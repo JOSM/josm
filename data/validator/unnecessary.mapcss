@@ -34,6 +34,19 @@ area:closed[aeroway=helipad][area?] {
   fixRemove: "{2.key}";
 }
 
+/* #17482 */
+*[building:ruian:type=2][building=farm_auxiliary],
+*[building:ruian:type=7][building=house],
+*[building:ruian:type=11][building=hotel],
+*[building:ruian:type=12][building=warehouse],
+*[building:ruian:type=13][building=barn],
+*[building:ruian:type=18][building=garage],
+*[building:ruian:type=21][building=greenhouse] {
+  throwWarning: tr("{0} is unnecessary for {1}", "{0.tag}", "{1.tag}");
+  group: tr("unnecessary tag");
+  fixRemove: "{0.key}";
+}
+
 *[emergency=permissive] {
   /* see #9458 - emergency=permissive makes no sense */
   throwWarning: tr("{0} makes no sense", "{0.tag");
