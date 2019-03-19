@@ -6109,6 +6109,7 @@
             <check key="payment:jcb" text="JCB" match="keyvalue" />
             <check key="payment:mastercard" text="Mastercard" match="keyvalue" />
             <check key="payment:visa" text="Visa" match="keyvalue" />
+            <check key="payment:contactless" text="Contactless" match="keyvalue" />
         </checkgroup>
         <space />
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="no" match="keyvalue" />
