@@ -34,7 +34,9 @@ area:closed[aeroway=helipad][area?] {
   fixRemove: "{2.key}";
 }
 
-/* #17482 */
+/* #9257, #17482 */
+way[foot =~ /^(yes|designated)$/][highway =~ /^(footway|pedestrian)$/],
+way[bicycle =~ /^(yes|designated)$/][highway=cycleway],
 *[building:ruian:type=2][building=farm_auxiliary],
 *[building:ruian:type=7][building=house],
 *[building:ruian:type=11][building=hotel],
