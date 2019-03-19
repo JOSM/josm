@@ -175,14 +175,12 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
 
     @Override
     public String get(Object key) {
-        String[] tags = this.tags;
         int index = indexOfKey(tags, key);
         return index < 0 ? null : tags[index + 1];
     }
 
     @Override
     public boolean containsValue(Object value) {
-        String[] tags = this.tags;
         for (int i = 1; i < tags.length; i += 2) {
             if (value.equals(tags[i])) {
                 return true;

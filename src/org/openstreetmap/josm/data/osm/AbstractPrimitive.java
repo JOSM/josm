@@ -233,7 +233,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public long getId() {
-        long id = this.id;
         return id >= 0 ? id : 0;
     }
 
@@ -469,7 +468,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public void visitKeys(KeyValueVisitor visitor) {
-        final String[] keys = this.keys;
         if (keys != null) {
             for (int i = 0; i < keys.length; i += 2) {
                 visitor.visitKeyValue(this, keys[i], keys[i + 1]);
@@ -639,7 +637,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public final String get(String key) {
-        String[] keys = this.keys;
         if (key == null)
             return null;
         if (keys == null)
@@ -656,7 +653,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * @return The value for a key that matches the given key ignoring case.
      */
     public final String getIgnoreCase(String key) {
-        String[] keys = this.keys;
         if (key == null)
             return null;
         if (keys == null)
@@ -669,13 +665,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public final int getNumKeys() {
-        String[] keys = this.keys;
         return keys == null ? 0 : keys.length / 2;
     }
 
     @Override
     public final Collection<String> keySet() {
-        final String[] keys = this.keys;
         if (keys == null) {
             return Collections.emptySet();
         }
@@ -844,7 +838,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
     @Override
     public Map<String, String> getInterestingTags() {
         Map<String, String> result = new HashMap<>();
-        String[] keys = this.keys;
         if (keys != null) {
             for (int i = 0; i < keys.length; i += 2) {
                 if (!isUninterestingKey(keys[i])) {
