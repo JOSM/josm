@@ -183,11 +183,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                     if (userObject instanceof Severity) {
                         oldExpandedRows.add(userObject);
                     } else if (userObject instanceof String) {
-                        String msg = (String) userObject;
-                        int index = msg.lastIndexOf(" (");
-                        if (index > 0) {
-                            msg = msg.substring(0, index);
-                        }
+                        String msg = removeSize((String) userObject);
                         oldExpandedRows.add(msg);
                     }
                 }
@@ -214,18 +210,18 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             rootNode.add(severityNode);
 
             if (oldExpandedRows.contains(severity)) {
-                expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode}));
+                expandedPaths.add(new TreePath(severityNode.getPath()));
             }
 
             final Map<String, List<TestError>> errorsWithEmptyMessageByDescription = errorsByMessageDescription.get("");
             if (errorsWithEmptyMessageByDescription != null) {
                 errorsWithEmptyMessageByDescription.forEach((description, noDescriptionErrors) -> {
-                    final String msg = tr("{0} ({1})", description, noDescriptionErrors.size());
+                    final String msg = addSize(description, noDescriptionErrors);
                     final DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                     severityNode.add(messageNode);
 
                     if (oldExpandedRows.contains(description)) {
-                        expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, messageNode}));
+                        expandedPaths.add(new TreePath(messageNode.getPath()));
                     }
                     // add the matching errors to the current node
                     noDescriptionErrors.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
@@ -242,36 +238,29 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                     groupNode = new GroupTreeNode(message);
                     severityNode.add(groupNode);
                     if (oldExpandedRows.contains(message)) {
-                        expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode}));
+                        expandedPaths.add(new TreePath(groupNode.getPath()));
                     }
                 } else {
                     groupNode = null;
                 }
 
                 errorsByDescription.forEach((description, errorsWithDescription) -> {
-                    boolean emptyDescription = description == null || description.isEmpty();
                     // Message node
-                    final String msg;
+                    final String searchMsg;
                     if (groupNode != null) {
-                        msg = tr("{0} ({1})", description, errorsWithDescription.size());
-                    } else if (emptyDescription) {
-                        msg = tr("{0} ({1})", message, errorsWithDescription.size());
+                        searchMsg = description;
+                    } else if (description == null || description.isEmpty()) {
+                        searchMsg = message;
                     } else {
-                        msg = tr("{0} - {1} ({2})", message, description, errorsWithDescription.size());
+                        searchMsg = message + " - " + description;
                     }
-                    final DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
-                    if (groupNode != null) {
-                        groupNode.add(messageNode);
-                    } else {
-                        severityNode.add(messageNode);
-                    }
+                    final String msg = addSize(searchMsg, errorsWithDescription);
 
-                    if (oldExpandedRows.contains(description) || (emptyDescription && oldExpandedRows.contains(message))) {
-                        if (groupNode != null) {
-                            expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode, messageNode}));
-                        } else {
-                            expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, messageNode}));
-                        }
+                    final DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
+                    DefaultMutableTreeNode  currNode = groupNode != null ? groupNode : severityNode;
+                    currNode.add(messageNode);
+                    if (oldExpandedRows.contains(searchMsg)) {
+                        expandedPaths.add(new TreePath(messageNode.getPath()));
                     }
 
                     // add the matching errors to the current node
@@ -299,11 +288,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             Object searchObject = node.getUserObject();
             String msg = null;
             if (searchObject instanceof String) {
-                msg = (String) searchObject;
-                int index = msg.lastIndexOf(" (");
-                if (index > 0) {
-                    msg = msg.substring(0, index);
-                }
+                msg = removeSize((String) searchObject);
             }
             String searchString = msg;
             visitTreeNodes(getRoot(), n -> {
@@ -335,6 +320,15 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         }
 
         invalidationListeners.fireEvent(Runnable::run);
+    }
+
+    private static String addSize(String msg, Collection<?> coll) {
+        return msg + " (" + coll.size() + ")";
+    }
+
+    private static String removeSize(String msg) {
+        int index = msg.lastIndexOf(" (");
+        return index > 0 ? msg.substring(0, index) : msg;
     }
 
     /**
