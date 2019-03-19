@@ -119,7 +119,6 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     public boolean containsNode(Node node) {
         if (node == null) return false;
 
-        Node[] nodes = this.nodes;
         for (Node n : nodes) {
             if (n.equals(node))
                 return true;
@@ -139,7 +138,6 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
 
         if (node == null) return neigh;
 
-        Node[] nodes = this.nodes;
         for (int i = 0; i < nodes.length; i++) {
             if (nodes[i].equals(node)) {
                 if (i > 0)
@@ -163,7 +161,6 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         List<Pair<Node, Node>> chunkSet = new ArrayList<>();
         if (isIncomplete()) return chunkSet;
         Node lastN = null;
-        Node[] nodes = this.nodes;
         for (Node n : nodes) {
             if (lastN == null) {
                 lastN = n;
@@ -465,7 +462,6 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     public boolean isClosed() {
         if (isIncomplete()) return false;
 
-        Node[] nodes = this.nodes;
         return nodes.length >= 3 && nodes[nodes.length-1] == nodes[0];
     }
 
@@ -491,28 +487,24 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
 
     @Override
     public Node lastNode() {
-        Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return null;
         return nodes[nodes.length-1];
     }
 
     @Override
     public Node firstNode() {
-        Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return null;
         return nodes[0];
     }
 
     @Override
     public boolean isFirstLastNode(INode n) {
-        Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return false;
         return n == nodes[0] || n == nodes[nodes.length -1];
     }
 
     @Override
     public boolean isInnerNode(INode n) {
-        Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length <= 2) return false;
         /* circular ways have only inner nodes, so return true for them! */
         if (n == nodes[0] && n == nodes[nodes.length-1]) return true;
@@ -535,7 +527,6 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     private void checkNodes() {
         DataSet dataSet = getDataSet();
         if (dataSet != null) {
-            Node[] nodes = this.nodes;
             for (Node n: nodes) {
                 if (n.getDataSet() != dataSet)
                     throw new DataIntegrityProblemException("Nodes in way must be in the same dataset",
@@ -597,7 +588,6 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      * @since 2587
      */
     public boolean hasIncompleteNodes() {
-        Node[] nodes = this.nodes;
         for (Node node : nodes) {
             if (node.isIncomplete())
                 return true;
@@ -611,7 +601,6 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      * @since 13033
      */
     public boolean hasOnlyLocatableNodes() {
-        Node[] nodes = this.nodes;
         for (Node node : nodes) {
             if (!node.isLatLonKnown())
                 return false;

@@ -816,7 +816,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
             return Stream.empty();
         }
         checkDataset();
-        final Object referrers = this.referrers;
         if (referrers == null) {
             return Stream.empty();
         }
@@ -894,7 +893,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     protected final boolean isNodeReferredByWays(int n) {
         // Count only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
-        Object referrers = this.referrers;
         if (referrers == null) return false;
         checkDataset();
         if (referrers instanceof OsmPrimitive)

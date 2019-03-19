@@ -463,7 +463,6 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     private void checkMembers() {
         DataSet dataSet = getDataSet();
         if (dataSet != null) {
-            RelationMember[] members = this.members;
             for (RelationMember rm: members) {
                 if (rm.getMember().getDataSet() != dataSet)
                     throw new DataIntegrityProblemException(
@@ -493,7 +492,6 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
 
     @Override
     public boolean hasIncompleteMembers() {
-        RelationMember[] members = this.members;
         for (RelationMember rm: members) {
             if (rm.getMember().isIncomplete()) return true;
         }
@@ -508,7 +506,6 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     @Override
     public Collection<OsmPrimitive> getIncompleteMembers() {
         Set<OsmPrimitive> ret = new HashSet<>();
-        RelationMember[] members = this.members;
         for (RelationMember rm: members) {
             if (!rm.getMember().isIncomplete()) {
                 continue;
