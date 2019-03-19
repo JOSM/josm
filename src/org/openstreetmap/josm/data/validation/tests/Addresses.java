@@ -18,12 +18,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -33,6 +36,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -46,6 +50,7 @@ public class Addresses extends Test {
     protected static final int MULTIPLE_STREET_NAMES = 2603;
     protected static final int MULTIPLE_STREET_RELATIONS = 2604;
     protected static final int HOUSE_NUMBER_TOO_FAR = 2605;
+    protected static final int OBSOLETE_RELATION = 2606;
 
     protected static final DoubleProperty MAX_DUPLICATE_DISTANCE = new DoubleProperty("validator.addresses.max_duplicate_distance", 200.0);
     protected static final DoubleProperty MAX_STREET_DISTANCE = new DoubleProperty("validator.addresses.max_street_distance", 200.0);
@@ -66,6 +71,7 @@ public class Addresses extends Test {
 
     private Map<String, Collection<OsmPrimitive>> knownAddresses;
     private Set<String> ignoredAddresses;
+
 
     /**
      * Constructor
@@ -261,6 +267,7 @@ public class Addresses extends Test {
         checkHouseNumbersWithoutStreet(r);
         checkForDuplicate(r);
         if (r.hasTag("type", ASSOCIATED_STREET)) {
+            checkIfObsolete(r);
             // Used to count occurrences of each house number in order to find duplicates
             Map<String, List<OsmPrimitive>> map = new HashMap<>();
             // Used to detect different street names
@@ -389,4 +396,107 @@ public class Addresses extends Test {
                 .primitives(errorList)
                 .build());
     }
+
+    /**
+     * Check if an associatedStreet Relation is obsolete. This test marks only those relations which
+     * are complete and don't contain any information which isn't also tagged on the members.
+     * The strategy is to avoid any false positive.
+     * @param r the relation
+     */
+    private void checkIfObsolete(Relation r) {
+        if (r.isIncomplete())
+            return;
+        /** array of country codes for which the test should be performed. For now, only Germany */
+        String[] countryCodes = {"DE"};
+        TagMap neededtagsForHouse = new TagMap();
+        for (Entry<String, String> tag : r.getKeys().entrySet()) {
+            String key = tag.getKey();
+            if (key.startsWith("name:")) {
+                return; // maybe check if all members have corresponding tags?
+            } else if (key.startsWith("addr:")) {
+                neededtagsForHouse.put(key, tag.getValue());
+            } else {
+                switch (key) {
+                case "name":
+                case "type":
+                case "source":
+                    break;
+                default:
+                    // unexpected tag in relation
+                    return;
+                }
+            }
+        }
+
+        for (RelationMember m : r.getMembers()) {
+            if (m.getMember().isIncomplete() || m.isRelation() || !isInWarnCountry(m, countryCodes))
+                return;
+
+            String role = m.getRole();
+            if ("".equals(role)) {
+                if (m.isWay() && m.getMember().hasKey("highway")) {
+                    role = "street";
+                } else if (m.getMember().hasTag("building"))
+                    role = "house";
+            }
+            switch (role) {
+            case "house":
+            case "addr:houselink":
+            case "address":
+                if (!m.getMember().hasTag(ADDR_STREET) || !m.getMember().hasTag(ADDR_HOUSE_NUMBER))
+                    return;
+                for (Entry<String, String> tag : neededtagsForHouse.entrySet()) {
+                    if (!m.getMember().hasTag(tag.getKey(), tag.getValue()))
+                        return;
+                }
+                break;
+            case "street":
+                if (!m.getMember().hasTag("name") && r.hasTag("name"))
+                    return;
+                break;
+            default:
+                // unknown role: don't create auto-fix
+                return;
+            }
+        }
+        errors.add(TestError.builder(this, Severity.WARNING, OBSOLETE_RELATION)
+                .message(tr("Relation is obsolete"))
+                .primitives(r)
+                .build());
+    }
+
+    private static boolean isInWarnCountry(RelationMember m, String[] countryCodes) {
+        if (countryCodes.length == 0)
+            return true;
+        LatLon center = null;
+
+        if (m.isNode()) {
+            center = m.getNode().getCoor();
+        } else if (m.isWay()) {
+            center = m.getWay().getBBox().getCenter();
+        }
+        if (center == null)
+            return true;
+        for (String country : countryCodes) {
+            if (Territories.isIso3166Code(country, center))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * remove obsolete relation.
+     */
+    @Override
+    public Command fixError(TestError testError) {
+        return new DeleteCommand(testError.getPrimitives());
+    }
+
+    @Override
+    public boolean isFixable(TestError testError) {
+        if (!(testError.getTester() instanceof Addresses))
+            return false;
+        return testError.getCode() == OBSOLETE_RELATION;
+    }
+
 }
