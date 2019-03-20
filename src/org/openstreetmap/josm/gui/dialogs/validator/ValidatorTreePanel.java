@@ -257,7 +257,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                     final String msg = addSize(searchMsg, errorsWithDescription);
 
                     final DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
-                    DefaultMutableTreeNode  currNode = groupNode != null ? groupNode : severityNode;
+                    DefaultMutableTreeNode currNode = groupNode != null ? groupNode : severityNode;
                     currNode.add(messageNode);
                     if (oldExpandedRows.contains(searchMsg)) {
                         expandedPaths.add(new TreePath(messageNode.getPath()));
