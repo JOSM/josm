@@ -87,19 +87,22 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   fixRemove: "{1.key}";
 }
 
-/* #17100 */
+/* #17100, #17471 */
 *[name][name=~/^(?i)(parking|parkplatz)$/][amenity=parking],
 *[name][name=~/^(?i)(playground|spielplatz)$/][leisure=playground],
 *[name][name=~/^(?i)(shop)$/][shop][shop!=no],
-*[name][name=~/^(?i)(building|house)$/][building][building!=no],
+*[name][name=~/^(?i)(building)$/][building][building!=no],
+*[name][name=~/^(?i)(house|rumah)$/][building=house],
 *[name][name=~/^(?i)(kiosk)$/][shop=kiosk],
+*[name][name=~/^(?i)(jalan)$/][highway],
+*[name][name=~/^(?i)(silo)$/][man_made=silo],
+*[name][name=~/^(?i)(silo)$/][building=silo],
 *[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=graveyard],
-*[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=cemetery] {
+*[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=cemetery],
+*[name="АЗС"][amenity=fuel] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
   fixRemove: "name";
-  assertMatch: "way name=parking amenity=parking";
-  assertMatch: "way name=Parking amenity=parking";
   assertMatch: "node name=parking amenity=parking";
   assertMatch: "node name=Parking amenity=parking";
   assertNoMatch: "node name=Parking_with_suffix amenity=parking";
@@ -109,16 +112,32 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertNoMatch: "way name=parking";
   assertMatch: "relation name=PLAYGROUND leisure=playground type=multipolygon";
   assertMatch: "node name=PLaYGrOUNd leisure=playground";
-  assertNoMatch: "way name=playground";
   assertMatch: "node name=shop shop=whatever";
   assertNoMatch: "node name=shop shop=no";
   assertNoMatch: "way name=shop leisure=playground";
   assertMatch: "way name=building building=yes";
-  assertNoMatch: "way building=yes";
+  assertMatch: "way name=building building=house";
+  assertMatch: "way name=Rumah building=house";
+  assertNoMatch: "way name=Rumah building=yes";
+  assertMatch: "way name=house building=house";
+  assertNoMatch: "way name=house building=yes";
   assertMatch: "way name=kiosk building=yes shop=kiosk";
   assertNoMatch: "way name=kiosk building=yes";
+  assertMatch: "way name=silo man_made=silo";
+  assertMatch: "way name=Silo man_made=silo building=silo";
+  assertMatch: "way name=Silo building=silo";
   assertMatch: "way name=cemetery amenity=graveyard";
-  assertMatch: "way name=cmentarz amenity=graveyard";
   assertMatch: "way name=Cmentarz amenity=graveyard";
   assertNoMatch: "way name=kiosk amenity=graveyard";
 } 
+*[name][name=~/^(?i)(house|rumah)$/][building][building!=house][building!=no] {
+  throwWarning: tr("{0}", "{0.tag}");
+  group: tr("descriptive name");
+  /* without fixRemove to avoid possible information loss */
+  assertNoMatch: "way name=building building=yes";
+  assertNoMatch: "way name=building building=house";
+  assertNoMatch: "way name=Rumah building=house";
+  assertMatch: "way name=Rumah building=yes";
+  assertNoMatch: "way name=house building=house";
+  assertMatch: "way name=house building=yes";
+}
