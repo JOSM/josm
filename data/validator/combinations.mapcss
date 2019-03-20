@@ -558,13 +558,13 @@ area[boundary=administrative][landuse=residential] {
 }
 
 /* #17391 */
-way[highway=pedestrian][width][width<2] {
+way[highway=pedestrian][width][width<3] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   suggestAlternative: "highway=footway";
   group: tr("suspicious tag combination");
   fixAdd: "highway=footway";
   assertMatch: "way highway=pedestrian width=0.8";
   assertMatch: "way highway=pedestrian width=1";
-  assertNoMatch: "way highway=pedestrian width=2";
+  assertNoMatch: "way highway=pedestrian width=3";
   assertNoMatch: "way highway=pedestrian width=5.5";
 }
