@@ -274,7 +274,7 @@ public class TestError implements Comparable<TestError> {
 
     /**
      * Returns the ignore state for this error.
-     * @return the ignore state for this error
+     * @return the ignore state for this error or null if any primitive is new
      */
     public String getIgnoreState() {
         Collection<String> strings = new TreeSet<>();
@@ -310,13 +310,11 @@ public class TestError implements Comparable<TestError> {
     }
 
     private boolean calcIgnored() {
-        String state = getIgnoreGroup();
-        if (state != null && OsmValidator.hasIgnoredError(state))
+        if (OsmValidator.hasIgnoredError(getIgnoreGroup()))
             return true;
-        state = getIgnoreSubGroup();
-        if (state != null && OsmValidator.hasIgnoredError(state))
+        if (OsmValidator.hasIgnoredError(getIgnoreSubGroup()))
             return true;
-        state = getIgnoreState();
+        String state = getIgnoreState();
         return state != null && OsmValidator.hasIgnoredError(state);
     }
 
