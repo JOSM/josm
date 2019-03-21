@@ -30,6 +30,7 @@ import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.Command;
@@ -85,7 +86,7 @@ public class ValidatorDialog extends ToggleDialog
         implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdapter.Listener {
 
     /** The display tree */
-    public ValidatorTreePanel tree;
+    public final ValidatorTreePanel tree;
 
     /** The validate action */
     public static final ValidateAction validateAction = new ValidateAction();
@@ -116,29 +117,30 @@ public class ValidatorDialog extends ToggleDialog
                 Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation Results")),
                         KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150, false, ValidatorPreference.class);
 
-        Action removeProblemAction = new AbstractAction() {
-            {
-                putValue(NAME, tr("Ignore for now"));
-                putValue(SHORT_DESCRIPTION, tr("Ignore and remove from tree."));
-                new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
-            }
+        tree = new ValidatorTreePanel();
+        tree.addMouseListener(new MouseEventHandler());
+        addTreeSelectionListener(new SelectionWatch());
+        InputMapUtils.unassignCtrlShiftUpDown(tree, JComponent.WHEN_FOCUSED);
+
+        JosmAction ignoreForNowAction = new JosmAction(tr("Ignore for now"), "dialogs/delete",
+                tr("Ignore and remove from tree."), Shortcut.registerShortcut("tools:validate:ignore-for-now",
+                        tr("Ignore and remove from tree."), KeyEvent.VK_MINUS, Shortcut.SHIFT),
+                false, false) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 TestError error = getSelectedError();
-                error.setIgnored(true);
-                tree.resetErrors();
+                if (error != null) {
+                    error.setIgnored(true);
+                    tree.resetErrors();
+                    invalidateValidatorLayers();
+                }
             }
         };
 
         popupMenuHandler.addAction(MainApplication.getMenu().autoScaleActions.get("problem"));
         popupMenuHandler.addAction(new EditRelationAction());
-        popupMenuHandler.addAction(removeProblemAction);
-
-        tree = new ValidatorTreePanel();
-        tree.addMouseListener(new MouseEventHandler());
-        addTreeSelectionListener(new SelectionWatch());
-        InputMapUtils.unassignCtrlShiftUpDown(tree, JComponent.WHEN_FOCUSED);
+        popupMenuHandler.addAction(ignoreForNowAction);
 
         List<SideButton> buttons = new LinkedList<>();
 
