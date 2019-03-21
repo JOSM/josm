@@ -429,7 +429,7 @@ public class Addresses extends Test {
         }
 
         for (RelationMember m : r.getMembers()) {
-            if (m.getMember().isIncomplete() || m.isRelation() || !isInWarnCountry(m, countryCodes))
+            if (m.getMember().isIncomplete() || !isInWarnCountry(m, countryCodes))
                 return;
 
             String role = m.getRole();
@@ -474,9 +474,11 @@ public class Addresses extends Test {
             center = m.getNode().getCoor();
         } else if (m.isWay()) {
             center = m.getWay().getBBox().getCenter();
+        } else if (m.isRelation() && m.getRelation().isMultipolygon()) {
+            center = m.getRelation().getBBox().getCenter();
         }
         if (center == null)
-            return true;
+            return false;
         for (String country : countryCodes) {
             if (Territories.isIso3166Code(country, center))
                 return true;
