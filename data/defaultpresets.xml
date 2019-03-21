@@ -2276,7 +2276,7 @@
             <link wiki="Tag:amenity=bicycle_parking" />
             <space />
             <key key="amenity" value="bicycle_parking" />
-            <combo key="bicycle_parking" text="Type" values="anchors,building,bollard,ground_slots,informal,lockers,rack,shed,stands,wall_loops" />
+            <combo key="bicycle_parking" text="Type" values="anchors,bollard,building,ground_slots,informal,lockers,rack,shed,stands,wall_loops" />
             <text key="name" text="Name" />
             <text key="capacity" text="Capacity" />
             <reference ref="parking_access_fee_operator_surface_smoothness" />
