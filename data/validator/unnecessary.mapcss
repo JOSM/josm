@@ -1,5 +1,5 @@
 *[access][highway=proposed],
-*[motor_vehicle?][vehicle!=no][access!=no][bicycle_road!=yes][highway =~ /^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|service|living_street)$/],
+*[motor_vehicle?][!vehicle][!access][bicycle_road!=yes][highway =~ /^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|service|living_street)$/],
 *[bridge=no],
 *[building=no],
 *[elevation="0"],
@@ -11,6 +11,8 @@
   assertMatch: "way layer=0";
   assertMatch: "way bridge=no";
   assertMatch: "way highway=proposed access=no";
+  assertMatch: "way highway=motorway motor_vehicle=yes";
+  assertNoMatch: "way highway=motorway access=no motor_vehicle=yes";
 }
 
 area:closed[amenity ][area?][!highway],
@@ -35,8 +37,8 @@ area:closed[aeroway=helipad][area?] {
 }
 
 /* #9257, #17482 */
-way[foot =~ /^(yes|designated)$/][highway =~ /^(footway|pedestrian)$/],
-way[bicycle =~ /^(yes|designated)$/][highway=cycleway],
+way[foot =~ /^(yes|designated)$/][!access][highway =~ /^(footway|pedestrian)$/],
+way[bicycle =~ /^(yes|designated)$/][!vehicle][!access][highway=cycleway],
 *[building:ruian:type=2][building=farm_auxiliary],
 *[building:ruian:type=7][building=house],
 *[building:ruian:type=11][building=hotel],
@@ -47,6 +49,8 @@ way[bicycle =~ /^(yes|designated)$/][highway=cycleway],
   throwWarning: tr("{0} is unnecessary for {1}", "{0.tag}", "{1.tag}");
   group: tr("unnecessary tag");
   fixRemove: "{0.key}";
+  assertMatch: "way highway=pedestrian foot=designated";
+  assertNoMatch: "way highway=pedestrian access=no foot=designated";
 }
 
 *[emergency=permissive] {

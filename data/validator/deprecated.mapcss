@@ -1403,3 +1403,12 @@ node[fire_hydrant:water_source] {
   fixAdd: "shop=mall";
   group: tr("deprecated tagging");
 }
+
+/* #17504 */
+*[is_in],
+node[/^is_in:.*$/],
+way[/^is_in:.*$/] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  group: tr("deprecated tagging");
+  fixRemove: "{0.key}";
+}
