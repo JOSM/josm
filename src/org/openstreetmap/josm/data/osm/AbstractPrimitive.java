@@ -788,6 +788,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
                             "KSJ2:river_id",
                             "odbl",
                             "odbl:note",
+                            "osmarender:nameDirection",
                             "SK53_bulk:load",
                             "sub_sea:type",
                             "tiger:source",
