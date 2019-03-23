@@ -32,7 +32,7 @@ sub getmaps
     my $name = $xpc->findvalue("./j:name", $entry);
     for my $e ($xpc->findnodes(".//j:*", $entry))
     {
-      if($e->textContent =~ /^http:\/\/(.*?)[\/:]/)
+      if($e->textContent =~ /^http:\/\/(.*?)(:\d+)?[\/]/)
       {
         my $u = $1;
         if($u =~ /^(.*)\{switch:(.*)\}(.*)$/)
@@ -71,7 +71,7 @@ sub getfile($$)
         $name = "$type:$n";
       }
     }
-    if($line =~ /http:\/\/(.*?)[\/:]/)
+    if($line =~ /http:\/\/(.*?)(:\d+)?[\/]/)
     {
       $urls{$1}{$name}++;
     }
@@ -92,6 +92,7 @@ sub getdump()
 print "Options: \n PLUGIN STYLE RULE PRESET MAP DUMP\n GETPLUGIN GETSTYLE GETRULE GETPRESET GETMAP GETDUMP\n LOCAL\n IGNORES GETIGNORES\n ALL GETALL\n" if !@ARGV;
 
 open OUTFILE,">","josm_https.txt" or die "Could not open output file";
+open OUTFILENH,">","josm_no_https.txt" or die "Could not open no-https output file";
 
 sub doprint($)
 {
@@ -149,12 +150,19 @@ for my $url (sort keys %urls)
     alarm(0);
     doprint "* $url [$code $mess]: $i\n";
   };
-  if($@ && $@ !~ "(--Alarm--|Connection refused)")
+  if($@)
   {
-    my $e = $@;
+    my $e = $@||"";
     $e =~ s/[\r\n]//g;
     $e =~ s/ at scripts\/TestHTTPS.pl .*//;
-    doprint "* $url [Error $e] :$i\n";
+    if($@ !~ "(--Alarm--|Connection refused)")
+    {
+      doprint "* $url [Error $e] :$i\n";
+    }
+    elsif($@)
+    {
+      print OUTFILENH "* $url [$e] :$i\n";
+    }
   }
 }
 
