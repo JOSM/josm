@@ -32,7 +32,7 @@ sub getmaps
     my $name = $xpc->findvalue("./j:name", $entry);
     for my $e ($xpc->findnodes(".//j:*", $entry))
     {
-      if($e->textContent =~ /^http:\/\/(.*?)[\/]/)
+      if($e->textContent =~ /^http:\/\/(.*?)[\/:]/)
       {
         my $u = $1;
         if($u =~ /^(.*)\{switch:(.*)\}(.*)$/)
@@ -71,7 +71,7 @@ sub getfile($$)
         $name = "$type:$n";
       }
     }
-    if($line =~ /http:\/\/(.*?)[\/]/)
+    if($line =~ /http:\/\/(.*?)[\/:]/)
     {
       $urls{$1}{$name}++;
     }
