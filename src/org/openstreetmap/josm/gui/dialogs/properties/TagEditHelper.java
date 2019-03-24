@@ -519,7 +519,10 @@ public class TagEditHelper {
                 return;
             if (key.equals(newkey) || value == null) {
                 UndoRedoHandler.getInstance().add(new ChangePropertyCommand(sel, newkey, value));
-                AutoCompletionManager.rememberUserInput(newkey, value, true);
+                if (value != null) {
+                    AutoCompletionManager.rememberUserInput(newkey, value, true);
+                    recentTags.add(new Tag(key, value));
+                }
             } else {
                 for (OsmPrimitive osm: sel) {
                     if (osm.get(newkey) != null) {
@@ -696,7 +699,7 @@ public class TagEditHelper {
         private int commandCount;
 
         protected AddTagsDialog() {
-            super(MainApplication.getMainFrame(), tr("Add value?"), tr("OK"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), tr("Add tag?"), tr("OK"), tr("Cancel"));
             setButtonIcons("ok", "cancel");
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
@@ -721,7 +724,7 @@ public class TagEditHelper {
 
             mainPanel.add(keys, GBC.eop().fill(GBC.HORIZONTAL));
 
-            mainPanel.add(new JLabel(tr("Please select a value")), GBC.eol());
+            mainPanel.add(new JLabel(tr("Choose a value")), GBC.eol());
             values.setEditable(true);
             mainPanel.add(values, GBC.eop().fill(GBC.HORIZONTAL));
 
