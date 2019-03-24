@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
@@ -341,8 +342,7 @@ public class DataSetMergerTest {
         n1.setCoor(LatLon.ZERO);
         n1.setOsmId(1, 1);
         n1.put("key1", "value1");
-        Date timestamp = new Date();
-        n1.setTimestamp(timestamp);
+        n1.setTimestamp(new Date());
         their.addPrimitive(n1);
 
         DataSetMerger visitor = new DataSetMerger(my, their);
@@ -973,6 +973,53 @@ public class DataSetMergerTest {
         assertEquals(2, w.getNode(1).getId());
     }
 
+    private void doTestTicket7481(DataSet source, DataSet target) {
+        // Local node A
+        Node nA = new Node(2848219691L, 1);
+        nA.setCoor(LatLon.ZERO);
+        nA.setTimestamp(DateUtils.fromString("2014-05-10T14:25:40Z"));
+        nA.setChangesetId(22251108);
+        nA.setUser(User.createOsmUser(385987, "yaho"));
+        nA.put("name", "Mionga");
+        nA.put("tourism", "hotel");
+
+        // Local node B, duplicated
+        Node nB = new Node(nA);
+
+        // Move and delete node A
+        nA.setCoor(new LatLon(0.1321894855, 6.64627402075));
+        nA.setDeleted(true);
+        my.addPrimitive(nA);
+
+        // Move and modify node B
+        nB.setCoor(new LatLon(0.1322066, 6.6462202));
+        nB.put("phone", "999");
+        nB.setModified(true);
+        their.addPrimitive(nB);
+
+        // Merge
+        DataSetMerger visitor = new DataSetMerger(source, target);
+        visitor.merge();
+
+        assertEquals(1, visitor.getConflicts().size());
+    }
+
+    /**
+     * Non-regression test 1 for <a href="https://josm.openstreetmap.de/ticket/7481">Bug #7481</a>.
+     */
+    @Test
+    public void testTicket07481ab() {
+        doTestTicket7481(my, their);
+    }
+
+    /**
+     * Non-regression test 2 for <a href="https://josm.openstreetmap.de/ticket/7481">Bug #7481</a>.
+     */
+    @Test
+    public void testTicket07481ba() {
+        doTestTicket7481(their, my);
+    }
+
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12599">Bug #12599</a>.
      */
@@ -1012,7 +1059,6 @@ public class DataSetMergerTest {
         assertEquals("something", n.get("note"));
         assertTrue(n.isModified());
     }
-
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12616">Bug #12616</a>.

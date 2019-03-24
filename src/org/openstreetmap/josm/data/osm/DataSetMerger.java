@@ -317,17 +317,21 @@ public class DataSetMerger {
             // take. We take target.
             //
         } else if (!target.isModified() && !source.isModified() && target.isVisible() != source.isVisible()
-                && target.getVersion() == source.getVersion())
+                && target.getVersion() == source.getVersion()) {
             // Same version, but different "visible" attribute and neither of them are modified.
             // It indicates a serious problem in datasets.
             // For example, datasets can be fetched from different OSM servers or badly hand-modified.
             // We shouldn't merge that datasets.
             throw new DataIntegrityProblemException(tr("Conflict in ''visible'' attribute for object of type {0} with id {1}",
                     target.getType(), target.getId()));
-        else if (target.isDeleted() && !source.isDeleted() && target.getVersion() == source.getVersion()) {
+        } else if (target.isDeleted() && !source.isDeleted() && target.getVersion() == source.getVersion()) {
             // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
-            // but, if source has a referrer that is not in the target dataset there is a conflict
+            // but, if source is modified, there is a conflict
+            if (source.isModified()) {
+                addConflict(new Conflict<>(target, source, true));
+            }
+            // or, if source has a referrer that is not in the target dataset there is a conflict
             // If target dataset refers to the deleted primitive, conflict will be added in fixReferences method
             for (OsmPrimitive referrer: source.getReferrers()) {
                 if (targetDataSet.getPrimitiveById(referrer.getPrimitiveId()) == null) {
