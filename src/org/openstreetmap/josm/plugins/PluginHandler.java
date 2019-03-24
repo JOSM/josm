@@ -103,7 +103,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("ywms", inCore),
             new DeprecatedPlugin("tways-0.2", inCore),
             new DeprecatedPlugin("geotagged", inCore),
-            new DeprecatedPlugin("landsat", tr("replaced by new {0} plugin", "lakewalker")),
+            new DeprecatedPlugin("landsat", tr("replaced by new {0} plugin", "scanaerial")),
             new DeprecatedPlugin("namefinder", inCore),
             new DeprecatedPlugin("waypoints", inCore),
             new DeprecatedPlugin("slippy_map_chooser", inCore),
@@ -144,7 +144,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("czechaddress", tr("no longer required")),
             new DeprecatedPlugin("kendzi3d_Improved_by_Andrei", tr("no longer required")),
             new DeprecatedPlugin("videomapping", tr("no longer required")),
-            new DeprecatedPlugin("public_transport_layer", tr("replaced by new {0} plugin", "pt_assistant"))
+            new DeprecatedPlugin("public_transport_layer", tr("replaced by new {0} plugin", "pt_assistant")),
+            new DeprecatedPlugin("lakewalker", tr("replaced by new {0} plugin", "scanaerial"))
         );
     }
 
