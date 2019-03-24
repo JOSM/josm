@@ -103,6 +103,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 *[name][name=~/^(?i)(silo)$/][building=silo],
 *[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=graveyard],
 *[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=cemetery],
+*[name="АГЗС"][amenity=fuel],
 *[name="АЗС"][amenity=fuel] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
