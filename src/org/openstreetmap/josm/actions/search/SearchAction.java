@@ -6,15 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,23 +21,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
-import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer;
@@ -53,22 +36,15 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler.SimpleMatchFactory;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
+import org.openstreetmap.josm.gui.dialogs.SearchDialog;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
-import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
-import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -77,6 +53,7 @@ import org.openstreetmap.josm.tools.Utils;
  * The search action allows the user to search the data layer using a complex search string.
  *
  * @see SearchCompiler
+ * @see SearchDialog
  */
 public class SearchAction extends JosmAction implements ParameterizedAction {
 
@@ -190,80 +167,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-    private static class SearchKeywordRow extends JPanel {
-
-        private final HistoryComboBox hcb;
-
-        SearchKeywordRow(HistoryComboBox hcb) {
-            super(new FlowLayout(FlowLayout.LEFT));
-            this.hcb = hcb;
-        }
-
-        /**
-         * Adds the title (prefix) label at the beginning of the row. Should be called only once.
-         * @param title English title
-         * @return {@code this} for easy chaining
-         */
-        public SearchKeywordRow addTitle(String title) {
-            add(new JLabel(tr("{0}: ", title)));
-            return this;
-        }
-
-        /**
-         * Adds an example keyword label at the end of the row. Can be called several times.
-         * @param displayText displayed HTML text
-         * @param insertText optional: if set, makes the label clickable, and {@code insertText} will be inserted in search string
-         * @param description optional: HTML text to be displayed in the tooltip
-         * @param examples optional: examples joined as HTML list in the tooltip
-         * @return {@code this} for easy chaining
-         */
-        public SearchKeywordRow addKeyword(String displayText, final String insertText, String description, String... examples) {
-            JLabel label = new JLabel("<html>"
-                    + "<style>td{border:1px solid gray; font-weight:normal;}</style>"
-                    + "<table><tr><td>" + displayText + "</td></tr></table></html>");
-            add(label);
-            if (description != null || examples.length > 0) {
-                label.setToolTipText("<html>"
-                        + description
-                        + (examples.length > 0 ? Utils.joinAsHtmlUnorderedList(Arrays.asList(examples)) : "")
-                        + "</html>");
-            }
-            if (insertText != null) {
-                label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                label.addMouseListener(new MouseAdapter() {
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        JTextComponent tf = hcb.getEditorComponent();
-
-                        /*
-                         * Make sure that the focus is transferred to the search text field
-                         * from the selector component.
-                         */
-                        if (!tf.hasFocus()) {
-                            tf.requestFocusInWindow();
-                        }
-
-                        /*
-                         * In order to make interaction with the search dialog simpler,
-                         * we make sure that if autocompletion triggers and the text field is
-                         * not in focus, the correct area is selected. We first request focus
-                         * and then execute the selection logic. invokeLater allows us to
-                         * defer the selection until waiting for focus.
-                         */
-                        SwingUtilities.invokeLater(() -> {
-                            try {
-                                tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
-                            } catch (BadLocationException ex) {
-                                throw new JosmRuntimeException(ex.getMessage(), ex);
-                            }
-                        });
-                    }
-                });
-            }
-            return this;
-        }
-    }
 
     /**
      * Builds and shows the search dialog.
@@ -276,188 +179,20 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             initialValues = new SearchSetting();
         }
 
-        // prepare the combo box with the search expressions
-        JLabel label = new JLabel(initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
-        HistoryComboBox hcbSearchString = new HistoryComboBox();
-        String tooltip = tr("Enter the search expression");
-        hcbSearchString.setText(initialValues.text);
-        hcbSearchString.setToolTipText(tooltip);
-
-        // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        List<String> searchExpressionHistory = getSearchExpressionHistory();
-        Collections.reverse(searchExpressionHistory);
-        hcbSearchString.setPossibleItems(searchExpressionHistory);
-        hcbSearchString.setPreferredSize(new Dimension(40, hcbSearchString.getPreferredSize().height));
-        label.setLabelFor(hcbSearchString);
-
-        JRadioButton replace = new JRadioButton(tr("replace selection"), initialValues.mode == SearchMode.replace);
-        JRadioButton add = new JRadioButton(tr("add to selection"), initialValues.mode == SearchMode.add);
-        JRadioButton remove = new JRadioButton(tr("remove from selection"), initialValues.mode == SearchMode.remove);
-        JRadioButton inSelection = new JRadioButton(tr("find in selection"), initialValues.mode == SearchMode.in_selection);
-        ButtonGroup bg = new ButtonGroup();
-        bg.add(replace);
-        bg.add(add);
-        bg.add(remove);
-        bg.add(inSelection);
-
-        JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
-        JCheckBox allElements = new JCheckBox(tr("all objects"), initialValues.allElements);
-        allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
-        JCheckBox addOnToolbar = new JCheckBox(tr("add toolbar button"), false);
-
-        JRadioButton standardSearch = new JRadioButton(tr("standard"), !initialValues.regexSearch && !initialValues.mapCSSSearch);
-        JRadioButton regexSearch = new JRadioButton(tr("regular expression"), initialValues.regexSearch);
-        JRadioButton mapCSSSearch = new JRadioButton(tr("MapCSS selector"), initialValues.mapCSSSearch);
-        ButtonGroup bg2 = new ButtonGroup();
-        bg2.add(standardSearch);
-        bg2.add(regexSearch);
-        bg2.add(mapCSSSearch);
-
-        JPanel selectionSettings = new JPanel(new GridBagLayout());
-        selectionSettings.setBorder(BorderFactory.createTitledBorder(tr("Selection settings")));
-        selectionSettings.add(replace, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
-        selectionSettings.add(add, GBC.eol());
-        selectionSettings.add(remove, GBC.eol());
-        selectionSettings.add(inSelection, GBC.eop());
-
-        JPanel additionalSettings = new JPanel(new GridBagLayout());
-        additionalSettings.setBorder(BorderFactory.createTitledBorder(tr("Additional settings")));
-        additionalSettings.add(caseSensitive, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
-
-        JPanel left = new JPanel(new GridBagLayout());
-
-        left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
-        left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
-
-        if (ExpertToggleAction.isExpert()) {
-            additionalSettings.add(allElements, GBC.eol());
-            additionalSettings.add(addOnToolbar, GBC.eop());
-
-            JPanel searchOptions = new JPanel(new GridBagLayout());
-            searchOptions.setBorder(BorderFactory.createTitledBorder(tr("Search syntax")));
-            searchOptions.add(standardSearch, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
-            searchOptions.add(regexSearch, GBC.eol());
-            searchOptions.add(mapCSSSearch, GBC.eol());
-
-            left.add(searchOptions, GBC.eol().fill(GBC.BOTH));
-        }
-
-        JPanel right = SearchAction.buildHintsSection(hcbSearchString);
-        JPanel top = new JPanel(new GridBagLayout());
-        top.add(label, GBC.std().insets(0, 0, 5, 0));
-        top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
-
-        JTextComponent editorComponent = hcbSearchString.getEditorComponent();
-        Document document = editorComponent.getDocument();
-
-        /*
-         * Setup the logic to validate the contents of the search text field which is executed
-         * every time the content of the field has changed. If the query is incorrect, then
-         * the text field is colored red.
-         */
-        document.addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
-
-            @Override
-            public void validate() {
-                if (!isValid()) {
-                    feedbackInvalid(tr("Invalid search expression"));
-                } else {
-                    feedbackValid(tooltip);
-                }
-            }
-
-            @Override
-            public boolean isValid() {
-                try {
-                    SearchSetting ss = new SearchSetting();
-                    ss.text = hcbSearchString.getText();
-                    ss.caseSensitive = caseSensitive.isSelected();
-                    ss.regexSearch = regexSearch.isSelected();
-                    ss.mapCSSSearch = mapCSSSearch.isSelected();
-                    SearchCompiler.compile(ss);
-                    return true;
-                } catch (SearchParseError | MapCSSException e) {
-                    return false;
-                }
-            }
-        });
-
-        /*
-         * Setup the logic to append preset queries to the search text field according to
-         * selected preset by the user. Every query is of the form ' group/sub-group/.../presetName'
-         * if the corresponding group of the preset exists, otherwise it is simply ' presetName'.
-         */
-        TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
-        selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
-        selector.setDblClickListener(ev -> setPresetDblClickListener(selector, editorComponent));
-
-        JPanel p = new JPanel(new GridBagLayout());
-        p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
-        p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0).fill(GBC.VERTICAL));
-        p.add(right, GBC.std().fill(GBC.BOTH).insets(0, 10, 0, 0));
-        p.add(selector, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
-
-        ExtendedDialog dialog = new ExtendedDialog(
-                MainApplication.getMainFrame(),
-                initialValues instanceof Filter ? tr("Filter") : tr("Search"),
-                initialValues instanceof Filter ? tr("Submit filter") : tr("Start Search"),
-                tr("Cancel")
-        ) {
-            @Override
-            protected void buttonAction(int buttonIndex, ActionEvent evt) {
-                if (buttonIndex == 0) {
-                    try {
-                        SearchSetting ss = new SearchSetting();
-                        ss.text = hcbSearchString.getText();
-                        ss.caseSensitive = caseSensitive.isSelected();
-                        ss.regexSearch = regexSearch.isSelected();
-                        ss.mapCSSSearch = mapCSSSearch.isSelected();
-                        SearchCompiler.compile(ss);
-                        super.buttonAction(buttonIndex, evt);
-                    } catch (SearchParseError | MapCSSException e) {
-                        Logging.debug(e);
-                        JOptionPane.showMessageDialog(
-                                MainApplication.getMainFrame(),
-                                "<html>" + tr("Search expression is not valid: \n\n {0}",
-                                        e.getMessage().replace("<html>", "").replace("</html>", "")).replace("\n", "<br>") +
-                                "</html>",
-                                tr("Invalid search expression"),
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    super.buttonAction(buttonIndex, evt);
-                }
-            }
-        };
-        dialog.setButtonIcons("dialogs/search", "cancel");
-        dialog.configureContextsensitiveHelp("/Action/Search", true /* show help button */);
-        dialog.setContent(p);
+        SearchDialog dialog = new SearchDialog(
+                initialValues, getSearchExpressionHistory(), ExpertToggleAction.isExpert());
 
         if (dialog.showDialog().getValue() != 1) return null;
 
         // User pressed OK - let's perform the search
-        initialValues.text = hcbSearchString.getText();
-        initialValues.caseSensitive = caseSensitive.isSelected();
-        initialValues.allElements = allElements.isSelected();
-        initialValues.regexSearch = regexSearch.isSelected();
-        initialValues.mapCSSSearch = mapCSSSearch.isSelected();
+        SearchSetting searchSettings = dialog.getSearchSettings();
 
-        if (inSelection.isSelected()) {
-            initialValues.mode = SearchMode.in_selection;
-        } else if (replace.isSelected()) {
-            initialValues.mode = SearchMode.replace;
-        } else if (add.isSelected()) {
-            initialValues.mode = SearchMode.add;
-        } else {
-            initialValues.mode = SearchMode.remove;
-        }
-
-        if (addOnToolbar.isSelected()) {
+        if (dialog.isAddOnToolbar()) {
             ToolbarPreferences.ActionDefinition aDef =
                     new ToolbarPreferences.ActionDefinition(MainApplication.getMenu().search);
-            aDef.getParameters().put(SEARCH_EXPRESSION, initialValues);
+            aDef.getParameters().put(SEARCH_EXPRESSION, searchSettings);
             // Display search expression as tooltip instead of generic one
-            aDef.setName(Utils.shortenString(initialValues.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY));
+            aDef.setName(Utils.shortenString(searchSettings.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY));
             // parametrized action definition is now composed
             ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
             String res = actionParser.saveAction(aDef);
@@ -466,106 +201,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             MainApplication.getToolbar().addCustomButton(res, -1, false);
         }
 
-        return initialValues;
-    }
-
-    private static JPanel buildHintsSection(HistoryComboBox hcbSearchString) {
-        JPanel hintPanel = new JPanel(new GridBagLayout());
-        hintPanel.setBorder(BorderFactory.createTitledBorder(tr("Search hints")));
-
-        hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("basics"))
-                .addKeyword(tr("Baker Street"), null, tr("''Baker'' and ''Street'' in any key"))
-                .addKeyword(tr("\"Baker Street\""), "\"\"", tr("''Baker Street'' in any key"))
-                .addKeyword("<i>key</i>:<i>valuefragment</i>", null,
-                        tr("''valuefragment'' anywhere in ''key''"), "name:str matches name=Bakerstreet")
-                .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''")),
-                GBC.eol());
-        hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addKeyword("<i>key</i>", null, tr("matches if ''key'' exists"))
-                .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
-                .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
-                .addKeyword("<i>key</i>=", null, tr("''key'' with empty value"))
-                .addKeyword("*=<i>value</i>", null, tr("''value'' in any key"))
-                .addKeyword("<i>key</i>><i>value</i>", null, tr("matches if ''key'' is greater than ''value'' (analogously, less than)"))
-                .addKeyword("\"key\"=\"value\"", "\"\"=\"\"",
-                        tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped " +
-                                "by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
-                        "\"addr:street\""),
-                GBC.eol().anchor(GBC.CENTER));
-        hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("combinators"))
-                .addKeyword("<i>expr</i> <i>expr</i>", null, tr("logical and (both expressions have to be satisfied)"))
-                .addKeyword("<i>expr</i> | <i>expr</i>", "| ", tr("logical or (at least one expression has to be satisfied)"))
-                .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)"))
-                .addKeyword("-<i>expr</i>", null, tr("logical not"))
-                .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions")),
-                GBC.eol());
-
-        if (ExpertToggleAction.isExpert()) {
-            hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("objects"))
-                .addKeyword("type:node", "type:node ", tr("all nodes"))
-                .addKeyword("type:way", "type:way ", tr("all ways"))
-                .addKeyword("type:relation", "type:relation ", tr("all relations"))
-                .addKeyword("closed", "closed ", tr("all closed ways"))
-                .addKeyword("untagged", "untagged ", tr("object without useful tags")),
-                GBC.eol());
-            hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                    .addKeyword("preset:\"Annotation/Address\"", "preset:\"Annotation/Address\"",
-                            tr("all objects that use the address preset"))
-                    .addKeyword("preset:\"Geography/Nature/*\"", "preset:\"Geography/Nature/*\"",
-                            tr("all objects that use any preset under the Geography/Nature group")),
-                    GBC.eol().anchor(GBC.CENTER));
-            hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("metadata"))
-                .addKeyword("user:", "user:", tr("objects changed by user", "user:anonymous"))
-                .addKeyword("id:", "id:", tr("objects with given ID"), "id:0 (new objects)")
-                .addKeyword("version:", "version:", tr("objects with given version"), "version:0 (objects without an assigned version)")
-                .addKeyword("changeset:", "changeset:", tr("objects with given changeset ID"),
-                        "changeset:0 (objects without an assigned changeset)")
-                .addKeyword("timestamp:", "timestamp:", tr("objects with last modification timestamp within range"), "timestamp:2012/",
-                        "timestamp:2008/2011-02-04T12"),
-                GBC.eol());
-            hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("properties"))
-                .addKeyword("nodes:<i>20-</i>", "nodes:", tr("ways with at least 20 nodes, or relations containing at least 20 nodes"))
-                .addKeyword("ways:<i>3-</i>", "ways:", tr("nodes with at least 3 referring ways, or relations containing at least 3 ways"))
-                .addKeyword("tags:<i>5-10</i>", "tags:", tr("objects having 5 to 10 tags"))
-                .addKeyword("role:", "role:", tr("objects with given role in a relation"))
-                .addKeyword("areasize:<i>-100</i>", "areasize:", tr("closed ways with an area of 100 m\u00b2"))
-                .addKeyword("waylength:<i>200-</i>", "waylength:", tr("ways with a length of 200 m or more")),
-                GBC.eol());
-            hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("state"))
-                .addKeyword("modified", "modified ", tr("all modified objects"))
-                .addKeyword("new", "new ", tr("all new objects"))
-                .addKeyword("selected", "selected ", tr("all selected objects"))
-                .addKeyword("incomplete", "incomplete ", tr("all incomplete objects"))
-                .addKeyword("deleted", "deleted ", tr("all deleted objects (checkbox <b>{0}</b> must be enabled)", tr("all objects"))),
-                GBC.eol());
-            hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("related objects"))
-                .addKeyword("child <i>expr</i>", "child ", tr("all children of objects matching the expression"), "child building")
-                .addKeyword("parent <i>expr</i>", "parent ", tr("all parents of objects matching the expression"), "parent bus_stop")
-                .addKeyword("hasRole:<i>stop</i>", "hasRole:", tr("relation containing a member of role <i>stop</i>"))
-                .addKeyword("role:<i>stop</i>", "role:", tr("objects being part of a relation as role <i>stop</i>"))
-                .addKeyword("nth:<i>7</i>", "nth:",
-                        tr("n-th member of relation and/or n-th node of way"), "nth:5 (child type:relation)", "nth:-1")
-                .addKeyword("nth%:<i>7</i>", "nth%:",
-                        tr("every n-th member of relation and/or every n-th node of way"), "nth%:100 (child waterway)"),
-                GBC.eol());
-            hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("view"))
-                .addKeyword("inview", "inview ", tr("objects in current view"))
-                .addKeyword("allinview", "allinview ", tr("objects (and all its way nodes / relation members) in current view"))
-                .addKeyword("indownloadedarea", "indownloadedarea ", tr("objects in downloaded area"))
-                .addKeyword("allindownloadedarea", "allindownloadedarea ",
-                        tr("objects (and all its way nodes / relation members) in downloaded area")),
-                GBC.eol());
-        }
-
-        return hintPanel;
+        return searchSettings;
     }
 
     /**
@@ -633,43 +269,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         CapturingSearchReceiver receiver = new CapturingSearchReceiver();
         SearchTask.newSearchTask(searchSetting, receiver).run();
         return receiver.result;
-    }
-
-    /**
-     *
-     * @param selector Selector component that the user interacts with
-     * @param searchEditor Editor for search queries
-     */
-    private static void setPresetDblClickListener(TaggingPresetSelector selector, JTextComponent searchEditor) {
-        TaggingPreset selectedPreset = selector.getSelectedPresetAndUpdateClassification();
-
-        if (selectedPreset == null) {
-            return;
-        }
-
-        /*
-         * Make sure that the focus is transferred to the search text field
-         * from the selector component.
-         */
-        searchEditor.requestFocusInWindow();
-
-        /*
-         * In order to make interaction with the search dialog simpler,
-         * we make sure that if autocompletion triggers and the text field is
-         * not in focus, the correct area is selected. We first request focus
-         * and then execute the selection logic. invokeLater allows us to
-         * defer the selection until waiting for focus.
-         */
-        SwingUtilities.invokeLater(() -> {
-            int textOffset = searchEditor.getCaretPosition();
-            String presetSearchQuery = " preset:" +
-                    "\"" + selectedPreset.getRawName() + "\"";
-            try {
-                searchEditor.getDocument().insertString(textOffset, presetSearchQuery, null);
-            } catch (BadLocationException e1) {
-                throw new JosmRuntimeException(e1.getMessage(), e1);
-            }
-        });
     }
 
     /**
