@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -83,7 +84,9 @@ public class LanguagePreference implements SubPreferenceSetting {
 
         LanguageComboBoxModel() {
             data.add(0, null);
-            data.addAll(Arrays.asList(I18n.getAvailableTranslations()));
+            List<Locale> locales = Arrays.asList(I18n.getAvailableTranslations());
+            locales.sort(Comparator.comparing(Locale::getDisplayLanguage));
+            data.addAll(locales);
         }
 
         private void selectLanguage(String language) {
