@@ -699,7 +699,7 @@ public class TagEditHelper {
         private int commandCount;
 
         protected AddTagsDialog() {
-            super(MainApplication.getMainFrame(), tr("Add tag?"), tr("OK"), tr("Cancel"));
+            super(MainApplication.getMainFrame(), tr("Add tag"), tr("OK"), tr("Cancel"));
             setButtonIcons("ok", "cancel");
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
