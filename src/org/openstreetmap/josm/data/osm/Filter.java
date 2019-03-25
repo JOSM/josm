@@ -46,6 +46,15 @@ public class Filter extends SearchSetting {
     }
 
     /**
+     * Constructs a new {@code Filter} from a {@code SearchSetting}
+     * @param setting {@code SearchSetting} to construct information from
+     * @since 14932
+     */
+    public Filter(SearchSetting setting) {
+        super(setting);
+    }
+
+    /**
      * Constructs a new {@code Filter} from a preference entry.
      * @param e preference entry
      */

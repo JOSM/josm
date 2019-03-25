@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
@@ -141,9 +142,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Filter filter = (Filter) SearchAction.showSearchDialog(new Filter());
-                if (filter != null) {
-                    filterModel.addFilter(filter);
+                SearchSetting searchSetting = SearchAction.showSearchDialog(new Filter());
+                if (searchSetting != null) {
+                    filterModel.addFilter(new Filter(searchSetting));
                 }
             }
         });
@@ -159,9 +160,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
                 if (index < 0) return;
                 Filter f = filterModel.getFilter(index);
-                Filter filter = (Filter) SearchAction.showSearchDialog(f);
-                if (filter != null) {
-                    filterModel.setFilter(index, filter);
+                SearchSetting searchSetting = SearchAction.showSearchDialog(f);
+                if (searchSetting != null) {
+                    filterModel.setFilter(index, new Filter(searchSetting));
                 }
             }
         });
