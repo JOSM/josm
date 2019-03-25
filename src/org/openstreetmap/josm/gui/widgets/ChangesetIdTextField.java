@@ -61,9 +61,9 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
         @Override
         public void validate() {
             if (!isValid()) {
-                feedbackInvalid(tr("The current value is not a valid changeset ID. Please enter an integer value > 0"));
+                feedbackInvalid(tr("The current value is not a valid changeset ID. Please enter an integer value > 0 or a changeset URL."));
             } else {
-                feedbackValid(tr("Please enter an integer value > 0"));
+                feedbackValid(tr("Please enter an integer value > 0 or a changeset URL."));
             }
         }
 
@@ -74,9 +74,15 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
         public boolean readChangesetId() {
             String value = getComponent().getText();
             if (value != null && !value.trim().isEmpty()) {
+                value = value.trim();
                 id = 0;
                 try {
-                    int changesetId = Integer.parseInt(value.trim());
+                    if (value.matches("http.*/changeset/[0-9]+")) {
+                        // full URL given, extract id
+                        value = value.substring(value.lastIndexOf('/') + 1);
+                    }
+
+                    int changesetId = Integer.parseInt(value);
                     if (changesetId > 0) {
                         id = changesetId;
                         return true;
