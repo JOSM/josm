@@ -101,6 +101,7 @@ public class ValidatorDialog extends ToggleDialog
     private final transient Action selectAction;
     /** The lookup action */
     private final transient LookupAction lookupAction;
+    private final transient JosmAction ignoreForNowAction;
 
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
@@ -122,7 +123,7 @@ public class ValidatorDialog extends ToggleDialog
         addTreeSelectionListener(new SelectionWatch());
         InputMapUtils.unassignCtrlShiftUpDown(tree, JComponent.WHEN_FOCUSED);
 
-        JosmAction ignoreForNowAction = new JosmAction(tr("Ignore for now"), "dialogs/delete",
+        ignoreForNowAction = new JosmAction(tr("Ignore for now"), "dialogs/delete",
                 tr("Ignore and remove from tree."), Shortcut.registerShortcut("tools:validate:ignore-for-now",
                         tr("Ignore and remove from tree."), KeyEvent.VK_MINUS, Shortcut.SHIFT),
                 false, false) {
@@ -732,6 +733,14 @@ public class ValidatorDialog extends ToggleDialog
             boolean rc = super.executeCommand();
             getAffectedDataSet().endUpdate();
             return rc;
+        }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        if (ignoreForNowAction != null) {
+            ignoreForNowAction.destroy();
         }
     }
 }
