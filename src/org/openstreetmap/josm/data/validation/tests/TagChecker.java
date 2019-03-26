@@ -384,13 +384,13 @@ public class TagChecker extends TagTest {
             return false;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if ((IsAsciiControlChar(c) && !isNewLineChar(c)) || IsBidiControlChar(c))
+            if ((isAsciiControlChar(c) && !isNewLineChar(c)) || isBidiControlChar(c))
                 return true;
         }
         return false;
     }
 
-    private static boolean IsAsciiControlChar(char c) {
+    private static boolean isAsciiControlChar(char c) {
         return c < 0x20 || c == 0x7F;
     }
 
@@ -398,7 +398,7 @@ public class TagChecker extends TagTest {
         return c == 0x0a || c == 0x0d;
     }
 
-    private static boolean IsBidiControlChar(char c) {
+    private static boolean isBidiControlChar(char c) {
         /* check for range 0x200c to 0x200f (ZWNJ, ZWJ, LRM, RLM) or
                            0x202a to 0x202e (LRE, RLE, PDF, LRO, RLO) */
         return (((c & 0xfffffffc) == 0x200c) || ((c >= 0x202a) && (c <= 0x202e)));
