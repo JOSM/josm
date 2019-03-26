@@ -247,4 +247,26 @@ public class TagCheckerTest {
         assertFalse(errors.get(0).isFixable());
     }
 
+    /**
+     * Unit test of {@link TagChecker#removeNonPrintingControlCharacters}
+     */
+    @Test
+    public void testRemoveUnprintableControlCharacters() {
+        // Check 65 ASCII control characters are removed, except new lines
+        for (char c = 0x0; c < 0x20; c++) {
+            if (c != '\r' && c != '\n') {
+                assertTrue(TagChecker.removeNonPrintingControlCharacters(Character.toString(c)).isEmpty());
+            } else {
+                assertFalse(TagChecker.removeNonPrintingControlCharacters(Character.toString(c)).isEmpty());
+            }
+        }
+        assertTrue(TagChecker.removeNonPrintingControlCharacters(Character.toString((char) 0x7F)).isEmpty());
+        // Check 9 Unicode bidi control characters are removed
+        for (char c = 0x200c; c <= 0x200f; c++) {
+            assertTrue(TagChecker.removeNonPrintingControlCharacters(Character.toString(c)).isEmpty());
+        }
+        for (char c = 0x202a; c <= 0x202e; c++) {
+            assertTrue(TagChecker.removeNonPrintingControlCharacters(Character.toString(c)).isEmpty());
+        }
+    }
 }

@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -71,6 +72,9 @@ public class TagChecker extends TagTest {
     private static volatile HashSet<String> additionalPresetsValueData;
     /** often used tags which are not in presets */
     private static volatile MultiMap<String, String> oftenUsedTags = new MultiMap<>();
+
+    private static final Pattern NON_PRINTING_CONTROL_CHARACTERS = Pattern.compile(
+            "[\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F\\u200c-\\u200f\\u202a-\\u202e]");
 
     /** The TagChecker data */
     private static final List<String> ignoreDataStartsWith = new ArrayList<>();
@@ -371,18 +375,37 @@ public class TagChecker extends TagTest {
     }
 
     /**
-     * Checks given string (key or value) if it contains characters with code below 0x20 (either newline or some other special characters)
+     * Checks given string (key or value) if it contains non-printing control characters (either ASCII or Unicode bidi characters)
      * @param s string to check
-     * @return {@code true} if {@code s} contains characters with code below 0x20
+     * @return {@code true} if {@code s} contains non-printing control characters
      */
-    private static boolean containsLow(String s) {
+    private static boolean containsNonPrintingControlCharacter(String s) {
         if (s == null)
             return false;
         for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) < 0x20)
+            char c = s.charAt(i);
+            if ((IsAsciiControlChar(c) && !isNewLineChar(c)) || IsBidiControlChar(c))
                 return true;
         }
         return false;
+    }
+
+    private static boolean IsAsciiControlChar(char c) {
+        return c < 0x20 || c == 0x7F;
+    }
+
+    private static boolean isNewLineChar(char c) {
+        return c == 0x0a || c == 0x0d;
+    }
+
+    private static boolean IsBidiControlChar(char c) {
+        /* check for range 0x200c to 0x200f (ZWNJ, ZWJ, LRM, RLM) or
+                           0x202a to 0x202e (LRE, RLE, PDF, LRO, RLO) */
+        return (((c & 0xfffffffc) == 0x200c) || ((c >= 0x202a) && (c <= 0x202e)));
+    }
+
+    static String removeNonPrintingControlCharacters(String s) {
+        return NON_PRINTING_CONTROL_CHARACTERS.matcher(s).replaceAll("");
     }
 
     /**
@@ -514,10 +537,11 @@ public class TagChecker extends TagTest {
     private void checkSingleTagValueSimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key, String value) {
         if (!checkValues || value == null)
             return;
-        if ((containsLow(value)) && !withErrors.contains(p, "ICV")) {
+        if ((containsNonPrintingControlCharacter(value)) && !withErrors.contains(p, "ICV")) {
             errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_VALUE)
-                    .message(tr("Tag value contains character with code less than 0x20"), s, key)
+                    .message(tr("Tag value contains non-printing character"), s, key)
                     .primitives(p)
+                    .fix(() -> new ChangePropertyCommand(p, key, removeNonPrintingControlCharacters(value)))
                     .build());
             withErrors.put(p, "ICV");
         }
@@ -562,10 +586,11 @@ public class TagChecker extends TagTest {
     private void checkSingleTagKeySimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key) {
         if (!checkKeys || key == null)
             return;
-        if ((containsLow(key)) && !withErrors.contains(p, "ICK")) {
+        if ((containsNonPrintingControlCharacter(key)) && !withErrors.contains(p, "ICK")) {
             errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_KEY)
-                    .message(tr("Tag key contains character with code less than 0x20"), s, key)
+                    .message(tr("Tag key contains non-printing character"), s, key)
                     .primitives(p)
+                    .fix(() -> new ChangePropertyCommand(p, key, removeNonPrintingControlCharacters(key)))
                     .build());
             withErrors.put(p, "ICK");
         }
