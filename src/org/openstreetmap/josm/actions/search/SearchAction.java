@@ -172,7 +172,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * Builds and shows the search dialog.
      * @param initialValues A set of initial values needed in order to initialize the search dialog.
      *                      If is {@code null}, then default settings are used.
-     * @return Returns {@link SearchAction} object containing parameters of the search.
+     * @return Returns new {@link SearchSetting} object containing parameters of the search.
      */
     public static SearchSetting showSearchDialog(SearchSetting initialValues) {
         if (initialValues == null) {
