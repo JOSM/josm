@@ -14,7 +14,6 @@ import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.xml.sax.SAXException;
 
@@ -113,8 +112,8 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                     EventQueue.invokeAndWait(this::afterFinish);
                 }
             }
-        } catch (final JosmRuntimeException | IllegalArgumentException | IllegalStateException | UnsupportedOperationException |
-                OsmTransferException | IOException | SAXException | InvocationTargetException | InterruptedException e) {
+        } catch (final RuntimeException | OsmTransferException | IOException | SAXException | InvocationTargetException
+                | InterruptedException e) {
             if (!ignoreException) {
                 // Exception has to thrown in EDT to be shown to user
                 SwingUtilities.invokeLater(() -> {
@@ -129,7 +128,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
     }
 
     /**
-     * Can be overriden if something needs to run after progress monitor is closed.
+     * Can be overridden if something needs to run after progress monitor is closed.
      */
     protected void afterFinish() {
 
