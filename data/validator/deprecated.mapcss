@@ -119,6 +119,13 @@ way[class] {
   fixAdd: "shop=bag";
 }
 
+*[shop=fashion] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=clothes";
+  group: tr("deprecated tagging");
+  fixAdd: "shop=clothes";
+}
+
 *[shop=organic] {
   /* from http://wiki.openstreetmap.org/wiki/Tag:shop=organic */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
