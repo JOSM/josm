@@ -130,7 +130,7 @@ public class ValidatorListManagementDialog extends ExtendedDialog {
 
     /**
      * Build a JTree with a list
-     * @return &lttype&gtlist as a {@code JTree}
+     * @return &lt;type&gt;list as a {@code JTree}
      */
     public JTree buildList() {
         JTree tree;
