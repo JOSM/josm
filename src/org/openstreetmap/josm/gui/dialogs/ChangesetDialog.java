@@ -484,13 +484,10 @@ public class ChangesetDialog extends ToggleDialog {
             ChangesetCacheManager cm = ChangesetCacheManager.getInstance();
             if (cm.isVisible()) {
                 cm.setExtendedState(Frame.NORMAL);
-                cm.toFront();
-                cm.requestFocus();
             } else {
                 cm.setVisible(true);
-                cm.toFront();
-                cm.requestFocus();
             }
+            cm.toFront();
             cm.setSelectedChangesetsById(toSelect);
         }
 
