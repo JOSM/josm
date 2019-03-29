@@ -119,6 +119,7 @@ way[class] {
   fixAdd: "shop=bag";
 }
 
+/* #17527 */
 *[shop=fashion] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "shop=clothes";
