@@ -856,7 +856,7 @@
             <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
             <combo key="goods" text="Light Commercial Vehicles (goods)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
             <combo key="hgv" text="Heavy Goods Vehicles (hgv)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <combo key="agricultural" text="Agricultural Vehicles" values="yes,official,designated,destination,permissive,private,no" match="key" />
+            <combo key="agricultural" text="Agricultural Vehicles (with restrictions e.g. max. 25 km/h)" values="yes,official,designated,destination,permissive,private,no" match="key" />
             <combo key="4wd_only" text="4WD only" values="yes,recommended,no" match="key" />
             <space />
             <label text="Vehicles per use" />

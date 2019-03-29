@@ -344,6 +344,20 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertMatch: "node ele=high";
 }
 
+/* #17530 */
+*[ele][ele =~ /^-?[0-9]+\.[0-9][0-9][0-9]+$/] {
+  throwWarning: tr("{0}", "{0.tag}");
+  group: tr("Unnecessary amount of decimal places");
+  fixAdd: concat("ele=", round(tag("ele")*100)/100);
+  assertNoMatch: "node ele=12";
+  assertNoMatch: "node ele=1.12";
+  assertMatch: "node ele=12.123";
+  assertMatch: "node ele=12.1234";
+  assertMatch: "node ele=-12.6789";
+  assertNoMatch: "node ele=12.123 m";
+  assertNoMatch: "node ele=high";
+}
+
 /* #15774 */
 node[fire_hydrant:pressure="#"] {
   throwError: tr("unusual value of {0}", "{0.key}");
