@@ -23,7 +23,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public class DownloadOsmIdTask extends DownloadOsmTask {
 
-    private static final String URL_ID_PATTERN = "https?://(?:www\\.)?(osm|openstreetmap)\\.org/(node|way|relation)/(\\p{Digit}+).*";
+    private static final String URL_ID_PATTERN = "https?://(?:www\\.)?(osm|openstreetmap)\\.org/(?:browse/)?(node|way|relation)/(\\p{Digit}+).*";
 
     @Override
     public String[] getPatterns() {
