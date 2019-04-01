@@ -28,6 +28,8 @@ public abstract class AbstractParser extends DefaultHandler {
     /** the current primitive to be read */
     protected HistoryOsmPrimitive currentPrimitive;
     protected Locator locator;
+    /** if true, replace user information in input by anonymous user */
+    protected boolean useAnonymousUser;
 
     @Override
     public void setDocumentLocator(Locator locator) {
@@ -111,17 +113,20 @@ public abstract class AbstractParser extends DefaultHandler {
         long changesetId = changeset != null ? changeset : 0L;
         boolean visible = getMandatoryAttributeBoolean(atts, "visible");
 
-        Long uid = getAttributeLong(atts, "uid");
-        String userStr = atts.getValue("user");
-        User user;
-        if (userStr != null) {
-            if (uid != null) {
-                user = User.createOsmUser(uid, userStr);
-                user.setPreferredName(userStr);
-            } else {
-                user = User.createLocalUser(userStr);
+        User user = null;
+        if (!useAnonymousUser) {
+            Long uid = getAttributeLong(atts, "uid");
+            String userStr = atts.getValue("user");
+            if (userStr != null) {
+                if (uid != null) {
+                    user = User.createOsmUser(uid, userStr);
+                    user.setPreferredName(userStr);
+                } else {
+                    user = User.createLocalUser(userStr);
+                }
             }
-        } else {
+        }
+        if (user == null) {
             user = User.getAnonymous();
         }
 

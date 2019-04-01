@@ -26,6 +26,24 @@ import org.openstreetmap.josm.tools.XmlParsingException;
  *
  */
 public class OsmServerChangesetReader extends OsmServerReader {
+    final boolean useAnonymousUser;
+
+    /**
+     * Constructs a new {@code OsmServerChangesetReader} with default settings.
+     */
+    public OsmServerChangesetReader() {
+        this(false);
+    }
+
+    /**
+     * Constructs a new {@code OsmServerChangesetReader}
+     * @param useAnonymousUser if true, replace all user information with the anonymous user
+     * @since 14946
+     */
+    public OsmServerChangesetReader(boolean useAnonymousUser) {
+        super();
+        this.useAnonymousUser = useAnonymousUser;
+    }
 
     /**
      * don't use - not implemented!
@@ -198,7 +216,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                     return null;
                 monitor.setCustomText(tr("Downloading content for changeset {0} ...", id));
                 OsmChangesetContentParser parser = new OsmChangesetContentParser(in);
-                result = parser.parse(monitor.createSubTaskMonitor(1, true));
+                result = parser.parse(monitor.createSubTaskMonitor(1, true), useAnonymousUser);
             } catch (IOException e) {
                 Logging.warn(e);
             }
