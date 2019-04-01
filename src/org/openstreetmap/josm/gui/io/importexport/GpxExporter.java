@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
 import java.time.Year;
 import java.util.Optional;
@@ -38,7 +37,6 @@ import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Exports data to a .gpx file. Data may be native GPX or OSM data which will be converted.
@@ -205,13 +203,8 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             gpxData.put(META_KEYWORDS, keywords.getText());
         }
 
-        try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
-            new GpxWriter(fo).write(gpxData);
-            fo.flush();
-        } catch (IOException | InvalidPathException ex) {
-            Logging.error(ex);
-            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("Error while exporting {0}:\n{1}", fn, ex.getMessage()),
-                    tr("Error"), JOptionPane.ERROR_MESSAGE);
+        try (OutputStream fo = Compression.getCompressedFileOutputStream(file); GpxWriter writer = new GpxWriter(fo)) {
+            writer.write(gpxData);
         }
     }
 

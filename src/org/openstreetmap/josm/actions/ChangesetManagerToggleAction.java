@@ -45,7 +45,6 @@ public class ChangesetManagerToggleAction extends ToggleAction {
             ChangesetCacheManager.getInstance().addWindowListener(changesetCacheManagerClosedHandler);
             ChangesetCacheManager.getInstance().setVisible(true);
         } else {
-            ChangesetCacheManager.getInstance().removeWindowListener(changesetCacheManagerClosedHandler);
             ChangesetCacheManager.destroyInstance();
         }
     }
@@ -55,7 +54,6 @@ public class ChangesetManagerToggleAction extends ToggleAction {
         public void windowClosed(WindowEvent e) {
             setSelected(false);
             notifySelectedState();
-            ChangesetCacheManager.getInstance().removeWindowListener(changesetCacheManagerClosedHandler);
         }
     }
 }

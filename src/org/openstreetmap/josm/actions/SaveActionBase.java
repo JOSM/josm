@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Abstract superclass of save actions.
@@ -120,8 +122,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 ((OsmDataLayer) layer).onPostSaveToFile();
             }
             MainApplication.getMainFrame().repaint();
-        } catch (IOException e) {
-            Logging.error(e);
+        } catch (IOException | InvalidPathException e) {
+            showAndLogException(e);
             return false;
         }
         addToFileOpenHistory(file);
@@ -238,5 +240,18 @@ public abstract class SaveActionBase extends DiskAccessAction {
         history.remove(filepath);
         history.add(0, filepath);
         PreferencesUtils.putListBounded(Config.getPref(), "file-open.history", maxsize, history);
+    }
+
+    static void showAndLogException(Exception e) {
+        GuiHelper.runInEDT(() ->
+        JOptionPane.showMessageDialog(
+                MainApplication.getMainFrame(),
+                tr("<html>An error occurred while saving.<br>Error is:<br>{0}</html>",
+                        Utils.escapeReservedCharactersHTML(e.getClass().getSimpleName() + " - " + e.getMessage())),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE
+                ));
+
+        Logging.error(e);
     }
 }

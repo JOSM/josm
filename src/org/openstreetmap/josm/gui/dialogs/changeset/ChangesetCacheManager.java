@@ -64,7 +64,6 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
@@ -103,12 +102,8 @@ public class ChangesetCacheManager extends JFrame {
     public static void destroyInstance() {
         if (instance != null) {
             instance.setVisible(false);
+            GuiHelper.destroyComponents(instance, false);
             instance.dispose();
-            for (Component c : instance.pnlChangesetDetailTabs.getComponents()) {
-                if (c instanceof Destroyable) {
-                    ((Destroyable) c).destroy();
-                }
-            }
             instance = null;
         }
     }
@@ -351,7 +346,7 @@ public class ChangesetCacheManager extends JFrame {
     class WindowEventHandler extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
-            new CancelAction().cancelAndClose();
+            destroyInstance();
         }
 
         @Override
