@@ -407,8 +407,50 @@ public class TagChecker extends TagTest {
         return value != null && value.chars().anyMatch(c -> isUnusualUnicodeBlock(key, UnicodeBlock.of(c)));
     }
 
+    /**
+     * Detects highly suspicious Unicode characters that have been seen in OSM database.
+     * @param key tag key
+     * @param b Unicode block of the current character
+     * @return {@code true} if the current unicode block is very unusual for the given key
+     */
     private static boolean isUnusualUnicodeBlock(String key, UnicodeBlock b) {
-        return b == UnicodeBlock.IPA_EXTENSIONS && !key.endsWith(":pronunciation");
+        return isUnusualPhoneticUse(key, b) || isUnusualBmpUse(b) || isUnusualSmpUse(b);
+    }
+
+    private static boolean isUnusualPhoneticUse(String key, UnicodeBlock b) {
+        return (b == UnicodeBlock.IPA_EXTENSIONS                        // U+0250..U+02AF
+             || b == UnicodeBlock.PHONETIC_EXTENSIONS                   // U+1D00..U+1D7F
+             || b == UnicodeBlock.PHONETIC_EXTENSIONS_SUPPLEMENT)       // U+1D80..U+1DBF
+                && !key.endsWith(":pronunciation");
+    }
+
+    private static boolean isUnusualBmpUse(UnicodeBlock b) {
+        // CHECKSTYLE.OFF: BooleanExpressionComplexity
+        return b == UnicodeBlock.COMBINING_MARKS_FOR_SYMBOLS            // U+20D0..U+20FF
+            || b == UnicodeBlock.ARROWS                                 // U+2190..U+21FF
+            || b == UnicodeBlock.MATHEMATICAL_OPERATORS                 // U+2200..U+22FF
+            || b == UnicodeBlock.ENCLOSED_ALPHANUMERICS                 // U+2460..U+24FF
+            || b == UnicodeBlock.BOX_DRAWING                            // U+2500..U+257F
+            || b == UnicodeBlock.GEOMETRIC_SHAPES                       // U+25A0..U+25FF
+            || b == UnicodeBlock.DINGBATS                               // U+2700..U+27BF
+            || b == UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_ARROWS       // U+2B00..U+2BFF
+            || b == UnicodeBlock.GLAGOLITIC                             // U+2C00..U+2C5F
+            || b == UnicodeBlock.HANGUL_COMPATIBILITY_JAMO              // U+3130..U+318F
+            || b == UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS        // U+3200..U+32FF
+            || b == UnicodeBlock.LATIN_EXTENDED_D                       // U+A720..U+A7FF
+            || b == UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS           // U+F900..U+FAFF
+            || b == UnicodeBlock.ALPHABETIC_PRESENTATION_FORMS          // U+FB00..U+FB4F
+            || b == UnicodeBlock.VARIATION_SELECTORS                    // U+FE00..U+FE0F
+            || b == UnicodeBlock.SPECIALS;                              // U+FFF0..U+FFFF
+            // CHECKSTYLE.ON: BooleanExpressionComplexity
+    }
+
+    private static boolean isUnusualSmpUse(UnicodeBlock b) {
+        // UnicodeBlock.SUPPLEMENTAL_SYMBOLS_AND_PICTOGRAPHS is only defined in Java 9+
+        return b == UnicodeBlock.MUSICAL_SYMBOLS                        // U+1D100..U+1D1FF
+            || b == UnicodeBlock.ENCLOSED_ALPHANUMERIC_SUPPLEMENT       // U+1F100..U+1F1FF
+            || b == UnicodeBlock.EMOTICONS                              // U+1F600..U+1F64F
+            || b == UnicodeBlock.TRANSPORT_AND_MAP_SYMBOLS;             // U+1F680..U+1F6FF
     }
 
     /**
