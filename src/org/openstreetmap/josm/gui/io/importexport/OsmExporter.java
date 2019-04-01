@@ -66,9 +66,11 @@ public class OsmExporter extends FileExporter {
      * @param layer Data layer. Must be an instance of {@link OsmDataLayer}.
      * @param noBackup if {@code true}, the potential backup file created if the output file already exists will be deleted
      *                 after a successful export
+     * @throws IOException in case of IO errors
+     * @throws InvalidPathException when file name cannot be converted into a Path
      * @throws IllegalArgumentException if {@code layer} is not an instance of {@code OsmDataLayer}
      */
-    public void exportData(File file, Layer layer, boolean noBackup) {
+    public void exportData(File file, Layer layer, boolean noBackup) throws IOException {
         if (!(layer instanceof OsmDataLayer)) {
             throw new IllegalArgumentException(
                     MessageFormat.format("Expected instance of OsmDataLayer. Got ''{0}''.", layer.getClass().getName()));
@@ -80,9 +82,10 @@ public class OsmExporter extends FileExporter {
         return Compression.getCompressedFileOutputStream(file);
     }
 
-    private void save(File file, OsmDataLayer layer, boolean noBackup) {
+    private void save(File file, OsmDataLayer layer, boolean noBackup) throws IOException {
         File tmpFile = null;
         try {
+
             // use a tmp file because if something errors out in the process of writing the file,
             // we might just end up with a truncated file.  That can destroy lots of work.
             if (file.exists()) {
@@ -97,13 +100,6 @@ public class OsmExporter extends FileExporter {
             layer.onPostSaveToFile();
         } catch (IOException | InvalidPathException e) {
             Logging.error(e);
-            JOptionPane.showMessageDialog(
-                    MainApplication.getMainFrame(),
-                    tr("<html>An error occurred while saving.<br>Error is:<br>{0}</html>",
-                            Utils.escapeReservedCharactersHTML(e.getClass().getSimpleName() + " - " + e.getMessage())),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
 
             try {
                 // if the file save failed, then the tempfile will not be deleted. So, restore the backup if we made one.
@@ -120,6 +116,8 @@ public class OsmExporter extends FileExporter {
                         JOptionPane.ERROR_MESSAGE
                 );
             }
+            // re-throw original error
+            throw e;
         }
     }
 

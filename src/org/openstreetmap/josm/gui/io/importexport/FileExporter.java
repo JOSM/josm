@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
  */
 public abstract class FileExporter implements ActiveLayerChangeListener {
 
+    /** the  ExtensionFileFilter filter used by this exporter */
     public final ExtensionFileFilter filter;
 
     private boolean enabled;

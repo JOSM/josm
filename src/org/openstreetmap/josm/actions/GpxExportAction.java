@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
@@ -20,7 +21,6 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -107,8 +107,8 @@ public class GpxExportAction extends DiskAccessAction {
             if (exporter.acceptFile(file, layer)) {
                 try {
                     exporter.exportData(file, layer);
-                } catch (IOException e) {
-                    Logging.error(e);
+                } catch (IOException | InvalidPathException e) {
+                    SaveActionBase.showAndLogException(e);
                 }
             }
         }
