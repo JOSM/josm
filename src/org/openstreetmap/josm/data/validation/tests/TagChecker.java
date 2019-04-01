@@ -403,12 +403,12 @@ public class TagChecker extends TagTest {
         return NON_PRINTING_CONTROL_CHARACTERS.matcher(s).replaceAll("");
     }
 
-    private static boolean containsUnusualUnicodeCharacter(String s) {
-        return s != null && s.chars().anyMatch(c -> isUnusualUnicodeBlock(UnicodeBlock.of(c)));
+    private static boolean containsUnusualUnicodeCharacter(String key, String value) {
+        return value != null && value.chars().anyMatch(c -> isUnusualUnicodeBlock(key, UnicodeBlock.of(c)));
     }
 
-    private static boolean isUnusualUnicodeBlock(UnicodeBlock b) {
-        return b == UnicodeBlock.IPA_EXTENSIONS;
+    private static boolean isUnusualUnicodeBlock(String key, UnicodeBlock b) {
+        return b == UnicodeBlock.IPA_EXTENSIONS && !key.endsWith(":pronunciation");
     }
 
     /**
@@ -548,7 +548,7 @@ public class TagChecker extends TagTest {
                     .build());
             withErrors.put(p, "ICV");
         }
-        if ((containsUnusualUnicodeCharacter(value)) && !withErrors.contains(p, "UUCV")) {
+        if ((containsUnusualUnicodeCharacter(key, value)) && !withErrors.contains(p, "UUCV")) {
             errors.add(TestError.builder(this, Severity.WARNING, UNUSUAL_UNICODE_CHAR_VALUE)
                     .message(tr("Tag value contains unusual Unicode character"), s, key)
                     .primitives(p)
