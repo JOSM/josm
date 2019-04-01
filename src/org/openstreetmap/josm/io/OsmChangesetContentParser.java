@@ -34,6 +34,9 @@ public class OsmChangesetContentParser {
     private final ChangesetDataSet data = new ChangesetDataSet();
 
     private class Parser extends AbstractParser {
+        Parser(boolean useAnonymousUser) {
+            this.useAnonymousUser = useAnonymousUser;
+        }
 
         /** the current change modification type */
         private ChangesetDataSet.ChangesetModificationType currentModificationType;
@@ -120,7 +123,6 @@ public class OsmChangesetContentParser {
      * @param source the input stream with the changeset content as XML document. Must not be null.
      * @throws IllegalArgumentException if source is {@code null}.
      */
-    @SuppressWarnings("resource")
     public OsmChangesetContentParser(InputStream source) {
         CheckParameterUtil.ensureParameterNotNull(source, "source");
         this.source = new InputSource(new InputStreamReader(source, StandardCharsets.UTF_8));
@@ -146,13 +148,27 @@ public class OsmChangesetContentParser {
      * exceptions.
      */
     public ChangesetDataSet parse(ProgressMonitor progressMonitor) throws XmlParsingException {
+        return parse(progressMonitor, false);
+    }
+
+    /**
+     * Parses the content.
+     *
+     * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
+     * @param useAnonymousUser if true, replace all user information with the anonymous user
+     * @return the parsed data
+     * @throws XmlParsingException if something went wrong. Check for chained
+     * exceptions.
+     * @since 14946
+     */
+    public ChangesetDataSet parse(ProgressMonitor progressMonitor, boolean useAnonymousUser) throws XmlParsingException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
         try {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing changeset content ..."));
-            XmlUtils.parseSafeSAX(source, new Parser());
+            XmlUtils.parseSafeSAX(source, new Parser(useAnonymousUser));
         } catch (XmlParsingException e) {
             throw e;
         } catch (ParserConfigurationException | SAXException | IOException e) {
@@ -171,6 +187,6 @@ public class OsmChangesetContentParser {
      * exceptions.
      */
     public ChangesetDataSet parse() throws XmlParsingException {
-        return parse(null);
+        return parse(null, false);
     }
 }
