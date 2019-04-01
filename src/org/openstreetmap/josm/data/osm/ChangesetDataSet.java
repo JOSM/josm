@@ -230,7 +230,7 @@ public class ChangesetDataSet {
      * @return an iterator over dataset entries. If a primitive was changed multiple times, only the last entry is returned.
      */
     public Iterator<ChangesetDataSetEntry> iterator() {
-        return new DefaultIterator();
+        return new DefaultIterator(entryMap);
     }
 
     /**
@@ -266,10 +266,10 @@ public class ChangesetDataSet {
         }
     }
 
-    private class DefaultIterator implements Iterator<ChangesetDataSetEntry> {
+    private static class DefaultIterator implements Iterator<ChangesetDataSetEntry> {
         private final Iterator<Entry<PrimitiveId, Object>> typeIterator;
 
-        DefaultIterator() {
+        DefaultIterator(Map<PrimitiveId, Object> entryMap) {
             typeIterator = entryMap.entrySet().iterator();
         }
 
