@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -164,6 +165,7 @@ public class TagChecker extends TagTest {
     protected static final int MISSPELLED_KEY           = 1213;
     protected static final int MULTIPLE_SPACES          = 1214;
     protected static final int MISSPELLED_VALUE_NO_FIX  = 1215;
+    protected static final int UNUSUAL_UNICODE_CHAR_VALUE = 1216;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     protected EditableList sourcesList;
@@ -380,25 +382,18 @@ public class TagChecker extends TagTest {
      * @return {@code true} if {@code s} contains non-printing control characters
      */
     private static boolean containsNonPrintingControlCharacter(String s) {
-        if (s == null)
-            return false;
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            if ((isAsciiControlChar(c) && !isNewLineChar(c)) || isBidiControlChar(c))
-                return true;
-        }
-        return false;
+        return s != null && s.chars().anyMatch(c -> (isAsciiControlChar(c) && !isNewLineChar(c)) || isBidiControlChar(c));
     }
 
-    private static boolean isAsciiControlChar(char c) {
+    private static boolean isAsciiControlChar(int c) {
         return c < 0x20 || c == 0x7F;
     }
 
-    private static boolean isNewLineChar(char c) {
+    private static boolean isNewLineChar(int c) {
         return c == 0x0a || c == 0x0d;
     }
 
-    private static boolean isBidiControlChar(char c) {
+    private static boolean isBidiControlChar(int c) {
         /* check for range 0x200c to 0x200f (ZWNJ, ZWJ, LRM, RLM) or
                            0x202a to 0x202e (LRE, RLE, PDF, LRO, RLO) */
         return (((c & 0xfffffffc) == 0x200c) || ((c >= 0x202a) && (c <= 0x202e)));
@@ -406,6 +401,14 @@ public class TagChecker extends TagTest {
 
     static String removeNonPrintingControlCharacters(String s) {
         return NON_PRINTING_CONTROL_CHARACTERS.matcher(s).replaceAll("");
+    }
+
+    private static boolean containsUnusualUnicodeCharacter(String s) {
+        return s != null && s.chars().anyMatch(c -> isUnusualUnicodeBlock(UnicodeBlock.of(c)));
+    }
+
+    private static boolean isUnusualUnicodeBlock(UnicodeBlock b) {
+        return b == UnicodeBlock.IPA_EXTENSIONS;
     }
 
     /**
@@ -544,6 +547,13 @@ public class TagChecker extends TagTest {
                     .fix(() -> new ChangePropertyCommand(p, key, removeNonPrintingControlCharacters(value)))
                     .build());
             withErrors.put(p, "ICV");
+        }
+        if ((containsUnusualUnicodeCharacter(value)) && !withErrors.contains(p, "UUCV")) {
+            errors.add(TestError.builder(this, Severity.WARNING, UNUSUAL_UNICODE_CHAR_VALUE)
+                    .message(tr("Tag value contains unusual Unicode character"), s, key)
+                    .primitives(p)
+                    .build());
+            withErrors.put(p, "UUCV");
         }
         if ((value.length() > Tagged.MAX_TAG_LENGTH) && !withErrors.contains(p, "LV")) {
             errors.add(TestError.builder(this, Severity.ERROR, LONG_VALUE)
