@@ -46,13 +46,17 @@ way[bicycle =~ /^(yes|designated)$/][highway=cycleway][!vehicle][!access][foot!=
 *[building:ruian:type=13][building=barn],
 *[building:ruian:type=18][building=garage],
 *[building:ruian:type=21][building=greenhouse],
-*[gnis:Class="Populated Place"][place],
+*[gnis:Class="Populated Place"][place=city],
+*[gnis:Class="Populated Place"][place=town],
+*[gnis:Class="Populated Place"][place=village],
+*[gnis:Class="Populated Place"][place=hamlet],
 *[gnis:Class=Summit][natural=peak] {
   throwWarning: tr("{0} is unnecessary for {1}", "{0.tag}", "{1.tag}");
   group: tr("unnecessary tag");
   fixRemove: "{0.key}";
   assertMatch: "way highway=pedestrian foot=designated";
   assertNoMatch: "way highway=pedestrian access=no foot=designated";
+  assertNoMatch: "node gnis:Class="Populated Place" place=locality";
 }
 
 *[emergency=permissive] {
