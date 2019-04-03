@@ -5769,6 +5769,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Bed -->
+        <item name="Carpet" icon="presets/shop/carpet.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=carpet" />
+            <space />
+            <key key="shop" value="carpet" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Carpet -->
         <item name="Interior Decoration" icon="presets/shop/interior_decoration.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=interior_decoration" />
             <space />

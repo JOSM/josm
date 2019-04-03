@@ -1967,6 +1967,7 @@ area[shop=lottery],
 area[shop=pet],
 area[shop=photo],
 area[shop=ticket],
+area[shop=carpet],
 area[shop=interior_decoration],
 area[shop=car_parts],
 area[shop=video_games],
@@ -2273,6 +2274,10 @@ node[shop=photo] {
 }
 node[shop=ticket] {
     icon-image: "presets/shop/ticket.svg";
+    set icon_z17;
+}
+node[shop=carpet] {
+    icon-image: "presets/shop/carpet.svg";
     set icon_z17;
 }
 node[shop=interior_decoration] {
