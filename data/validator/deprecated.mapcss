@@ -997,9 +997,9 @@ node[type][pipeline=marker] {
   fixChangeKey: "amenity => leisure";
 }
 
-/* #12494 */
+/* #12494, #17554 */
 *[/^[^t][^i][^g].+_[0-9]$/][!/^note_[0-9]$/][!/^description_[0-9]$/] {
-  throwOther: tr("{0}", "{0.key}");
+  throwWarning: tr("{0}", "{0.key}");
   group: tr("questionable key (ending with a number)");
   assertMatch: "way name_1=foo";
   assertNoMatch: "way note_2=foo";
