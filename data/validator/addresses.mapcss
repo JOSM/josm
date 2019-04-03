@@ -24,3 +24,15 @@ way[addr:interpolation] {
     assertMatch: "node addr:housename=1 addr:housenumber=1";
     assertNoMatch: "node addr:housename=1 addr:housenumber=2";
 }
+
+/* #17486 */
+*[addr:housenumber][addr:housenumber!~/[0-9]/] {
+  throwWarning: tr("{0} without number", "{0.key}");
+  assertNoMatch: "way addr:housenumber=0";
+  assertNoMatch: "way addr:housenumber=5a";
+  assertNoMatch: "way addr:housenumber=5/1";
+  assertMatch: "way addr:housenumber=?";
+  assertMatch: "way addr:housenumber=unknown";
+  assertMatch: "way addr:housenumber=Palace of Westminster";
+  assertMatch: "way addr:housenumber=S/N";
+}
