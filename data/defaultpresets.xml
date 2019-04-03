@@ -1331,7 +1331,7 @@
             <link wiki="Tag:barrier=wall" />
             <key key="barrier" value="wall" />
             <reference ref="optional_height" />
-            <combo key="wall" text="Type" values="dry_stone,noise_barrier" />
+            <combo key="wall" text="Type" values="castle_wall,dry_stone,flood_wall,noise_barrier,seawall" />
         </item> <!-- Wall -->
         <item name="City Wall" icon="presets/barrier/city_wall.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=city_wall" />
