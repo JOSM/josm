@@ -191,17 +191,7 @@ public class ChangesetDataSet {
      * @since 14946
      */
     public ChangesetDataSetEntry getFirstEntry(PrimitiveId id) {
-        if (id == null)
-            return null;
-        Object val = entryMap.get(id);
-        if (val == null)
-            return null;
-        if (val instanceof ChangesetDataSetEntry[]) {
-            ChangesetDataSetEntry[] entries = (ChangesetDataSetEntry[]) val;
-            return entries[0];
-        } else {
-            return (ChangesetDataSetEntry) val;
-        }
+        return getEntry(id, 0);
     }
 
     /**
@@ -212,6 +202,10 @@ public class ChangesetDataSet {
      * @since 14946
      */
     public ChangesetDataSetEntry getLastEntry(PrimitiveId id) {
+        return getEntry(id, 1);
+    }
+
+    private ChangesetDataSetEntry getEntry(PrimitiveId id, int n) {
         if (id == null)
             return null;
         Object val = entryMap.get(id);
@@ -219,7 +213,7 @@ public class ChangesetDataSet {
             return null;
         if (val instanceof ChangesetDataSetEntry[]) {
             ChangesetDataSetEntry[] entries = (ChangesetDataSetEntry[]) val;
-            return entries[1];
+            return entries[n];
         } else {
             return (ChangesetDataSetEntry) val;
         }
