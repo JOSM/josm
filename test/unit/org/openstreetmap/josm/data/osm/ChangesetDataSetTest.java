@@ -56,6 +56,26 @@ public class ChangesetDataSetTest {
     }
 
     /**
+     * Unit test of method {@link ChangesetDataSet#getFirstEntry(PrimitiveId)} and {@link ChangesetDataSet#getLastEntry(PrimitiveId)}.
+     */
+    @Test
+    public void testGetEntry() {
+        final ChangesetDataSet cds = new ChangesetDataSet();
+        HistoryNode prim1 = new HistoryNode(1, 1, true, User.getAnonymous(), 1, new Date(), LatLon.ZERO);
+        cds.put(prim1, ChangesetModificationType.CREATED);
+        HistoryNode prim2 = new HistoryNode(1, 2, true, User.getAnonymous(), 1, new Date(), LatLon.ZERO);
+        prim2.put("highway", "stop");
+        cds.put(prim2, ChangesetModificationType.UPDATED);
+        assertEquals(prim1, cds.getFirstEntry(prim1.getPrimitiveId()).getPrimitive());
+        assertEquals(prim2, cds.getLastEntry(prim1.getPrimitiveId()).getPrimitive());
+        HistoryNode prim3 = new HistoryNode(1, 3, false, User.getAnonymous(), 1, new Date(), null);
+
+        cds.put(prim3, ChangesetModificationType.DELETED);
+        assertEquals(prim1, cds.getFirstEntry(prim1.getPrimitiveId()).getPrimitive());
+        assertEquals(prim3, cds.getLastEntry(prim1.getPrimitiveId()).getPrimitive());
+    }
+
+    /**
      * Unit test of {@link ChangesetModificationType} enum.
      */
     @Test
