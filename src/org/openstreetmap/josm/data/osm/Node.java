@@ -402,4 +402,22 @@ public final class Node extends OsmPrimitive implements INode {
     public List<Way> getParentWays() {
         return referrers(Way.class).collect(Collectors.toList());
     }
+
+    /**
+     * Determines if this node is outside of the world. See also #13538.
+     * @return <code>true</code>, if the coordinate is outside the world, compared by using lat/lon and east/north
+     * @since 14960
+     */
+    public boolean isOutSideWorld() {
+        LatLon ll = getCoor();
+        if (ll != null) {
+            if (ll.isOutSideWorld())
+                return true;
+            if (!new Node(ll).getEastNorth().equalsEpsilon(getEastNorth(), 1.0)) {
+                // we get here if a node was moved or created left from -180 or right from +180
+                return true;
+            }
+        }
+        return false;
+    }
 }

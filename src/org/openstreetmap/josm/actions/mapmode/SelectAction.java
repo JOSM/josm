@@ -31,7 +31,6 @@ import org.openstreetmap.josm.command.ScaleCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmData;
@@ -722,8 +721,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     UndoRedoHandler.getInstance().add(c);
                 }
                 for (Node n : affectedNodes) {
-                    LatLon ll = n.getCoor();
-                    if (ll != null && ll.isOutSideWorld()) {
+                    if (n.isOutSideWorld()) {
                         // Revert move
                         if (c instanceof MoveCommand) {
                             ((MoveCommand) c).resetToCheckpoint();
