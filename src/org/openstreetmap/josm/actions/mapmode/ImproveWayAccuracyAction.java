@@ -415,7 +415,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
             }
         } else if (state == State.IMPROVING) {
             // Checking if the new coordinate is outside of the world
-            if (mv.getLatLon(mousePos.x, mousePos.y).isOutSideWorld()) {
+            if (new Node(mv.getEastNorth(mousePos.x, mousePos.y)).isOutSideWorld()) {
                 JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                         tr("Cannot add a node outside of the world."),
                         tr("Warning"), JOptionPane.WARNING_MESSAGE);

@@ -213,7 +213,7 @@ public final class CreateCircleAction extends JosmAction {
                 double x = center.east() + r*Math.cos(alpha);
                 double y = center.north() + r*Math.sin(alpha);
                 LatLon ll = ProjectionRegistry.getProjection().eastNorth2latlon(new EastNorth(x, y));
-                if (ll.isOutSideWorld()) {
+                if (new Node(new EastNorth(x, y)).isOutSideWorld()) {
                     notifyNodesNotOnCircle();
                     return;
                 }

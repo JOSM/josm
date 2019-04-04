@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -26,7 +27,7 @@ public class NodeTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     /**
      * Non-regression test for ticket #12060.
@@ -103,4 +104,29 @@ public class NodeTest {
     public void testLoadIAE() {
         new Node().load(new WayData());
     }
+
+    /**
+     * Test that {@link Node#isOutSideWorld} works as expected.
+     */
+    @Test
+    public void testOutsideWorld() {
+        Node n = new Node(1, 1);
+        n.setCoor(LatLon.ZERO);
+        assertFalse(n.isOutSideWorld());
+        n.setCoor(null);
+        assertFalse(n.isOutSideWorld());
+        n.setCoor(LatLon.NORTH_POLE);
+        assertTrue(n.isOutSideWorld());
+        n.setCoor(new LatLon(0, 180.0));
+        assertFalse(n.isOutSideWorld());
+        // simulate a small move east
+        n.setEastNorth(new EastNorth(n.getEastNorth().getX() + 0.1, n.getEastNorth().getY()));
+        assertTrue(n.isOutSideWorld());
+        n.setCoor(new LatLon(0, -180.0));
+        assertFalse(n.isOutSideWorld());
+        // simulate a small move west
+        n.setEastNorth(new EastNorth(n.getEastNorth().getX() - 0.1, n.getEastNorth().getY()));
+        assertTrue(n.isOutSideWorld());
+    }
+
 }

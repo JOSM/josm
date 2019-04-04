@@ -51,6 +51,16 @@ public final class MoveNodeAction extends JosmAction {
 
         // move the node
         UndoRedoHandler.getInstance().add(new MoveCommand(n, coordinates));
+        if (n.getCoor().distance(coordinates) > 1) {
+            // see #13538: Avoid rounding error near 180 longitude which moves nodes too far
+            if (coordinates.lon() >= 180.0) {
+                coordinates = new LatLon(coordinates.lat(), Math.nextDown(180.0));
+            } else if (coordinates.lon() <= -180.0) {
+                coordinates = new LatLon(coordinates.lat(), Math.nextUp(-180.0));
+            }
+            UndoRedoHandler.getInstance().undo(1);
+            UndoRedoHandler.getInstance().add(new MoveCommand(n, coordinates));
+        }
         MainApplication.getMap().mapView.repaint();
     }
 
