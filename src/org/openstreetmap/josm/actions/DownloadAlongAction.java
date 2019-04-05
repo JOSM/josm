@@ -5,7 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,17 +20,28 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTaskList;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.layer.gpx.DownloadAlongPanel;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Abstract superclass of DownloadAlongTrackAction and DownloadAlongWayAction
  * @since 6054
  */
 public abstract class DownloadAlongAction extends JosmAction {
+
+    /**
+     * Sub classes must override this method.
+     * @return the task to start or null if nothing to do
+     */
+    protected abstract PleaseWaitRunnable createTask();
 
     /**
      * Constructs a new {@code DownloadAlongAction}
@@ -97,10 +111,8 @@ public abstract class DownloadAlongAction extends JosmAction {
      * @param osmDownload Set to true if OSM data should be downloaded
      * @param gpxDownload Set to true if GPX data should be downloaded
      * @param title the title string for the confirmation dialog
-     * @param progressMonitor the progress monitor
      */
-    protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title,
-            ProgressMonitor progressMonitor) {
+    protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title) {
         List<Rectangle2D> toDownload = new ArrayList<>();
         addToDownload(a, a.getBounds(), toDownload, maxArea);
         if (toDownload.isEmpty()) {
@@ -117,5 +129,163 @@ public abstract class DownloadAlongAction extends JosmAction {
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
         final Future<?> future = new DownloadTaskList().download(false, toDownload, osmDownload, gpxDownload, monitor);
         waitFuture(future, monitor);
+    }
+
+    /**
+     * Calculate list of points between two given points so that the distance between two consecutive points is below a limit.
+     * @param p1 first point or null
+     * @param p2 second point (must not be null)
+     * @param bufferDist the maximum distance
+     * @return a list of points with at least one point (p2) and maybe more.
+     */
+    protected static Collection<LatLon> calcBetweenPoints(LatLon p1, LatLon p2, double bufferDist) {
+        ArrayList<LatLon> intermediateNodes = new ArrayList<>();
+        intermediateNodes.add(p2);
+        if (p1 != null && p2.greatCircleDistance(p1) > bufferDist) {
+            Double d = p2.greatCircleDistance(p1) / bufferDist;
+            int nbNodes = d.intValue();
+            if (Logging.isDebugEnabled()) {
+                Logging.debug(tr("{0} intermediate nodes to download.", nbNodes));
+                Logging.debug(tr("between {0} {1} and {2} {3}", p2.lat(), p2.lon(), p1.lat(), p1.lon()));
+            }
+            double latStep = (p2.lat() - p1.lat()) / (nbNodes + 1);
+            double lonStep = (p2.lon() - p1.lon()) / (nbNodes + 1);
+            for (int i = 1; i <= nbNodes; i++) {
+                LatLon intermediate = new LatLon(p1.lat() + i * latStep, p1.lon() + i * lonStep);
+                intermediateNodes.add(intermediate);
+                if (Logging.isTraceEnabled()) {
+                    Logging.trace(tr("  adding {0} {1}", intermediate.lat(), intermediate.lon()));
+                }
+            }
+        }
+        return intermediateNodes;
+    }
+
+    /**
+     * Create task that downloads areas along the given path using the values specified in the panel.
+     * @param alongPath the path along which the areas are to be downloaded
+     * @param panel the panel that was displayed to the user and now contains his selections
+     * @param confirmTitle the title to display in the confirmation panel
+     * @return the task or null if canceled by user
+     */
+    protected PleaseWaitRunnable createCalcTask(Path2D alongPath, DownloadAlongPanel panel, String confirmTitle) {
+        /*
+         * Find the average latitude for the data we're contemplating, so we can know how many
+         * metres per degree of longitude we have.
+         */
+        double latsum = 0;
+        int latcnt = 0;
+        final PathIterator pit = alongPath.getPathIterator(null);
+        final double[] res = new double[6];
+        while (!pit.isDone()) {
+            int type = pit.currentSegment(res);
+            if (type == PathIterator.SEG_LINETO || type == PathIterator.SEG_MOVETO) {
+                latsum += res[1];
+                latcnt++;
+            }
+            pit.next();
+        }
+        if (latcnt == 0) {
+            return null;
+        }
+        final double avglat = latsum / latcnt;
+        final double scale = Math.cos(Utils.toRadians(avglat));
+
+        /*
+         * Compute buffer zone extents and maximum bounding box size. Note that the maximum we
+         * ever offer is a bbox area of 0.002, while the API theoretically supports 0.25, but as
+         * soon as you touch any built-up area, that kind of bounding box will download forever
+         * and then stop because it has more than 50k nodes.
+         */
+        final double bufferDist = panel.getDistance();
+        final double maxArea = panel.getArea() / 10000.0 / scale;
+        final double bufferY = bufferDist / 100000.0;
+        final double bufferX = bufferY / scale;
+        final int totalTicks = latcnt;
+        // guess if a progress bar might be useful.
+        final boolean displayProgress = totalTicks > 20_000 && bufferY < 0.01;
+
+        class CalculateDownloadArea extends PleaseWaitRunnable {
+
+            private final Path2D downloadPath = new Path2D.Double();
+            private boolean cancel;
+            private int ticks;
+            private final Rectangle2D r = new Rectangle2D.Double();
+
+            CalculateDownloadArea() {
+                super(tr("Calculating Download Area"), displayProgress ? null : NullProgressMonitor.INSTANCE, false);
+            }
+
+            @Override
+            protected void cancel() {
+                cancel = true;
+            }
+
+            @Override
+            protected void finish() {
+                // Do nothing
+            }
+
+            @Override
+            protected void afterFinish() {
+                if (cancel) {
+                    return;
+                }
+                confirmAndDownloadAreas(new Area(downloadPath), maxArea, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
+                        confirmTitle);
+            }
+
+            /**
+             * increase tick count by one, report progress every 100 ticks
+             */
+            private void tick() {
+                ticks++;
+                if (ticks % 100 == 0) {
+                    progressMonitor.worked(100);
+                }
+            }
+
+            /**
+             * calculate area enclosing a single point
+             */
+            private void calcAreaForWayPoint(LatLon c) {
+                r.setRect(c.lon() - bufferX, c.lat() - bufferY, 2 * bufferX, 2 * bufferY);
+                downloadPath.append(r, false);
+            }
+
+            @Override
+            protected void realRun() {
+                progressMonitor.setTicksCount(totalTicks);
+                PathIterator pit = alongPath.getPathIterator(null);
+                double[] res = new double[6];
+                LatLon previous = null;
+                while (!pit.isDone()) {
+                    int type = pit.currentSegment(res);
+                    LatLon c = new LatLon(res[1], res[0]);
+                    if (type == PathIterator.SEG_LINETO) {
+                        tick();
+                        for (LatLon d : calcBetweenPoints(previous, c, bufferDist)) {
+                            calcAreaForWayPoint(d);
+                        }
+                        previous = c;
+                    } else if (type == PathIterator.SEG_MOVETO) {
+                        previous = c;
+                        tick();
+                        calcAreaForWayPoint(c);
+                    }
+                    pit.next();
+                }
+            }
+        }
+
+        return new CalculateDownloadArea();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        PleaseWaitRunnable task = createTask();
+        if (task != null) {
+            MainApplication.worker.submit(task);
+        }
     }
 }

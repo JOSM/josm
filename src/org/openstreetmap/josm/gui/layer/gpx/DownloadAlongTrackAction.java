@@ -3,22 +3,15 @@ package org.openstreetmap.josm.gui.layer.gpx;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.ActionEvent;
-import java.awt.geom.Area;
 import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 
 import org.openstreetmap.josm.actions.DownloadAlongAction;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action that issues a series of download requests to the API, following the GPX track.
@@ -50,7 +43,8 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
         this.data = data;
     }
 
-    PleaseWaitRunnable createTask() {
+    @Override
+    protected PleaseWaitRunnable createTask() {
         final DownloadAlongPanel panel = new DownloadAlongPanel(
                 PREF_DOWNLOAD_ALONG_TRACK_OSM, PREF_DOWNLOAD_ALONG_TRACK_GPS,
                 PREF_DOWNLOAD_ALONG_TRACK_DISTANCE, PREF_DOWNLOAD_ALONG_TRACK_AREA, PREF_DOWNLOAD_ALONG_TRACK_NEAR);
@@ -61,143 +55,29 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
 
         final int near = panel.getNear();
 
-        /*
-         * Find the average latitude for the data we're contemplating, so we can know how many
-         * metres per degree of longitude we have.
-         */
-        double latsum = 0;
-        int latcnt = 0;
+        // Convert the GPX data into a Path2D.
+        Path2D gpxPath = new Path2D.Double();
         if (near == NEAR_TRACK || near == NEAR_BOTH) {
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
+                    boolean first = true;
                     for (WayPoint p : segment.getWayPoints()) {
-                        latsum += p.lat();
-                        latcnt++;
+                        if (first) {
+                            gpxPath.moveTo(p.lon(), p.lat());
+                            first = false;
+                        } else {
+                            gpxPath.lineTo(p.lon(), p.lat());
+                        }
                     }
                 }
             }
         }
         if (near == NEAR_WAYPOINTS || near == NEAR_BOTH) {
             for (WayPoint p : data.waypoints) {
-                latsum += p.getCoor().lat();
-                latcnt++;
+                gpxPath.moveTo(p.lon(), p.lat());
+                gpxPath.closePath();
             }
         }
-        if (latcnt == 0) {
-            return null;
-        }
-        double avglat = latsum / latcnt;
-        double scale = Math.cos(Utils.toRadians(avglat));
-        /*
-         * Compute buffer zone extents and maximum bounding box size. Note that the maximum we
-         * ever offer is a bbox area of 0.002, while the API theoretically supports 0.25, but as
-         * soon as you touch any built-up area, that kind of bounding box will download forever
-         * and then stop because it has more than 50k nodes.
-         */
-        final double bufferDist = panel.getDistance();
-        final double maxArea = panel.getArea() / 10000.0 / scale;
-        final double bufferY = bufferDist / 100000.0;
-        final double bufferX = bufferY / scale;
-        final int totalTicks = latcnt;
-        // guess if a progress bar might be useful.
-        final boolean displayProgress = totalTicks > 200_000 && bufferY < 0.01;
-
-        class CalculateDownloadArea extends PleaseWaitRunnable {
-
-            private final Path2D path = new Path2D.Double();
-            private boolean cancel;
-            private int ticks;
-            private final Rectangle2D r = new Rectangle2D.Double();
-
-            CalculateDownloadArea() {
-                super(tr("Calculating Download Area"), displayProgress ? null : NullProgressMonitor.INSTANCE, false);
-            }
-
-            @Override
-            protected void cancel() {
-                cancel = true;
-            }
-
-            @Override
-            protected void finish() {
-                // Do nothing
-            }
-
-            @Override
-            protected void afterFinish() {
-                if (cancel) {
-                    return;
-                }
-                confirmAndDownloadAreas(new Area(path), maxArea, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
-                        tr("Download from OSM along this track"), progressMonitor);
-            }
-
-            /**
-             * increase tick count by one, report progress every 100 ticks
-             */
-            private void tick() {
-                ticks++;
-                if (ticks % 100 == 0) {
-                    progressMonitor.worked(100);
-                }
-            }
-
-            /**
-             * calculate area for single, given way point and return new LatLon if the
-             * way point has been used to modify the area.
-             */
-            private LatLon calcAreaForWayPoint(WayPoint p, LatLon previous) {
-                tick();
-                LatLon c = p.getCoor();
-                if (previous == null || c.greatCircleDistance(previous) > bufferDist) {
-                    // we add a buffer around the point.
-                    r.setRect(c.lon() - bufferX, c.lat() - bufferY, 2 * bufferX, 2 * bufferY);
-                    path.append(r, false);
-                    return c;
-                }
-                return previous;
-            }
-
-            @Override
-            protected void realRun() {
-                progressMonitor.setTicksCount(totalTicks);
-                /*
-                 * Collect the combined area of all gpx points plus buffer zones around them. We ignore
-                 * points that lie closer to the previous point than the given buffer size because
-                 * otherwise this operation takes ages.
-                 */
-                LatLon previous = null;
-                if (near == NEAR_TRACK || near == NEAR_BOTH) {
-                    for (GpxTrack trk : data.tracks) {
-                        for (GpxTrackSegment segment : trk.getSegments()) {
-                            for (WayPoint p : segment.getWayPoints()) {
-                                if (cancel) {
-                                    return;
-                                }
-                                previous = calcAreaForWayPoint(p, previous);
-                            }
-                        }
-                    }
-                }
-                if (near == NEAR_WAYPOINTS || near == NEAR_BOTH) {
-                    for (WayPoint p : data.waypoints) {
-                        if (cancel) {
-                            return;
-                        }
-                        previous = calcAreaForWayPoint(p, previous);
-                    }
-                }
-            }
-        }
-
-        return new CalculateDownloadArea();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        PleaseWaitRunnable task = createTask();
-        if (task != null) {
-            MainApplication.worker.submit(task);
-        }
+        return createCalcTask(gpxPath, panel, tr("Download from OSM along this track"));
     }
 }
