@@ -42,17 +42,18 @@ import org.openstreetmap.josm.actions.DeleteLayerAction;
 import org.openstreetmap.josm.actions.DialogsToggleAction;
 import org.openstreetmap.josm.actions.DistributeAction;
 import org.openstreetmap.josm.actions.DownloadAction;
+import org.openstreetmap.josm.actions.DownloadAlongWayAction;
 import org.openstreetmap.josm.actions.DownloadNotesInViewAction;
 import org.openstreetmap.josm.actions.DownloadOsmInViewAction;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.actions.DownloadReferrersAction;
+import org.openstreetmap.josm.actions.DrawBoundariesOfDownloadedDataAction;
 import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.FollowLineAction;
 import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
-import org.openstreetmap.josm.actions.DrawBoundariesOfDownloadedDataAction;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.HistoryInfoWebAction;
@@ -281,6 +282,8 @@ public class MainMenu extends JMenuBar {
     public final CreateMultipolygonAction createMultipolygon = new CreateMultipolygonAction(false);
     /** Tools / Update multipolygon */
     public final CreateMultipolygonAction updateMultipolygon = new CreateMultipolygonAction(true);
+    /** Tools / Download along way */
+    public final DownloadAlongWayAction downloadAlongWay = new DownloadAlongWayAction();
 
     /* Selection menu */
     /** Selection / Select All */
@@ -815,6 +818,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, joinAreas);
         add(toolsMenu, createMultipolygon);
         add(toolsMenu, updateMultipolygon);
+        add(toolsMenu, downloadAlongWay);
 
         // -- changeset manager toggle action
         final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManager,

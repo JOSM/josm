@@ -145,7 +145,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("kendzi3d_Improved_by_Andrei", tr("no longer required")),
             new DeprecatedPlugin("videomapping", tr("no longer required")),
             new DeprecatedPlugin("public_transport_layer", tr("replaced by new {0} plugin", "pt_assistant")),
-            new DeprecatedPlugin("lakewalker", tr("replaced by new {0} plugin", "scanaerial"))
+            new DeprecatedPlugin("lakewalker", tr("replaced by new {0} plugin", "scanaerial")),
+            new DeprecatedPlugin("download_along", inCore)
         );
     }
 
