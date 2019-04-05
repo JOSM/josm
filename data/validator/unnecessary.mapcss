@@ -56,7 +56,7 @@ way[bicycle =~ /^(yes|designated)$/][highway=cycleway][!vehicle][!access][foot!=
   fixRemove: "{0.key}";
   assertMatch: "way highway=pedestrian foot=designated";
   assertNoMatch: "way highway=pedestrian access=no foot=designated";
-  assertNoMatch: "node gnis:Class="Populated Place" place=locality";
+  /* see #17555 assertNoMatch: "node gnis:Class="Populated Place" place=locality";*/
 }
 
 *[emergency=permissive] {
