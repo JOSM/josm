@@ -58,19 +58,19 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
         }
 
         // Convert OSM ways to Path2D
-        Path2D gpxPath = new Path2D.Double();
+        Path2D alongPath = new Path2D.Double();
         for (Way way : selectedWays) {
             boolean first = true;
             for (Node p : way.getNodes()) {
                 if (first) {
-                    gpxPath.moveTo(p.lon(), p.lat());
+                    alongPath.moveTo(p.lon(), p.lat());
                     first = false;
                 } else {
-                    gpxPath.lineTo(p.lon(), p.lat());
+                    alongPath.lineTo(p.lon(), p.lat());
                 }
             }
         }
-        return createCalcTask(gpxPath, panel, tr("Download from OSM along selected ways"));
+        return createCalcTask(alongPath, panel, tr("Download from OSM along selected ways"));
 
     }
 
