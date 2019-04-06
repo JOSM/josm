@@ -413,7 +413,7 @@ public final class Node extends OsmPrimitive implements INode {
         if (ll != null) {
             if (ll.isOutSideWorld())
                 return true;
-            if (!new Node(ll).getEastNorth().equalsEpsilon(getEastNorth(), 1.0)) {
+            if (!ProjectionRegistry.getProjection().latlon2eastNorth(ll).equalsEpsilon(getEastNorth(), 1.0)) {
                 // we get here if a node was moved or created left from -180 or right from +180
                 return true;
             }
