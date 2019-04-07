@@ -37,16 +37,16 @@ public final class ValidatorTestUtils {
         try (InputStream is = new FileInputStream(sampleFile)) {
             for (T t: provider.apply(OsmReader.parseDataSet(is, null))) {
                 String name = DefaultNameFormatter.getInstance().format(t);
+                List<TestError> errors = new ArrayList<>();
+                for (Test test : tests) {
+                    test.initialize();
+                    test.startTest(null);
+                    test.visit(Collections.singleton(t));
+                    test.endTest();
+                    errors.addAll(test.getErrors());
+                }
                 String codes = t.get("josm_error_codes");
                 if (codes != null) {
-                    List<TestError> errors = new ArrayList<>();
-                    for (Test test : tests) {
-                        test.initialize();
-                        test.startTest(null);
-                        test.visit(Collections.singleton(t));
-                        test.endTest();
-                        errors.addAll(test.getErrors());
-                    }
                     Set<Integer> expectedCodes = new TreeSet<>();
                     if (!"none".equals(codes)) {
                         for (String code : codes.split(",")) {
@@ -64,6 +64,8 @@ public final class ValidatorTestUtils {
                             expectedCodes.size(), actualCodes.size());
                 } else if (t.hasKey("name") && namePredicate != null && namePredicate.test(t.getName())) {
                     fail(name + " lacks josm_error_codes tag");
+                } else if (t.hasKey("name") && name.startsWith("OK") && !errors.isEmpty()) {
+                    fail(name + "has unexpected error(s) ");
                 }
             }
         }
