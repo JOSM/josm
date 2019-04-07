@@ -133,12 +133,13 @@ public class SimplifyWayAction extends JosmAction {
      *
      * @param way the way to be simplified
      * @param node the node to check
+     * @param multipleUseNodes set of nodes which is used more than once in the way
      * @return true if <code>node</code> is a required node which can't be removed
      * in order to simplify the way.
      */
-    protected static boolean isRequiredNode(Way way, Node node) {
+    protected static boolean isRequiredNode(Way way, Node node, Set<Node> multipleUseNodes) {
         boolean isRequired = node.isTagged();
-        if (!isRequired) {
+        if (!isRequired && multipleUseNodes.contains(node)) {
             int frequency = Collections.frequency(way.getNodes(), node);
             if ((way.getNode(0) == node) && (way.getNode(way.getNodesCount()-1) == node)) {
                 frequency = frequency - 1; // closed way closing node counted only once
@@ -166,6 +167,21 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     /**
+     * Calculate a set of nodes which occurs more than once in the way
+     * @param w the way
+     * @return a set of nodes which occurs more than once in the way
+     */
+    private static Set<Node> getMultiUseNodes(Way w) {
+        Set<Node> multipleUseNodes = new HashSet<>();
+        Set<Node> allNodes = new HashSet<>();
+        for (Node n : w.getNodes()) {
+            if (!allNodes.add(n))
+                multipleUseNodes.add(n);
+        }
+        return multipleUseNodes;
+    }
+
+    /**
      * Simplifies a way with a given threshold.
      *
      * @param w the way to simplify
@@ -176,9 +192,11 @@ public class SimplifyWayAction extends JosmAction {
     public static SequenceCommand simplifyWay(Way w, double threshold) {
         int lower = 0;
         int i = 0;
+
+        Set<Node> multipleUseNodes = getMultiUseNodes(w);
         List<Node> newNodes = new ArrayList<>(w.getNodesCount());
         while (i < w.getNodesCount()) {
-            if (isRequiredNode(w, w.getNode(i))) {
+            if (isRequiredNode(w, w.getNode(i), multipleUseNodes)) {
                 // copy a required node to the list of new nodes. Simplify not possible
                 newNodes.add(w.getNode(i));
                 i++;
@@ -187,7 +205,7 @@ public class SimplifyWayAction extends JosmAction {
             }
             i++;
             // find the longest sequence of not required nodes ...
-            while (i < w.getNodesCount() && !isRequiredNode(w, w.getNode(i))) {
+            while (i < w.getNodesCount() && !isRequiredNode(w, w.getNode(i), multipleUseNodes)) {
                 i++;
             }
             // ... and simplify them
@@ -197,7 +215,7 @@ public class SimplifyWayAction extends JosmAction {
         }
 
         // Closed way, check if the first node could also be simplified ...
-        if (newNodes.size() > 3 && newNodes.get(0) == newNodes.get(newNodes.size() - 1) && !isRequiredNode(w, newNodes.get(0))) {
+        if (newNodes.size() > 3 && newNodes.get(0) == newNodes.get(newNodes.size() - 1) && !isRequiredNode(w, newNodes.get(0), multipleUseNodes)) {
             final List<Node> l1 = Arrays.asList(newNodes.get(newNodes.size() - 2), newNodes.get(0), newNodes.get(1));
             final List<Node> l2 = new ArrayList<>(3);
             buildSimplifiedNodeList(l1, 0, 2, threshold, l2);
