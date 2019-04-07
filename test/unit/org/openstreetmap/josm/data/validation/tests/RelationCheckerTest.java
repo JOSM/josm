@@ -80,7 +80,7 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role 'outer2' unknown in templates 'outer/inner'", errors.get(0).getDescription());
+        assertEquals("Role 'outer2' is not in templates 'outer/inner'", errors.get(0).getDescription());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role 'level_x' unknown in templates 'outline/part/ridge/edge/entrance/level_-?\\d+'", errors.get(0).getDescription());
+        assertEquals("Role 'level_x' is not in templates 'outline/part/ridge/edge/entrance/level_-?\\d+'", errors.get(0).getDescription());
     }
 
     @Test
