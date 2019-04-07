@@ -214,7 +214,7 @@ public final class CreateCircleAction extends JosmAction {
                 double y = center.north() + r*Math.sin(alpha);
                 LatLon ll = ProjectionRegistry.getProjection().eastNorth2latlon(new EastNorth(x, y));
                 if (new Node(new EastNorth(x, y)).isOutSideWorld()) {
-                    notifyNodesNotOnCircle();
+                    notifyNodesOutsideWorld();
                     return;
                 }
                 Node n = new Node(ll);
@@ -282,6 +282,12 @@ public final class CreateCircleAction extends JosmAction {
                 tr("Those nodes are not in a circle. Aborting."))
                 .setIcon(JOptionPane.WARNING_MESSAGE)
                 .show();
+    }
+
+    private static void notifyNodesOutsideWorld() {
+        new Notification(tr("Cannot add a node outside of the world."))
+        .setIcon(JOptionPane.WARNING_MESSAGE)
+        .show();
     }
 
     @Override
