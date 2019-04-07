@@ -129,7 +129,7 @@ public class RelationChecker extends Test {
             // see #17010: don't report same problem twice
             return;
         }
-        if (ignoreTurnRestrictions && n.hasTag("type","restriction")) {
+        if (ignoreTurnRestrictions && n.hasTag("type", "restriction")) {
             // see #17561: don't report same problem twice
             return;
         }
