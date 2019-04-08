@@ -164,6 +164,15 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
     }
 
     /**
+     * Returns the search text entered by user.
+     * @return the search text entered by user
+     * @since 14975
+     */
+    public String getSearchText() {
+        return edSearchText.getText();
+    }
+
+    /**
      * Sets a listener to be invoked on double click
      * @param dblClickListener The double click listener
      */
