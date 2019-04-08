@@ -40,10 +40,8 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ListenerList;
-import org.openstreetmap.josm.tools.Pair;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -332,28 +330,6 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     }
 
     /**
-     * Sort list of errors in place (#8517).
-     */
-    void sortErrors() {
-        if (errors.isEmpty())
-            return;
-        // Calculate the string to sort only once for each element
-        // Avoids to call TestError.compare() which is costly
-        List<Pair<String, TestError>> toSort = new ArrayList<>();
-        for (int i = 0; i < errors.size(); i++) {
-            TestError e = errors.get(i);
-            toSort.add(new Pair<>(e.getNameVisitor().getText(), e));
-        }
-        toSort.sort((o1, o2) -> AlphanumComparator.getInstance().compare(o1.a, o2.a));
-        List<TestError> sortedErrors = new ArrayList<>(errors.size());
-        for (Pair<String, TestError> p : toSort) {
-            sortedErrors.add(p.b);
-        }
-        errors.clear();
-        errors.addAll(sortedErrors);
-    }
-
-    /**
      * Add a new invalidation listener
      * @param listener The listener
      */
@@ -378,7 +354,6 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         if (errors != null && errors == this.errors)
             return;
         this.errors = errors != null ? errors : new ArrayList<>();
-        sortErrors();
         if (isVisible()) {
             //TODO: If list is changed because another layer was activated it would be good to store/restore
             // the expanded / selected paths.
@@ -398,7 +373,6 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                 errors.add(error);
             }
         }
-        sortErrors();
         if (isVisible()) {
             buildTree();
         }
