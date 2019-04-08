@@ -136,7 +136,7 @@ public class TurnrestrictionTest extends Test {
                     break;
                 case "location_hint":
                     errors.add(TestError.builder(this, Severity.WARNING, UNKNOWN_ROLE)
-                            .message(tr("Role location_hint in not in templates"))
+                            .message(tr("Role ''{0}'' is not in templates", m.getRole()))
                             .primitives(l)
                             .highlight(m.getMember())
                             .build());
