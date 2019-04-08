@@ -364,7 +364,7 @@ way[highway=footway][cycleway=lane] {
 /* {0} on suspicious object */
 *[tunnel  ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing],
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=bridge][building!=bridge],
-*[psv     ][!highway][!railway][!waterway][amenity !~ /^parking.*/],
+*[psv     ][!highway][!railway][!waterway][barrier!=bollard][amenity !~ /^parking.*/],
 *[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance][natural!=stone][leisure!=track],
 *[maxspeed][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(river|canal|lock)$/][!traffic_calming][aerialway!=zip_line] {
   throwWarning: tr("{0} on suspicious object", "{0.key}");
