@@ -154,4 +154,14 @@ public class PopupMenuLauncher extends MouseAdapter {
     public final JPopupMenu getMenu() {
         return menu;
     }
+
+    /**
+     * Empties the internal undo manager, if any.
+     * @since 14977
+     */
+    public void discardAllUndoableEdits() {
+        if (menu instanceof TextContextualPopupMenu) {
+            ((TextContextualPopupMenu) menu).discardAllUndoableEdits();
+        }
+    }
 }

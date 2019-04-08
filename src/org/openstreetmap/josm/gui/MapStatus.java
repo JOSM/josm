@@ -252,7 +252,7 @@ public final class MapStatus extends JPanel implements
     private final ImageLabel nameText = new ImageLabel("name",
             tr("The name of the object at the mouse pointer."),
             getNameLabelCharacterCount(MainApplication.getMainFrame()), PROP_BACKGROUND_COLOR.get());
-    private final JosmTextField helpText = new JosmTextField();
+    private final JosmTextField helpText = new JosmTextField(null, null, 0, false);
     private final JProgressBar progressBar = new JProgressBar();
     private final transient ComponentAdapter mvComponentAdapter;
     /**

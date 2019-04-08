@@ -282,11 +282,29 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      * @param dataSet to obtain the tags set in the dataset
      */
     public void setChangesetTags(DataSet dataSet) {
+        setChangesetTags(dataSet, false);
+    }
+
+    /**
+     * Sets the tags for this upload based on (later items overwrite earlier ones):
+     * <ul>
+     * <li>previous "source" and "comment" input</li>
+     * <li>the tags set in the dataset (see {@link DataSet#getChangeSetTags()})</li>
+     * <li>the tags from the selected open changeset</li>
+     * <li>the JOSM user agent (see {@link Version#getAgentString(boolean)})</li>
+     * </ul>
+     *
+     * @param dataSet to obtain the tags set in the dataset
+     * @param keepSourceComment if {@code true}, keep upload {@code source} and {@code comment} current values from models
+     */
+    private void setChangesetTags(DataSet dataSet, boolean keepSourceComment) {
         final Map<String, String> tags = new HashMap<>();
 
         // obtain from previous input
-        tags.put("source", getLastChangesetSourceFromHistory());
-        tags.put("comment", getLastChangesetCommentFromHistory());
+        if (!keepSourceComment) {
+            tags.put("source", getLastChangesetSourceFromHistory());
+            tags.put("comment", getLastChangesetCommentFromHistory());
+        }
 
         // obtain from dataset
         if (dataSet != null) {
@@ -317,8 +335,15 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             }
         }
 
+        // ignore source/comment to keep current values from models ?
+        if (keepSourceComment) {
+            tags.put("source", changesetSourceModel.getComment());
+            tags.put("comment", changesetCommentModel.getComment());
+        }
+
         pnlTagSettings.initFromTags(tags);
         pnlTagSettings.tableChanged(null);
+        pnlBasicUploadSettings.discardAllUndoableEdits();
     }
 
     @Override
@@ -518,6 +543,9 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            // force update of model in case dialog is closed before focus lost event, see #17452
+            dialog.forceUpdateActiveField();
+
             if (isUploadCommentTooShort(dialog.getUploadComment()) && warnUploadComment()) {
                 // abort for missing comment
                 dialog.handleMissingComment();
@@ -619,7 +647,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
             Changeset cs = (Changeset) evt.getNewValue();
-            setChangesetTags(dataSet);
+            setChangesetTags(dataSet, cs == null); // keep comment/source of first tab for new changesets 
             if (cs == null) {
                 tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
             } else {
@@ -633,9 +661,24 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     /* -------------------------------------------------------------------------- */
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
-        if (e.getKey() == null || !"osm-server.url".equals(e.getKey()))
-            return;
-        final Setting<?> newValue = e.getNewValue();
+        if (e.getKey() != null
+                && e.getSource() != getClass()
+                && e.getSource() != BasicUploadSettingsPanel.class) {
+            switch (e.getKey()) {
+                case "osm-server.url":
+                    osmServerUrlChanged(e.getNewValue());
+                    break;
+                case BasicUploadSettingsPanel.HISTORY_KEY:
+                case BasicUploadSettingsPanel.SOURCE_HISTORY_KEY:
+                    pnlBasicUploadSettings.refreshHistoryComboBoxes();
+                    break;
+                default:
+                    return;
+            }
+        }
+    }
+
+    private void osmServerUrlChanged(Setting<?> newValue) {
         final String url;
         if (newValue == null || newValue.getValue() == null) {
             url = OsmApi.getOsmApi().getBaseUrl();
@@ -647,20 +690,19 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
     private static String getLastChangesetTagFromHistory(String historyKey, List<String> def) {
         Collection<String> history = Config.getPref().getList(historyKey, def);
-        int age = (int) (System.currentTimeMillis() / 1000 - Config.getPref().getInt(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0));
-        if (history != null && age < Config.getPref().getLong(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, TimeUnit.HOURS.toMillis(4))
+        long age = System.currentTimeMillis() / 1000 - Config.getPref().getLong(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0);
+        if (age < Config.getPref().getLong(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, TimeUnit.HOURS.toSeconds(4))
                 && !history.isEmpty()) {
             return history.iterator().next();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
      * Returns the last changeset comment from history.
      * @return the last changeset comment from history
      */
-    public String getLastChangesetCommentFromHistory() {
+    public static String getLastChangesetCommentFromHistory() {
         return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.HISTORY_KEY, new ArrayList<String>());
     }
 
@@ -668,7 +710,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      * Returns the last changeset source from history.
      * @return the last changeset source from history
      */
-    public String getLastChangesetSourceFromHistory() {
+    public static String getLastChangesetSourceFromHistory() {
         return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.SOURCE_HISTORY_KEY, BasicUploadSettingsPanel.getDefaultSources());
     }
 
@@ -692,6 +734,13 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     @Override
     public void handleIllegalChunkSize() {
         tpConfigPanels.setSelectedIndex(0);
+    }
+
+    @Override
+    public void forceUpdateActiveField() {
+        if (tpConfigPanels.getSelectedComponent() == pnlBasicUploadSettings) {
+            pnlBasicUploadSettings.forceUpdateActiveField();
+        }
     }
 
     /**

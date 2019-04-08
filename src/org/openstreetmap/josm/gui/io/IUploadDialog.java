@@ -65,4 +65,10 @@ public interface IUploadDialog {
      * Handles illegal chunk size.
      */
     void handleIllegalChunkSize();
+
+    /**
+     * Forces update of comment/source model if matching text field is active.
+     * @since 14977
+     */
+    void forceUpdateActiveField();
 }

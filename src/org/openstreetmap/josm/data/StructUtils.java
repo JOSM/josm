@@ -32,7 +32,7 @@ import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 
 /**
  * Utility methods to convert struct-like classes to a string map and back.
@@ -160,7 +160,7 @@ public final class StructUtils {
                 continue;
             }
             try {
-                Utils.setObjectsAccessible(f);
+                ReflectionUtils.setObjectsAccessible(f);
                 Object fieldValue = f.get(struct);
                 Object defaultFieldValue = f.get(structPrototype);
                 if (fieldValue != null && (
@@ -214,7 +214,7 @@ public final class StructUtils {
             if (f.getAnnotation(StructEntry.class) == null) {
                 continue;
             }
-            Utils.setObjectsAccessible(f);
+            ReflectionUtils.setObjectsAccessible(f);
             if (f.getType() == Boolean.class || f.getType() == boolean.class) {
                 value = Boolean.valueOf(keyValue.getValue());
             } else if (f.getType() == Integer.class || f.getType() == int.class) {

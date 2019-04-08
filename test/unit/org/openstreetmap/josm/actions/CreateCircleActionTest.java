@@ -20,8 +20,8 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.GeoProperty;
 import org.openstreetmap.josm.tools.GeoPropertyIndex;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
-import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -117,7 +117,7 @@ public final class CreateCircleActionTest {
 
         // Mock left/right hand traffic database
         Field rlCache = RightAndLefthandTraffic.class.getDeclaredField("rlCache");
-        Utils.setObjectsAccessible(rlCache);
+        ReflectionUtils.setObjectsAccessible(rlCache);
         Object origRlCache = rlCache.get(null);
         rlCache.set(null, new GeoPropertyIndex<>(new ConstantTrafficHand(true), 24));
 

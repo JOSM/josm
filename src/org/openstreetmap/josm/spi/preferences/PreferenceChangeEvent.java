@@ -8,6 +8,13 @@ package org.openstreetmap.josm.spi.preferences;
 public interface PreferenceChangeEvent {
 
     /**
+     * Returns the class source of this event.
+     * @return The class source of this event
+     * @since 14977
+     */
+    Class<?> getSource();
+
+    /**
      * Returns the preference key.
      * @return the preference key
      */
@@ -24,5 +31,4 @@ public interface PreferenceChangeEvent {
      * @return the new preference value
      */
     Setting<?> getNewValue();
-    
 }

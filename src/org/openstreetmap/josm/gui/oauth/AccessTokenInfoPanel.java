@@ -21,8 +21,8 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
  */
 public class AccessTokenInfoPanel extends JPanel {
 
-    private final JosmTextField tfAccessTokenKey = new JosmTextField();
-    private final JosmTextField tfAccessTokenSecret = new JosmTextField();
+    private final JosmTextField tfAccessTokenKey = new JosmTextField(null, null, 0, false);
+    private final JosmTextField tfAccessTokenSecret = new JosmTextField(null, null, 0, false);
     private final JCheckBox cbSaveAccessTokenInPreferences = new JCheckBox(tr("Save Access Token in preferences"));
 
     /**

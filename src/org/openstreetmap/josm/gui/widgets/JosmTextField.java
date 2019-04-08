@@ -147,6 +147,14 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
         this.hint = hint;
     }
 
+    /**
+     * Empties the internal undo manager.
+     * @since 14977
+     */
+    public final void discardAllUndoableEdits() {
+        launcher.discardAllUndoableEdits();
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);

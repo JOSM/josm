@@ -26,7 +26,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -41,7 +41,7 @@ public class SelectActionTest {
         SelectActionMock(MapFrame mapFrame, DataSet dataSet, OsmDataLayer layer) throws ReflectiveOperationException {
             super(mapFrame);
             Field mv = SelectAction.class.getDeclaredField("mv");
-            Utils.setObjectsAccessible(mv);
+            ReflectionUtils.setObjectsAccessible(mv);
             mv.set(this, new MapViewMock(new MainLayerManager()));
         }
 
