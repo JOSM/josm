@@ -175,12 +175,16 @@ public enum Compression {
      * @throws IOException if any I/O error occurs
      */
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
-        InputStream in = Files.newInputStream(file.toPath());
         try {
-            return byExtension(file.getName()).getUncompressedInputStream(in);
-        } catch (IOException e) {
-            Utils.close(in);
-            throw e;
+            InputStream in = Files.newInputStream(file.toPath());
+            try {
+                return byExtension(file.getName()).getUncompressedInputStream(in);
+            } catch (IOException e) {
+                Utils.close(in);
+                throw e;
+            }
+        } catch (InvalidPathException e) {
+            throw new IOException(e);
         }
     }
 

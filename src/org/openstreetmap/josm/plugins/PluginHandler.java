@@ -299,6 +299,11 @@ public final class PluginHandler {
         }
     }
 
+    /**
+     * Plugin class loaders.
+     */
+    private static final Map<PluginInformation, PluginClassLoader> classLoaders = new HashMap<>();
+
     private static PluginDownloadTask pluginDownloadTask;
 
     /**
@@ -316,6 +321,15 @@ public final class PluginHandler {
      */
     public static Collection<ClassLoader> getResourceClassLoaders() {
         return Collections.unmodifiableCollection(sources);
+    }
+
+    /**
+     * Returns all plugin classloaders.
+     * @return all plugin classloaders
+     * @since 14978
+     */
+    public static Collection<PluginClassLoader> getPluginClassLoaders() {
+        return Collections.unmodifiableCollection(classLoaders.values());
     }
 
     /**
@@ -836,7 +850,7 @@ public final class PluginHandler {
             if (toLoad.isEmpty())
                 return;
 
-            Map<PluginInformation, PluginClassLoader> classLoaders = new HashMap<>();
+            classLoaders.clear();
             for (PluginInformation info : toLoad) {
                 PluginClassLoader cl = AccessController.doPrivileged((PrivilegedAction<PluginClassLoader>)
                     () -> new PluginClassLoader(
