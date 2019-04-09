@@ -60,8 +60,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
 
     protected final transient UndoableEditListener undoEditListener = e -> {
         undo.addEdit(e.getEdit());
-        undoAction.updateUndoState();
-        redoAction.updateRedoState();
+        updateUndoRedoState();
     };
 
     protected final transient PropertyChangeListener propertyChangeListener = evt -> {
@@ -78,6 +77,11 @@ public class TextContextualPopupMenu extends JPopupMenu {
         // Restricts visibility
     }
 
+    private void updateUndoRedoState() {
+        undoAction.updateUndoState();
+        redoAction.updateRedoState();
+    }
+
     /**
      * Attaches this contextual menu to the given text component.
      * A menu can only be attached to a single component.
@@ -89,20 +93,39 @@ public class TextContextualPopupMenu extends JPopupMenu {
     protected TextContextualPopupMenu attach(JTextComponent component, boolean undoRedo) {
         if (component != null && !isAttached()) {
             this.component = component;
-            this.undoRedo = undoRedo;
             if (undoRedo && component.isEditable()) {
-                component.getDocument().addUndoableEditListener(undoEditListener);
-                if (!GraphicsEnvironment.isHeadless()) {
-                    component.getInputMap().put(
-                            KeyStroke.getKeyStroke(KeyEvent.VK_Z, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), undoAction);
-                    component.getInputMap().put(
-                            KeyStroke.getKeyStroke(KeyEvent.VK_Y, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), redoAction);
-                }
+                enableUndoRedo();
             }
             addMenuEntries();
             component.addPropertyChangeListener(EDITABLE, propertyChangeListener);
         }
         return this;
+    }
+
+    private void enableUndoRedo() {
+        if (!undoRedo) {
+            component.getDocument().addUndoableEditListener(undoEditListener);
+            if (!GraphicsEnvironment.isHeadless()) {
+                component.getInputMap().put(
+                        KeyStroke.getKeyStroke(KeyEvent.VK_Z, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), undoAction);
+                component.getInputMap().put(
+                        KeyStroke.getKeyStroke(KeyEvent.VK_Y, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()), redoAction);
+            }
+            undoRedo = true;
+        }
+    }
+
+    private void disableUndoRedo() {
+        if (undoRedo) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                component.getInputMap().remove(
+                        KeyStroke.getKeyStroke(KeyEvent.VK_Z, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()));
+                component.getInputMap().remove(
+                        KeyStroke.getKeyStroke(KeyEvent.VK_Y, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx()));
+            }
+            component.getDocument().removeUndoableEditListener(undoEditListener);
+            undoRedo = false;
+        }
     }
 
     private void addMenuEntries() {
@@ -133,7 +156,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
             component.removePropertyChangeListener(EDITABLE, propertyChangeListener);
             removeAll();
             if (undoRedo) {
-                component.getDocument().removeUndoableEditListener(undoEditListener);
+                disableUndoRedo();
             }
             component = null;
         }
@@ -165,6 +188,15 @@ public class TextContextualPopupMenu extends JPopupMenu {
             ((TextContextualPopupMenu) launcher.getMenu()).detach();
             component.removeMouseListener(launcher);
         }
+    }
+
+    /**
+     * Empties the internal undo manager.
+     * @since 14977
+     */
+    public void discardAllUndoableEdits() {
+        undo.discardAllEdits();
+        updateUndoRedoState();
     }
 
     /**

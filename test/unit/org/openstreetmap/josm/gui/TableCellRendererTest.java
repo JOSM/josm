@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -98,7 +98,7 @@ public class TableCellRendererTest {
         } else {
             c = klass.getDeclaredConstructor();
         }
-        Utils.setObjectsAccessible(c);
+        ReflectionUtils.setObjectsAccessible(c);
         if (needOuterClass) {
             return c.newInstance(createInstance(klass.getDeclaringClass()));
         } else {

@@ -210,7 +210,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      */
     private class RetrieveAccessTokenPanel extends JPanel {
 
-        private final JosmTextField tfAuthoriseUrl = new JosmTextField();
+        private final JosmTextField tfAuthoriseUrl = new JosmTextField(null, null, 0, false);
 
         /**
          * Constructs a new {@code RetrieveAccessTokenPanel}.

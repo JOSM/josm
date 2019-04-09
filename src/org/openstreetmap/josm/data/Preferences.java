@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,13 +44,16 @@ import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.DefaultPreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -117,6 +121,14 @@ public class Preferences extends AbstractPreferences {
     private final HashMap<String, ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener>> keyListeners = new HashMap<>();
 
     private static final Preferences defaultInstance = new Preferences(JosmBaseDirectories.getInstance());
+
+    /**
+     * Preferences classes calling directly the method {@link #putSetting(String, Setting)}.
+     * This collection allows us to exclude them when searching the business class who set a preference.
+     * The found class is used as event source when notifying event listeners.
+     */
+    private static final Collection<Class<?>> preferencesClasses = Arrays.asList(
+            Preferences.class, PreferencesUtils.class, AbstractPreferences.class);
 
     /**
      * Constructs a new {@code Preferences}.
@@ -215,8 +227,8 @@ public class Preferences extends AbstractPreferences {
     }
 
     protected void firePreferenceChanged(String key, Setting<?> oldValue, Setting<?> newValue) {
-        final org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent evt =
-                new org.openstreetmap.josm.spi.preferences.DefaultPreferenceChangeEvent(key, oldValue, newValue);
+        final PreferenceChangeEvent evt =
+                new DefaultPreferenceChangeEvent(ReflectionUtils.findCallerClass(preferencesClasses), key, oldValue, newValue);
         listeners.fireEvent(listener -> listener.preferenceChanged(evt));
 
         ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener> forKey = keyListeners.get(key);

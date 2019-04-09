@@ -32,17 +32,15 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * ChangesetManagementPanel allows to configure changeset to be used in the next
- * upload.
+ * ChangesetManagementPanel allows to configure changeset to be used in the next upload.
  *
  * It is displayed as one of the configuration panels in the {@link UploadDialog}.
  *
- * ChangesetManagementPanel is a source for {@link java.beans.PropertyChangeEvent}s. Clients can listen
- * to
+ * ChangesetManagementPanel is a source for {@link java.beans.PropertyChangeEvent}s. Clients can listen to
  * <ul>
  *   <li>{@link #SELECTED_CHANGESET_PROP}  - the new value in the property change event is
  *   the changeset selected by the user. The value is null if the user didn't select a
- *   a changeset or if he chosed to use a new changeset.</li>
+ *   a changeset or if he chose to use a new changeset.</li>
  *   <li> {@link #CLOSE_CHANGESET_AFTER_UPLOAD} - the new value is a boolean value indicating
  *   whether the changeset should be closed after the next upload</li>
  * </ul>

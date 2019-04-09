@@ -211,8 +211,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      *
      */
     private class AlreadyAuthorisedPanel extends JPanel {
-        private final JosmTextField tfAccessTokenKey = new JosmTextField();
-        private final JosmTextField tfAccessTokenSecret = new JosmTextField();
+        private final JosmTextField tfAccessTokenKey = new JosmTextField(null, null, 0, false);
+        private final JosmTextField tfAccessTokenSecret = new JosmTextField(null, null, 0, false);
 
         /**
          * Constructs a new {@code AlreadyAuthorisedPanel}.

@@ -34,6 +34,8 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  */
 public class JosmComboBox<E> extends JComboBox<E> {
 
+    private final ContextMenuHandler handler = new ContextMenuHandler();
+
     /**
      * Creates a <code>JosmComboBox</code> with a default data model.
      * The default data model is an empty list of objects.
@@ -164,6 +166,10 @@ public class JosmComboBox<E> extends JComboBox<E> {
     }
 
     protected final void init(E prototype) {
+        init(prototype, true);
+    }
+
+    protected final void init(E prototype, boolean registerPropertyChangeListener) {
         if (prototype != null) {
             setPrototypeDisplayValue(prototype);
             int screenHeight = GuiHelper.getScreenSize().height;
@@ -185,9 +191,10 @@ public class JosmComboBox<E> extends JComboBox<E> {
             setMaximumRowCount(Math.max(getMaximumRowCount(), maxsize));
         }
         // Handle text contextual menus for editable comboboxes
-        ContextMenuHandler handler = new ContextMenuHandler();
-        addPropertyChangeListener("editable", handler);
-        addPropertyChangeListener("editor", handler);
+        if (registerPropertyChangeListener) {
+            addPropertyChangeListener("editable", handler);
+            addPropertyChangeListener("editor", handler);
+        }
     }
 
     protected class ContextMenuHandler extends MouseAdapter implements PropertyChangeListener {
@@ -231,6 +238,12 @@ public class JosmComboBox<E> extends JComboBox<E> {
             }
         }
 
+        private void discardAllUndoableEdits() {
+            if (launcher != null) {
+                launcher.discardAllUndoableEdits();
+            }
+        }
+
         @Override
         public void mousePressed(MouseEvent e) {
             processEvent(e);
@@ -249,11 +262,20 @@ public class JosmComboBox<E> extends JComboBox<E> {
     }
 
     /**
-     * Reinitializes this {@link JosmComboBox} to the specified values. This may needed if a custom renderer is used.
+     * Reinitializes this {@link JosmComboBox} to the specified values. This may be needed if a custom renderer is used.
      * @param values The values displayed in the combo box.
      * @since 5558
      */
     public final void reinitialize(Collection<E> values) {
-        init(findPrototypeDisplayValue(values));
+        init(findPrototypeDisplayValue(values), false);
+        discardAllUndoableEdits();
+    }
+
+    /**
+     * Empties the internal undo manager, if any.
+     * @since 14977
+     */
+    public final void discardAllUndoableEdits() {
+        handler.discardAllUndoableEdits();
     }
 }

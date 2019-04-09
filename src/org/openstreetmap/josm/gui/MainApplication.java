@@ -157,6 +157,7 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHook.NativeOsCallback;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.PlatformManager;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
@@ -990,7 +991,7 @@ public class MainApplication {
         if (Utils.getJavaVersion() < 9 && !GraphicsEnvironment.isHeadless()) {
             try {
                 Field field = Toolkit.class.getDeclaredField("resources");
-                Utils.setObjectsAccessible(field);
+                ReflectionUtils.setObjectsAccessible(field);
                 field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
             } catch (ReflectiveOperationException | RuntimeException e) { // NOPMD
                 // Catch RuntimeException in order to catch InaccessibleObjectException, new in Java 9

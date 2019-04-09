@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.io;
 
 import java.awt.BorderLayout;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.swing.JPanel;
@@ -16,7 +17,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Tag settings panel of upload dialog.
@@ -37,17 +37,14 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      * @param changesetCommentModel the changeset comment model. Must not be null.
      * @param changesetSourceModel the changeset source model. Must not be null.
      * @param changesetReviewModel the model for the changeset review. Must not be null.
-     * @throws IllegalArgumentException if {@code changesetCommentModel} is null
+     * @throws NullPointerException if a model is null
      * @since 12719 (signature)
      */
     public TagSettingsPanel(ChangesetCommentModel changesetCommentModel, ChangesetCommentModel changesetSourceModel,
             ChangesetReviewModel changesetReviewModel) {
-        CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
-        CheckParameterUtil.ensureParameterNotNull(changesetSourceModel, "changesetSourceModel");
-        CheckParameterUtil.ensureParameterNotNull(changesetReviewModel, "changesetReviewModel");
-        this.changesetCommentModel = changesetCommentModel;
-        this.changesetSourceModel = changesetSourceModel;
-        this.changesetReviewModel = changesetReviewModel;
+        this.changesetCommentModel = Objects.requireNonNull(changesetCommentModel, "changesetCommentModel");
+        this.changesetSourceModel = Objects.requireNonNull(changesetSourceModel, "changesetSourceModel");
+        this.changesetReviewModel = Objects.requireNonNull(changesetReviewModel, "changesetReviewModel");
         changesetCommentModel.addChangeListener(new ChangesetCommentChangeListener("comment", "hashtags"));
         changesetSourceModel.addChangeListener(new ChangesetCommentChangeListener("source"));
         changesetReviewModel.addChangeListener(new ChangesetReviewChangeListener());

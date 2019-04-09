@@ -3,30 +3,34 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
+
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 
-import mockit.Invocation;
-import mockit.Mock;
-
 import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import mockit.Invocation;
+import mockit.Mock;
 
 /**
  * Unit tests of {@link UploadDialog} class.
@@ -95,6 +99,11 @@ public class UploadDialogTest {
         @Override
         public Map<String, String> getTags(boolean keepEmpty) {
             return new ConcurrentHashMap<>();
+        }
+
+        @Override
+        public void forceUpdateActiveField() {
+            // Do nothing
         }
     }
 
@@ -212,5 +221,40 @@ public class UploadDialogTest {
         assertFalse(UploadDialog.UploadAction.isUploadCommentTooShort("几何校正"));
         // test with unassigned unicode characters ==> no unicode block
         assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort("\u0860"));
+    }
+
+    private static void doTestGetLastChangesetTagFromHistory(String historyKey, Supplier<String> methodToTest, String def) {
+        Config.getPref().putList(historyKey, null);
+        Config.getPref().putInt(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0);
+        Config.getPref().putInt(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, 30);
+        assertNull(methodToTest.get());          // age NOK (history empty)
+        Config.getPref().putList(historyKey, Arrays.asList("foo"));
+        assertNull(methodToTest.get());          // age NOK (history not empty)
+        Config.getPref().putLong(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, System.currentTimeMillis() / 1000);
+        assertEquals("foo", methodToTest.get()); // age OK, history not empty
+        Config.getPref().putList(historyKey, null);
+        assertEquals(def, methodToTest.get());   // age OK, history empty
+    }
+
+    /**
+     * Test of {@link UploadDialog#getLastChangesetCommentFromHistory} method.
+     */
+    @Test
+    public void testGetLastChangesetCommentFromHistory() {
+        doTestGetLastChangesetTagFromHistory(
+                BasicUploadSettingsPanel.HISTORY_KEY,
+                UploadDialog::getLastChangesetCommentFromHistory,
+                null);
+    }
+
+    /**
+     * Test of {@link UploadDialog#getLastChangesetSourceFromHistory} method.
+     */
+    @Test
+    public void testGetLastChangesetSourceFromHistory() {
+        doTestGetLastChangesetTagFromHistory(
+                BasicUploadSettingsPanel.SOURCE_HISTORY_KEY,
+                UploadDialog::getLastChangesetSourceFromHistory,
+                BasicUploadSettingsPanel.getDefaultSources().get(0));
     }
 }

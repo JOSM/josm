@@ -56,12 +56,12 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener, ChangesetAware, Destroyable {
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
-    private final JosmTextField tfID        = new JosmTextField(10);
+    private final JosmTextField tfID        = new JosmTextField(null, null, 10, false);
     private final JosmTextArea  taComment   = new JosmTextArea(5, 40);
-    private final JosmTextField tfOpen      = new JosmTextField(10);
-    private final JosmTextField tfUser      = new JosmTextField("");
-    private final JosmTextField tfCreatedOn = new JosmTextField(20);
-    private final JosmTextField tfClosedOn  = new JosmTextField(20);
+    private final JosmTextField tfOpen      = new JosmTextField(null, null, 10, false);
+    private final JosmTextField tfUser      = new JosmTextField(null, "", 0);
+    private final JosmTextField tfCreatedOn = new JosmTextField(null, null, 20, false);
+    private final JosmTextField tfClosedOn  = new JosmTextField(null, null, 20, false);
 
     private final OpenChangesetPopupMenuAction   actOpenChangesetPopupMenu   = new OpenChangesetPopupMenuAction();
     private final DownloadChangesetContentAction actDownloadChangesetContent = new DownloadChangesetContentAction(this);

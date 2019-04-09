@@ -29,10 +29,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
-import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivilegedAction;
 import java.text.Bidi;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -1558,19 +1556,12 @@ public final class Utils {
      * Sets {@code AccessibleObject}(s) accessible.
      * @param objects objects
      * @see AccessibleObject#setAccessible
+     * @deprecated Use {@link ReflectionUtils#setObjectsAccessible(AccessibleObject...)}
      * @since 10223
      */
+    @Deprecated
     public static void setObjectsAccessible(final AccessibleObject... objects) {
-        if (objects != null && objects.length > 0) {
-            AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
-                for (AccessibleObject o : objects) {
-                    if (o != null) {
-                        o.setAccessible(true);
-                    }
-                }
-                return null;
-            });
-        }
+        ReflectionUtils.setObjectsAccessible(objects);
     }
 
     /**

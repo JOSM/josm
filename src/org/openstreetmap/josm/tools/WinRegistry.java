@@ -62,7 +62,7 @@ public final class WinRegistry {
         regEnumValue = getDeclaredMethod("WindowsRegEnumValue", int.class, int.class, int.class);
         regQueryInfoKey = getDeclaredMethod("WindowsRegQueryInfoKey1", int.class);
         regEnumKeyEx = getDeclaredMethod("WindowsRegEnumKeyEx", int.class, int.class, int.class);
-        Utils.setObjectsAccessible(regOpenKey, regCloseKey, regQueryValueEx, regEnumValue, regQueryInfoKey, regEnumKeyEx);
+        ReflectionUtils.setObjectsAccessible(regOpenKey, regCloseKey, regQueryValueEx, regEnumValue, regQueryInfoKey, regEnumKeyEx);
     }
 
     private static Method getDeclaredMethod(String name, Class<?>... parameterTypes) {

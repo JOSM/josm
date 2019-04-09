@@ -53,6 +53,7 @@ import org.openstreetmap.josm.testutils.FakeGraphics;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.ReflectionUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
 
@@ -412,7 +413,7 @@ public final class TestUtils {
         try {
             Method values = enumClass.getMethod("values");
             Method valueOf = enumClass.getMethod("valueOf", String.class);
-            Utils.setObjectsAccessible(values, valueOf);
+            ReflectionUtils.setObjectsAccessible(values, valueOf);
             for (Object o : (Object[]) values.invoke(null)) {
                 assertEquals(o, valueOf.invoke(null, ((Enum<?>) o).name()));
             }
