@@ -1174,7 +1174,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 sldTimezone.setValue((int) (timezoneOffsetPair.a.getHours() * 2));
                 sldMinutes.setValue((int) (timezoneOffsetPair.b.getSeconds() / 60));
                 final long deciSeconds = timezoneOffsetPair.b.getMilliseconds() / 100;
-                sldSeconds.setValue((int) (deciSeconds % 60));
+                sldSeconds.setValue((int) (deciSeconds % 600));
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 Logging.warn(e);
                 JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
