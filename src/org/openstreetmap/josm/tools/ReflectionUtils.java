@@ -7,6 +7,8 @@ import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.function.Function;
 
+import org.openstreetmap.josm.plugins.PluginHandler;
+
 /**
  * Reflection utilities.
  * @since 14977
@@ -45,6 +47,13 @@ public final class ReflectionUtils {
             try {
                 return Class.forName(x.getClassName());
             } catch (ClassNotFoundException e) {
+                for (ClassLoader cl : PluginHandler.getPluginClassLoaders()) {
+                    try {
+                        return Class.forName(x.getClassName(), true, cl);
+                    } catch (ClassNotFoundException ex) {
+                        Logging.trace(ex);
+                    }
+                }
                 Logging.error(e);
                 return null;
             }

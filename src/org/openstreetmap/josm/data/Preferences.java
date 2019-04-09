@@ -227,8 +227,9 @@ public class Preferences extends AbstractPreferences {
     }
 
     protected void firePreferenceChanged(String key, Setting<?> oldValue, Setting<?> newValue) {
+        final Class<?> source = ReflectionUtils.findCallerClass(preferencesClasses);
         final PreferenceChangeEvent evt =
-                new DefaultPreferenceChangeEvent(ReflectionUtils.findCallerClass(preferencesClasses), key, oldValue, newValue);
+                new DefaultPreferenceChangeEvent(source != null ? source : getClass(), key, oldValue, newValue);
         listeners.fireEvent(listener -> listener.preferenceChanged(evt));
 
         ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener> forKey = keyListeners.get(key);
