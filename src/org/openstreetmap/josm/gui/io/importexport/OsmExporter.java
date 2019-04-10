@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
 
@@ -85,6 +86,9 @@ public class OsmExporter extends FileExporter {
     private void save(File file, OsmDataLayer layer, boolean noBackup) throws IOException {
         File tmpFile = null;
         try {
+            if (file.exists() && !file.canWrite()) {
+                throw new AccessDeniedException(file.toString());
+            }
 
             // use a tmp file because if something errors out in the process of writing the file,
             // we might just end up with a truncated file.  That can destroy lots of work.
