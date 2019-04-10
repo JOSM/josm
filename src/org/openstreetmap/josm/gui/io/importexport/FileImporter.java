@@ -94,7 +94,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
             Logging.info("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
             importData(f, progressMonitor);
             return true;
-        } catch (IllegalDataException e) {
+        } catch (IllegalDataException | IllegalStateException e ) {
             Throwable cause = e.getCause();
             if (cause instanceof ImportCancelException) {
                 displayCancel(cause);
