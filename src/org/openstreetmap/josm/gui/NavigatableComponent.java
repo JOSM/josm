@@ -810,9 +810,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void zoomTo(ViewportData viewport) {
         if (viewport == null) return;
         if (viewport.getBounds() != null) {
-            BoundingXYVisitor v = new BoundingXYVisitor();
-            v.visit(viewport.getBounds());
-            zoomTo(v);
+            zoomTo(viewport.getBounds());
         } else {
             zoomTo(viewport.getCenter(), viewport.getScale(), true);
         }
