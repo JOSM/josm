@@ -301,7 +301,7 @@ public class AutoScaleAction extends JosmAction {
                 modeSelectionOrConflict(new BoundingXYVisitor());
                 break;
             case DOWNLOAD:
-                modeDownload(new BoundingXYVisitor());
+                modeDownload();
                 break;
             }
             putValue("active", Boolean.TRUE);
@@ -394,11 +394,12 @@ public class AutoScaleAction extends JosmAction {
         MainApplication.getMap().mapView.zoomTo(v);
     }
 
-    private void modeDownload(BoundingXYVisitor v) {
+    private void modeDownload() {
         if (lastZoomTime > 0 &&
                 System.currentTimeMillis() - lastZoomTime > Config.getPref().getLong("zoom.bounds.reset.time", TimeUnit.SECONDS.toMillis(10))) {
             lastZoomTime = -1;
         }
+        Bounds bbox = null;
         final DataSet dataset = getLayerManager().getActiveDataSet();
         if (dataset != null) {
             List<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
@@ -406,15 +407,15 @@ public class AutoScaleAction extends JosmAction {
             if (s > 0) {
                 if (lastZoomTime == -1 || lastZoomArea == -1 || lastZoomArea > s) {
                     lastZoomArea = s-1;
-                    v.visit(dataSources.get(lastZoomArea).bounds);
+                    bbox = dataSources.get(lastZoomArea).bounds;
                 } else if (lastZoomArea > 0) {
                     lastZoomArea -= 1;
-                    v.visit(dataSources.get(lastZoomArea).bounds);
+                    bbox = dataSources.get(lastZoomArea).bounds;
                 } else {
                     lastZoomArea = -1;
                     Area sourceArea = getLayerManager().getActiveDataSet().getDataSourceArea();
                     if (sourceArea != null) {
-                        v.visit(new Bounds(sourceArea.getBounds2D()));
+                        bbox = new Bounds(sourceArea.getBounds2D());
                     }
                 }
                 lastZoomTime = System.currentTimeMillis();
@@ -422,8 +423,10 @@ public class AutoScaleAction extends JosmAction {
                 lastZoomTime = -1;
                 lastZoomArea = -1;
             }
+            if (bbox != null) {
+                MainApplication.getMap().mapView.zoomTo(bbox);
+            }
         }
-        MainApplication.getMap().mapView.zoomTo(v);
     }
 
     @Override
