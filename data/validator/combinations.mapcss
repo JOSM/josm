@@ -242,7 +242,8 @@ way[highway=footway][oneway=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.tag} together with {1.tag}, see #17542, #16861, #16147, #10186 */
+/* {0.tag} together with {1.tag}, see #17592, #17542, #16861, #16147, #10186 */
+way[tracktype=grade1][surface][surface=~/^(unpaved|compacted|gravel|fine_gravel|pebblestone|ground|earth|dirt|grass|sand|mud|ice|salt|snow|woodchips)$/]
 way[segregated][bicycle=no],
 way[segregated][foot=no],
 way[man_made=pipeline][tunnel=flooded],
