@@ -54,7 +54,7 @@ way[bicycle =~ /^(yes|designated)$/][highway=cycleway][!vehicle][!access][foot!=
 
 *[emergency=permissive] {
   /* see #9458 - emergency=permissive makes no sense */
-  throwWarning: tr("{0} makes no sense", "{0.tag");
+  throwWarning: tr("{0} makes no sense", "{0.tag}");
   fixAdd: "emergency=yes";
   assertMatch: "way emergency=permissive";
   assertNoMatch: "way emergency=designated";
