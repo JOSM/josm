@@ -595,7 +595,6 @@ public final class DomainValidator extends AbstractValidator {
         "doctor", // doctor Brice Trail, LLC
         "dodge", // dodge FCA US LLC.
         "dog", // dog Koko Mill, LLC
-        "doha", // doha Communications Regulatory Authority (CRA)
         "domains", // domains Sugar Cross, LLC
         "dot", // dot Dish DBS Corporation
         "download", // download dot Support Limited
