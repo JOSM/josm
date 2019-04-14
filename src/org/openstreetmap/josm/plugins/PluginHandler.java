@@ -146,7 +146,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("videomapping", tr("no longer required")),
             new DeprecatedPlugin("public_transport_layer", tr("replaced by new {0} plugin", "pt_assistant")),
             new DeprecatedPlugin("lakewalker", tr("replaced by new {0} plugin", "scanaerial")),
-            new DeprecatedPlugin("download_along", inCore)
+            new DeprecatedPlugin("download_along", inCore),
+            new DeprecatedPlugin("plastic_laf", tr("no longer required"))
         );
     }
 
