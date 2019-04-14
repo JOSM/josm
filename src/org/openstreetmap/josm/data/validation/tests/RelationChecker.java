@@ -39,22 +39,24 @@ import org.openstreetmap.josm.tools.Utils;
 public class RelationChecker extends Test {
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
-    /** Role {0} unknown in templates {1} */
+    /** Role ''{0}'' is not in templates ''{1}'' */
     public static final int ROLE_UNKNOWN     = 1701;
-    /** Empty role type found when expecting one of {0} */
+    /** Empty role found when expecting one of ''{0}'' */
     public static final int ROLE_EMPTY       = 1702;
-    /** Role member does not match expression {0} in template {1} */
-    public static final int WRONG_TYPE       = 1703;
-    /** Number of {0} roles too high ({1}) */
+    /** Role of relation member does not match template expression ''{0}'' in preset {1} */
+    public static final int WRONG_ROLE       = 1708;
+    /** Number of ''{0}'' roles too high ({1}) */
     public static final int HIGH_COUNT       = 1704;
-    /** Number of {0} roles too low ({1}) */
+    /** Number of ''{0}'' roles too low ({1}) */
     public static final int LOW_COUNT        = 1705;
-    /** Role {0} missing */
+    /** Role ''{0}'' missing */
     public static final int ROLE_MISSING     = 1706;
     /** Relation type is unknown */
     public static final int RELATION_UNKNOWN = 1707;
     /** Relation is empty */
     public static final int RELATION_EMPTY   = 1708;
+    /** Type ''{0}'' of relation member with role ''{1}'' does not match accepted types ''{2}'' in preset {3} */
+    public static final int WRONG_TYPE       = 1709;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /**
@@ -210,7 +212,7 @@ public class RelationChecker extends Test {
     private boolean checkMemberExpressionAndType(Map<Role, String> allroles, RelationMember member, Relation n) {
         String role = member.getRole();
         String name = null;
-        // Set of all accepted types in template
+        // Set of all accepted types in preset
         Collection<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
         TestError possibleMatchError = null;
         // iterate through all of the role definition within preset
@@ -241,11 +243,11 @@ public class RelationChecker extends Test {
                         } else {
                             // possible match error
                             // we still need to iterate further, as we might have
-                            // different present, for which memberExpression will match
+                            // different preset, for which memberExpression will match
                             // but stash the error in case no better reason will be found later
-                            possibleMatchError = TestError.builder(this, Severity.WARNING, WRONG_TYPE)
+                            possibleMatchError = TestError.builder(this, Severity.WARNING, WRONG_ROLE)
                                     .message(ROLE_VERIF_PROBLEM_MSG,
-                                            marktr("Role of relation member does not match expression ''{0}'' in template {1}"),
+                                            marktr("Role of relation member does not match template expression ''{0}'' in preset {1}"),
                                             r.memberExpression, name)
                                     .primitives(member.getMember().isUsable() ? member.getMember() : n)
                                     .build();
@@ -279,7 +281,7 @@ public class RelationChecker extends Test {
 
                 errors.add(TestError.builder(this, Severity.WARNING, WRONG_TYPE)
                         .message(ROLE_VERIF_PROBLEM_MSG,
-                            marktr("Type ''{0}'' of relation member with role ''{1}'' does not match accepted types ''{2}'' in template {3}"),
+                            marktr("Type ''{0}'' of relation member with role ''{1}'' does not match accepted types ''{2}'' in preset {3}"),
                             member.getType(), member.getRole(), typesStr, name)
                         .primitives(member.getMember().isUsable() ? member.getMember() : n)
                         .build());
@@ -292,7 +294,7 @@ public class RelationChecker extends Test {
      *
      * @param n relation to validate
      * @param allroles contains presets for specified relation
-     * @param map contains statistics of occurrences of specified role types in relation
+     * @param map contains statistics of occurrences of specified role in relation
      */
     private void checkRoles(Relation n, Map<Role, String> allroles, Map<String, RoleInfo> map) {
         // go through all members of relation
@@ -332,7 +334,7 @@ public class RelationChecker extends Test {
                             .build());
                 } else {
                     errors.add(TestError.builder(this, Severity.WARNING, ROLE_EMPTY)
-                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Empty role type found when expecting one of ''{0}''"), templates)
+                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Empty role found when expecting one of ''{0}''"), templates)
                             .primitives(n)
                             .build());
                 }

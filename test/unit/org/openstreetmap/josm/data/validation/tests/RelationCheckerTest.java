@@ -7,32 +7,29 @@ import static org.openstreetmap.josm.data.osm.OsmUtils.createPrimitive;
 
 import java.util.List;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link RelationChecker} class.
  */
 public class RelationCheckerTest {
-
     /**
      * Setup test.
      */
-    @Before
-    public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-        getRelationChecker();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules rule = new JOSMTestRules().presets();
 
     private static RelationChecker getRelationChecker() {
         RelationChecker checker = new RelationChecker();
-        TaggingPresets.readFromPreferences();
         checker.initialize();
         return checker;
     }
@@ -103,7 +100,7 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Type 'relation' of relation member with role 'via' does not match accepted types 'node/way' in template Turn Restriction",
+        assertEquals("Type 'relation' of relation member with role 'via' does not match accepted types 'node/way' in preset Turn Restriction",
                 errors.get(0).getDescription());
     }
 
@@ -130,7 +127,7 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertTrue(errors.get(0).getDescription().startsWith("Empty role type found when expecting one of"));
+        assertTrue(errors.get(0).getDescription().startsWith("Empty role found when expecting one of"));
     }
 
     @Test
@@ -140,7 +137,7 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role of relation member does not match expression 'power' in template Power Route", errors.get(0).getDescription());
+        assertEquals("Role of relation member does not match template expression 'power' in preset Power Route", errors.get(0).getDescription());
     }
 
     @Test
@@ -168,21 +165,21 @@ public class RelationCheckerTest {
 
         r.addMember(new RelationMember("", createPrimitive("way no-rail-way=yes")));
         assertEquals(1, testRelation(r).size());
-        assertEquals("Role of relation member does not match expression 'railway' in template Public Transport Route (Rail)",
+        assertEquals("Role of relation member does not match template expression 'railway' in preset Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
 
         r.removeMember(3);
         r.addMember(new RelationMember("stop", createPrimitive("way no-rail-way=yes")));
         assertEquals(1, testRelation(r).size());
         assertEquals(
-                "Type 'way' of relation member with role 'stop' does not match accepted types 'node' in template Public Transport Route (Rail)",
+                "Type 'way' of relation member with role 'stop' does not match accepted types 'node' in preset Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
 
         r.removeMember(3);
         r.addMember(new RelationMember("stop", createPrimitive("node public_transport=stop_position bus=yes")));
         assertEquals(1, testRelation(r).size());
-        assertEquals("Role of relation member does not match expression 'public_transport=stop_position && "+
-                "(train=yes || subway=yes || monorail=yes || tram=yes || light_rail=yes)' in template Public Transport Route (Rail)",
+        assertEquals("Role of relation member does not match template expression 'public_transport=stop_position && "+
+                "(train=yes || subway=yes || monorail=yes || tram=yes || light_rail=yes)' in preset Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
     }
 }
