@@ -74,8 +74,8 @@ public class TagChecker extends TagTest {
     /** often used tags which are not in presets */
     private static volatile MultiMap<String, String> oftenUsedTags = new MultiMap<>();
 
-    private static final Pattern NON_PRINTING_CONTROL_CHARACTERS = Pattern.compile(
-            "[\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F\\u200c-\\u200f\\u202a-\\u202e]");
+    private static final Pattern UNWANTED_NON_PRINTING_CONTROL_CHARACTERS = Pattern.compile(
+            "[\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F\\u200e-\\u200f\\u202a-\\u202e]");
 
     /** The TagChecker data */
     private static final List<String> ignoreDataStartsWith = new ArrayList<>();
@@ -377,12 +377,16 @@ public class TagChecker extends TagTest {
     }
 
     /**
-     * Checks given string (key or value) if it contains non-printing control characters (either ASCII or Unicode bidi characters)
+     * Checks given string (key or value) if it contains unwanted non-printing control characters (either ASCII or Unicode bidi characters)
      * @param s string to check
      * @return {@code true} if {@code s} contains non-printing control characters
      */
-    private static boolean containsNonPrintingControlCharacter(String s) {
-        return s != null && s.chars().anyMatch(c -> (isAsciiControlChar(c) && !isNewLineChar(c)) || isBidiControlChar(c));
+    static boolean containsUnwantedNonPrintingControlCharacter(String s) {
+        return s != null && !s.isEmpty() && (
+                isJoiningChar(s.charAt(0)) ||
+                isJoiningChar(s.charAt(s.length() - 1)) ||
+                s.chars().anyMatch(c -> (isAsciiControlChar(c) && !isNewLineChar(c)) || isBidiControlChar(c))
+                );
     }
 
     private static boolean isAsciiControlChar(int c) {
@@ -393,14 +397,28 @@ public class TagChecker extends TagTest {
         return c == 0x0a || c == 0x0d;
     }
 
-    private static boolean isBidiControlChar(int c) {
-        /* check for range 0x200c to 0x200f (ZWNJ, ZWJ, LRM, RLM) or
-                           0x202a to 0x202e (LRE, RLE, PDF, LRO, RLO) */
-        return (((c & 0xfffffffc) == 0x200c) || ((c >= 0x202a) && (c <= 0x202e)));
+    private static boolean isJoiningChar(int c) {
+        return c == 0x200c || c == 0x200d; // ZWNJ, ZWJ
     }
 
-    static String removeNonPrintingControlCharacters(String s) {
-        return NON_PRINTING_CONTROL_CHARACTERS.matcher(s).replaceAll("");
+    private static boolean isBidiControlChar(int c) {
+        /* check for range 0x200e to 0x200f (LRM, RLM) or
+                           0x202a to 0x202e (LRE, RLE, PDF, LRO, RLO) */
+        return (c >= 0x200e && c <= 0x200f) || (c >= 0x202a && c <= 0x202e);
+    }
+
+    static String removeUnwantedNonPrintingControlCharacters(String s) {
+        // Remove all unwanted characters
+        String result = UNWANTED_NON_PRINTING_CONTROL_CHARACTERS.matcher(s).replaceAll("");
+        // Remove joining characters located at the beginning of the string
+        while (!result.isEmpty() && isJoiningChar(result.charAt(0))) {
+            result = result.substring(1);
+        }
+        // Remove joining characters located at the end of the string
+        while (!result.isEmpty() && isJoiningChar(result.charAt(result.length() - 1))) {
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
     }
 
     private static boolean containsUnusualUnicodeCharacter(String key, String value) {
@@ -582,11 +600,11 @@ public class TagChecker extends TagTest {
     private void checkSingleTagValueSimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key, String value) {
         if (!checkValues || value == null)
             return;
-        if ((containsNonPrintingControlCharacter(value)) && !withErrors.contains(p, "ICV")) {
+        if ((containsUnwantedNonPrintingControlCharacter(value)) && !withErrors.contains(p, "ICV")) {
             errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_VALUE)
                     .message(tr("Tag value contains non-printing character"), s, key)
                     .primitives(p)
-                    .fix(() -> new ChangePropertyCommand(p, key, removeNonPrintingControlCharacters(value)))
+                    .fix(() -> new ChangePropertyCommand(p, key, removeUnwantedNonPrintingControlCharacters(value)))
                     .build());
             withErrors.put(p, "ICV");
         }
@@ -638,11 +656,11 @@ public class TagChecker extends TagTest {
     private void checkSingleTagKeySimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key) {
         if (!checkKeys || key == null)
             return;
-        if ((containsNonPrintingControlCharacter(key)) && !withErrors.contains(p, "ICK")) {
+        if ((containsUnwantedNonPrintingControlCharacter(key)) && !withErrors.contains(p, "ICK")) {
             errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_KEY)
                     .message(tr("Tag key contains non-printing character"), s, key)
                     .primitives(p)
-                    .fix(() -> new ChangePropertyCommand(p, key, removeNonPrintingControlCharacters(key)))
+                    .fix(() -> new ChangePropertyCommand(p, key, removeUnwantedNonPrintingControlCharacters(key)))
                     .build());
             withErrors.put(p, "ICK");
         }

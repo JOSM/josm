@@ -8,7 +8,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -247,26 +249,50 @@ public class TagCheckerTest {
         assertFalse(errors.get(0).isFixable());
     }
 
+    private static void doTestUnwantedNonprintingControlCharacters(String s, Consumer<Boolean> assertionC, String expected) {
+        assertionC.accept(TagChecker.containsUnwantedNonPrintingControlCharacter(s));
+        assertEquals(expected, TagChecker.removeUnwantedNonPrintingControlCharacters(s));
+    }
+
+    private static void doTestUnwantedNonprintingControlCharacters(String s) {
+        doTestUnwantedNonprintingControlCharacters(s, Assert::assertTrue, "");
+    }
+
     /**
-     * Unit test of {@link TagChecker#removeNonPrintingControlCharacters}
+     * Unit test of {@link TagChecker#containsUnwantedNonPrintingControlCharacter}
+     *            / {@link TagChecker#removeUnwantedNonPrintingControlCharacters}
      */
     @Test
-    public void testRemoveUnprintableControlCharacters() {
+    public void testContainsRemoveUnwantedNonprintingControlCharacters() {
+        // Check empty string is handled
+        doTestUnwantedNonprintingControlCharacters("", Assert::assertFalse, "");
         // Check 65 ASCII control characters are removed, except new lines
         for (char c = 0x0; c < 0x20; c++) {
             if (c != '\r' && c != '\n') {
-                assertTrue(TagChecker.removeNonPrintingControlCharacters(Character.toString(c)).isEmpty());
+                doTestUnwantedNonprintingControlCharacters(Character.toString(c));
             } else {
-                assertFalse(TagChecker.removeNonPrintingControlCharacters(Character.toString(c)).isEmpty());
+                doTestUnwantedNonprintingControlCharacters(Character.toString(c), Assert::assertFalse, Character.toString(c));
             }
         }
-        assertTrue(TagChecker.removeNonPrintingControlCharacters(Character.toString((char) 0x7F)).isEmpty());
-        // Check 9 Unicode bidi control characters are removed
-        for (char c = 0x200c; c <= 0x200f; c++) {
-            assertTrue(TagChecker.removeNonPrintingControlCharacters(Character.toString(c)).isEmpty());
+        doTestUnwantedNonprintingControlCharacters(Character.toString((char) 0x7F));
+        // Check 7 Unicode bidi control characters are removed
+        for (char c = 0x200e; c <= 0x200f; c++) {
+            doTestUnwantedNonprintingControlCharacters(Character.toString(c));
         }
         for (char c = 0x202a; c <= 0x202e; c++) {
-            assertTrue(TagChecker.removeNonPrintingControlCharacters(Character.toString(c)).isEmpty());
+            doTestUnwantedNonprintingControlCharacters(Character.toString(c));
+        }
+        // Check joining characters are removed if located at the beginning or end of the string
+        for (char c = 0x200c; c <= 0x200d; c++) {
+            final String s = Character.toString(c);
+            doTestUnwantedNonprintingControlCharacters(s);
+            doTestUnwantedNonprintingControlCharacters(s + s);
+            doTestUnwantedNonprintingControlCharacters(s + 'a' + s, Assert::assertTrue, "a");
+            final String ok = 'a' + s + 'b';
+            doTestUnwantedNonprintingControlCharacters(ok, Assert::assertFalse, ok);
+            doTestUnwantedNonprintingControlCharacters(s + ok, Assert::assertTrue, ok);
+            doTestUnwantedNonprintingControlCharacters(ok + s, Assert::assertTrue, ok);
+            doTestUnwantedNonprintingControlCharacters(s + ok + s, Assert::assertTrue, ok);
         }
     }
 }
