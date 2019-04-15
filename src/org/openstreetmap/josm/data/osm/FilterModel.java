@@ -148,7 +148,7 @@ public class FilterModel {
      * @param primitives The primitives
      */
     public void executeFilters(Collection<? extends OsmPrimitive> primitives) {
-        DataSet ds = OsmDataManager.getInstance().getEditDataSet();
+        DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
         if (ds == null)
             return;
 
@@ -207,7 +207,7 @@ public class FilterModel {
      * Clears all filtered flags from all primitives in the dataset
      */
     public void clearFilterFlags() {
-        DataSet ds = OsmDataManager.getInstance().getEditDataSet();
+        DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
         if (ds != null) {
             FilterWorker.clearFilterFlags(ds.allPrimitives());
         }
