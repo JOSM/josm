@@ -95,6 +95,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -554,7 +555,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         event.getMapView().addMouseListener(adapter);
         MapView.addZoomChangeListener(this);
 
-        if (this instanceof NativeScaleLayer) {
+        if (this instanceof NativeScaleLayer && NavigatableComponent.PROP_ZOOM_SCALE_FOLLOWS_NATIVE_RESOLUTION_AT_LOAD.get()) {
             event.getMapView().setNativeScaleLayer((NativeScaleLayer) this);
         }
 

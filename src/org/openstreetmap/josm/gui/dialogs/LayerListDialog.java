@@ -538,10 +538,13 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             if (layer instanceof NativeScaleLayer) {
                 boolean active = ((NativeScaleLayer) layer) == MainApplication.getMap().mapView.getNativeScaleLayer();
                 cb.setSelected(active);
-                cb.setToolTipText(active
-                    ? tr("scale follows native resolution of this layer")
-                    : tr("scale follows native resolution of another layer (click to set this layer)")
-                );
+                if (MainApplication.getMap().mapView.getNativeScaleLayer() != null) {
+                    cb.setToolTipText(active
+                            ? tr("scale follows native resolution of this layer")
+                            : tr("scale follows native resolution of another layer (click to set this layer)"));
+                } else {
+                    cb.setToolTipText(tr("scale does not follow native resolution of any layer (click to set this layer)"));
+                }
             } else {
                 cb.setSelected(false);
                 cb.setToolTipText(tr("this layer has no native resolution"));
