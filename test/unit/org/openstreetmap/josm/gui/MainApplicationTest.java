@@ -166,7 +166,7 @@ public class MainApplicationTest {
     public void testUpdateAndLoadPlugins() throws PluginListParseException {
         final String old = System.getProperty("josm.plugins");
         try {
-            System.setProperty("josm.plugins", "buildings_tools,plastic_laf");
+            System.setProperty("josm.plugins", "buildings_tools,utilsplugin2");
             SplashProgressMonitor monitor = new SplashProgressMonitor("foo", e -> {
                 // Do nothing
             });
@@ -174,11 +174,11 @@ public class MainApplicationTest {
             if (plugins.isEmpty()) {
                 PluginHandlerTestIT.downloadPlugins(Arrays.asList(
                         newPluginInformation("buildings_tools"),
-                        newPluginInformation("plastic_laf")));
+                        newPluginInformation("utilsplugin2")));
                 plugins = MainApplication.updateAndLoadEarlyPlugins(null, monitor);
             }
             assertEquals(2, plugins.size());
-            assertNotNull(PluginHandler.getPlugin("plastic_laf"));
+            assertNotNull(PluginHandler.getPlugin("utilsplugin2"));
             assertNull(PluginHandler.getPlugin("buildings_tools"));
             MainApplication.loadLatePlugins(null, monitor, plugins);
             assertNotNull(PluginHandler.getPlugin("buildings_tools"));
