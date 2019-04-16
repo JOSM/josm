@@ -85,6 +85,7 @@ public class SevenZFile implements Closeable {
     private int currentFolderIndex = -1;
     private InputStream currentFolderInputStream = null;
     private byte[] password;
+    private int maxMemoryLimitInKb;
 
     private long compressedBytesReadFromCurrentEntry;
     private long uncompressedBytesReadFromCurrentEntry;
@@ -105,8 +106,22 @@ public class SevenZFile implements Closeable {
      * @since 1.17
      */
     public SevenZFile(final File filename, final char[] password) throws IOException {
+        this(filename, password, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads a file as 7z archive with memory limitation
+     *
+     * @param filename the file to read
+     * @param password optional password if the archive is encrypted
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @since 1.19
+     */
+    public SevenZFile(final File filename, final char[] password, final int maxMemoryLimitInKb) throws IOException {
         this(Files.newByteChannel(filename.toPath(), EnumSet.of(StandardOpenOption.READ)),
-             filename.getAbsolutePath(), utf16Decode(password), true);
+                filename.getAbsolutePath(), utf16Decode(password), true, maxMemoryLimitInKb);
     }
 
     /**
@@ -120,8 +135,25 @@ public class SevenZFile implements Closeable {
      * @deprecated use the char[]-arg version for the password instead
      */
     public SevenZFile(final File filename, final byte[] password) throws IOException {
-        this(Files.newByteChannel(filename.toPath(), EnumSet.of(StandardOpenOption.READ)),
-             filename.getAbsolutePath(), password, true);
+        this(filename, password, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads a file as 7z archive with memory limitation
+     *
+     * @param filename the file to read
+     * @param password optional password if the archive is encrypted -
+     * the byte array is supposed to be the UTF16-LE encoded
+     * representation of the password.
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @deprecated use the char[]-arg version for the password instead
+     * @since 1.19
+     */
+    public SevenZFile(final File filename, final byte[] password, final int maxMemoryLimitInKb) throws IOException {
+        this(Files.newByteChannel(filename.toPath(), EnumSet.of(StandardOpenOption.READ)), filename.getAbsolutePath(),
+                password, true, maxMemoryLimitInKb);
     }
 
     /**
@@ -136,7 +168,24 @@ public class SevenZFile implements Closeable {
      * @since 1.13
      */
     public SevenZFile(final SeekableByteChannel channel) throws IOException {
-        this(channel, "unknown archive", (char[]) null);
+        this(channel, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads a SeekableByteChannel as 7z archive with memory limitation
+     *
+     * <p>{@link
+     * org.apache.commons.compress.utils.SeekableInMemoryByteChannel}
+     * allows you to read from an in-memory archive.</p>
+     *
+     * @param channel the channel to read
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @since 1.19
+     */
+    public SevenZFile(final SeekableByteChannel channel, final int maxMemoryLimitInKb) throws IOException {
+        this(channel, "unknown archive", (char[]) null, maxMemoryLimitInKb);
     }
 
     /**
@@ -153,7 +202,26 @@ public class SevenZFile implements Closeable {
      */
     public SevenZFile(final SeekableByteChannel channel,
                       final char[] password) throws IOException {
-        this(channel, "unknown archive", utf16Decode(password));
+        this(channel, password, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads a SeekableByteChannel as 7z archive with memory limitation
+     *
+     * <p>{@link
+     * org.apache.commons.compress.utils.SeekableInMemoryByteChannel}
+     * allows you to read from an in-memory archive.</p>
+     *
+     * @param channel the channel to read
+     * @param password optional password if the archive is encrypted
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @since 1.19
+     */
+    public SevenZFile(final SeekableByteChannel channel, final char[] password, final int maxMemoryLimitInKb)
+            throws IOException {
+        this(channel, "unknown archive", utf16Decode(password), maxMemoryLimitInKb);
     }
 
     /**
@@ -171,7 +239,27 @@ public class SevenZFile implements Closeable {
      */
     public SevenZFile(final SeekableByteChannel channel, String filename,
                       final char[] password) throws IOException {
-        this(channel, filename, utf16Decode(password), false);
+        this(channel, filename, password, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads a SeekableByteChannel as 7z archive with memory limitation
+     *
+     * <p>{@link
+     * org.apache.commons.compress.utils.SeekableInMemoryByteChannel}
+     * allows you to read from an in-memory archive.</p>
+     *
+     * @param channel the channel to read
+     * @param filename name of the archive - only used for error reporting
+     * @param password optional password if the archive is encrypted
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @since 1.19
+     */
+    public SevenZFile(final SeekableByteChannel channel, String filename, final char[] password,
+            final int maxMemoryLimitInKb) throws IOException {
+        this(channel, filename, utf16Decode(password), false, maxMemoryLimitInKb);
     }
 
     /**
@@ -188,7 +276,26 @@ public class SevenZFile implements Closeable {
      */
     public SevenZFile(final SeekableByteChannel channel, String filename)
         throws IOException {
-        this(channel, filename, null, false);
+        this(channel, filename, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads a SeekableByteChannel as 7z archive with memory limitation
+     *
+     * <p>{@link
+     * org.apache.commons.compress.utils.SeekableInMemoryByteChannel}
+     * allows you to read from an in-memory archive.</p>
+     *
+     * @param channel the channel to read
+     * @param filename name of the archive - only used for error reporting
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @since 1.19
+     */
+    public SevenZFile(final SeekableByteChannel channel, String filename, final int maxMemoryLimitInKb)
+            throws IOException {
+        this(channel, filename, null, false, maxMemoryLimitInKb);
     }
 
     /**
@@ -212,6 +319,28 @@ public class SevenZFile implements Closeable {
     }
 
     /**
+     * Reads a SeekableByteChannel as 7z archive with memory limitation
+     *
+     * <p>{@link
+     * org.apache.commons.compress.utils.SeekableInMemoryByteChannel}
+     * allows you to read from an in-memory archive.</p>
+     *
+     * @param channel the channel to read
+     * @param password optional password if the archive is encrypted -
+     * the byte array is supposed to be the UTF16-LE encoded
+     * representation of the password.
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @since 1.19
+     * @deprecated use the char[]-arg version for the password instead
+     */
+    public SevenZFile(final SeekableByteChannel channel, final byte[] password, final int maxMemoryLimitInKb)
+            throws IOException {
+        this(channel, "unknown archive", password, maxMemoryLimitInKb);
+    }
+
+    /**
      * Reads a SeekableByteChannel as 7z archive
      *
      * <p>{@link
@@ -229,14 +358,38 @@ public class SevenZFile implements Closeable {
      */
     public SevenZFile(final SeekableByteChannel channel, String filename,
                       final byte[] password) throws IOException {
-        this(channel, filename, password, false);
+        this(channel, filename, password, false, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads a SeekableByteChannel as 7z archive with memory limitation
+     *
+     * <p>{@link
+     * org.apache.commons.compress.utils.SeekableInMemoryByteChannel}
+     * allows you to read from an in-memory archive.</p>
+     *
+     * @param channel the channel to read
+     * @param filename name of the archive - only used for error reporting
+     * @param password optional password if the archive is encrypted -
+     * the byte array is supposed to be the UTF16-LE encoded
+     * representation of the password.
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @since 1.19
+     * @deprecated use the char[]-arg version for the password instead
+     */
+    public SevenZFile(final SeekableByteChannel channel, String filename, final byte[] password,
+            final int maxMemoryLimitInKb) throws IOException {
+        this(channel, filename, password, false, maxMemoryLimitInKb);
     }
 
     private SevenZFile(final SeekableByteChannel channel, String filename,
-                       final byte[] password, boolean closeOnError) throws IOException {
+                       final byte[] password, boolean closeOnError, final int maxMemoryLimitInKb) throws IOException {
         boolean succeeded = false;
         this.channel = channel;
         this.fileName = filename;
+        this.maxMemoryLimitInKb = maxMemoryLimitInKb;
         try {
             archive = readHeaders(password);
             if (password != null) {
@@ -259,7 +412,20 @@ public class SevenZFile implements Closeable {
      * @throws IOException if reading the archive fails
      */
     public SevenZFile(final File filename) throws IOException {
-        this(filename, (char[]) null);
+        this(filename, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads a file as unencrypted 7z archive
+     *
+     * @param filename the file to read
+     * @param maxMemoryLimitInKb limit of the maximum amount of memory to use for extraction. Not all codecs will honor
+     *                           this setting. Currently only lzma and lzma2 are supported.
+     * @throws IOException if reading the archive fails or the memory limit is too small
+     * @since 1.19
+     */
+    public SevenZFile(final File filename, final int maxMemoryLimitInKb) throws IOException {
+        this(filename, (char[]) null, maxMemoryLimitInKb);
     }
 
     /**
@@ -435,7 +601,7 @@ public class SevenZFile implements Closeable {
                 throw new IOException("Multi input/output stream coders are not yet supported");
             }
             inputStreamStack = Coders.addDecoder(fileName, inputStreamStack, //NOSONAR
-                    folder.getUnpackSizeForCoder(coder), coder, password);
+                    folder.getUnpackSizeForCoder(coder), coder, password, maxMemoryLimitInKb);
         }
         if (folder.hasCrc) {
             inputStreamStack = new CRC32VerifyingInputStream(inputStreamStack,
@@ -1030,7 +1196,7 @@ public class SevenZFile implements Closeable {
             }
             final SevenZMethod method = SevenZMethod.byId(coder.decompressionMethodId);
             inputStreamStack = Coders.addDecoder(fileName, inputStreamStack,
-                    folder.getUnpackSizeForCoder(coder), coder, password);
+                    folder.getUnpackSizeForCoder(coder), coder, password, maxMemoryLimitInKb);
             methods.addFirst(new SevenZMethodConfiguration(method,
                      Coders.findByMethod(method).getOptionsFromCoder(coder, inputStreamStack)));
         }

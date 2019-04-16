@@ -66,7 +66,7 @@ abstract class CoderBase {
      */
     abstract InputStream decode(final String archiveName,
         final InputStream in, long uncomressedLength,
-        final Coder coder, byte[] password) throws IOException;
+        final Coder coder, byte[] password, int maxMemoryLimitInKb) throws IOException;
 
     /**
      * @return a stream that writes to out using the given configuration.

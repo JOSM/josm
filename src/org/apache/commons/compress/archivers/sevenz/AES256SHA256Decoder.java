@@ -32,7 +32,7 @@ import org.apache.commons.compress.PasswordRequiredException;
 class AES256SHA256Decoder extends CoderBase {
     @Override
     InputStream decode(final String archiveName, final InputStream in, final long uncompressedLength,
-            final Coder coder, final byte[] passwordBytes) throws IOException {
+            final Coder coder, final byte[] passwordBytes, int maxMemoryLimitInKb) throws IOException {
         return new InputStream() {
             private boolean isInitialized = false;
             private CipherInputStream cipherInputStream = null;

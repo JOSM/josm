@@ -31,7 +31,7 @@ class DeltaDecoder extends CoderBase {
 
     @Override
     InputStream decode(final String archiveName, final InputStream in, final long uncompressedLength,
-            final Coder coder, final byte[] password) throws IOException {
+            final Coder coder, final byte[] password, int maxMemoryLimitInKb) throws IOException {
         return new DeltaOptions(getOptionsFromCoder(coder)).getInputStream(in);
     }
 

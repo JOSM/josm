@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.compress.MemoryLimitException;
 import org.tukaani.xz.FinishableWrapperOutputStream;
 import org.tukaani.xz.FinishableOutputStream;
 import org.tukaani.xz.LZMA2InputStream;
@@ -33,9 +34,13 @@ class LZMA2Decoder extends CoderBase {
 
     @Override
     InputStream decode(final String archiveName, final InputStream in, final long uncompressedLength,
-            final Coder coder, final byte[] password) throws IOException {
+            final Coder coder, final byte[] password, int maxMemoryLimitInKb) throws IOException {
         try {
             final int dictionarySize = getDictionarySize(coder);
+            final int memoryUsageInKb = LZMA2InputStream.getMemoryUsage(dictionarySize);
+            if (memoryUsageInKb > maxMemoryLimitInKb) {
+                throw new MemoryLimitException(memoryUsageInKb, maxMemoryLimitInKb);
+            }
             return new LZMA2InputStream(in, dictionarySize);
         } catch (final IllegalArgumentException ex) {  // NOSONAR
             throw new IOException(ex.getMessage());

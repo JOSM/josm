@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.compress.MemoryLimitException;
 import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.commons.compress.utils.FlushShieldFilterOutputStream;
 import org.tukaani.xz.LZMA2Options;
@@ -34,11 +35,15 @@ class LZMADecoder extends CoderBase {
 
     @Override
     InputStream decode(final String archiveName, final InputStream in, final long uncompressedLength,
-            final Coder coder, final byte[] password) throws IOException {
+            final Coder coder, final byte[] password, int maxMemoryLimitInKb) throws IOException {
         final byte propsByte = coder.properties[0];
         final int dictSize = getDictionarySize(coder);
         if (dictSize > LZMAInputStream.DICT_SIZE_MAX) {
             throw new IOException("Dictionary larger than 4GiB maximum size used in " + archiveName);
+        }
+        final int memoryUsageInKb = LZMAInputStream.getMemoryUsage(dictSize, propsByte);
+        if (memoryUsageInKb > maxMemoryLimitInKb) {
+            throw new MemoryLimitException(memoryUsageInKb, maxMemoryLimitInKb);
         }
         return new LZMAInputStream(in, uncompressedLength, propsByte, dictSize);
     }
