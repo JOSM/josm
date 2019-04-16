@@ -108,7 +108,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /** Divide intervals between native resolution levels to smaller steps if they are much larger than zoom ratio */
     public static final BooleanProperty PROP_ZOOM_INTERMEDIATE_STEPS = new BooleanProperty("zoom.intermediate-steps", true);
     /** scale follows native resolution of layer status when layer is created */
-    public static final BooleanProperty PROP_ZOOM_SCALE_FOLLOWS_NATIVE_RESOLUTION_AT_LOAD = new BooleanProperty(
+    public static final BooleanProperty PROP_ZOOM_SCALE_FOLLOW_NATIVE_RES_AT_LOAD = new BooleanProperty(
             "zoom.scale-follow-native-resolution-at-load", true);
 
     /**
