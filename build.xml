@@ -764,6 +764,7 @@ Build-Date: ${build.tstamp}
                 <fileset file="${java.home}/lib/jce.jar" unless:set="isJava9"/>
                 <fileset file="${java.home}/lib/ext/jfxrt.jar" unless:set="isJava9"/>
                 <fileset dir="${java.home}/jmods" if:set="isJava9"/>
+                <fileset dir="/usr/share/openjfx/lib" unless:set="isJava9"/>
             </path>
         </as:build-signatures>
         <as:check-signature signature="${dir}/api.sig" failonerror="false">
