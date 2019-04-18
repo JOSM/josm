@@ -22,3 +22,10 @@
   assertMatch: "way name=Hauptstraße";
   assertNoMatch: "way name=Hauptstrasse";
 }
+
+/* #17484 */
+relation[type=associatedStreet][inside("DE")] {
+  throwWarning: tr("{0} is deprecated in {1}", "{0.tag}", "Deutschland");
+  suggestAlternative: "addr:street";
+  group: tr("deprecated tagging");
+}

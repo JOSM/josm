@@ -1192,7 +1192,7 @@
             <key key="highway" value="turning_loop" />
         </item> <!-- Turning Loop -->
         <item name="City Limit Sign" icon="presets/vehicle/restriction/city_limit.svg" type="node" preset_name_label="true">
-            <link wiki="Key:traffic_sign" />
+            <link wiki="Tag:traffic_sign=city_limit" />
             <space />
             <key key="traffic_sign" value="city_limit" />
             <text key="name" text="Name" />
@@ -6442,7 +6442,7 @@
         <reference ref="link_contact_address" />
     </item> <!-- Shoemaker -->
     <separator/> <!-- other "soft"/art craft group -->
-    <item name="Sawmill" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Sawmill" icon="presets/craft/sawmill.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=sawmill" />
         <space />
         <key key="craft" value="sawmill" />
@@ -7438,7 +7438,7 @@
             </item> <!-- Road Route -->
         </group> <!-- Routes -->
         <item name="Route Network" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
-            <link wiki="Relations/Proposed/Network" />
+            <link wiki="Relation:network" />
             <space />
             <key key="type" value="network" />
             <text key="name" text="Name" />

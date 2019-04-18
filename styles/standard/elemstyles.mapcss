@@ -3016,8 +3016,8 @@ node[craft=plumber] {
     icon-image: "presets/craft/plumber.svg";
     set icon_z17;
 }
-node[craft=sawmill][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=sawmill] {
+    icon-image: "presets/craft/sawmill.svg";
     set icon_z17;
 }
 node[craft=gardener][!is_prop_set(icon-image)] {
