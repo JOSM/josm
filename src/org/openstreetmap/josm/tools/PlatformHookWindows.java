@@ -86,6 +86,8 @@ import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
+import org.openstreetmap.josm.io.NetworkManager;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -478,7 +480,7 @@ public class PlatformHookWindows implements PlatformHook {
         KeyStore ks = getRootKeystore();
         // Search by alias (fast)
         Certificate result = ks.getCertificate(certAmend.getWinAlias());
-        if (result == null) {
+        if (result == null && !NetworkManager.isOffline(OnlineResource.CERTIFICATES)) {
             // Make a web request to target site to force Windows to update if needed its trust root store from its certificate trust list
             // A better, but a lot more complex method might be to get certificate list from Windows Registry with PowerShell
             // using (Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\SystemCertificates\\AuthRoot\\AutoUpdate').EncodedCtl)
@@ -494,9 +496,11 @@ public class PlatformHookWindows implements PlatformHook {
         // If not found, search by SHA-256 (slower)
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
-            result = ks.getCertificate(aliases.nextElement());
+            String alias = aliases.nextElement();
+            result = ks.getCertificate(alias);
             if (result instanceof X509Certificate
                     && certAmend.getSha256().equalsIgnoreCase(Utils.toHexString(md.digest(result.getEncoded())))) {
+                Logging.warn("Certificate not found for alias ''{0}'' but found for alias ''{1}''", certAmend.getWinAlias(), alias);
                 return (X509Certificate) result;
             }
         }

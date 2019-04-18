@@ -16,6 +16,8 @@ public enum OnlineResource {
     OSM_API(tr("OSM API")),
     /** The JOSM website, used for startup page, imagery/presets/styles/rules entries, help, etc. */
     JOSM_WEBSITE(tr("JOSM website")),
+    /** Various government certificates downloaded on Windows to make https imagery work in some countries */
+    CERTIFICATES(tr("Certificates")),
     /** Value used to represent all online resources */
     ALL(tr("All"));
 
