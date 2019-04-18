@@ -52,6 +52,20 @@ class MainHeader {
         static final int ALTNAME = 0x80;
     }
 
+    static class HostOS {
+        static final int MS_DOS = 0;
+        static final int PRIMOS = 1;
+        static final int UNIX = 2;
+        static final int AMIGA = 3;
+        static final int MAC_OS = 4;
+        static final int OS2 = 5;
+        static final int APPLE_GS = 6;
+        static final int ATARI_ST = 7;
+        static final int NeXT = 8;
+        static final int VAX_VMS = 9;
+        static final int WIN95 = 10;
+        static final int WIN32 = 11;
+    }
 
     @Override
     public String toString() {

@@ -35,7 +35,9 @@ import org.apache.commons.compress.utils.IOUtils;
 /**
  * Implements the "arj" archive format as an InputStream.
  * <p>
- * <a href="http://farmanager.com/svn/trunk/plugins/multiarc/arc.doc/arj.txt">Reference</a>
+ * <a href="https://github.com/FarGroup/FarManager/blob/master/plugins/multiarc/arc.doc/arj.txt">Reference 1</a>
+ * <br>
+ * <a href="http://www.fileformat.info/format/arj/corion.htm">Reference 2</a>
  * @NotThreadSafe
  * @since 1.6
  */

@@ -58,6 +58,7 @@ class LocalFileHeader {
     static class FileTypes {
         static final int BINARY = 0;
         static final int SEVEN_BIT_TEXT = 1;
+        static final int COMMENT_HEADER = 2;
         static final int DIRECTORY = 3;
         static final int VOLUME_LABEL = 4;
         static final int CHAPTER_LABEL = 5;
@@ -66,6 +67,8 @@ class LocalFileHeader {
     static class Methods {
         static final int STORED = 0;
         static final int COMPRESSED_MOST = 1;
+        static final int COMPRESSED = 2;
+        static final int COMPRESSED_FASTER = 3;
         static final int COMPRESSED_FASTEST = 4;
         static final int NO_DATA_NO_CRC = 8;
         static final int NO_DATA = 9;
