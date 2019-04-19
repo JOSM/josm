@@ -188,7 +188,7 @@ public final class CertificateAmendment {
                 "e23d4a036d7b70e9f595b1422079d2b91edfbb1fb651a0633eaa8a9dc5f80703",
                 "https://eidas.disig.sk"),
         // Government of Taiwan - https://grca.nat.gov.tw/GRCAeng/index.html
-        new NativeCertAmend("Government Root Certification Authority", "Government Root Certification Authority", "Taiwan_GRCA.pem",
+        new NativeCertAmend("TW Government Root Certification Authority", "Government Root Certification Authority", "Taiwan_GRCA.pem",
                 "7600295eefe85b9e1fd624db76062aaaae59818a54d2774cd4c0b2c01131e1b3",
                 "https://grca.nat.gov.tw")
     };
