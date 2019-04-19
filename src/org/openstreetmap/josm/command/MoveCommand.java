@@ -180,7 +180,10 @@ public class MoveCommand extends Command {
      */
     public void moveAgain(double x, double y) {
         for (Node n : nodes) {
-            n.setEastNorth(n.getEastNorth().add(x, y));
+            EastNorth eastNorth = n.getEastNorth();
+            if (eastNorth != null) {
+                n.setEastNorth(eastNorth.add(x, y));
+            }
         }
         this.x += x;
         this.y += y;
