@@ -62,7 +62,7 @@ public class TurnrestrictionTest extends Test {
 
         if (!r.hasTag("restriction", SUPPORTED_RESTRICTIONS)) {
             errors.add(TestError.builder(this, Severity.ERROR, UNKNOWN_RESTRICTION)
-                    .message(tr("Unknown restriction"))
+                    .message(tr("Unknown turnrestriction"))
                     .primitives(r)
                     .build());
             return;
@@ -115,7 +115,7 @@ public class TurnrestrictionTest extends Test {
                     break;
                 default:
                     errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_ROLE)
-                            .message(tr("Unexpected role ''{0}'' in restriction", m.getRole()))
+                            .message(tr("Unexpected role ''{0}'' in turnrestriction", m.getRole()))
                             .primitives(l)
                             .highlight(m.getMember())
                             .build());
@@ -134,14 +134,14 @@ public class TurnrestrictionTest extends Test {
                     }
                 } else {
                     errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_ROLE)
-                            .message(tr("Unexpected role ''{0}'' in restriction", m.getRole()))
+                            .message(tr("Unexpected role ''{0}'' in turnrestriction", m.getRole()))
                             .primitives(l)
                             .highlight(m.getMember())
                             .build());
                 }
             } else {
                 errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_TYPE)
-                        .message(tr("Unexpected member type in restriction"))
+                        .message(tr("Unexpected member type in turnrestriction"))
                         .primitives(l)
                         .highlight(m.getMember())
                         .build());
