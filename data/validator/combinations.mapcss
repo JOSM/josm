@@ -266,7 +266,8 @@ relation[type=multipolygon][area=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.key} together with {1.key}, #17604 */
+/* {0.key} together with {1.key}, #17630, #17604 */
+*[building:part][building],
 *[addr:street][addr:place] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
   group: tr("suspicious tag combination");

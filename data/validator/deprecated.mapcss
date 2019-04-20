@@ -1420,3 +1420,16 @@ way[/^is_in:.*$/] {
   group: tr("deprecated tagging");
   fixRemove: "{0.key}";
 }
+
+/* #17593 */
+*[sport=football] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "sport=soccer";
+  suggestAlternative: "sport=american_football";
+  suggestAlternative: "sport=australian_football";
+  suggestAlternative: "sport=canadian_football";
+  suggestAlternative: "sport=rugby_league";
+  suggestAlternative: "sport=rugby_union";
+  suggestAlternative: "sport=gaelic_games";
+  group: tr("deprecated tagging");
+}
