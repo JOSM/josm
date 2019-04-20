@@ -615,7 +615,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                         break;
                     default: // Do nothing
                     }
-                    if (!noDraw && !segment.isUnordered() && (maxLineLength == -1 || dist <= maxLineLength)) {
+                    if (!noDraw && (!segment.isUnordered() || !data.fromServer) && (maxLineLength == -1 || dist <= maxLineLength)) {
                         trkPnt.drawLine = true;
                         double bearing = oldWp.getCoor().bearing(trkPnt.getCoor());
                         trkPnt.dir = ((int) (bearing / Math.PI * 4 + 1.5)) % 8;
