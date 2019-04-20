@@ -28,8 +28,8 @@ public class TurnrestrictionTest extends Test {
     protected static final int MORE_VIA = 1804;
     protected static final int MORE_FROM = 1805;
     protected static final int MORE_TO = 1806;
-    protected static final int UNKNOWN_ROLE = 1807;
-    protected static final int UNKNOWN_TYPE = 1808;
+    protected static final int UNEXPECTED_ROLE = 1807;
+    protected static final int UNEXPECTED_TYPE = 1808;
     protected static final int FROM_VIA_NODE = 1809;
     protected static final int TO_VIA_NODE = 1810;
     protected static final int FROM_VIA_WAY = 1811;
@@ -114,16 +114,15 @@ public class TurnrestrictionTest extends Test {
                     }
                     break;
                 default:
-                    errors.add(TestError.builder(this, Severity.WARNING, UNKNOWN_ROLE)
-                            .message(tr("Unknown role in restriction"))
+                    errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_ROLE)
+                            .message(tr("Unexpected role ''{0}'' in restriction", m.getRole()))
                             .primitives(l)
                             .highlight(m.getMember())
                             .build());
                 }
             } else if (m.isNode()) {
                 Node n = m.getNode();
-                switch (m.getRole()) {
-                case "via":
+                if ("via".equals(m.getRole())) {
                     if (!via.isEmpty()) {
                         if (via.get(0) instanceof Node) {
                             morevia = true;
@@ -133,24 +132,16 @@ public class TurnrestrictionTest extends Test {
                     } else {
                         via.add(n);
                     }
-                    break;
-                case "location_hint":
-                    errors.add(TestError.builder(this, Severity.WARNING, UNKNOWN_ROLE)
-                            .message(tr("Role ''{0}'' is not in templates", m.getRole()))
-                            .primitives(l)
-                            .highlight(m.getMember())
-                            .build());
-                    break;
-                default:
-                    errors.add(TestError.builder(this, Severity.WARNING, UNKNOWN_ROLE)
-                            .message(tr("Unknown role in restriction"))
+                } else {
+                    errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_ROLE)
+                            .message(tr("Unexpected role ''{0}'' in restriction", m.getRole()))
                             .primitives(l)
                             .highlight(m.getMember())
                             .build());
                 }
             } else {
-                errors.add(TestError.builder(this, Severity.WARNING, UNKNOWN_TYPE)
-                        .message(tr("Unknown member type"))
+                errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_TYPE)
+                        .message(tr("Unexpected member type in restriction"))
                         .primitives(l)
                         .highlight(m.getMember())
                         .build());
