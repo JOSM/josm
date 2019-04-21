@@ -216,14 +216,6 @@ public class MainApplication {
      */
     private static final MainLayerManager layerManager = new MainLayerManager();
 
-    /**
-     * The commands undo/redo handler.
-     * @since 12641
-     * @deprecated Use {@link UndoRedoHandler#getInstance}
-     */
-    @Deprecated
-    public static final UndoRedoHandler undoRedo = UndoRedoHandler.getInstance();
-
     private static final LayerChangeListener undoRedoCleaner = new LayerChangeListener() {
         @Override
         public void layerRemoving(LayerRemoveEvent e) {

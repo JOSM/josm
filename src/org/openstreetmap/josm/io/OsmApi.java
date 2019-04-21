@@ -35,7 +35,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.spi.preferences.IUrls;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -69,14 +68,6 @@ public class OsmApi extends OsmConnection {
      * @since 5386
      */
     public static final int MAX_DOWNLOAD_THREADS = 2;
-
-    /**
-     * Default URL of the standard OSM API.
-     * @deprecated Use {@link IUrls#getDefaultOsmApiUrl}
-     * @since 5422
-     */
-    @Deprecated
-    public static final String DEFAULT_API_URL = "https://api.openstreetmap.org/api";
 
     // The collection of instantiated OSM APIs
     private static final Map<String, OsmApi> instances = new HashMap<>();

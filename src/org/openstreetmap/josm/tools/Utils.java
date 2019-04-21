@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.AccessibleObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -1550,18 +1549,6 @@ public final class Utils {
     public static String deAccent(String str) {
         // https://stackoverflow.com/a/1215117/2257172
         return REMOVE_DIACRITICS.matcher(Normalizer.normalize(str, Normalizer.Form.NFD)).replaceAll("");
-    }
-
-    /**
-     * Sets {@code AccessibleObject}(s) accessible.
-     * @param objects objects
-     * @see AccessibleObject#setAccessible
-     * @deprecated Use {@link ReflectionUtils#setObjectsAccessible(AccessibleObject...)}
-     * @since 10223
-     */
-    @Deprecated
-    public static void setObjectsAccessible(final AccessibleObject... objects) {
-        ReflectionUtils.setObjectsAccessible(objects);
     }
 
     /**

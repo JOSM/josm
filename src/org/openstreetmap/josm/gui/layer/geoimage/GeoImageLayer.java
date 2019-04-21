@@ -695,20 +695,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     }
 
     /**
-     * Clears the currentPhoto, i.e. remove select marker, and optionally repaint.
-     * @param repaint Repaint flag
-     * @deprecated Use {@link ImageData#clearSelectedImage}
-     * @since 6392
-     */
-    @Deprecated
-    public void clearCurrentPhoto(boolean repaint) {
-        data.clearSelectedImage();
-        if (repaint) {
-            updateBufferAndRepaint();
-        }
-    }
-
-    /**
      * Clears the currentPhoto of the other GeoImageLayer's. Otherwise there could be multiple selected photos.
      */
     private void clearOtherCurrentPhotos() {

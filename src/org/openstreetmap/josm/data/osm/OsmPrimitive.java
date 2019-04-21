@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -79,46 +78,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
         reversedDirectionKeys = compileDirectionKeys("tags.reversed_direction", reversedDirectionDefault);
         directionKeys = compileDirectionKeys("tags.direction", directionDefault);
-    }
-
-    /**
-     * Replies the sub-collection of {@link OsmPrimitive}s of type <code>type</code> present in
-     * another collection of {@link OsmPrimitive}s. The result collection is a list.
-     *
-     * If <code>list</code> is null, replies an empty list.
-     *
-     * @param <T> type of data (must be one of the {@link OsmPrimitive} types
-     * @param list  the original list
-     * @param type the type to filter for
-     * @return the sub-list of OSM primitives of type <code>type</code>
-     * @deprecated Use {@link Stream} or {@link Utils#filteredCollection(Collection, Class)} instead.
-     */
-    @Deprecated
-    public static <T extends OsmPrimitive> List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
-        return (list != null ? list.stream() : Stream.empty())
-                .filter(type::isInstance)
-                .map(type::cast)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Replies the sub-collection of {@link OsmPrimitive}s of type <code>type</code> present in
-     * another collection of {@link OsmPrimitive}s. The result collection is a set.
-     *
-     * If <code>list</code> is null, replies an empty set.
-     *
-     * @param <T> type of data (must be one of the {@link OsmPrimitive} types
-     * @param set  the original collection
-     * @param type the type to filter for
-     * @return the sub-set of OSM primitives of type <code>type</code>
-     * @deprecated Use {@link Stream} instead
-     */
-    @Deprecated
-    public static <T extends OsmPrimitive> Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
-        return (set != null ? set.stream() : Stream.empty())
-                .filter(type::isInstance)
-                .map(type::cast)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**

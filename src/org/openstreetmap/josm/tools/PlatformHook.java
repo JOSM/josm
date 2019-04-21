@@ -123,26 +123,6 @@ public interface PlatformHook {
     void initSystemShortcuts();
 
     /**
-      * The makeTooltip hook will be called whenever a tooltip for
-      * a menu or button is created.
-      *
-      * Tooltips are usually not system dependent, unless the
-      * JVM is too dumb to provide correct names for all the keys.
-      *
-      * Some LAFs don't understand HTML, such as the OSX LAFs.
-      *
-     * @param name Tooltip text to display
-     * @param sc Shortcut associated (to display accelerator between parenthesis)
-     * @return Full tooltip text (name + accelerator)
-     * @since 1084
-     * @deprecated Use {@link Shortcut#makeTooltip} instead.
-      */
-    @Deprecated
-    default String makeTooltip(String name, Shortcut sc) {
-        return Shortcut.makeTooltip(name, sc != null ? sc.getKeyStroke() : null);
-    }
-
-    /**
      * Returns the default LAF to be used on this platform to look almost as a native application.
      * @return The default native LAF for this platform
      */
