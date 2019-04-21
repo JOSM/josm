@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -70,6 +71,9 @@ public final class Geometry {
          */
         CROSSING
     }
+
+    /** threshold value for size of intersection area given in east/north space */
+    public static final double INTERSECTION_EPS_EAST_NORTH = 1e-4;
 
     /**
      * Will find all intersection and add nodes there for list of given ways.
@@ -577,18 +581,18 @@ public final class Geometry {
     public static PolygonIntersection polygonIntersection(List<? extends INode> first, List<? extends INode> second) {
         Area a1 = getArea(first);
         Area a2 = getArea(second);
-        return polygonIntersection(a1, a2);
+        return polygonIntersection(a1, a2, INTERSECTION_EPS_EAST_NORTH);
     }
 
     /**
-     * Tests if two polygons intersect.
+     * Tests if two polygons intersect. It is assumed that the area is given in East North points.
      * @param a1 Area of first polygon
      * @param a2 Area of second polygon
      * @return intersection kind
      * @since 6841
      */
     public static PolygonIntersection polygonIntersection(Area a1, Area a2) {
-        return polygonIntersection(a1, a2, 1.0);
+        return polygonIntersection(a1, a2, INTERSECTION_EPS_EAST_NORTH);
     }
 
     /**
@@ -603,9 +607,7 @@ public final class Geometry {
         Area inter = new Area(a1);
         inter.intersect(a2);
 
-        Rectangle bounds = inter.getBounds();
-
-        if (inter.isEmpty() || bounds.getHeight()*bounds.getWidth() <= eps) {
+        if (inter.isEmpty() || !checkIntersection(inter, eps)) {
             return PolygonIntersection.OUTSIDE;
         } else if (a2.getBounds2D().contains(a1.getBounds2D()) && inter.equals(a1)) {
             return PolygonIntersection.FIRST_INSIDE_SECOND;
@@ -614,6 +616,38 @@ public final class Geometry {
         } else {
             return PolygonIntersection.CROSSING;
         }
+    }
+
+    /**
+     * Check an intersection area which might describe multiple small polygons.
+     * Return true if any of the polygons is bigger than the given threshold.
+     * @param inter the intersection area
+     * @param eps an area threshold, everything below is considered an empty intersection
+     * @return true if any of the polygons is bigger than the given threshold
+     */
+    private static boolean checkIntersection(Area inter, double eps) {
+        PathIterator pit = inter.getPathIterator(null);
+        double[] res = new double[6];
+        Rectangle2D r = new Rectangle2D.Double();
+        while (!pit.isDone()) {
+            int type = pit.currentSegment(res);
+            switch (type) {
+            case PathIterator.SEG_MOVETO:
+                r = new Rectangle2D.Double(res[0], res[1], 0, 0);
+                break;
+            case PathIterator.SEG_LINETO:
+                r.add(res[0], res[1]);
+                break;
+            case PathIterator.SEG_CLOSE:
+                if (r.getWidth() > eps || r.getHeight() > eps)
+                    return true;
+                break;
+            default:
+                break;
+            }
+            pit.next();
+        }
+        return false;
     }
 
     /**
@@ -777,17 +811,17 @@ public final class Geometry {
      * Returns angle of a corner defined with 3 point coordinates.
      *
      * @param p1 first point
-     * @param p2 Common endpoint
+     * @param common Common end point
      * @param p3 third point
      * @return Angle in radians (-pi, pi]
      */
-    public static double getCornerAngle(EastNorth p1, EastNorth p2, EastNorth p3) {
+    public static double getCornerAngle(EastNorth p1, EastNorth common, EastNorth p3) {
 
         CheckParameterUtil.ensure(p1, "p1", EastNorth::isValid);
-        CheckParameterUtil.ensure(p2, "p2", EastNorth::isValid);
+        CheckParameterUtil.ensure(common, "p2", EastNorth::isValid);
         CheckParameterUtil.ensure(p3, "p3", EastNorth::isValid);
 
-        Double result = getSegmentAngle(p2, p1) - getSegmentAngle(p2, p3);
+        double result = getSegmentAngle(common, p1) - getSegmentAngle(common, p3);
         if (result <= -Math.PI) {
             result += 2 * Math.PI;
         }
