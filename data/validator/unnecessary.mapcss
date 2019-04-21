@@ -90,20 +90,36 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   fixRemove: "{1.key}";
 }
 
-/* #17100, #17471 */
+/* #17100, #17471, #17629 */
+*[name][name=~/^(?i)(pond)$/][water=pond],
+*[name][name=~/^(?i)(chapel|chapelle|kapelle)$/][building=chapel],
+*[name][name=~/^(?i)(church|église|biserica)$/][amenity=place_of_worship][religion=christian],
+*[name][name=~/^(?i)(mosque|cami|masjid|مسجد)$/][amenity=place_of_worship][religion=muslim],
 *[name][name=~/^(?i)(parking|parkplatz)$/][amenity=parking],
+*[name][name=~/^(?i)(post office)$/][amenity=post_office],
+*[name][name=~/^(?i)(restaurant)$/][amenity=restaurant],
+*[name][name=~/^(?i)(toilets?)$/][amenity=toilets],
 *[name][name=~/^(?i)(playground|spielplatz)$/][leisure=playground],
-*[name][name=~/^(?i)(shop)$/][shop][shop!=no],
-*[name][name=~/^(?i)(building)$/][building][building!=no],
-*[name][name=~/^(?i)(house|rumah)$/][building=house],
+*[name][name=~/^(?i)(shop|boutique)$/][shop][shop!=no],
+*[name][name=~/^(?i)(building|bangunan)$/][building][building!=no],
+*[name][name=~/^(?i)(house|casa|maison|rumah|vivienda)$/][building=house],
 *[name][name=~/^(?i)(kiosk)$/][shop=kiosk],
+*[name][name=~/^(?i)(path)$/][highway=path],
 *[name][name=~/^(?i)(jalan)$/][highway],
 *[name][name=~/^(?i)(silo)$/][man_made=silo],
 *[name][name=~/^(?i)(silo)$/][building=silo],
-*[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=graveyard],
-*[name][name=~/^(?i)(cemetery|cmentarz)$/][amenity=cemetery],
-*[name="АГЗС"][amenity=fuel],
-*[name="АЗС"][amenity=fuel] {
+*[name][name=~/^(?i)(cemetery|cementerio|cimetière|cmentarz|friedhof)$/][amenity=grave_yard],
+*[name][name=~/^(?i)(cemetery|cementerio|cimetière|cmentarz|friedhof)$/][landuse=cemetery],
+*[name][name=~/^(?i)(mairie|rathaus)$/][amenity=townhall],
+*[name][name=~/^(?i)(monument aux morts|war memorial)$/][historic=memorial][memorial=war_memorial],
+*[name][name=~/^(?i)(school|école|Школа)$/][amenity=school],
+*[name][name=~/^(?i)(école élémentaire)$/][amenity=school]["school:FR"="élémentaire"],
+*[name][name=~/^(?i)(école maternelle)$/][amenity=school]["school:FR"="maternelle"],
+*[name][name=~/^(?i)(école primaire)$/][amenity=school]["school:FR"="primaire"],
+*[name][name=~/^(?i)(collège)$/][amenity=school]["school:FR"="collège"],
+*[name][name=~/^(?i)(lycée)$/][amenity=school]["school:FR"="lycée"],
+*[name][name=~/^(?i)(Аптека|farmacia|pharmacy|pharmacie)$/][amenity=pharmacy],
+*[name][name=~/^(?i)(АГЗС|АЗС)$/][amenity=fuel] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
   fixRemove: "name";
@@ -130,11 +146,11 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertMatch: "way name=silo man_made=silo";
   assertMatch: "way name=Silo man_made=silo building=silo";
   assertMatch: "way name=Silo building=silo";
-  assertMatch: "way name=cemetery amenity=graveyard";
-  assertMatch: "way name=Cmentarz amenity=graveyard";
-  assertNoMatch: "way name=kiosk amenity=graveyard";
+  assertMatch: "way name=cemetery amenity=grave_yard";
+  assertMatch: "way name=Cmentarz amenity=grave_yard";
+  assertNoMatch: "way name=kiosk amenity=grave_yard";
 } 
-*[name][name=~/^(?i)(house|rumah)$/][building][building!=house][building!=no] {
+*[name][name=~/^(?i)(house|casa|rumah|vivienda)$/][building][building!=house][building!=no] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
   /* without fixRemove to avoid possible information loss */
