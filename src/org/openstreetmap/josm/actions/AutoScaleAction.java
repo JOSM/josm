@@ -9,9 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -110,21 +108,6 @@ public class AutoScaleAction extends JosmAction {
     }
 
     /**
-     * A list of things we can zoom to. The zoom target is given depending on the mode.
-     * @deprecated Use {@link AutoScaleMode} enum instead
-     */
-    @Deprecated
-    public static final Collection<String> MODES = Collections.unmodifiableList(Arrays.asList(
-        marktr(/* ICON(dialogs/autoscale/) */ "data"),
-        marktr(/* ICON(dialogs/autoscale/) */ "layer"),
-        marktr(/* ICON(dialogs/autoscale/) */ "selection"),
-        marktr(/* ICON(dialogs/autoscale/) */ "conflict"),
-        marktr(/* ICON(dialogs/autoscale/) */ "download"),
-        marktr(/* ICON(dialogs/autoscale/) */ "problem"),
-        marktr(/* ICON(dialogs/autoscale/) */ "previous"),
-        marktr(/* ICON(dialogs/autoscale/) */ "next")));
-
-    /**
      * One of {@link AutoScaleMode}. Defines what we are zooming to.
      */
     private final AutoScaleMode mode;
@@ -170,21 +153,11 @@ public class AutoScaleAction extends JosmAction {
 
     /**
      * Performs the auto scale operation of the given mode without the need to create a new action.
-     * @param mode One of {@link #MODES}.
+     * @param mode One of {@link AutoScaleMode}.
      * @since 14221
      */
     public static void autoScale(AutoScaleMode mode) {
         new AutoScaleAction(mode, false).autoScale();
-    }
-
-    /**
-     * Performs the auto scale operation of the given mode without the need to create a new action.
-     * @param mode One of {@link #MODES}.
-     * @deprecated Use {@link #autoScale(AutoScaleMode)} instead
-     */
-    @Deprecated
-    public static void autoScale(String mode) {
-        autoScale(AutoScaleMode.of(mode));
     }
 
     private static int getModeShortcut(String mode) {
@@ -220,17 +193,7 @@ public class AutoScaleAction extends JosmAction {
 
     /**
      * Constructs a new {@code AutoScaleAction}.
-     * @param mode The autoscale mode (one of {@link AutoScaleAction#MODES})
-     * @deprecated Use {@link #AutoScaleAction(AutoScaleMode)} instead
-     */
-    @Deprecated
-    public AutoScaleAction(final String mode) {
-        this(AutoScaleMode.of(mode));
-    }
-
-    /**
-     * Constructs a new {@code AutoScaleAction}.
-     * @param mode The autoscale mode (one of {@link AutoScaleAction#MODES})
+     * @param mode The autoscale mode (one of {@link AutoScaleMode})
      * @since 14221
      */
     public AutoScaleAction(final AutoScaleMode mode) {

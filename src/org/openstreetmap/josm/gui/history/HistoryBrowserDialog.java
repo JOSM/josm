@@ -123,15 +123,6 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         browser.populate(history);
     }
 
-    /**
-     * Removes this history browser model as listener for data change and layer change events.
-     * @deprecated not needeed anymore, job is done in {@link #dispose}
-     */
-    @Deprecated
-    public void unlinkAsListener() {
-        getHistoryBrowser().getModel().unlinkAsListener();
-    }
-
     /* ---------------------------------------------------------------------------------- */
     /* interface HistoryDataSetListener                                                   */
     /* ---------------------------------------------------------------------------------- */
