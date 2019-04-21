@@ -479,28 +479,30 @@ public class PlatformHookWindows implements PlatformHook {
         // Get Windows Trust Root Store
         KeyStore ks = getRootKeystore();
         // Search by alias (fast)
-        Certificate result = ks.getCertificate(certAmend.getWinAlias());
-        if (result == null && !NetworkManager.isOffline(OnlineResource.CERTIFICATES)) {
-            // Make a web request to target site to force Windows to update if needed its trust root store from its certificate trust list
-            // A better, but a lot more complex method might be to get certificate list from Windows Registry with PowerShell
-            // using (Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\SystemCertificates\\AuthRoot\\AutoUpdate').EncodedCtl)
-            // then decode it using CertUtil -dump or calling CertCreateCTLContext API using JNI, and finally find and decode the certificate
-            Logging.trace(webRequest(certAmend.getWebSite()));
-            // Reload Windows Trust Root Store and search again by alias (fast)
-            ks = getRootKeystore();
-            result = ks.getCertificate(certAmend.getWinAlias());
-        }
-        if (result instanceof X509Certificate) {
-            return (X509Certificate) result;
+        for (String winAlias : certAmend.getNativeAliases()) {
+            Certificate result = ks.getCertificate(winAlias);
+            if (result == null && !NetworkManager.isOffline(OnlineResource.CERTIFICATES)) {
+                // Make a web request to target site to force Windows to update if needed its trust root store from its certificate trust list
+                // A better, but a lot more complex method might be to get certificate list from Windows Registry with PowerShell
+                // using (Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\SystemCertificates\\AuthRoot\\AutoUpdate').EncodedCtl)
+                // then decode it using CertUtil -dump or calling CertCreateCTLContext API using JNI, and finally find and decode the certificate
+                Logging.trace(webRequest(certAmend.getWebSite()));
+                // Reload Windows Trust Root Store and search again by alias (fast)
+                ks = getRootKeystore();
+                result = ks.getCertificate(winAlias);
+            }
+            if (result instanceof X509Certificate) {
+                return (X509Certificate) result;
+            }
         }
         // If not found, search by SHA-256 (slower)
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
             String alias = aliases.nextElement();
-            result = ks.getCertificate(alias);
+            Certificate result = ks.getCertificate(alias);
             if (result instanceof X509Certificate
                     && certAmend.getSha256().equalsIgnoreCase(Utils.toHexString(md.digest(result.getEncoded())))) {
-                Logging.warn("Certificate not found for alias ''{0}'' but found for alias ''{1}''", certAmend.getWinAlias(), alias);
+                Logging.warn("Certificate not found for alias ''{0}'' but found for alias ''{1}''", certAmend.getNativeAliases(), alias);
                 return (X509Certificate) result;
             }
         }

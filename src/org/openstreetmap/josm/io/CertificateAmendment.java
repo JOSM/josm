@@ -21,6 +21,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 import javax.net.ssl.SSLContext;
@@ -105,31 +108,22 @@ public final class CertificateAmendment {
      * @since 13450
      */
     public static class NativeCertAmend extends CertAmend {
-        private final String winAlias;
-        private final String macAlias;
+        private final Collection<String> aliases;
         private final String httpsWebSite;
 
-        NativeCertAmend(String winAlias, String macAlias, String filename, String sha256, String httpsWebSite) {
+        NativeCertAmend(Collection<String> aliases, String filename, String sha256, String httpsWebSite) {
             super(filename, sha256);
-            this.winAlias = Objects.requireNonNull(winAlias);
-            this.macAlias = Objects.requireNonNull(macAlias);
+            this.aliases = Objects.requireNonNull(aliases);
             this.httpsWebSite = Objects.requireNonNull(httpsWebSite);
         }
 
         /**
-         * Returns the Windows alias in System Root Certificates keystore.
-         * @return the Windows alias in System Root Certificates keystore
+         * Returns the native aliases in System Root Certificates keystore/keychain.
+         * @return the native aliases in System Root Certificates keystore/keychain
+         * @since 15006
          */
-        public final String getWinAlias() {
-            return winAlias;
-        }
-
-        /**
-         * Returns the macOS alias in System Root Certificates keychain.
-         * @return the macOS alias in System Root Certificates keychain
-         */
-        public final String getMacAlias() {
-            return macAlias;
+        public final Collection<String> getNativeAliases() {
+            return aliases;
         }
 
         /**
@@ -143,11 +137,7 @@ public final class CertificateAmendment {
 
         @Override
         public String toString() {
-            String result = winAlias;
-            if (!winAlias.equals(macAlias)) {
-                result += " / " + macAlias;
-            }
-            return result;
+            return String.join(" / ", aliases);
         }
     }
 
@@ -165,30 +155,33 @@ public final class CertificateAmendment {
      */
     private static final NativeCertAmend[] PLATFORM_CERT_AMEND = {
         // Let's Encrypt - should be included in JDK, but problems with Ubuntu 18.04, see #15851
-        new NativeCertAmend("DST Root CA X3", "DST Root CA X3",
+        new NativeCertAmend(Collections.singleton("DST Root CA X3"),
                 "DST_Root_CA_X3.pem",
                 "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739",
                 "https://acme-v02.api.letsencrypt.org"),
         // Government of Netherlands
-        new NativeCertAmend("Staat der Nederlanden Root CA - G2", "Staat der Nederlanden Root CA - G2",
+        new NativeCertAmend(Collections.singleton("Staat der Nederlanden Root CA - G2"),
                 "Staat_der_Nederlanden_Root_CA_-_G2.crt",
                 "668c83947da63b724bece1743c31a0e6aed0db8ec5b31be377bb784f91b6716f",
                 "https://roottest-g2.pkioverheid.nl"),
         // Government of Netherlands
-        new NativeCertAmend("Government of Netherlands G3", "Staat der Nederlanden Root CA - G3",
+        new NativeCertAmend(Arrays.asList("Government of Netherlands G3", "Staat der Nederlanden Root CA - G3"),
                 "Staat_der_Nederlanden_Root_CA_-_G3.crt",
                 "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428",
                 "https://roottest-g3.pkioverheid.nl"),
         // Trusted and used by French Government - https://www.certigna.fr/autorites/index.xhtml?ac=Racine#lracine
-        new NativeCertAmend("Certigna", "Certigna", "Certigna.crt",
+        new NativeCertAmend(Collections.singleton("Certigna"),
+                "Certigna.crt",
                 "e3b6a2db2ed7ce48842f7ac53241c7b71d54144bfb40c11f3f1d0b42f5eea12d",
                 "https://www.certigna.fr"),
         // Trusted and used by Slovakian Government - https://eidas.disig.sk/en/cacert/
-        new NativeCertAmend("CA Disig Root R2", "CA Disig Root R2", "CA_Disig_Root_R2.pem",
+        new NativeCertAmend(Collections.singleton("CA Disig Root R2"),
+                "CA_Disig_Root_R2.pem",
                 "e23d4a036d7b70e9f595b1422079d2b91edfbb1fb651a0633eaa8a9dc5f80703",
                 "https://eidas.disig.sk"),
         // Government of Taiwan - https://grca.nat.gov.tw/GRCAeng/index.html
-        new NativeCertAmend("TW Government Root Certification Authority", "Government Root Certification Authority", "Taiwan_GRCA.pem",
+        new NativeCertAmend(Arrays.asList("TW Government Root Certification Authority", "Government Root Certification Authority"),
+                "Taiwan_GRCA.pem",
                 "7600295eefe85b9e1fd624db76062aaaae59818a54d2774cd4c0b2c01131e1b3",
                 "https://grca.nat.gov.tw")
     };

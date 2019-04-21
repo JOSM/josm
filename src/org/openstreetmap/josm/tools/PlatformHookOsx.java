@@ -411,15 +411,18 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     @Override
     public X509Certificate getX509Certificate(NativeCertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        try {
-            // Get platform certificate in PEM format
-            String pem = Utils.execOutput(Arrays.asList("security", "find-certificate",
-                    "-c", certAmend.getMacAlias(), "-p", "/System/Library/Keychains/SystemRootCertificates.keychain"));
-            Logging.debug(pem);
-            return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(
-                    new ByteArrayInputStream(pem.getBytes(StandardCharsets.UTF_8)));
-        } catch (ExecutionException | InterruptedException | IllegalArgumentException e) {
-            throw new IOException(e);
+        for (String macAlias : certAmend.getNativeAliases()) {
+            try {
+                // Get platform certificate in PEM format
+                String pem = Utils.execOutput(Arrays.asList("security", "find-certificate",
+                        "-c", macAlias, "-p", "/System/Library/Keychains/SystemRootCertificates.keychain"));
+                Logging.debug(pem);
+                return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(
+                        new ByteArrayInputStream(pem.getBytes(StandardCharsets.UTF_8)));
+            } catch (ExecutionException | InterruptedException | IllegalArgumentException | CertificateException e) {
+                Logging.debug(e);
+            }
         }
+        return null;
     }
 }
