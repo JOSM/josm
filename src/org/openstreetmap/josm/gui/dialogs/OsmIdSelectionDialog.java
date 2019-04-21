@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -179,11 +178,8 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
      * @param cbHistory the {@link HistoryComboBox} to which the history is restored to
      */
     protected void restorePrimitivesHistory(HistoryComboBox cbHistory) {
-        List<String> cmtHistory = new LinkedList<>(
-                Config.getPref().getList(getClass().getName() + ".primitivesHistory", new LinkedList<String>()));
-        // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        Collections.reverse(cmtHistory);
-        cbHistory.setPossibleItems(cmtHistory);
+        cbHistory.setPossibleItemsTopDown(
+                Config.getPref().getList(getClass().getName() + ".primitivesHistory", Collections.emptyList()));
     }
 
     /**
