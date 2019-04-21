@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Future;
@@ -109,12 +108,8 @@ public class OpenLocationAction extends JosmAction {
      * @param cbHistory the history combo box
      */
     protected void restoreUploadAddressHistory(HistoryComboBox cbHistory) {
-        List<String> cmtHistory = new LinkedList<>(Config.getPref().getList(getClass().getName() + ".uploadAddressHistory",
-                new LinkedList<String>()));
-        // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        //
-        Collections.reverse(cmtHistory);
-        cbHistory.setPossibleItems(cmtHistory);
+        cbHistory.setPossibleItemsTopDown(Config.getPref().getList(getClass().getName() + ".uploadAddressHistory",
+                Collections.emptyList()));
     }
 
     /**

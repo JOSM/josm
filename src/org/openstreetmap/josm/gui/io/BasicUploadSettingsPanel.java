@@ -13,7 +13,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -113,9 +112,7 @@ public class BasicUploadSettingsPanel extends JPanel {
     }
 
     private static void populateHistoryComboBox(HistoryComboBox hcb, String historyKey, List<String> defaultValues) {
-        List<String> cmtHistory = new LinkedList<>(Config.getPref().getList(historyKey, defaultValues));
-        Collections.reverse(cmtHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        hcb.setPossibleItems(cmtHistory);
+        hcb.setPossibleItemsTopDown(Config.getPref().getList(historyKey, defaultValues));
         hcb.discardAllUndoableEdits();
     }
 

@@ -17,7 +17,6 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -114,9 +113,7 @@ public class PlaceSelection implements DownloadSelection {
 
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
-        List<String> cmtHistory = new LinkedList<>(Config.getPref().getList(HISTORY_KEY, new LinkedList<String>()));
-        Collections.reverse(cmtHistory);
-        cbSearchExpression.setPossibleItems(cmtHistory);
+        cbSearchExpression.setPossibleItemsTopDown(Config.getPref().getList(HISTORY_KEY, Collections.emptyList()));
         lpanel.add(cbSearchExpression);
 
         panel.add(lpanel, GBC.std().fill(GBC.HORIZONTAL).insets(5, 5, 0, 5));

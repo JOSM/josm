@@ -8,6 +8,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.im.InputContext;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Locale;
 
 import javax.swing.ComboBoxEditor;
@@ -287,7 +289,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
     }
 
     /**
-     * Sets the items of the combobox to the given {@code String}s.
+     * Sets the items of the combobox to the given {@code String}s in reversed order (last element first).
      * @param elems String items
      */
     public void setPossibleItems(Collection<String> elems) {
@@ -297,10 +299,23 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
         for (String elem : elems) {
             model.addElement(new AutoCompletionItem(elem, AutoCompletionPriority.UNKNOWN));
         }
+        this.setSelectedItem(null);
         // disable autocomplete to prevent unnecessary actions in AutoCompletingComboBoxDocument#insertString
         autocompleteEnabled = false;
-        this.getEditor().setItem(oldValue); // Do not use setSelectedItem(oldValue); (fix #8013)
+        this.setSelectedItem(oldValue);
         autocompleteEnabled = true;
+    }
+
+    /**
+     * Sets the items of the combobox to the given {@code String}s in top down order.
+     * @param elems Collection of String items (is not changed)
+     * @since 15011
+     */
+    public void setPossibleItemsTopDown(Collection<String> elems) {
+        // We have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
+        LinkedList<String> reversed = new LinkedList<>(elems);
+        Collections.reverse(reversed);
+        setPossibleItems(reversed);
     }
 
     /**

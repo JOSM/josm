@@ -94,9 +94,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
         if (!items.isEmpty()) {
             queryWizard.setText(items.get(0));
         }
-        // HistoryComboBox needs the reversed list
-        Collections.reverse(items);
-        queryWizard.setPossibleItems(items);
+        queryWizard.setPossibleItemsTopDown(items);
 
         setCancelButton(CANCEL + 1);
         setDefaultButton(BUILD_AN_EXECUTE_QUERY + 1);
