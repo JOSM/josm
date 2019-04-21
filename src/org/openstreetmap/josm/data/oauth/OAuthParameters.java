@@ -3,8 +3,8 @@ package org.openstreetmap.josm.data.oauth;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IUrls;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -28,7 +28,7 @@ public class OAuthParameters {
 
     /**
      * Replies a set of default parameters for a consumer accessing the standard OSM server
-     * at {@link OsmApi#DEFAULT_API_URL}.
+     * at {@link IUrls#getDefaultOsmApiUrl}.
      *
      * @return a set of default parameters
      */
@@ -38,7 +38,7 @@ public class OAuthParameters {
 
     /**
      * Replies a set of default parameters for a consumer accessing an OSM server
-     * at the given API url. URL parameters are only set if the URL equals {@link OsmApi#DEFAULT_API_URL}
+     * at the given API url. URL parameters are only set if the URL equals {@link IUrls#getDefaultOsmApiUrl}
      * or references the domain "dev.openstreetmap.org", otherwise they may be <code>null</code>.
      *
      * @param apiUrl The API URL for which the OAuth default parameters are created. If null or empty, the default OSM API url is used.
