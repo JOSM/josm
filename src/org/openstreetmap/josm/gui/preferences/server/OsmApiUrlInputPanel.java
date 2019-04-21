@@ -36,6 +36,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IUrls;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -166,7 +167,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     /**
      * Returns the entered API URL, stripped of leading and trailing white characters.
      * @return the entered API URL, stripped of leading and trailing white characters.
-     *         May be an empty string if nothing has been entered. In this case, it means the user wants to use {@link OsmApi#DEFAULT_API_URL}.
+     *         May be an empty string if nothing has been entered. In this case, it means the user wants to use {@link IUrls#getDefaultOsmApiUrl}.
      * @see Utils#strip(String)
      * @since 6602
      */
