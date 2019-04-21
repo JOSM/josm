@@ -12,13 +12,13 @@ public final class WaySegment implements Comparable<WaySegment> {
     /**
      * The way.
      */
-    public Way way;
+    public final Way way;
 
     /**
      * The index of one of the 2 nodes in the way.  The other node has the
      * index <code>lowerIndex + 1</code>.
      */
-    public int lowerIndex;
+    public final int lowerIndex;
 
     /**
      * Constructs a new {@code WaySegment}.

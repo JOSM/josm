@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.FileInputStream;
 import java.util.Arrays;
@@ -157,5 +158,66 @@ public class GeometryTest {
         assertEquals(en1, Geometry.getCentroidEN(Arrays.asList(en1)));
         assertEquals(new EastNorth(125, 300), Geometry.getCentroidEN(Arrays.asList(en1, en2)));
         assertEquals(new EastNorth(150, 266d + 2d/3d), Geometry.getCentroidEN(Arrays.asList(en1, en2, en3)));
+    }
+
+
+    /**
+     * Test of {@link Geometry#polygonIntersection} method with two triangles.
+     */
+    @Test
+    public void testPolygonIntersectionTriangles() {
+        Node node1 = new Node(new LatLon(0.0, 1.0));
+        Node node2 = new Node(new LatLon(0.0, 2.0));
+        Node node3 = new Node(new LatLon(5.0, 1.5));
+        List<Node> poly1 = Arrays.asList(node1, node2, node3, node1);
+        Node node4 = new Node(new LatLon(10.0, 1.0));
+        Node node5 = new Node(new LatLon(10.0, 2.0));
+        Node node6 = new Node(new LatLon(5.000001, 1.5));
+        List<Node> poly2 = Arrays.asList(node4, node5, node6, node4);
+        // no intersection, not even touching
+        assertEquals(Geometry.PolygonIntersection.OUTSIDE, Geometry.polygonIntersection(poly1, poly2));
+
+        node5.setCoor(new LatLon(5.0, 1.5));
+        // touching in a single point with two different nodes
+        assertEquals(Geometry.PolygonIntersection.OUTSIDE, Geometry.polygonIntersection(poly1, poly2));
+
+        node5.setCoor(new LatLon(4.99999999, 1.5));
+        // now node5 lies inside way1, intersection is a very small area, in OSM precision nodes are equal
+        assertEquals(node5.getCoor().getRoundedToOsmPrecision(), node3.getCoor().getRoundedToOsmPrecision());
+        assertEquals(Geometry.PolygonIntersection.CROSSING, Geometry.polygonIntersection(poly1, poly2));
+
+        node5.setCoor(new LatLon(4.9999999, 1.5));
+        // intersection area is too big to ignore
+        assertNotEquals(node5.getCoor().getRoundedToOsmPrecision(), node3.getCoor().getRoundedToOsmPrecision());
+        assertEquals(Geometry.PolygonIntersection.CROSSING, Geometry.polygonIntersection(poly1, poly2));
+    }
+
+    /**
+     * Test of {@link Geometry#polygonIntersection} method with two V-shapes
+     */
+    @Test
+    public void testPolygonIntersectionVShapes() {
+        Node node1 = new Node(new LatLon(1.0, 1.0));
+        Node node2 = new Node(new LatLon(2.0, 2.0));
+        Node node3 = new Node(new LatLon(0.9, 1.0));
+        Node node4 = new Node(new LatLon(2.0, 0.0));
+        List<Node> poly1 = Arrays.asList(node1, node2, node3, node4, node1);
+        Node node5 = new Node(new LatLon(3.0, 1.0));
+        Node node6 = new Node(new LatLon(2.0, 2.0)); // like node2
+        Node node7 = new Node(new LatLon(3.1, 1.0));
+        Node node8 = new Node(new LatLon(2.0, 0.0)); // like node4
+        List<Node> poly2 = Arrays.asList(node5, node6, node7, node8, node5);
+
+        // touching in two points but not overlapping
+        assertEquals(Geometry.PolygonIntersection.OUTSIDE, Geometry.polygonIntersection(poly1, poly2));
+
+        // touching in one point, small overlap at the other
+        node6.setCoor(new LatLon(1.9999999, 2.0));
+        assertEquals(Geometry.PolygonIntersection.CROSSING, Geometry.polygonIntersection(poly1, poly2));
+
+        // two small overlaps, but clearly visible because lines are crossing
+        node6.setCoor(new LatLon(1.99999999, 2.0));
+        node8.setCoor(new LatLon(1.99999999, 0.0));
+        assertEquals(Geometry.PolygonIntersection.OUTSIDE, Geometry.polygonIntersection(poly1, poly2));
     }
 }

@@ -271,9 +271,8 @@ public class MultipolygonTest extends Test {
 
                 for (int j = i + 1; j < allPolygons.size(); j++) {
                     PolyData pd2 = allPolygons.get(j);
-                    if (!checkProblemMap(crossingPolyMap, pd1, pd2)) {
-                        if (hasIntersectionWay(pd2, intersectionWays))
-                            checkPolygonsForSharedNodes(r, pd1, pd2, sharedNodes);
+                    if (!checkProblemMap(crossingPolyMap, pd1, pd2) && hasIntersectionWay(pd2, intersectionWays)) {
+                        checkPolygonsForSharedNodes(r, pd1, pd2, sharedNodes);
                     }
                 }
             }
@@ -471,7 +470,7 @@ public class MultipolygonTest extends Test {
             // the two polygons may only share one or more segments but they may also intersect
             Area a1 = new Area(pd1.get());
             Area a2 = new Area(pd2.get());
-            PolygonIntersection areaRes = Geometry.polygonIntersection(a1, a2, 1e-6);
+            PolygonIntersection areaRes = Geometry.polygonIntersection(a1, a2);
             if (areaRes == PolygonIntersection.OUTSIDE)
                 return ExtPolygonIntersection.OUTSIDE;
             return ExtPolygonIntersection.CROSSING;
@@ -841,15 +840,13 @@ public class MultipolygonTest extends Test {
             final List<PolygonLevel> result = new ArrayList<>();
 
             for (PolyData pd : polygons) {
-                if (processOuterWay(level, polygons, result, pd) == null) {
-                    return null;
-                }
+                processOuterWay(level, polygons, result, pd);
             }
 
             return result;
         }
 
-        private Object processOuterWay(int level, List<PolyData> polygons, List<PolygonLevel> result, PolyData pd) {
+        private void processOuterWay(int level, List<PolyData> polygons, List<PolygonLevel> result, PolyData pd) {
             List<PolyData> inners = findInnerWaysCandidates(pd, polygons);
 
             if (inners != null) {
@@ -864,7 +861,6 @@ public class MultipolygonTest extends Test {
 
                 result.add(pol);
             }
-            return result;
         }
 
         /**
