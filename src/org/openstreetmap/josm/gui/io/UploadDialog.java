@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -489,19 +491,67 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             );
         }
 
-        protected boolean warnUploadTag(final String title, final String message, final String togglePref) {
-            String[] buttonTexts = new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")};
-            Icon[] buttonIcons = new Icon[] {
-                    new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).get(),
-                    new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
-                    new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
-                            new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()};
-            String[] tooltips = new String[] {
-                    tr("Return to the previous dialog to enter a more descriptive comment"),
-                    tr("Cancel and return to the previous dialog"),
-                    tr("Ignore this hint and upload anyway")};
+        /**
+         * Displays a warning message indicating that the upload comment is rejected.
+         * @param details details explaining why
+         * @return {@code true}
+         */
+        protected boolean warnRejectedUploadComment(String details) {
+            return warnRejectedUploadTag(
+                    tr("Please revise upload comment"),
+                    tr("Your upload comment is <i>rejected</i>.") + "<br />" + details
+            );
+        }
 
-            ExtendedDialog dlg = new ExtendedDialog((Component) dialog, title, buttonTexts) {
+        /**
+         * Displays a warning message indicating that the changeset source is rejected.
+         * @param details details explaining why
+         * @return {@code true}
+         */
+        protected boolean warnRejectedUploadSource(String details) {
+            return warnRejectedUploadTag(
+                    tr("Please revise changeset source"),
+                    tr("Your changeset source is <i>rejected</i>.") + "<br />" + details
+            );
+        }
+
+        /**
+         * Warn about an upload tag with the possibility of resuming the upload.
+         * @param title dialog title
+         * @param message dialog message
+         * @param togglePref preference entry to offer the user a "Do not show again" checkbox for the dialog
+         * @return {@code true} if the user wants to revise the upload tag
+         */
+        protected boolean warnUploadTag(final String title, final String message, final String togglePref) {
+            return warnUploadTag(title, message, togglePref, true);
+        }
+
+        /**
+         * Warn about an upload tag without the possibility of resuming the upload.
+         * @param title dialog title
+         * @param message dialog message
+         * @return {@code true}
+         */
+        protected boolean warnRejectedUploadTag(final String title, final String message) {
+            return warnUploadTag(title, message, null, false);
+        }
+
+        private boolean warnUploadTag(final String title, final String message, final String togglePref, boolean allowContinue) {
+            List<String> buttonTexts = new ArrayList<>(Arrays.asList(tr("Revise"), tr("Cancel")));
+            List<Icon> buttonIcons = new ArrayList<>(Arrays.asList(
+                    new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).get(),
+                    new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get()));
+            List<String> tooltips = new ArrayList<>(Arrays.asList(
+                    tr("Return to the previous dialog to enter a more descriptive comment"),
+                    tr("Cancel and return to the previous dialog")));
+            if (allowContinue) {
+                buttonTexts.add(tr("Continue as is"));
+                buttonIcons.add(new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
+                        new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get());
+                tooltips.add(tr("Ignore this hint and upload anyway"));
+            }
+
+            ExtendedDialog dlg = new ExtendedDialog((Component) dialog, title, buttonTexts.toArray(new String[] {})) {
                 @Override
                 public void setupDialog() {
                     super.setupDialog();
@@ -509,10 +559,12 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 }
             };
             dlg.setContent("<html>" + message + "</html>");
-            dlg.setButtonIcons(buttonIcons);
-            dlg.setToolTipTexts(tooltips);
+            dlg.setButtonIcons(buttonIcons.toArray(new Icon[] {}));
+            dlg.setToolTipTexts(tooltips.toArray(new String[] {}));
             dlg.setIcon(JOptionPane.WARNING_MESSAGE);
-            dlg.toggleEnable(togglePref);
+            if (allowContinue) {
+                dlg.toggleEnable(togglePref);
+            }
             dlg.setCancelButton(1, 2);
             return dlg.showDialog().getValue() != 3;
         }
@@ -541,18 +593,40 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             return result;
         }
 
+        static String validateUploadTag(String uploadValue, String preferencePrefix) {
+            // Check mandatory terms
+            List<String> missingTerms = Config.getPref().getList(preferencePrefix+".mandatory-terms")
+                .stream().filter(x -> !uploadValue.contains(x)).collect(Collectors.toList());
+            if (!missingTerms.isEmpty()) {
+                return tr("The following required terms are missing: {0}", missingTerms);
+            }
+            // Check forbidden terms
+            List<String> forbiddenTerms = Config.getPref().getList(preferencePrefix+".forbidden-terms")
+                    .stream().filter(uploadValue::contains).collect(Collectors.toList());
+            if (!forbiddenTerms.isEmpty()) {
+                return tr("The following forbidden terms have been found: {0}", forbiddenTerms);
+            }
+            return null;
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             // force update of model in case dialog is closed before focus lost event, see #17452
             dialog.forceUpdateActiveField();
 
-            if (isUploadCommentTooShort(dialog.getUploadComment()) && warnUploadComment()) {
-                // abort for missing comment
+            final String uploadComment = dialog.getUploadComment();
+            final String uploadCommentRejection = validateUploadTag(uploadComment, "upload.comment");
+            if ((isUploadCommentTooShort(uploadComment) && warnUploadComment()) ||
+                (uploadCommentRejection != null && warnRejectedUploadComment(uploadCommentRejection))) {
+                // abort for missing or rejected comment
                 dialog.handleMissingComment();
                 return;
             }
-            if (dialog.getUploadSource().trim().isEmpty() && warnUploadSource()) {
-                // abort for missing changeset source
+            final String uploadSource = dialog.getUploadSource();
+            final String uploadSourceRejection = validateUploadTag(uploadSource, "upload.source");
+            if ((Utils.isStripEmpty(uploadSource) && warnUploadSource()) ||
+                    (uploadSourceRejection != null && warnRejectedUploadSource(uploadSourceRejection))) {
+                // abort for missing or rejected changeset source
                 dialog.handleMissingSource();
                 return;
             }
@@ -561,8 +635,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
              * though, accept if key and value are empty (cf. xor). */
             List<String> emptyChangesetTags = new ArrayList<>();
             for (final Entry<String, String> i : dialog.getTags(true).entrySet()) {
-                final boolean isKeyEmpty = i.getKey() == null || i.getKey().trim().isEmpty();
-                final boolean isValueEmpty = i.getValue() == null || i.getValue().trim().isEmpty();
+                final boolean isKeyEmpty = Utils.isStripEmpty(i.getKey());
+                final boolean isValueEmpty = Utils.isStripEmpty(i.getValue());
                 final boolean ignoreKey = "comment".equals(i.getKey()) || "source".equals(i.getKey());
                 if ((isKeyEmpty ^ isValueEmpty) && !ignoreKey) {
                     emptyChangesetTags.add(tr("{0}={1}", i.getKey(), i.getValue()));
@@ -647,7 +721,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
             Changeset cs = (Changeset) evt.getNewValue();
-            setChangesetTags(dataSet, cs == null); // keep comment/source of first tab for new changesets 
+            setChangesetTags(dataSet, cs == null); // keep comment/source of first tab for new changesets
             if (cs == null) {
                 tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
             } else {

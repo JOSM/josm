@@ -20,6 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.io.UploadDialog.UploadAction;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -256,5 +257,30 @@ public class UploadDialogTest {
                 BasicUploadSettingsPanel.SOURCE_HISTORY_KEY,
                 UploadDialog::getLastChangesetSourceFromHistory,
                 BasicUploadSettingsPanel.getDefaultSources().get(0));
+    }
+
+    private static void doTestValidateUploadTag(String prefix) {
+        Config.getPref().putList(prefix + ".mandatory-terms", null);
+        Config.getPref().putList(prefix + ".forbidden-terms", null);
+        assertNull(UploadAction.validateUploadTag("foo", prefix));
+
+        Config.getPref().putList(prefix + ".mandatory-terms", Arrays.asList("foo"));
+        assertNull(UploadAction.validateUploadTag("foo", prefix));
+        assertEquals("The following required terms are missing: [foo]",
+                UploadAction.validateUploadTag("bar", prefix));
+
+        Config.getPref().putList(prefix + ".forbidden-terms", Arrays.asList("bar"));
+        assertNull(UploadAction.validateUploadTag("foo", prefix));
+        assertEquals("The following forbidden terms have been found: [bar]",
+                UploadAction.validateUploadTag("foobar", prefix));
+    }
+
+    /**
+     * Test of {@link UploadDialog.UploadAction#validateUploadTag} method.
+     */
+    @Test
+    public void testvalidateUploadTag() {
+        doTestValidateUploadTag("upload.comment");
+        doTestValidateUploadTag("upload.source");
     }
 }
