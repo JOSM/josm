@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -580,7 +581,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         }
 
         static boolean isUploadCommentTooShort(String comment) {
-            String s = comment.trim();
+            String s = Utils.strip(comment);
             boolean result = true;
             if (!s.isEmpty()) {
                 UnicodeBlock block = Character.UnicodeBlock.of(s.charAt(0));
@@ -593,16 +594,21 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             return result;
         }
 
-        static String validateUploadTag(String uploadValue, String preferencePrefix) {
+        private static String lc(String s) {
+            return s.toLowerCase(Locale.ENGLISH);
+        }
+
+        static String validateUploadTag(String uploadValue, String preferencePrefix, List<String> defMandatory, List<String> defForbidden) {
+            String uploadValueLc = lc(uploadValue);
             // Check mandatory terms
-            List<String> missingTerms = Config.getPref().getList(preferencePrefix+".mandatory-terms")
-                .stream().filter(x -> !uploadValue.contains(x)).collect(Collectors.toList());
+            List<String> missingTerms = Config.getPref().getList(preferencePrefix+".mandatory-terms", defMandatory)
+                .stream().map(UploadAction::lc).filter(x -> !uploadValueLc.contains(x)).collect(Collectors.toList());
             if (!missingTerms.isEmpty()) {
                 return tr("The following required terms are missing: {0}", missingTerms);
             }
             // Check forbidden terms
-            List<String> forbiddenTerms = Config.getPref().getList(preferencePrefix+".forbidden-terms")
-                    .stream().filter(uploadValue::contains).collect(Collectors.toList());
+            List<String> forbiddenTerms = Config.getPref().getList(preferencePrefix+".forbidden-terms", defForbidden)
+                    .stream().map(UploadAction::lc).filter(uploadValueLc::contains).collect(Collectors.toList());
             if (!forbiddenTerms.isEmpty()) {
                 return tr("The following forbidden terms have been found: {0}", forbiddenTerms);
             }
@@ -614,8 +620,10 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             // force update of model in case dialog is closed before focus lost event, see #17452
             dialog.forceUpdateActiveField();
 
+            final List<String> def = Collections.emptyList();
             final String uploadComment = dialog.getUploadComment();
-            final String uploadCommentRejection = validateUploadTag(uploadComment, "upload.comment");
+            final String uploadCommentRejection = validateUploadTag(
+                    uploadComment, "upload.comment", def, def);
             if ((isUploadCommentTooShort(uploadComment) && warnUploadComment()) ||
                 (uploadCommentRejection != null && warnRejectedUploadComment(uploadCommentRejection))) {
                 // abort for missing or rejected comment
@@ -623,7 +631,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 return;
             }
             final String uploadSource = dialog.getUploadSource();
-            final String uploadSourceRejection = validateUploadTag(uploadSource, "upload.source");
+            final String uploadSourceRejection = validateUploadTag(
+                    uploadSource, "upload.source", def, Collections.singletonList("google"));
             if ((Utils.isStripEmpty(uploadSource) && warnUploadSource()) ||
                     (uploadSourceRejection != null && warnRejectedUploadSource(uploadSourceRejection))) {
                 // abort for missing or rejected changeset source
