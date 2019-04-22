@@ -3,32 +3,22 @@ package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-
-import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Command that changes the nodes list of a way.
  * The same can be done with ChangeCommand, but this is more
  * efficient. (Needed for the duplicate node fixing
- * tool of the validator plugin, when processing large data sets.)
+ * tool of the validator, when processing large data sets.)
  *
  * @author Imi
  */
-public class ChangeNodesCommand extends Command {
-
-    private final Way way;
-    private final List<Node> newNodes;
+public class ChangeNodesCommand extends AbstractNodesCommand<List<Node>> {
 
     /**
      * Constructs a new {@code ChangeNodesCommand}.
@@ -36,7 +26,7 @@ public class ChangeNodesCommand extends Command {
      * @param newNodes The new list of nodes for the given way
      */
     public ChangeNodesCommand(Way way, List<Node> newNodes) {
-        this(way.getDataSet(), way, newNodes);
+        super(way.getDataSet(), way, newNodes);
     }
 
     /**
@@ -47,49 +37,16 @@ public class ChangeNodesCommand extends Command {
      * @since 12726
      */
     public ChangeNodesCommand(DataSet ds, Way way, List<Node> newNodes) {
-        super(ds);
-        this.way = way;
-        this.newNodes = newNodes;
-        if (newNodes.isEmpty()) {
-            throw new IllegalArgumentException("Cannot set nodes to be an empty list.");
-        }
+        super(ds, way, newNodes);
     }
 
     @Override
-    public boolean executeCommand() {
-        super.executeCommand();
-        way.setNodes(newNodes);
-        way.setModified(true);
-        return true;
-    }
-
-    @Override
-    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
-        modified.add(way);
+    public void modifyWay() {
+        way.setNodes(cmdNodes);
     }
 
     @Override
     public String getDescriptionText() {
         return tr("Change nodes of {0}", way.getDisplayName(DefaultNameFormatter.getInstance()));
-    }
-
-    @Override
-    public Icon getDescriptionIcon() {
-        return ImageProvider.get(OsmPrimitiveType.WAY);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), way, newNodes);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (!super.equals(obj)) return false;
-        ChangeNodesCommand that = (ChangeNodesCommand) obj;
-        return Objects.equals(way, that.way) &&
-                Objects.equals(newNodes, that.newNodes);
     }
 }

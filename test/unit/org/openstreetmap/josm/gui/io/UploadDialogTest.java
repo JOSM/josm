@@ -279,7 +279,7 @@ public class UploadDialogTest {
      * Test of {@link UploadDialog.UploadAction#validateUploadTag} method.
      */
     @Test
-    public void testvalidateUploadTag() {
+    public void testValidateUploadTag() {
         doTestValidateUploadTag("upload.comment");
         doTestValidateUploadTag("upload.source");
     }
