@@ -4808,6 +4808,9 @@ node:tagged {
     symbol-stroke-color: none;
     symbol-fill-color: node_tagged#00ffff;
 }
+node:tagged[!is_prop_set("icon-image")]!.maxspeedclass {
+    symbol-fill-color: node_tagged_without_icon#00ffff; /* by default same color as above but user configurable */
+}
 way > node|z-14[setting("shrink_nodes")][setting("hide_tagged_waynodes")]:tagged { /* todo: check which is faster: `way > node {...}` or `node!:unconnected {...}`, also at other occurrences in this file */
     symbol-shape: none;
 }
