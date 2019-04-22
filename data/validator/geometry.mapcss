@@ -131,15 +131,19 @@ way[route=bus] {
   throwError: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
 }
 
-/* #14395 */
-way >[index=1] node,
-way >[index=-1] node {
-  set first_last_node;
-}
+/* #14395, #17025 */
 way[highway][area!=yes][!tunnel][!covered] > node {
   set node_in_highway;
 }
-way[building][building!=no] > node.node_in_highway!.first_last_node {
+way[highway][area!=yes][!tunnel][!covered]:closed > node {
+  set node_in_closed_highway;
+}
+way[highway][area!=yes][!tunnel][!covered] >[index=1] node,
+way[highway][area!=yes][!tunnel][!covered] >[index=-1] node {
+  set first_last_highway_node;
+}
+way[building][building!=no] > node.node_in_closed_highway,
+way[building][building!=no] > node.node_in_highway!.first_last_highway_node {
   throwWarning: tr("node connects highway and building");
 }
 
@@ -279,6 +283,10 @@ way[waterway] > node.node_in_bridge {
 way[highway] > node[tourism=information][information=guidepost] {
   set guidepost;
   throwOther: tr("{0} node connected to a highway", "{1.tag}");
+}
+way >[index=1] node,
+way >[index=-1] node {
+  set first_last_node;
 }
 way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash|ferry_terminal|weighbridge|taxi|toilets)$/],
 way[highway] > node[building][!entrance],
