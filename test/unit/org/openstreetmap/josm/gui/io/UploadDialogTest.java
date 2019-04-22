@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -260,19 +261,22 @@ public class UploadDialogTest {
     }
 
     private static void doTestValidateUploadTag(String prefix) {
+        List<String> def = Collections.emptyList();
         Config.getPref().putList(prefix + ".mandatory-terms", null);
         Config.getPref().putList(prefix + ".forbidden-terms", null);
-        assertNull(UploadAction.validateUploadTag("foo", prefix));
+        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def));
 
         Config.getPref().putList(prefix + ".mandatory-terms", Arrays.asList("foo"));
-        assertNull(UploadAction.validateUploadTag("foo", prefix));
+        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def));
         assertEquals("The following required terms are missing: [foo]",
-                UploadAction.validateUploadTag("bar", prefix));
+                UploadAction.validateUploadTag("bar", prefix, def, def));
 
         Config.getPref().putList(prefix + ".forbidden-terms", Arrays.asList("bar"));
-        assertNull(UploadAction.validateUploadTag("foo", prefix));
+        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def));
         assertEquals("The following forbidden terms have been found: [bar]",
-                UploadAction.validateUploadTag("foobar", prefix));
+                UploadAction.validateUploadTag("foobar", prefix, def, def));
+        assertEquals("The following forbidden terms have been found: [bar]",
+                UploadAction.validateUploadTag("FOOBAR", prefix, def, def));
     }
 
     /**
