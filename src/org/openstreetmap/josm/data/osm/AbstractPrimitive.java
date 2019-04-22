@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiPredicate;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
@@ -628,6 +629,17 @@ public abstract class AbstractPrimitive implements IPrimitive {
         }
     }
 
+    protected final String doGet(String key, BiPredicate<String, String> predicate) {
+        if (key == null)
+            return null;
+        if (keys == null)
+            return null;
+        for (int i = 0; i < keys.length; i += 2) {
+            if (predicate.test(keys[i], key)) return keys[i+1];
+        }
+        return null;
+    }
+
     /**
      * Replies the value for key <code>key</code>. Replies null, if <code>key</code> is null.
      * Replies null, if there is no value for the given key.
@@ -637,14 +649,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public final String get(String key) {
-        if (key == null)
-            return null;
-        if (keys == null)
-            return null;
-        for (int i = 0; i < keys.length; i += 2) {
-            if (keys[i].equals(key)) return keys[i+1];
-        }
-        return null;
+        return doGet(key, String::equals);
     }
 
     /**
@@ -653,14 +658,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * @return The value for a key that matches the given key ignoring case.
      */
     public final String getIgnoreCase(String key) {
-        if (key == null)
-            return null;
-        if (keys == null)
-            return null;
-        for (int i = 0; i < keys.length; i += 2) {
-            if (keys[i].equalsIgnoreCase(key)) return keys[i+1];
-        }
-        return null;
+        return doGet(key, String::equalsIgnoreCase);
     }
 
     @Override
