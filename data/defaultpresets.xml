@@ -5368,6 +5368,7 @@
             <optional>
                 <text key="inscription" text="Inscription" />
                 <text key="artist_name" text="Artist Name" />
+                <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
                 <text key="start_date" text="Start date" />
                 <text key="wikipedia" text="Wikipedia" />
             </optional>
