@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -88,7 +89,8 @@ public class UnJoinNodeWayAction extends JosmAction {
         Way selectedWay = applicableWays.get(0);
 
         // I'm sure there's a better way to handle this
-        UndoRedoHandler.getInstance().add(new RemoveNodesCommand(selectedWay, selectedNodes));
+        UndoRedoHandler.getInstance().add(
+                new RemoveNodesCommand(selectedWay, new HashSet<>(selectedNodes)));
     }
 
     /**

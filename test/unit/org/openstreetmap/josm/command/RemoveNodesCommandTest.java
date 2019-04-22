@@ -51,7 +51,7 @@ public class RemoveNodesCommandTest {
     @Test
     public void testExecute() {
         RemoveNodesCommand command = new RemoveNodesCommand(testData.existingWay,
-                Collections.singletonList(testData.existingNode));
+                Collections.singleton(testData.existingNode));
 
         command.executeCommand();
 
@@ -66,7 +66,7 @@ public class RemoveNodesCommandTest {
     @Test
     public void testUndo() {
         RemoveNodesCommand command = new RemoveNodesCommand(testData.existingWay,
-                Collections.singletonList(testData.existingNode));
+                Collections.singleton(testData.existingNode));
 
         command.executeCommand();
 
@@ -91,7 +91,7 @@ public class RemoveNodesCommandTest {
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
         RemoveNodesCommand command = new RemoveNodesCommand(testData.existingWay,
-                Collections.singletonList(testData.existingNode));
+                Collections.singleton(testData.existingNode));
         command.fillModifiedData(modified, deleted, added);
         assertArrayEquals(new Object[] {testData.existingWay }, modified.toArray());
         assertArrayEquals(new Object[] {}, deleted.toArray());
@@ -104,7 +104,7 @@ public class RemoveNodesCommandTest {
     @Test
     public void testGetParticipatingPrimitives() {
         RemoveNodesCommand command = new RemoveNodesCommand(testData.existingWay,
-                Collections.singletonList(testData.existingNode));
+                Collections.singleton(testData.existingNode));
         command.executeCommand();
         assertArrayEquals(new Object[] {testData.existingWay }, command.getParticipatingPrimitives().toArray());
     }
@@ -114,7 +114,7 @@ public class RemoveNodesCommandTest {
      */
     @Test
     public void testDescription() {
-        assertTrue(new RemoveNodesCommand(testData.existingWay, Collections.singletonList(testData.existingNode))
+        assertTrue(new RemoveNodesCommand(testData.existingWay, Collections.singleton(testData.existingNode))
                 .getDescriptionText().matches("Removed nodes from .*"));
     }
 

@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -497,8 +498,8 @@ public abstract class AbstractPrimitive implements IPrimitive {
         String[] newKeys = new String[keys.size() * 2];
         int index = 0;
         for (Entry<String, String> entry:keys.entrySet()) {
-            newKeys[index++] = entry.getKey();
-            newKeys[index++] = entry.getValue();
+            newKeys[index++] = Objects.requireNonNull(entry.getKey());
+            newKeys[index++] = Objects.requireNonNull(entry.getValue());
         }
         this.keys = newKeys;
         keysChangedImpl(originalKeys);
