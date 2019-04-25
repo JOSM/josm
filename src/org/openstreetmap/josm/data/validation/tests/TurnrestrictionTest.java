@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 
 /**
- * Checks if turnrestrictions are valid
+ * Checks if turn restrictions are valid
  * @since 3669
  */
 public class TurnrestrictionTest extends Test {
@@ -52,7 +52,7 @@ public class TurnrestrictionTest extends Test {
      * Constructs a new {@code TurnrestrictionTest}.
      */
     public TurnrestrictionTest() {
-        super(tr("Turnrestrictions"), tr("This test checks if turnrestrictions are valid."));
+        super(tr("Turn restrictions"), tr("This test checks if turn restrictions are valid."));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class TurnrestrictionTest extends Test {
 
         if (!r.hasTag("restriction", SUPPORTED_RESTRICTIONS)) {
             errors.add(TestError.builder(this, Severity.ERROR, UNKNOWN_RESTRICTION)
-                    .message(tr("Unknown turnrestriction"))
+                    .message(tr("Unknown turn restriction"))
                     .primitives(r)
                     .build());
             return;
@@ -115,7 +115,7 @@ public class TurnrestrictionTest extends Test {
                     break;
                 default:
                     errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_ROLE)
-                            .message(tr("Unexpected role ''{0}'' in turnrestriction", m.getRole()))
+                            .message(tr("Unexpected role ''{0}'' in turn restriction", m.getRole()))
                             .primitives(l)
                             .highlight(m.getMember())
                             .build());
@@ -134,14 +134,14 @@ public class TurnrestrictionTest extends Test {
                     }
                 } else {
                     errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_ROLE)
-                            .message(tr("Unexpected role ''{0}'' in turnrestriction", m.getRole()))
+                            .message(tr("Unexpected role ''{0}'' in turn restriction", m.getRole()))
                             .primitives(l)
                             .highlight(m.getMember())
                             .build());
                 }
             } else {
                 errors.add(TestError.builder(this, Severity.WARNING, UNEXPECTED_TYPE)
-                        .message(tr("Unexpected member type in turnrestriction"))
+                        .message(tr("Unexpected member type in turn restriction"))
                         .primitives(l)
                         .highlight(m.getMember())
                         .build());
@@ -224,7 +224,7 @@ public class TurnrestrictionTest extends Test {
             final Node viaNode = (Node) via.get(0);
             if (isFullOneway(toWay) && viaNode.equals(toWay.lastNode(true))) {
                 errors.add(TestError.builder(this, Severity.WARNING, SUPERFLUOUS)
-                        .message(tr("Superfluous turnrestriction as \"to\" way is oneway"))
+                        .message(tr("Superfluous turn restriction as \"to\" way is oneway"))
                         .primitives(r)
                         .highlight(toWay)
                         .build());
@@ -232,7 +232,7 @@ public class TurnrestrictionTest extends Test {
             }
             if (isFullOneway(fromWay) && viaNode.equals(fromWay.firstNode(true))) {
                 errors.add(TestError.builder(this, Severity.WARNING, SUPERFLUOUS)
-                        .message(tr("Superfluous turnrestriction as \"from\" way is oneway"))
+                        .message(tr("Superfluous turn restriction as \"from\" way is oneway"))
                         .primitives(r)
                         .highlight(fromWay)
                         .build());
@@ -247,7 +247,7 @@ public class TurnrestrictionTest extends Test {
         } else {
             if (isFullOneway(toWay) && ((Way) via.get(via.size() - 1)).isFirstLastNode(toWay.lastNode(true))) {
                 errors.add(TestError.builder(this, Severity.WARNING, SUPERFLUOUS)
-                        .message(tr("Superfluous turnrestriction as \"to\" way is oneway"))
+                        .message(tr("Superfluous turn restriction as \"to\" way is oneway"))
                         .primitives(r)
                         .highlight(toWay)
                         .build());
@@ -255,7 +255,7 @@ public class TurnrestrictionTest extends Test {
             }
             if (isFullOneway(fromWay) && ((Way) via.get(0)).isFirstLastNode(fromWay.firstNode(true))) {
                 errors.add(TestError.builder(this, Severity.WARNING, SUPERFLUOUS)
-                        .message(tr("Superfluous turnrestriction as \"from\" way is oneway"))
+                        .message(tr("Superfluous turn restriction as \"from\" way is oneway"))
                         .primitives(r)
                         .highlight(fromWay)
                         .build());
