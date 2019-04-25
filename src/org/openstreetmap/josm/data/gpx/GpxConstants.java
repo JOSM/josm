@@ -160,7 +160,7 @@ public interface GpxConstants {
             GPX_NAME, GPX_CMT, GPX_DESC, GPX_SRC, META_LINKS, "number", PT_TYPE, META_EXTENSIONS));
 
     /**
-     * Possible fix values.
+     * Possible fix values. NMEA 0183 Version 4.00
      */
-    Collection<String> FIX_VALUES = Collections.unmodifiableList(Arrays.asList("none", "2d", "3d", "dgps", "pps"));
+    Collection<String> FIX_VALUES = Collections.unmodifiableList(Arrays.asList("none", "2d", "3d", "dgps", "pps","rtk", "float rtk", "estimated", "manual", "simulated"));
 }

@@ -410,6 +410,24 @@ public class NmeaReader implements IGpxReader {
                     case 2:
                         currentwp.put(GpxConstants.PT_FIX, "dgps");
                         break;
+                    case 3:
+                        currentwp.put(GpxConstants.PT_FIX, "pps");
+                        break;
+                    case 4:
+                        currentwp.put(GpxConstants.PT_FIX, "rtk");
+                        break;
+                    case 5:
+                        currentwp.put(GpxConstants.PT_FIX, "float rtk");
+                        break;
+                    case 6:
+                        currentwp.put(GpxConstants.PT_FIX, "estimated");
+                        break;
+                    case 7:
+                        currentwp.put(GpxConstants.PT_FIX, "manual");
+                        break;
+                    case 8:
+                        currentwp.put(GpxConstants.PT_FIX, "simulated");
+                        break;
                     default:
                         break;
                     }
