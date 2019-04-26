@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.util.Arrays;
@@ -17,6 +19,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.io.OsmReader;
@@ -219,5 +222,40 @@ public class GeometryTest {
         node6.setCoor(new LatLon(1.99999999, 2.0));
         node8.setCoor(new LatLon(1.99999999, 0.0));
         assertEquals(Geometry.PolygonIntersection.OUTSIDE, Geometry.polygonIntersection(poly1, poly2));
+    }
+
+    /**
+     * Test of {@link Geometry#isPolygonInsideMultiPolygon}
+     * See #17652. Triangle crosses outer way of multipolygon.
+     */
+    @Test
+    public void testIsPolygonInsideMultiPolygon() {
+        Node node1 = new Node(new LatLon(1.01, 1.0));
+        Node node2 = new Node(new LatLon(1.01, 1.1));
+        Node node3 = new Node(new LatLon(1.02, 1.05));
+        Way w1 = new Way();
+        w1.setNodes(Arrays.asList(node1, node2, node3, node1));
+        w1.put("building", "yes");
+
+        Node node4 = new Node(new LatLon(1.0, 1.09));
+        Node node5 = new Node(new LatLon(1.0, 1.12));
+        Node node6 = new Node(new LatLon(1.1, 1.12));
+        Node node7 = new Node(new LatLon(1.1, 1.09));
+        Way outer = new Way();
+        outer.setNodes(Arrays.asList(node4, node5, node6, node7, node4));
+        Node node8 = new Node(new LatLon(1.04, 1.1));
+        Node node9 = new Node(new LatLon(1.04, 1.11));
+        Node node10 = new Node(new LatLon(1.06, 1.105));
+        Way inner = new Way();
+        inner.setNodes(Arrays.asList(node8, node9, node10, node8));
+        Relation mp = new Relation();
+        mp.addMember(new RelationMember("outer",outer));
+        mp.addMember(new RelationMember("inner",inner));
+        mp.put("type", "multipolygon");
+        assertFalse(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp, null));
+
+        node4.setCoor(new LatLon(1.006, 0.99));
+        // now w1 is inside
+        assertTrue(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp, null));
     }
 }
