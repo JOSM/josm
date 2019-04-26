@@ -166,8 +166,8 @@ public class OsmApiUrlInputPanel extends JPanel {
 
     /**
      * Returns the entered API URL, stripped of leading and trailing white characters.
-     * @return the entered API URL, stripped of leading and trailing white characters.
-     *         May be an empty string if nothing has been entered. In this case, it means the user wants to use {@link IUrls#getDefaultOsmApiUrl}.
+     * @return the entered API URL, stripped of leading and trailing white characters. May be an empty string
+     *         if nothing has been entered. In this case, it means the user wants to use {@link IUrls#getDefaultOsmApiUrl}.
      * @see Utils#strip(String)
      * @since 6602
      */

@@ -162,5 +162,6 @@ public interface GpxConstants {
     /**
      * Possible fix values. NMEA 0183 Version 4.00
      */
-    Collection<String> FIX_VALUES = Collections.unmodifiableList(Arrays.asList("none", "2d", "3d", "dgps", "pps","rtk", "float rtk", "estimated", "manual", "simulated"));
+    Collection<String> FIX_VALUES = Collections.unmodifiableList(
+            Arrays.asList("none", "2d", "3d", "dgps", "pps", "rtk", "float rtk", "estimated", "manual", "simulated"));
 }
