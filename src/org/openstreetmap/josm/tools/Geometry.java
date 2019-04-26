@@ -11,7 +11,6 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -1002,15 +1001,14 @@ public final class Geometry {
         for (JoinedPolygon out : outerInner.a) {
             if (nodes.size() == 1
                     ? nodeInsidePolygon(nodes.get(0), out.getNodes())
-                    : EnumSet.of(PolygonIntersection.FIRST_INSIDE_SECOND, PolygonIntersection.CROSSING).contains(
-                            polygonIntersection(nodes, out.getNodes()))) {
+                    : PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(nodes, out.getNodes())) {
                 boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
                 for (JoinedPolygon in : outerInner.b) {
-                    if (polygonIntersection(in.getNodes(), out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND
-                            && (nodes.size() == 1
-                            ? nodeInsidePolygon(nodes.get(0), in.getNodes())
-                            : polygonIntersection(nodes, in.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND)) {
+                    if (nodes.size() == 1 ? nodeInsidePolygon(nodes.get(0), in.getNodes())
+                            : polygonIntersection(nodes, in.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND
+                                    && polygonIntersection(in.getNodes(),
+                                            out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND) {
                         insideInner = true;
                         break;
                     }
