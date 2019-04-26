@@ -249,8 +249,8 @@ public class GeometryTest {
         Way inner = new Way();
         inner.setNodes(Arrays.asList(node8, node9, node10, node8));
         Relation mp = new Relation();
-        mp.addMember(new RelationMember("outer",outer));
-        mp.addMember(new RelationMember("inner",inner));
+        mp.addMember(new RelationMember("outer", outer));
+        mp.addMember(new RelationMember("inner", inner));
         mp.put("type", "multipolygon");
         assertFalse(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp, null));
 
