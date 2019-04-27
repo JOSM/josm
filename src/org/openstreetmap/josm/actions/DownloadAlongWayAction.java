@@ -36,7 +36,7 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
      */
     public DownloadAlongWayAction() {
         super(tr("Download along..."), "download_along_way", tr("Download OSM data along the selected ways."),
-                Shortcut.registerShortcut("tools:download_along", tr("Tool: {0}", tr("Download Along")),
+                Shortcut.registerShortcut("file:download_along", tr("File: {0}", tr("Download Along")),
                         KeyEvent.VK_D, Shortcut.ALT_SHIFT), true);
     }
 
