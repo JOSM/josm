@@ -103,7 +103,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @author Gerd
      *
      */
-    private static class IndexData {
+    private static final class IndexData {
         final Map<MapCSSRule, TagCheck> ruleToCheckMap = new HashMap<>();
 
         /**
