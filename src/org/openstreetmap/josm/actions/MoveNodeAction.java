@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 import org.openstreetmap.josm.command.MoveCommand;
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This action displays a dialog with the coordinates of a node where the user can change them,
@@ -27,8 +29,8 @@ public final class MoveNodeAction extends JosmAction {
      */
     public MoveNodeAction() {
         super(tr("Move Node..."), "movenode", tr("Edit latitude and longitude of a node."),
-                null, /* no shortcut */
-                true);
+                Shortcut.registerShortcut("movenode", tr("Edit: {0}", tr("Move Node...")),
+                        KeyEvent.VK_M, Shortcut.NONE), true);
         setHelpId(ht("/Action/MoveNode"));
     }
 
