@@ -676,6 +676,7 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, download);
         add(fileMenu, downloadInView, true);
+        add(fileMenu, downloadAlongWay);
         add(fileMenu, downloadPrimitive);
         add(fileMenu, searchNotes);
         add(fileMenu, downloadNotesInView);
@@ -818,7 +819,6 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, joinAreas);
         add(toolsMenu, createMultipolygon);
         add(toolsMenu, updateMultipolygon);
-        add(toolsMenu, downloadAlongWay);
 
         // -- changeset manager toggle action
         final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManager,
