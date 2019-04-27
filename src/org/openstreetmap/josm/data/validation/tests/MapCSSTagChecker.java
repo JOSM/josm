@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.FixCommand.evaluateObject;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Rectangle;
@@ -103,7 +104,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @author Gerd
      *
      */
-    private static class IndexData {
+    private static final class IndexData {
         final Map<MapCSSRule, TagCheck> ruleToCheckMap = new HashMap<>();
 
         /**
