@@ -127,11 +127,11 @@ public class MapCSSTagChecker extends Test.TagTest {
          */
         final MapCSSRuleIndex multipolygonRules = new MapCSSRuleIndex();
 
-        IndexData(MultiMap<String, TagCheck> checks) {
-            buildIndex(checks);
+        private IndexData(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity) {
+            buildIndex(checks, includeOtherSeverity);
         }
 
-        private void buildIndex(MultiMap<String, TagCheck> checks) {
+        private void buildIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity) {
             List<TagCheck> allChecks = new ArrayList<>();
             for (Set<TagCheck> cs : checks.values()) {
                 allChecks.addAll(cs);
@@ -146,6 +146,12 @@ public class MapCSSTagChecker extends Test.TagTest {
 
             // optimization: filter rules for different primitive types
             for (TagCheck c : allChecks) {
+                if (!includeOtherSeverity && Severity.OTHER == c.getSeverity()
+                        && c.setClassExpressions.isEmpty()) {
+                    // Ignore "information" level checks if not wanted, unless they also set a MapCSS class
+                    continue;
+                }
+
                 for (Selector s : c.rule.selectors) {
                     // find the rightmost selector, this must be a GeneralSelector
                     Selector selRightmost = s;
@@ -836,7 +842,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
         final List<TestError> res = new ArrayList<>();
         if (indexData == null)
-            indexData = new IndexData(checks);
+            indexData = new IndexData(checks, includeOtherSeverity);
 
         MapCSSRuleIndex matchingRuleIndex = indexData.get(p);
 
@@ -851,17 +857,12 @@ public class MapCSSTagChecker extends Test.TagTest {
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 TagCheck check = indexData.getCheck(r);
                 if (check != null) {
-                    boolean ignoreError = Severity.OTHER == check.getSeverity() && !includeOtherSeverity;
-                    // Do not run "information" level checks if not wanted, unless they also set a MapCSS class
-                    if (ignoreError && check.setClassExpressions.isEmpty()) {
-                        continue;
-                    }
                     if (r.declaration == lastDeclUsed)
                         continue; // don't apply one declaration more than once
                     lastDeclUsed = r.declaration;
 
                     r.declaration.execute(env);
-                    if (!ignoreError && !check.errors.isEmpty()) {
+                    if (!check.errors.isEmpty()) {
                         final TestError error = check.getErrorForPrimitive(p, r.selector, env, new MapCSSTagCheckerAndRule(check.rule));
                         if (error != null) {
                             res.add(error);
@@ -1094,7 +1095,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         super.startTest(progressMonitor);
         super.setShowElements(true);
         if (indexData == null) {
-            indexData = new IndexData(checks);
+            indexData = new IndexData(checks, ValidatorPrefHelper.PREF_OTHER.get());
         }
     }
 
