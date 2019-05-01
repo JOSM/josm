@@ -55,6 +55,8 @@
         <property name="jacoco.inclbootstrapclasses" value="false" />
         <property name="jacoco.inclnolocationclasses" value="false" />
         <property name="junit.printsummary" value="on" />
+        <property name="default-junit-includes" value="**/*Test.class"/>
+        <property name="default-junitIT-includes" value="**/*TestIT.class"/>
         <!-- build parameter: compression level (ant -Dclevel=N)
                  N ranges from 0 (no compression) to 9 (maximum compression)
                  default: 9 -->
@@ -501,6 +503,8 @@ Build-Date: ${build.tstamp}
         <attribute name="testfamily"/>
         <attribute name="testITsuffix" default=""/>
         <attribute name="coverage" default="${coverageByDefault}"/>
+        <attribute name="includes" default="${default-junit@{testITsuffix}-includes}"/>
+        <attribute name="excludes" default="${default-junit@{testITsuffix}-excludes}"/>
         <sequential>
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
             <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="${jacoco.includes}"
@@ -548,7 +552,7 @@ Build-Date: ${build.tstamp}
                     <formatter type="plain"/>
                     <formatter type="xml"/>
                     <batchtest fork="yes" todir="${test.dir}/report">
-                        <fileset dir="${test.dir}/build/@{testfamily}" includes="**/*Test@{testITsuffix}.class"/>
+                        <fileset dir="${test.dir}/build/@{testfamily}" includes="@{includes}" excludes="@{excludes}"/>
                     </batchtest>
                 </junit>
             </jacoco:coverage>
