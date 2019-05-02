@@ -33,12 +33,12 @@ public class GpxDistanceTest {
         Node node1 = new Node();
         Node node2 = new Node();
         Way way = new Way();
-        node1.setCoor(new LatLon(0, 0));
-        node2.setCoor(new LatLon(0, 1));
+        node1.setCoor(new LatLon(0.5, 0));
+        node2.setCoor(new LatLon(-0.5, 0));
         way.addNode(node1);
         way.addNode(node2);
 
-        WayPoint waypoint = new WayPoint(new LatLon(1, 0));
+        WayPoint waypoint = new WayPoint(new LatLon(0, 1));
 
         double distance = GpxDistance.getDistanceWay(null, waypoint);
         assertEquals(Double.MAX_VALUE, distance, 0.1);
@@ -103,9 +103,7 @@ public class GpxDistanceTest {
 
         en = new EastNorth(0, 1);
         distance = GpxDistance.getDistanceEastNorth(en, waypoint);
-        /* 111319.49077 uses the WGS84/NAD38/GRS80 model for
-         * the distance between (0, 0) and (0, 1) */
-        assertEquals(111319.49077, distance, 0.1);
+        assertEquals(1, distance, 0.000001);
     }
 
 
