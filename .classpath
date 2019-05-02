@@ -83,32 +83,12 @@
 			<accessrule kind="discouraged" pattern="javafx/util/Duration"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="tools/pmd/commons-lang3-3.8.1.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="tools/spotbugs/spotbugs-annotations.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="tools/groovy/groovy-cli-commons-2.5.5.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="tools/groovy/groovy-xml-2.5.5.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
