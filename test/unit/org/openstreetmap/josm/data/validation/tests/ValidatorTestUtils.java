@@ -5,8 +5,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +35,7 @@ public final class ValidatorTestUtils {
     static <T extends OsmPrimitive> void testSampleFile(String sampleFile,
             Function<DataSet, Iterable<T>> provider, Predicate<String> namePredicate,
             Test... tests) throws Exception {
-        try (InputStream is = new FileInputStream(sampleFile)) {
+        try (InputStream is = Files.newInputStream(Paths.get(sampleFile))) {
             for (T t: provider.apply(OsmReader.parseDataSet(is, null))) {
                 String name = DefaultNameFormatter.getInstance().format(t);
                 List<TestError> errors = new ArrayList<>();

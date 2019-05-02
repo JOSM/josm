@@ -3,7 +3,9 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +98,7 @@ public class OrthogonalizeActionTest {
     }
 
     DataSet performTest(String... search) throws Exception {
-        try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "orthogonalize.osm")) {
+        try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "orthogonalize.osm"))) {
             final DataSet ds = OsmReader.parseDataSet(in, null);
             // TODO: Executing commands depends on active edit layer
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "ds", null));

@@ -6,9 +6,10 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
@@ -79,10 +80,10 @@ public abstract class AbstractMapRendererPerformanceTestParent {
         StyledMapRenderer.PREFERENCE_ANTIALIASING_USE.put(true);
         StyledMapRenderer.PREFERENCE_TEXT_ANTIALIASING.put("gasp");
 
-        try (InputStream fisR = new FileInputStream("data_nodist/restriction.osm");
-                InputStream fisM = new FileInputStream("data_nodist/multipolygon.osm");
-                InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
-                InputStream fisO = Compression.getUncompressedFileInputStream(new File("data_nodist/overpass-download.osm.bz2"));) {
+        try (InputStream fisR = Files.newInputStream(Paths.get("data_nodist/restriction.osm"));
+             InputStream fisM = Files.newInputStream(Paths.get("data_nodist/multipolygon.osm"));
+             InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
+             InputStream fisO = Compression.getUncompressedFileInputStream(new File("data_nodist/overpass-download.osm.bz2"));) {
             dsRestriction = OsmReader.parseDataSet(fisR, NullProgressMonitor.INSTANCE);
             dsMultipolygon = OsmReader.parseDataSet(fisM, NullProgressMonitor.INSTANCE);
             dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);

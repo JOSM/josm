@@ -8,9 +8,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,7 +59,7 @@ public class OsmReaderTest {
         OsmReader.registerPostprocessor(unregistered);
         OsmReader.deregisterPostprocessor(unregistered);
 
-        try (InputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "empty.osm")) {
+        try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "empty.osm"))) {
             OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
             assertTrue(registered.called);
             assertFalse(unregistered.called);

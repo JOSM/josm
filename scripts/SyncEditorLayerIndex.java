@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,6 +49,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.validation.routines.DomainValidator;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.OptionParser.OptionCount;
 import org.openstreetmap.josm.tools.ReflectionUtils;
@@ -73,20 +74,22 @@ import org.xml.sax.SAXException;
  */
 public class SyncEditorLayerIndex {
 
+    private static final int MAXLEN = 140;
+
     private List<ImageryInfo> josmEntries;
     private JsonArray eliEntries;
 
-    private Map<String, JsonObject> eliUrls = new HashMap<>();
-    private Map<String, ImageryInfo> josmUrls = new HashMap<>();
-    private Map<String, ImageryInfo> josmMirrors = new HashMap<>();
-    private static Map<String, String> oldproj = new HashMap<>();
-    private static List<String> ignoreproj = new LinkedList<>();
+    private final Map<String, JsonObject> eliUrls = new HashMap<>();
+    private final Map<String, ImageryInfo> josmUrls = new HashMap<>();
+    private final Map<String, ImageryInfo> josmMirrors = new HashMap<>();
+    private static final Map<String, String> oldproj = new HashMap<>();
+    private static final List<String> ignoreproj = new LinkedList<>();
 
     private static String eliInputFile = "imagery_eli.geojson";
     private static String josmInputFile = "imagery_josm.imagery.xml";
     private static String ignoreInputFile = "imagery_josm.ignores.txt";
-    private static FileOutputStream outputFile = null;
-    private static OutputStreamWriter outputStream = null;
+    private static OutputStream outputFile;
+    private static OutputStreamWriter outputStream;
     private static String optionOutput;
     private static boolean optionShorten;
     private static boolean optionNoSkip;
@@ -107,7 +110,7 @@ public class SyncEditorLayerIndex {
      */
     public static void main(String[] args) throws IOException, SAXException, ReflectiveOperationException {
         Locale.setDefault(Locale.ROOT);
-        parse_command_line_arguments(args);
+        parseCommandLineArguments(args);
         Preferences pref = new Preferences(JosmBaseDirectories.getInstance());
         Config.setPreferencesInstance(pref);
         pref.init(false);
@@ -117,19 +120,15 @@ public class SyncEditorLayerIndex {
         script.start();
         script.loadJosmEntries();
         if (optionJosmXml != null) {
-            FileOutputStream file = new FileOutputStream(optionJosmXml);
-            OutputStreamWriter stream = new OutputStreamWriter(file, "UTF-8");
-            script.printentries(script.josmEntries, stream);
-            stream.close();
-            file.close();
+            try (OutputStreamWriter stream = new OutputStreamWriter(Files.newOutputStream(Paths.get(optionJosmXml)), UTF_8)) {
+                script.printentries(script.josmEntries, stream);
+            }
         }
         script.loadELIEntries();
         if (optionEliXml != null) {
-            FileOutputStream file = new FileOutputStream(optionEliXml);
-            OutputStreamWriter stream = new OutputStreamWriter(file, "UTF-8");
-            script.printentries(script.eliEntries, stream);
-            stream.close();
-            file.close();
+            try (OutputStreamWriter stream = new OutputStreamWriter(Files.newOutputStream(Paths.get(optionEliXml)), UTF_8)) {
+                script.printentries(script.eliEntries, stream);
+            }
         }
         script.checkInOneButNotTheOther();
         script.checkCommonEntries();
@@ -153,10 +152,12 @@ public class SyncEditorLayerIndex {
     static String getHelp() {
         return "usage: java -cp build SyncEditorLayerIndex\n" +
         "-c,--encoding <encoding>           output encoding (defaults to UTF-8 or cp850 on Windows)\n" +
-        "-e,--eli_input <eli_input>         Input file for the editor layer index (geojson). Default is imagery_eli.geojson (current directory).\n" +
+        "-e,--eli_input <eli_input>         Input file for the editor layer index (geojson). " +
+                                            "Default is imagery_eli.geojson (current directory).\n" +
         "-h,--help                          show this help\n" +
         "-i,--ignore_input <ignore_input>   Input file for the ignore list. Default is imagery_josm.ignores.txt (current directory).\n" +
-        "-j,--josm_input <josm_input>       Input file for the JOSM imagery list (xml). Default is imagery_josm.imagery.xml (current directory).\n" +
+        "-j,--josm_input <josm_input>       Input file for the JOSM imagery list (xml). " +
+                                            "Default is imagery_josm.imagery.xml (current directory).\n" +
         "-m,--noeli                         don't show output for ELI problems\n" +
         "-n,--noskip                        don't skip known entries\n" +
         "-o,--output <output>               Output file, - prints to stdout (default: -)\n" +
@@ -170,10 +171,9 @@ public class SyncEditorLayerIndex {
     /**
      * Parse command line arguments.
      * @param args program arguments
-     * @throws FileNotFoundException if a file can't be found
-     * @throws UnsupportedEncodingException  if the given encoding can't be found
+     * @throws IOException in case of I/O error
      */
-    static void parse_command_line_arguments(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+    static void parseCommandLineArguments(String[] args) throws IOException {
         new OptionParser("JOSM/ELI synchronization script")
                 .addFlagParameter("help", SyncEditorLayerIndex::showHelp)
                 .addShortAlias("help", "h")
@@ -203,8 +203,8 @@ public class SyncEditorLayerIndex {
                 .addShortAlias("encoding", "c")
                 .parseOptionsOrExit(Arrays.asList(args));
 
-        if (optionOutput != null && optionOutput != "-") {
-            outputFile = new FileOutputStream(optionOutput);
+        if (optionOutput != null && !"-".equals(optionOutput)) {
+            outputFile = Files.newOutputStream(Paths.get(optionOutput));
             outputStream = new OutputStreamWriter(outputFile, optionEncoding != null ? optionEncoding : "UTF-8");
         } else if (optionEncoding != null) {
             outputStream = new OutputStreamWriter(System.out, optionEncoding);
@@ -232,7 +232,7 @@ public class SyncEditorLayerIndex {
 
     void loadSkip() throws IOException {
         final Pattern pattern = Pattern.compile("^\\|\\| *(ELI|Ignore) *\\|\\| *\\{\\{\\{(.+)\\}\\}\\} *\\|\\|");
-        try (BufferedReader fr = new BufferedReader(new InputStreamReader(new FileInputStream(ignoreInputFile), "UTF-8"))) {
+        try (BufferedReader fr = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(ignoreInputFile)), UTF_8))) {
             String line;
 
             while ((line = fr.readLine()) != null) {
@@ -261,18 +261,19 @@ public class SyncEditorLayerIndex {
             String color = skip.get(s);
             skip.remove(s);
             if (optionXhtmlBody || optionXhtml) {
-                s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>";
+                s = "<pre style=\"margin:3px;color:"+color+"\">"
+                        + s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</pre>";
             }
             if (!optionNoSkip) {
                 return;
             }
-        } else if(optionXhtmlBody || optionXhtml) {
+        } else if (optionXhtmlBody || optionXhtml) {
             String color =
                     s.startsWith("***") ? "black" :
                         ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :
                             (s.startsWith("#") ? "indigo" :
                                 (s.startsWith("!") ? "orange" : "red")));
-            s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>";
+            s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</pre>";
         }
         if ((s.startsWith("+ ") || s.startsWith("+++ ELI") || s.startsWith("#")) && optionNoEli) {
             return;
@@ -282,8 +283,11 @@ public class SyncEditorLayerIndex {
 
     void start() throws IOException {
         if (optionXhtml) {
-            myprintlnfinal("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
-            myprintlnfinal("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><title>JOSM - ELI differences</title></head><body>\n");
+            myprintlnfinal(
+                    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
+            myprintlnfinal(
+                    "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>"+
+                    "<title>JOSM - ELI differences</title></head><body>\n");
         }
     }
 
@@ -297,7 +301,7 @@ public class SyncEditorLayerIndex {
     }
 
     void loadELIEntries() throws IOException {
-        try (JsonReader jr = Json.createReader(new InputStreamReader(new FileInputStream(eliInputFile), "UTF-8"))) {
+        try (JsonReader jr = Json.createReader(new InputStreamReader(Files.newInputStream(Paths.get(eliInputFile)), UTF_8))) {
             eliEntries = jr.readObject().getJsonArray("features");
         }
 
@@ -305,7 +309,7 @@ public class SyncEditorLayerIndex {
             String url = getUrlStripped(e);
             if (url.contains("{z}")) {
                 myprintln("+++ ELI-URL uses {z} instead of {zoom}: "+url);
-                url = url.replace("{z}","{zoom}");
+                url = url.replace("{z}", "{zoom}");
             }
             if (eliUrls.containsKey(url)) {
                 myprintln("+++ ELI-URL is not unique: "+url);
@@ -354,8 +358,9 @@ public class SyncEditorLayerIndex {
             List<String> p = getProjections(entry);
             if (p != null) {
                 res += offset + "<projections>\n";
-                for (String c : p)
+                for (String c : p) {
                     res += offset + "    <code>"+c+"</code>\n";
+                }
                 res += offset + "</projections>\n";
             }
         }
@@ -369,8 +374,8 @@ public class SyncEditorLayerIndex {
         stream.write("<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n");
         for (Object e : entries) {
             stream.write("    <entry"
-                + ("eli-best".equals(getQuality(e)) ? " eli-best=\"true\"" : "" )
-                + (getOverlay(e) ? " overlay=\"true\"" : "" )
+                + ("eli-best".equals(getQuality(e)) ? " eli-best=\"true\"" : "")
+                + (getOverlay(e) ? " overlay=\"true\"" : "")
                 + ">\n");
             String t;
             if (isNotBlank(t = getName(e)))
@@ -427,17 +432,21 @@ public class SyncEditorLayerIndex {
                         if (lon > maxlon) maxlon = lon;
                         if (lat < minlat) minlat = lat;
                         if (lon < minlon) minlon = lon;
-                        if ((i++%3) == 0) {
+                        if ((i++ % 3) == 0) {
                             shapes += sep + "    ";
                         }
                         shapes += "<point lat='"+df.format(lat)+"' lon='"+df.format(lon)+"'/>";
                     }
                     shapes += sep + "</shape>\n";
                 }
-            } catch(IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException ignored) {
+                Logging.trace(ignored);
             }
             if (!shapes.isEmpty()) {
-                stream.write("        <bounds min-lat='"+df.format(minlat)+"' min-lon='"+df.format(minlon)+"' max-lat='"+df.format(maxlat)+"' max-lon='"+df.format(maxlon)+"'>\n");
+                stream.write("        <bounds min-lat='"+df.format(minlat)
+                                          +"' min-lon='"+df.format(minlon)
+                                          +"' max-lat='"+df.format(maxlat)
+                                          +"' max-lon='"+df.format(maxlon)+"'>\n");
                 stream.write(shapes + "        </bounds>\n");
             }
             stream.write("    </entry>\n");
@@ -463,7 +472,7 @@ public class SyncEditorLayerIndex {
             String url = getUrlStripped(e);
             if (url.contains("{z}")) {
                 myprintln("+++ JOSM-URL uses {z} instead of {zoom}: "+url);
-                url = url.replace("{z}","{zoom}");
+                url = url.replace("{z}", "{zoom}");
             }
             if (josmUrls.containsKey(url)) {
                 myprintln("+++ JOSM-URL is not unique: "+url);
@@ -474,7 +483,7 @@ public class SyncEditorLayerIndex {
                 url = getUrlStripped(m);
                 Field origNameField = ImageryInfo.class.getDeclaredField("origName");
                 ReflectionUtils.setObjectsAccessible(origNameField);
-                origNameField.set(m, m.getOriginalName().replaceAll(" mirror server( \\d+)?",""));
+                origNameField.set(m, m.getOriginalName().replaceAll(" mirror server( \\d+)?", ""));
                 if (josmUrls.containsKey(url)) {
                     myprintln("+++ JOSM-Mirror-URL is not unique: "+url);
                 } else {
@@ -503,7 +512,7 @@ public class SyncEditorLayerIndex {
             for (String urle : ke) {
                 JsonObject e = eliUrls.get(urle);
                 String ide = getId(e);
-                String urlhttps = urle.replace("http:","https:");
+                String urlhttps = urle.replace("http:", "https:");
                 if (lj.contains(urlhttps)) {
                     myprintln("+ Missing https: "+getDescription(e));
                     eliUrls.put(urlhttps, eliUrls.get(urle));
@@ -522,7 +531,7 @@ public class SyncEditorLayerIndex {
                             lj.remove(urlj);
                             // replace key for this entry with JOSM URL
                             eliUrls.remove(urle);
-                            eliUrls.put(urlj,e);
+                            eliUrls.put(urlj, e);
                             break;
                         }
                     }
@@ -547,18 +556,34 @@ public class SyncEditorLayerIndex {
     }
 
     void checkCommonEntries() throws IOException {
+        doSameUrlButDifferentName();
+        doSameUrlButDifferentId();
+        doSameUrlButDifferentType();
+        doSameUrlButDifferentZoomBounds();
+        doSameUrlButDifferentCountryCode();
+        doSameUrlButDifferentQuality();
+        doSameUrlButDifferentDates();
+        doSameUrlButDifferentInformation();
+        doMismatchingShapes();
+        doMismatchingIcons();
+        doMiscellaneousChecks();
+    }
+
+    void doSameUrlButDifferentName() throws IOException {
         myprintln("*** Same URL, but different name: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
             if (!josmUrls.containsKey(url)) continue;
             ImageryInfo j = josmUrls.get(url);
-            String ename = getName(e).replace("'","\u2019");
-            String jname = getName(j).replace("'","\u2019");
+            String ename = getName(e).replace("'", "\u2019");
+            String jname = getName(j).replace("'", "\u2019");
             if (!ename.equals(jname)) {
                 myprintln("* Name differs ('"+getName(e)+"' != '"+getName(j)+"'): "+getUrl(j));
             }
         }
+    }
 
+    void doSameUrlButDifferentId() throws IOException {
         myprintln("*** Same URL, but different Id: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -570,7 +595,9 @@ public class SyncEditorLayerIndex {
                 myprintln("# Id differs ('"+getId(e)+"' != '"+getId(j)+"'): "+getUrl(j));
             }
         }
+    }
 
+    void doSameUrlButDifferentType() throws IOException {
         myprintln("*** Same URL, but different type: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -580,7 +607,9 @@ public class SyncEditorLayerIndex {
                 myprintln("* Type differs ("+getType(e)+" != "+getType(j)+"): "+getName(j)+" - "+getUrl(j));
             }
         }
+    }
 
+    void doSameUrlButDifferentZoomBounds() throws IOException {
         myprintln("*** Same URL, but different zoom bounds: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -604,7 +633,9 @@ public class SyncEditorLayerIndex {
                 myprintln("* Maxzoom differs ("+eMaxZoom+" != "+jMaxZoom+"): "+getDescription(j));
             }
         }
+    }
 
+    void doSameUrlButDifferentCountryCode() throws IOException {
         myprintln("*** Same URL, but different country code: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -618,6 +649,9 @@ public class SyncEditorLayerIndex {
                 myprintln("* Country code differs ("+getCountryCode(e)+" != "+getCountryCode(j)+"): "+getDescription(j));
             }
         }
+    }
+
+    void doSameUrlButDifferentQuality() throws IOException {
         myprintln("*** Same URL, but different quality: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -633,6 +667,9 @@ public class SyncEditorLayerIndex {
                 myprintln("* Quality differs ("+getQuality(e)+" != "+getQuality(j)+"): "+getDescription(j));
             }
         }
+    }
+
+    void doSameUrlButDifferentDates() throws IOException {
         myprintln("*** Same URL, but different dates: ***");
         Pattern pattern = Pattern.compile("^(.*;)(\\d\\d\\d\\d)(-(\\d\\d)(-(\\d\\d))?)?$");
         for (String url : eliUrls.keySet()) {
@@ -641,7 +678,7 @@ public class SyncEditorLayerIndex {
             ImageryInfo j = josmUrls.get(url);
             String jd = getDate(j);
             // The forms 2015;- or -;2015 or 2015;2015 are handled equal to 2015
-            String ef = ed.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z", "$1");
+            String ef = ed.replaceAll("\\A-;", "").replaceAll(";-\\z", "").replaceAll("\\A([0-9-]+);\\1\\z", "$1");
             // ELI has a strange and inconsistent used end_date definition, so we try again with subtraction by one
             String ed2 = ed;
             Matcher m = pattern.matcher(ed);
@@ -657,7 +694,7 @@ public class SyncEditorLayerIndex {
                 if (m.group(6) != null)
                     ed2 += "-" + String.format("%02d", cal.get(Calendar.DAY_OF_MONTH));
             }
-            String ef2 = ed2.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z", "$1");
+            String ef2 = ed2.replaceAll("\\A-;", "").replaceAll(";-\\z", "").replaceAll("\\A([0-9-]+);\\1\\z", "$1");
             if (!ed.equals(jd) && !ef.equals(jd) && !ed2.equals(jd) && !ef2.equals(jd)) {
                 String t = "'"+ed+"'";
                 if (!ed.equals(ef)) {
@@ -672,6 +709,9 @@ public class SyncEditorLayerIndex {
                 }
             }
         }
+    }
+
+    void doSameUrlButDifferentInformation() throws IOException {
         myprintln("*** Same URL, but different information: ***");
         for (String url : eliUrls.keySet()) {
             if (!josmUrls.containsKey(url)) continue;
@@ -722,7 +762,7 @@ public class SyncEditorLayerIndex {
                 if (isBlank(jt)) {
                     myprintln("- Missing JOSM attribution URL ("+et+"): "+getDescription(j));
                 } else if (isNotBlank(et)) {
-                    String ethttps = et.replace("http:","https:");
+                    String ethttps = et.replace("http:", "https:");
                     if (jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
                         myprintln("+ Attribution URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
                     } else {
@@ -785,13 +825,16 @@ public class SyncEditorLayerIndex {
                 }
             }
         }
+    }
+
+    void doMismatchingShapes() throws IOException {
         myprintln("*** Mismatching shapes: ***");
         for (String url : josmUrls.keySet()) {
             ImageryInfo j = josmUrls.get(url);
             int num = 1;
             for (Shape shape : getShapes(j)) {
                 List<Coordinate> p = shape.getPoints();
-                if(!p.get(0).equals(p.get(p.size()-1))) {
+                if (!p.get(0).equals(p.get(p.size()-1))) {
                     myprintln("+++ JOSM shape "+num+" unclosed: "+getDescription(j));
                 }
                 for (int nump = 1; nump < p.size(); ++nump) {
@@ -810,7 +853,7 @@ public class SyncEditorLayerIndex {
                 s = getShapes(e);
                 for (Shape shape : s) {
                     List<Coordinate> p = shape.getPoints();
-                    if(!p.get(0).equals(p.get(p.size()-1)) && !optionNoEli) {
+                    if (!p.get(0).equals(p.get(p.size()-1)) && !optionNoEli) {
                         myprintln("+++ ELI shape "+num+" unclosed: "+getDescription(e));
                     }
                     for (int nump = 1; nump < p.size(); ++nump) {
@@ -833,12 +876,12 @@ public class SyncEditorLayerIndex {
                 if (!optionNoEli) {
                     myprintln("+ No ELI shape: "+getDescription(j));
                 }
-            } else if(js.isEmpty() && !s.isEmpty()) {
+            } else if (js.isEmpty() && !s.isEmpty()) {
                 // don't report boundary like 5 point shapes as difference
                 if (s.size() != 1 || s.get(0).getPoints().size() != 5) {
                     myprintln("- No JOSM shape: "+getDescription(j));
                 }
-            } else if(s.size() != js.size()) {
+            } else if (s.size() != js.size()) {
                 myprintln("* Different number of shapes ("+s.size()+" != "+js.size()+"): "+getDescription(j));
             } else {
                 boolean[] edone = new boolean[s.size()];
@@ -849,13 +892,13 @@ public class SyncEditorLayerIndex {
                         List<Coordinate> jp = js.get(jnums).getPoints();
                         if (ep.size() == jp.size() && !jdone[jnums]) {
                             boolean err = false;
-                            for(int nump = 0; nump < ep.size() && !err; ++nump) {
+                            for (int nump = 0; nump < ep.size() && !err; ++nump) {
                                 Coordinate ept = ep.get(nump);
                                 Coordinate jpt = jp.get(nump);
-                                if(Math.abs(ept.getLat()-jpt.getLat()) > 0.00001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.00001)
+                                if (Math.abs(ept.getLat()-jpt.getLat()) > 0.00001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.00001)
                                     err = true;
                             }
-                            if(!err) {
+                            if (!err) {
                                 edone[enums] = true;
                                 jdone[jnums] = true;
                                 break;
@@ -896,7 +939,8 @@ public class SyncEditorLayerIndex {
                             if (enums != jnums) {
                                 numtxt += '/' + Integer.toString(jnums+1);
                             }
-                            myprintln("* Different number of points for shape "+numtxt+" ("+ep.size()+" ! = "+jp.size()+")): "+getDescription(j));
+                            myprintln("* Different number of points for shape "+numtxt+" ("+ep.size()+" ! = "+jp.size()+")): "
+                                    + getDescription(j));
                             edone[enums] = true;
                             jdone[jnums] = true;
                             break;
@@ -905,6 +949,9 @@ public class SyncEditorLayerIndex {
                 }
             }
         }
+    }
+
+    void doMismatchingIcons() throws IOException {
         myprintln("*** Mismatching icons: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -926,7 +973,7 @@ public class SyncEditorLayerIndex {
               (ie.startsWith("https://osmlab.github.io/editor-layer-index/")
               || ie.startsWith("https://raw.githubusercontent.com/osmlab/editor-layer-index/")) &&
               ij.startsWith("data:"))) {
-                String iehttps = ie.replace("http:","https:");
+                String iehttps = ie.replace("http:", "https:");
                 if (ij.equals(iehttps)) {
                     myprintln("+ Different icons: "+getDescription(j));
                 } else {
@@ -934,6 +981,9 @@ public class SyncEditorLayerIndex {
                 }
             }
         }
+    }
+
+    void doMiscellaneousChecks() throws IOException {
         myprintln("*** Miscellaneous checks: ***");
         Map<String, ImageryInfo> josmIds = new HashMap<>();
         Collection<String> all = Projections.getAllProjectionCodes();
@@ -963,7 +1013,8 @@ public class SyncEditorLayerIndex {
                         myprintln("* Projections "+String.join(", ", unsupported)+" not supported by JOSM: "+getDescription(j));
                     }
                     for (String o : old) {
-                        myprintln("* Projection "+o+" is an old unsupported code and has been replaced by "+oldproj.get(o)+": "+getDescription(j));
+                        myprintln("* Projection "+o+" is an old unsupported code and has been replaced by "+oldproj.get(o)+": "
+                                + getDescription(j));
                     }
                 }
                 if (urlLc.contains("version=1.3") && !urlLc.contains("crs={proj}")) {
@@ -994,7 +1045,7 @@ public class SyncEditorLayerIndex {
                 if (!m.matches() || u.matches(".*[ \t]+$")) {
                     myprintln("* Strange URL '"+u+"': "+getDescription(j));
                 } else {
-                    String domain = m.group(1).replaceAll("\\{switch:.*\\}","x");
+                    String domain = m.group(1).replaceAll("\\{switch:.*\\}", "x");
                     String port = m.group(2);
                     if (!(domain.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) && !dv.isValid(domain))
                         myprintln("* Strange Domain '"+domain+"': "+getDescription(j));
@@ -1027,8 +1078,7 @@ public class SyncEditorLayerIndex {
                         if (second.compareTo(first) < 0) {
                             myprintln("* JOSM-Date '"+d+"' is strange (second earlier than first): "+getDescription(j));
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         myprintln("* JOSM-Date '"+d+"' is strange ("+e.getMessage()+"): "+getDescription(j));
                     }
                 }
@@ -1052,16 +1102,17 @@ public class SyncEditorLayerIndex {
                     for (Coordinate p: s.getPoints()) {
                         double lat = p.getLat();
                         double lon = p.getLon();
-                        if(lat > maxlat) maxlat = lat;
-                        if(lon > maxlon) maxlon = lon;
-                        if(lat < minlat) minlat = lat;
-                        if(lon < minlon) minlon = lon;
+                        if (lat > maxlat) maxlat = lat;
+                        if (lon > maxlon) maxlon = lon;
+                        if (lat < minlat) minlat = lat;
+                        if (lon < minlon) minlon = lon;
                     }
                 }
                 ImageryBounds b = j.getBounds();
                 if (b.getMinLat() != minlat || b.getMinLon() != minlon || b.getMaxLat() != maxlat || b.getMaxLon() != maxlon) {
                     myprintln("* Bounds do not match shape (is "+b.getMinLat()+","+b.getMinLon()+","+b.getMaxLat()+","+b.getMaxLon()
-                        + ", calculated <bounds min-lat='"+minlat+"' min-lon='"+minlon+"' max-lat='"+maxlat+"' max-lon='"+maxlon+"'>): "+getDescription(j));
+                        + ", calculated <bounds min-lat='"+minlat+"' min-lon='"+minlon+"' max-lat='"+maxlat+"' max-lon='"+maxlon+"'>): "
+                        + getDescription(j));
                 }
             }
             List<String> knownCategories = Arrays.asList("photo", "map", "historicmap", "osmbasedmap", "historicphoto", "other");
@@ -1084,7 +1135,7 @@ public class SyncEditorLayerIndex {
     }
 
     static String getUrlStripped(Object e) {
-        return getUrl(e).replaceAll("\\?(apikey|access_token)=.*","");
+        return getUrl(e).replaceAll("\\?(apikey|access_token)=.*", "");
     }
 
     static String getDate(Object e) {
@@ -1092,18 +1143,18 @@ public class SyncEditorLayerIndex {
         JsonObject p = ((Map<String, JsonObject>) e).get("properties");
         String start = p.containsKey("start_date") ? p.getString("start_date") : "";
         String end = p.containsKey("end_date") ? p.getString("end_date") : "";
-        if(!start.isEmpty() && !end.isEmpty())
+        if (!start.isEmpty() && !end.isEmpty())
             return start+";"+end;
-        else if(!start.isEmpty())
+        else if (!start.isEmpty())
             return start+";-";
-        else if(!end.isEmpty())
+        else if (!end.isEmpty())
             return "-;"+end;
         return "";
     }
 
     static Date verifyDate(String year, String month, String day) throws ParseException {
         String date;
-        if(year == null) {
+        if (year == null) {
             date = "3000-01-01";
         } else {
             date = year + "-" + (month == null ? "01" : month) + "-" + (day == null ? "01" : day);
@@ -1160,7 +1211,7 @@ public class SyncEditorLayerIndex {
     static List<Shape> getShapes(Object e) {
         if (e instanceof ImageryInfo) {
             ImageryBounds bounds = ((ImageryInfo) e).getBounds();
-            if(bounds != null) {
+            if (bounds != null) {
                 return bounds.getShapes();
             }
             return Collections.emptyList();
@@ -1282,14 +1333,14 @@ public class SyncEditorLayerIndex {
         return ((Map<String, JsonObject>) e).get("properties").getString("license_url", null);
     }
 
-    static Map<String,String> getDescriptions(Object e) {
-        Map<String,String> res = new HashMap<String, String>();
+    static Map<String, String> getDescriptions(Object e) {
+        Map<String, String> res = new HashMap<String, String>();
         if (e instanceof ImageryInfo) {
             String a = ((ImageryInfo) e).getDescription();
             if (a != null) res.put("en", a);
         } else {
             String a = ((Map<String, JsonObject>) e).get("properties").getString("description", null);
-            if (a != null) res.put("en", a.replaceAll("''","'"));
+            if (a != null) res.put("en", a.replaceAll("''", "'"));
         }
         return res;
     }
@@ -1322,7 +1373,6 @@ public class SyncEditorLayerIndex {
         }
         String d = cc + getName(o) + " - " + getUrl(o);
         if (optionShorten) {
-            final int MAXLEN = 140;
             if (d.length() > MAXLEN) d = d.substring(0, MAXLEN-1) + "...";
         }
         return d;
