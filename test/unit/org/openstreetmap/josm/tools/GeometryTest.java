@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -260,4 +262,169 @@ public class GeometryTest {
         // now w1 is inside
         assertTrue(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp, null));
     }
+
+    /**
+     * Test of {@link Geometry#getDistance} method.
+     */
+    @Test
+    public void testGetDistance() {
+        Node node1 = new Node(new LatLon(0, 0));
+        Node node2 = new Node(new LatLon(0.1, 1));
+        Node node3 = new Node(new LatLon(1.1, 0.1));
+        Node node4 = new Node(new LatLon(1, 1.1));
+        Way way1 = TestUtils.newWay("", node1, node2);
+        Way way2 = TestUtils.newWay("", node3, node4);
+        Relation testRelation1 = new Relation();
+        Relation testRelation2 = new Relation();
+        testRelation1.addMember(new RelationMember("", way1));
+        testRelation1.addMember(new RelationMember("", way2));
+        testRelation2.addMember(new RelationMember("", node1));
+        testRelation2.addMember(new RelationMember("", node2));
+        testRelation2.addMember(new RelationMember("", node3));
+        testRelation2.addMember(new RelationMember("", node4));
+
+        double distance = Geometry.getDistance(null, node3);
+        assertEquals(Double.NaN, distance, 0.1);
+
+        distance = Geometry.getDistance(way1, null);
+        assertEquals(Double.NaN, distance, 0.1);
+
+        distance = Geometry.getDistance(null, null);
+        assertEquals(Double.NaN, distance, 0.1);
+
+        distance = Geometry.getDistance(node1, node2);
+        assertEquals(111874.6474307704, distance, 0.1);
+
+        distance = Geometry.getDistance(way1, node3);
+        assertEquals(120743.55085962385, distance, 0.1);
+
+        distance = Geometry.getDistance(node3, way1);
+        assertEquals(120743.55085962385, distance, 0.1);
+
+        distance = Geometry.getDistance(way1, way2);
+        assertEquals(100803.63714283936, distance, 0.1);
+
+        distance = Geometry.getDistance(testRelation1, new Node(new LatLon(0, 0.5)));
+        assertEquals(5538.354450686605, distance, 0.1);
+
+        distance = Geometry.getDistance(new Node(new LatLon(0, 0.5)), testRelation1);
+        assertEquals(5538.354450686605, distance, 0.1);
+
+        distance = Geometry.getDistance(testRelation1, testRelation2);
+        assertEquals(0.0, distance, 0.1);
+    }
+
+    /**
+     * Test of {@link Geometry#getClosestPrimitive} method
+     */
+    @Test
+    public void testGetClosestPrimitive() {
+        Node node1 = new Node(new LatLon(0, 0));
+        Node node2 = new Node(new LatLon(0.1, 1));
+        Node node3 = new Node(new LatLon(1.1, 0.1));
+        Node node4 = new Node(new LatLon(1, 1.1));
+        Way way1 = TestUtils.newWay("", node1, node2);
+        Way way2 = TestUtils.newWay("", node3, node4);
+
+        List<OsmPrimitive> primitives = new ArrayList<>();
+        primitives.add(way1);
+        primitives.add(way2);
+        OsmPrimitive closest = Geometry.getClosestPrimitive(node1, primitives);
+        assertEquals(way1, closest);
+    }
+
+    /**
+     * Test of {@link Geometry#getFurthestPrimitive} method
+     */
+    @Test
+    public void testGetFurthestPrimitive() {
+        Node node1 = new Node(new LatLon(0, 0));
+        Node node2 = new Node(new LatLon(0, 1.1));
+        Node node3 = new Node(new LatLon(1, 0.1));
+        Node node4 = new Node(new LatLon(1.1, 1));
+        Way way1 = TestUtils.newWay("", node1, node2);
+        Way way2 = TestUtils.newWay("", node3, node4);
+        Way way3 = TestUtils.newWay("", node2, node4);
+        Way way4 = TestUtils.newWay("", node1, node3);
+
+        List<OsmPrimitive> primitives = new ArrayList<>();
+        primitives.add(way1);
+        OsmPrimitive furthest = Geometry.getFurthestPrimitive(new Node(new LatLon(0, 0.75)), primitives);
+        assertEquals(way1, furthest);
+        primitives.add(way2);
+        primitives.add(way3);
+        primitives.add(way4);
+        furthest = Geometry.getFurthestPrimitive(new Node(new LatLon(0, 0.5)), primitives);
+        assertEquals(way2, furthest);
+        furthest = Geometry.getFurthestPrimitive(new Node(new LatLon(.25, 0.5)), primitives);
+        assertEquals(way2, furthest);
+    }
+
+    /**
+     * Test of {@link Geometry#getClosestWaySegment} method
+     */
+    @Test
+    public void testGetClosestWaySegment() {
+        Node node1 = new Node(new LatLon(0, 0));
+        Node node2 = new Node(new LatLon(0, 1));
+        Node node3 = new Node(new LatLon(0.3, 0.5));
+        Node node4 = new Node(new LatLon(0.1, 0));
+        Way way1 = TestUtils.newWay("", node1, node2, node3, node4);
+
+        Way closestSegment = Geometry.getClosestWaySegment(way1, new Node(new LatLon(0, 0.5))).toWay();
+        Assert.assertTrue(closestSegment.containsNode(node1));
+        Assert.assertTrue(closestSegment.containsNode(node2));
+    }
+
+    /**
+     * Test of {@link Geometry#getDistanceSegmentSegment} method
+     */
+    @Test
+    public void testGetDistanceSegmentSegment() {
+        Node node1 = new Node(new LatLon(2.0, 2.0));
+        Node node2 = new Node(new LatLon(2.0, 3.0));
+        Node node3 = new Node(new LatLon(2.3, 2.5));
+        Node node4 = new Node(new LatLon(2.1, 2.0));
+
+        // connected segments
+        assertEquals(0.0, Geometry.getDistanceSegmentSegment(node1, node2, node3, node1), 0.000001);
+
+        // distance between node 1 and node4 is the shortest
+        double expected = node1.getEastNorth().distance(node4.getEastNorth());
+        assertEquals(expected, Geometry.getDistanceSegmentSegment(node1, node2, node3, node4), 0.000001);
+
+        // crossing segments
+        node4.setCoor(new LatLon(1.9998192774806864, 2.0004056993230455));
+        assertEquals(0, Geometry.getDistanceSegmentSegment(node1, node2, node3, node4), 0.000001);
+
+        // usual case
+        node4.setCoor(new LatLon(2.0002098170882276, 2.0000778643530537));
+        assertEquals(23.4, Geometry.getDistanceSegmentSegment(node1, node2, node3, node4), 1.0);
+
+        // similar segments, reversed direction
+        node3.setCoor(node2.getCoor());
+        node4.setCoor(node1.getCoor());
+        assertEquals(0.0, Geometry.getDistanceSegmentSegment(node1, node2, node3, node4), 0.000001);
+
+        // overlapping segments
+        node3.setCoor(new LatLon(2.0, 2.2));
+        node4.setCoor(new LatLon(2.0, 2.3));
+        assertEquals(0.0, Geometry.getDistanceSegmentSegment(node1, node2, node3, node4), 0.000001);
+
+        // parallel segments, n1 and n3 at same longitude
+        node3.setCoor(new LatLon(2.1, 2.0));
+        node4.setCoor(new LatLon(2.1, 2.3));
+        expected = node1.getEastNorth().distance(node3.getEastNorth());
+        assertEquals(expected, Geometry.getDistanceSegmentSegment(node1, node2, node3, node4), 0.000001);
+
+        // parallel segments
+        node3.setCoor(new LatLon(2.1, 2.1));
+        assertEquals(expected, Geometry.getDistanceSegmentSegment(node1, node2, node3, node4), 0.000001);
+
+        // almost parallel segments
+        node3.setCoor(new LatLon(2.09999999, 2.1));
+        assertEquals(expected, Geometry.getDistanceSegmentSegment(node1, node2, node3, node4), 0.01);
+        assertTrue(expected > Geometry.getDistanceSegmentSegment(node1, node2, node3, node4));
+    }
+
 }

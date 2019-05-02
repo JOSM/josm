@@ -9,11 +9,14 @@ import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -30,8 +33,10 @@ import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -1101,5 +1106,312 @@ public final class Geometry {
             }
         }
         return new AreaAndPerimeter(Math.abs(area) / 2, perimeter);
+    }
+
+    /**
+     * Get the closest primitive to {@code osm} from the collection of
+     * OsmPrimitive {@code primitives}
+     *
+     * The {@code primitives} should be fully downloaded to ensure accuracy.
+     *
+     * Note: The complexity of this method is O(n*m), where n is the number of
+     * children {@code osm} has plus 1, m is the number of children the
+     * collection of primitives have plus the number of primitives in the
+     * collection.
+     *
+     * @param <T> The return type of the primitive
+     * @param osm The primitive to get the distances from
+     * @param primitives The collection of primitives to get the distance to
+     * @return The closest {@link OsmPrimitive}. This is not determinative.
+     * To get all primitives that share the same distance, use
+     * {@link Geometry#getClosestPrimitives}.
+     * @since 15035
+     */
+    public static <T extends OsmPrimitive> T getClosestPrimitive(OsmPrimitive osm, Collection<T> primitives) {
+        Collection<T> collection = getClosestPrimitives(osm, primitives);
+        return collection.iterator().next();
+    }
+
+    /**
+     * Get the closest primitives to {@code osm} from the collection of
+     * OsmPrimitive {@code primitives}
+     *
+     * The {@code primitives} should be fully downloaded to ensure accuracy.
+     *
+     * Note: The complexity of this method is O(n*m), where n is the number of
+     * children {@code osm} has plus 1, m is the number of children the
+     * collection of primitives have plus the number of primitives in the
+     * collection.
+     *
+     * @param <T> The return type of the primitive
+     * @param osm The primitive to get the distances from
+     * @param primitives The collection of primitives to get the distance to
+     * @return The closest {@link OsmPrimitive}s. May be empty.
+     * @since 15035
+     */
+    public static <T extends OsmPrimitive> Collection<T> getClosestPrimitives(OsmPrimitive osm, Collection<T> primitives) {
+        double lowestDistance = Double.MAX_VALUE;
+        TreeSet<T> closest = new TreeSet<>();
+        for (T primitive : primitives) {
+            double distance = getDistance(osm, primitive);
+            if (Double.isNaN(distance)) continue;
+            if (distance < lowestDistance) {
+                closest.clear();
+                lowestDistance = distance;
+                closest.add(primitive);
+            } else if (distance == lowestDistance) {
+                closest.add(primitive);
+            }
+        }
+        return closest;
+    }
+
+    /**
+     * Get the furthest primitive to {@code osm} from the collection of
+     * OsmPrimitive {@code primitives}
+     *
+     * The {@code primitives} should be fully downloaded to ensure accuracy.
+     *
+     * It does NOT give the furthest primitive based off of the furthest
+     * part of that primitive
+     *
+     * Note: The complexity of this method is O(n*m), where n is the number of
+     * children {@code osm} has plus 1, m is the number of children the
+     * collection of primitives have plus the number of primitives in the
+     * collection.
+     *
+     * @param <T> The return type of the primitive
+     * @param osm The primitive to get the distances from
+     * @param primitives The collection of primitives to get the distance to
+     * @return The furthest {@link OsmPrimitive}.  This is not determinative.
+     * To get all primitives that share the same distance, use
+     * {@link Geometry#getFurthestPrimitives}
+     * @since 15035
+     */
+    public static <T extends OsmPrimitive> T getFurthestPrimitive(OsmPrimitive osm, Collection<T> primitives) {
+        return getFurthestPrimitives(osm, primitives).iterator().next();
+    }
+
+    /**
+     * Get the furthest primitives to {@code osm} from the collection of
+     * OsmPrimitive {@code primitives}
+     *
+     * The {@code primitives} should be fully downloaded to ensure accuracy.
+     *
+     * It does NOT give the furthest primitive based off of the furthest
+     * part of that primitive
+     *
+     * Note: The complexity of this method is O(n*m), where n is the number of
+     * children {@code osm} has plus 1, m is the number of children the
+     * collection of primitives have plus the number of primitives in the
+     * collection.
+     *
+     * @param <T> The return type of the primitive
+     * @param osm The primitive to get the distances from
+     * @param primitives The collection of primitives to get the distance to
+     * @return The furthest {@link OsmPrimitive}s. It may return an empty collection.
+     * @since 15035
+     */
+    public static <T extends OsmPrimitive> Collection<T> getFurthestPrimitives(OsmPrimitive osm, Collection<T> primitives) {
+        double furthestDistance = Double.NEGATIVE_INFINITY;
+        TreeSet<T> furthest = new TreeSet<>();
+        for (T primitive : primitives) {
+            double distance = getDistance(osm, primitive);
+            if (Double.isNaN(distance)) continue;
+            if (distance > furthestDistance) {
+                furthest.clear();
+                furthestDistance = distance;
+                furthest.add(primitive);
+            } else if (distance == furthestDistance) {
+                furthest.add(primitive);
+            }
+        }
+        return furthest;
+    }
+
+    /**
+     * Get the distance between different {@link OsmPrimitive}s
+     * @param one The primitive to get the distance from
+     * @param two The primitive to get the distance to
+     * @return The distance between the primitives in meters
+     * (or the unit of the current projection, see {@link Projection}).
+     * May return {@link Double#NaN} if one of the primitives is incomplete.
+     *
+     * Note: The complexity is O(n*m), where (n,m) are the number of child
+     * objects the {@link OsmPrimitive}s have.
+     * @since 15035
+     */
+    public static double getDistance(OsmPrimitive one, OsmPrimitive two) {
+        double rValue = Double.MAX_VALUE;
+        if (one == null || two == null || one.isIncomplete()
+                || two.isIncomplete()) return Double.NaN;
+        if (one instanceof Node && two instanceof Node) {
+            rValue = ((Node) one).getCoor().greatCircleDistance(((Node) two).getCoor());
+        } else if (one instanceof Node && two instanceof Way) {
+            rValue = getDistanceWayNode((Way) two, (Node) one);
+        } else if (one instanceof Way && two instanceof Node) {
+            rValue = getDistanceWayNode((Way) one, (Node) two);
+        } else if (one instanceof Way && two instanceof Way) {
+            rValue = getDistanceWayWay((Way) one, (Way) two);
+        } else if (one instanceof Relation && !(two instanceof Relation)) {
+            for (OsmPrimitive osmPrimitive: ((Relation) one).getMemberPrimitives()) {
+                double currentDistance = getDistance(osmPrimitive, two);
+                if (currentDistance < rValue) rValue = currentDistance;
+            }
+        } else if (!(one instanceof Relation) && two instanceof Relation) {
+            rValue = getDistance(two, one);
+        } else if (one instanceof Relation && two instanceof Relation) {
+            for (OsmPrimitive osmPrimitive1 : ((Relation) one).getMemberPrimitives()) {
+                for (OsmPrimitive osmPrimitive2 : ((Relation) two).getMemberPrimitives()) {
+                    double currentDistance = getDistance(osmPrimitive1, osmPrimitive2);
+                    if (currentDistance < rValue) rValue = currentDistance;
+                }
+            }
+        }
+        return rValue != Double.MAX_VALUE ? rValue : Double.NaN;
+    }
+
+    /**
+     * Get the distance between a way and a node
+     * @param way The way to get the distance from
+     * @param node The node to get the distance to
+     * @return The distance between the {@code way} and the {@code node} in
+     * meters (or the unit of the current projection, see {@link Projection}).
+     * May return {@link Double#NaN} if the primitives are incomplete.
+     * @since 15035
+     */
+    public static double getDistanceWayNode(Way way, Node node) {
+        if (way == null || node == null || way.getNodesCount() < 2 || !node.isLatLonKnown())
+            return Double.NaN;
+
+        double smallest = Double.MAX_VALUE;
+        EastNorth en0 = node.getEastNorth();
+        // go through the nodes as if they were paired
+        Iterator<Node> iter = way.getNodes().iterator();
+        EastNorth en1 = iter.next().getEastNorth();
+        while (iter.hasNext()) {
+            EastNorth en2 = iter.next().getEastNorth();
+            double distance = getSegmentNodeDistSq(en1, en2, en0);
+            if (distance < smallest)
+                smallest = distance;
+            en1 = en2;
+        }
+        return smallest != Double.MAX_VALUE ? Math.sqrt(smallest) : Double.NaN;
+    }
+
+    /**
+     * Get the closest {@link WaySegment} from a way to a primitive.
+     * @param way The {@link Way} to get the distance from and the {@link WaySegment}
+     * @param primitive The {@link OsmPrimitive} to get the distance to
+     * @return The {@link WaySegment} that is closest to {@code primitive} from {@code way}.
+     * If there are multiple {@link WaySegment}s with the same distance, the last
+     * {@link WaySegment} with the same distance will be returned.
+     * May return {@code null} if the way has fewer than two nodes or one
+     * of the primitives is incomplete.
+     * @since 15035
+     */
+    public static WaySegment getClosestWaySegment(Way way, OsmPrimitive primitive) {
+        if (way == null || primitive == null || way.isIncomplete()
+                || primitive.isIncomplete()) return null;
+        double lowestDistance = Double.MAX_VALUE;
+        Pair<Node, Node> closestNodes = null;
+        for (Pair<Node, Node> nodes : way.getNodePairs(false)) {
+            Way tWay = new Way();
+            tWay.addNode(nodes.a);
+            tWay.addNode(nodes.b);
+            double distance = getDistance(tWay, primitive);
+            if (distance < lowestDistance) {
+                lowestDistance = distance;
+                closestNodes = nodes;
+            }
+        }
+        if (closestNodes == null) return null;
+        return lowestDistance != Double.MAX_VALUE ? WaySegment.forNodePair(way, closestNodes.a, closestNodes.b) : null;
+    }
+
+    /**
+     * Get the distance between different ways. Iterates over the nodes of the ways, complexity is O(n*m)
+     * (n,m giving the number of nodes)
+     * @param w1 The first {@link Way}
+     * @param w2 The second {@link Way}
+     * @return The shortest distance between the ways in meters
+     * (or the unit of the current projection, see {@link Projection}).
+     * May return {@link Double#NaN}.
+     * @since 15035
+     */
+    public static double getDistanceWayWay(Way w1, Way w2) {
+        if (w1 == null || w2 == null || w1.getNodesCount() < 2 || w2.getNodesCount() < 2)
+            return Double.NaN;
+        double rValue = Double.MAX_VALUE;
+        Iterator<Node> iter1 = w1.getNodes().iterator();
+        Node w1N1 = iter1.next();
+        while (iter1.hasNext()) {
+            Node w1N2 = iter1.next();
+            Iterator<Node> iter2 = w2.getNodes().iterator();
+            Node w2N1 = iter2.next();
+            while (iter2.hasNext()) {
+                Node w2N2 = iter2.next();
+                double distance = getDistanceSegmentSegment(w1N1, w1N2, w2N1, w2N2);
+                if (distance < rValue)
+                    rValue = distance;
+                w2N1 = w2N2;
+            }
+            w1N1 = w1N2;
+        }
+        return rValue != Double.MAX_VALUE ? rValue : Double.NaN;
+    }
+
+    /**
+     * Get the distance between different {@link WaySegment}s
+     * @param ws1 A {@link WaySegment}
+     * @param ws2 A {@link WaySegment}
+     * @return The distance between the two {@link WaySegment}s in meters
+     * (or the unit of the current projection, see {@link Projection}).
+     * May return {@link Double#NaN}.
+     * @since 15035
+     */
+    public static double getDistanceSegmentSegment(WaySegment ws1, WaySegment ws2) {
+        return getDistanceSegmentSegment(ws1.getFirstNode(), ws1.getSecondNode(), ws2.getFirstNode(), ws2.getSecondNode());
+    }
+
+    /**
+     * Get the distance between different {@link WaySegment}s
+     * @param ws1Node1 The first node of the first WaySegment
+     * @param ws1Node2 The second node of the second WaySegment
+     * @param ws2Node1 The first node of the second WaySegment
+     * @param ws2Node2 The second node of the second WaySegment
+     * @return The distance between the two {@link WaySegment}s in meters
+     * (or the unit of the current projection, see {@link Projection}).
+     * May return {@link Double#NaN}.
+     * @since 15035
+     */
+    public static double getDistanceSegmentSegment(Node ws1Node1, Node ws1Node2, Node ws2Node1, Node ws2Node2) {
+        EastNorth enWs1Node1 = ws1Node1.getEastNorth();
+        EastNorth enWs1Node2 = ws1Node2.getEastNorth();
+        EastNorth enWs2Node1 = ws2Node1.getEastNorth();
+        EastNorth enWs2Node2 = ws2Node2.getEastNorth();
+        if (enWs1Node1 == null || enWs1Node2 == null || enWs2Node1 == null || enWs2Node2 == null)
+            return Double.NaN;
+        if (getSegmentSegmentIntersection(enWs1Node1, enWs1Node2, enWs2Node1, enWs2Node2) != null)
+            return 0;
+
+        double dist1sq = getSegmentNodeDistSq(enWs1Node1, enWs1Node2, enWs2Node1);
+        double dist2sq = getSegmentNodeDistSq(enWs1Node1, enWs1Node2, enWs2Node2);
+        double dist3sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node1);
+        double dist4sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node2);
+        double smallest = Math.min(Math.min(dist1sq, dist2sq), Math.min(dist3sq, dist4sq));
+        return smallest != Double.MAX_VALUE ? Math.sqrt(smallest) : Double.NaN;
+    }
+
+    /**
+     * Calculate closest distance between a line segment s1-s2 and a point p
+     * @param s1 start of segment
+     * @param s2 end of segment
+     * @param p the point
+     * @return the square of the euclidean distance from p to the closest point on the segment
+     */
+    private static double getSegmentNodeDistSq(EastNorth s1, EastNorth s2, EastNorth p) {
+        EastNorth c1 = closestPointTo(s1, s2, p, true);
+        return c1.distanceSq(p);
     }
 }
