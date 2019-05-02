@@ -37,7 +37,7 @@
         <property name="javacc.home" location="${tools.dir}"/>
         <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
         <property name="proj-build.dir" location="${base.dir}/build2"/>
-        <property name="taginfo-build.dir" location="${base.dir}/build2"/>
+        <property name="script-build.dir" location="${base.dir}/build2"/>
         <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="error_prone_core.jar" location="${tools.dir}/error_prone_core.jar"/>
@@ -46,6 +46,7 @@
         <property name="javacutil.jar" location="${tools.dir}/javacutil.jar"/>
         <property name="failureaccess.jar" location="${tools.dir}/failureaccess.jar"/>
         <property name="guava.jar" location="${tools.dir}/guava.jar"/>
+    	<property name="commons-lang3.jar" location="${pmd.dir}/commons-lang3-3.8.1.jar"/>
         <property name="jformatstring.jar" location="${spotbugs.dir}/jFormatString-3.0.0.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
@@ -78,11 +79,6 @@
         <condition property="java.library.dir" value="jmods" else="lib">
             <isset property="isJava9"/>
         </condition>
-        <path id="groovy.classpath">
-            <fileset dir="${tools.dir}/groovy">
-                <include name="*.jar"/>
-            </fileset>
-        </path>
         <path id="test.classpath">
             <fileset dir="${test.dir}/lib">
                 <include name="**/*.jar"/>
@@ -90,7 +86,7 @@
             <pathelement path="${dist.jar}"/>
             <pathelement path="${failureaccess.jar}"/>
             <pathelement path="${guava.jar}"/>
-            <pathelement path="${pmd.dir}/commons-lang3-3.8.1.jar"/>
+            <pathelement path="${commons-lang3.jar}"/>
             <pathelement path="${spotbugs.dir}/spotbugs-annotations.jar"/>
         </path>
         <path id="pmd.classpath">
@@ -429,6 +425,7 @@ Build-Date: ${build.tstamp}
     <target name="clean" depends="init-properties">
         <delete dir="${build.dir}"/>
         <delete dir="${proj-build.dir}"/>
+        <delete dir="${script-build.dir}"/>
         <delete dir="${checkstyle-build.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${mapcss.dir}/parsergen"/>
@@ -841,11 +838,16 @@ Build-Date: ${build.tstamp}
         </as:check-signature>
     </target>
 
-    <target name="taginfo-compile" depends="dist">
-        <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="TagInfoExtract.java"
-               destdir="${taginfo-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
-               includeantruntime="false" createMissingPackageInfoClass="false"
-               encoding="UTF-8" classpath="${build.dir}">
+    <target name="script-compile" depends="dist, test-compile">
+        <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="*.java"
+               destdir="${script-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
+               includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            <classpath>
+                <pathelement path="${build.dir}"/>
+                <pathelement path="${test.dir}/build/unit"/>
+                <pathelement path="${guava.jar}"/>
+                <pathelement path="${commons-lang3.jar}"/>
+            </classpath>
         </javac>
     </target>
 
@@ -858,7 +860,9 @@ Build-Date: ${build.tstamp}
                 <sysproperty key="java.awt.headless" value="true"/>
                 <classpath>
                     <pathelement path="${dist.jar}"/>
-                    <pathelement path="${taginfo-build.dir}"/>
+                    <pathelement path="${script-build.dir}"/>
+                    <pathelement path="${guava.jar}"/>
+                    <pathelement path="${commons-lang3.jar}"/>
                 </classpath>
                 <arg value="--type"/>
                 <arg value="@{type}"/>
@@ -871,22 +875,27 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
 
-    <target name="taginfo" depends="taginfo-compile">
+    <target name="taginfo" depends="script-compile">
         <_taginfo type="mappaint" output="taginfo_style.json"/>
         <_taginfo type="presets" output="taginfo_presets.json"/>
         <_taginfo type="external_presets" output="taginfo_external_presets.json"/>
     </target>
 
-    <target name="imageryindex" depends="init-properties">
-        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="groovy.classpath"/>
+    <target name="imageryindex" depends="init-properties,script-compile">
         <echo message="Checking editor imagery difference"/>
-        <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.jar}">
-                <arg value="-noeli"/>
-                <arg value="-p"/>
-                <arg value="imagery_eliout.imagery.xml"/>
-                <arg value="-q"/>
-                <arg value="imagery_josmout.imagery.xml"/>
-        </groovy>
+        <java classname="SyncEditorLayerIndex" failonerror="true" fork="false">
+            <classpath>
+                <pathelement path="${dist.jar}"/>
+                <pathelement path="${script-build.dir}"/>
+                <pathelement path="${guava.jar}"/>
+                <pathelement path="${commons-lang3.jar}"/>
+            </classpath>
+            <arg value="--noeli"/>
+            <arg value="-p"/>
+            <arg value="imagery_eliout.imagery.xml"/>
+            <arg value="-q"/>
+            <arg value="imagery_josmout.imagery.xml"/>
+        </java>
     </target>
 
     <target name="imageryindexdownload">
