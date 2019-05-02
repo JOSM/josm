@@ -9,9 +9,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -344,14 +344,14 @@ public class MapCSSRendererTest {
             return getTestDirectory() + "/style.mapcss";
         }
 
-        public DataSet getOsmDataSet() throws FileNotFoundException, IllegalDataException {
+        public DataSet getOsmDataSet() throws IllegalDataException, IOException {
             if (ds == null) {
-                ds = OsmReader.parseDataSet(new FileInputStream(getTestDirectory() + "/data.osm"), null);
+                ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(getTestDirectory(), "data.osm")), null);
             }
             return ds;
         }
 
-        public Bounds getTestArea() throws FileNotFoundException, IllegalDataException {
+        public Bounds getTestArea() throws IllegalDataException, IOException {
             if (testArea == null) {
                 testArea = getOsmDataSet().getDataSourceBounds().get(0);
             }

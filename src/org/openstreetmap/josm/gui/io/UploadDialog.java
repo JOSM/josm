@@ -594,21 +594,21 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             return result;
         }
 
-        private static String lc(String s) {
+        private static String lower(String s) {
             return s.toLowerCase(Locale.ENGLISH);
         }
 
         static String validateUploadTag(String uploadValue, String preferencePrefix, List<String> defMandatory, List<String> defForbidden) {
-            String uploadValueLc = lc(uploadValue);
+            String uploadValueLc = lower(uploadValue);
             // Check mandatory terms
             List<String> missingTerms = Config.getPref().getList(preferencePrefix+".mandatory-terms", defMandatory)
-                .stream().map(UploadAction::lc).filter(x -> !uploadValueLc.contains(x)).collect(Collectors.toList());
+                .stream().map(UploadAction::lower).filter(x -> !uploadValueLc.contains(x)).collect(Collectors.toList());
             if (!missingTerms.isEmpty()) {
                 return tr("The following required terms are missing: {0}", missingTerms);
             }
             // Check forbidden terms
             List<String> forbiddenTerms = Config.getPref().getList(preferencePrefix+".forbidden-terms", defForbidden)
-                    .stream().map(UploadAction::lc).filter(uploadValueLc::contains).collect(Collectors.toList());
+                    .stream().map(UploadAction::lower).filter(uploadValueLc::contains).collect(Collectors.toList());
             if (!forbiddenTerms.isEmpty()) {
                 return tr("The following forbidden terms have been found: {0}", forbiddenTerms);
             }

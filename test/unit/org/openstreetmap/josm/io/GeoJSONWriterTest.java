@@ -4,7 +4,9 @@ package org.openstreetmap.josm.io;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.junit.BeforeClass;
@@ -112,7 +114,7 @@ public class GeoJSONWriterTest {
      */
     @Test
     public void testMultipolygon() throws Exception {
-        try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "multipolygon.osm")) {
+        try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final GeoJSONWriter writer = new GeoJSONWriter(ds);
             assertTrue(writer.write().contains("MultiPolygon"));
@@ -125,7 +127,7 @@ public class GeoJSONWriterTest {
      */
     @Test
     public void testMultipolygonRobustness() throws Exception {
-        try (FileInputStream in = new FileInputStream("data_nodist/multipolygon.osm")) {
+        try (InputStream in = Files.newInputStream(Paths.get("data_nodist/multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final GeoJSONWriter writer = new GeoJSONWriter(ds);
             assertTrue(writer.write().contains("MultiPolygon"));

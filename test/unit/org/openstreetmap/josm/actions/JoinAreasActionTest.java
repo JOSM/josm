@@ -4,9 +4,10 @@ package org.openstreetmap.josm.actions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -105,10 +106,10 @@ public class JoinAreasActionTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testExamples() throws Exception {
         DataSet dsToJoin, dsExpected;
-        try (InputStream is = new FileInputStream("data_nodist/Join_Areas_Tests.osm")) {
+        try (InputStream is = Files.newInputStream(Paths.get("data_nodist/Join_Areas_Tests.osm"))) {
             dsToJoin = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
         }
-        try (InputStream is = new FileInputStream("data_nodist/Join_Areas_Tests_joined.osm")) {
+        try (InputStream is = Files.newInputStream(Paths.get("data_nodist/Join_Areas_Tests_joined.osm"))) {
             dsExpected = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
         }
 

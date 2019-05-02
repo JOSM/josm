@@ -6,9 +6,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,7 +61,7 @@ public class NmeaReaderTest {
     @Test
     public void testReader() throws Exception {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
-        final NmeaReader in = new NmeaReader(new FileInputStream("data_nodist/btnmeatrack_2016-01-25.nmea"));
+        final NmeaReader in = new NmeaReader(Files.newInputStream(Paths.get("data_nodist/btnmeatrack_2016-01-25.nmea")));
         in.parse(true);
         assertEquals(30, in.getNumberOfCoordinates());
         assertEquals(0, in.getParserMalformed());
@@ -86,7 +87,7 @@ public class NmeaReaderTest {
 
     private static void compareWithReference(int ticket, String filename, int numCoor) throws IOException, SAXException {
         GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getRegressionDataFile(ticket, filename+".gpx"));
-        NmeaReader in = new NmeaReader(new FileInputStream(TestUtils.getRegressionDataFile(ticket, filename+".nmea")));
+        NmeaReader in = new NmeaReader(Files.newInputStream(Paths.get(TestUtils.getRegressionDataFile(ticket, filename+".nmea"))));
         in.parse(true);
         assertEquals(numCoor, in.getNumberOfCoordinates());
         assertEquals(0, in.getParserMalformed());

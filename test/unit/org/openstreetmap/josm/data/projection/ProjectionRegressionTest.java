@@ -4,13 +4,13 @@ package org.openstreetmap.josm.data.projection;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,7 +88,7 @@ public class ProjectionRegressionTest {
 
         Random rand = new SecureRandom();
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(PROJECTION_DATA_FILE), StandardCharsets.UTF_8))) {
+                Files.newOutputStream(Paths.get(PROJECTION_DATA_FILE)), StandardCharsets.UTF_8))) {
             out.write("# Data for test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java\n");
             out.write("# Format: 1. Projection code; 2. lat/lon; 3. lat/lon projected -> east/north; 4. east/north (3.) inverse projected\n");
             for (String code : codesToWrite) {
@@ -113,7 +113,7 @@ public class ProjectionRegressionTest {
     }
 
     private static List<TestData> readData() throws IOException, FileNotFoundException {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE),
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(PROJECTION_DATA_FILE)),
                 StandardCharsets.UTF_8))) {
             List<TestData> result = new ArrayList<>();
             String line;

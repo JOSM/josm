@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data.projection;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +12,8 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,7 +120,7 @@ public class ProjectionRefTest {
             return result;
         }
         try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream(REFERENCE_DATA_FILE), StandardCharsets.UTF_8))) {
+                Files.newInputStream(Paths.get(REFERENCE_DATA_FILE)), StandardCharsets.UTF_8))) {
             String line;
             Pattern projPattern = Pattern.compile("<(.+?)>(.*)<>");
             RefEntry curEntry = null;
@@ -356,7 +356,7 @@ public class ProjectionRefTest {
             refsMap.put(ref.code, ref);
         }
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(REFERENCE_DATA_FILE), StandardCharsets.UTF_8))) {
+                Files.newOutputStream(Paths.get(REFERENCE_DATA_FILE)), StandardCharsets.UTF_8))) {
             for (Map.Entry<String, RefEntry> e : refsMap.entrySet()) {
                 RefEntry ref = e.getValue();
                 out.write("<" + ref.code + "> " + ref.def + "  <>\n");

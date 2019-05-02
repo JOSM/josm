@@ -6,7 +6,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -77,7 +79,7 @@ public class GeometryTest {
      */
     @Test
     public void testClosedWayArea() throws Exception {
-        try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm")) {
+        try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "create_multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             Way closedWay = (Way) SubclassFilteredCollection.filter(ds.allPrimitives(),
                     SearchCompiler.compile("landuse=forest")).iterator().next();
@@ -93,7 +95,7 @@ public class GeometryTest {
      */
     @Test
     public void testMultipolygonArea() throws Exception {
-        try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "multipolygon.osm")) {
+        try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final Relation r = ds.getRelations().iterator().next();
             Assert.assertEquals(4401735.20703125, Geometry.multipolygonArea(r), 1e-3);
@@ -108,7 +110,7 @@ public class GeometryTest {
      */
     @Test
     public void testAreaAndPerimeter() throws Exception {
-        try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm")) {
+        try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "create_multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             Way closedWay = (Way) SubclassFilteredCollection.filter(ds.allPrimitives(),
                     SearchCompiler.compile("landuse=forest")).iterator().next();

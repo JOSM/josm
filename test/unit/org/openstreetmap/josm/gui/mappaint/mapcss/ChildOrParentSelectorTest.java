@@ -5,7 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -187,7 +188,7 @@ public class ChildOrParentSelectorTest {
 
     @Test
     public void testContains() throws Exception {
-        ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/amenity-in-amenity.osm"), null);
+        ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get("data_nodist/amenity-in-amenity.osm")), null);
         ChildOrParentSelector css = parse("node[tag(\"amenity\") = parent_tag(\"amenity\")] ∈ *[amenity] {}");
         assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.WAY))));
         assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.RELATION))));

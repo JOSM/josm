@@ -3,7 +3,8 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -73,7 +74,7 @@ public class CreateMultipolygonActionTest {
 
     @Test
     public void testCreate1() throws Exception {
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
+        DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "create_multipolygon.osm")), null);
         Pair<SequenceCommand, Relation> mp = CreateMultipolygonAction.createMultipolygonCommand(ds.getWays(), null);
         assertEquals("Sequence: Create multipolygon", mp.a.getDescriptionText());
         assertEquals("{1=outer, 1.1=inner, 1.1.1=outer, 1.1.2=outer, 1.2=inner}", getRefToRoleMap(mp.b).toString());
@@ -81,14 +82,14 @@ public class CreateMultipolygonActionTest {
 
     @Test
     public void testCreate2() throws Exception {
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
+        DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "create_multipolygon.osm")), null);
         Relation mp = createMultipolygon(ds.getWays(), "ref=1 OR ref:1.1.", null, true);
         assertEquals("{1=outer, 1.1.1=inner, 1.1.2=inner}", getRefToRoleMap(mp).toString());
     }
 
     @Test
     public void testUpdate1() throws Exception {
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
+        DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "create_multipolygon.osm")), null);
         Relation mp = createMultipolygon(ds.getWays(), "ref=\".*1$\"", null, true);
         assertEquals(3, mp.getMembersCount());
         assertEquals("{1=outer, 1.1=inner, 1.1.1=outer}", getRefToRoleMap(mp).toString());
@@ -99,7 +100,7 @@ public class CreateMultipolygonActionTest {
 
     @Test
     public void testUpdate2() throws Exception {
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
+        DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "create_multipolygon.osm")), null);
         Relation mp = createMultipolygon(ds.getWays(), "ref=1 OR ref:1.1.1", null, true);
         assertEquals("{1=outer, 1.1.1=inner}", getRefToRoleMap(mp).toString());
         Relation mp2 = createMultipolygon(ds.getWays(), "ref=1.1 OR ref=1.2 OR ref=1.1.2", mp, false);

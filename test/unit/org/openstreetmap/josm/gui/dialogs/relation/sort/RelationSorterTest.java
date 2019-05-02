@@ -1,9 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation.sort;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Assert;
@@ -43,7 +44,7 @@ public class RelationSorterTest {
     @Before
     public void loadData() throws IllegalDataException, IOException {
         if (testDataset == null) {
-            try (InputStream fis = new FileInputStream("data_nodist/relation_sort.osm")) {
+            try (InputStream fis = Files.newInputStream(Paths.get("data_nodist/relation_sort.osm"))) {
                 testDataset = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             }
         }

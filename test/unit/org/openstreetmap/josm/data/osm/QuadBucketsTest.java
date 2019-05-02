@@ -3,8 +3,9 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.TestUtils.getPrivateField;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,7 +84,7 @@ public class QuadBucketsTest {
     @Test
     public void testRemove() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        try (InputStream fis = new FileInputStream("data_nodist/restriction.osm")) {
+        try (InputStream fis = Files.newInputStream(Paths.get("data_nodist/restriction.osm"))) {
             DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             removeAllTest(ds);
         }
@@ -96,7 +97,7 @@ public class QuadBucketsTest {
     @Test
     public void testMove() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        try (InputStream fis = new FileInputStream("data_nodist/restriction.osm")) {
+        try (InputStream fis = Files.newInputStream(Paths.get("data_nodist/restriction.osm"))) {
             DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
 
             for (Node n: ds.getNodes()) {
