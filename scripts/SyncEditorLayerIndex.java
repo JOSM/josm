@@ -72,6 +72,7 @@ import org.xml.sax.SAXException;
  *
  * Add option "-h" to show the available command line flags.
  */
+@SuppressWarnings("unchecked")
 public class SyncEditorLayerIndex {
 
     private static final int MAXLEN = 140;
