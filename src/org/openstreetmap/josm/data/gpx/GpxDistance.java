@@ -31,7 +31,7 @@ public final class GpxDistance {
      */
     public static double getLowestDistance(OsmPrimitive p, GpxData gpxData) {
         return gpxData.getTrackPoints()
-                .mapToDouble(tp -> getDistance(p, tp))
+                .mapToDouble(tp -> Geometry.getDistance(p, new Node(tp.getCoor())))
                 .filter(x -> x >= 0)
                 .min().orElse(Double.MAX_VALUE);
     }
@@ -41,16 +41,12 @@ public final class GpxDistance {
      * @param p OsmPrimitive to get the distance to the WayPoint
      * @param waypoint WayPoint to get the distance from
      * @return The shortest distance between p and waypoint
+     * @deprecated Use {@code Geometry.getDistance(p, new Node(waypoint.getCoor()))}
+     * instead
      */
+    @Deprecated
     public static double getDistance(OsmPrimitive p, WayPoint waypoint) {
-        if (p instanceof Node) {
-            return getDistanceNode((Node) p, waypoint);
-        } else if (p instanceof Way) {
-            return getDistanceWay((Way) p, waypoint);
-        } else if (p instanceof Relation) {
-            return getDistanceRelation((Relation) p, waypoint);
-        }
-        return Double.MAX_VALUE;
+        return Geometry.getDistance(p, new Node(waypoint.getCoor()));
     }
 
     /**
@@ -58,7 +54,10 @@ public final class GpxDistance {
      * @param relation Relation to get the distance from
      * @param waypoint WayPoint to get the distance to
      * @return The distance between the relation and the waypoint
+     * @deprecated Use {@code Geometry.getDistance(relation, new Node(waypoint.getCoor()))}
+     * instead
      */
+    @Deprecated
     public static double getDistanceRelation(Relation relation, WayPoint waypoint) {
         double shortestDistance = Double.MAX_VALUE;
         List<Node> nodes = new ArrayList<>(relation.getMemberPrimitives(Node.class));
@@ -85,32 +84,12 @@ public final class GpxDistance {
      * @param way Way to get the distance from
      * @param waypoint WayPoint to get the distance to
      * @return The distance between the way and the waypoint
+     * @deprecated Use {@code Geometry.getDistanceWayNode(way, new Node(waypoint.getCoor()))} instead
      */
+    @Deprecated
     public static double getDistanceWay(Way way, WayPoint waypoint) {
-        double shortestDistance = Double.MAX_VALUE;
-        if (way == null || waypoint == null) return shortestDistance;
-        LatLon llwaypoint = waypoint.getCoor();
-        EastNorth enwaypoint = new EastNorth(llwaypoint.getY(), llwaypoint.getX());
-        for (int i = 0; i < way.getNodesCount() - 1; i++) {
-            double distance = Double.MAX_VALUE;
-            LatLon llfirst = way.getNode(i).getCoor();
-            LatLon llsecond = way.getNode(i + 1).getCoor();
-            EastNorth first = new EastNorth(llfirst.getY(), llfirst.getX());
-            EastNorth second = new EastNorth(llsecond.getY(), llsecond.getX());
-            if (first.isValid() && second.isValid()) {
-                EastNorth closestPoint = Geometry.closestPointToSegment(first, second, enwaypoint);
-                distance = llwaypoint.greatCircleDistance(new LatLon(closestPoint.getX(), closestPoint.getY()));
-            } else if (first.isValid() && !second.isValid()) {
-                distance = getDistanceEastNorth(first, waypoint);
-            } else if (!first.isValid() && second.isValid()) {
-                distance = getDistanceEastNorth(second, waypoint);
-            } else if (!first.isValid() && !second.isValid()) {
-                distance = Double.MAX_VALUE;
-            }
-            if (distance < shortestDistance) shortestDistance = distance;
-
-        }
-        return shortestDistance;
+        if (way == null || waypoint == null) return Double.MAX_VALUE;
+        return Geometry.getDistanceWayNode(way, new Node(waypoint.getCoor()));
     }
 
     /**
@@ -118,10 +97,13 @@ public final class GpxDistance {
      * @param node Node to get the distance from
      * @param waypoint WayPoint to get the distance to
      * @return The distance between the two points
+     * @deprecated Use {@code Geometry.getDistance(node, new Node(waypoint.getCoor()))}
+     * instead
      */
+    @Deprecated
     public static double getDistanceNode(Node node, WayPoint waypoint) {
-        if (node == null) return Double.MAX_VALUE;
-        return getDistanceLatLon(node.getCoor(), waypoint);
+        if (node == null || waypoint == null) return Double.MAX_VALUE;
+        return Geometry.getDistance(node, new Node(waypoint.getCoor()));
     }
 
     /**
@@ -129,10 +111,12 @@ public final class GpxDistance {
      * @param en The EastNorth to get the distance to
      * @param waypoint WayPoint to get the distance to
      * @return The distance between the two points
+     * @deprecated Use {@code Geometry.getDistance(new Node(en), new Node(waypoint.getCoor()))} instead
      */
+    @Deprecated
     public static double getDistanceEastNorth(EastNorth en, WayPoint waypoint) {
-        if (en == null || !en.isValid()) return Double.MAX_VALUE;
-        return getDistanceLatLon(new LatLon(en.getY(), en.getX()), waypoint);
+        if (en == null || waypoint == null) return Double.MAX_VALUE;
+        return Geometry.getDistance(new Node(en), new Node(waypoint.getCoor()));
     }
 
     /**
@@ -140,9 +124,11 @@ public final class GpxDistance {
      * @param latlon LatLon to get the distance from
      * @param waypoint WayPoint to get the distance to
      * @return The distance between the two points
+     * @deprecated Use {@code Geometry.getDistance(new Node(latlon), new Node(waypoint.getCoor()))} instead
      */
+    @Deprecated
     public static double getDistanceLatLon(LatLon latlon, WayPoint waypoint) {
         if (latlon == null || waypoint == null || waypoint.getCoor() == null) return Double.MAX_VALUE;
-        return waypoint.getCoor().greatCircleDistance(latlon);
+        return Geometry.getDistance(new Node(latlon), new Node(waypoint.getCoor()));
     }
 }
