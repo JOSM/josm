@@ -1155,11 +1155,12 @@ public final class Geometry {
         for (T primitive : primitives) {
             double distance = getDistance(osm, primitive);
             if (Double.isNaN(distance)) continue;
-            if (distance < lowestDistance) {
+            int comp = Double.compare(distance, lowestDistance);
+            if (comp < 0) {
                 closest.clear();
                 lowestDistance = distance;
                 closest.add(primitive);
-            } else if (distance == lowestDistance) {
+            } else if (comp == 0) {
                 closest.add(primitive);
             }
         }
@@ -1218,11 +1219,12 @@ public final class Geometry {
         for (T primitive : primitives) {
             double distance = getDistance(osm, primitive);
             if (Double.isNaN(distance)) continue;
-            if (distance > furthestDistance) {
+            int comp = Double.compare(distance, furthestDistance);
+            if (comp > 0) {
                 furthest.clear();
                 furthestDistance = distance;
                 furthest.add(primitive);
-            } else if (distance == furthestDistance) {
+            } else if (comp == 0) {
                 furthest.add(primitive);
             }
         }
