@@ -10,7 +10,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * JUnit Test of coastline validation test.
+ * JUnit Test of {@link Coastlines} validation test.
  */
 public class CoastlinesTest {
 
