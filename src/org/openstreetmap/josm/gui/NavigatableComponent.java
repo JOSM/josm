@@ -679,9 +679,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         EastNorth enShift = mvs.getForView(enOriginAligned.getX(), enOriginAligned.getY()).getEastNorth();
         newCenter = newCenter.subtract(enShift);
 
-        if (!newCenter.equals(getCenter()) || !Utils.equalsEpsilon(getScale(), newScale)) {
+        EastNorth oldCenter = getCenter();
+        if (!newCenter.equals(oldCenter) || !Utils.equalsEpsilon(getScale(), newScale)) {
             if (!initial) {
-                pushZoomUndo(getCenter(), getScale());
+                pushZoomUndo(oldCenter, getScale());
             }
             zoomNoUndoTo(newCenter, newScale, initial);
         }
@@ -740,8 +741,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         // FIXME make these configurable.
         final int fps = 20;     // animation frames per second
         final int speed = 1500; // milliseconds for full-screen-width pan
-        if (!newCenter.equals(getCenter())) {
-            final EastNorth oldCenter = getCenter();
+        final EastNorth oldCenter = getCenter();
+        if (!newCenter.equals(oldCenter)) {
             final double distance = newCenter.distance(oldCenter) / getScale();
             final double milliseconds = distance / getWidth() * speed;
             final double frames = milliseconds * fps / 1000;
