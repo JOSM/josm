@@ -249,6 +249,12 @@ public class TagCheckerTest {
         assertFalse(errors.get(0).isFixable());
     }
 
+    /**
+     * Checks for unwanted non printing control characters
+     * @param s String to test
+     * @param assertionC assertion on the result (true/false)
+     * @param expected expected fixed value
+     */
     private static void doTestUnwantedNonprintingControlCharacters(String s, Consumer<Boolean> assertionC, String expected) {
         assertionC.accept(TagChecker.containsUnwantedNonPrintingControlCharacter(s));
         assertEquals(expected, TagChecker.removeUnwantedNonPrintingControlCharacters(s));
@@ -294,5 +300,18 @@ public class TagCheckerTest {
             doTestUnwantedNonprintingControlCharacters(ok + s, Assert::assertTrue, ok);
             doTestUnwantedNonprintingControlCharacters(s + ok + s, Assert::assertTrue, ok);
         }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17667">Bug #17667</a>.
+     */
+    @Test
+    public void testTicket17667() {
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Bus 118: Berlin, Rathaus Zehlendorf => Potsdam, Drewitz Stern-Center"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Καρδίτσα → Λάρισα"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("traffic_sign", "FI:871[← Lippuautomaatti]"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("traffic_sign", "FI:871[↑ Nostopaikka ↑]"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Cinderella II - Strandvägen ↔ Hagede"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Tallinn — Narva"));
     }
 }
