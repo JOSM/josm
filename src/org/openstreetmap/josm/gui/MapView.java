@@ -683,15 +683,16 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             initialViewport = null;
         }
 
-        if (getCenter() == null)
+        EastNorth oldCenter = getCenter();
+        if (oldCenter == null)
             return false; // no data loaded yet.
 
         // if the position was remembered, we need to adjust center once before repainting
         if (oldLoc != null && oldSize != null) {
             Point l1 = getLocationOnScreen();
             final EastNorth newCenter = new EastNorth(
-                    getCenter().getX()+ (l1.x-oldLoc.x - (oldSize.width-getWidth())/2.0)*getScale(),
-                    getCenter().getY()+ (oldLoc.y-l1.y + (oldSize.height-getHeight())/2.0)*getScale()
+                    oldCenter.getX()+ (l1.x-oldLoc.x - (oldSize.width-getWidth())/2.0)*getScale(),
+                    oldCenter.getY()+ (oldLoc.y-l1.y + (oldSize.height-getHeight())/2.0)*getScale()
                     );
             oldLoc = null; oldSize = null;
             zoomTo(newCenter);

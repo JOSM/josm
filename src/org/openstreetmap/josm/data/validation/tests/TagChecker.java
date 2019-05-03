@@ -421,7 +421,7 @@ public class TagChecker extends TagTest {
         return result;
     }
 
-    private static boolean containsUnusualUnicodeCharacter(String key, String value) {
+    static boolean containsUnusualUnicodeCharacter(String key, String value) {
         return value != null && value.chars().anyMatch(c -> isUnusualUnicodeBlock(key, UnicodeBlock.of(c)));
     }
 
@@ -445,7 +445,6 @@ public class TagChecker extends TagTest {
     private static boolean isUnusualBmpUse(UnicodeBlock b) {
         // CHECKSTYLE.OFF: BooleanExpressionComplexity
         return b == UnicodeBlock.COMBINING_MARKS_FOR_SYMBOLS            // U+20D0..U+20FF
-            || b == UnicodeBlock.ARROWS                                 // U+2190..U+21FF
             || b == UnicodeBlock.MATHEMATICAL_OPERATORS                 // U+2200..U+22FF
             || b == UnicodeBlock.ENCLOSED_ALPHANUMERICS                 // U+2460..U+24FF
             || b == UnicodeBlock.BOX_DRAWING                            // U+2500..U+257F

@@ -739,22 +739,24 @@ public final class MapViewState implements Serializable {
          */
         public MapViewPoint getLineEntry(MapViewPoint start, MapViewPoint end) {
             ProjectionBounds bounds = getProjectionBounds();
-            if (bounds.contains(start.getEastNorth())) {
+            EastNorth enStart = start.getEastNorth();
+            if (bounds.contains(enStart)) {
                 return start;
             }
 
-            double dx = end.getEastNorth().east() - start.getEastNorth().east();
+            EastNorth enEnd = end.getEastNorth();
+            double dx = enEnd.east() - enStart.east();
             double boundX = dx > 0 ? bounds.minEast : bounds.maxEast;
-            EastNorth borderIntersection = Geometry.getSegmentSegmentIntersection(start.getEastNorth(), end.getEastNorth(),
+            EastNorth borderIntersection = Geometry.getSegmentSegmentIntersection(enStart, enEnd,
                     new EastNorth(boundX, bounds.minNorth),
                     new EastNorth(boundX, bounds.maxNorth));
             if (borderIntersection != null) {
                 return getPointFor(borderIntersection);
             }
 
-            double dy = end.getEastNorth().north() - start.getEastNorth().north();
+            double dy = enEnd.north() - enStart.north();
             double boundY = dy > 0 ? bounds.minNorth : bounds.maxNorth;
-            borderIntersection = Geometry.getSegmentSegmentIntersection(start.getEastNorth(), end.getEastNorth(),
+            borderIntersection = Geometry.getSegmentSegmentIntersection(enStart, enEnd,
                     new EastNorth(bounds.minEast, boundY),
                     new EastNorth(bounds.maxEast, boundY));
             if (borderIntersection != null) {
