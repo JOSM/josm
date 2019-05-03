@@ -632,7 +632,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             }
             final String uploadSource = dialog.getUploadSource();
             final String uploadSourceRejection = validateUploadTag(
-                    uploadSource, "upload.source", def, Collections.singletonList("google"));
+                    uploadSource, "upload.source", def, def);
             if ((Utils.isStripEmpty(uploadSource) && warnUploadSource()) ||
                     (uploadSourceRejection != null && warnRejectedUploadSource(uploadSourceRejection))) {
                 // abort for missing or rejected changeset source
