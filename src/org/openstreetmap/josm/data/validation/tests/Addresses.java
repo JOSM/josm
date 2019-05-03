@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,6 +62,7 @@ public class Addresses extends Test {
     protected static final String ADDR_NEIGHBOURHOOD = "addr:neighbourhood";
     protected static final String ADDR_PLACE         = "addr:place";
     protected static final String ADDR_STREET        = "addr:street";
+    protected static final String ADDR_SUBURB        = "addr:suburb";
     protected static final String ADDR_CITY          = "addr:city";
     protected static final String ADDR_UNIT          = "addr:unit";
     protected static final String ADDR_FLATS         = "addr:flats";
@@ -71,7 +73,6 @@ public class Addresses extends Test {
 
     private Map<String, Collection<OsmPrimitive>> knownAddresses;
     private Set<String> ignoredAddresses;
-
 
     /**
      * Constructor
@@ -103,25 +104,26 @@ public class Addresses extends Test {
         return list;
     }
 
-    protected void checkHouseNumbersWithoutStreet(OsmPrimitive p) {
-        List<Relation> associatedStreets = getAndCheckAssociatedStreets(p);
+    /**
+     * Checks for house numbers for which the street is unknown.
+     * @param p primitive to test
+     * @return error found, or null
+     */
+    protected TestError checkHouseNumbersWithoutStreet(OsmPrimitive p) {
         // Find house number without proper location
         // (neither addr:street, associatedStreet, addr:place, addr:neighbourhood or addr:interpolation)
-        if (p.hasKey(ADDR_HOUSE_NUMBER) && !p.hasKey(ADDR_STREET, ADDR_PLACE, ADDR_NEIGHBOURHOOD)) {
-            for (Relation r : associatedStreets) {
-                if (r.hasTag("type", ASSOCIATED_STREET)) {
-                    return;
-                }
-            }
-            if (p.referrers(Way.class).anyMatch(w -> w.hasKey(ADDR_INTERPOLATION) && w.hasKey(ADDR_STREET))) {
-                return;
-            }
-            // No street found
-            errors.add(TestError.builder(this, Severity.WARNING, HOUSE_NUMBER_WITHOUT_STREET)
-                    .message(tr("House number without street"))
-                    .primitives(p)
-                    .build());
+        if (p.hasKey(ADDR_HOUSE_NUMBER) && !p.hasKey(ADDR_STREET, ADDR_PLACE, ADDR_NEIGHBOURHOOD)
+            && getAndCheckAssociatedStreets(p).isEmpty()
+            && p.referrers(Way.class).noneMatch(w -> w.hasKey(ADDR_INTERPOLATION) && w.hasKey(ADDR_STREET))) {
+            // no street found
+            TestError e = TestError.builder(this, Severity.WARNING, HOUSE_NUMBER_WITHOUT_STREET)
+                .message(tr("House number without street"))
+                .primitives(p)
+                .build();
+            errors.add(e);
+            return e;
         }
+        return null;
     }
 
     static boolean isPOI(OsmPrimitive p) {
@@ -176,16 +178,14 @@ public class Addresses extends Test {
         super.endTest();
     }
 
-    protected void checkForDuplicate(OsmPrimitive p) {
+    protected List<TestError> checkForDuplicate(OsmPrimitive p) {
         if (knownAddresses == null) {
             initAddressMap(p);
         }
         if (!isPOI(p) && hasAddress(p)) {
+            List<TestError> result = new ArrayList<>();
             String simplifiedAddress = getSimplifiedAddress(p);
-            if (ignoredAddresses.contains(simplifiedAddress)) {
-                return;
-            }
-            if (knownAddresses.containsKey(simplifiedAddress)) {
+            if (!ignoredAddresses.contains(simplifiedAddress) && knownAddresses.containsKey(simplifiedAddress)) {
                 double maxDistance = MAX_DUPLICATE_DISTANCE.get();
                 for (OsmPrimitive p2 : knownAddresses.get(simplifiedAddress)) {
                     if (p == p2) {
@@ -197,10 +197,11 @@ public class Addresses extends Test {
                     double distance = getDistance(p, p2);
                     if (city1 != null && city2 != null) {
                         if (city1.equals(city2)) {
-                            if (!p.hasKey(ADDR_POSTCODE) || !p2.hasKey(ADDR_POSTCODE) || p.get(ADDR_POSTCODE).equals(p2.get(ADDR_POSTCODE))) {
+                            if ((!p.hasKey(ADDR_POSTCODE) || !p2.hasKey(ADDR_POSTCODE) || p.get(ADDR_POSTCODE).equals(p2.get(ADDR_POSTCODE)))
+                             && (!p.hasKey(ADDR_SUBURB) || !p2.hasKey(ADDR_SUBURB) || p.get(ADDR_SUBURB).equals(p2.get(ADDR_SUBURB)))) {
                                 severityLevel = Severity.WARNING;
                             } else {
-                                // address including city identical but postcode differs
+                                // address including city identical but postcode or suburb differs
                                 // most likely perfectly fine
                                 severityLevel = Severity.OTHER;
                             }
@@ -227,13 +228,16 @@ public class Addresses extends Test {
                             }
                         }
                     }
-                    errors.add(TestError.builder(this, severityLevel, DUPLICATE_HOUSE_NUMBER)
+                    result.add(TestError.builder(this, severityLevel, DUPLICATE_HOUSE_NUMBER)
                             .message(tr("Duplicate house numbers"), marktr("''{0}'' ({1}m)"), simplifiedAddress, (int) distance)
                             .primitives(Arrays.asList(p, p2)).build());
                 }
                 knownAddresses.get(simplifiedAddress).remove(p); // otherwise we would get every warning two times
             }
+            errors.addAll(result);
+            return result;
         }
+        return Collections.emptyList();
     }
 
     static String getSimplifiedAddress(OsmPrimitive p) {
