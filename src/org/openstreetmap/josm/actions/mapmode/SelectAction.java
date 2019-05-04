@@ -190,8 +190,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * @param mapFrame The MapFrame this action belongs to.
      */
     public SelectAction(MapFrame mapFrame) {
-        super(tr("Select"), "move/move", tr("Select, move, scale and rotate objects"),
-                Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, Shortcut.DIRECT),
+        super(tr("Select mode"), "move/move", tr("Select, move, scale and rotate objects"),
+                Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select mode")), KeyEvent.VK_S, Shortcut.DIRECT),
                 ImageProvider.getCursor("normal", "selection"));
         mv = mapFrame.mapView;
         setHelpId(ht("/Action/Select"));
