@@ -90,7 +90,8 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   fixRemove: "{1.key}";
 }
 
-/* #17100, #17471, #17629 */
+/* #17100, #17471, #17629, #17633 */
+*[name][name=~/^(?i)(parc|park)$/][leisure=park],
 *[name][name=~/^(?i)(pond)$/][water=pond],
 *[name][name=~/^(?i)(chapel|chapelle|kapelle)$/][building=chapel],
 *[name][name=~/^(?i)(church|église|biserica)$/][amenity=place_of_worship][religion=christian],
@@ -112,6 +113,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 *[name][name=~/^(?i)(cemetery|cementerio|cimetière|cmentarz|friedhof)$/][landuse=cemetery],
 *[name][name=~/^(?i)(mairie|rathaus)$/][amenity=townhall],
 *[name][name=~/^(?i)(monument aux morts|war memorial)$/][historic=memorial][memorial=war_memorial],
+*[name][name=~/^(?i)(school|école|Школа)$/][building=school],
 *[name][name=~/^(?i)(school|école|Школа)$/][amenity=school],
 *[name][name=~/^(?i)(école élémentaire)$/][amenity=school]["school:FR"="élémentaire"],
 *[name][name=~/^(?i)(école maternelle)$/][amenity=school]["school:FR"="maternelle"],
@@ -149,7 +151,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertMatch: "way name=cemetery amenity=grave_yard";
   assertMatch: "way name=Cmentarz amenity=grave_yard";
   assertNoMatch: "way name=kiosk amenity=grave_yard";
-} 
+}
 *[name][name=~/^(?i)(house|casa|rumah|vivienda)$/][building][building!=house][building!=no] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
@@ -160,4 +162,9 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertMatch: "way name=Rumah building=yes";
   assertNoMatch: "way name=house building=house";
   assertMatch: "way name=house building=yes";
+}
+*[name][name=~/^(?i)(school|école|Школа)$/][building][building!=school][building!=no] {
+  throwWarning: tr("{0}", "{0.tag}");
+  group: tr("descriptive name");
+  /* without fixRemove to avoid possible information loss */
 }
