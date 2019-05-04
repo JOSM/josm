@@ -33,6 +33,7 @@ public class SelectionTable extends JTable {
     protected void build() {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         addMouseListener(new DoubleClickAdapter());
+        memberTableModel.addTableModelListener(e -> repaint());
     }
 
     class DoubleClickAdapter extends MouseAdapter {
