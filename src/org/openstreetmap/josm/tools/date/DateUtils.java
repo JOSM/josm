@@ -6,7 +6,6 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -100,8 +99,7 @@ public final class DateUtils {
                 parsePart2(str, 14),
                 parsePart2(str, 17),
                 0,
-                // consider EXIF date in default timezone
-                checkLayout(str, "xxxx:xx:xx xx:xx:xx") ? ZoneId.systemDefault() : ZoneOffset.UTC
+                ZoneOffset.UTC
             );
             if (str.length() == 22 || str.length() == 25) {
                 final int plusHr = parsePart2(str, 20);
@@ -122,8 +120,7 @@ public final class DateUtils {
                 parsePart2(str, 14),
                 parsePart2(str, 17),
                 parsePart3(str, 20) * 1_000_000,
-                // consider EXIF date in default timezone
-                checkLayout(str, "xxxx:xx:xx xx:xx:xx.xxx") ? ZoneId.systemDefault() : ZoneOffset.UTC
+                ZoneOffset.UTC
             );
             if (str.length() == 29) {
                 final int plusHr = parsePart2(str, 24);

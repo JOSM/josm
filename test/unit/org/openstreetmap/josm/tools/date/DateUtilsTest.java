@@ -69,9 +69,8 @@ public class DateUtilsTest {
      */
     @Test
     public void testExifDate() {
-        setTimeZone(TimeZone.getTimeZone("GMT+8:00")); // parsing is timezone aware
-        assertEquals(1443038712000L - 8 * 3600 * 1000, DateUtils.fromString("2015:09:23 20:05:12").getTime());
-        assertEquals(1443038712888L - 8 * 3600 * 1000, DateUtils.fromString("2015:09:23 20:05:12.888").getTime());
+        assertEquals(1443038712000L, DateUtils.fromString("2015:09:23 20:05:12").getTime());
+        assertEquals(1443038712888L, DateUtils.fromString("2015:09:23 20:05:12.888").getTime());
     }
 
     /**
