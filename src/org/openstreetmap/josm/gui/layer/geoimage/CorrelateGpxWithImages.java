@@ -28,7 +28,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -36,7 +35,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -107,6 +105,7 @@ import org.xml.sax.SAXException;
 /**
  * This class displays the window to select the GPX file and the offset (timezone + delta).
  * Then it correlates the images of the layer with that GPX file.
+ * @since 2566
  */
 public class CorrelateGpxWithImages extends AbstractAction {
 
@@ -540,9 +539,63 @@ public class CorrelateGpxWithImages extends AbstractAction {
      *
      */
     private class SetOffsetActionListener implements ActionListener {
+        JCheckBox ckDst;
+        ImageDisplay imgDisp;
+        JLabel lbExifTime;
+        JosmTextField tfGpsTime;
+
+        class TimeZoneItem implements Comparable<TimeZoneItem> {
+            private final TimeZone tz;
+            private String rawString;
+            private String dstString;
+
+            TimeZoneItem(TimeZone tz) {
+                this.tz = tz;
+            }
+
+            public String getFormattedString() {
+                if (ckDst.isSelected()) {
+                    return getDstString();
+                } else {
+                    return getRawString();
+                }
+            }
+
+            public String getDstString() {
+                if (dstString == null) {
+                    dstString = formatTimezone(tz.getRawOffset() + tz.getDSTSavings());
+                }
+                return dstString;
+            }
+
+            public String getRawString() {
+                if (rawString == null) {
+                    rawString = formatTimezone(tz.getRawOffset());
+                }
+                return rawString;
+            }
+
+            public String getID() {
+                return tz.getID();
+            }
+
+            @Override
+            public String toString() {
+                return getID() + " (" + getFormattedString() + ')';
+            }
+
+            @Override
+            public int compareTo(TimeZoneItem o) {
+                return getID().compareTo(o.getID());
+            }
+
+            private String formatTimezone(int offset) {
+                return new GpxTimezone((double) offset / TimeUnit.HOURS.toMillis(1)).formatTimezone();
+            }
+        }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             SimpleDateFormat dateFormat = (SimpleDateFormat) DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
 
             JPanel panel = new JPanel(new BorderLayout());
@@ -551,7 +604,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     + "And then, simply capture the time you read on the photo and select a timezone<hr></html>")),
                     BorderLayout.NORTH);
 
-            ImageDisplay imgDisp = new ImageDisplay();
+            imgDisp = new ImageDisplay();
             imgDisp.setPreferredSize(new Dimension(300, 225));
             panel.add(imgDisp, BorderLayout.CENTER);
 
@@ -565,7 +618,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.anchor = GridBagConstraints.WEST;
             panelTf.add(new JLabel(tr("Photo time (from exif):")), gc);
 
-            JLabel lbExifTime = new JLabel();
+            lbExifTime = new JLabel();
             gc.gridx = 1;
             gc.weightx = 1.0;
             gc.fill = GridBagConstraints.HORIZONTAL;
@@ -580,7 +633,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.anchor = GridBagConstraints.WEST;
             panelTf.add(new JLabel(tr("Gps time (read from the above photo): ")), gc);
 
-            JosmTextField tfGpsTime = new JosmTextField(12);
+            tfGpsTime = new JosmTextField(12);
             tfGpsTime.setEnabled(false);
             tfGpsTime.setMinimumSize(new Dimension(155, tfGpsTime.getMinimumSize().height));
             gc.gridx = 1;
@@ -598,41 +651,45 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.weightx = gc.weighty = 0.0;
             gc.fill = GridBagConstraints.NONE;
             gc.anchor = GridBagConstraints.WEST;
-            panelTf.add(new JLabel(tr("I am in the timezone of: ")), gc);
+            panelTf.add(new JLabel(tr("Photo taken in the timezone of: ")), gc);
+
+            ckDst = new JCheckBox(tr("Use daylight saving time (where applicable)"), Config.getPref().getBoolean("geoimage.timezoneid.dst"));
 
             String[] tmp = TimeZone.getAvailableIDs();
-            List<String> vtTimezones = new ArrayList<>(tmp.length);
+            List<TimeZoneItem> vtTimezones = new ArrayList<>(tmp.length);
+
+            String defTzStr = Config.getPref().get("geoimage.timezoneid", "");
+            if (defTzStr.isEmpty()) {
+                defTzStr = TimeZone.getDefault().getID();
+            }
+            TimeZoneItem defTzItem = null;
 
             for (String tzStr : tmp) {
-                TimeZone tz = TimeZone.getTimeZone(tzStr);
-
-                String tzDesc = tzStr + " (" +
-                        new GpxTimezone(((double) tz.getRawOffset()) / TimeUnit.HOURS.toMillis(1)).formatTimezone() +
-                        ')';
-                vtTimezones.add(tzDesc);
+                TimeZoneItem tz = new TimeZoneItem(TimeZone.getTimeZone(tzStr));
+                vtTimezones.add(tz);
+                if (defTzStr.equals(tzStr)) {
+                    defTzItem = tz;
+                }
             }
 
             Collections.sort(vtTimezones);
 
-            JosmComboBox<String> cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[0]));
+            JosmComboBox<TimeZoneItem> cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new TimeZoneItem[0]));
 
-            String tzId = Config.getPref().get("geoimage.timezoneid", "");
-            TimeZone defaultTz;
-            if (tzId.isEmpty()) {
-                defaultTz = TimeZone.getDefault();
-            } else {
-                defaultTz = TimeZone.getTimeZone(tzId);
+            if (defTzItem != null) {
+                cbTimezones.setSelectedItem(defTzItem);
             }
-
-            cbTimezones.setSelectedItem(defaultTz.getID() + " (" +
-                    new GpxTimezone(((double) defaultTz.getRawOffset()) / TimeUnit.HOURS.toMillis(1)).formatTimezone() +
-                    ')');
 
             gc.gridx = 1;
             gc.weightx = 1.0;
             gc.gridwidth = 2;
             gc.fill = GridBagConstraints.HORIZONTAL;
             panelTf.add(cbTimezones, gc);
+
+            gc.gridy = 3;
+            panelTf.add(ckDst, gc);
+
+            ckDst.addActionListener(x -> cbTimezones.repaint());
 
             panel.add(panelTf, BorderLayout.SOUTH);
 
@@ -653,20 +710,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             imgList.getSelectionModel().addListSelectionListener(evt -> {
                 int index = imgList.getSelectedIndex();
                 ImageEntry img = yLayer.getImageData().getImages().get(index);
-                imgDisp.setImage(img);
-                Date date = img.getExifTime();
-                if (date != null) {
-                    DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
-                    lbExifTime.setText(df.format(date));
-                    tfGpsTime.setText(df.format(date));
-                    tfGpsTime.setCaretPosition(tfGpsTime.getText().length());
-                    tfGpsTime.setEnabled(true);
-                    tfGpsTime.requestFocus();
-                } else {
-                    lbExifTime.setText(tr("No date"));
-                    tfGpsTime.setText("");
-                    tfGpsTime.setEnabled(false);
-                }
+                updateExifComponents(img);
             });
             panelLst.add(new JScrollPane(imgList), BorderLayout.CENTER);
 
@@ -678,18 +722,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     return;
                 ImageEntry entry = new ImageEntry(fc.getSelectedFile());
                 entry.extractExif();
-                imgDisp.setImage(entry);
-
-                Date date = entry.getExifTime();
-                if (date != null) {
-                    lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM).format(date));
-                    tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+' ');
-                    tfGpsTime.setEnabled(true);
-                } else {
-                    lbExifTime.setText(tr("No date"));
-                    tfGpsTime.setText("");
-                    tfGpsTime.setEnabled(false);
-                }
+                updateExifComponents(entry);
             });
             panelLst.add(openButton, BorderLayout.PAGE_END);
 
@@ -710,28 +743,44 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 try {
                     delta = dateFormat.parse(lbExifTime.getText()).getTime()
-                    - dateFormat.parse(tfGpsTime.getText()).getTime();
-                } catch (ParseException e) {
+                          - dateFormat.parse(tfGpsTime.getText()).getTime();
+                } catch (ParseException ex) {
                     JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("Error while parsing the date.\n"
                             + "Please use the requested format"),
                             tr("Invalid date"), JOptionPane.ERROR_MESSAGE);
                     continue;
                 }
 
-                String selectedTz = (String) cbTimezones.getSelectedItem();
-                int pos = selectedTz.lastIndexOf('(');
-                tzId = selectedTz.substring(0, pos - 1);
-                String tzValue = selectedTz.substring(pos + 1, selectedTz.length() - 1);
+                TimeZoneItem selectedTz = (TimeZoneItem) cbTimezones.getSelectedItem();
 
-                Config.getPref().put("geoimage.timezoneid", tzId);
+                Config.getPref().put("geoimage.timezoneid", selectedTz.getID());
+                Config.getPref().putBoolean("geoimage.timezoneid.dst", ckDst.isSelected());
                 tfOffset.setText(GpxTimeOffset.milliseconds(delta).formatOffset());
-                tfTimezone.setText(tzValue);
+                tfTimezone.setText(selectedTz.getFormattedString());
 
                 isOk = true;
 
             }
             statusBarUpdater.updateStatusBar();
             yLayer.updateBufferAndRepaint();
+        }
+
+        void updateExifComponents(ImageEntry img) {
+            imgDisp.setImage(img);
+            Date date = img.getExifTime();
+            if (date != null) {
+                DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
+                df.setTimeZone(DateUtils.UTC); // EXIF data does not contain timezone information and is read as UTC
+                lbExifTime.setText(df.format(date));
+                tfGpsTime.setText(df.format(date));
+                tfGpsTime.setCaretPosition(tfGpsTime.getText().length());
+                tfGpsTime.setEnabled(true);
+                tfGpsTime.requestFocus();
+            } else {
+                lbExifTime.setText(tr("No date"));
+                tfGpsTime.setText("");
+                tfGpsTime.setEnabled(false);
+            }
         }
     }
 
@@ -768,17 +817,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         // Construct the list of loaded GPX tracks
-        Collection<Layer> layerLst = MainApplication.getLayerManager().getLayers();
         gpxLst.clear();
         GpxDataWrapper defaultItem = null;
-        for (Layer cur : layerLst) {
-            if (cur instanceof GpxLayer) {
-                GpxLayer curGpx = (GpxLayer) cur;
-                GpxDataWrapper gdw = new GpxDataWrapper(curGpx.getName(), curGpx.data, curGpx.data.storageFile);
-                gpxLst.add(gdw);
-                if (cur == yLayer.gpxLayer) {
-                    defaultItem = gdw;
-                }
+        for (GpxLayer cur : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class)) {
+            GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), cur.data, cur.data.storageFile);
+            gpxLst.add(gdw);
+            if (cur == yLayer.gpxLayer) {
+                defaultItem = gdw;
             }
         }
         for (GpxData data : loadedGpxData) {
@@ -800,12 +845,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             cbGpx.setSelectedItem(defaultItem);
         } else {
             // select first GPX track associated to a file
-            for (GpxDataWrapper item : gpxLst) {
-                if (item.file != null) {
-                    cbGpx.setSelectedItem(item);
-                    break;
-                }
-            }
+            gpxLst.stream().filter(i -> i.file != null).findFirst().ifPresent(cbGpx::setSelectedItem);
         }
         cbGpx.addActionListener(statusBarUpdaterWithRepaint);
         panelCb.add(cbGpx);
@@ -817,7 +857,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
         JPanel panelTf = new JPanel(new GridBagLayout());
 
         try {
-            timezone = GpxTimezone.parseTimezone(Optional.ofNullable(Config.getPref().get("geoimage.timezone", "0:00")).orElse("0:00"));
+            String tz = Config.getPref().get("geoimage.timezone");
+            if (!tz.isEmpty()) {
+                timezone = GpxTimezone.parseTimezone(tz);
+            } else {
+                timezone = new GpxTimezone(TimeUnit.MILLISECONDS.toMinutes(TimeZone.getDefault().getRawOffset()) / 60.); //hours is double
+            }
         } catch (ParseException e) {
             timezone = GpxTimezone.ZERO;
             Logging.trace(e);
@@ -836,8 +881,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         tfOffset = new JosmTextField(10);
         tfOffset.setText(delta.formatOffset());
 
-        JButton buttonViewGpsPhoto = new JButton(tr("<html>Use photo of an accurate clock,<br>"
-                + "e.g. GPS receiver display</html>"));
+        JButton buttonViewGpsPhoto = new JButton(tr("<html>Use photo of an accurate clock,<br>e.g. GPS receiver display</html>"));
         buttonViewGpsPhoto.setIcon(ImageProvider.get("clock"));
         buttonViewGpsPhoto.addActionListener(new SetOffsetActionListener());
 
@@ -1054,7 +1098,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             if (selGpx == null)
                 return tr("No gpx selected");
 
-            final long offsetMs = ((long) (timezone.getHours() * TimeUnit.HOURS.toMillis(-1))) + delta.getMilliseconds(); // in milliseconds
+            final long offsetMs = ((long) (timezone.getHours() * TimeUnit.HOURS.toMillis(1))) + delta.getMilliseconds(); // in milliseconds
             lastNumMatched = GpxImageCorrelation.matchGpxTrack(dateImgLst, selGpx.data, offsetMs, forceTags);
 
             return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
