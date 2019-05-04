@@ -9,21 +9,20 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.AbstractCoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
 
 /**
  * EXIF metadata extraction test
@@ -55,13 +54,7 @@ public class ExifReaderTest {
     @Test
     public void testReadTime() throws ParseException {
         Date date = ExifReader.readTime(directionSampleFile);
-        assertEquals(ZonedDateTime.of(2010, 5, 15, 17, 12, 5, 0, ZoneId.systemDefault()).toInstant(), date.toInstant());
-
-        final TimeZone zone = TimeZone.getTimeZone("Europe/Berlin");
-        TimeZone.setDefault(zone);
-        date = ExifReader.readTime(directionSampleFile);
-        TimeZone.setDefault(DateUtils.UTC);
-        assertEquals(ZonedDateTime.of(2010, 5, 15, 17, 12, 5, 0, zone.toZoneId()).toInstant(), date.toInstant());
+        assertEquals(ZonedDateTime.of(2010, 5, 15, 17, 12, 5, 0, DateUtils.UTC.toZoneId()).toInstant(), date.toInstant());
     }
 
     /**
@@ -72,11 +65,6 @@ public class ExifReaderTest {
     public void testReadTimeSubSecond1() throws ParseException {
         Date date = ExifReader.readTime(new File("data_nodist/IMG_20150711_193419.jpg"));
         doTest("2015-07-11T19:34:19.100", date);
-
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
-        date = ExifReader.readTime(new File("data_nodist/IMG_20150711_193419.jpg"));
-        TimeZone.setDefault(DateUtils.UTC);
-        doTest("2015-07-11T17:34:19.100", date);
     }
 
     private static void doTest(String expectedDate, Date parsedDate) {
@@ -103,7 +91,7 @@ public class ExifReaderTest {
     public void testReadLatLon() {
         LatLon latlon = ExifReader.readLatLon(directionSampleFile);
         assertNotNull(latlon);
-        DecimalFormat f = new DecimalFormat("00.0");
+        DecimalFormat f = AbstractCoordinateFormat.newUnlocalizedDecimalFormat("00.0");
         assertEquals("51°46'"+f.format(43.0)+"\"", DMSCoordinateFormat.degreesMinutesSeconds(latlon.lat()));
         assertEquals("8°21'"+f.format(56.3)+"\"", DMSCoordinateFormat.degreesMinutesSeconds(latlon.lon()));
     }
