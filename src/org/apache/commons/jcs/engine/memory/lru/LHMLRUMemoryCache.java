@@ -189,7 +189,6 @@ public class LHMLRUMemoryCache<K, V>
             }
             else
             {
-
                 if ( log.isDebugEnabled() )
                 {
                     log.debug( "LHMLRU max size: " + getCacheAttributes().getMaxObjects()

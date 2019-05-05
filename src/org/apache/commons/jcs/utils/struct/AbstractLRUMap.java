@@ -1,31 +1,9 @@
 package org.apache.commons.jcs.utils.struct;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -461,33 +439,22 @@ public abstract class AbstractLRUMap<K, V>
         }
 
         log.debug( "verifycache: checking via keysets!" );
-        for (Iterator<K> itr2 = map.keySet().iterator(); itr2.hasNext(); )
-        {
-            found = false;
-            Serializable val = null;
-            try
-            {
-                val = (Serializable) itr2.next();
-            }
-            catch ( NoSuchElementException nse )
-            {
-                log.error( "verifycache: no such element exception" );
-                continue;
-            }
+        map.forEach((key, value) -> {
+            boolean _found = false;
 
             for (LRUElementDescriptor<K, V> li2 = list.getFirst(); li2 != null; li2 = (LRUElementDescriptor<K, V>) li2.next )
             {
-                if ( val.equals( li2.getKey() ) )
+                if ( key.equals( li2.getKey() ) )
                 {
-                    found = true;
+                    _found = true;
                     break;
                 }
             }
-            if ( !found )
+            if ( !_found )
             {
-                log.error( "verifycache: key not found in list : " + val );
+                log.error( "verifycache: key not found in list : " + key );
                 dumpCacheEntries();
-                if ( map.containsKey( val ) )
+                if ( map.containsKey( key ) )
                 {
                     log.error( "verifycache: map contains key" );
                 }
@@ -496,7 +463,7 @@ public abstract class AbstractLRUMap<K, V>
                     log.error( "verifycache: map does NOT contain key, what the HECK!" );
                 }
             }
-        }
+        });
     }
 
     /**

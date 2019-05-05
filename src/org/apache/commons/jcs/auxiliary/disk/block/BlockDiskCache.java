@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -203,24 +202,28 @@ public class BlockDiskCache<K, V>
 
         try
         {
-            int maxToTest = 100;
-            int count = 0;
-            Iterator<Map.Entry<K, int[]>> it = this.keyStore.entrySet().iterator();
-            while ( it.hasNext() && count < maxToTest )
-            {
-                count++;
-                Map.Entry<K, int[]> entry = it.next();
-                Object data = this.dataFile.read( entry.getValue() );
-                if ( data == null )
-                {
-                    throw new Exception( logCacheName + "Couldn't find data for key [" + entry.getKey() + "]" );
-                }
-            }
+            this.keyStore.entrySet().stream()
+                .limit(100)
+                .forEach(entry -> {
+                    try
+                    {
+                        Object data = this.dataFile.read(entry.getValue());
+                        if ( data == null )
+                        {
+                            throw new IOException("Data is null");
+                        }
+                    }
+                    catch (IOException | ClassNotFoundException e)
+                    {
+                        throw new RuntimeException(logCacheName
+                                + " Couldn't find data for key [" + entry.getKey() + "]", e);
+                    }
+                });
             alright = true;
         }
         catch ( Exception e )
         {
-            log.warn( logCacheName + "Problem verifying disk.  Message [" + e.getMessage() + "]" );
+            log.warn(logCacheName + " Problem verifying disk.", e);
             alright = false;
         }
         finally

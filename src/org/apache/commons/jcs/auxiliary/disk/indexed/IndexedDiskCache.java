@@ -23,11 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1364,24 +1363,15 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
      * Creates a snapshot of the IndexedDiskElementDescriptors in the keyHash and returns them
      * sorted by position in the dataFile.
      * <p>
-     * TODO fix values() method on the LRU map.
-     * <p>
      *
      * @return IndexedDiskElementDescriptor[]
      */
     private IndexedDiskElementDescriptor[] createPositionSortedDescriptorList()
     {
-        IndexedDiskElementDescriptor[] defragList = new IndexedDiskElementDescriptor[keyHash.size()];
-        Iterator<Map.Entry<K, IndexedDiskElementDescriptor>> iterator = keyHash.entrySet().iterator();
-        for (int i = 0; iterator.hasNext(); i++)
-        {
-            Map.Entry<K, IndexedDiskElementDescriptor> next = iterator.next();
-            defragList[i] = next.getValue();
-        }
+        List<IndexedDiskElementDescriptor> defragList = new ArrayList<>(keyHash.values());
+        Collections.sort(defragList, new PositionComparator());
 
-        Arrays.sort(defragList, new PositionComparator());
-
-        return defragList;
+        return defragList.toArray(new IndexedDiskElementDescriptor[0]);
     }
 
     /**

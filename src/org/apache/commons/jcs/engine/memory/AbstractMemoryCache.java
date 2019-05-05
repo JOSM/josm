@@ -22,7 +22,6 @@ package org.apache.commons.jcs.engine.memory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +35,7 @@ import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.control.group.GroupAttrName;
+import org.apache.commons.jcs.engine.control.group.GroupId;
 import org.apache.commons.jcs.engine.memory.behavior.IMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
 import org.apache.commons.jcs.engine.stats.StatElement;
@@ -334,31 +334,28 @@ public abstract class AbstractMemoryCache<K, V>
      */
     protected boolean removeByGroup(K key)
     {
-        boolean removed = false;
+        GroupId groupId = ((GroupAttrName<?>) key).groupId;
 
         // remove all keys of the same group hierarchy.
-        for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext();)
-        {
-            Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
+        return map.entrySet().removeIf(entry -> {
             K k = entry.getKey();
 
-            if (k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(((GroupAttrName<?>) key).groupId))
+            if (k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(groupId))
             {
                 lock.lock();
                 try
                 {
-                    itr.remove();
                     lockedRemoveElement(entry.getValue());
-                    removed = true;
+                    return true;
                 }
                 finally
                 {
                     lock.unlock();
                 }
             }
-        }
 
-        return removed;
+            return false;
+        });
     }
 
     /**
@@ -369,31 +366,28 @@ public abstract class AbstractMemoryCache<K, V>
      */
     protected boolean removeByHierarchy(K key)
     {
-        boolean removed = false;
+        String keyString = key.toString();
 
         // remove all keys of the same name hierarchy.
-        for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext();)
-        {
-            Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
+        return map.entrySet().removeIf(entry -> {
             K k = entry.getKey();
 
-            if (k instanceof String && ((String) k).startsWith(key.toString()))
+            if (k instanceof String && ((String) k).startsWith(keyString))
             {
                 lock.lock();
                 try
                 {
-                    itr.remove();
                     lockedRemoveElement(entry.getValue());
-                    removed = true;
+                    return true;
                 }
                 finally
                 {
                     lock.unlock();
                 }
             }
-        }
 
-        return removed;
+            return false;
+        });
     }
 
     /**

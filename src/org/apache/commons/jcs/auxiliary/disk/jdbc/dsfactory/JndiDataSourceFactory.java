@@ -21,7 +21,6 @@ package org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory;
 
 import java.sql.SQLException;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.naming.Context;
@@ -173,13 +172,8 @@ public class JndiDataSourceFactory implements DataSourceFactory
     {
         log.debug("InitialContext -------------------------------");
         Map<?, ?> env = ctx.getEnvironment();
-        Iterator<?> qw = env.entrySet().iterator();
         log.debug("Environment properties:" + env.size());
-        while (qw.hasNext())
-        {
-            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) qw.next();
-            log.debug("    " + entry.getKey() + ": " + entry.getValue());
-        }
+        env.forEach((key, value) -> log.debug("    " + key + ": " + value));
         log.debug("----------------------------------------------");
     }
 }

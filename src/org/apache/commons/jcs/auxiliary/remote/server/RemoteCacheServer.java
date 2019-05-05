@@ -27,7 +27,6 @@ import java.rmi.server.RMISocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.server.Unreferenced;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -1234,21 +1233,11 @@ public class RemoteCacheServer<K, V>
     {
         synchronized ( eventQMap )
         {
-            for (Iterator<Map.Entry<Long, ICacheEventQueue<KK, VV>>> itr = eventQMap.entrySet().iterator(); itr.hasNext(); )
-            {
-                Map.Entry<Long, ICacheEventQueue<KK, VV>> e = itr.next();
-                ICacheEventQueue<KK, VV> q = e.getValue();
-
-                // this does not care if the q is alive (i.e. if
-                // there are active threads; it cares if the queue
-                // is working -- if it has not encountered errors
-                // above the failure threshold
-                if ( !q.isWorking() )
-                {
-                    itr.remove();
-                    log.warn( "Cache event queue " + q + " is not working and removed from cache server." );
-                }
-            }
+            // this does not care if the q is alive (i.e. if
+            // there are active threads; it cares if the queue
+            // is working -- if it has not encountered errors
+            // above the failure threshold
+            eventQMap.entrySet().removeIf(e -> !e.getValue().isWorking());
         }
     }
 

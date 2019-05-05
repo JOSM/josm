@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -732,13 +731,8 @@ public class CompositeCache<K, V>
         throws IOException
     {
         Map<K, ICacheElement<K, V>> elementsFromMemory = memCache.getMultiple(keys);
-        Iterator<Map.Entry<K, ICacheElement<K, V>>> elementFromMemoryIterator = elementsFromMemory.entrySet().iterator();
-
-        while (elementFromMemoryIterator.hasNext())
-        {
-            Map.Entry<K, ICacheElement<K, V>> entry = elementFromMemoryIterator.next();
+        elementsFromMemory.entrySet().removeIf(entry -> {
             ICacheElement<K, V> element = entry.getValue();
-
             if (isExpired(element))
             {
                 if (log.isDebugEnabled())
@@ -747,7 +741,7 @@ public class CompositeCache<K, V>
                 }
 
                 doExpires(element);
-                elementFromMemoryIterator.remove();
+                return true;
             }
             else
             {
@@ -758,8 +752,9 @@ public class CompositeCache<K, V>
 
                 // Update counters
                 hitCountRam.incrementAndGet();
+                return false;
             }
-        }
+        });
 
         return elementsFromMemory;
     }
@@ -982,11 +977,7 @@ public class CompositeCache<K, V>
     private void processRetrievedElements(AuxiliaryCache<K, V> aux, Map<K, ICacheElement<K, V>> elementsFromAuxiliary)
         throws IOException
     {
-        Iterator<Map.Entry<K, ICacheElement<K, V>>> elementFromAuxiliaryIterator = elementsFromAuxiliary.entrySet().iterator();
-
-        while (elementFromAuxiliaryIterator.hasNext())
-        {
-            Map.Entry<K, ICacheElement<K, V>> entry = elementFromAuxiliaryIterator.next();
+        elementsFromAuxiliary.entrySet().removeIf(entry -> {
             ICacheElement<K, V> element = entry.getValue();
 
             // Item found in one of the auxiliary caches.
@@ -1004,7 +995,7 @@ public class CompositeCache<K, V>
                     // associated with the item when it created govern its behavior
                     // everywhere.
                     doExpires(element);
-                    elementFromAuxiliaryIterator.remove();
+                    return true;
                 }
                 else
                 {
@@ -1015,10 +1006,20 @@ public class CompositeCache<K, V>
 
                     // Update counters
                     hitCountAux.incrementAndGet();
-                    copyAuxiliaryRetrievedItemToMemory(element);
+                    try
+                    {
+                        copyAuxiliaryRetrievedItemToMemory(element);
+                    }
+                    catch (IOException e)
+                    {
+                        log.error(cacheAttr.getCacheName()
+                                + " failed to copy element to memory " + element, e);
+                    }
                 }
             }
-        }
+
+            return false;
+        });
     }
 
     /**
