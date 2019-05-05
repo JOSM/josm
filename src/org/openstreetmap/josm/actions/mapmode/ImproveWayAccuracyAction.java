@@ -37,7 +37,18 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
@@ -61,7 +72,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
-public class ImproveWayAccuracyAction extends MapMode implements DataSelectionListener, ModifierExListener {
+public class ImproveWayAccuracyAction extends MapMode implements DataSelectionListener, DataSetListener, ModifierExListener {
 
     private static final String CROSSHAIR = /* ICON(cursor/)*/ "crosshair";
 
@@ -156,6 +167,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
         map.mapView.addMouseMotionListener(this);
         map.mapView.addTemporaryLayer(temporaryLayer);
         SelectionEventManager.getInstance().addSelectionListener(this);
+        DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IMMEDIATELY);
 
         map.keyDetector.addModifierExListener(this);
     }
@@ -174,6 +186,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
         map.mapView.removeMouseMotionListener(this);
         map.mapView.removeTemporaryLayer(temporaryLayer);
         SelectionEventManager.getInstance().removeSelectionListener(this);
+        DatasetEventManager.getInstance().removeDatasetListener(this);
 
         map.keyDetector.removeModifierExListener(this);
         temporaryLayer.invalidate();
@@ -657,5 +670,47 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
 
         // Starting selecting by default
         startSelecting();
+    }
+
+    @Override
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
+        if (event.getPrimitives().contains(candidateNode) || event.getPrimitives().contains(targetWay)) {
+            updateCursorDependentObjectsIfNeeded();
+        }
+    }
+
+    @Override
+    public void primitivesAdded(PrimitivesAddedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void tagsChanged(TagsChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void nodeMoved(NodeMovedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void wayNodesChanged(WayNodesChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void relationMembersChanged(RelationMembersChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void dataChanged(DataChangedEvent event) {
+        // Do nothing
     }
 }
