@@ -24,12 +24,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -55,6 +57,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryCategory;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
@@ -74,6 +77,7 @@ import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -334,10 +338,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             activeModel.addTableModelListener(e -> defaultTable.repaint());
 
             TableColumnModel mod = defaultTable.getColumnModel();
-            mod.getColumn(2).setPreferredWidth(800);
-            mod.getColumn(2).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getLayers()));
-            mod.getColumn(1).setPreferredWidth(400);
-            mod.getColumn(1).setCellRenderer(new ImageryNameTableCellRenderer());
+            mod.getColumn(3).setPreferredWidth(775);
+            mod.getColumn(3).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getLayers()));
+            mod.getColumn(2).setPreferredWidth(475);
+            mod.getColumn(2).setCellRenderer(new ImageryNameTableCellRenderer());
+            mod.getColumn(0).setPreferredWidth(50);
             mod.getColumn(0).setPreferredWidth(50);
 
             mod = activeTable.getColumnModel();
@@ -756,7 +761,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
              * Constructs a new {@code ImageryDefaultLayerTableModel}.
              */
             public ImageryDefaultLayerTableModel() {
-                setColumnIdentifiers(new String[]{"", tr("Menu Name (Default)"), tr("Imagery URL (Default)")});
+                setColumnIdentifiers(new String[]{"", "", tr("Menu Name (Default)"), tr("Imagery URL (Default)")});
             }
 
             /**
@@ -774,14 +779,22 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             }
 
             @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 0 ? ImageIcon.class : super.getColumnClass(columnIndex);
+            }
+
+            @Override
             public Object getValueAt(int row, int column) {
                 ImageryInfo info = layerInfo.getAllDefaultLayers().get(row);
+                ImageryCategory cat = Optional.ofNullable(info.getImageryCategory()).orElse(ImageryCategory.OTHER);
                 switch (column) {
                 case 0:
-                    return info.getCountryCode();
+                    return cat.getIcon(ImageSizes.TABLE);
                 case 1:
-                    return info;
+                    return info.getCountryCode();
                 case 2:
+                    return info;
+                case 3:
                     return info.getExtendedUrl();
                 }
                 return null;

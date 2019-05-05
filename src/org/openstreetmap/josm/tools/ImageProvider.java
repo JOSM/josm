@@ -149,6 +149,10 @@ public class ImageProvider {
          * @since 8323
          */
         LAYER(Config.getPref().getInt("iconsize.layer", 16)),
+        /** Table icon size
+         * @since 15049
+         */
+        TABLE(SMALLICON),
         /** Toolbar button icon size
          * @since 9253
          */
