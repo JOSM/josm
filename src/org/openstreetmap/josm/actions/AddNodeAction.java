@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
 
+import javax.swing.SwingUtilities;
+
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -42,37 +44,40 @@ public final class AddNodeAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        LatLonDialog dialog = new LatLonDialog(MainApplication.getMainFrame(), tr("Add Node..."), ht("/Action/AddNode"));
+        // #17682 - Run the action later in EDT to make sure the KeyEvent triggering it is consumed before the dialog is shown
+        SwingUtilities.invokeLater(() -> {
+            LatLonDialog dialog = new LatLonDialog(MainApplication.getMainFrame(), tr("Add Node..."), ht("/Action/AddNode"));
 
-        if (textLatLon != null) {
-            dialog.setLatLonText(textLatLon);
-        }
-        if (textEastNorth != null) {
-            dialog.setEastNorthText(textEastNorth);
-        }
+            if (textLatLon != null) {
+                dialog.setLatLonText(textLatLon);
+            }
+            if (textEastNorth != null) {
+                dialog.setEastNorthText(textEastNorth);
+            }
 
-        dialog.showDialog();
+            dialog.showDialog();
 
-        if (dialog.getValue() != 1)
-            return;
+            if (dialog.getValue() != 1)
+                return;
 
-        LatLon coordinates = dialog.getCoordinates();
-        if (coordinates == null)
-            return;
+            LatLon coordinates = dialog.getCoordinates();
+            if (coordinates == null)
+                return;
 
-        textLatLon = dialog.getLatLonText();
-        textEastNorth = dialog.getEastNorthText();
+            textLatLon = dialog.getLatLonText();
+            textEastNorth = dialog.getEastNorthText();
 
-        Node nnew = new Node(coordinates);
+            Node nnew = new Node(coordinates);
 
-        // add the node
-        DataSet ds = getLayerManager().getEditDataSet();
-        UndoRedoHandler.getInstance().add(new AddCommand(ds, nnew));
-        ds.setSelected(nnew);
-        MapView mapView = MainApplication.getMap().mapView;
-        if (mapView != null && !mapView.getRealBounds().contains(nnew.getCoor())) {
-            AutoScaleAction.zoomTo(Collections.<OsmPrimitive>singleton(nnew));
-        }
+            // add the node
+            DataSet ds = getLayerManager().getEditDataSet();
+            UndoRedoHandler.getInstance().add(new AddCommand(ds, nnew));
+            ds.setSelected(nnew);
+            MapView mapView = MainApplication.getMap().mapView;
+            if (mapView != null && !mapView.getRealBounds().contains(nnew.getCoor())) {
+                AutoScaleAction.zoomTo(Collections.<OsmPrimitive>singleton(nnew));
+            }
+        });
     }
 
     @Override
