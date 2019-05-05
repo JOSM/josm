@@ -264,19 +264,27 @@ public class UploadDialogTest {
         List<String> def = Collections.emptyList();
         Config.getPref().putList(prefix + ".mandatory-terms", null);
         Config.getPref().putList(prefix + ".forbidden-terms", null);
-        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def));
+        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def, def));
 
         Config.getPref().putList(prefix + ".mandatory-terms", Arrays.asList("foo"));
-        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def));
+        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def, def));
         assertEquals("The following required terms are missing: [foo]",
-                UploadAction.validateUploadTag("bar", prefix, def, def));
+                UploadAction.validateUploadTag("bar", prefix, def, def, def));
 
         Config.getPref().putList(prefix + ".forbidden-terms", Arrays.asList("bar"));
-        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def));
+        assertNull(UploadAction.validateUploadTag("foo", prefix, def, def, def));
         assertEquals("The following forbidden terms have been found: [bar]",
-                UploadAction.validateUploadTag("foobar", prefix, def, def));
+                UploadAction.validateUploadTag("foobar", prefix, def, def, def));
         assertEquals("The following forbidden terms have been found: [bar]",
-                UploadAction.validateUploadTag("FOOBAR", prefix, def, def));
+                UploadAction.validateUploadTag("FOOBAR", prefix, def, def, def));
+
+        Config.getPref().putList(prefix + ".exception-terms", Arrays.asList("barosm"));
+        assertEquals("The following forbidden terms have been found: [bar]",
+                UploadAction.validateUploadTag("foobar", prefix, def, def, def));
+        assertEquals("The following forbidden terms have been found: [bar]",
+                UploadAction.validateUploadTag("FOOBAR", prefix, def, def, def));
+        assertNull(UploadAction.validateUploadTag("foobarosm", prefix, def, def, def));
+        assertNull(UploadAction.validateUploadTag("FOOBAROSM", prefix, def, def, def));
     }
 
     /**

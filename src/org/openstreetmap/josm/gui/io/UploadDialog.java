@@ -598,7 +598,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             return s.toLowerCase(Locale.ENGLISH);
         }
 
-        static String validateUploadTag(String uploadValue, String preferencePrefix, List<String> defMandatory, List<String> defForbidden) {
+        static String validateUploadTag(String uploadValue, String preferencePrefix,
+                List<String> defMandatory, List<String> defForbidden, List<String> defException) {
             String uploadValueLc = lower(uploadValue);
             // Check mandatory terms
             List<String> missingTerms = Config.getPref().getList(preferencePrefix+".mandatory-terms", defMandatory)
@@ -607,8 +608,11 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 return tr("The following required terms are missing: {0}", missingTerms);
             }
             // Check forbidden terms
+            List<String> exceptions = Config.getPref().getList(preferencePrefix+".exception-terms", defException);
             List<String> forbiddenTerms = Config.getPref().getList(preferencePrefix+".forbidden-terms", defForbidden)
-                    .stream().map(UploadAction::lower).filter(uploadValueLc::contains).collect(Collectors.toList());
+                    .stream().map(UploadAction::lower)
+                    .filter(x -> uploadValueLc.contains(x) && !exceptions.stream().anyMatch(uploadValueLc::contains))
+                    .collect(Collectors.toList());
             if (!forbiddenTerms.isEmpty()) {
                 return tr("The following forbidden terms have been found: {0}", forbiddenTerms);
             }
@@ -623,7 +627,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             final List<String> def = Collections.emptyList();
             final String uploadComment = dialog.getUploadComment();
             final String uploadCommentRejection = validateUploadTag(
-                    uploadComment, "upload.comment", def, def);
+                    uploadComment, "upload.comment", def, def, def);
             if ((isUploadCommentTooShort(uploadComment) && warnUploadComment()) ||
                 (uploadCommentRejection != null && warnRejectedUploadComment(uploadCommentRejection))) {
                 // abort for missing or rejected comment
@@ -632,7 +636,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             }
             final String uploadSource = dialog.getUploadSource();
             final String uploadSourceRejection = validateUploadTag(
-                    uploadSource, "upload.source", def, def);
+                    uploadSource, "upload.source", def, def, def);
             if ((Utils.isStripEmpty(uploadSource) && warnUploadSource()) ||
                     (uploadSourceRejection != null && warnRejectedUploadSource(uploadSourceRejection))) {
                 // abort for missing or rejected changeset source
