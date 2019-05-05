@@ -243,7 +243,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
      * @param bbox The bounding box
      */
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
-        if (mousePos == null) {
+        if (mousePos == null || candidateNode != null && candidateNode.getDataSet() == null) {
             return;
         }
 
