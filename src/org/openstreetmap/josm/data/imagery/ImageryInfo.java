@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -122,6 +124,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
         private final String category;
         private final String description;
+        private static final Map<ImageSizes, Map<ImageryCategory, ImageIcon>> iconCache =
+                Collections.synchronizedMap(new EnumMap<>(ImageSizes.class));
 
         ImageryCategory(String category, String description) {
             this.category = category;
@@ -142,6 +146,18 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          */
         public final String getDescription() {
             return description;
+        }
+
+        /**
+         * Returns the category icon at the given size.
+         * @param size icon wanted size
+         * @return the category icon at the given size
+         * @since 15049
+         */
+        public final ImageIcon getIcon(ImageSizes size) {
+            return iconCache
+                    .computeIfAbsent(size, x -> Collections.synchronizedMap(new EnumMap<>(ImageryCategory.class)))
+                    .computeIfAbsent(this, x -> ImageProvider.get("data/imagery", x.category, size));
         }
 
         /**
