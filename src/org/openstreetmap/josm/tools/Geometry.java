@@ -106,7 +106,7 @@ public final class Geometry {
         //copy node arrays for local usage.
         for (int pos = 0; pos < n; pos++) {
             newNodes[pos] = new ArrayList<>(ways.get(pos).getNodes());
-            wayBounds[pos] = getNodesBounds(newNodes[pos]);
+            wayBounds[pos] = ways.get(pos).getBBox();
             changedWays[pos] = false;
         }
 
@@ -240,15 +240,6 @@ public final class Geometry {
         }
 
         return intersectionNodes;
-    }
-
-    private static BBox getNodesBounds(List<Node> nodes) {
-
-        BBox bounds = new BBox(nodes.get(0));
-        for (Node n: nodes) {
-            bounds.add(n);
-        }
-        return bounds;
     }
 
     /**
