@@ -87,11 +87,11 @@ public final class Geometry {
      * Prerequisite: no two nodes have the same coordinates.
      *
      * @param ways  a list of ways to test
-     * @param test  if false, do not build list of Commands, just return nodes
+     * @param test  if true, do not build list of Commands, just return nodes
      * @param cmds  list of commands, typically empty when handed to this method.
      *              Will be filled with commands that add intersection nodes to
      *              the ways.
-     * @return list of new nodes
+     * @return list of new nodes, if test is true the list might not contain all intersections
      */
     public static Set<Node> addIntersections(List<Way> ways, boolean test, List<Command> cmds) {
 
