@@ -189,7 +189,8 @@ public final class GuiHelper {
 
     /**
      * Executes asynchronously a runnable in
-     * <a href="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
+     * <a href="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>,
+     * except if we're already in the EDT: in this case the runnable is executed synchronously.
      * @param task The runnable to execute
      * @see SwingUtilities#invokeLater
      */
