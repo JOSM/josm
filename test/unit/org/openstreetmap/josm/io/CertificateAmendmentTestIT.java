@@ -1,15 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static org.junit.Assume.assumeFalse;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.SSLHandshakeException;
 
 import org.junit.Assert;
-import org.junit.Rule;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -22,9 +28,20 @@ public class CertificateAmendmentTestIT {
     /**
      * Setup rule
      */
-    @Rule
+    @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().timeout(20000);
+    public static JOSMTestRules test = new JOSMTestRules().https().preferences().timeout(20000);
+
+    private static final List<String> errorsToIgnore = new ArrayList<>();
+
+    /**
+     * Setup test
+     * @throws IOException in case of I/O error
+     */
+    @BeforeClass
+    public static void beforeClass() throws IOException {
+        errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(CertificateAmendmentTestIT.class));
+    }
 
     /**
      * Test a well-known certificate.
@@ -94,14 +111,18 @@ public class CertificateAmendmentTestIT {
         try {
             connection.connect();
         } catch (SSLHandshakeException e) {
+            String error = "Untrusted: " + url;
+            assumeFalse(errorsToIgnore.contains(error));
             if (shouldWork) {
-                throw new IOException("Untrusted: " + url, e);
+                throw new IOException(error, e);
             } else {
                 return;
             }
         }
+        String error = "Expected error: " + url;
+        assumeFalse(errorsToIgnore.contains(error));
         if (!shouldWork) {
-            Assert.fail("Expected error: " + url);
+            Assert.fail(error);
         }
     }
 }
