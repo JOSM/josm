@@ -87,11 +87,11 @@ public final class Geometry {
      * Prerequisite: no two nodes have the same coordinates.
      *
      * @param ways  a list of ways to test
-     * @param test  if false, do not build list of Commands, just return nodes
+     * @param test  if true, do not build list of Commands, just return nodes
      * @param cmds  list of commands, typically empty when handed to this method.
      *              Will be filled with commands that add intersection nodes to
      *              the ways.
-     * @return list of new nodes
+     * @return list of new nodes, if test is true the list might not contain all intersections
      */
     public static Set<Node> addIntersections(List<Way> ways, boolean test, List<Command> cmds) {
 
@@ -106,7 +106,7 @@ public final class Geometry {
         //copy node arrays for local usage.
         for (int pos = 0; pos < n; pos++) {
             newNodes[pos] = new ArrayList<>(ways.get(pos).getNodes());
-            wayBounds[pos] = getNodesBounds(newNodes[pos]);
+            wayBounds[pos] = ways.get(pos).getBBox();
             changedWays[pos] = false;
         }
 
@@ -240,15 +240,6 @@ public final class Geometry {
         }
 
         return intersectionNodes;
-    }
-
-    private static BBox getNodesBounds(List<Node> nodes) {
-
-        BBox bounds = new BBox(nodes.get(0));
-        for (Node n: nodes) {
-            bounds.add(n);
-        }
-        return bounds;
     }
 
     /**
