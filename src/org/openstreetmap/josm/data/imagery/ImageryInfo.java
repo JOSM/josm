@@ -61,18 +61,17 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public enum ImageryType {
         /** A WMS (Web Map Service) entry. **/
-        WMS("wms"),
+        WMS(/* ICON(data/imagery/) */ "wms"),
         /** A TMS (Tile Map Service) entry. **/
-        TMS("tms"),
+        TMS(/* ICON(data/imagery/) */ "tms"),
         /** TMS entry for Microsoft Bing. */
-        BING("bing"),
+        BING(/* ICON(data/imagery/) */ "bing"),
         /** TMS entry for Russian company <a href="https://wiki.openstreetmap.org/wiki/WikiProject_Russia/kosmosnimki">ScanEx</a>. **/
-        SCANEX("scanex"),
+        SCANEX(/* ICON(data/imagery/) */ "scanex"),
         /** A WMS endpoint entry only stores the WMS server info, without layer, which are chosen later by the user. **/
-        WMS_ENDPOINT("wms_endpoint"),
+        WMS_ENDPOINT(/* ICON(data/imagery/) */ "wms_endpoint"),
         /** WMTS stores GetCapabilities URL. Does not store any information about the layer **/
-        WMTS("wmts");
-
+        WMTS(/* ICON(data/imagery/) */ "wmts");
 
         private final String typeString;
 
