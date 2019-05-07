@@ -61,17 +61,17 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public enum ImageryType {
         /** A WMS (Web Map Service) entry. **/
-        WMS(/* ICON(data/imagery/) */ "wms"),
+        WMS("wms"),
         /** A TMS (Tile Map Service) entry. **/
-        TMS(/* ICON(data/imagery/) */ "tms"),
+        TMS("tms"),
         /** TMS entry for Microsoft Bing. */
-        BING(/* ICON(data/imagery/) */ "bing"),
+        BING("bing"),
         /** TMS entry for Russian company <a href="https://wiki.openstreetmap.org/wiki/WikiProject_Russia/kosmosnimki">ScanEx</a>. **/
-        SCANEX(/* ICON(data/imagery/) */ "scanex"),
+        SCANEX("scanex"),
         /** A WMS endpoint entry only stores the WMS server info, without layer, which are chosen later by the user. **/
-        WMS_ENDPOINT(/* ICON(data/imagery/) */ "wms_endpoint"),
+        WMS_ENDPOINT("wms_endpoint"),
         /** WMTS stores GetCapabilities URL. Does not store any information about the layer **/
-        WMTS(/* ICON(data/imagery/) */ "wmts");
+        WMTS("wmts");
 
         private final String typeString;
 
@@ -109,17 +109,17 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public enum ImageryCategory {
         /** A aerial or satellite photo. **/
-        PHOTO("photo", tr("Aerial or satellite photo")),
+        PHOTO(/* ICON(data/imagery/) */ "photo", tr("Aerial or satellite photo")),
         /** A map. **/
-        MAP("map", tr("Map")),
+        MAP(/* ICON(data/imagery/) */ "map", tr("Map")),
         /** A historic or otherwise outdated map. */
-        HISTORICMAP("historicmap", tr("Historic or otherwise outdated map")),
+        HISTORICMAP(/* ICON(data/imagery/) */ "historicmap", tr("Historic or otherwise outdated map")),
         /** A map based on OSM data. **/
-        OSMBASEDMAP("osmbasedmap", tr("Map based on OSM data")),
+        OSMBASEDMAP(/* ICON(data/imagery/) */ "osmbasedmap", tr("Map based on OSM data")),
         /** A historic or otherwise outdated aerial or satellite photo. **/
-        HISTORICPHOTO("historicphoto", tr("Historic or otherwise outdated aerial or satellite photo")),
+        HISTORICPHOTO(/* ICON(data/imagery/) */ "historicphoto", tr("Historic or otherwise outdated aerial or satellite photo")),
         /** Any other type of imagery **/
-        OTHER("other", tr("Imagery not matching any other category"));
+        OTHER(/* ICON(data/imagery/) */ "other", tr("Imagery not matching any other category"));
 
         private final String category;
         private final String description;
