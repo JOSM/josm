@@ -47,7 +47,7 @@
 }
 
 *[wikipedia =~ /(?i)^[-a-z]{2,12}:.*%[0-9A-F][0-9A-F]/] {
-  throwError: tr("{0} tag should not have URL-encoded values like ''%27''", "{0.tag}");
+  throwError: tr("{0} tag should not have URL-encoded values like ''%27''", "{0.key}");
   fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("wikipedia")),1), trim(replace(URL_decode(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),2)), "_", " ")));
   assertMatch: "node wikipedia=en:Foo%27s";
   assertNoMatch: "node wikipedia=en:Foo";
