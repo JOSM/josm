@@ -1622,7 +1622,8 @@
             <optional>
                 <text key="name" text="Name" />
                 <text key="operator" text="Operator" />
-                <combo key="diameter" text="Diameter (in mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
+                <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
+                <text key="pressure" text="Pressure (bar)" />
                 <combo key="material" text="Material" values="metal,steel" />
             </optional>
         </item> <!-- Penstock -->
@@ -4706,6 +4707,8 @@
             <text key="ref" text="Reference" />
             <reference ref="operator_substance" />
             <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
+            <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
+            <text key="pressure" text="Pressure (bar)" />
         </item> <!-- Pipeline -->
         <item name="Pipeline Marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
             <link wiki="Tag:pipeline=marker" />
