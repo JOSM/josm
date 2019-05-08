@@ -146,6 +146,7 @@ way[bridge=aqueduct]::core_bridge {
 }
 way[tunnel=yes]::core_tunnel,
 way[tunnel=culvert]::core_tunnel,
+way[tunnel=flooded]::core_tunnel,
 way[tunnel=building_passage]::core_tunnel,
 way[tunnel=avalanche_protector]::core_tunnel {
     major-z-index: 2;

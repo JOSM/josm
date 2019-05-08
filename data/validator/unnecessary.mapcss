@@ -152,6 +152,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertMatch: "way name=Cmentarz amenity=grave_yard";
   assertNoMatch: "way name=kiosk amenity=grave_yard";
 }
+*[name][name=~/^(?i)(school|école|Школа)$/][building][building!=school][building!=no],
 *[name][name=~/^(?i)(house|casa|rumah|vivienda)$/][building][building!=house][building!=no] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
@@ -162,9 +163,4 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertMatch: "way name=Rumah building=yes";
   assertNoMatch: "way name=house building=house";
   assertMatch: "way name=house building=yes";
-}
-*[name][name=~/^(?i)(school|école|Школа)$/][building][building!=school][building!=no] {
-  throwWarning: tr("{0}", "{0.tag}");
-  group: tr("descriptive name");
-  /* without fixRemove to avoid possible information loss */
 }
