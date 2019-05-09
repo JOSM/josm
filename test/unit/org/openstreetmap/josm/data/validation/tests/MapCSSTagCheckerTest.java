@@ -15,7 +15,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -86,9 +85,13 @@ public class MapCSSTagCheckerTest {
         final OsmPrimitive n2 = OsmUtils.createPrimitive("node natural=wood");
         new DataSet(n1, n2);
         assertTrue(check.test(n1));
-        assertEquals("deprecated", check.getErrorForPrimitive(n1).getMessage());
-        assertEquals("natural=marsh is deprecated", check.getErrorForPrimitive(n1).getDescription());
-        assertEquals(Severity.WARNING, check.getErrorForPrimitive(n1).getSeverity());
+
+        final Collection<TestError> errors = check.getErrorsForPrimitive(n1);
+        assertEquals(1, errors.size());
+        TestError err = errors.iterator().next();
+        assertEquals("deprecated", err.getMessage());
+        assertEquals("natural=marsh is deprecated", err.getDescription());
+        assertEquals(Severity.WARNING, err.getSeverity());
         assertEquals("Sequence: Fix of natural=marsh is deprecated", check.fixPrimitive(n1).getDescriptionText());
         assertEquals("{natural=}", ((ChangePropertyCommand) check.fixPrimitive(n1).getChildren().iterator().next()).getTags().toString());
         assertFalse(check.test(n2));
@@ -239,7 +242,6 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore("not fixed yet")
     public void testTicket14287() throws Exception {
         final MapCSSTagChecker test = buildTagChecker(
                 "node[amenity=parking] ∈ *[amenity=parking] {" +
@@ -299,7 +301,6 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore("not fixed yet")
     public void testTicket12627() throws Exception {
         doTestNaturalWood(12627, "overlapping.osm", 1, 1);
     }
@@ -309,7 +310,6 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore("not fixed yet")
     public void testTicket14289() throws Exception {
         doTestNaturalWood(14289, "example2.osm", 3, 3);
     }

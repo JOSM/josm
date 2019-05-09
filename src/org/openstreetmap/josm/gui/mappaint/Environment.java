@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
@@ -60,6 +63,11 @@ public class Environment {
     public Integer count;
 
     /**
+     * Set of matched children filled by ContainsFinder and CrossingFinder, null if nothing matched
+     */
+    public Set<IPrimitive> children;
+
+    /**
      * Creates a new uninitialized environment.
      */
     public Environment() {
@@ -108,6 +116,7 @@ public class Environment {
         this.index = other.index;
         this.count = other.count;
         this.context = other.getContext();
+        this.children = other.children == null ? null : new LinkedHashSet<>(other.children);
     }
 
     /**
@@ -273,6 +282,7 @@ public class Environment {
         child = null;
         index = null;
         count = null;
+        children = null;
     }
 
     /**

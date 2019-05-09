@@ -12,7 +12,6 @@ import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +38,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -69,6 +69,8 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource.MapCSSRuleIndex;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelectorType;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
@@ -733,34 +735,42 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @param p the primitive to construct the error for
          * @return an instance of {@link TestError}, or returns null if the primitive does not give rise to an error.
          */
-        TestError getErrorForPrimitive(OsmPrimitive p) {
+        List<TestError> getErrorsForPrimitive(OsmPrimitive p) {
             final Environment env = new Environment(p);
-            return getErrorForPrimitive(p, whichSelectorMatchesEnvironment(env), env, null);
+            return getErrorsForPrimitive(p, whichSelectorMatchesEnvironment(env), env, null);
         }
 
-        TestError getErrorForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env, Test tester) {
+        private List<TestError> getErrorsForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env, Test tester) {
+            List<TestError> res = new ArrayList<>();
             if (matchingSelector != null && !errors.isEmpty()) {
                 final Command fix = fixPrimitive(p);
                 final String description = getDescriptionForMatchingSelector(p, matchingSelector);
                 final String description1 = group == null ? description : group;
                 final String description2 = group == null ? null : description;
-                final List<OsmPrimitive> primitives;
-                if (env.child instanceof OsmPrimitive) {
-                    primitives = Arrays.asList(p, (OsmPrimitive) env.child);
-                } else {
-                    primitives = Collections.singletonList(p);
-                }
-                final TestError.Builder error = TestError.builder(tester, getSeverity(), 3000)
-                        .messageWithManuallyTranslatedDescription(description1, description2, matchingSelector.toString())
-                        .primitives(primitives);
+                TestError.Builder errorBuilder = TestError.builder(tester, getSeverity(), 3000)
+                        .messageWithManuallyTranslatedDescription(description1, description2, matchingSelector.toString());
                 if (fix != null) {
-                    return error.fix(() -> fix).build();
-                } else {
-                    return error.build();
+                    errorBuilder = errorBuilder.fix(() -> fix);
                 }
-            } else {
-                return null;
+                if (env.child instanceof OsmPrimitive) {
+                    res.add(errorBuilder.primitives(p, (OsmPrimitive) env.child).build());
+                } else if (env.children != null) {
+                    for (IPrimitive c : env.children) {
+                        if (c instanceof OsmPrimitive) {
+                            errorBuilder = TestError.builder(tester, getSeverity(), 3000)
+                                    .messageWithManuallyTranslatedDescription(description1, description2,
+                                            matchingSelector.toString());
+                            if (fix != null) {
+                                errorBuilder = errorBuilder.fix(() -> fix);
+                            }
+                            res.add(errorBuilder.primitives(p, (OsmPrimitive) c).build());
+                        }
+                    }
+                } else {
+                    res.add(errorBuilder.primitives(p).build());
+                }
             }
+            return res;
         }
 
         /**
@@ -854,6 +864,25 @@ public class MapCSSTagChecker extends Test.TagTest {
         while (candidates.hasNext()) {
             MapCSSRule r = candidates.next();
             env.clearSelectorMatchingInformation();
+            if (partialSelection && r.selector instanceof Selector.ChildOrParentSelector) {
+                ChildOrParentSelector sel = (Selector.ChildOrParentSelector) r.selector;
+                if (sel.type == ChildOrParentSelectorType.ELEMENT_OF && p.getDataSet() != null) {
+                    List<OsmPrimitive> toCheck = new ArrayList<>();
+                    toCheck.addAll(p.getDataSet().searchWays(p.getBBox()));
+                    toCheck.addAll(p.getDataSet().searchRelations(p.getBBox()));
+                    toCheck.removeIf(OsmPrimitive::isSelected);
+                    if (!toCheck.isEmpty()) {
+                        Set<Set<TagCheck>> checksCol = Collections.singleton(Collections.singleton(indexData.getCheck(r)));
+                        for (OsmPrimitive p2 : toCheck) {
+                            for (TestError e : getErrorsForPrimitive(p2, includeOtherSeverity, checksCol)) {
+                                if (e.getPrimitives().contains(p)) {
+                                    addIfNotSimilar(e, res);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 TagCheck check = indexData.getCheck(r);
                 if (check != null) {
@@ -863,16 +892,40 @@ public class MapCSSTagChecker extends Test.TagTest {
 
                     r.declaration.execute(env);
                     if (!check.errors.isEmpty()) {
-                        final TestError error = check.getErrorForPrimitive(p, r.selector, env, new MapCSSTagCheckerAndRule(check.rule));
-                        if (error != null) {
-                            res.add(error);
+                        for (TestError e: check.getErrorsForPrimitive(p, r.selector, env, new MapCSSTagCheckerAndRule(check.rule))) {
+                            addIfNotSimilar(e, res);
                         }
                     }
-
                 }
             }
         }
         return res;
+    }
+
+    /**
+     * See #12627
+     * Add error to given list if list doesn't already contain a similar error.
+     * Similar means same code and description and same combination of primitives and same combination of highlighted objects,
+     * but maybe with different orders.
+     * @param toAdd the error to add
+     * @param errors the list of errors
+     */
+    private static void addIfNotSimilar(TestError toAdd, List<TestError> errors) {
+        boolean isDup = false;
+        if (toAdd.getPrimitives().size() >= 2) {
+            for (TestError e : errors) {
+                if (e.getCode() == toAdd.getCode() && e.getMessage().equals(toAdd.getMessage())
+                        && e.getPrimitives().size() == toAdd.getPrimitives().size()
+                        && e.getPrimitives().containsAll(toAdd.getPrimitives())
+                        && e.getHighlighted().size() == toAdd.getHighlighted().size()
+                        && e.getHighlighted().containsAll(toAdd.getHighlighted())) {
+                    isDup = true;
+                    break;
+                }
+            }
+        }
+        if (!isDup)
+            errors.add(toAdd);
     }
 
     private static Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity,
@@ -890,10 +943,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 if (selector != null) {
                     check.rule.declaration.execute(env);
                     if (!ignoreError && !check.errors.isEmpty()) {
-                        final TestError error = check.getErrorForPrimitive(p, selector, env, new MapCSSTagCheckerAndRule(check.rule));
-                        if (error != null) {
-                            r.add(error);
-                        }
+                        r.addAll(check.getErrorsForPrimitive(p, selector, env, new MapCSSTagCheckerAndRule(check.rule)));
                     }
                 }
             }
@@ -908,7 +958,9 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
-        errors.addAll(getErrorsForPrimitive(p, ValidatorPrefHelper.PREF_OTHER.get()));
+        for (TestError e : getErrorsForPrimitive(p, ValidatorPrefHelper.PREF_OTHER.get())) {
+            addIfNotSimilar(e, errors);
+        }
     }
 
     /**
