@@ -241,25 +241,19 @@ public class FilterTableModel extends AbstractTableModel {
         switch (column) {
         case COL_ENABLED:
             f.enable = (Boolean) aValue;
-            setFilter(row, f);
             break;
         case COL_HIDING:
             f.hiding = (Boolean) aValue;
-            setFilter(row, f);
             break;
         case COL_TEXT:
             f.text = (String) aValue;
-            savePrefs();
             break;
         case COL_INVERTED:
             f.inverted = (Boolean) aValue;
-            setFilter(row, f);
             break;
         default: // Do nothing
         }
-        if (column != 0) {
-            fireTableCellUpdated(row, column);
-        }
+        setFilter(row, f);
     }
 
     @Override
