@@ -1538,9 +1538,12 @@ node[man_made=water_works] {
     icon-image: "presets/landmark/water_works.svg";
     set icon_z17;
 }
-way[man_made=cutline] {
-    width: 2;
-    color: cutline#99ff55;
+way[man_made=cutline]::man_made_cutline {
+    width: 4;
+    color: cutline#bbff7c;
+    z-index: -2;
+    object-z-index: -1; /* below highway=* */
+    modifier: false; /* don't draw default way if there is no line on default layer */
 }
 node[man_made=cutline] {
     icon-image: "presets/misc/deprecated.svg";
