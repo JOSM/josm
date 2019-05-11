@@ -8,9 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 import java.util.regex.PatternSyntaxException;
@@ -20,11 +18,9 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -357,30 +353,7 @@ public interface Selector {
                     return false;
                 }
 
-                ContainsFinder containsFinder;
-                try {
-                    // if right selector also matches relations and if matched primitive is a way which is part of a multipolygon,
-                    // use the multipolygon for further analysis
-                    if (!(e.osm instanceof Way)
-                            || (right instanceof OptimizedGeneralSelector
-                            && !((OptimizedGeneralSelector) right).matchesBase(OsmPrimitiveType.RELATION))) {
-                        throw new NoSuchElementException();
-                    }
-                    final Relation multipolygon = ((Way) e.osm).referrers(Relation.class)
-                            .filter(p -> p.hasTag("type", "multipolygon"))
-                            .findFirst()
-                            .orElseThrow(NoSuchElementException::new);
-                    final Set<OsmPrimitive> members = multipolygon.getMemberPrimitives();
-                    containsFinder = new ContainsFinder(new Environment(multipolygon)) {
-                        @Override
-                        public boolean isPrimitiveUsable(IPrimitive p) {
-                            return super.isPrimitiveUsable(p) && !members.contains(p);
-                        }
-                    };
-                } catch (NoSuchElementException ignore) {
-                    Logging.trace(ignore);
-                    containsFinder = new ContainsFinder(e);
-                }
+                ContainsFinder containsFinder = new ContainsFinder(e);
                 e.parent = e.osm;
 
                 if (left instanceof OptimizedGeneralSelector) {
