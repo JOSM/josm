@@ -112,7 +112,7 @@ public class Check extends KeyedItem {
 
     @Override
     public String toString() {
-        return "Check ["
+        return "Check [key=" + key + ", text=" + text + ", "
                 + (locale_text != null ? "locale_text=" + locale_text + ", " : "")
                 + (value_on != null ? "value_on=" + value_on + ", " : "")
                 + (value_off != null ? "value_off=" + value_off + ", " : "")

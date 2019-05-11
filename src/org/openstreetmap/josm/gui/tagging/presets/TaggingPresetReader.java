@@ -130,7 +130,7 @@ public final class TaggingPresetReader {
         parser.mapOnStart("optional", Optional.class);
         parser.mapOnStart("roles", Roles.class);
         parser.map("role", Role.class);
-        parser.map("checkgroup", CheckGroup.class);
+        parser.mapBoth("checkgroup", CheckGroup.class);
         parser.map("check", Check.class);
         parser.map("combo", Combo.class);
         parser.map("multiselect", MultiSelect.class);
@@ -166,6 +166,8 @@ public final class TaggingPresetReader {
     static Collection<TaggingPreset> readAll(Reader in, boolean validate, HashSetWithLast<TaggingPreset> all) throws SAXException {
         XmlObjectParser parser = buildParser();
 
+        /** to detect end of {@code <checkgroup>} */
+        CheckGroup lastcheckgroup = null;
         /** to detect end of {@code <group>} */
         TaggingPresetMenu lastmenu = null;
         /** to detect end of reused {@code <group>} */
@@ -280,16 +282,26 @@ public final class TaggingPresetReader {
                             throw new SAXException(tr("Preset role element without parent"));
                         lastrole.roles.add((Role) o);
                     } else if (o instanceof Check) {
-                        checks.add((Check) o);
+                        if (lastcheckgroup != null) {
+                            checks.add((Check) o);
+                        } else {
+                            all.getLast().data.add((TaggingPresetItem) o);
+                        }
                     } else if (o instanceof ComboMultiSelect.PresetListEntry) {
                         listEntries.add((ComboMultiSelect.PresetListEntry) o);
                     } else if (o instanceof CheckGroup) {
-                        all.getLast().data.add((TaggingPresetItem) o);
-                        // Make sure list of checks is empty to avoid adding checks several times
-                        // when used in chunks (fix #10801)
-                        ((CheckGroup) o).checks.clear();
-                        ((CheckGroup) o).checks.addAll(checks);
-                        checks.clear();
+                        CheckGroup cg = (CheckGroup) o;
+                        if (cg == lastcheckgroup) {
+                            lastcheckgroup = null;
+                            all.getLast().data.add(cg);
+                            // Make sure list of checks is empty to avoid adding checks several times
+                            // when used in chunks (fix #10801)
+                            cg.checks.clear();
+                            cg.checks.addAll(checks);
+                            checks.clear();
+                        } else {
+                            lastcheckgroup = cg;
+                        }
                     } else {
                         if (!checks.isEmpty()) {
                             all.getLast().data.addAll(checks);
