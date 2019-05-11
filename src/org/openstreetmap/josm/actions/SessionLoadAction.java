@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * Loads a JOSM session.
@@ -137,10 +139,7 @@ public class SessionLoadAction extends DiskAccessAction {
                 for (Layer l : layers) {
                     if (canceled)
                         return;
-                    // NoteImporter directly loads notes into current note layer
-                    if (!MainApplication.getLayerManager().containsLayer(l)) {
-                        MainApplication.getLayerManager().addLayer(l);
-                    }
+                    addLayer(l);
                 }
                 if (active != null) {
                     MainApplication.getLayerManager().setActiveLayer(active);
@@ -149,6 +148,29 @@ public class SessionLoadAction extends DiskAccessAction {
                     MainApplication.getMap().mapView.scheduleZoomTo(viewport.getEastNorthViewport(ProjectionRegistry.getProjection()));
                 }
             }
+        }
+
+        /**
+         * Tries to add a new layer.
+         * @param l layer to add
+         * @return {@code true} if layer has been added, {@code false} if it wasn't needed or if an error occurred
+         */
+        static boolean addLayer(Layer l) {
+            // NoteImporter directly loads notes into current note layer
+            if (!MainApplication.getLayerManager().containsLayer(l)) {
+                try {
+                    MainApplication.getLayerManager().addLayer(l);
+                } catch (ReportedException e) {
+                    Logging.error(e);
+                    new Notification(tr("Unable to add layer ''{0}'': {1}", l.getName(), e.getMessage()))
+                        .setIcon(JOptionPane.ERROR_MESSAGE).setDuration(Notification.TIME_LONG).show();
+                    if (MainApplication.getLayerManager().containsLayer(l)) {
+                        MainApplication.getLayerManager().removeLayer(l);
+                    }
+                    return false;
+                }
+            }
+            return true;
         }
 
         private void runPostLoadTasks() {
