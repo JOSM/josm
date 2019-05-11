@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -38,6 +39,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -964,6 +966,7 @@ public final class Geometry {
     /**
      * Tests if the {@code node} is inside the multipolygon {@code multiPolygon}. The nullable argument
      * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
+     * For repeated tests against {@code multiPolygon} better use {@link Geometry#filterInsideMultipolygon}.
      * @param node node
      * @param multiPolygon multipolygon
      * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
@@ -976,40 +979,55 @@ public final class Geometry {
     /**
      * Tests if the polygon formed by {@code nodes} is inside the multipolygon {@code multiPolygon}. The nullable argument
      * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
+     * For repeated tests against {@code multiPolygon} better use {@link Geometry#filterInsideMultipolygon}.
      * <p>
      * If {@code nodes} contains exactly one element, then it is checked whether that one node is inside the multipolygon.
      * @param nodes nodes forming the polygon
      * @param multiPolygon multipolygon
      * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
-     * @return {@code true} if the polygon formed by nodes is inside the multipolygon
+     * @return {@code true} if the multipolygon is valid and the polygon formed by nodes is inside the multipolygon
      */
     public static boolean isPolygonInsideMultiPolygon(List<? extends INode> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
-        // Extract outer/inner members from multipolygon
-        final Pair<List<JoinedPolygon>, List<JoinedPolygon>> outerInner;
         try {
-            outerInner = MultipolygonBuilder.joinWays(multiPolygon);
+            return isPolygonInsideMultiPolygon(nodes, MultipolygonBuilder.joinWays(multiPolygon), isOuterWayAMatch);
         } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
             Logging.trace(ex);
             Logging.debug("Invalid multipolygon " + multiPolygon);
             return false;
         }
+    }
+
+    /**
+     * Tests if the polygon formed by {@code nodes} is inside the multipolygon {@code multiPolygon}. The nullable argument
+     * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
+     * For repeated tests against {@code multiPolygon} better use {@link Geometry#filterInsideMultipolygon}.
+     * <p>
+     * If {@code nodes} contains exactly one element, then it is checked whether that one node is inside the multipolygon.
+     * @param nodes nodes forming the polygon
+     * @param outerInner result of {@link MultipolygonBuilder#joinWays(Relation)}
+     * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
+     * @return {@code true} if the multipolygon is valid and the polygon formed by nodes is inside the multipolygon
+     * @since 15069
+     */
+    public static boolean isPolygonInsideMultiPolygon(List<? extends INode> nodes, Pair<List<JoinedPolygon>,
+            List<JoinedPolygon>> outerInner, Predicate<Way> isOuterWayAMatch) {
+        Area a1 = nodes.size() == 1 ? null : getArea(nodes);
         // Test if object is inside an outer member
         for (JoinedPolygon out : outerInner.a) {
-            if (nodes.size() == 1
+            if (a1 == null
                     ? nodeInsidePolygon(nodes.get(0), out.getNodes())
-                    : PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(nodes, out.getNodes())) {
+                    : PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(a1, out.area)) {
                 boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
                 for (JoinedPolygon in : outerInner.b) {
-                    if (nodes.size() == 1 ? nodeInsidePolygon(nodes.get(0), in.getNodes())
-                            : polygonIntersection(nodes, in.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND
-                                    && polygonIntersection(in.getNodes(),
-                                            out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND) {
+                    if (a1 == null ? nodeInsidePolygon(nodes.get(0), in.getNodes())
+                            : in.area.getBounds2D().contains(a1.getBounds2D())
+                                    && polygonIntersection(a1, in.area) == PolygonIntersection.FIRST_INSIDE_SECOND
+                                    && polygonIntersection(in.area, out.area) == PolygonIntersection.FIRST_INSIDE_SECOND) {
                         insideInner = true;
                         break;
                     }
                 }
-                // Inside outer but not inside inner -> the polygon appears to be inside a the multipolygon
                 if (!insideInner) {
                     // Final check using predicate
                     if (isOuterWayAMatch == null || isOuterWayAMatch.test(out.ways.get(0)
@@ -1021,6 +1039,108 @@ public final class Geometry {
         }
         return false;
     }
+
+    /**
+     * Find all primitives in the given collection which are inside the given polygon.
+     * @param primitives the primitives
+     * @param polygon the polygon
+     * @return a new list containing the found primitives, empty if polygon is invalid or nothing was found.
+     * @since 15069
+     */
+
+    public static List<IPrimitive> filterInsidePolygon(List<IPrimitive> primitives, IWay<?> polygon) {
+        List<IPrimitive> res = new ArrayList<>();
+        if (!polygon.isClosed() || polygon.getNodesCount() <= 3)
+            return res;
+        /** polygon area in east north space, calculated only when really needed */
+        Area polygonArea = null;
+        for (IPrimitive p : primitives) {
+            if (p instanceof INode) {
+                if (nodeInsidePolygon((INode) p, polygon.getNodes())) {
+                    res.add(p);
+                }
+            } else if (p instanceof IWay) {
+                if (polygonArea == null) {
+                    polygonArea = getArea(polygon.getNodes());
+                }
+                if (PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(getArea(((IWay<?>) p).getNodes()),
+                        polygonArea)) {
+                    res.add(p);
+                }
+            } else if (p.isMultipolygon()) {
+                if (polygonArea == null) {
+                    polygonArea = getArea(polygon.getNodes());
+                }
+                Multipolygon mp = new Multipolygon((Relation) p);
+                boolean inside = true;
+                // a (valid) multipolygon is inside the polygon if all outer rings are inside
+                for (PolyData outer : mp.getOuterPolygons()) {
+                    if (PolygonIntersection.FIRST_INSIDE_SECOND != polygonIntersection(getArea(outer.getNodes()),
+                            polygonArea)) {
+                        inside = false;
+                        break;
+                    }
+                }
+                if (inside) {
+                    res.add(p);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Find all primitives in the given collection which are inside the given multipolygon. Members of the multipolygon are
+     * ignored.
+     * @param primitives the primitives
+     * @param multiPolygon the multipolygon relation
+     * @return a new list containing the found primitives, empty if multipolygon is invalid or nothing was found.
+     * @since 15069
+     */
+    public static List<IPrimitive> filterInsideMultipolygon(Collection<IPrimitive> primitives, Relation multiPolygon) {
+        List<IPrimitive> res = new ArrayList<>();
+        if (primitives.isEmpty())
+            return res;
+
+        final Pair<List<JoinedPolygon>, List<JoinedPolygon>> outerInner;
+        try {
+            outerInner = MultipolygonBuilder.joinWays(multiPolygon);
+        } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
+            Logging.trace(ex);
+            Logging.debug("Invalid multipolygon " + multiPolygon);
+            return res;
+        }
+
+        Set<OsmPrimitive> members = multiPolygon.getMemberPrimitives();
+        for (IPrimitive p : primitives) {
+            if (members.contains(p))
+                continue;
+            if (p instanceof Node) {
+                if (isPolygonInsideMultiPolygon(Collections.singletonList((Node) p), outerInner, null)) {
+                    res.add(p);
+                }
+            } else if (p instanceof Way) {
+                if (isPolygonInsideMultiPolygon(((Way) p).getNodes(), outerInner, null)) {
+                    res.add(p);
+                }
+            } else if (p.isMultipolygon()) {
+                Multipolygon mp = new Multipolygon((Relation) p);
+                boolean inside = true;
+                // a (valid) multipolygon is inside multiPolygon if all outer rings are inside
+                for (PolyData outer : mp.getOuterPolygons()) {
+                    if (!isPolygonInsideMultiPolygon(outer.getNodes(), outerInner, null)) {
+                        inside = false;
+                        break;
+                    }
+                }
+                if (inside) {
+                    res.add(p);
+                }
+            }
+        }
+        return res;
+    }
+
 
     /**
      * Data class to hold two double values (area and perimeter of a polygon).

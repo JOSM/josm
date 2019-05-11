@@ -338,4 +338,22 @@ public class MapCSSTagCheckerTest {
                 "}").getErrorsForPrimitive(OsmUtils.createPrimitive("way name=Test St"), false);
         assertEquals(1, errors.size());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17695">Bug #17695</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket17695() throws Exception {
+        final MapCSSTagChecker test = buildTagChecker(
+                "*[building] ∈  *[building] {" +
+                "throwWarning: tr(\"Building inside building\");" +
+                "}");
+        try (InputStream is = TestUtils.getRegressionDataStream(17695, "bib2.osm")) {
+            test.visit(OsmReader.parseDataSet(is, null).allPrimitives());
+            List<TestError> errors = test.getErrors();
+            assertEquals(6, errors.size());
+        }
+    }
+
 }
