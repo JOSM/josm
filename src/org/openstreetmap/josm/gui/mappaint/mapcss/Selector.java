@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -312,30 +313,37 @@ public interface Selector {
         }
 
         private class ContainsFinder extends AbstractFinder {
+            protected List<IPrimitive> toCheck;
+
             protected ContainsFinder(Environment e) {
                 super(e);
                 CheckParameterUtil.ensureThat(!(e.osm instanceof INode), "Nodes not supported");
             }
 
             @Override
-            public void visit(INode n) {
-                if (left.matches(new Environment(n).withParent(e.osm))
-                    && ((e.osm instanceof IWay && Geometry.nodeInsidePolygon(n, ((IWay<?>) e.osm).getNodes()))
-                            || (e.osm instanceof Relation && (
-                                    (Relation) e.osm).isMultipolygon() && Geometry.isNodeInsideMultiPolygon(n, (Relation) e.osm, null)))) {
-                    addToChildren(e, n);
+            public void visit(Collection<? extends IPrimitive> primitives) {
+                for (IPrimitive p : primitives) {
+                    if (p != e.osm && isPrimitiveUsable(p) && left.matches(new Environment(p).withParent(e.osm))) {
+                        if (toCheck == null) {
+                            toCheck = new ArrayList<>();
+                        }
+                        toCheck.add(p);
+                    }
                 }
             }
 
-            @Override
-            public void visit(IWay<?> w) {
-                if (left.matches(new Environment(w).withParent(e.osm))
-                    && ((e.osm instanceof IWay && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(
-                            Geometry.polygonIntersection(w.getNodes(), ((IWay<?>) e.osm).getNodes())))
-                            || (e.osm instanceof Relation && (
-                                    (Relation) e.osm).isMultipolygon()
-                                    && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) e.osm, null)))) {
-                    addToChildren(e, w);
+            void execGeometryTests() {
+                if (toCheck == null || toCheck.isEmpty())
+                    return;
+
+                if (e.osm instanceof IWay) {
+                    for (IPrimitive p : Geometry.filterInsidePolygon(toCheck, (IWay<?>) e.osm)) {
+                        addToChildren(e, p);
+                    }
+                } else if (e.osm instanceof Relation) {
+                    for (IPrimitive p : Geometry.filterInsideMultipolygon(toCheck, (Relation) e.osm)) {
+                        addToChildren(e, p);
+                    }
                 }
             }
         }
@@ -363,11 +371,14 @@ public interface Selector {
                     if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
                         containsFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                     }
+                    if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.RELATION)) {
+                        containsFinder.visit(e.osm.getDataSet().searchRelations(e.osm.getBBox()));
+                    }
                 } else {
                     // use slow test
                     containsFinder.visit(e.osm.getDataSet().allPrimitives());
                 }
-
+                containsFinder.execGeometryTests();
                 return e.children != null;
 
             } else if (ChildOrParentSelectorType.CROSSING == type && e.osm instanceof IWay) {

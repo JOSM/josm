@@ -264,6 +264,48 @@ public class GeometryTest {
     }
 
     /**
+     * Test of {@link Geometry#filterInsideMultipolygon}
+     */
+    @Test
+    public void testFilterInsideMultiPolygon() {
+        Node node1 = new Node(new LatLon(1.01, 1.0));
+        Node node2 = new Node(new LatLon(1.01, 1.1));
+        Node node3 = new Node(new LatLon(1.02, 1.05));
+        Way w1 = new Way();
+        w1.setNodes(Arrays.asList(node1, node2, node3, node1));
+        w1.put("building", "yes");
+        Relation mp1 = new Relation();
+        mp1.addMember(new RelationMember("outer", w1));
+        mp1.put("type", "multipolygon");
+
+        Node node4 = new Node(new LatLon(1.0, 1.09));
+        Node node5 = new Node(new LatLon(1.0, 1.12));
+        Node node6 = new Node(new LatLon(1.1, 1.12));
+        Node node7 = new Node(new LatLon(1.1, 1.09));
+        Way outer = new Way();
+        outer.setNodes(Arrays.asList(node4, node5, node6, node7, node4));
+        Node node8 = new Node(new LatLon(1.04, 1.1));
+        Node node9 = new Node(new LatLon(1.04, 1.11));
+        Node node10 = new Node(new LatLon(1.06, 1.105));
+        Way inner = new Way();
+        inner.setNodes(Arrays.asList(node8, node9, node10, node8));
+        Relation mp2 = new Relation();
+        mp2.addMember(new RelationMember("outer", outer));
+        mp2.addMember(new RelationMember("inner", inner));
+        mp2.put("type", "multipolygon");
+        assertFalse(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp2, null));
+        assertFalse(Geometry.filterInsideMultipolygon(Arrays.asList(w1), mp2).contains(w1));
+
+        node4.setCoor(new LatLon(1.006, 0.99));
+        // now w1 is inside
+        assertTrue(Geometry.isPolygonInsideMultiPolygon(w1.getNodes(), mp2, null));
+        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1), mp2).contains(w1));
+        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(mp1), mp2).contains(mp1));
+        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1, mp1), mp2).contains(w1));
+        assertTrue(Geometry.filterInsideMultipolygon(Arrays.asList(w1, mp1), mp2).contains(mp1));
+    }
+
+    /**
      * Test of {@link Geometry#getDistance} method.
      */
     @Test
