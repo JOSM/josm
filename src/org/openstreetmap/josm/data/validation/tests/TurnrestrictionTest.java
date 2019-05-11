@@ -15,6 +15,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.tests.ConditionalKeys.ConditionalParsingException;
+import org.openstreetmap.josm.data.validation.tests.ConditionalKeys.ConditionalValue;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Checks if turn restrictions are valid
@@ -55,12 +58,27 @@ public class TurnrestrictionTest extends Test {
         super(tr("Turn restrictions"), tr("This test checks if turn restrictions are valid."));
     }
 
+    private static boolean hasSupportedRestrictionTag(Relation r) {
+        if (r.hasTag("restriction", SUPPORTED_RESTRICTIONS))
+            return true;
+        String conditionalValue = r.get("restriction:conditional");
+        if (conditionalValue != null) {
+            try {
+                List<ConditionalValue> values = ConditionalValue.parse(conditionalValue);
+                return !values.isEmpty() && SUPPORTED_RESTRICTIONS.contains(values.get(0).restrictionValue);
+            } catch (ConditionalParsingException e) {
+                Logging.trace(e);
+            }
+        }
+        return false;
+    }
+
     @Override
     public void visit(Relation r) {
         if (!r.hasTag("type", "restriction"))
             return;
 
-        if (!r.hasTag("restriction", SUPPORTED_RESTRICTIONS)) {
+        if (!hasSupportedRestrictionTag(r)) {
             errors.add(TestError.builder(this, Severity.ERROR, UNKNOWN_RESTRICTION)
                     .message(tr("Unknown turn restriction"))
                     .primitives(r)

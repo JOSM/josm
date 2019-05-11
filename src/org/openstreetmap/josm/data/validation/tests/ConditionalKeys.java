@@ -37,6 +37,13 @@ public class ConditionalKeys extends Test.TagTest {
             "motorcar", "motorhome", "psv", "bus", "taxi", "tourist_bus", "goods", "hgv", "agricultural", "atv", "snowmobile"
             /*,"hov","emergency","hazmat","disabled"*/));
 
+    private static final Pattern CONDITIONAL_PATTERN;
+    static {
+        final String part = Pattern.compile("([^@\\p{Space}][^@]*?)"
+                + "\\s*@\\s*" + "(\\([^)\\p{Space}][^)]+?\\)|[^();\\p{Space}][^();]*?)\\s*").toString();
+        CONDITIONAL_PATTERN = Pattern.compile('(' + part + ")(;\\s*" + part + ")*");
+    }
+
     /**
      * Constructs a new {@code ConditionalKeys}.
      */
@@ -163,9 +170,7 @@ public class ConditionalKeys extends Test.TagTest {
         public static List<ConditionalValue> parse(String value) {
             // <restriction-value> @ <condition>[;<restriction-value> @ <condition>]
             final List<ConditionalValue> r = new ArrayList<>();
-            final String part = Pattern.compile("([^@\\p{Space}][^@]*?)"
-                    + "\\s*@\\s*" + "(\\([^)\\p{Space}][^)]+?\\)|[^();\\p{Space}][^();]*?)\\s*").toString();
-            final Matcher m = Pattern.compile('(' + part + ")(;\\s*" + part + ")*").matcher(value);
+            final Matcher m = CONDITIONAL_PATTERN.matcher(value);
             if (!m.matches()) {
                 throw new ConditionalParsingException(tr("Does not match pattern ''restriction value @ condition''"));
             } else {

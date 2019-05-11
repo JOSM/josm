@@ -46,6 +46,7 @@ public class ConditionalKeysTest {
         assertTrue(test.isKeyValid("maxspeed:hgv:backward:conditional"));
         assertTrue(test.isKeyValid("oneway:backward:conditional"));
         assertTrue(test.isKeyValid("fee:conditional"));
+        assertTrue(test.isKeyValid("restriction:conditional"));
         assertFalse(test.isKeyValid("maxspeed:hgv:conditional:backward"));
     }
 
@@ -66,5 +67,6 @@ public class ConditionalKeysTest {
         assertFalse(test.isValueValid("motor_vehicle:conditional", "foo @ (10:00-18:00 AND length>5)"));
         assertFalse(test.isValueValid("motor_vehicle:conditional", "no @ (10:00until18:00 AND length>5)"));
         assertTrue(test.isValueValid("maxspeed:hgv:conditional", "60 @ (weight>7.5)"));
+        assertTrue(test.isValueValid("restriction:conditional", "no_left_turn @ (Mo-Fr 16:00-18:00)"));
     }
 }

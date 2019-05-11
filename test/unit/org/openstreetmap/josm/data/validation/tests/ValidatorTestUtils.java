@@ -65,8 +65,8 @@ public final class ValidatorTestUtils {
                             expectedCodes.size(), actualCodes.size());
                 } else if (t.hasKey("name") && namePredicate != null && namePredicate.test(t.getName())) {
                     fail(name + " lacks josm_error_codes tag");
-                } else if (t.hasKey("name") && name.startsWith("OK") && !errors.isEmpty()) {
-                    fail(name + "has unexpected error(s) ");
+                } else if (t.hasKey("name") && t.get("name").startsWith("OK") && !errors.isEmpty()) {
+                    fail(name + "has unexpected error(s): " + errors);
                 }
             }
         }
