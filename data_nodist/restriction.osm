@@ -294,6 +294,15 @@
   <node id='-138976' action='modify' lat='51.11909862283' lon='14.1606108948' />
   <node id='-138978' action='modify' lat='51.11929761964' lon='14.1607307948' />
   <node id='-138980' action='modify' lat='51.11938242064' lon='14.1607607948' />
+  <node id='-139147' action='modify' lat='51.12600394515' lon='14.1602059678' />
+  <node id='-139148' action='modify' lat='51.12545534658' lon='14.15967261709' />
+  <node id='-139149' action='modify' lat='51.1257203484' lon='14.15988743891' />
+  <node id='-139150' action='modify' lat='51.12552508405' lon='14.16119859274' />
+  <node id='-139152' action='modify' lat='51.12608298001' lon='14.1608430256'>
+    <tag k='name' v='05.4 - no u-turn via way (oneway, conditional)' />
+  </node>
+  <node id='-139153' action='modify' lat='51.12589701544' lon='14.16097636327' />
+  <node id='-139155' action='modify' lat='51.12605520638' lon='14.16056440756' />
   <way id='-138981' timestamp='2009-09-09T15:30:17Z'>
     <nd ref='-112783' />
     <nd ref='-112877' />
@@ -953,6 +962,27 @@
     <nd ref='-138964' />
     <tag k='highway' v='unclassified' />
   </way>
+  <way id='-139151' action='modify'>
+    <nd ref='-139148' />
+    <nd ref='-139149' />
+    <nd ref='-139147' />
+    <tag k='highway' v='unclassified' />
+    <tag k='oneway' v='yes' />
+  </way>
+  <way id='-139154' action='modify'>
+    <nd ref='-139147' />
+    <nd ref='-139155' />
+    <nd ref='-139152' />
+    <tag k='highway' v='unclassified' />
+    <tag k='oneway' v='yes' />
+  </way>
+  <way id='-139156' action='modify'>
+    <nd ref='-139152' />
+    <nd ref='-139153' />
+    <nd ref='-139150' />
+    <tag k='highway' v='unclassified' />
+    <tag k='oneway' v='yes' />
+  </way>
   <relation id='-139094' action='modify' timestamp='2009-09-09T15:30:17Z'>
     <member type='way' ref='-139044' role='to' />
     <member type='node' ref='-112839' role='via' />
@@ -1279,6 +1309,14 @@
     <tag k='josm_error_codes' v='1807' />
     <tag k='name' v='E20 - role location_hint' />
     <tag k='restriction' v='only_straight_on' />
+    <tag k='type' v='restriction' />
+  </relation>
+  <relation id='-139207' action='modify'>
+    <member type='way' ref='-139151' role='from' />
+    <member type='way' ref='-139154' role='via' />
+    <member type='way' ref='-139156' role='to' />
+    <tag k='name' v='OK 05.4 - no u-turn via way (oneway, conditional)' />
+    <tag k='restriction:conditional' v='no_u_turn @ (Mo-Fr 16:00-18:00)' />
     <tag k='type' v='restriction' />
   </relation>
 </osm>
