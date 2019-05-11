@@ -1030,9 +1030,7 @@
                 <reference ref="surface" />
                 <text key="step_count" text="Amount of Steps" />
                 <space />
-                <checkgroup columns="1" > <!-- workaround -->
-                    <check key="ramp" text="Ramp" />
-                </checkgroup>
+                <check key="ramp" text="Ramp" />
                 <checkgroup columns="2" >
                     <check key="ramp:stroller" text="Stroller ramp" />
                     <check key="ramp:bicycle" text="Bicycle ramp" />
@@ -1040,9 +1038,7 @@
                 <combo key="ramp:wheelchair" text="Wheelchair ramp" values="yes,limited,no" />
                 <combo key="ramp:luggage" text="Luggage ramp" values="yes,automatic,manual,no" />
                 <space />
-                <checkgroup columns="1" > <!-- workaround -->
-                    <check key="handrail" text="Handrail" />
-                </checkgroup>
+                <check key="handrail" text="Handrail" />
                 <checkgroup columns="3" >
                     <check key="handrail:left" text="Left handrail" />
                     <check key="handrail:center" text="Center handrail" />
