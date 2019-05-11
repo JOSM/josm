@@ -5,8 +5,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.junit.Rule;
@@ -152,5 +155,37 @@ public class SessionReaderTest {
         final NoteLayer layer = (NoteLayer) layers.get(0);
         assertEquals("Notes", layer.getName());
         assertEquals(174, layer.getNoteData().getNotes().size());
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17701">Bug #17701</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket17701() throws Exception {
+        try (InputStream in = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<josm-session version=\"0.1\">\n" +
+                "    <layers active=\"1\">\n" +
+                "        <layer index=\"1\" name=\"GPS-треки OpenStreetMap\" type=\"imagery\" version=\"0.1\" visible=\"true\">\n" +
+                "            <id>osm-gps</id>\n" +
+                "            <type>tms</type>\n" +
+                "            <url>https://{switch:a,b,c}.gps-tile.openstreetmap.org/lines/{zoom}/{x}/{y}.png</url>\n" +
+                "            <attribution-text>© OpenStreetMap contributors</attribution-text>\n" +
+                "            <attribution-url>https://www.openstreetmap.org/copyright</attribution-url>\n" +
+                "            <max-zoom>20</max-zoom>\n" +
+                "            <cookies/>\n" +
+                "            <description>Общедоступные GPS-треки, загруженные на OpenStreetMap.</description>\n" +
+                "            <valid-georeference>true</valid-georeference>\n" +
+                "            <overlay>true</overlay>\n" +
+                "            <show-errors>true</show-errors>\n" +
+                "            <automatic-downloading>true</automatic-downloading>\n" +
+                "            <automatically-change-resolution>true</automatically-change-resolution>\n" +
+                "        </layer>\r\n" +
+                "    </layers>\n" +
+                "</josm-session>").getBytes(StandardCharsets.UTF_8))) {
+            SessionReader reader = new SessionReader();
+            reader.loadSession(in, null, false, null);
+            assertTrue(reader.getLayers().isEmpty());
+        }
     }
 }

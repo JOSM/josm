@@ -564,7 +564,7 @@ public class SessionReader {
                     if (layer == null) {
                         throw new IllegalStateException("Importer " + imp + " returned null for " + support);
                     }
-                } catch (IllegalDataException | IllegalStateException | IOException ex) {
+                } catch (IllegalDataException | IllegalArgumentException | IllegalStateException | IOException ex) {
                     exception = ex;
                 }
                 if (exception != null) {
@@ -703,7 +703,7 @@ public class SessionReader {
      */
     public void loadSession(File sessionFile, boolean zip, ProgressMonitor progressMonitor) throws IllegalDataException, IOException {
         try (InputStream josIS = createInputStream(sessionFile, zip)) {
-            loadSession(josIS, sessionFile.toURI(), zip, progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE);
+            loadSession(josIS, sessionFile.toURI(), zip, progressMonitor);
         }
     }
 
@@ -736,14 +736,24 @@ public class SessionReader {
         return zipFile.getInputStream(josEntry);
     }
 
-    private void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor)
+    /**
+     * Loads session from the given input stream.
+     * @param josIS session stream to load
+     * @param zip {@code true} if it's a zipped session (.joz)
+     * @param sessionFileURI URI of the underlying session file
+     * @param progressMonitor progress monitor
+     * @throws IllegalDataException if invalid data is detected
+     * @throws IOException if any I/O error occurs
+     * @since xxx
+     */
+    public void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor)
             throws IOException, IllegalDataException {
 
         this.sessionFileURI = sessionFileURI;
         this.zip = zip;
 
         try {
-            parseJos(XmlUtils.parseSafeDOM(josIS), progressMonitor);
+            parseJos(XmlUtils.parseSafeDOM(josIS), progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE);
         } catch (SAXException e) {
             throw new IllegalDataException(e);
         } catch (ParserConfigurationException e) {
