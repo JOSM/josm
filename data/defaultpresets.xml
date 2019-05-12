@@ -45,23 +45,22 @@
         <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
         <reference ref="surface_smoothness" />
     </chunk>
+    <chunk id="highway_yesno">
+        <checkgroup columns="2">
+            <check key="bridge" text="Bridge" disable_off="true" />
+            <check key="embankment" text="Embankment" disable_off="true" />
+            <check key="tunnel" text="Tunnel" disable_off="true" />
+            <check key="cutting" text="Cutting" disable_off="true" />
+        </checkgroup>
+    </chunk>
     <chunk id="highway_yesno_incline">
-        <check key="bridge" text="Bridge" disable_off="true" />
-        <check key="tunnel" text="Tunnel" disable_off="true" />
-        <check key="cutting" text="Cutting" disable_off="true" />
-        <check key="embankment" text="Embankment" disable_off="true" />
+        <reference ref="highway_yesno" />
         <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down"/>
     </chunk>
-    <chunk id="highway_yesno_incline_oneway">
+    <chunk id="highway_yesno_incline_oneway_lit_width">
         <check key="oneway" text="Oneway" />
         <reference ref="highway_yesno_incline" />
-    </chunk>
-    <chunk id="highway_yesno_incline_oneway_lit">
-        <reference ref="highway_yesno_incline_oneway" />
         <check key="lit" text="Lit" />
-    </chunk>
-    <chunk id="highway_yesno_incline_oneway_lit_width">
-        <reference ref="highway_yesno_incline_oneway_lit" />
         <text key="width" text="Width (meters)" />
     </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width_sidewalk">
@@ -71,16 +70,17 @@
     <chunk id="railway_service">
         <combo key="service" text="Service type" values="yard,siding,spur,crossover" />
     </chunk>
-    <chunk id="railway_electrified">
+    <chunk id="railway_electrified_yesno">
         <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" values_context="electrified" />
         <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
         <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+        <reference ref="highway_yesno" />
     </chunk>
-    <chunk id="railway_service_gauge_electrified">
+    <chunk id="railway_service_gauge_electrified_yesno">
         <reference ref="railway_service" />
         <combo key="tracks" text="Tracks" text_context="railway" values="1,2,3,4" length="4" />
         <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
-        <reference ref="railway_electrified" />
+        <reference ref="railway_electrified_yesno" />
     </chunk>
     <chunk id="barrier_5">
         <optional text="Allowed traffic:">
@@ -886,7 +886,7 @@
             <optional>
                 <reference ref="name_layer" />
                 <combo key="lanes" text="Lanes" values="1,2,3" length="3" />
-                <reference ref="highway_yesno_incline_oneway" />
+                <reference ref="highway_yesno" />
                 <text key="width" text="Width (meters)" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
@@ -1816,7 +1816,7 @@
             <key key="railway" value="rail" />
             <optional>
                 <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
-                <reference ref="railway_service_gauge_electrified" />
+                <reference ref="railway_service_gauge_electrified_yesno" />
             </optional>
         </item> <!-- Rail -->
         <item name="Narrow Gauge Rail" icon="presets/transport/railway/narrow_gauge_rail.svg" type="way" preset_name_label="true">
@@ -1824,7 +1824,7 @@
             <key key="railway" value="narrow_gauge" />
             <optional>
                 <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
-                <reference ref="railway_service_gauge_electrified" />
+                <reference ref="railway_service_gauge_electrified_yesno" />
             </optional>
         </item> <!-- Narrow Gauge Rail -->
         <item name="Monorail" icon="presets/transport/railway/monorail.svg" type="way" preset_name_label="true">
@@ -1832,42 +1832,42 @@
             <key key="railway" value="monorail" />
             <optional>
                 <reference ref="railway_service" />
-                <reference ref="railway_electrified" />
+                <reference ref="railway_electrified_yesno" />
             </optional>
         </item> <!-- Monorail -->
         <item name="Preserved" icon="presets/transport/railway/preserved.svg" type="way" preset_name_label="true">
             <link wiki="Tag:railway=preserved" />
             <key key="railway" value="preserved" />
             <optional>
-                <reference ref="railway_service_gauge_electrified" />
+                <reference ref="railway_service_gauge_electrified_yesno" />
             </optional>
         </item> <!-- Preserved -->
         <item name="Light Rail" icon="presets/transport/railway/light_rail.svg" type="way" preset_name_label="true">
             <link wiki="Tag:railway=light_rail" />
             <key key="railway" value="light_rail" />
             <optional>
-                <reference ref="railway_service_gauge_electrified" />
+                <reference ref="railway_service_gauge_electrified_yesno" />
             </optional>
         </item> <!-- Light Rail -->
         <item name="Subway" icon="presets/transport/railway/subway.svg" type="way" preset_name_label="true">
             <link wiki="Tag:railway=subway" />
             <key key="railway" value="subway" />
             <optional>
-                <reference ref="railway_service_gauge_electrified" />
+                <reference ref="railway_service_gauge_electrified_yesno" />
             </optional>
         </item> <!-- Subway -->
         <item name="Tram" icon="presets/transport/railway/tram.svg" type="way" preset_name_label="true">
             <link wiki="Tag:railway=tram" />
             <key key="railway" value="tram" />
             <optional>
-                <reference ref="railway_service_gauge_electrified" />
+                <reference ref="railway_service_gauge_electrified_yesno" />
             </optional>
         </item> <!-- Tram -->
         <item name="Funicular" icon="presets/transport/railway/funicular.svg" type="way" preset_name_label="true">
             <link wiki="Tag:railway=funicular" />
             <key key="railway" value="funicular" />
             <optional>
-                <reference ref="railway_service_gauge_electrified" />
+                <reference ref="railway_service_gauge_electrified_yesno" />
             </optional>
         </item> <!-- Funicular -->
         <item name="Bus Guideway" icon="presets/transport/railway/bus_guideway.svg" type="way" preset_name_label="true">
@@ -1875,7 +1875,8 @@
             <key key="highway" value="bus_guideway" />
             <optional>
                 <text key="name" text="Name" />
-                <reference ref="highway_yesno_incline_oneway" />
+                <reference ref="highway_yesno" />
+                <check key="oneway" text="Oneway" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <reference ref="surface_smoothness" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
@@ -1888,6 +1889,7 @@
             <key key="railway" value="disused" />
             <optional>
                 <reference ref="railway_service" />
+                <reference ref="highway_yesno" />
             </optional>
         </item> <!-- Disused Rail -->
         <item name="Abandoned Rail" icon="presets/transport/railway/abandoned_rail.svg" type="way" preset_name_label="true">
@@ -1895,6 +1897,7 @@
             <key key="railway" value="abandoned" />
             <optional>
                 <reference ref="railway_service" />
+                <reference ref="highway_yesno" />
             </optional>
         </item> <!-- Abandoned Rail -->
         <separator/>
