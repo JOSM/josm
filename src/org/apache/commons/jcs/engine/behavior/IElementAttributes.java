@@ -60,7 +60,8 @@ public interface IElementAttributes extends Serializable, Cloneable
     void setIdleTime( long idle );
 
     /**
-     * Size in bytes. This is not used except in the admin pages. It will be -1 by default.
+     * Size in bytes. This is not used except in the admin pages. It will be 0 by default
+     * and is only updated when the element is serialized.
      * <p>
      * @param size The new size value
      */

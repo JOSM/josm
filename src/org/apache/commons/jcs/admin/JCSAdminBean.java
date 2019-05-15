@@ -182,7 +182,7 @@ public class JCSAdminBean implements JCSJMXBean
      * @return int The size of the region in bytes.
      */
 	@Override
-    public int getByteCount(String cacheName)
+    public long getByteCount(String cacheName)
 	{
 		return getByteCount(cacheHub.getCache(cacheName));
 	}
@@ -194,7 +194,7 @@ public class JCSAdminBean implements JCSJMXBean
      *
      * @return int The size of the region in bytes.
      */
-    public <K, V> int getByteCount(CompositeCache<K, V> cache)
+    public <K, V> long getByteCount(CompositeCache<K, V> cache)
     {
         if (cache == null)
         {
@@ -223,7 +223,7 @@ public class JCSAdminBean implements JCSJMXBean
 
 			if (ice instanceof CacheElementSerialized)
             {
-                size = size + ((CacheElementSerialized<K, V>) ice).getSerializedValue().length;
+                size += ((CacheElementSerialized<K, V>) ice).getSerializedValue().length;
             }
             else
             {
@@ -256,12 +256,12 @@ public class JCSAdminBean implements JCSJMXBean
             }
         }
 
-        if (size > Integer.MAX_VALUE)
+        if (size > Long.MAX_VALUE)
         {
-            throw new IllegalStateException("The size of cache " + cache.getCacheName() + " (" + size + " bytes) is too large to be represented as an integer.");
+            throw new IllegalStateException("The size of cache " + cache.getCacheName() + " (" + size + " bytes) is too large to be represented as an long integer.");
         }
 
-        return (int) size;
+        return size;
     }
 
     /**

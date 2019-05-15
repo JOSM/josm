@@ -52,9 +52,9 @@ public interface JCSJMXBean
      * the region or an error occurs, suppresses exceptions and returns 0.
      * <p>
      *
-     * @return int The size of the region in bytes.
+     * @return long The size of the region in bytes.
      */
-    int getByteCount(String cacheName);
+    long getByteCount(String cacheName);
 
     /**
      * Clears all regions in the cache.

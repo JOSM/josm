@@ -19,15 +19,14 @@ package org.apache.commons.jcs.utils.serialization;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.behavior.IElementSerializer;
-import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
-
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import org.apache.commons.jcs.engine.behavior.IElementSerializer;
+import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
 
 /**
  * Performs default serialization and de-serialization.

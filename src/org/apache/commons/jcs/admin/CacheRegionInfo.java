@@ -41,16 +41,16 @@ public class CacheRegionInfo
     private final String cacheStatistics;
 
     /** The number of memory hits in the cache region */
-    private final int hitCountRam;
+    private final long hitCountRam;
 
     /** The number of auxiliary hits in the cache region */
-    private final int hitCountAux;
+    private final long hitCountAux;
 
     /** The number of misses in the cache region because the items were not found */
-    private final int missCountNotFound;
+    private final long missCountNotFound;
 
     /** The number of misses in the cache region because the items were expired */
-    private final int missCountExpired;
+    private final long missCountExpired;
 
     /** The number of bytes counted so far, will be a total of all items */
     private final long byteCount;
@@ -71,8 +71,8 @@ public class CacheRegionInfo
     @ConstructorProperties({"cacheName", "cacheSize", "cacheStatus", "cacheStatistics",
     	"hitCountRam", "hitCountAux", "missCountNotFound", "missCountExpired", "byteCount"})
 	public CacheRegionInfo(String cacheName, int cacheSize, String cacheStatus,
-			String cacheStatistics, int hitCountRam, int hitCountAux,
-			int missCountNotFound, int missCountExpired, long byteCount)
+			String cacheStatistics, long hitCountRam, long hitCountAux,
+			long missCountNotFound, long missCountExpired, long byteCount)
 	{
 		super();
 		this.cacheName = cacheName;
@@ -123,7 +123,7 @@ public class CacheRegionInfo
     /**
 	 * @return the hitCountRam
 	 */
-	public int getHitCountRam()
+	public long getHitCountRam()
 	{
 		return hitCountRam;
 	}
@@ -131,7 +131,7 @@ public class CacheRegionInfo
 	/**
 	 * @return the hitCountAux
 	 */
-	public int getHitCountAux()
+	public long getHitCountAux()
 	{
 		return hitCountAux;
 	}
@@ -139,7 +139,7 @@ public class CacheRegionInfo
 	/**
 	 * @return the missCountNotFound
 	 */
-	public int getMissCountNotFound()
+	public long getMissCountNotFound()
 	{
 		return missCountNotFound;
 	}
@@ -147,7 +147,7 @@ public class CacheRegionInfo
 	/**
 	 * @return the missCountExpired
 	 */
-	public int getMissCountExpired()
+	public long getMissCountExpired()
 	{
 		return missCountExpired;
 	}

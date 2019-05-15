@@ -19,22 +19,14 @@ package org.apache.commons.jcs.utils.serialization;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.behavior.IElementSerializer;
-import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
-import org.apache.commons.jcs.utils.zip.CompressionUtil;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import org.apache.commons.jcs.utils.zip.CompressionUtil;
 
 /**
  * Performs default serialization and de-serialization. It gzips the value.
  */
-public class CompressingSerializer
-    implements IElementSerializer
+public class CompressingSerializer extends StandardSerializer
 {
     /**
      * Serializes an object using default serialization. Compresses the byte array.
@@ -47,29 +39,9 @@ public class CompressingSerializer
     public <T> byte[] serialize( T obj )
         throws IOException
     {
-        byte[] uncompressed = serializeObject( obj );
+        byte[] uncompressed = super.serialize(obj);
         byte[] compressed = CompressionUtil.compressByteArray( uncompressed );
         return compressed;
-    }
-
-    /**
-     * Does the basic serialization.
-     * <p>
-     * @param obj object
-     * @return byte[]
-     * @throws IOException on i/o problem
-     */
-    protected <T> byte[] serializeObject( T obj )
-        throws IOException
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        try (ObjectOutputStream oos = new ObjectOutputStream( baos ))
-        {
-            oos.writeObject( obj );
-        }
-
-        return baos.toByteArray();
     }
 
     /**
@@ -89,28 +61,8 @@ public class CompressingSerializer
         {
             return null;
         }
+        
         byte[] decompressedByteArray = CompressionUtil.decompressByteArray( data );
-        return deserializeObject( decompressedByteArray );
-    }
-
-    /**
-     * Does the standard deserialization.
-     * <p>
-     * @param decompressedByteArray array of decompressed bytes
-     * @return Object
-     * @throws IOException on i/o error
-     * @throws ClassNotFoundException if class is not found during deserialization
-     */
-    protected <T> T deserializeObject( byte[] decompressedByteArray )
-        throws IOException, ClassNotFoundException
-    {
-        ByteArrayInputStream bais = new ByteArrayInputStream( decompressedByteArray );
-
-        try (ObjectInputStream ois = new ObjectInputStreamClassLoaderAware( bais, null ))
-        {
-            @SuppressWarnings("unchecked") // Need to cast from Object
-            T readObject = (T) ois.readObject();
-            return readObject;
-        }
+        return super.deSerialize(decompressedByteArray, loader);
     }
 }
