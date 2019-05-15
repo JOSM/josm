@@ -52,8 +52,8 @@ public class SearchDialog extends ExtendedDialog {
     private final SearchSetting searchSettings;
 
     private final HistoryComboBox hcbSearchString = new HistoryComboBox();
-    private final JCheckBox addOnToolbar = new JCheckBox(tr("add toolbar button"), false);
 
+    private JCheckBox addOnToolbar;
     private JCheckBox caseSensitive;
     private JCheckBox allElements;
 
@@ -75,7 +75,7 @@ public class SearchDialog extends ExtendedDialog {
     public SearchDialog(SearchSetting initialValues, List<String> searchExpressionHistory, boolean expertMode) {
         super(MainApplication.getMainFrame(),
                 initialValues instanceof Filter ? tr("Filter") : tr("Search"),
-                initialValues instanceof Filter ? tr("Submit filter") : tr("Start Search"),
+                initialValues instanceof Filter ? tr("Submit filter") : tr("Search"),
                 tr("Cancel"));
         this.searchSettings = new SearchSetting(initialValues);
         setButtonIcons("dialogs/search", "cancel");
@@ -98,7 +98,7 @@ public class SearchDialog extends ExtendedDialog {
         hcbSearchString.setPreferredSize(new Dimension(40, hcbSearchString.getPreferredSize().height));
         label.setLabelFor(hcbSearchString);
 
-        replace = new JRadioButton(tr("replace selection"), searchSettings.mode == SearchMode.replace);
+        replace = new JRadioButton(tr("select"), searchSettings.mode == SearchMode.replace);
         add = new JRadioButton(tr("add to selection"), searchSettings.mode == SearchMode.add);
         remove = new JRadioButton(tr("remove from selection"), searchSettings.mode == SearchMode.remove);
         inSelection = new JRadioButton(tr("find in selection"), searchSettings.mode == SearchMode.in_selection);
@@ -111,6 +111,8 @@ public class SearchDialog extends ExtendedDialog {
         caseSensitive = new JCheckBox(tr("case sensitive"), searchSettings.caseSensitive);
         allElements = new JCheckBox(tr("all objects"), searchSettings.allElements);
         allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
+        addOnToolbar = new JCheckBox(tr("add toolbar button"), false);
+        addOnToolbar.setToolTipText(tr("Add a button with this search expression to the toolbar."));
 
         standardSearch = new JRadioButton(tr("standard"), !searchSettings.regexSearch && !searchSettings.mapCSSSearch);
         regexSearch = new JRadioButton(tr("regular expression"), searchSettings.regexSearch);
@@ -121,14 +123,14 @@ public class SearchDialog extends ExtendedDialog {
         bg2.add(mapCSSSearch);
 
         JPanel selectionSettings = new JPanel(new GridBagLayout());
-        selectionSettings.setBorder(BorderFactory.createTitledBorder(tr("Selection settings")));
+        selectionSettings.setBorder(BorderFactory.createTitledBorder(tr("Results")));
         selectionSettings.add(replace, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
         selectionSettings.add(add, GBC.eol());
         selectionSettings.add(remove, GBC.eol());
         selectionSettings.add(inSelection, GBC.eop());
 
         JPanel additionalSettings = new JPanel(new GridBagLayout());
-        additionalSettings.setBorder(BorderFactory.createTitledBorder(tr("Additional settings")));
+        additionalSettings.setBorder(BorderFactory.createTitledBorder(tr("Options")));
         additionalSettings.add(caseSensitive, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
 
         JPanel left = new JPanel(new GridBagLayout());
@@ -266,14 +268,14 @@ public class SearchDialog extends ExtendedDialog {
 
     private static JPanel buildHintsSection(HistoryComboBox hcbSearchString, boolean expertMode) {
         JPanel hintPanel = new JPanel(new GridBagLayout());
-        hintPanel.setBorder(BorderFactory.createTitledBorder(tr("Search hints")));
+        hintPanel.setBorder(BorderFactory.createTitledBorder(tr("Hints")));
 
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basics"))
                 .addKeyword(tr("Baker Street"), null, tr("''Baker'' and ''Street'' in any key"))
                 .addKeyword(tr("\"Baker Street\""), "\"\"", tr("''Baker Street'' in any key"))
                 .addKeyword("<i>key</i>:<i>valuefragment</i>", null,
-                        tr("''valuefragment'' anywhere in ''key''"), "name:str matches name=Bakerstreet")
+                        tr("''valuefragment'' anywhere in ''key''"), tr("name:str matches name=Bakerstreet"))
                 .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''")),
                 GBC.eol());
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
@@ -286,11 +288,14 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword("\"key\"=\"value\"", "\"\"=\"\"",
                         tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped " +
                                 "by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
+                        tr("name=\"Baker Street\""),
                         "\"addr:street\""),
                 GBC.eol().anchor(GBC.CENTER));
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("combinators"))
-                .addKeyword("<i>expr</i> <i>expr</i>", null, tr("logical and (both expressions have to be satisfied)"))
+                .addKeyword("<i>expr</i> <i>expr</i>", null,
+                        tr("logical and (both expressions have to be satisfied)"),
+                        tr("Baker Street"))
                 .addKeyword("<i>expr</i> | <i>expr</i>", "| ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("-<i>expr</i>", null, tr("logical not"))
@@ -314,11 +319,11 @@ public class SearchDialog extends ExtendedDialog {
                     GBC.eol().anchor(GBC.CENTER));
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("metadata"))
-                .addKeyword("user:", "user:", tr("objects changed by user", "user:anonymous"))
-                .addKeyword("id:", "id:", tr("objects with given ID"), "id:0 (new objects)")
-                .addKeyword("version:", "version:", tr("objects with given version"), "version:0 (objects without an assigned version)")
+                .addKeyword("user:", "user:", tr("objects changed by user"), tr("user:anonymous"))
+                .addKeyword("id:", "id:", tr("objects with given ID"), tr("id:0 (new objects)"))
+                .addKeyword("version:", "version:", tr("objects with given version"), tr("version:0 (objects without an assigned version)"))
                 .addKeyword("changeset:", "changeset:", tr("objects with given changeset ID"),
-                        "changeset:0 (objects without an assigned changeset)")
+                        tr("changeset:0 (objects without an assigned changeset)"))
                 .addKeyword("timestamp:", "timestamp:", tr("objects with last modification timestamp within range"), "timestamp:2012/",
                         "timestamp:2008/2011-02-04T12"),
                 GBC.eol());
