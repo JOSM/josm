@@ -119,6 +119,21 @@ public class WayConnectionTypeCalculator {
         if (lastWct != null) {
             lastWct.linkNext = wct.linkPrev;
         }
+
+        if (lastWct != null && i > 0 && m.getMember() instanceof Way && members.get(i - 1).getMember() instanceof Way
+                && (m.getWay().isOneway() != 0 || members.get(i - 1).getWay().isOneway() != 0)) {
+            Way way = m.getWay();
+            Way previousWay = members.get(i - 1).getWay();
+            if (way.isOneway() != 0 && previousWay.isOneway() != 0 &&
+                    (way.firstNode(true) != previousWay.lastNode(true) &&
+                        way.lastNode(true) != previousWay.firstNode(true))) {
+                wct.onewayFollowsPrevious = false;
+                lastWct.onewayFollowsNext = false;
+            } else if (way.isOneway() != 0 && previousWay.isOneway() == 0 &&
+                    previousWay.isFirstLastNode(way.lastNode(true))) {
+                wct.onewayFollowsPrevious = false;
+            }
+        }
         con.set(i, wct);
         return wct;
     }

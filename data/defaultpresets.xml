@@ -325,10 +325,9 @@
         <combo key="voltage:tertiary" text="Tertiary voltage in Volts (V)" values="765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000" />
         <reference ref="frequency" />
     </chunk>
-    <chunk id="ref_operator_branch">
+    <chunk id="ref_operator">
         <text key="ref" text="Reference" />
         <text key="operator" text="Operator" />
-        <text key="branch" text="Branch operator" />
     </chunk>
     <chunk id="cables">
         <combo key="cables" text="Amount of Cables" values="1,2,3,4,6,9,12" />
@@ -343,7 +342,7 @@
     <chunk id="power_extra">
         <reference ref="power_loc" />
         <reference ref="voltage_frequency" />
-        <reference ref="ref_operator_branch" />
+        <reference ref="ref_operator" />
     </chunk>
     <chunk id="power_line_extra">
         <reference ref="cables_circuits" />
@@ -354,7 +353,6 @@
         <space />
         <key key="power" value="generator" />
         <reference ref="name_ref_operator" />
-        <text key="branch" text="Branch operator" />
         <text key="start_date" text="Start date" />
     </chunk>
     <chunk id="power_output">
@@ -376,7 +374,7 @@
         <text key="height" text="Height (meters)" />
         <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
         <check key="location:transition" text="Location transition" disable_off="true" />
-        <reference ref="ref_operator_branch" />
+        <reference ref="ref_operator" />
     </chunk>
     <chunk id="rating_phases">
         <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
@@ -4916,7 +4914,6 @@
             <space />
             <key key="power" value="plant" />
             <reference ref="name_ref_operator" />
-            <text key="branch" text="Branch operator" />
             <text key="start_date" text="Start date" />
             <optional text="Output forms of energy (optional):">
                 <combo key="plant:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
@@ -4928,7 +4925,7 @@
                 <combo key="plant:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="plant:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <space />
-                <reference ref="voltage_frequency" />
+                <combo key="plant:source" text="Plant source" values="biofuel,biogas,biomass,coal,gas,oil,diesel,gasoline,nuclear,solar,waste,hydro,tidal,wave,osmotic,geothermal,wind" />
             </optional>
         </item> <!-- Power Plant -->
         <group name="Power Generator" icon="presets/power/generator.svg">
@@ -5110,7 +5107,7 @@
             <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,auxiliary,yes" match="key" values_context="power" />
             <reference ref="power_loc" />
             <reference ref="transformer_voltage_frequency" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
             <reference ref="optional_transformer_rating_phases_devices_windings" />
         </item> <!-- Power Transformer -->
         <item name="Power Switchgear" icon="presets/power/switchgear.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -5148,7 +5145,7 @@
             <optional>
                 <reference ref="voltage" />
                 <reference ref="cables" />
-                <reference ref="ref_operator_branch" />
+                <reference ref="ref_operator" />
             </optional>
         </item> <!-- Power Switch -->
         <separator/>
@@ -5158,7 +5155,7 @@
             <key key="power" value="converter" />
             <combo key="converter" text="Type of converter" values="lcc,vsc,back-to-back" match="key" values_context="power" />
             <reference ref="voltage_frequency" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
             <optional>
                 <combo key="poles" text="Amount of poles" values="monopole,bipole" />
                 <combo key="rating" text="Power rating (MVA)" values="15 MVA,50 MVA,100 MVA" />
@@ -5170,7 +5167,7 @@
             <key key="power" value="compensator" />
             <combo key="compensator" text="Type of compensator" values="shunt_reactor,shunt_capacitor,static_var,statcom,synchronous_condenser,filter,series_reactor,series_capacitor" match="key" values_context="power" />
             <reference ref="voltage_frequency" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
             <optional>
                 <combo key="rating" text="Power rating (kvar/Mvar)" values="500 kvar,1 Mvar,5 Mvar" />
             </optional>
@@ -5182,7 +5179,7 @@
             <key key="man_made" value="street_cabinet" />
             <key key="street_cabinet" value="power" />
             <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110" /> <!-- Recheck values -->
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
         </item> <!-- Power Street Cabinet -->
         <separator/>
         <item name="Transformer Tower" icon="presets/power/transformer_tower.svg" type="node,closedway" preset_name_label="true">
@@ -5190,7 +5187,7 @@
             <space />
             <key key="building" value="transformer_tower" />
             <text key="height" text="Height (meters)" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
             <preset_link preset_name="Power Substation" />
         </item> <!-- Transformer Tower -->
         <item name="Terminal" icon="presets/power/terminal.svg" type="node" preset_name_label="true">
@@ -5210,7 +5207,7 @@
             <combo key="structure" text="Type of construction" values="lattice,tubular,solid" />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
             <combo key="design" text="Portal design" values="portal,portal_two-level,portal_three-level" values_context="power" />
         </item> <!-- Power Portal -->
         <item name="Power Tower" icon="presets/power/tower.svg" type="node" preset_name_label="true">
@@ -5221,7 +5218,7 @@
             <combo key="structure" text="Type of construction" values="lattice,tubular,solid" />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
             <optional>
                 <combo key="tower:type" text="Tower type" values="suspension,anchor,termination,branch,transposing,crossing,transition" text_context="power" values_context="power" />
                 <combo key="branch:type" text="Branch tower type" values="tap,split,loop,cross" values_context="power" />
@@ -5276,14 +5273,14 @@
             <link wiki="Tag:power=insulator" />
             <space />
             <key key="power" value="insulator" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
         </item> <!-- Insulator -->
         <item name="Power Line" icon="presets/power/line.svg" type="way" preset_name_label="true">
             <link wiki="Tag:power=line" />
             <space />
             <combo key="power" text="Line type" values="line,minor_line" default="line" match="keyvalue!" />
             <reference ref="voltage_frequency" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
             <optional>
                 <reference ref="cables_circuits" />
                 <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" />
@@ -5296,7 +5293,7 @@
             <space />
             <key key="power" value="cable" />
             <reference ref="voltage_frequency" />
-            <reference ref="ref_operator_branch" />
+            <reference ref="ref_operator" />
             <optional>
                 <reference ref="cables_circuits" />
                 <combo key="location" text="Location" values="underground,underwater,overground" values_context="power cable" />

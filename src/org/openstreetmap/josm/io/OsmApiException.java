@@ -282,7 +282,7 @@ public class OsmApiException extends OsmTransferException {
     /**
      * Determines if the exception has {@code text/html} as content type.
      * @return {@code true} if the exception has {@code text/html} as content type.
-     * @since xxx
+     * @since 14810
      */
     public final boolean isHtml() {
         return "text/html".equals(contentType);

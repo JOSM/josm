@@ -21,6 +21,10 @@ public class WayConnectionType {
      * direction is FORWARD if the first node of this way is connected to the previous way
      * and / or the last node of this way is connected to the next way.
      * direction is BACKWARD if it is the other way around.
+     * direction has a ONEWAY value, if it is tagged as such and it is connected
+     * to the previous / next member.
+     * ONEWAY_FORWARD == the first node of the oneway is the last node of the previous way
+     * ONEWAY_BACKWARD == the last node of the oneway is the last node of the previous way
      * direction has a ROUNDABOUT value, if it is tagged as such and it is somehow
      * connected to the previous / next member.
      * If there is no connection to the previous or next member, then
@@ -43,6 +47,11 @@ public class WayConnectionType {
     public boolean isOnewayLoopBackwardPart;
     public boolean isOnewayHead;
     public boolean isOnewayTail;
+
+    /** False, if the way is oneway and it doesn't follow the flow of the previous member */
+    public boolean onewayFollowsPrevious = true;
+    /** True, if the way is oneway and it doesn't follow the flow of the next member */
+    public boolean onewayFollowsNext = true;
 
     public WayConnectionType(boolean linkPrev, boolean linkNext, Direction direction) {
         this.linkPrev = linkPrev;
@@ -82,14 +91,21 @@ public class WayConnectionType {
      * @since 10248
      */
     public String getTooltip() {
+        boolean onewayGood = onewayFollowsPrevious && onewayFollowsNext;
         if (!isValid())
             return "";
-        else if (linkPrev && linkNext)
+        else if (linkPrev && linkNext && onewayGood)
             return tr("way is connected");
-        else if (linkPrev)
+        else if (linkPrev && linkNext && !onewayGood)
+            return tr("way is connected but has a wrong oneway direction");
+        else if (linkPrev && onewayGood)
             return tr("way is connected to previous relation member");
-        else if (linkNext)
+        else if (linkPrev && !onewayGood)
+            return tr("way is connected to previous relation member but has a wrong oneway direction");
+        else if (linkNext && onewayGood)
             return tr("way is connected to next relation member");
+        else if (linkNext && !onewayGood)
+            return tr("way is connected to next relation member but has a wrong oneway direction");
         else
             return tr("way is not connected to previous or next relation member");
     }

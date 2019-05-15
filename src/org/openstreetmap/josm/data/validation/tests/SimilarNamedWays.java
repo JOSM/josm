@@ -244,7 +244,9 @@ public class SimilarNamedWays extends Test {
             String part = "";
             for (int i = 0; i < words.length; i++) {
                 String word = words[i];
-                part = name.substring(start, start + word.length());
+                if (start + word.length() <= name.length()) {
+                    part = name.substring(start, start + word.length());
+                }
                 if (word.equalsIgnoreCase(part)) {
                     break;
                 }
