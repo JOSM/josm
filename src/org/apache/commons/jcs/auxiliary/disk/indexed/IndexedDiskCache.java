@@ -177,11 +177,10 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
 
         try
         {
+            initializeRecycleBin();
             initializeFileSystem(cattr);
-
             initializeKeysAndData(cattr);
 
-            initializeRecycleBin();
 
             // Initialization finished successfully, so set alive to true.
             setAlive(true);
