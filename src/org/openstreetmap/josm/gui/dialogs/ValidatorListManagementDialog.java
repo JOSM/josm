@@ -42,7 +42,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * A management window for the validator's ignorelist
  * @author Taylor Smock
- * @since xxx
+ * @since 14828
  */
 public class ValidatorListManagementDialog extends ExtendedDialog {
     enum BUTTONS {

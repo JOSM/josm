@@ -36,7 +36,7 @@ public class RemoveNodesCommand extends AbstractNodesCommand<Set<Node>> {
      * Constructs a new {@code RemoveNodesCommand}.
      * @param way The way to modify. Must not be null, and belong to a data set
      * @param rmNodes The set of nodes to remove
-     * @since xxx
+     * @since 15013
      */
     public RemoveNodesCommand(Way way, Set<Node> rmNodes) {
         super(way.getDataSet(), way, rmNodes);

@@ -744,7 +744,7 @@ public class SessionReader {
      * @param progressMonitor progress monitor
      * @throws IllegalDataException if invalid data is detected
      * @throws IOException if any I/O error occurs
-     * @since xxx
+     * @since 15070
      */
     public void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor)
             throws IOException, IllegalDataException {
