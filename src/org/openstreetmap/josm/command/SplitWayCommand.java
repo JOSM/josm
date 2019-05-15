@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -51,6 +53,12 @@ public class SplitWayCommand extends SequenceCommand {
     private final List<? extends PrimitiveId> newSelection;
     private final Way originalWay;
     private final List<Way> newWays;
+    /** Map&lt;Restriction type, type to treat it as&gt; */
+    private static final Map<String, String> relationSpecialTypes = new HashMap<>();
+    static {
+        relationSpecialTypes.put("restriction", "restriction");
+        relationSpecialTypes.put("destination_sign", "restriction");
+    }
 
     /**
      * Create a new {@code SplitWayCommand}.
@@ -310,48 +318,10 @@ public class SplitWayCommand extends SequenceCommand {
             for (RelationMember rm: relationMembers) {
                 if (rm.isWay() && rm.getMember() == way) {
                     boolean insert = true;
-                    if ("restriction".equals(type) || "destination_sign".equals(type)) {
-                        /* this code assumes the restriction is correct. No real error checking done */
-                        String role = rm.getRole();
-                        if ("from".equals(role) || "to".equals(role)) {
-                            OsmPrimitive via = findVia(r, type);
-                            List<Node> nodes = new ArrayList<>();
-                            if (via != null) {
-                                if (via instanceof Node) {
-                                    nodes.add((Node) via);
-                                } else if (via instanceof Way) {
-                                    nodes.add(((Way) via).lastNode());
-                                    nodes.add(((Way) via).firstNode());
-                                }
-                            }
-                            Way res = null;
-                            for (Node n : nodes) {
-                                if (changedWay.isFirstLastNode(n)) {
-                                    res = way;
-                                }
-                            }
-                            if (res == null) {
-                                for (Way wayToAdd : newWays) {
-                                    for (Node n : nodes) {
-                                        if (wayToAdd.isFirstLastNode(n)) {
-                                            res = wayToAdd;
-                                        }
-                                    }
-                                }
-                                if (res != null) {
-                                    if (c == null) {
-                                        c = new Relation(r);
-                                    }
-                                    c.addMember(new RelationMember(role, res));
-                                    c.removeMembersFor(way);
-                                    insert = false;
-                                }
-                            } else {
-                                insert = false;
-                            }
-                        } else if (!"via".equals(role)) {
-                            warnme = true;
-                        }
+                    if (relationSpecialTypes.containsKey(type) && "restriction".equals(relationSpecialTypes.get(type))) {
+                        Map<String, Boolean> rValue = treatAsRestriction(r, rm, c, newWays, way, changedWay);
+                        warnme = rValue.containsKey("warnme") ? rValue.get("warnme") : warnme;
+                        insert = rValue.containsKey("insert") ? rValue.get("insert") : insert;
                     } else if (!("route".equals(type)) && !("multipolygon".equals(type))) {
                         warnme = true;
                     }
@@ -439,6 +409,55 @@ public class SplitWayCommand extends SequenceCommand {
             );
     }
 
+    private static Map<String, Boolean> treatAsRestriction(Relation r,
+            RelationMember rm, Relation c, Collection<Way> newWays, Way way,
+            Way changedWay) {
+        HashMap<String, Boolean> rMap = new HashMap<>();
+        /* this code assumes the restriction is correct. No real error checking done */
+        String role = rm.getRole();
+        String type = Optional.ofNullable(r.get("type")).orElse("");
+        if ("from".equals(role) || "to".equals(role)) {
+            OsmPrimitive via = findVia(r, type);
+            List<Node> nodes = new ArrayList<>();
+            if (via != null) {
+                if (via instanceof Node) {
+                    nodes.add((Node) via);
+                } else if (via instanceof Way) {
+                    nodes.add(((Way) via).lastNode());
+                    nodes.add(((Way) via).firstNode());
+                }
+            }
+            Way res = null;
+            for (Node n : nodes) {
+                if (changedWay.isFirstLastNode(n)) {
+                    res = way;
+                }
+            }
+            if (res == null) {
+                for (Way wayToAdd : newWays) {
+                    for (Node n : nodes) {
+                        if (wayToAdd.isFirstLastNode(n)) {
+                            res = wayToAdd;
+                        }
+                    }
+                }
+                if (res != null) {
+                    if (c == null) {
+                        c = new Relation(r);
+                    }
+                    c.addMember(new RelationMember(role, res));
+                    c.removeMembersFor(way);
+                    rMap.put("insert", false);
+                }
+            } else {
+                rMap.put("insert", false);
+            }
+        } else if (!"via".equals(role)) {
+            rMap.put("warnme", true);
+        }
+        return rMap;
+    }
+
     static OsmPrimitive findVia(Relation r, String type) {
         if (type != null) {
             switch (type) {
@@ -476,5 +495,27 @@ public class SplitWayCommand extends SequenceCommand {
     public static SplitWayCommand split(Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection) {
         List<List<Node>> chunks = buildSplitChunks(way, atNodes);
         return chunks != null ? splitWay(way, chunks, selection) : null;
+    }
+
+    /**
+     * Add relations that are treated in a specific way.
+     * @param relationType The value in the {@code type} key
+     * @param treatAs The type of relation to treat the {@code relationType} as.
+     * Currently only supports relations that can be handled like "restriction"
+     * relations.
+     * @return the previous value associated with relationType, or null if there was no mapping
+     * @since 15078
+     */
+    public static String addSpecialRelationType(String relationType, String treatAs) {
+        return relationSpecialTypes.put(relationType, treatAs);
+    }
+
+    /**
+     * Get the types of relations that are treated differently
+     * @return {@code Map<Relation Type, Type of Relation it is to be treated as>}
+     * @since 15078
+     */
+    public static Map<String, String> getSpecialRelationTypes() {
+        return relationSpecialTypes;
     }
 }
