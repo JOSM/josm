@@ -66,7 +66,11 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         int y2;
 
         if (value.linkPrev) {
-            g.setColor(Color.black);
+            if (value.onewayFollowsPrevious) {
+                g.setColor(Color.black);
+            } else {
+                g.setColor(Color.lightGray);
+            }
             if (value.isOnewayHead) {
                 g.fillRect(xoff - 1, 0, 3, 1);
             } else {
@@ -92,7 +96,11 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         }
 
         if (value.linkNext) {
-            g.setColor(Color.black);
+            if (value.onewayFollowsNext) {
+                g.setColor(Color.black);
+            } else {
+                g.setColor(Color.lightGray);
+            }
             if (value.isOnewayTail) {
                 g.fillRect(xoff - 1, ymax, 3, 1);
             } else {
@@ -119,7 +127,11 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         }
 
         /* vertical lines */
-        g.setColor(Color.black);
+        if (value.onewayFollowsNext && value.onewayFollowsPrevious) {
+            g.setColor(Color.black);
+        } else {
+            g.setColor(Color.lightGray);
+        }
         if (value.isLoop) {
             g.drawLine(xoff+xloop, y1, xoff+xloop, y2);
         }
