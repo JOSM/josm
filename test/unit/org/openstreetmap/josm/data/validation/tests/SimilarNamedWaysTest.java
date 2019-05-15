@@ -129,4 +129,12 @@ public class SimilarNamedWaysTest {
         checkSimilarity("case only", "Rua Sao Joao", "Rua SAO JOAO", true);
         checkSimilarity("case only", "Rue éèçàïù", "Rue EeCAIU", true);
     }
+
+     /**
+      * Test names that previously caused a crash
+      */
+     @Test
+     public void testSimilarNamesRegression() {
+         assertFalse(test.similaryName("Unnecessary Name", "Third"));
+     }
 }
