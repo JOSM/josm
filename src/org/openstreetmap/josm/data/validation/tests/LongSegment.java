@@ -83,7 +83,7 @@ public class LongSegment extends Test {
     }
 
     private boolean ignoreWay(Way w) {
-        return visitedWays.contains(w) || w.hasTag("route", "ferry");
+        return visitedWays.contains(w) || w.hasTag("route", "ferry") || w.hasTag("bay", "fjord");
     }
 
     private void visitWaySegment(Way w, int i) {
