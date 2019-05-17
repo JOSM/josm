@@ -137,7 +137,7 @@ public class UnclosedWays extends Test {
         // list contains natural tag allowed on unclosed ways as well as those only allowed on nodes to avoid
         // duplicate warnings
         new UnclosedWaysCheck(1101, "natural", marktr("natural type {0}"),
-            new HashSet<>(Arrays.asList("arete", "cave", "cliff", "coastline", "gorge", "gully", "peak",
+            new HashSet<>(Arrays.asList("arete", "bay", "cave", "cliff", "coastline", "gorge", "gully", "peak",
                             "ridge", "saddle", "tree", "tree_row", "valley", "volcano"))),
 
         new UnclosedWaysCheck(1102, "landuse", marktr("landuse type {0}")),

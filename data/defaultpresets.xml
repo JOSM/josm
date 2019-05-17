@@ -1702,12 +1702,15 @@
                 <combo key="sport" text="Sport" values="swimming,surfing" />
             </optional>
         </item> <!-- Beach -->
-        <item name="Bay" icon="presets/nautical/bay.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Bay" icon="presets/nautical/bay.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=bay" />
             <label text="An area of water mostly surrounded by land but with level connection to the ocean or a lake." />
             <space />
             <key key="natural" value="bay" />
             <text key="name" text="Name" />
+            <optional>
+                <check key="bay" text="Fjord" value_on="fjord" disable_off="true" />
+            </optional>
         </item> <!-- Bay -->
         <item name="Cape" icon="presets/nautical/cape.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=cape" />
