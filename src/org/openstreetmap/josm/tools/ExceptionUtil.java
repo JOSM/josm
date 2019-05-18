@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -41,6 +42,12 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @since 2097
  */
 public final class ExceptionUtil {
+
+    /**
+     * Error message sent by the OSM API when a user has been blocked.
+     */
+    private static final String OSM_API_BLOCKED =
+            marktr("Your access to the API has been blocked. Please log-in to the web interface to find out more.");
 
     private ExceptionUtil() {
         // Hide default constructor for utils classes
@@ -295,18 +302,7 @@ public final class ExceptionUtil {
      */
     public static String explainFailedAuthorisation(OsmApiException e) {
         Logging.error(e);
-        String header = e.getErrorHeader();
-        String body = e.getErrorBody();
-        String msg;
-        if (header != null) {
-            if (body != null && !header.equals(body)) {
-                msg = header + " (" + body + ')';
-            } else {
-                msg = header;
-            }
-        } else {
-            msg = body;
-        }
+        String msg = e.getDisplayMessage();
 
         if (msg != null && !msg.isEmpty()) {
             return tr("<html>"
@@ -723,6 +719,16 @@ public final class ExceptionUtil {
         } else {
             return explainGeneric(e);
         }
+    }
+
+    /**
+     * Determines if the OSM API exception has been thrown because user has been blocked.
+     * @param e OSM API exception
+     * @return {@code true} if the OSM API exception has been thrown because user has been blocked
+     * @since 15084
+     */
+    public static boolean isUserBlocked(OsmApiException e) {
+        return OSM_API_BLOCKED.equals(e.getErrorHeader());
     }
 
     static String getUrlFromException(OsmApiException e) {

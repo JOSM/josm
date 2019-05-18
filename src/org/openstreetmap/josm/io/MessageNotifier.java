@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
@@ -88,7 +89,7 @@ public final class MessageNotifier {
                     }
                 }
             } catch (OsmTransferException e) {
-                Logging.warn(e);
+                ExceptionDialogUtil.explainOsmTransferException(e);
             }
         }
     }
