@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -719,111 +721,149 @@ public class SyncEditorLayerIndex {
             JsonObject e = eliUrls.get(url);
             ImageryInfo j = josmUrls.get(url);
 
-            String et = getDescriptions(e).getOrDefault("en", "");
-            String jt = getDescriptions(j).getOrDefault("en", "");
-            if (!et.equals(jt)) {
-                if (jt.isEmpty()) {
-                    myprintln("- Missing JOSM description ("+et+"): "+getDescription(j));
-                } else if (!et.isEmpty()) {
-                    myprintln("* Description differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
-                } else if (!optionNoEli) {
-                    myprintln("+ Missing ELI description ('"+jt+"'): "+getDescription(j));
-                }
-            }
+            compareDescriptions(e, j);
+            comparePermissionReferenceUrls(e, j);
+            compareAttributionUrls(e, j);
+            compareAttributionTexts(e, j);
+            compareProjections(e, j);
+            compareDefaults(e, j);
+            compareOverlays(e, j);
+            compareNoTileHeaders(e, j);
+        }
+    }
 
-            et = getPermissionReferenceUrl(e);
-            jt = getPermissionReferenceUrl(j);
-            String jt2 = getTermsOfUseUrl(j);
-            if (isBlank(jt)) jt = jt2;
-            if (!Objects.equals(et, jt)) {
-                if (isBlank(jt)) {
-                    myprintln("- Missing JOSM license URL ("+et+"): "+getDescription(j));
-                } else if (isNotBlank(et)) {
-                    String ethttps = et.replace("http:", "https:");
-                    if (isBlank(jt2) || !(jt2.equals(ethttps) || jt2.equals(et+"/") || jt2.equals(ethttps+"/"))) {
-                        if (jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
-                            myprintln("+ License URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
+    void compareDescriptions(JsonObject e, ImageryInfo j) throws IOException {
+        String et = getDescriptions(e).getOrDefault("en", "");
+        String jt = getDescriptions(j).getOrDefault("en", "");
+        if (!et.equals(jt)) {
+            if (jt.isEmpty()) {
+                myprintln("- Missing JOSM description ("+et+"): "+getDescription(j));
+            } else if (!et.isEmpty()) {
+                myprintln("* Description differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
+            } else if (!optionNoEli) {
+                myprintln("+ Missing ELI description ('"+jt+"'): "+getDescription(j));
+            }
+        }
+    }
+
+    void comparePermissionReferenceUrls(JsonObject e, ImageryInfo j) throws IOException {
+        String et = getPermissionReferenceUrl(e);
+        String jt = getPermissionReferenceUrl(j);
+        String jt2 = getTermsOfUseUrl(j);
+        if (isBlank(jt)) jt = jt2;
+        if (!Objects.equals(et, jt)) {
+            if (isBlank(jt)) {
+                myprintln("- Missing JOSM license URL ("+et+"): "+getDescription(j));
+            } else if (isNotBlank(et)) {
+                String ethttps = et.replace("http:", "https:");
+                if (isBlank(jt2) || !(jt2.equals(ethttps) || jt2.equals(et+"/") || jt2.equals(ethttps+"/"))) {
+                    if (jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
+                        myprintln("+ License URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
+                    } else {
+                        String ja = getAttributionUrl(j);
+                        if (ja != null && (ja.equals(et) || ja.equals(ethttps) || ja.equals(et+"/") || ja.equals(ethttps+"/"))) {
+                           myprintln("+ ELI License URL in JOSM Attribution: "+getDescription(j));
                         } else {
-                            String ja = getAttributionUrl(j);
-                            if (ja != null && (ja.equals(et) || ja.equals(ethttps) || ja.equals(et+"/") || ja.equals(ethttps+"/"))) {
-                               myprintln("+ ELI License URL in JOSM Attribution: "+getDescription(j));
-                            } else {
-                                myprintln("* License URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
-                            }
+                            myprintln("* License URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
                         }
                     }
-                } else if (!optionNoEli) {
-                    myprintln("+ Missing ELI license URL ('"+jt+"'): "+getDescription(j));
                 }
+            } else if (!optionNoEli) {
+                myprintln("+ Missing ELI license URL ('"+jt+"'): "+getDescription(j));
             }
+        }
+    }
 
-            et = getAttributionUrl(e);
-            jt = getAttributionUrl(j);
-            if (!Objects.equals(et, jt)) {
-                if (isBlank(jt)) {
-                    myprintln("- Missing JOSM attribution URL ("+et+"): "+getDescription(j));
-                } else if (isNotBlank(et)) {
-                    String ethttps = et.replace("http:", "https:");
-                    if (jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
-                        myprintln("+ Attribution URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
-                    } else {
-                        myprintln("* Attribution URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
-                    }
-                } else if (!optionNoEli) {
-                    myprintln("+ Missing ELI attribution URL ('"+jt+"'): "+getDescription(j));
+    void compareAttributionUrls(JsonObject e, ImageryInfo j) throws IOException {
+        String et = getAttributionUrl(e);
+        String jt = getAttributionUrl(j);
+        if (!Objects.equals(et, jt)) {
+            if (isBlank(jt)) {
+                myprintln("- Missing JOSM attribution URL ("+et+"): "+getDescription(j));
+            } else if (isNotBlank(et)) {
+                String ethttps = et.replace("http:", "https:");
+                if (jt.equals(ethttps) || jt.equals(et+"/") || jt.equals(ethttps+"/")) {
+                    myprintln("+ Attribution URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
+                } else {
+                    myprintln("* Attribution URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
                 }
+            } else if (!optionNoEli) {
+                myprintln("+ Missing ELI attribution URL ('"+jt+"'): "+getDescription(j));
             }
+        }
+    }
 
-            et = getAttributionText(e);
-            jt = getAttributionText(j);
-            if (!Objects.equals(et, jt)) {
-                if (isBlank(jt)) {
-                    myprintln("- Missing JOSM attribution text ("+et+"): "+getDescription(j));
-                } else if (isNotBlank(et)) {
-                    myprintln("* Attribution text differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
-                } else if (!optionNoEli) {
-                    myprintln("+ Missing ELI attribution text ('"+jt+"'): "+getDescription(j));
-                }
+    void compareAttributionTexts(JsonObject e, ImageryInfo j) throws IOException {
+        String et = getAttributionText(e);
+        String jt = getAttributionText(j);
+        if (!Objects.equals(et, jt)) {
+            if (isBlank(jt)) {
+                myprintln("- Missing JOSM attribution text ("+et+"): "+getDescription(j));
+            } else if (isNotBlank(et)) {
+                myprintln("* Attribution text differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
+            } else if (!optionNoEli) {
+                myprintln("+ Missing ELI attribution text ('"+jt+"'): "+getDescription(j));
             }
+        }
+    }
 
-            et = getProjections(e).stream().sorted().collect(Collectors.joining(" "));
-            jt = getProjections(j).stream().sorted().collect(Collectors.joining(" "));
-            if (!Objects.equals(et, jt)) {
-                if (isBlank(jt)) {
-                    String t = getType(e);
-                    if ("wms_endpoint".equals(t) || "tms".equals(t)) {
-                        myprintln("+ ELI projections for type "+t+": "+getDescription(j));
-                    } else {
-                        myprintln("- Missing JOSM projections ("+et+"): "+getDescription(j));
-                    }
-                } else if (isNotBlank(et)) {
-                    if ("EPSG:3857 EPSG:4326".equals(et) || "EPSG:3857".equals(et) || "EPSG:4326".equals(et)) {
-                        myprintln("+ ELI has minimal projections ('"+et+"' != '"+jt+"'): "+getDescription(j));
-                    } else {
-                        myprintln("* Projections differ ('"+et+"' != '"+jt+"'): "+getDescription(j));
-                    }
-                } else if (!optionNoEli && !"tms".equals(getType(e))) {
-                    myprintln("+ Missing ELI projections ('"+jt+"'): "+getDescription(j));
+    void compareProjections(JsonObject e, ImageryInfo j) throws IOException {
+        String et = getProjections(e).stream().sorted().collect(Collectors.joining(" "));
+        String jt = getProjections(j).stream().sorted().collect(Collectors.joining(" "));
+        if (!Objects.equals(et, jt)) {
+            if (isBlank(jt)) {
+                String t = getType(e);
+                if ("wms_endpoint".equals(t) || "tms".equals(t)) {
+                    myprintln("+ ELI projections for type "+t+": "+getDescription(j));
+                } else {
+                    myprintln("- Missing JOSM projections ("+et+"): "+getDescription(j));
                 }
+            } else if (isNotBlank(et)) {
+                if ("EPSG:3857 EPSG:4326".equals(et) || "EPSG:3857".equals(et) || "EPSG:4326".equals(et)) {
+                    myprintln("+ ELI has minimal projections ('"+et+"' != '"+jt+"'): "+getDescription(j));
+                } else {
+                    myprintln("* Projections differ ('"+et+"' != '"+jt+"'): "+getDescription(j));
+                }
+            } else if (!optionNoEli && !"tms".equals(getType(e))) {
+                myprintln("+ Missing ELI projections ('"+jt+"'): "+getDescription(j));
             }
+        }
+    }
 
-            boolean ed = getDefault(e);
-            boolean jd = getDefault(j);
-            if (ed != jd) {
-                if (!jd) {
-                    myprintln("- Missing JOSM default: "+getDescription(j));
-                } else if (!optionNoEli) {
-                    myprintln("+ Missing ELI default: "+getDescription(j));
-                }
+    void compareDefaults(JsonObject e, ImageryInfo j) throws IOException {
+        boolean ed = getDefault(e);
+        boolean jd = getDefault(j);
+        if (ed != jd) {
+            if (!jd) {
+                myprintln("- Missing JOSM default: "+getDescription(j));
+            } else if (!optionNoEli) {
+                myprintln("+ Missing ELI default: "+getDescription(j));
             }
-            boolean eo = getOverlay(e);
-            boolean jo = getOverlay(j);
-            if (eo != jo) {
-                if (!jo) {
-                    myprintln("- Missing JOSM overlay flag: "+getDescription(j));
-                } else if (!optionNoEli) {
-                    myprintln("+ Missing ELI overlay flag: "+getDescription(j));
-                }
+        }
+    }
+
+    void compareOverlays(JsonObject e, ImageryInfo j) throws IOException {
+        boolean eo = getOverlay(e);
+        boolean jo = getOverlay(j);
+        if (eo != jo) {
+            if (!jo) {
+                myprintln("- Missing JOSM overlay flag: "+getDescription(j));
+            } else if (!optionNoEli) {
+                myprintln("+ Missing ELI overlay flag: "+getDescription(j));
+            }
+        }
+    }
+
+    void compareNoTileHeaders(JsonObject e, ImageryInfo j) throws IOException {
+        Map<String, Set<String>> eh = getNoTileHeader(e);
+        Map<String, Set<String>> jh = getNoTileHeader(j);
+        if (!Objects.equals(eh, jh)) {
+            if (jh == null || jh.isEmpty()) {
+                myprintln("- Missing JOSM no tile headers ("+eh+"): "+getDescription(j));
+            } else if (eh != null && !eh.isEmpty()) {
+                myprintln("* No tile headers differ ('"+eh+"' != '"+jh+"'): "+getDescription(j));
+            } else if (!optionNoEli) {
+                myprintln("+ Missing ELI no tile headers ('"+jh+"'): "+getDescription(j));
             }
         }
     }
@@ -1334,8 +1374,16 @@ public class SyncEditorLayerIndex {
         return ((Map<String, JsonObject>) e).get("properties").getString("license_url", null);
     }
 
+    static Map<String, Set<String>> getNoTileHeader(Object e) {
+        if (e instanceof ImageryInfo) return ((ImageryInfo) e).getNoTileHeaders();
+        JsonObject nth = ((Map<String, JsonObject>) e).get("properties").getJsonObject("no_tile_header");
+        return nth == null ? null : nth.keySet().stream().collect(Collectors.toMap(
+                Function.identity(),
+                k -> nth.getJsonArray(k).stream().map(x -> ((JsonString) x).getString()).collect(Collectors.toSet())));
+    }
+
     static Map<String, String> getDescriptions(Object e) {
-        Map<String, String> res = new HashMap<String, String>();
+        Map<String, String> res = new HashMap<>();
         if (e instanceof ImageryInfo) {
             String a = ((ImageryInfo) e).getDescription();
             if (a != null) res.put("en", a);
