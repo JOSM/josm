@@ -2436,6 +2436,8 @@
             <check key="shelter" text="Shelter" />
             <check key="bin" text="Waste Basket/Trash Can" />
             <check key="covered" text="Covered" />
+            <check key="passenger_information_display" text="Passenger information display" />
+            <text key="route_ref" text="Route references" />
             <reference ref="wheelchair" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
         </item> <!-- Platform -->
@@ -2540,6 +2542,8 @@
                 <check key="bench" text="Bench" />
                 <check key="shelter" text="Shelter" />
                 <check key="bin" text="Waste Basket/Trash Can" />
+                <check key="passenger_information_display" text="Passenger information display" />
+                <text key="route_ref" text="Route references" />
                 <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             </optional>
         </item> <!-- Bus Stop -->
