@@ -220,7 +220,7 @@ public class OsmApiException extends OsmTransferException {
             if (header != null && !header.isEmpty()) {
                 sb.append(tr(header));
             }
-            if (body != null && !body.isEmpty()) {
+            if (body != null && !body.isEmpty() && !body.equals(header)) {
                 if (sb.length() > 0) {
                     sb.append(". ");
                 }

@@ -164,11 +164,17 @@ public class ExceptionUtilTest {
         assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>"+
                 "'The server replied an error with code 0.'</html>",
                 ExceptionUtil.explainFailedAuthorisation(new OsmApiException("")));
-        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'header (Code=403)'</html>",
+        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>"+
+                "'header (Code=403)'</html>",
                 ExceptionUtil.explainFailedAuthorisation(new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, "header", null)));
-        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'header. body (Code=403)'</html>",
+        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:"+
+                "<br>'header. body (Code=403)'</html>",
                 ExceptionUtil.explainFailedAuthorisation(new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, "header", "body")));
-        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'body (Code=403)'</html>",
+        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:"+
+                "<br>'header_body (Code=403)'</html>",
+                ExceptionUtil.explainFailedAuthorisation(new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, "header_body", "header_body")));
+        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>"+
+                "'body (Code=403)'</html>",
                 ExceptionUtil.explainFailedAuthorisation(new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, null, "body")));
     }
 
