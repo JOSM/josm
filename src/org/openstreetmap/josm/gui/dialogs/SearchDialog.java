@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -275,7 +276,8 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword(tr("Baker Street"), null, tr("''Baker'' and ''Street'' in any key"))
                 .addKeyword(tr("\"Baker Street\""), "\"\"", tr("''Baker Street'' in any key"))
                 .addKeyword("<i>key</i>:<i>valuefragment</i>", null,
-                        tr("''valuefragment'' anywhere in ''key''"), tr("name:str matches name=Bakerstreet"))
+                        tr("''valuefragment'' anywhere in ''key''"),
+                        trc("search string example", "name:str matches name=Bakerstreet"))
                 .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''")),
                 GBC.eol());
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
@@ -288,14 +290,14 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword("\"key\"=\"value\"", "\"\"=\"\"",
                         tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped " +
                                 "by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
-                        tr("name=\"Baker Street\""),
+                        trc("search string example", "name=\"Baker Street\""),
                         "\"addr:street\""),
                 GBC.eol().anchor(GBC.CENTER));
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("combinators"))
                 .addKeyword("<i>expr</i> <i>expr</i>", null,
                         tr("logical and (both expressions have to be satisfied)"),
-                        tr("Baker Street"))
+                        trc("search string example", "Baker Street"))
                 .addKeyword("<i>expr</i> | <i>expr</i>", "| ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("-<i>expr</i>", null, tr("logical not"))
@@ -319,11 +321,15 @@ public class SearchDialog extends ExtendedDialog {
                     GBC.eol().anchor(GBC.CENTER));
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("metadata"))
-                .addKeyword("user:", "user:", tr("objects changed by user"), tr("user:anonymous"))
-                .addKeyword("id:", "id:", tr("objects with given ID"), tr("id:0 (new objects)"))
-                .addKeyword("version:", "version:", tr("objects with given version"), tr("version:0 (objects without an assigned version)"))
+                .addKeyword("user:", "user:", tr("objects changed by author"),
+                        trc("search string example", "user:<i>OSM username</i> (objects with the author <i>OSM username</i>)"),
+                        trc("search string example", "user:anonymous (objects without an assigned author)"))
+                .addKeyword("id:", "id:", tr("objects with given ID"),
+                        trc("search string example", "id:0 (new objects)"))
+                .addKeyword("version:", "version:", tr("objects with given version"), 
+                        trc("search string example", "version:0 (objects without an assigned version)"))
                 .addKeyword("changeset:", "changeset:", tr("objects with given changeset ID"),
-                        tr("changeset:0 (objects without an assigned changeset)"))
+                        trc("search string example", "changeset:0 (objects without an assigned changeset)"))
                 .addKeyword("timestamp:", "timestamp:", tr("objects with last modification timestamp within range"), "timestamp:2012/",
                         "timestamp:2008/2011-02-04T12"),
                 GBC.eol());
