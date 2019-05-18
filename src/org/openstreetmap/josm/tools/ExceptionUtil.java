@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -13,8 +12,10 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
@@ -44,10 +45,14 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public final class ExceptionUtil {
 
     /**
-     * Error message sent by the OSM API when a user has been blocked.
+     * Error messages sent by the OSM API when a user has been blocked/suspended.
      */
-    private static final String OSM_API_BLOCKED =
-            marktr("Your access to the API has been blocked. Please log-in to the web interface to find out more.");
+    private static final List<String> OSM_API_BLOCK_MESSAGES = Arrays.asList(
+            "You have an urgent message on the OpenStreetMap web site. " +
+                    "You need to read the message before you will be able to save your edits.",
+            "Your access to the API has been blocked. Please log-in to the web interface to find out more.",
+            "Your access to the API is temporarily suspended. Please log-in to the web interface to view the Contributor Terms." +
+                    " You do not need to agree, but you must view them.");
 
     private ExceptionUtil() {
         // Hide default constructor for utils classes
@@ -722,13 +727,13 @@ public final class ExceptionUtil {
     }
 
     /**
-     * Determines if the OSM API exception has been thrown because user has been blocked.
+     * Determines if the OSM API exception has been thrown because user has been blocked or suspended.
      * @param e OSM API exception
-     * @return {@code true} if the OSM API exception has been thrown because user has been blocked
+     * @return {@code true} if the OSM API exception has been thrown because user has been blocked or suspended
      * @since 15084
      */
     public static boolean isUserBlocked(OsmApiException e) {
-        return OSM_API_BLOCKED.equals(e.getErrorHeader());
+        return OSM_API_BLOCK_MESSAGES.contains(e.getErrorHeader());
     }
 
     static String getUrlFromException(OsmApiException e) {
