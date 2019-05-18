@@ -1433,3 +1433,12 @@ way[/^is_in:.*$/] {
   suggestAlternative: "sport=gaelic_games";
   group: tr("deprecated tagging");
 }
+
+/* #17556 */
+*[leisure=common] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "landuse=*";
+  suggestAlternative: "leisure=*";
+  suggestAlternative: "designation=common";
+  group: tr("deprecated tagging");
+}
