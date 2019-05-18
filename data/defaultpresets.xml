@@ -6963,12 +6963,6 @@
             <key key="landuse" value="village_green" />
             <reference ref="optional_name" />
         </item> <!-- Village Green -->
-        <item name="Common" icon="presets/leisure/common.svg" type="closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:leisure=common" />
-            <space />
-            <key key="leisure" value="common" />
-            <reference ref="optional_name" />
-        </item> <!-- Common -->
         <item name="Park" icon="presets/leisure/park.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:leisure=park" />
             <space />

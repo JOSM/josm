@@ -1753,7 +1753,6 @@ area[leisure=nature_reserve],
 area[leisure=park],
 area[leisure=playground],
 area[leisure=garden],
-area[leisure=common],
 area[leisure=firepit] {
     fill-color: leisure#c7f1a3;
 }
@@ -1778,7 +1777,7 @@ node[leisure=garden] {
     set icon_z17;
 }
 node[leisure=common] {
-    icon-image: "presets/leisure/common.svg";
+    icon-image: "presets/misc/deprecated.svg";
     set icon_z17;
 }
 node[leisure=firepit] { 
