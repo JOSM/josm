@@ -1945,6 +1945,7 @@ area[shop=kitchen],
 area[shop=mall],
 area[shop=massage],
 area[shop=mobile_phone],
+area[shop=watches],
 area[shop=motorcycle],
 area[shop=musical_instrument],
 area[shop=newsagent],
@@ -2177,6 +2178,10 @@ node[shop=massage] {
 }
 node[shop=mobile_phone] {
     icon-image: "presets/shop/mobile_phone.svg";
+    set icon_z17;
+}
+node[shop=watches] {
+    icon-image: "presets/shop/watches.svg";
     set icon_z17;
 }
 node[shop=motorcycle] {
