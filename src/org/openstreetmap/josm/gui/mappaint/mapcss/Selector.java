@@ -340,7 +340,7 @@ public interface Selector {
                     for (IPrimitive p : Geometry.filterInsidePolygon(toCheck, (IWay<?>) e.osm)) {
                         addToChildren(e, p);
                     }
-                } else if (e.osm instanceof Relation) {
+                } else if (e.osm instanceof Relation && e.osm.isMultipolygon()) {
                     for (IPrimitive p : Geometry.filterInsideMultipolygon(toCheck, (Relation) e.osm)) {
                         addToChildren(e, p);
                     }
