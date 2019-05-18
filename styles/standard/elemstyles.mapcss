@@ -4307,6 +4307,17 @@ node[natural=bay] {
     icon-image: "presets/nautical/bay.svg";
     set icon_z17;
 }
+area[natural=strait]:closed {
+    fill-color: natural#002f00;
+}
+way[natural=strait] {
+    width: 2;
+    color: natural#002f00;
+}
+node[natural=strait] {
+    icon-image: "presets/nautical/strait.svg";
+    set icon_z17;
+}
 area[natural=cape],
 area[natural=cave_entrance] {
     fill-color: natural#002f00;
