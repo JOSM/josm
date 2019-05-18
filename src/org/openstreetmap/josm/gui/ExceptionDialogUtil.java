@@ -285,7 +285,7 @@ public final class ExceptionDialogUtil {
             // {1} is the translation of "node", "way" or "relation"
             msg = tr("Access to redacted version ''{0}'' of {1} {2} is forbidden.",
                     version, tr(type), id);
-        } else if (OsmApi.isUsingOAuth()) {
+        } else if (OsmApi.isUsingOAuth() && !ExceptionUtil.isUserBlocked(e)) {
             msg = ExceptionUtil.explainFailedOAuthAuthorisation(e);
         } else {
             msg = ExceptionUtil.explainFailedAuthorisation(e);

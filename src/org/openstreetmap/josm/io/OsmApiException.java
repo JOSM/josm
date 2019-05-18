@@ -212,15 +212,21 @@ public class OsmApiException extends OsmTransferException {
      */
     public String getDisplayMessage() {
         StringBuilder sb = new StringBuilder();
-        if (errorHeader != null) {
-            sb.append(tr(errorHeader));
-            sb.append(tr("(Code={0})", responseCode));
-        } else if (errorBody != null && !errorBody.trim().isEmpty()) {
-            errorBody = errorBody.trim();
-            sb.append(tr(errorBody));
-            sb.append(tr("(Code={0})", responseCode));
-        } else {
+        String header = Utils.strip(errorHeader);
+        String body = Utils.strip(errorBody);
+        if ((header == null || header.isEmpty()) && (body == null || body.isEmpty())) {
             sb.append(tr("The server replied an error with code {0}.", responseCode));
+        } else {
+            if (header != null && !header.isEmpty()) {
+                sb.append(tr(header));
+            }
+            if (body != null && !body.isEmpty()) {
+                if (sb.length() > 0) {
+                    sb.append(". ");
+                }
+                sb.append(tr(body));
+            }
+            sb.append(' ').append(tr("(Code={0})", responseCode));
         }
         return sb.toString();
     }

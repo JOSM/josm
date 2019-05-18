@@ -10,9 +10,9 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.TimeZone;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
@@ -21,13 +21,23 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.date.DateUtilsTest;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link ExceptionUtil} class.
  */
 public class ExceptionUtilTest {
+
+    /**
+     * Setup rule.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().fakeAPI();
 
     private static String baseUrl;
     private static String serverUrl;
@@ -38,11 +48,9 @@ public class ExceptionUtilTest {
      * Setup test.
      * @throws Exception in case of error
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
-        JOSMFixture.createUnitTestFixture().init();
+    @Before
+    public void setUp() throws Exception {
         OsmApi api = OsmApi.getOsmApi();
-        api.initialize(null);
         baseUrl = api.getBaseUrl();
         serverUrl = api.getServerUrl();
         host = new URL(serverUrl).getHost();
@@ -153,13 +161,14 @@ public class ExceptionUtilTest {
      */
     @Test
     public void testExplainFailedAuthorisation() {
-        assertEquals("<html>Authorisation at the OSM server failed.<br></html>",
+        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>"+
+                "'The server replied an error with code 0.'</html>",
                 ExceptionUtil.explainFailedAuthorisation(new OsmApiException("")));
-        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'header'</html>",
+        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'header (Code=403)'</html>",
                 ExceptionUtil.explainFailedAuthorisation(new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, "header", null)));
-        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'header (body)'</html>",
+        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'header. body (Code=403)'</html>",
                 ExceptionUtil.explainFailedAuthorisation(new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, "header", "body")));
-        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'body'</html>",
+        assertEquals("<html>Authorisation at the OSM server failed.<br>The server reported the following error:<br>'body (Code=403)'</html>",
                 ExceptionUtil.explainFailedAuthorisation(new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, null, "body")));
     }
 
@@ -246,7 +255,7 @@ public class ExceptionUtilTest {
      */
     @Test
     public void testExplainMissingOAuthAccessTokenException() {
-        assertEquals("<html>Failed to authenticate at the OSM server 'https://api06.dev.openstreetmap.org/api'.<br>"+
+        assertEquals("<html>Failed to authenticate at the OSM server 'http://fake.xxx/api'.<br>"+
                 "You are using OAuth to authenticate but currently there is no<br>OAuth Access Token configured.<br>"+
                 "Please open the Preferences Dialog and generate or enter an Access Token.</html>",
                 ExceptionUtil.explainMissingOAuthAccessTokenException(new MissingOAuthAccessTokenException()));
