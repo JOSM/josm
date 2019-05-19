@@ -62,7 +62,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Use {@link #setStyleSources(Collection)} to select the StyleSources that are applied.
  */
 public class ElemStyles implements PreferenceChangedListener {
-    private final List<StyleSource> styleSources;
+    private final List<StyleSource> styleSources = Collections.synchronizedList(new ArrayList<>());
     private boolean drawMultipolygon;
 
     private short cacheIdx = 1;
@@ -73,7 +73,7 @@ public class ElemStyles implements PreferenceChangedListener {
     private short defaultNodesIdx;
     private short defaultLinesIdx;
 
-    private final Map<String, String> preferenceCache = new HashMap<>();
+    private final Map<String, String> preferenceCache = Collections.synchronizedMap(new HashMap<>());
 
     private volatile Color backgroundColorCache;
 
@@ -81,7 +81,6 @@ public class ElemStyles implements PreferenceChangedListener {
      * Constructs a new {@code ElemStyles}.
      */
     public ElemStyles() {
-        styleSources = new ArrayList<>();
         Config.getPref().addPreferenceChangeListener(this);
     }
 
