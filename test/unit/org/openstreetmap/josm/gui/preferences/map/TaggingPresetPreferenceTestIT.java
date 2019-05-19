@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
@@ -29,7 +30,6 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.ParallelParameterized;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link TaggingPresetPreference} class.
  */
-@RunWith(ParallelParameterized.class)
+@RunWith(Parameterized.class)
 public class TaggingPresetPreferenceTestIT {
 
     /**
