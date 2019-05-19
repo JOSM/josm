@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.openstreetmap.josm.data.osm.INode;
@@ -498,7 +499,7 @@ public class ElemStyles implements PreferenceChangedListener {
      * @param style style source to add
      */
     void add(StyleSource style) {
-        styleSources.add(style);
+        styleSources.add(Objects.requireNonNull(style));
     }
 
     /**
@@ -507,7 +508,7 @@ public class ElemStyles implements PreferenceChangedListener {
      * @return {@code true} if this list contained the specified element
      */
     boolean remove(StyleSource style) {
-        return styleSources.remove(style);
+        return styleSources.remove(Objects.requireNonNull(style));
     }
 
     /**
@@ -516,7 +517,7 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     void setStyleSources(Collection<StyleSource> sources) {
         styleSources.clear();
-        styleSources.addAll(sources);
+        sources.forEach(this::add);
     }
 
     /**
