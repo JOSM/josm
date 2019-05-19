@@ -27,10 +27,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
-import org.junit.runners.model.Statement;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -84,20 +82,7 @@ public class ImageryPreferenceTestIT {
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public static JOSMTestRules test = new JOSMTestRules().https().i18n().preferences().projection().projectionNadGrids()
-                                                   .timeout((int) TimeUnit.MINUTES.toMillis(40));
-
-    static {
-        try {
-            test.apply(new Statement() {
-                @Override
-                public void evaluate() throws Throwable {
-                    // Do nothing. Hack needed because @Parameters are computed before anything else
-                }
-            }, Description.createSuiteDescription(ImageryPreferenceTestIT.class)).evaluate();
-        } catch (Throwable e) {
-            Logging.error(e);
-        }
-    }
+                                                   .timeout((int) TimeUnit.MINUTES.toMillis(40)).parameters();
 
     /** Entry to test */
     private final ImageryInfo info;
