@@ -7,7 +7,6 @@ import static org.junit.Assume.assumeTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -34,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Integration tests of {@link MapPaintPreference} class.
  */
 @RunWith(ParallelParameterized.class)
-public class MapPaintPreferenceTestIT {
+public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
 
     /**
      * Setup rule
@@ -42,11 +41,6 @@ public class MapPaintPreferenceTestIT {
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public static JOSMTestRules test = new JOSMTestRules().https().timeout(15000*60).parameters();
-
-    /** Entry to test */
-    private final ExtendedSourceEntry source;
-    private final List<String> ignoredErrors = new ArrayList<>();
-    private static final List<String> errorsToIgnore = new ArrayList<>();
 
     /**
      * Setup test
@@ -65,8 +59,7 @@ public class MapPaintPreferenceTestIT {
     @Parameters(name = "{0} - {1}")
     public static List<Object[]> data() throws Exception {
         ImageProvider.clearCache();
-        return new MapPaintPreference.MapPaintSourceEditor().loadAndGetAvailableSources().stream()
-                .map(x -> new Object[] {x.getDisplayName(), x.url, x}).collect(Collectors.toList());
+        return getTestParameters(new MapPaintPreference.MapPaintSourceEditor().loadAndGetAvailableSources());
     }
 
     /**
@@ -76,7 +69,7 @@ public class MapPaintPreferenceTestIT {
      * @param source source entry to test
      */
     public MapPaintPreferenceTestIT(String displayName, String url, ExtendedSourceEntry source) {
-        this.source = source;
+        super(source);
     }
 
     /**
@@ -114,9 +107,5 @@ public class MapPaintPreferenceTestIT {
 
         assertTrue(errors.toString() + '\n' + warnings.toString(), errors.isEmpty() && warnings.isEmpty());
         assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
-    }
-
-    private static boolean isIgnoredSubstring(String substring) {
-        return errorsToIgnore.parallelStream().anyMatch(x -> substring.contains(x));
     }
 }

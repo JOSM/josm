@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -40,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Integration tests of {@link TaggingPresetPreference} class.
  */
 @RunWith(Parameterized.class)
-public class TaggingPresetPreferenceTestIT {
+public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
 
     /**
      * Setup rule
@@ -48,11 +46,6 @@ public class TaggingPresetPreferenceTestIT {
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public static JOSMTestRules test = new JOSMTestRules().https().timeout(10000*60).parameters();
-
-    /** Entry to test */
-    private final ExtendedSourceEntry source;
-    private final List<String> ignoredErrors = new ArrayList<>();
-    private static final List<String> errorsToIgnore = new ArrayList<>();
 
     /**
      * Setup test
@@ -76,8 +69,7 @@ public class TaggingPresetPreferenceTestIT {
     @Parameters(name = "{0} - {1}")
     public static List<Object[]> data() throws Exception {
         ImageProvider.clearCache();
-        return new TaggingPresetPreference.TaggingPresetSourceEditor().loadAndGetAvailableSources().stream()
-                .map(x -> new Object[] {x.getDisplayName(), x.url, x}).collect(Collectors.toList());
+        return getTestParameters(new TaggingPresetPreference.TaggingPresetSourceEditor().loadAndGetAvailableSources());
     }
 
     /**
@@ -87,7 +79,7 @@ public class TaggingPresetPreferenceTestIT {
      * @param source source entry to test
      */
     public TaggingPresetPreferenceTestIT(String displayName, String url, ExtendedSourceEntry source) {
-        this.source = source;
+        super(source);
     }
 
     /**
@@ -112,16 +104,6 @@ public class TaggingPresetPreferenceTestIT {
         }
         assertTrue(errors.toString(), errors.isEmpty());
         assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
-    }
-
-    private void handleException(Exception e, Set<String> errors) {
-        e.printStackTrace();
-        String s = source.url + " => " + e.toString();
-        if (isIgnoredSubstring(s)) {
-            ignoredErrors.add(s);
-        } else {
-            errors.add(s);
-        }
     }
 
     private void testPresets(Set<String> messages, ExtendedSourceEntry source) throws SAXException, IOException {
@@ -150,9 +132,5 @@ public class TaggingPresetPreferenceTestIT {
         if (error) {
             Logging.clearLastErrorAndWarnings();
         }
-    }
-
-    private static boolean isIgnoredSubstring(String substring) {
-        return errorsToIgnore.parallelStream().anyMatch(x -> substring.contains(x));
     }
 }
