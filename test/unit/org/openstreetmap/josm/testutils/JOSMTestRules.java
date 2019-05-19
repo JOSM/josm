@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
+import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreferenceTestIT;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
@@ -362,6 +363,24 @@ public class JOSMTestRules implements TestRule {
         this.main = true;
         this.mapViewStateMockingRunnable = mapViewStateMockingRunnable;
         this.navigableComponentMockingRunnable = navigableComponentMockingRunnable;
+        return this;
+    }
+
+    /**
+     * Must be called if test run with Junit parameters
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules parameters() {
+        try {
+            apply(new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    // Do nothing. Hack needed because @Parameters are computed before anything else
+                }
+            }, Description.createSuiteDescription(ImageryPreferenceTestIT.class)).evaluate();
+        } catch (Throwable e) {
+            Logging.error(e);
+        }
         return this;
     }
 
