@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
@@ -78,6 +79,7 @@ public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCas
      */
     @Test
     public void testStyleValidity() throws Exception {
+        assumeFalse(isIgnoredSubstring(source.url));
         StyleSource style = MapPaintStyles.addStyle(source);
         if (style instanceof MapCSSStyleSource) {
             // Force loading of all icons to detect missing ones
