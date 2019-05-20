@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
@@ -78,6 +79,7 @@ public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCas
      */
     @Test
     public void testStyleValidity() throws Exception {
+        assumeFalse(isIgnoredSubstring(source.url));
         StyleSource style = MapPaintStyles.addStyle(source);
         if (style instanceof MapCSSStyleSource) {
             // Force loading of all icons to detect missing ones
@@ -98,11 +100,11 @@ public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCas
         }
 
         List<Throwable> errors = new ArrayList<>(style.getErrors());
-        errors.stream().map(Throwable::getMessage).filter(MapPaintPreferenceTestIT::isIgnoredSubstring).forEach(ignoredErrors::add);
+        errors.stream().map(Throwable::getMessage).filter(this::isIgnoredSubstring).forEach(ignoredErrors::add);
         errors.removeIf(e -> ignoredErrors.contains(e.getMessage()));
 
         List<String> warnings = new ArrayList<>(style.getWarnings());
-        warnings.stream().filter(MapPaintPreferenceTestIT::isIgnoredSubstring).forEach(ignoredErrors::add);
+        warnings.stream().filter(this::isIgnoredSubstring).forEach(ignoredErrors::add);
         warnings.removeAll(ignoredErrors);
 
         assertTrue(errors.toString() + '\n' + warnings.toString(), errors.isEmpty() && warnings.isEmpty());

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
      */
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https().timeout(10000*60).parameters();
+    public static JOSMTestRules test = new JOSMTestRules().https().timeout(10000*90).parameters();
 
     /**
      * Setup test
@@ -88,6 +89,7 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
      */
     @Test
     public void testPresetsValidity() throws Exception {
+        assumeFalse(isIgnoredSubstring(source.url));
         Set<String> errors = new HashSet<>();
         try {
             testPresets(errors, source);
