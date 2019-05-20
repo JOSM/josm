@@ -45,7 +45,7 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
      */
     @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https().timeout(10000*60).parameters();
+    public static JOSMTestRules test = new JOSMTestRules().https().timeout(10000*90).parameters();
 
     /**
      * Setup test
