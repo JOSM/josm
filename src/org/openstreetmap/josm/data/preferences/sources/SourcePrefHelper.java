@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 
@@ -88,11 +89,7 @@ public abstract class SourcePrefHelper {
     }
 
     private List<Map<String, String>> serializeList(Collection<? extends SourceEntry> entries) {
-        List<Map<String, String>> setting = new ArrayList<>(entries.size());
-        for (SourceEntry e : entries) {
-            setting.add(serialize(e));
-        }
-        return setting;
+        return new ArrayList<>(entries).stream().map(this::serialize).collect(Collectors.toList());
     }
 
     /**
