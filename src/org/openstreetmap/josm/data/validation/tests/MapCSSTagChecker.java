@@ -866,7 +866,9 @@ public class MapCSSTagChecker extends Test.TagTest {
             env.clearSelectorMatchingInformation();
             if (partialSelection && r.selector instanceof Selector.ChildOrParentSelector) {
                 ChildOrParentSelector sel = (Selector.ChildOrParentSelector) r.selector;
-                if (sel.type == ChildOrParentSelectorType.ELEMENT_OF && p.getDataSet() != null) {
+                boolean needEnclosing = sel.type == ChildOrParentSelectorType.SUBSET_OR_EQUAL
+                        || sel.type == ChildOrParentSelectorType.NOT_SUBSET_OR_EQUAL;
+                if (needEnclosing && p.getDataSet() != null) {
                     List<OsmPrimitive> toCheck = new ArrayList<>();
                     toCheck.addAll(p.getDataSet().searchWays(p.getBBox()));
                     toCheck.addAll(p.getDataSet().searchRelations(p.getBBox()));

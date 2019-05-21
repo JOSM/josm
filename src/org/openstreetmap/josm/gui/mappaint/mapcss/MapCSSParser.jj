@@ -216,7 +216,10 @@ TOKEN:
 |   < CARET: "^" >
 |   < FULLSTOP: "." >
 |   < DEG: "°" >
-|   < ELEMENT_OF: "∈" >
+|   < SUBSET_OR_EQUAL: ["∈","⊆"] >
+|   < NOT_SUBSET_OR_EQUAL: "⊈" >
+|   < SUPERSET_OR_EQUAL: "⊇" >
+|   < NOT_SUPERSET_OR_EQUAL: "⊉" >
 |   < CROSSING: "⧉" >
 |   < PERCENT: "%" >
 |   < COMMENT_START: "/*" > : COMMENT
@@ -690,7 +693,13 @@ Selector child_selector() :
                 )
                 ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
             |
-                <ELEMENT_OF> { type = Selector.ChildOrParentSelectorType.ELEMENT_OF; }
+                <SUBSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.SUBSET_OR_EQUAL; }
+            |
+                <NOT_SUBSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.NOT_SUBSET_OR_EQUAL; }
+            |
+                <SUPERSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.SUPERSET_OR_EQUAL; }
+            |
+                <NOT_SUPERSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.NOT_SUPERSET_OR_EQUAL; }
             |
                 <CROSSING> { type = Selector.ChildOrParentSelectorType.CROSSING; }
             )

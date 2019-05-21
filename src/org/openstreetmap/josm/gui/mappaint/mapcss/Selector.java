@@ -117,7 +117,7 @@ public interface Selector {
      * @see ChildOrParentSelector
      */
     enum ChildOrParentSelectorType {
-        CHILD, PARENT, ELEMENT_OF, CROSSING, SIBLING
+        CHILD, PARENT, SUBSET_OR_EQUAL, NOT_SUBSET_OR_EQUAL, SUPERSET_OR_EQUAL, NOT_SUPERSET_OR_EQUAL, CROSSING, SIBLING,
     }
 
     /**
@@ -312,6 +312,9 @@ public interface Selector {
             }
         }
 
+        /**
+         * Finds elements which are inside the right element, collects those in {@code children}
+         */
         private class ContainsFinder extends AbstractFinder {
             protected List<IPrimitive> toCheck;
 
@@ -348,38 +351,92 @@ public interface Selector {
             }
         }
 
+        /**
+         * Finds elements which are inside the left element, or in other words, it finds elements enclosing e.osm.
+         * The found enclosing elements are collected in {@code e.children}.
+         */
+        private class InsideOrEqualFinder extends AbstractFinder {
+
+            protected InsideOrEqualFinder(Environment e) {
+                super(e);
+            }
+
+            @Override
+            public void visit(IWay<?> w) {
+                if (left.matches(new Environment(w).withParent(e.osm))
+                        && w.getBBox().bounds(e.osm.getBBox())
+                        && !Geometry.filterInsidePolygon(Collections.singletonList(e.osm), w).isEmpty()) {
+                    addToChildren(e, w);
+                }
+            }
+
+            @Override
+            public void visit(IRelation<?> r) {
+                if (r instanceof Relation && r.isMultipolygon() && r.getBBox().bounds(e.osm.getBBox())
+                        && left.matches(new Environment(r).withParent(e.osm))
+                        && !Geometry.filterInsideMultipolygon(Collections.singletonList(e.osm), (Relation) r).isEmpty()) {
+                    addToChildren(e, r);
+                }
+            }
+        }
+
+        private void visitBBox(Environment e, AbstractFinder finder) {
+            boolean withNodes = finder instanceof ContainsFinder;
+            if (left instanceof OptimizedGeneralSelector) {
+                if (withNodes && ((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
+                    finder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
+                }
+                if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
+                    finder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
+                }
+                if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.RELATION)) {
+                    finder.visit(e.osm.getDataSet().searchRelations(e.osm.getBBox()));
+                }
+            } else {
+                if (withNodes) {
+                    finder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
+                }
+                finder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
+                finder.visit(e.osm.getDataSet().searchRelations(e.osm.getBBox()));
+            }
+        }
+
+        private static boolean isArea(IPrimitive p) {
+            return (p instanceof IWay && ((IWay<?>) p).isClosed() && ((IWay<?>) p).getNodesCount() >= 4)
+                    || (p instanceof IRelation && p.isMultipolygon() && !p.isIncomplete());
+        }
+
         @Override
         public boolean matches(Environment e) {
 
             if (!right.matches(e))
                 return false;
 
-            if (ChildOrParentSelectorType.ELEMENT_OF == type) {
+            if (ChildOrParentSelectorType.SUBSET_OR_EQUAL == type || ChildOrParentSelectorType.NOT_SUBSET_OR_EQUAL == type) {
 
-                if (e.osm instanceof INode || e.osm.getDataSet() == null) {
-                    // nodes cannot contain elements
-                    return false;
+                if (e.osm.getDataSet() == null || !isArea(e.osm)) {
+                    // only areas can contain elements
+                    return ChildOrParentSelectorType.NOT_SUBSET_OR_EQUAL == type;
                 }
-
                 ContainsFinder containsFinder = new ContainsFinder(e);
                 e.parent = e.osm;
 
-                if (left instanceof OptimizedGeneralSelector) {
-                    if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
-                        containsFinder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
-                    }
-                    if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
-                        containsFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
-                    }
-                    if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.RELATION)) {
-                        containsFinder.visit(e.osm.getDataSet().searchRelations(e.osm.getBBox()));
-                    }
-                } else {
-                    // use slow test
-                    containsFinder.visit(e.osm.getDataSet().allPrimitives());
-                }
+                visitBBox(e, containsFinder);
                 containsFinder.execGeometryTests();
-                return e.children != null;
+                return ChildOrParentSelectorType.SUBSET_OR_EQUAL == type ? e.children != null : e.children == null;
+
+            } else if (ChildOrParentSelectorType.SUPERSET_OR_EQUAL == type || ChildOrParentSelectorType.NOT_SUPERSET_OR_EQUAL == type) {
+
+                if (e.osm.getDataSet() == null || (e.osm instanceof INode && ((INode) e.osm).getCoor() == null)
+                        || (!(e.osm instanceof INode) && !isArea(e.osm))) {
+                    return ChildOrParentSelectorType.NOT_SUPERSET_OR_EQUAL == type;
+                }
+
+                InsideOrEqualFinder insideOrEqualFinder = new InsideOrEqualFinder(e);
+                e.parent = e.osm;
+
+                visitBBox(e, insideOrEqualFinder);
+                return ChildOrParentSelectorType.SUPERSET_OR_EQUAL == type ? e.children != null : e.children == null;
 
             } else if (ChildOrParentSelectorType.CROSSING == type && e.osm instanceof IWay) {
                 e.parent = e.osm;
