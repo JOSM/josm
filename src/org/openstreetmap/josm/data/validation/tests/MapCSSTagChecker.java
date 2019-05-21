@@ -37,10 +37,7 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.IRelation;
-import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -85,7 +82,6 @@ import org.openstreetmap.josm.tools.DefaultGeoProperty;
 import org.openstreetmap.josm.tools.GeoProperty;
 import org.openstreetmap.josm.tools.GeoPropertyIndex;
 import org.openstreetmap.josm.tools.I18n;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Territories;
@@ -96,157 +92,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 6506
  */
 public class MapCSSTagChecker extends Test.TagTest {
-    IndexData indexData;
+    MapCSSTagCheckerIndex indexData;
     final Set<OsmPrimitive> tested = new HashSet<>();
 
-    private static final boolean ALL_TESTS = true;
-    private static final boolean ONLY_SELECTED_TESTS = false;
-
-    /**
-     * Helper class to store indexes of rules.
-     * @author Gerd
-     *
-     */
-    private static final class IndexData {
-        final Map<MapCSSRule, TagCheck> ruleToCheckMap = new HashMap<>();
-
-        /**
-         * Rules for nodes
-         */
-        final MapCSSRuleIndex nodeRules = new MapCSSRuleIndex();
-        /**
-         * Rules for ways without tag area=no
-         */
-        final MapCSSRuleIndex wayRules = new MapCSSRuleIndex();
-        /**
-         * Rules for ways with tag area=no
-         */
-        final MapCSSRuleIndex wayNoAreaRules = new MapCSSRuleIndex();
-        /**
-         * Rules for relations that are not multipolygon relations
-         */
-        final MapCSSRuleIndex relationRules = new MapCSSRuleIndex();
-        /**
-         * Rules for multipolygon relations
-         */
-        final MapCSSRuleIndex multipolygonRules = new MapCSSRuleIndex();
-
-        private IndexData(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
-            buildIndex(checks, includeOtherSeverity, allTests);
-        }
-
-        private void buildIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
-            List<TagCheck> allChecks = new ArrayList<>();
-            for (Set<TagCheck> cs : checks.values()) {
-                allChecks.addAll(cs);
-            }
-
-            ruleToCheckMap.clear();
-            nodeRules.clear();
-            wayRules.clear();
-            wayNoAreaRules.clear();
-            relationRules.clear();
-            multipolygonRules.clear();
-
-            // optimization: filter rules for different primitive types
-            for (TagCheck c : allChecks) {
-                if (!includeOtherSeverity && Severity.OTHER == c.getSeverity()
-                        && c.setClassExpressions.isEmpty()) {
-                    // Ignore "information" level checks if not wanted, unless they also set a MapCSS class
-                    continue;
-                }
-
-                for (Selector s : c.rule.selectors) {
-                    // find the rightmost selector, this must be a GeneralSelector
-                    boolean hasLeftRightSel = false;
-                    Selector selRightmost = s;
-                    while (selRightmost instanceof Selector.ChildOrParentSelector) {
-                        hasLeftRightSel = true;
-                        selRightmost = ((Selector.ChildOrParentSelector) selRightmost).right;
-                    }
-                    if (!allTests && !hasLeftRightSel) {
-                        continue;
-                    }
-
-                    MapCSSRule optRule = new MapCSSRule(s.optimizedBaseCheck(), c.rule.declaration);
-
-                    ruleToCheckMap.put(optRule, c);
-                    final String base = ((GeneralSelector) selRightmost).getBase();
-                    switch (base) {
-                    case Selector.BASE_NODE:
-                        nodeRules.add(optRule);
-                        break;
-                    case Selector.BASE_WAY:
-                        wayNoAreaRules.add(optRule);
-                        wayRules.add(optRule);
-                        break;
-                    case Selector.BASE_AREA:
-                        wayRules.add(optRule);
-                        multipolygonRules.add(optRule);
-                        break;
-                    case Selector.BASE_RELATION:
-                        relationRules.add(optRule);
-                        multipolygonRules.add(optRule);
-                        break;
-                    case Selector.BASE_ANY:
-                        nodeRules.add(optRule);
-                        wayRules.add(optRule);
-                        wayNoAreaRules.add(optRule);
-                        relationRules.add(optRule);
-                        multipolygonRules.add(optRule);
-                        break;
-                    case Selector.BASE_CANVAS:
-                    case Selector.BASE_META:
-                    case Selector.BASE_SETTING:
-                        break;
-                    default:
-                        final RuntimeException e = new JosmRuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
-                        Logging.warn(tr("Failed to index validator rules. Error was: {0}", e.getMessage()));
-                        Logging.error(e);
-                    }
-                }
-            }
-            nodeRules.initIndex();
-            wayRules.initIndex();
-            wayNoAreaRules.initIndex();
-            relationRules.initIndex();
-            multipolygonRules.initIndex();
-        }
-
-        /**
-         * Get the index of rules for the given primitive.
-         * @param p the primitve
-         * @return index of rules for the given primitive
-         */
-        public MapCSSRuleIndex get(OsmPrimitive p) {
-            if (p instanceof INode) {
-                return nodeRules;
-            } else if (p instanceof IWay) {
-                if (OsmUtils.isFalse(p.get("area"))) {
-                    return wayNoAreaRules;
-                } else {
-                    return wayRules;
-                }
-            } else if (p instanceof IRelation) {
-                if (((IRelation<?>) p).isMultipolygon()) {
-                    return multipolygonRules;
-                } else {
-                    return relationRules;
-                }
-            } else {
-                throw new IllegalArgumentException("Unsupported type: " + p);
-            }
-        }
-
-        /**
-         * return the TagCheck for which the given indexed rule was created.
-         * @param rule an indexed rule
-         * @return the original TagCheck
-         */
-        public TagCheck getCheck(MapCSSRule rule) {
-            return ruleToCheckMap.get(rule);
-        }
-    }
 
     /**
     * A grouped MapCSSRule with multiple selectors for a single declaration.
@@ -859,8 +707,9 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
         final List<TestError> res = new ArrayList<>();
-        if (indexData == null)
-            indexData = new IndexData(checks, includeOtherSeverity, ALL_TESTS);
+        if (indexData == null) {
+            indexData = new MapCSSTagCheckerIndex(checks, includeOtherSeverity, MapCSSTagCheckerIndex.ALL_TESTS);
+        }
 
         MapCSSRuleIndex matchingRuleIndex = indexData.get(p);
 
@@ -1139,7 +988,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         super.startTest(progressMonitor);
         super.setShowElements(true);
         if (indexData == null) {
-            indexData = new IndexData(checks, includeOtherSeverityChecks(), ALL_TESTS);
+            indexData = new MapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ALL_TESTS);
         }
         tested.clear();
     }
@@ -1152,7 +1001,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
             // rebuild index with a reduced set of rules (those that use ChildOrParentSelector) and thus may have left selectors
             // matching the previously tested elements
-            indexData = new IndexData(checks, includeOtherSeverityChecks(), ONLY_SELECTED_TESTS);
+            indexData = new MapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ONLY_SELECTED_TESTS);
 
             Set<OsmPrimitive> surrounding = new HashSet<>();
             for (OsmPrimitive p : tested) {
@@ -1163,7 +1012,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
             final boolean includeOtherSeverity = includeOtherSeverityChecks();
             for (OsmPrimitive p : surrounding) {
-                if (tested.contains(p) )
+                if (tested.contains(p))
                     continue;
                 Collection<TestError> additionalErrors = getErrorsForPrimitive(p, includeOtherSeverity);
                 for (TestError e : additionalErrors) {
