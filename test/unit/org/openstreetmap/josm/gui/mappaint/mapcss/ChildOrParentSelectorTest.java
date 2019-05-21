@@ -186,11 +186,31 @@ public class ChildOrParentSelectorTest {
         assertTrue(selector.matches(e));
     }
 
+    /**
+     * Test inside/contains selectors (spatial test)
+     */
     @Test
     public void testContains() throws Exception {
         ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get("data_nodist/amenity-in-amenity.osm")), null);
         ChildOrParentSelector css = parse("node[tag(\"amenity\") = parent_tag(\"amenity\")] ∈ *[amenity] {}");
+        assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.NODE))));
         assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.WAY))));
+        assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.RELATION))));
+        css = parse("node[tag(\"amenity\") = parent_tag(\"amenity\")] ⊆  *[amenity] {}");
+        assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.NODE))));
+        assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.WAY))));
+        assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.RELATION))));
+        css = parse("node[tag(\"amenity\") = parent_tag(\"amenity\")] ⊈  *[amenity] {}");
+        assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.NODE))));
+        assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.WAY))));
+        assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.RELATION))));
+        css = parse("*[tag(\"amenity\") = parent_tag(\"amenity\")] ⊇  *[amenity] {}");
+        assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.NODE))));
+        assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.WAY))));
+        assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.RELATION))));
+        css = parse("*[tag(\"amenity\") = parent_tag(\"amenity\")] ⊉  *[amenity] {}");
+        assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.NODE))));
+        assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.WAY))));
         assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.RELATION))));
     }
 }

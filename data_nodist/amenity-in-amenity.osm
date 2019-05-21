@@ -4,13 +4,13 @@
   <node id='-3877' action='modify' visible='true' lat='-22.69078106744' lon='-48.56082153115' />
   <node id='-3875' action='modify' visible='true' lat='-22.6907376271' lon='-48.56085907164' />
   <node id='-3871' action='modify' visible='true' lat='-22.69070289438' lon='-48.56081834975' />
-  <node id='-3864' visible='true' lat='-22.69073023197' lon='-48.56082133585'>
-    <tag k='amenity' v='hospital' />
-  </node>
   <node id='-3863' visible='true' lat='-22.69071631095' lon='-48.56081028236' />
   <node id='-3862' visible='true' lat='-22.69074204865' lon='-48.56081115962' />
   <node id='-3861' visible='true' lat='-22.69071809155' lon='-48.56082765213' />
   <node id='-3860' visible='true' lat='-22.69074528609' lon='-48.56083782836' />
+  <node id='123' version='3' lat='-22.69073023197' lon='-48.56082133585'>
+    <tag k='amenity' v='hospital' />
+  </node>
   <way id='-3880' action='modify' visible='true'>
     <nd ref='-3877' />
     <nd ref='-3879' />
