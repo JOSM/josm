@@ -69,8 +69,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource.MapCSSRuleIndex;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelectorType;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
@@ -99,6 +97,10 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MapCSSTagChecker extends Test.TagTest {
     IndexData indexData;
+    final Set<OsmPrimitive> tested = new HashSet<>();
+
+    private static final boolean ALL_TESTS = true;
+    private static final boolean ONLY_SELECTED_TESTS = false;
 
     /**
      * Helper class to store indexes of rules.
@@ -129,11 +131,11 @@ public class MapCSSTagChecker extends Test.TagTest {
          */
         final MapCSSRuleIndex multipolygonRules = new MapCSSRuleIndex();
 
-        private IndexData(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity) {
-            buildIndex(checks, includeOtherSeverity);
+        private IndexData(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
+            buildIndex(checks, includeOtherSeverity, allTests);
         }
 
-        private void buildIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity) {
+        private void buildIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
             List<TagCheck> allChecks = new ArrayList<>();
             for (Set<TagCheck> cs : checks.values()) {
                 allChecks.addAll(cs);
@@ -156,10 +158,16 @@ public class MapCSSTagChecker extends Test.TagTest {
 
                 for (Selector s : c.rule.selectors) {
                     // find the rightmost selector, this must be a GeneralSelector
+                    boolean hasLeftRightSel = false;
                     Selector selRightmost = s;
                     while (selRightmost instanceof Selector.ChildOrParentSelector) {
+                        hasLeftRightSel = true;
                         selRightmost = ((Selector.ChildOrParentSelector) selRightmost).right;
                     }
+                    if (!allTests && !hasLeftRightSel) {
+                        continue;
+                    }
+
                     MapCSSRule optRule = new MapCSSRule(s.optimizedBaseCheck(), c.rule.declaration);
 
                     ruleToCheckMap.put(optRule, c);
@@ -852,7 +860,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
         final List<TestError> res = new ArrayList<>();
         if (indexData == null)
-            indexData = new IndexData(checks, includeOtherSeverity);
+            indexData = new IndexData(checks, includeOtherSeverity, ALL_TESTS);
 
         MapCSSRuleIndex matchingRuleIndex = indexData.get(p);
 
@@ -864,27 +872,6 @@ public class MapCSSTagChecker extends Test.TagTest {
         while (candidates.hasNext()) {
             MapCSSRule r = candidates.next();
             env.clearSelectorMatchingInformation();
-            if (partialSelection && r.selector instanceof Selector.ChildOrParentSelector) {
-                ChildOrParentSelector sel = (Selector.ChildOrParentSelector) r.selector;
-                boolean needEnclosing = sel.type == ChildOrParentSelectorType.SUBSET_OR_EQUAL
-                        || sel.type == ChildOrParentSelectorType.NOT_SUBSET_OR_EQUAL;
-                if (needEnclosing && p.getDataSet() != null) {
-                    List<OsmPrimitive> toCheck = new ArrayList<>();
-                    toCheck.addAll(p.getDataSet().searchWays(p.getBBox()));
-                    toCheck.addAll(p.getDataSet().searchRelations(p.getBBox()));
-                    toCheck.removeIf(OsmPrimitive::isSelected);
-                    if (!toCheck.isEmpty()) {
-                        Set<Set<TagCheck>> checksCol = Collections.singleton(Collections.singleton(indexData.getCheck(r)));
-                        for (OsmPrimitive p2 : toCheck) {
-                            for (TestError e : getErrorsForPrimitive(p2, includeOtherSeverity, checksCol)) {
-                                if (e.getPrimitives().contains(p)) {
-                                    addIfNotSimilar(e, res);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 TagCheck check = indexData.getCheck(r);
                 if (check != null) {
@@ -962,6 +949,9 @@ public class MapCSSTagChecker extends Test.TagTest {
     public void check(OsmPrimitive p) {
         for (TestError e : getErrorsForPrimitive(p, ValidatorPrefHelper.PREF_OTHER.get())) {
             addIfNotSimilar(e, errors);
+        }
+        if (partialSelection && p.isTagged()) {
+            tested.add(p);
         }
     }
 
@@ -1145,19 +1135,51 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     @Override
-    public void startTest(ProgressMonitor progressMonitor) {
+    public synchronized void startTest(ProgressMonitor progressMonitor) {
         super.startTest(progressMonitor);
         super.setShowElements(true);
         if (indexData == null) {
-            indexData = new IndexData(checks, ValidatorPrefHelper.PREF_OTHER.get());
+            indexData = new IndexData(checks, includeOtherSeverityChecks(), ALL_TESTS);
         }
+        tested.clear();
     }
 
     @Override
-    public void endTest() {
+    public synchronized void endTest() {
+        if (partialSelection && !tested.isEmpty()) {
+            // #14287: see https://josm.openstreetmap.de/ticket/14287#comment:15
+            // execute tests for objects which might contain or cross previously tested elements
+
+            // rebuild index with a reduced set of rules (those that use ChildOrParentSelector) and thus may have left selectors
+            // matching the previously tested elements
+            indexData = new IndexData(checks, includeOtherSeverityChecks(), ONLY_SELECTED_TESTS);
+
+            Set<OsmPrimitive> surrounding = new HashSet<>();
+            for (OsmPrimitive p : tested) {
+                if (p.getDataSet() != null) {
+                    surrounding.addAll(p.getDataSet().searchWays(p.getBBox()));
+                    surrounding.addAll(p.getDataSet().searchRelations(p.getBBox()));
+                }
+            }
+            final boolean includeOtherSeverity = includeOtherSeverityChecks();
+            for (OsmPrimitive p : surrounding) {
+                if (tested.contains(p) )
+                    continue;
+                Collection<TestError> additionalErrors = getErrorsForPrimitive(p, includeOtherSeverity);
+                for (TestError e : additionalErrors) {
+                    if (e.getPrimitives().stream().anyMatch(tested::contains))
+                        addIfNotSimilar(e, errors);
+                }
+            }
+            tested.clear();
+        }
         super.endTest();
         // no need to keep the index, it is quickly build and doubles the memory needs
         indexData = null;
+    }
+
+    private boolean includeOtherSeverityChecks() {
+        return isBeforeUpload ? ValidatorPrefHelper.PREF_OTHER_UPLOAD.get() : ValidatorPrefHelper.PREF_OTHER.get();
     }
 
 }
