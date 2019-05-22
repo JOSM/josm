@@ -161,7 +161,7 @@ node[source:geometry] {
 
 /* Building inside building (spatial test) */
 *[building][building!~/no|entrance/][any(tag("layer"),"0") = any(parent_tag("layer"),"0")] ∈
-*[building][building!~/no|entrance/] {
+area[building][building!~/no|entrance/] {
   throwWarning: tr("Building inside building");
 }
 
@@ -181,7 +181,7 @@ area:closed:areaStyle ⧉ area:closed:areaStyle {
 }
 
 /* see ticket #9311 */
-node[amenity=parking]["capacity:disabled" !~ /^(yes|[0-9]+)$/] ∈ *[amenity=parking] {
+node[amenity=parking]["capacity:disabled" !~ /^(yes|[0-9]+)$/] ∈ area[amenity=parking] {
   throwWarning: tr("{0} inside {1}", "amenity=parking", "amenity=parking");
   group: tr("{0} inside {1}", "amenity", "amenity");
 }
@@ -196,23 +196,23 @@ area:closed:areaStyle[landuse!=residential][tag("landuse") = parent_tag("landuse
 }
 
 /* see ticket:#9522 */
-node[tag("amenity") = parent_tag("amenity")] ∈ *[amenity][amenity != parking] {
+node[tag("amenity") = parent_tag("amenity")] ∈ area[amenity][amenity != parking] {
   throwWarning: tr("{0} inside {1}", concat("amenity=", tag("amenity")), concat("amenity=", tag("amenity")));
   group: tr("{0} inside {1}", "amenity", "amenity");
 }
-node[tag("leisure") = parent_tag("leisure")] ∈ *[leisure] {
+node[tag("leisure") = parent_tag("leisure")] ∈ area[leisure] {
   throwWarning: tr("{0} inside {1}", concat("leisure=", tag("leisure")), concat("leisure=", tag("leisure")));
   group: tr("{0} inside {1}", "leisure", "leisure");
 }
-node[tag("tourism") = parent_tag("tourism")] ∈ *[tourism] {
+node[tag("tourism") = parent_tag("tourism")] ∈ area[tourism] {
   throwWarning: tr("{0} inside {1}", concat("tourism=", tag("tourism")), concat("tourism=", tag("tourism")));
   group: tr("{0} inside {1}", "tourism", "tourism");
 }
-node[tag("shop") = parent_tag("shop")] ∈ *[shop] {
+node[tag("shop") = parent_tag("shop")] ∈ area[shop] {
   throwWarning: tr("{0} inside {1}", concat("shop=", tag("shop")), concat("shop=", tag("shop")));
   group: tr("{0} inside {1}", "shop", "shop");
 }
-node[tag("power") = parent_tag("power")] ∈ *[power] {
+node[tag("power") = parent_tag("power")] ∈ area[power] {
   throwWarning: tr("{0} inside {1}", concat("power=", tag("power")), concat("power=", tag("power")));
   group: tr("{0} inside {1}", "power", "power");
 }
