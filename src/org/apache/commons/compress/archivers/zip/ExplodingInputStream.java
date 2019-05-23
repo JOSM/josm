@@ -177,7 +177,7 @@ class ExplodingInputStream extends InputStream implements InputStreamStatistics 
 
             buffer.put(literal);
 
-        } else if (bit == 0) {
+        } else {
             // back reference
             final int distanceLowSize = dictionarySize == 4096 ? 6 : 7;
             final int distanceLow = (int) bits.nextBits(distanceLowSize);
