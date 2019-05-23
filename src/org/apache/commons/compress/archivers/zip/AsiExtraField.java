@@ -274,7 +274,7 @@ public class AsiExtraField implements ZipExtraField, UnixStat, Cloneable {
         crc.update(tmp);
         final long realChecksum = crc.getValue();
         if (givenChecksum != realChecksum) {
-            throw new ZipException("bad CRC checksum "
+            throw new ZipException("Bad CRC checksum "
                                    + Long.toHexString(givenChecksum)
                                    + " instead of "
                                    + Long.toHexString(realChecksum));

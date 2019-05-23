@@ -101,7 +101,7 @@ public final class ByteUtils {
         for (int i = 0; i < length; i++) {
             long b = in.read();
             if (b == -1) {
-                throw new IOException("premature end of data");
+                throw new IOException("Premature end of data");
             }
             l |= (b << (i * 8));
         }
@@ -127,7 +127,7 @@ public final class ByteUtils {
         for (int i = 0; i < length; i++) {
             long b = supplier.getAsByte();
             if (b == -1) {
-                throw new IOException("premature end of data");
+                throw new IOException("Premature end of data");
             }
             l |= (b << (i * 8));
         }
@@ -255,7 +255,7 @@ public final class ByteUtils {
 
     private static final void checkReadLength(int length) {
         if (length > 8) {
-            throw new IllegalArgumentException("can't read more than eight bytes into a long value");
+            throw new IllegalArgumentException("Can't read more than eight bytes into a long value");
         }
     }
 }

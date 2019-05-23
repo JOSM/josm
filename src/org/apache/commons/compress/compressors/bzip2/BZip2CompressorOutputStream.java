@@ -396,7 +396,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         if (!closed) {
             write0(b);
         } else {
-            throw new IOException("closed");
+            throw new IOException("Closed");
         }
     }
 
@@ -633,7 +633,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
                                                 + buf.length + ").");
         }
         if (closed) {
-            throw new IOException("stream closed");
+            throw new IOException("Stream closed");
         }
 
         for (final int hi = offs + len; offs < hi;) {

@@ -72,7 +72,7 @@ abstract class CoderBase {
      * @return a stream that writes to out using the given configuration.
      */
     OutputStream encode(final OutputStream out, final Object options) throws IOException {
-        throw new UnsupportedOperationException("method doesn't support writing");
+        throw new UnsupportedOperationException("Method doesn't support writing");
     }
 
     /**

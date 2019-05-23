@@ -38,10 +38,10 @@ public class Zip64RequiredException extends ZipException {
     }
 
     static final String ARCHIVE_TOO_BIG_MESSAGE =
-        "archive's size exceeds the limit of 4GByte.";
+        "Archive's size exceeds the limit of 4GByte.";
 
     static final String TOO_MANY_ENTRIES_MESSAGE =
-        "archive contains more than 65535 entries.";
+        "Archive contains more than 65535 entries.";
 
     public Zip64RequiredException(final String reason) {
         super(reason);

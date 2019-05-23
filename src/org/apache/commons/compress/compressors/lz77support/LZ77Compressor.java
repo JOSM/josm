@@ -334,7 +334,7 @@ public class LZ77Compressor {
      */
     public void prefill(byte[] data) {
         if (currentPosition != 0 || lookahead != 0) {
-            throw new IllegalStateException("the compressor has already started to accept data, can't prefill anymore");
+            throw new IllegalStateException("The compressor has already started to accept data, can't prefill anymore");
         }
 
         // don't need more than windowSize for back-references

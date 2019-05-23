@@ -765,7 +765,7 @@ public class CpioArchiveEntry implements CpioConstants, ArchiveEntry {
      */
     public void setSize(final long size) {
         if (size < 0 || size > 0xFFFFFFFFL) {
-            throw new IllegalArgumentException("invalid entry size <" + size
+            throw new IllegalArgumentException("Invalid entry size <" + size
                                                + ">");
         }
         this.filesize = size;

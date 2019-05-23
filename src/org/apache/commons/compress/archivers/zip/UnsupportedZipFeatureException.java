@@ -38,7 +38,7 @@ public class UnsupportedZipFeatureException extends ZipException {
      */
     public UnsupportedZipFeatureException(final Feature reason,
                                           final ZipArchiveEntry entry) {
-        super("unsupported feature " + reason +  " used in entry "
+        super("Unsupported feature " + reason +  " used in entry "
               + entry.getName());
         this.reason = reason;
         this.entry = entry;
@@ -53,7 +53,7 @@ public class UnsupportedZipFeatureException extends ZipException {
      */
     public UnsupportedZipFeatureException(final ZipMethod method,
                                           final ZipArchiveEntry entry) {
-        super("unsupported compression method " + entry.getMethod()
+        super("Unsupported compression method " + entry.getMethod()
               + " (" + method.name() + ") used in entry " + entry.getName());
         this.reason = Feature.METHOD;
         this.entry = entry;
@@ -67,7 +67,7 @@ public class UnsupportedZipFeatureException extends ZipException {
      * @since 1.5
      */
     public UnsupportedZipFeatureException(final Feature reason) {
-        super("unsupported feature " + reason +  " used in archive.");
+        super("Unsupported feature " + reason +  " used in archive.");
         this.reason = reason;
         this.entry = null;
     }

@@ -89,7 +89,7 @@ public class CLI {
                         final int toRead = (int) Math.min(total - off, buf.length);
                         final int bytesRead = archive.read(buf, 0, toRead);
                         if (bytesRead < 1) {
-                            throw new IOException("reached end of entry "
+                            throw new IOException("Reached end of entry "
                                                   + entry.getName()
                                                   + " after " + off
                                                   + " bytes, expected "

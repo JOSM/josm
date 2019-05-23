@@ -235,7 +235,7 @@ public class FixedLengthBlockOutputStream extends OutputStream implements Writab
                 throw new ClosedChannelException();
             }
             if (!buffer.hasArray()) {
-                throw new IllegalArgumentException("direct buffer somehow written to BufferAtATimeOutputChannel");
+                throw new IllegalArgumentException("Direct buffer somehow written to BufferAtATimeOutputChannel");
             }
 
             try {

@@ -725,7 +725,7 @@ public class ZipArchiveEntry extends java.util.zip.ZipEntry
     @Override
     public void setSize(final long size) {
         if (size < 0) {
-            throw new IllegalArgumentException("invalid entry size");
+            throw new IllegalArgumentException("Invalid entry size");
         }
         this.size = size;
     }

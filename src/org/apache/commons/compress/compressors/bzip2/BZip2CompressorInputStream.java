@@ -143,7 +143,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream
             count(r < 0 ? -1 : 1);
             return r;
         }
-        throw new IOException("stream closed");
+        throw new IOException("Stream closed");
     }
 
     /*
@@ -165,7 +165,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream
                                                 + len + ") > dest.length(" + dest.length + ").");
         }
         if (this.bin == null) {
-            throw new IOException("stream closed");
+            throw new IOException("Stream closed");
         }
         if (len == 0) {
             return 0;
@@ -315,7 +315,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream
             magic5 != 0x59 // 'Y'
             ) {
             this.currentState = EOF;
-            throw new IOException("bad block header");
+            throw new IOException("Bad block header");
         }
         this.storedBlockCRC = bsGetInt(bin);
         this.blockRandomised = bsR(bin, 1) == 1;
@@ -390,7 +390,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream
     private static int bsR(BitInputStream bin, final int n) throws IOException {
         long thech = bin.readBits(n);
         if (thech < 0) {
-            throw new IOException("unexpected end of stream");
+            throw new IOException("Unexpected end of stream");
         }
         return (int) thech;
     }
@@ -661,12 +661,12 @@ public class BZip2CompressorInputStream extends CompressorInputStream
                 Arrays.fill(ll8, from, lastShadow + 1, ch);
 
                 if (lastShadow >= limitLast) {
-                    throw new IOException("block overrun while expanding RLE in MTF, "
+                    throw new IOException("Block overrun while expanding RLE in MTF, "
                         + lastShadow + " exceeds " + limitLast);
                 }
             } else {
                 if (++lastShadow >= limitLast) {
-                    throw new IOException("block overrun in MTF, "
+                    throw new IOException("Block overrun in MTF, "
                         + lastShadow + " exceeds " + limitLast);
                 }
                 checkBounds(nextSym, 256 + 1, "nextSym");
@@ -762,7 +762,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream
         }
 
         if ((this.origPtr < 0) || (this.origPtr >= tt.length)) {
-            throw new IOException("stream corrupted");
+            throw new IOException("Stream corrupted");
         }
 
         this.su_tPos = tt[this.origPtr];

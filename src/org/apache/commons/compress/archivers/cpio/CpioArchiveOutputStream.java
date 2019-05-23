@@ -238,7 +238,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         }
 
         if (this.names.put(e.getName(), e) != null) {
-            throw new IOException("duplicate entry: " + e.getName());
+            throw new IOException("Duplicate entry: " + e.getName());
         }
 
         writeHeader(e);
@@ -269,7 +269,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
             writeOldBinaryEntry(e, swapHalfWord);
             break;
         default:
-            throw new IOException("unknown format " + e.getFormat());
+            throw new IOException("Unknown format " + e.getFormat());
         }
     }
 
@@ -389,7 +389,7 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         }
 
         if (this.entry.getSize() != this.written) {
-            throw new IOException("invalid entry size (expected "
+            throw new IOException("Invalid entry size (expected "
                     + this.entry.getSize() + " but got " + this.written
                     + " bytes)");
         }
@@ -428,10 +428,10 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
         }
 
         if (this.entry == null) {
-            throw new IOException("no current CPIO entry");
+            throw new IOException("No current CPIO entry");
         }
         if (this.written + len > this.entry.getSize()) {
-            throw new IOException("attempt to write past end of STORED entry");
+            throw new IOException("Attempt to write past end of STORED entry");
         }
         out.write(b, off, len);
         this.written += len;

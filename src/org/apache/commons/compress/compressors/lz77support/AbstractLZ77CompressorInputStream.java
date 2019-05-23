@@ -179,7 +179,7 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
      */
     public void prefill(byte[] data) {
         if (writeIndex != 0) {
-            throw new IllegalStateException("the stream has already been read from, can't prefill anymore");
+            throw new IllegalStateException("The stream has already been read from, can't prefill anymore");
         }
         // we don't need more data than the big offset could refer to, so cap it
         int len = Math.min(windowSize, data.length);

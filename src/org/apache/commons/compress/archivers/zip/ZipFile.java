@@ -698,7 +698,7 @@ public class ZipFile implements Closeable {
         long sig = ZipLong.getValue(wordBuf);
 
         if (sig != CFH_SIG && startsWithLocalFileHeader()) {
-            throw new IOException("central directory is empty, can't expand"
+            throw new IOException("Central directory is empty, can't expand"
                                   + " corrupt archive.");
         }
 
@@ -996,7 +996,7 @@ public class ZipFile implements Closeable {
         wordBbuf.rewind();
         IOUtils.readFully(archive, wordBbuf);
         if (!Arrays.equals(wordBuf, ZipArchiveOutputStream.ZIP64_EOCD_SIG)) {
-            throw new ZipException("archive's ZIP64 end of central "
+            throw new ZipException("Archive's ZIP64 end of central "
                                    + "directory locator is corrupt.");
         }
         skipBytes(ZIP64_EOCD_CFD_LOCATOR_OFFSET
@@ -1030,7 +1030,7 @@ public class ZipFile implements Closeable {
         final boolean found = tryToLocateSignature(MIN_EOCD_SIZE, MAX_EOCD_SIZE,
                                              ZipArchiveOutputStream.EOCD_SIG);
         if (!found) {
-            throw new ZipException("archive is not a ZIP archive");
+            throw new ZipException("Archive is not a ZIP archive");
         }
     }
 

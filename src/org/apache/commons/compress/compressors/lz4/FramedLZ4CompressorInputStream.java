@@ -242,7 +242,7 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream
         int expectedHash = (int) ((contentHash.getValue() >> 8) & 0xff);
         contentHash.reset();
         if (headerHash != expectedHash) {
-            throw new IOException("frame header checksum mismatch.");
+            throw new IOException("Frame header checksum mismatch");
         }
     }
 

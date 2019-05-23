@@ -232,7 +232,7 @@ public class Zip64ExtendedInformationExtraField implements ZipExtraField {
                 + (hasRelativeHeaderOffset ? DWORD : 0)
                 + (hasDiskStart ? WORD : 0);
             if (rawCentralDirectoryData.length < expectedLength) {
-                throw new ZipException("central directory zip64 extended"
+                throw new ZipException("Central directory zip64 extended"
                                        + " information extra field's length"
                                        + " doesn't match central directory"
                                        + " data.  Expected length "

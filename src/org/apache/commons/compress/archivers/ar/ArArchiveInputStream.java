@@ -104,11 +104,11 @@ public class ArArchiveInputStream extends ArchiveInputStream {
             final int read = IOUtils.readFully(input, realized);
             trackReadBytes(read);
             if (read != expected.length) {
-                throw new IOException("failed to read header. Occured at byte: " + getBytesRead());
+                throw new IOException("Failed to read header. Occured at byte: " + getBytesRead());
             }
             for (int i = 0; i < expected.length; i++) {
                 if (expected[i] != realized[i]) {
-                    throw new IOException("invalid header " + ArchiveUtils.toAsciiString(realized));
+                    throw new IOException("Invalid header " + ArchiveUtils.toAsciiString(realized));
                 }
             }
         }
@@ -128,7 +128,7 @@ public class ArArchiveInputStream extends ArchiveInputStream {
                 return null;
             }
             if (read < metaData.length) {
-                throw new IOException("truncated ar archive");
+                throw new IOException("Truncated ar archive");
             }
         }
 
@@ -138,11 +138,11 @@ public class ArArchiveInputStream extends ArchiveInputStream {
             final int read = IOUtils.readFully(input, realized);
             trackReadBytes(read);
             if (read != expected.length) {
-                throw new IOException("failed to read entry trailer. Occured at byte: " + getBytesRead());
+                throw new IOException("Failed to read entry trailer. Occured at byte: " + getBytesRead());
             }
             for (int i = 0; i < expected.length; i++) {
                 if (expected[i] != realized[i]) {
-                    throw new IOException("invalid entry trailer. not read the content? Occured at byte: " + getBytesRead());
+                    throw new IOException("Invalid entry trailer. not read the content? Occured at byte: " + getBytesRead());
                 }
             }
         }

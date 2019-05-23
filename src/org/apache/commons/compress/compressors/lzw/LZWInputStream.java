@@ -169,7 +169,7 @@ public abstract class LZWInputStream extends CompressorInputStream implements In
      */
     protected int readNextCode() throws IOException {
         if (codeSize > 31) {
-            throw new IllegalArgumentException("code size must not be bigger than 31");
+            throw new IllegalArgumentException("Code size must not be bigger than 31");
         }
         return (int) in.readBits(codeSize);
     }

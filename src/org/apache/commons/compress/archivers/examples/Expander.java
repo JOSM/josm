@@ -142,7 +142,7 @@ public class Expander {
             expand(new SevenZFile(archive), targetDirectory);
         } else {
             // never reached as prefersSeekableByteChannel only returns true for ZIP and 7z
-            throw new ArchiveException("don't know how to handle format " + format);
+            throw new ArchiveException("Don't know how to handle format " + format);
         }
     }
 
@@ -244,17 +244,17 @@ public class Expander {
         while (nextEntry != null) {
             File f = new File(targetDirectory, nextEntry.getName());
             if (!f.getCanonicalPath().startsWith(targetDirPath)) {
-                throw new IOException("expanding " + nextEntry.getName()
+                throw new IOException("Expanding " + nextEntry.getName()
                     + " would create file outside of " + targetDirectory);
             }
             if (nextEntry.isDirectory()) {
                 if (!f.isDirectory() && !f.mkdirs()) {
-                    throw new IOException("failed to create directory " + f);
+                    throw new IOException("Failed to create directory " + f);
                 }
             } else {
                 File parent = f.getParentFile();
                 if (!parent.isDirectory() && !parent.mkdirs()) {
-                    throw new IOException("failed to create directory " + parent);
+                    throw new IOException("Failed to create directory " + parent);
                 }
                 try (OutputStream o = Files.newOutputStream(f.toPath())) {
                     writer.writeEntryDataTo(nextEntry, o);

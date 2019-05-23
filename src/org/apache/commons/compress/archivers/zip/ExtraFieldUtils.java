@@ -145,7 +145,7 @@ public class ExtraFieldUtils {
             if (start + WORD + length > data.length) {
                 switch(onUnparseableData.getKey()) {
                 case UnparseableExtraField.THROW_KEY:
-                    throw new ZipException("bad extra field starting at "
+                    throw new ZipException("Bad extra field starting at "
                                            + start + ".  Block length of "
                                            + length + " bytes exceeds remaining"
                                            + " data of "
@@ -169,7 +169,7 @@ public class ExtraFieldUtils {
                     // available data
                     break LOOP;
                 default:
-                    throw new ZipException("unknown UnparseableExtraField key: "
+                    throw new ZipException("Unknown UnparseableExtraField key: "
                                            + onUnparseableData.getKey());
                 }
             }

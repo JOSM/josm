@@ -478,7 +478,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
     @Override
     public long skip(final long n) throws IOException {
         if (n < 0) {
-            throw new IllegalArgumentException("negative skip length");
+            throw new IllegalArgumentException("Negative skip length");
         }
         ensureOpen();
         final int max = (int) Math.min(n, Integer.MAX_VALUE);

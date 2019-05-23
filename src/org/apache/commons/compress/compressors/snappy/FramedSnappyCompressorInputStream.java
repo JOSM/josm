@@ -240,7 +240,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream
             skipBlock();
             readNextBlock();
         } else if (type >= MIN_UNSKIPPABLE_TYPE && type <= MAX_UNSKIPPABLE_TYPE) {
-            throw new IOException("unskippable chunk with type " + type
+            throw new IOException("Unskippable chunk with type " + type
                                   + " (hex " + Integer.toHexString(type) + ")"
                                   + " detected.");
         } else if (type == UNCOMPRESSED_CHUNK_TYPE) {
@@ -261,7 +261,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream
             count(currentCompressedChunk.getBytesRead());
         } else {
             // impossible as all potential byte values have been covered
-            throw new IOException("unknown chunk type " + type
+            throw new IOException("Unknown chunk type " + type
                                   + " detected.");
         }
     }
@@ -271,7 +271,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream
         final int read = IOUtils.readFully(in, b);
         count(read);
         if (read != 4) {
-            throw new IOException("premature end of stream");
+            throw new IOException("Premature end of stream");
         }
         return ByteUtils.fromLittleEndian(b);
     }
@@ -293,7 +293,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream
         final long read = IOUtils.skip(in, size);
         count(read);
         if (read != size) {
-            throw new IOException("premature end of stream");
+            throw new IOException("Premature end of stream");
         }
     }
 

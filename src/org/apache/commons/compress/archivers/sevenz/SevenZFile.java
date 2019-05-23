@@ -504,7 +504,7 @@ public class SevenZFile implements Closeable {
 
         final int nextHeaderSizeInt = (int) startHeader.nextHeaderSize;
         if (nextHeaderSizeInt != startHeader.nextHeaderSize) {
-            throw new IOException("cannot handle nextHeaderSize " + startHeader.nextHeaderSize);
+            throw new IOException("Cannot handle nextHeaderSize " + startHeader.nextHeaderSize);
         }
         channel.position(SIGNATURE_HEADER_SIZE + startHeader.nextHeaderOffset);
         buf = ByteBuffer.allocate(nextHeaderSizeInt).order(ByteOrder.LITTLE_ENDIAN);

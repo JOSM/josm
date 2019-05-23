@@ -266,7 +266,7 @@ class TapeInputStream extends FilterInputStream {
      */
     private void readBlock(final boolean decompress) throws IOException {
         if (in == null) {
-            throw new IOException("input buffer is closed");
+            throw new IOException("Input buffer is closed");
         }
 
         if (!isCompressed || (currBlkIdx == -1)) {
@@ -309,7 +309,7 @@ class TapeInputStream extends FilterInputStream {
                                 throw new ShortFileException();
                             }
                         } catch (final DataFormatException e) {
-                            throw new DumpArchiveException("bad data", e);
+                            throw new DumpArchiveException("Bad data", e);
                         } finally {
                             inflator.end();
                         }
