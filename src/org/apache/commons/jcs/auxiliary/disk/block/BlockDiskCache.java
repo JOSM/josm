@@ -138,7 +138,7 @@ public class BlockDiskCache<K, V>
                                                getElementSerializer() );
             }
 
-            keyStore = new BlockDiskKeyStore<K>( this.blockDiskCacheAttributes, this );
+            keyStore = new BlockDiskKeyStore<>( this.blockDiskCacheAttributes, this );
 
             boolean alright = verifyDisk();
 
@@ -171,15 +171,7 @@ public class BlockDiskCache<K, V>
         // TODO we might need to stagger this a bit.
         if ( this.blockDiskCacheAttributes.getKeyPersistenceIntervalSeconds() > 0 )
         {
-            future = scheduledExecutor.scheduleAtFixedRate(
-                    new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            keyStore.saveKeys();
-                        }
-                    },
+            future = scheduledExecutor.scheduleAtFixedRate(keyStore::saveKeys,
                     this.blockDiskCacheAttributes.getKeyPersistenceIntervalSeconds(),
                     this.blockDiskCacheAttributes.getKeyPersistenceIntervalSeconds(),
                     TimeUnit.SECONDS);
@@ -242,7 +234,7 @@ public class BlockDiskCache<K, V>
     @Override
     public Set<K> getKeySet() throws IOException
     {
-        HashSet<K> keys = new HashSet<K>();
+        HashSet<K> keys = new HashSet<>();
 
         storageLock.readLock().lock();
 
@@ -272,7 +264,7 @@ public class BlockDiskCache<K, V>
         storageLock.readLock().lock();
         try
         {
-            keyArray = new HashSet<K>(keyStore.keySet());
+            keyArray = new HashSet<>(keyStore.keySet());
         }
         finally
         {
@@ -574,22 +566,7 @@ public class BlockDiskCache<K, V>
     @Override
     public void processDispose()
     {
-        Runnable disR = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    disposeInternal();
-                }
-                catch ( InterruptedException e )
-                {
-                    log.warn( "Interrupted while diposing." );
-                }
-            }
-        };
-        Thread t = new Thread( disR, "BlockDiskCache-DisposalThread" );
+        Thread t = new Thread(this::disposeInternal, "BlockDiskCache-DisposalThread" );
         t.start();
         // wait up to 60 seconds for dispose and then quit if not done.
         try
@@ -604,10 +581,8 @@ public class BlockDiskCache<K, V>
 
     /**
      * Internal method that handles the disposal.
-     * @throws InterruptedException
      */
     protected void disposeInternal()
-        throws InterruptedException
     {
         if ( !isAlive() )
         {
@@ -720,29 +695,29 @@ public class BlockDiskCache<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Block Disk Cache" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
-        elems.add(new StatElement<Boolean>( "Is Alive", Boolean.valueOf(isAlive()) ) );
-        elems.add(new StatElement<Integer>( "Key Map Size", Integer.valueOf(this.keyStore.size()) ) );
+        elems.add(new StatElement<>( "Is Alive", Boolean.valueOf(isAlive()) ) );
+        elems.add(new StatElement<>( "Key Map Size", Integer.valueOf(this.keyStore.size()) ) );
 
         if (this.dataFile != null)
         {
             try
             {
-                elems.add(new StatElement<Long>( "Data File Length", Long.valueOf(this.dataFile.length()) ) );
+                elems.add(new StatElement<>( "Data File Length", Long.valueOf(this.dataFile.length()) ) );
             }
             catch ( IOException e )
             {
                 log.error( e );
             }
 
-            elems.add(new StatElement<Integer>( "Block Size Bytes",
+            elems.add(new StatElement<>( "Block Size Bytes",
                     Integer.valueOf(this.dataFile.getBlockSizeBytes()) ) );
-            elems.add(new StatElement<Integer>( "Number Of Blocks",
+            elems.add(new StatElement<>( "Number Of Blocks",
                     Integer.valueOf(this.dataFile.getNumberOfBlocks()) ) );
-            elems.add(new StatElement<Long>( "Average Put Size Bytes",
+            elems.add(new StatElement<>( "Average Put Size Bytes",
                     Long.valueOf(this.dataFile.getAveragePutSizeBytes()) ) );
-            elems.add(new StatElement<Integer>( "Empty Blocks",
+            elems.add(new StatElement<>( "Empty Blocks",
                     Integer.valueOf(this.dataFile.getEmptyBlocks()) ) );
         }
 

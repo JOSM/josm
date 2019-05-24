@@ -70,16 +70,16 @@ public class RemoteHttpCacheFactory
         // TODO, use the configured value.
         rca.setRemoteType( RemoteType.LOCAL );
 
-        RemoteHttpClientListener<K, V> listener = new RemoteHttpClientListener<K, V>( rca, cacheMgr, elementSerializer );
+        RemoteHttpClientListener<K, V> listener = new RemoteHttpClientListener<>( rca, cacheMgr, elementSerializer );
 
         IRemoteHttpCacheClient<K, V> remoteService = createRemoteHttpCacheClientForAttributes(rca);
 
         IRemoteCacheClient<K, V> remoteCacheClient =
-                new RemoteHttpCache<K, V>( rca, remoteService, listener, monitor );
+                new RemoteHttpCache<>( rca, remoteService, listener, monitor );
         remoteCacheClient.setCacheEventLogger( cacheEventLogger );
         remoteCacheClient.setElementSerializer( elementSerializer );
 
-        RemoteCacheNoWait<K, V> remoteCacheNoWait = new RemoteCacheNoWait<K, V>( remoteCacheClient );
+        RemoteCacheNoWait<K, V> remoteCacheNoWait = new RemoteCacheNoWait<>( remoteCacheClient );
         remoteCacheNoWait.setCacheEventLogger( cacheEventLogger );
         remoteCacheNoWait.setElementSerializer( elementSerializer );
 
@@ -104,7 +104,7 @@ public class RemoteHttpCacheFactory
             {
                 log.info( "Creating the default client for " + cattr.getCacheName());
             }
-            remoteService = new RemoteHttpCacheClient<K, V>( );
+            remoteService = new RemoteHttpCacheClient<>( );
         }
 
         remoteService.initialize( cattr );

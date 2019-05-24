@@ -63,7 +63,7 @@ public class BlockDisk
     private final AtomicInteger numberOfBlocks = new AtomicInteger(0);
 
     /** Empty blocks that can be reused. */
-    private final ConcurrentLinkedQueue<Integer> emptyBlocks = new ConcurrentLinkedQueue<Integer>();
+    private final ConcurrentLinkedQueue<Integer> emptyBlocks = new ConcurrentLinkedQueue<>();
 
     /** The serializer. */
     private final IElementSerializer elementSerializer;

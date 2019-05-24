@@ -270,7 +270,7 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
     public Map<K, ICacheElement<K, V>> processGetMatching( String pattern )
         throws IOException
     {
-        Map<K, ICacheElement<K, V>> results = new HashMap<K, ICacheElement<K, V>>();
+        Map<K, ICacheElement<K, V>> results = new HashMap<>();
         try
         {
             Map<K, ICacheElement<K, V>> rawResults = getRemoteCacheService().getMatching( cacheName, pattern, getListenerId() );
@@ -529,25 +529,25 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "AbstractRemoteAuxiliaryCache" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
-        elems.add(new StatElement<String>( "Remote Type", this.getRemoteCacheAttributes().getRemoteTypeName() ) );
+        elems.add(new StatElement<>( "Remote Type", this.getRemoteCacheAttributes().getRemoteTypeName() ) );
 
 //      if ( this.getRemoteCacheAttributes().getRemoteType() == RemoteType.CLUSTER )
 //      {
 //          // something cluster specific
 //      }
 
-        elems.add(new StatElement<Boolean>( "UsePoolForGet", Boolean.valueOf(usePoolForGet) ) );
+        elems.add(new StatElement<>( "UsePoolForGet", Boolean.valueOf(usePoolForGet) ) );
 
         if ( pool != null )
         {
-            elems.add(new StatElement<ExecutorService>( "Pool", pool ) );
+            elems.add(new StatElement<>( "Pool", pool ) );
         }
 
         if ( getRemoteCacheService() instanceof ZombieCacheServiceNonLocal )
         {
-            elems.add(new StatElement<Integer>( "Zombie Queue Size",
+            elems.add(new StatElement<>( "Zombie Queue Size",
                     Integer.valueOf(( (ZombieCacheServiceNonLocal<K, V>) getRemoteCacheService() ).getQueueSize()) ) );
         }
 

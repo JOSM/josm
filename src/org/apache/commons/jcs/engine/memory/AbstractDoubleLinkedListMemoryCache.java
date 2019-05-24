@@ -61,7 +61,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
     public void initialize(CompositeCache<K, V> hub)
     {
         super.initialize(hub);
-        list = new DoubleLinkedList<MemoryElementDescriptor<K, V>>();
+        list = new DoubleLinkedList<>();
         log.info("initialized MemoryCache for " + getCacheName());
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
     @Override
     public ConcurrentMap<K, MemoryElementDescriptor<K, V>> createMap()
     {
-        return new ConcurrentHashMap<K, MemoryElementDescriptor<K, V>>();
+        return new ConcurrentHashMap<>();
     }
 
     /**
@@ -341,7 +341,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         lock.lock();
         try
         {
-            MemoryElementDescriptor<K, V> me = new MemoryElementDescriptor<K, V>(ce);
+            MemoryElementDescriptor<K, V> me = new MemoryElementDescriptor<>(ce);
             list.addFirst(me);
             if ( log.isDebugEnabled() )
             {
@@ -368,7 +368,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         lock.lock();
         try
         {
-            MemoryElementDescriptor<K, V> me = new MemoryElementDescriptor<K, V>(ce);
+            MemoryElementDescriptor<K, V> me = new MemoryElementDescriptor<>(ce);
             list.addLast(me);
             if ( log.isDebugEnabled() )
             {
@@ -517,7 +517,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
 
         List<IStatElement<?>> elems = stats.getStatElements();
 
-        elems.add(new StatElement<Integer>("List Size", Integer.valueOf(list.size())));
+        elems.add(new StatElement<>("List Size", Integer.valueOf(list.size())));
 
         return stats;
     }

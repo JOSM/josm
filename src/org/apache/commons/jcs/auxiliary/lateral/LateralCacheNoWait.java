@@ -84,8 +84,8 @@ public class LateralCacheNoWait<K, V>
             log.debug( "Constructing LateralCacheNoWait, LateralCache = [" + cache + "]" );
         }
 
-        CacheEventQueueFactory<K, V> fact = new CacheEventQueueFactory<K, V>();
-        this.eventQueue = fact.createCacheEventQueue( new CacheAdaptor<K, V>( cache ), CacheInfo.listenerId, cache
+        CacheEventQueueFactory<K, V> fact = new CacheEventQueueFactory<>();
+        this.eventQueue = fact.createCacheEventQueue( new CacheAdaptor<>( cache ), CacheInfo.listenerId, cache
             .getCacheName(), cache.getAuxiliaryCacheAttributes().getEventQueuePoolName(), cache
             .getAuxiliaryCacheAttributes().getEventQueueType() );
 
@@ -182,7 +182,7 @@ public class LateralCacheNoWait<K, V>
             return elements;
         }
 
-        return new HashMap<K, ICacheElement<K, V>>();
+        return new HashMap<>();
     }
 
     /**
@@ -360,8 +360,8 @@ public class LateralCacheNoWait<K, V>
         {
             eventQueue.destroy();
         }
-        CacheEventQueueFactory<K, V> fact = new CacheEventQueueFactory<K, V>();
-        this.eventQueue = fact.createCacheEventQueue( new CacheAdaptor<K, V>( cache ), CacheInfo.listenerId, cache
+        CacheEventQueueFactory<K, V> fact = new CacheEventQueueFactory<>();
+        this.eventQueue = fact.createCacheEventQueue( new CacheAdaptor<>( cache ), CacheInfo.listenerId, cache
             .getCacheName(), cache.getAuxiliaryCacheAttributes().getEventQueuePoolName(), cache
             .getAuxiliaryCacheAttributes().getEventQueueType() );
     }
@@ -405,16 +405,16 @@ public class LateralCacheNoWait<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Lateral Cache No Wait" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
         // get the stats from the event queue too
         IStats eqStats = this.eventQueue.getStatistics();
         elems.addAll(eqStats.getStatElements());
 
-        elems.add(new StatElement<Integer>( "Get Count", Integer.valueOf(this.getCount) ) );
-        elems.add(new StatElement<Integer>( "Remove Count", Integer.valueOf(this.removeCount) ) );
-        elems.add(new StatElement<Integer>( "Put Count", Integer.valueOf(this.putCount) ) );
-        elems.add(new StatElement<AuxiliaryCacheAttributes>( "Attributes", cache.getAuxiliaryCacheAttributes() ) );
+        elems.add(new StatElement<>( "Get Count", Integer.valueOf(this.getCount) ) );
+        elems.add(new StatElement<>( "Remove Count", Integer.valueOf(this.removeCount) ) );
+        elems.add(new StatElement<>( "Put Count", Integer.valueOf(this.putCount) ) );
+        elems.add(new StatElement<>( "Attributes", cache.getAuxiliaryCacheAttributes() ) );
 
         stats.setStatElements( elems );
 

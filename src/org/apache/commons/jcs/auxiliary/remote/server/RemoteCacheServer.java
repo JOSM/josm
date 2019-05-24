@@ -86,20 +86,20 @@ public class RemoteCacheServer<K, V>
 
     /** Maps cache name to CacheListeners object. association of listeners (regions). */
     private final transient ConcurrentMap<String, CacheListeners<K, V>> cacheListenersMap =
-        new ConcurrentHashMap<String, CacheListeners<K, V>>();
+        new ConcurrentHashMap<>();
 
     /** maps cluster listeners to regions. */
     private final transient ConcurrentMap<String, CacheListeners<K, V>> clusterListenersMap =
-        new ConcurrentHashMap<String, CacheListeners<K, V>>();
+        new ConcurrentHashMap<>();
 
     /** The central hub */
     private transient CompositeCacheManager cacheManager;
 
     /** relates listener id with a type */
-    private final ConcurrentMap<Long, RemoteType> idTypeMap = new ConcurrentHashMap<Long, RemoteType>();
+    private final ConcurrentMap<Long, RemoteType> idTypeMap = new ConcurrentHashMap<>();
 
     /** relates listener id with an ip address */
-    private final ConcurrentMap<Long, String> idIPMap = new ConcurrentHashMap<Long, String>();
+    private final ConcurrentMap<Long, String> idIPMap = new ConcurrentHashMap<>();
 
     /** Used to get the next listener id. */
     private final int[] listenerId = new int[1];
@@ -171,7 +171,7 @@ public class RemoteCacheServer<K, V>
         {
             String name = list[i];
             CompositeCache<K, V> cache = cacheManager.getCache( name );
-            cacheListenersMap.put( name, new CacheListeners<K, V>( cache ) );
+            cacheListenersMap.put( name, new CacheListeners<>( cache ) );
         }
     }
 
@@ -1152,7 +1152,7 @@ public class RemoteCacheServer<K, V>
     {
         CacheListeners<K, V> cacheListeners = cacheListenersMap.computeIfAbsent(cacheName, key -> {
             CompositeCache<K, V> cache = cacheManager.getCache(key);
-            return new CacheListeners<K, V>( cache );
+            return new CacheListeners<>( cache );
         });
 
         return cacheListeners;
@@ -1169,7 +1169,7 @@ public class RemoteCacheServer<K, V>
     {
         CacheListeners<K, V> cacheListeners = clusterListenersMap.computeIfAbsent(cacheName, key -> {
             CompositeCache<K, V> cache = cacheManager.getCache( cacheName );
-            return new CacheListeners<K, V>( cache );
+            return new CacheListeners<>( cache );
         });
 
         return cacheListeners;
@@ -1342,7 +1342,7 @@ public class RemoteCacheServer<K, V>
                 }
             }
 
-            CacheEventQueueFactory<KK, VV> fact = new CacheEventQueueFactory<KK, VV>();
+            CacheEventQueueFactory<KK, VV> fact = new CacheEventQueueFactory<>();
             ICacheEventQueue<KK, VV> q = fact.createCacheEventQueue( listener, id, cacheName, remoteCacheServerAttributes
                 .getEventQueuePoolName(), remoteCacheServerAttributes.getEventQueueType() );
 
@@ -1594,7 +1594,7 @@ public class RemoteCacheServer<K, V>
     {
         if ( cacheEventLogger == null )
         {
-            return new CacheEvent<ICacheElement<K, V>>();
+            return new CacheEvent<>();
         }
         String ipAddress = getExtraInfoForRequesterId( requesterId );
         return cacheEventLogger
@@ -1614,7 +1614,7 @@ public class RemoteCacheServer<K, V>
     {
         if ( cacheEventLogger == null )
         {
-            return new CacheEvent<T>();
+            return new CacheEvent<>();
         }
         String ipAddress = getExtraInfoForRequesterId( requesterId );
         return cacheEventLogger.createICacheEvent( "RemoteCacheServer", cacheName, eventName, ipAddress, key );

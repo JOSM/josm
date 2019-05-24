@@ -17,7 +17,7 @@ public class CacheListeners<K, V>
 
     /** Map ICacheListener to ICacheEventQueue */
     public final ConcurrentMap<Long, ICacheEventQueue<K, V>> eventQMap =
-        new ConcurrentHashMap<Long, ICacheEventQueue<K, V>>();
+        new ConcurrentHashMap<>();
 
     /**
      * Constructs with the given cache.

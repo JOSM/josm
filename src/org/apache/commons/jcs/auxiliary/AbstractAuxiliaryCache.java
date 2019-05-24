@@ -45,7 +45,7 @@ public abstract class AbstractAuxiliaryCache<K, V>
     private IElementSerializer elementSerializer = new StandardSerializer();
 
     /** Key matcher used by the getMatching API */
-    private IKeyMatcher<K> keyMatcher = new KeyMatcherPatternImpl<K>();
+    private IKeyMatcher<K> keyMatcher = new KeyMatcherPatternImpl<>();
 
     /**
      * Gets multiple items from the cache based on the given set of keys.
@@ -75,7 +75,7 @@ public abstract class AbstractAuxiliaryCache<K, V>
                         element -> element));
         }
 
-        return new HashMap<K, ICacheElement<K, V>>();
+        return new HashMap<>();
     }
 
     /**
@@ -99,7 +99,7 @@ public abstract class AbstractAuxiliaryCache<K, V>
     {
         if ( cacheEventLogger == null )
         {
-            return new CacheEvent<K>();
+            return new CacheEvent<>();
         }
         String diskLocation = getEventLoggingExtraInfo();
         String regionName = null;
@@ -125,7 +125,7 @@ public abstract class AbstractAuxiliaryCache<K, V>
     {
         if ( cacheEventLogger == null )
         {
-            return new CacheEvent<T>();
+            return new CacheEvent<>();
         }
         String diskLocation = getEventLoggingExtraInfo();
         return cacheEventLogger.createICacheEvent( getAuxiliaryCacheAttributes().getName(), regionName, eventName,

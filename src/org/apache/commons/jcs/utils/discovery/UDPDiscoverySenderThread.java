@@ -40,7 +40,7 @@ public class UDPDiscoverySenderThread
     private final UDPDiscoveryAttributes attributes;
 
     /** List of known regions. */
-    private ArrayList<String> cacheNames = new ArrayList<String>();
+    private ArrayList<String> cacheNames = new ArrayList<>();
 
     /**
      * @param cacheNames The cacheNames to set.

@@ -139,11 +139,11 @@ public class RemoteCacheServerFactory
             // CREATE SERVER
             if ( customRMISocketFactory != null )
             {
-                remoteCacheServer = new RemoteCacheServer<Serializable, Serializable>( rcsa, props, customRMISocketFactory );
+                remoteCacheServer = new RemoteCacheServer<>( rcsa, props, customRMISocketFactory );
             }
             else
             {
-                remoteCacheServer = new RemoteCacheServer<Serializable, Serializable>( rcsa, props );
+                remoteCacheServer = new RemoteCacheServer<>( rcsa, props );
             }
 
             remoteCacheServer.setCacheEventLogger( cacheEventLogger );

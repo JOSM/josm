@@ -40,7 +40,7 @@ public class ShrinkerThread
 
     /** A set of JDBCDiskCache objects to call deleteExpired on. */
     private final Set<JDBCDiskCache<?, ?>> shrinkSet =
-        Collections.synchronizedSet( new HashSet<JDBCDiskCache<?, ?>>() );
+        Collections.synchronizedSet( new HashSet<>() );
 
     /** Default time period to use. */
     private static final long DEFAULT_PAUSE_BETWEEN_REGION_CALLS_MILLIS = 5000;

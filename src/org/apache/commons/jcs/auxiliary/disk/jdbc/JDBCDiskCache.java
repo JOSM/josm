@@ -465,7 +465,7 @@ public class JDBCDiskCache<K, V>
             return null;
         }
 
-        Map<K, ICacheElement<K, V>> results = new HashMap<K, ICacheElement<K, V>>();
+        Map<K, ICacheElement<K, V>> results = new HashMap<>();
 
         try
         {
@@ -830,10 +830,10 @@ public class JDBCDiskCache<K, V>
 
         List<IStatElement<?>> elems = stats.getStatElements();
 
-        elems.add(new StatElement<AtomicInteger>( "Update Count", updateCount ) );
-        elems.add(new StatElement<AtomicInteger>( "Get Count", getCount ) );
-        elems.add(new StatElement<AtomicInteger>( "Get Matching Count", getMatchingCount ) );
-        elems.add(new StatElement<String>( "DB URL", getJdbcDiskCacheAttributes().getUrl()) );
+        elems.add(new StatElement<>( "Update Count", updateCount ) );
+        elems.add(new StatElement<>( "Get Count", getCount ) );
+        elems.add(new StatElement<>( "Get Matching Count", getMatchingCount ) );
+        elems.add(new StatElement<>( "DB URL", getJdbcDiskCacheAttributes().getUrl()) );
 
         stats.setStatElements( elems );
 

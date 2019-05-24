@@ -49,7 +49,7 @@ public class RemoteHttpCacheMonitor extends AbstractAuxiliaryCacheMonitor
     {
         super("JCS-RemoteHttpCacheMonitor");
         this.factory = factory;
-        this.remoteHttpCaches = new ConcurrentHashMap<RemoteHttpCache<?, ?>, RemoteHttpCache<?, ?>>();
+        this.remoteHttpCaches = new ConcurrentHashMap<>();
         setIdlePeriod(3000L);
     }
 

@@ -44,7 +44,7 @@ public class RemoteCacheMonitor extends AbstractAuxiliaryCacheMonitor
     public RemoteCacheMonitor()
     {
         super("JCS-RemoteCacheMonitor");
-        this.managers = new ConcurrentHashMap<RemoteCacheManager, RemoteCacheManager>();
+        this.managers = new ConcurrentHashMap<>();
         setIdlePeriod(30000L);
     }
 

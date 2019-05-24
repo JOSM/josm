@@ -121,7 +121,7 @@ public class CompositeCacheConfigurator
      */
     protected void parseRegions( Properties props, CompositeCacheManager ccm )
     {
-        List<String> regionNames = new ArrayList<String>();
+        List<String> regionNames = new ArrayList<>();
 
         for (String key : props.stringPropertyNames() )
         {
@@ -225,7 +225,7 @@ public class CompositeCacheConfigurator
         if (auxiliaries != null)
         {
             // Next, create the auxiliaries for the new cache
-            List<AuxiliaryCache<K, V>> auxList = new ArrayList<AuxiliaryCache<K, V>>();
+            List<AuxiliaryCache<K, V>> auxList = new ArrayList<>();
 
             if ( log.isDebugEnabled() )
             {
@@ -285,7 +285,7 @@ public class CompositeCacheConfigurator
     protected <K, V> CompositeCache<K, V> newCache(
             ICompositeCacheAttributes cca, IElementAttributes ea)
     {
-        return new CompositeCache<K, V>( cca, ea );
+        return new CompositeCache<>( cca, ea );
     }
 
     /**
@@ -565,7 +565,7 @@ public class CompositeCacheConfigurator
         else
         {
             // use the default standard serializer
-            keyMatcher = new KeyMatcherPatternImpl<K>();
+            keyMatcher = new KeyMatcherPatternImpl<>();
             if ( log.isInfoEnabled() )
             {
                 log.info( "Using standard key matcher [" + keyMatcher + "] for auxiliary [" + auxPrefix + "]" );

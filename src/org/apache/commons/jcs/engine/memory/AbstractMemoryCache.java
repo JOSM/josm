@@ -135,7 +135,7 @@ public abstract class AbstractMemoryCache<K, V>
                         element -> element));
         }
 
-        return new HashMap<K, ICacheElement<K, V>>();
+        return new HashMap<>();
     }
 
     /**
@@ -231,13 +231,13 @@ public abstract class AbstractMemoryCache<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Abstract Memory Cache" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
         stats.setStatElements(elems);
 
-        elems.add(new StatElement<AtomicLong>("Put Count", putCnt));
-        elems.add(new StatElement<AtomicLong>("Hit Count", hitCnt));
-        elems.add(new StatElement<AtomicLong>("Miss Count", missCnt));
-        elems.add(new StatElement<Integer>( "Map Size", Integer.valueOf(getSize()) ) );
+        elems.add(new StatElement<>("Put Count", putCnt));
+        elems.add(new StatElement<>("Hit Count", hitCnt));
+        elems.add(new StatElement<>("Miss Count", missCnt));
+        elems.add(new StatElement<>( "Map Size", Integer.valueOf(getSize()) ) );
 
         return stats;
     }
@@ -457,7 +457,7 @@ public abstract class AbstractMemoryCache<K, V>
     @Override
     public Set<K> getKeySet()
     {
-        return new LinkedHashSet<K>(map.keySet());
+        return new LinkedHashSet<>(map.keySet());
     }
 
     /**

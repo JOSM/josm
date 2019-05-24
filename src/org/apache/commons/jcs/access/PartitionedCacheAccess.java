@@ -281,12 +281,12 @@ public class PartitionedCacheAccess<K, V>
             int partition = getPartitionNumberForKey( key );
             if ( dividedNames[partition] == null )
             {
-                dividedNames[partition] = new HashSet<K>();
+                dividedNames[partition] = new HashSet<>();
             }
             dividedNames[partition].add( key );
         }
 
-        Map<K, ICacheElement<K, V>> result = new HashMap<K, ICacheElement<K, V>>();
+        Map<K, ICacheElement<K, V>> result = new HashMap<>();
         for ( int i = 0; i < partitions.length; i++ )
         {
             if ( dividedNames[i] != null && !dividedNames[i].isEmpty() )
@@ -320,7 +320,7 @@ public class PartitionedCacheAccess<K, V>
             return null;
         }
 
-        Map<K, V> result = new HashMap<K, V>();
+        Map<K, V> result = new HashMap<>();
         for (ICacheAccess<K, V> partition : partitions)
         {
             result.putAll( partition.getMatching( pattern ) );
@@ -349,7 +349,7 @@ public class PartitionedCacheAccess<K, V>
             return null;
         }
 
-        Map<K, ICacheElement<K, V>> result = new HashMap<K, ICacheElement<K, V>>();
+        Map<K, ICacheElement<K, V>> result = new HashMap<>();
         for (ICacheAccess<K, V> partition : partitions)
         {
             result.putAll( partition.getMatchingCacheElements( pattern ) );

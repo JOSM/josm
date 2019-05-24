@@ -59,7 +59,7 @@ public class ZombieCacheServiceNonLocal<K, V>
      */
     public ZombieCacheServiceNonLocal()
     {
-        queue = new ConcurrentLinkedQueue<ZombieEvent>();
+        queue = new ConcurrentLinkedQueue<>();
     }
 
     /**
@@ -70,7 +70,7 @@ public class ZombieCacheServiceNonLocal<K, V>
     public ZombieCacheServiceNonLocal( int maxQueueSize )
     {
         this.maxQueueSize = maxQueueSize;
-        queue = new ConcurrentLinkedQueue<ZombieEvent>();
+        queue = new ConcurrentLinkedQueue<>();
     }
 
     /**
@@ -103,7 +103,7 @@ public class ZombieCacheServiceNonLocal<K, V>
     {
         if ( maxQueueSize > 0 )
         {
-            PutEvent<K, V> event = new PutEvent<K, V>( item, listenerId );
+            PutEvent<K, V> event = new PutEvent<>( item, listenerId );
             addQueue( event );
         }
         // Zombies have no inner life
@@ -121,7 +121,7 @@ public class ZombieCacheServiceNonLocal<K, V>
     {
         if ( maxQueueSize > 0 )
         {
-            RemoveEvent<K> event = new RemoveEvent<K>( cacheName, key, listenerId );
+            RemoveEvent<K> event = new RemoveEvent<>( cacheName, key, listenerId );
             addQueue( event );
         }
         // Zombies have no inner life
@@ -186,7 +186,7 @@ public class ZombieCacheServiceNonLocal<K, V>
     @Override
     public Map<K, ICacheElement<K, V>> getMultiple( String cacheName, Set<K> keys, long requesterId )
     {
-        return new HashMap<K, ICacheElement<K, V>>();
+        return new HashMap<>();
     }
 
     /**

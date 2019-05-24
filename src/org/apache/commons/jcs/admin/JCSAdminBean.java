@@ -102,7 +102,7 @@ public class JCSAdminBean implements JCSJMXBean
             keys = cache.getMemoryCache().getKeySet().toArray(new Serializable[0]);
         }
 
-        LinkedList<CacheElementInfo> records = new LinkedList<CacheElementInfo>();
+        LinkedList<CacheElementInfo> records = new LinkedList<>();
 
         ICacheElement<Serializable, Serializable> element;
         IElementAttributes attributes;
@@ -147,7 +147,7 @@ public class JCSAdminBean implements JCSJMXBean
 
         Arrays.sort( cacheNames );
 
-        LinkedList<CacheRegionInfo> cacheInfo = new LinkedList<CacheRegionInfo>();
+        LinkedList<CacheRegionInfo> cacheInfo = new LinkedList<>();
 
         CacheRegionInfo regionInfo;
         CompositeCache<?, ?> cache;

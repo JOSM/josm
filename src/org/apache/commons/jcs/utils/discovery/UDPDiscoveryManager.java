@@ -42,7 +42,7 @@ public class UDPDiscoveryManager
     private static UDPDiscoveryManager INSTANCE = new UDPDiscoveryManager();
 
     /** Known services */
-    private final Map<String, UDPDiscoveryService> services = new HashMap<String, UDPDiscoveryService>();
+    private final Map<String, UDPDiscoveryService> services = new HashMap<>();
 
     /** private for singleton */
     private UDPDiscoveryManager()

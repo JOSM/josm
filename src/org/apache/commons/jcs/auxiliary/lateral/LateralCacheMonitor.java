@@ -69,7 +69,7 @@ public class LateralCacheMonitor extends AbstractAuxiliaryCacheMonitor
     {
         super("JCS-LateralCacheMonitor");
         this.factory = factory;
-        this.caches = new ConcurrentHashMap<String, LateralCacheNoWait<?,?>>();
+        this.caches = new ConcurrentHashMap<>();
         setIdlePeriod(20000L);
     }
 

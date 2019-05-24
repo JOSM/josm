@@ -89,7 +89,7 @@ public class SerializationConversionUtil
                 throw new IOException( "Could not serialize object.  The ElementSerializer is null." );
             }
         }
-        ICacheElementSerialized<K, V> serialized = new CacheElementSerialized<K, V>(
+        ICacheElementSerialized<K, V> serialized = new CacheElementSerialized<>(
                 element.getCacheName(), element.getKey(), serializedValue, element.getElementAttributes() );
 
         return serialized;
@@ -142,7 +142,7 @@ public class SerializationConversionUtil
             // we could just use the default.
             log.warn( "ElementSerializer is null.  Could not serialize object." );
         }
-        ICacheElement<K, V> deSerialized = new CacheElement<K, V>( serialized.getCacheName(), serialized.getKey(), deSerializedValue );
+        ICacheElement<K, V> deSerialized = new CacheElement<>( serialized.getCacheName(), serialized.getKey(), deSerializedValue );
         deSerialized.setElementAttributes( serialized.getElementAttributes() );
 
         return deSerialized;

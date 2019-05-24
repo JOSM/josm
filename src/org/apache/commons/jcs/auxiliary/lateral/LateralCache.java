@@ -319,7 +319,7 @@ public class LateralCache<K, V>
     {
         log.error( "Disabling lateral cache due to error " + msg, ex );
 
-        lateralCacheService = new ZombieCacheServiceNonLocal<K, V>( lateralCacheAttributes.getZombieQueueMaxSize() );
+        lateralCacheService = new ZombieCacheServiceNonLocal<>( lateralCacheAttributes.getZombieQueueMaxSize() );
         // may want to flush if region specifies
         // Notify the cache monitor about the error, and kick off the recovery
         // process.

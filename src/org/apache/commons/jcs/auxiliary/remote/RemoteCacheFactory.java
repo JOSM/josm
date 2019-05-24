@@ -74,13 +74,13 @@ public class RemoteCacheFactory
     {
         RemoteCacheAttributes rca = (RemoteCacheAttributes) iaca;
 
-        ArrayList<RemoteCacheNoWait<K,V>> noWaits = new ArrayList<RemoteCacheNoWait<K,V>>();
+        ArrayList<RemoteCacheNoWait<K,V>> noWaits = new ArrayList<>();
 
         switch (rca.getRemoteType())
         {
             case LOCAL:
                 // a list to be turned into an array of failover server information
-                ArrayList<RemoteLocation> failovers = new ArrayList<RemoteLocation>();
+                ArrayList<RemoteLocation> failovers = new ArrayList<>();
 
                 // not necessary if a failover list is defined
                 // REGISTER PRIMARY LISTENER
@@ -152,7 +152,7 @@ public class RemoteCacheFactory
         }
 
         RemoteCacheNoWaitFacade<K, V> rcnwf =
-            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheEventLogger, elementSerializer, this );
+            new RemoteCacheNoWaitFacade<>(noWaits, rca, cacheEventLogger, elementSerializer, this );
 
         return rcnwf;
     }
@@ -233,7 +233,7 @@ public class RemoteCacheFactory
 	{
 		super.initialize();
 
-		managers = new ConcurrentHashMap<RemoteLocation, RemoteCacheManager>();
+		managers = new ConcurrentHashMap<>();
 		managerLock = new ReentrantLock();
 
         monitor = new RemoteCacheMonitor();

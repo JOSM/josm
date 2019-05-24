@@ -76,7 +76,7 @@ public class GroupCacheAccess<K, V>
     private GroupAttrName<K> getGroupAttrName( String group, K name )
     {
         GroupId gid = new GroupId( this.getCacheControl().getCacheName(), group );
-        return new GroupAttrName<K>( gid, name );
+        return new GroupAttrName<>( gid, name );
     }
 
     /**
@@ -134,7 +134,7 @@ public class GroupCacheAccess<K, V>
         {
             GroupAttrName<K> key = getGroupAttrName( groupName, name );
             CacheElement<GroupAttrName<K>, V> ce =
-                new CacheElement<GroupAttrName<K>, V>( this.getCacheControl().getCacheName(), key, value );
+                new CacheElement<>( this.getCacheControl().getCacheName(), key, value );
 
             IElementAttributes attributes = (attr == null) ? this.getCacheControl().getElementAttributes() : attr;
             ce.setElementAttributes( attributes );

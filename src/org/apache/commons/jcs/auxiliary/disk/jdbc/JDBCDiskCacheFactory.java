@@ -95,7 +95,7 @@ public class JDBCDiskCacheFactory
         TableState tableState = getTableState( cattr.getTableName() );
         DataSourceFactory dsFactory = getDataSourceFactory(cattr, compositeCacheManager.getConfigurationProperties());
 
-        JDBCDiskCache<K, V> cache = new JDBCDiskCache<K, V>( cattr, dsFactory, tableState, compositeCacheManager );
+        JDBCDiskCache<K, V> cache = new JDBCDiskCache<>( cattr, dsFactory, tableState, compositeCacheManager );
         cache.setCacheEventLogger( cacheEventLogger );
         cache.setElementSerializer( elementSerializer );
 
@@ -112,9 +112,9 @@ public class JDBCDiskCacheFactory
     public void initialize()
     {
         super.initialize();
-        this.tableStates = new ConcurrentHashMap<String, TableState>();
-        this.shrinkerThreadMap = new ConcurrentHashMap<String, ShrinkerThread>();
-        this.dsFactories = new ConcurrentHashMap<String, DataSourceFactory>();
+        this.tableStates = new ConcurrentHashMap<>();
+        this.shrinkerThreadMap = new ConcurrentHashMap<>();
+        this.dsFactories = new ConcurrentHashMap<>();
     }
 
     /**

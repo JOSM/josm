@@ -83,7 +83,7 @@ public class CompositeCacheManager
 
     /** Caches managed by this cache manager */
     private final ConcurrentMap<String, ICache<?, ?>> caches =
-        new ConcurrentHashMap<String, ICache<?, ?>>();
+        new ConcurrentHashMap<>();
 
     /** Number of clients accessing this cache manager */
     private final AtomicInteger clients = new AtomicInteger(0);
@@ -96,15 +96,15 @@ public class CompositeCacheManager
 
     /** Used to keep track of configured auxiliaries */
     private final ConcurrentMap<String, AuxiliaryCacheFactory> auxiliaryFactoryRegistry =
-        new ConcurrentHashMap<String, AuxiliaryCacheFactory>( );
+        new ConcurrentHashMap<>( );
 
     /** Used to keep track of attributes for auxiliaries. */
     private final ConcurrentMap<String, AuxiliaryCacheAttributes> auxiliaryAttributeRegistry =
-        new ConcurrentHashMap<String, AuxiliaryCacheAttributes>( );
+        new ConcurrentHashMap<>( );
 
     /** Used to keep track of configured auxiliaries */
     private final ConcurrentMap<String, AuxiliaryCache<?, ?>> auxiliaryCaches =
-        new ConcurrentHashMap<String, AuxiliaryCache<?, ?>>( );
+        new ConcurrentHashMap<>( );
 
     /** Properties with which this manager was configured. This is exposed for other managers. */
     private Properties configurationProperties;
@@ -122,7 +122,7 @@ public class CompositeCacheManager
     private static final boolean DEFAULT_FORCE_RECONFIGURATION = false;
 
     /** Stack for those waiting for notification of a shutdown. */
-    private final LinkedBlockingDeque<IShutdownObserver> shutdownObservers = new LinkedBlockingDeque<IShutdownObserver>();
+    private final LinkedBlockingDeque<IShutdownObserver> shutdownObservers = new LinkedBlockingDeque<>();
 
     /** The central background scheduler. */
     private ScheduledExecutorService scheduledExecutor;
@@ -839,7 +839,7 @@ public class CompositeCacheManager
      */
     public ICacheStats[] getStatistics()
     {
-        ArrayList<ICacheStats> cacheStats = new ArrayList<ICacheStats>();
+        ArrayList<ICacheStats> cacheStats = new ArrayList<>();
         for (ICache<?, ?> c :  caches.values())
         {
             CompositeCache<?, ?> cache = (CompositeCache<?, ?>) c;

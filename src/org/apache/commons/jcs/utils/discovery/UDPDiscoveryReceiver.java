@@ -26,6 +26,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.jcs.engine.CacheInfo;
 import org.apache.commons.jcs.engine.behavior.IShutdownObserver;
@@ -57,19 +58,19 @@ public class UDPDiscoveryReceiver
     private static final int maxPoolSize = 2;
 
     /** The processor */
-    private ExecutorService pooledExecutor = null;
+    private final ExecutorService pooledExecutor;
 
     /** number of messages received. For debugging and testing. */
-    private int cnt = 0;
+    private AtomicInteger cnt = new AtomicInteger(0);
 
     /** Service to get cache names and handle request broadcasts */
-    private UDPDiscoveryService service = null;
+    private final UDPDiscoveryService service;
 
     /** Address */
-    private String multicastAddressString = "";
+    private final String multicastAddressString;
 
     /** The port */
-    private int multicastPort = 0;
+    private final int multicastPort;
 
     /** Is it shutdown. */
     private boolean shutdown = false;
@@ -92,7 +93,7 @@ public class UDPDiscoveryReceiver
         this.multicastPort = multicastPort;
 
         // create a small thread pool to handle a barrage
-        pooledExecutor = ThreadPoolManager.getInstance().createPool(
+        this.pooledExecutor = ThreadPoolManager.getInstance().createPool(
         		new PoolConfiguration(false, 0, maxPoolSize, maxPoolSize, 0, WhenBlockedPolicy.DISCARDOLDEST, maxPoolSize),
         		"JCS-UDPDiscoveryReceiver-", Thread.MIN_PRIORITY);
 
@@ -101,16 +102,7 @@ public class UDPDiscoveryReceiver
             log.info( "Constructing listener, [" + this.multicastAddressString + ":" + this.multicastPort + "]" );
         }
 
-        try
-        {
-            createSocket( this.multicastAddressString, this.multicastPort );
-        }
-        catch ( IOException ioe )
-        {
-            // consider eating this so we can go on, or constructing the socket
-            // later
-            throw ioe;
-        }
+        createSocket( this.multicastAddressString, this.multicastPort );
     }
 
     /**
@@ -165,9 +157,8 @@ public class UDPDiscoveryReceiver
                 log.debug( "Received packet from address [" + packet.getSocketAddress() + "]" );
             }
 
-            final ByteArrayInputStream byteStream = new ByteArrayInputStream( mBuffer, 0, packet.getLength() );
-
-            try (ObjectInputStream objectStream = new ObjectInputStreamClassLoaderAware( byteStream, null ))
+            try (ByteArrayInputStream byteStream = new ByteArrayInputStream(mBuffer, 0, packet.getLength());
+                 ObjectInputStream objectStream = new ObjectInputStreamClassLoaderAware(byteStream, null))
             {
                 obj = objectStream.readObject();
             }
@@ -204,8 +195,7 @@ public class UDPDiscoveryReceiver
             {
                 Object obj = waitForMessage();
 
-                // not thread safe, but just for debugging
-                cnt++;
+                cnt.incrementAndGet();
 
                 if ( log.isDebugEnabled() )
                 {
@@ -261,7 +251,7 @@ public class UDPDiscoveryReceiver
      */
     public void setCnt( int cnt )
     {
-        this.cnt = cnt;
+        this.cnt.set(cnt);
     }
 
     /**
@@ -269,7 +259,7 @@ public class UDPDiscoveryReceiver
      */
     public int getCnt()
     {
-        return cnt;
+        return cnt.get();
     }
 
     /**

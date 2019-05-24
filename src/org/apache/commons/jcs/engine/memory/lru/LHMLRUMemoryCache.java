@@ -74,7 +74,7 @@ public class LHMLRUMemoryCache<K, V>
         throws IOException
     {
         putCnt.incrementAndGet();
-        map.put( ce.getKey(), new MemoryElementDescriptor<K, V>(ce) );
+        map.put( ce.getKey(), new MemoryElementDescriptor<>(ce) );
     }
 
     /**

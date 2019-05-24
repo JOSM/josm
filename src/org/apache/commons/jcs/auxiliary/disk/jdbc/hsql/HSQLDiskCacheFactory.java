@@ -79,7 +79,7 @@ public class HSQLDiskCacheFactory
     public void initialize()
     {
         super.initialize();
-        this.databases = Collections.synchronizedSet( new HashSet<String>() );
+        this.databases = Collections.synchronizedSet( new HashSet<>() );
     }
 
     /**

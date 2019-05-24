@@ -161,7 +161,7 @@ public class BlockDiskKeyStore<K>
                     // collection makes a copy
                     for (Map.Entry<K, int[]> entry : keyHash.entrySet())
                     {
-                        BlockDiskElementDescriptor<K> descriptor = new BlockDiskElementDescriptor<K>();
+                        BlockDiskElementDescriptor<K> descriptor = new BlockDiskElementDescriptor<>();
                         descriptor.setKey(entry.getKey());
                         descriptor.setBlocks(entry.getValue());
                         // stream these out in the loop.
@@ -228,7 +228,7 @@ public class BlockDiskKeyStore<K>
         {
             // If no max size, use a plain map for memory and processing
             // efficiency.
-            keyHash = new HashMap<K, int[]>();
+            keyHash = new HashMap<>();
             // keyHash = Collections.synchronizedMap( new HashMap() );
             if (log.isInfoEnabled())
             {
@@ -253,7 +253,7 @@ public class BlockDiskKeyStore<K>
             // create a key map to use.
             initKeyMap();
 
-            HashMap<K, int[]> keys = new HashMap<K, int[]>();
+            HashMap<K, int[]> keys = new HashMap<>();
 
             synchronized (keyFile)
             {
@@ -377,7 +377,7 @@ public class BlockDiskKeyStore<K>
      */
     private boolean verify()
     {
-        Map<Integer, Set<K>> blockAllocationMap = new TreeMap<Integer, Set<K>>();
+        Map<Integer, Set<K>> blockAllocationMap = new TreeMap<>();
         for (Entry<K, int[]> e : keyHash.entrySet())
         {
             for (int block : e.getValue())
@@ -385,7 +385,7 @@ public class BlockDiskKeyStore<K>
                 Set<K> keys = blockAllocationMap.get(block);
                 if (keys == null)
                 {
-                    keys = new HashSet<K>();
+                    keys = new HashSet<>();
                     blockAllocationMap.put(block, keys);
                 }
                 else if (!log.isDebugEnabled())

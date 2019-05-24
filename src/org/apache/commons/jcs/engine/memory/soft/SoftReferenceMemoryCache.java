@@ -74,7 +74,7 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     public synchronized void initialize( CompositeCache<K, V> hub )
     {
         super.initialize( hub );
-        strongReferences = new LinkedBlockingQueue<ICacheElement<K, V>>();
+        strongReferences = new LinkedBlockingQueue<>();
         log.info( "initialized Soft Reference Memory Cache for " + getCacheName() );
     }
 
@@ -84,7 +84,7 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     @Override
     public ConcurrentMap<K, MemoryElementDescriptor<K, V>> createMap()
     {
-        return new ConcurrentHashMap<K, MemoryElementDescriptor<K, V>>();
+        return new ConcurrentHashMap<>();
     }
 
     /**
@@ -93,7 +93,7 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     @Override
     public Set<K> getKeySet()
     {
-        Set<K> keys = new HashSet<K>();
+        Set<K> keys = new HashSet<>();
         for (Map.Entry<K, MemoryElementDescriptor<K, V>> e : map.entrySet())
         {
             SoftReferenceElementDescriptor<K, V> sred = (SoftReferenceElementDescriptor<K, V>) e.getValue();
@@ -137,8 +137,8 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
 
         List<IStatElement<?>> elems = stats.getStatElements();
         int emptyrefs = map.size() - getSize();
-        elems.add(new StatElement<Integer>("Empty References", Integer.valueOf(emptyrefs)));
-        elems.add(new StatElement<Integer>("Strong References", Integer.valueOf(strongReferences.size())));
+        elems.add(new StatElement<>("Empty References", Integer.valueOf(emptyrefs)));
+        elems.add(new StatElement<>("Strong References", Integer.valueOf(strongReferences.size())));
 
         return stats;
     }
@@ -198,7 +198,7 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
 
         try
         {
-            map.put(ce.getKey(), new SoftReferenceElementDescriptor<K, V>(ce));
+            map.put(ce.getKey(), new SoftReferenceElementDescriptor<>(ce));
             strongReferences.add(ce);
             trimStrongReferences();
         }

@@ -113,9 +113,9 @@ public class RemoteCacheNoWait<K, V>
      */
     private ICacheEventQueue<K, V> createCacheEventQueue( IRemoteCacheClient<K, V> client )
     {
-        CacheEventQueueFactory<K, V> factory = new CacheEventQueueFactory<K, V>();
+        CacheEventQueueFactory<K, V> factory = new CacheEventQueueFactory<>();
         ICacheEventQueue<K, V> ceq = factory.createCacheEventQueue(
-            new CacheAdaptor<K, V>( client ),
+            new CacheAdaptor<>( client ),
             client.getListenerId(),
             client.getCacheName(),
             client.getAuxiliaryCacheAttributes().getEventQueuePoolName(),
@@ -282,7 +282,7 @@ public class RemoteCacheNoWait<K, V>
             throw ex;
         }
 
-        return new HashMap<K, ICacheElement<K, V>>();
+        return new HashMap<>();
     }
 
     /**
@@ -498,9 +498,9 @@ public class RemoteCacheNoWait<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Remote Cache No Wait" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
-        elems.add(new StatElement<CacheStatus>( "Status", getStatus() ) );
+        elems.add(new StatElement<>( "Status", getStatus() ) );
 
         // get the stats from the cache queue too
         IStats cStats = this.remoteCacheClient.getStatistics();
@@ -513,11 +513,11 @@ public class RemoteCacheNoWait<K, V>
         IStats eqStats = this.cacheEventQueue.getStatistics();
         elems.addAll(eqStats.getStatElements());
 
-        elems.add(new StatElement<Integer>( "Get Count", Integer.valueOf(this.getCount) ) );
-        elems.add(new StatElement<Integer>( "GetMatching Count", Integer.valueOf(this.getMatchingCount) ) );
-        elems.add(new StatElement<Integer>( "GetMultiple Count", Integer.valueOf(this.getMultipleCount) ) );
-        elems.add(new StatElement<Integer>( "Remove Count", Integer.valueOf(this.removeCount) ) );
-        elems.add(new StatElement<Integer>( "Put Count", Integer.valueOf(this.putCount) ) );
+        elems.add(new StatElement<>( "Get Count", Integer.valueOf(this.getCount) ) );
+        elems.add(new StatElement<>( "GetMatching Count", Integer.valueOf(this.getMatchingCount) ) );
+        elems.add(new StatElement<>( "GetMultiple Count", Integer.valueOf(this.getMultipleCount) ) );
+        elems.add(new StatElement<>( "Remove Count", Integer.valueOf(this.removeCount) ) );
+        elems.add(new StatElement<>( "Put Count", Integer.valueOf(this.putCount) ) );
 
         stats.setStatElements( elems );
 

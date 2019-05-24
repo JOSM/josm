@@ -54,14 +54,14 @@ public class LateralTCPDiscoveryListener
      * use laterals.
      */
     private final Map<String, LateralCacheNoWaitFacade<?, ?>> facades =
-        Collections.synchronizedMap( new HashMap<String, LateralCacheNoWaitFacade<?, ?>>() );
+        Collections.synchronizedMap( new HashMap<>() );
 
     /**
      * List of regions that are configured differently here than on another server. We keep track of
      * this to limit the amount of info logging.
      */
     private final Set<String> knownDifferentlyConfiguredRegions =
-        Collections.synchronizedSet( new HashSet<String>() );
+        Collections.synchronizedSet( new HashSet<>() );
 
     /** The name of the cache factory */
     private String factoryName;

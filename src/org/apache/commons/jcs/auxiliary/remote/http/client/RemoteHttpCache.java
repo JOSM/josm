@@ -82,7 +82,7 @@ public class RemoteHttpCache<K, V>
             logError( cacheName, "", message );
             log.error( message, ex );
 
-            setRemoteCacheService( new ZombieCacheServiceNonLocal<K, V>( getRemoteCacheAttributes().getZombieQueueMaxSize() ) );
+            setRemoteCacheService( new ZombieCacheServiceNonLocal<>( getRemoteCacheAttributes().getZombieQueueMaxSize() ) );
 
             monitor.notifyError( this );
         }

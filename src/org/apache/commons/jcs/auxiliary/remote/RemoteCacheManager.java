@@ -54,7 +54,7 @@ public class RemoteCacheManager
 
     /** Contains instances of RemoteCacheNoWait managed by a RemoteCacheManager instance. */
     private final ConcurrentMap<String, RemoteCacheNoWait<?, ?>> caches =
-            new ConcurrentHashMap<String, RemoteCacheNoWait<?, ?>>();
+            new ConcurrentHashMap<>();
 
     /** The event logger. */
     private final ICacheEventLogger cacheEventLogger;
@@ -151,7 +151,7 @@ public class RemoteCacheManager
             // Failed to connect to the remote server.
             // Configure this RemoteCacheManager instance to use the "zombie"
             // services.
-            this.remoteService = new ZombieCacheServiceNonLocal<String, String>();
+            this.remoteService = new ZombieCacheServiceNonLocal<>();
             remoteWatch.setCacheWatch( new ZombieCacheWatch() );
             throw new IOException( "Problem finding server at [" + registry + "]", ex );
         }
@@ -268,7 +268,7 @@ public class RemoteCacheManager
         RemoteCacheListener<K, V> listener = null;
         try
         {
-            listener = new RemoteCacheListener<K, V>( cattr, cacheMgr, elementSerializer );
+            listener = new RemoteCacheListener<>( cattr, cacheMgr, elementSerializer );
             addRemoteCacheListener( cattr, listener );
         }
         catch ( IOException ioe )
@@ -283,11 +283,11 @@ public class RemoteCacheManager
         }
 
         IRemoteCacheClient<K, V> remoteCacheClient =
-            new RemoteCache<K, V>( cattr, (ICacheServiceNonLocal<K, V>) remoteService, listener, monitor );
+            new RemoteCache<>( cattr, (ICacheServiceNonLocal<K, V>) remoteService, listener, monitor );
         remoteCacheClient.setCacheEventLogger( cacheEventLogger );
         remoteCacheClient.setElementSerializer( elementSerializer );
 
-        remoteCacheNoWait = new RemoteCacheNoWait<K, V>( remoteCacheClient );
+        remoteCacheNoWait = new RemoteCacheNoWait<>( remoteCacheClient );
         remoteCacheNoWait.setCacheEventLogger( cacheEventLogger );
         remoteCacheNoWait.setElementSerializer( elementSerializer );
 

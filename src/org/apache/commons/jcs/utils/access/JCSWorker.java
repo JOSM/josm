@@ -105,7 +105,7 @@ public class JCSWorker<K, V>
     /**
      * Map to hold who's doing work presently.
      */
-    private volatile ConcurrentMap<String, JCSWorkerHelper<V>> map = new ConcurrentHashMap<String, JCSWorkerHelper<V>>();
+    private volatile ConcurrentMap<String, JCSWorkerHelper<V>> map = new ConcurrentHashMap<>();
 
     /**
      * Region for the JCS cache.

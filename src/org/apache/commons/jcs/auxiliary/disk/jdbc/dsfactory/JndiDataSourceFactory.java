@@ -138,7 +138,7 @@ public class JndiDataSourceFactory implements DataSourceFactory
                 log.debug("Time between context lookups: " + ttl);
             }
 
-    		Hashtable<String, Object> env = new Hashtable<String, Object>();
+    		Hashtable<String, Object> env = new Hashtable<>();
             ctx = new InitialContext(env);
 
             if (log.isDebugEnabled())

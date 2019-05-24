@@ -114,7 +114,7 @@ public abstract class AbstractDiskCache<K, V>
         this.cacheName = attr.getCacheName();
 
         // create queue
-        CacheEventQueueFactory<K, V> fact = new CacheEventQueueFactory<K, V>();
+        CacheEventQueueFactory<K, V> fact = new CacheEventQueueFactory<>();
         this.cacheEventQueue = fact.createCacheEventQueue( new MyCacheListener(), CacheInfo.listenerId, cacheName,
                                                            diskCacheAttributes.getEventQueuePoolName(),
                                                            diskCacheAttributes.getEventQueueType() );
@@ -159,11 +159,11 @@ public abstract class AbstractDiskCache<K, V>
             {
                 if ( diskCacheAttributes.getMaxPurgatorySize() >= 0 )
                 {
-                    purgatory = new LRUMap<K, PurgatoryElement<K, V>>( diskCacheAttributes.getMaxPurgatorySize() );
+                    purgatory = new LRUMap<>( diskCacheAttributes.getMaxPurgatorySize() );
                 }
                 else
                 {
-                    purgatory = new HashMap<K, PurgatoryElement<K, V>>();
+                    purgatory = new HashMap<>();
                 }
             }
         }
@@ -198,7 +198,7 @@ public abstract class AbstractDiskCache<K, V>
         try
         {
             // Wrap the CacheElement in a PurgatoryElement
-            PurgatoryElement<K, V> pe = new PurgatoryElement<K, V>( cacheElement );
+            PurgatoryElement<K, V> pe = new PurgatoryElement<>( cacheElement );
 
             // Indicates the the element is eligible to be spooled to disk,
             // this will remain true unless the item is pulled back into
@@ -324,7 +324,7 @@ public abstract class AbstractDiskCache<K, V>
         // this avoids locking purgatory, but it uses more memory
         synchronized ( purgatory )
         {
-            keyArray = new HashSet<K>(purgatory.keySet());
+            keyArray = new HashSet<>(purgatory.keySet());
         }
 
         Set<K> matchingKeys = getKeyMatcher().getMatchingKeysFromArray( pattern, keyArray );
@@ -437,32 +437,27 @@ public abstract class AbstractDiskCache<K, V>
     public final void dispose()
         throws IOException
     {
-        Runnable disR = new Runnable()
+        Thread t = new Thread(() ->
         {
-            @Override
-            public void run()
+            boolean keepGoing = true;
+            // long total = 0;
+            long interval = 100;
+            while ( keepGoing )
             {
-                boolean keepGoing = true;
-                // long total = 0;
-                long interval = 100;
-                while ( keepGoing )
+                keepGoing = !cacheEventQueue.isEmpty();
+                try
                 {
-                    keepGoing = !cacheEventQueue.isEmpty();
-                    try
-                    {
-                        Thread.sleep( interval );
-                        // total += interval;
-                        // log.info( "total = " + total );
-                    }
-                    catch ( InterruptedException e )
-                    {
-                        break;
-                    }
+                    Thread.sleep( interval );
+                    // total += interval;
+                    // log.info( "total = " + total );
                 }
-                log.info( "No longer waiting for event queue to finish: " + cacheEventQueue.getStatistics() );
+                catch ( InterruptedException e )
+                {
+                    break;
+                }
             }
-        };
-        Thread t = new Thread( disR );
+            log.info( "No longer waiting for event queue to finish: " + cacheEventQueue.getStatistics() );
+        });
         t.start();
         // wait up to 60 seconds for dispose and then quit if not done.
         try
@@ -517,10 +512,10 @@ public abstract class AbstractDiskCache<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Abstract Disk Cache" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
-        elems.add(new StatElement<Integer>( "Purgatory Hits", Integer.valueOf(purgHits) ) );
-        elems.add(new StatElement<Integer>( "Purgatory Size", Integer.valueOf(purgatory.size()) ) );
+        elems.add(new StatElement<>( "Purgatory Hits", Integer.valueOf(purgHits) ) );
+        elems.add(new StatElement<>( "Purgatory Size", Integer.valueOf(purgatory.size()) ) );
 
         // get the stats from the event queue too
         IStats eqStats = this.cacheEventQueue.getStatistics();

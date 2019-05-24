@@ -71,7 +71,7 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
         this.remoteCacheAttributes = rca;
         setCacheEventLogger( cacheEventLogger );
         setElementSerializer( elementSerializer );
-        this.noWaits = new ArrayList<RemoteCacheNoWait<K,V>>(noWaits);
+        this.noWaits = new ArrayList<>(noWaits);
         for (RemoteCacheNoWait<K,V> nw : this.noWaits)
         {
             // FIXME: This cast is very brave. Remove this.
@@ -219,7 +219,7 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     @Override
     public Set<K> getKeySet() throws IOException
     {
-        HashSet<K> allKeys = new HashSet<K>();
+        HashSet<K> allKeys = new HashSet<>();
         for (RemoteCacheNoWait<K, V> nw : noWaits)
         {
             if ( nw != null )
@@ -407,11 +407,11 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Remote Cache No Wait Facade" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
         if ( noWaits != null )
         {
-            elems.add(new StatElement<Integer>( "Number of No Waits", Integer.valueOf(noWaits.size()) ) );
+            elems.add(new StatElement<>( "Number of No Waits", Integer.valueOf(noWaits.size()) ) );
 
             for ( RemoteCacheNoWait<K, V> rcnw : noWaits )
             {

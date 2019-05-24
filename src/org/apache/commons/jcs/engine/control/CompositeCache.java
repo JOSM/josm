@@ -122,7 +122,7 @@ public class CompositeCache<K, V>
     private IMemoryCache<K, V> memCache;
 
     /** Key matcher used by the getMatching API */
-    private IKeyMatcher<K> keyMatcher = new KeyMatcherPatternImpl<K>();
+    private IKeyMatcher<K> keyMatcher = new KeyMatcherPatternImpl<>();
 
     private ScheduledFuture<?> future;
 
@@ -181,7 +181,7 @@ public class CompositeCache<K, V>
         if (cacheAttr.isUseMemoryShrinker())
         {
             future = scheduledExecutor.scheduleAtFixedRate(
-                    new ShrinkerThread<K, V>(this), 0, cacheAttr.getShrinkerIntervalSeconds(),
+                    new ShrinkerThread<>(this), 0, cacheAttr.getShrinkerIntervalSeconds(),
                     TimeUnit.SECONDS);
         }
     }
@@ -675,7 +675,7 @@ public class CompositeCache<K, V>
      */
     protected Map<K, ICacheElement<K, V>> getMultiple(Set<K> keys, boolean localOnly)
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
+        Map<K, ICacheElement<K, V>> elements = new HashMap<>();
 
         if (log.isDebugEnabled())
         {
@@ -763,15 +763,15 @@ public class CompositeCache<K, V>
     private Map<K, ICacheElement<K, V>> getMultipleFromAuxiliaryCaches(Set<K> keys, boolean localOnly)
         throws IOException
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
-        Set<K> remainingKeys = new HashSet<K>(keys);
+        Map<K, ICacheElement<K, V>> elements = new HashMap<>();
+        Set<K> remainingKeys = new HashSet<>(keys);
 
         for (AuxiliaryCache<K, V> aux : auxCaches)
         {
             if (aux != null)
             {
                 Map<K, ICacheElement<K, V>> elementsFromAuxiliary =
-                    new HashMap<K, ICacheElement<K, V>>();
+                    new HashMap<>();
 
                 CacheType cacheType = aux.getCacheType();
 
@@ -877,7 +877,7 @@ public class CompositeCache<K, V>
             log.error("Problem encountered getting elements.", e);
         }
 
-        return new HashMap<K, ICacheElement<K, V>>();
+        return new HashMap<>();
     }
 
     /**
@@ -916,7 +916,7 @@ public class CompositeCache<K, V>
     private Map<K, ICacheElement<K, V>> getMatchingFromAuxiliaryCaches(String pattern, boolean localOnly)
         throws IOException
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
+        Map<K, ICacheElement<K, V>> elements = new HashMap<>();
 
         for (int i = auxCaches.length - 1; i >= 0; i--)
         {
@@ -925,7 +925,7 @@ public class CompositeCache<K, V>
             if (aux != null)
             {
                 Map<K, ICacheElement<K, V>> elementsFromAuxiliary =
-                    new HashMap<K, ICacheElement<K, V>>();
+                    new HashMap<>();
 
                 CacheType cacheType = aux.getCacheType();
 
@@ -1048,7 +1048,7 @@ public class CompositeCache<K, V>
      */
     private Set<K> pruneKeysFound(Set<K> keys, Map<K, ICacheElement<K, V>> foundElements)
     {
-        Set<K> remainingKeys = new HashSet<K>(keys);
+        Set<K> remainingKeys = new HashSet<>(keys);
         remainingKeys.removeAll(foundElements.keySet());
 
         return remainingKeys;
@@ -1073,7 +1073,7 @@ public class CompositeCache<K, V>
      */
     public Set<K> getKeySet(boolean localOnly)
     {
-        HashSet<K> allKeys = new HashSet<K>();
+        HashSet<K> allKeys = new HashSet<>();
 
         allKeys.addAll(memCache.getKeySet());
         for (AuxiliaryCache<K, V> aux : auxCaches)
@@ -1473,16 +1473,16 @@ public class CompositeCache<K, V>
         stats.setRegionName(this.getCacheName());
 
         // store the composite cache stats first
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
-        elems.add(new StatElement<Long>("HitCountRam", Long.valueOf(getHitCountRam())));
-        elems.add(new StatElement<Long>("HitCountAux", Long.valueOf(getHitCountAux())));
+        elems.add(new StatElement<>("HitCountRam", Long.valueOf(getHitCountRam())));
+        elems.add(new StatElement<>("HitCountAux", Long.valueOf(getHitCountAux())));
 
         stats.setStatElements(elems);
 
         // memory + aux, memory is not considered an auxiliary internally
         int total = auxCaches.length + 1;
-        ArrayList<IStats> auxStats = new ArrayList<IStats>(total);
+        ArrayList<IStats> auxStats = new ArrayList<>(total);
 
         auxStats.add(getMemoryCache().getStatistics());
 
@@ -1674,7 +1674,7 @@ public class CompositeCache<K, V>
                 log.warn("No element event queue available for cache " + getCacheName());
                 return;
             }
-            IElementEvent<ICacheElement<K, V>> event = new ElementEvent<ICacheElement<K, V>>(element, eventType);
+            IElementEvent<ICacheElement<K, V>> event = new ElementEvent<>(element, eventType);
             for (IElementEventHandler hand : eventHandlers)
             {
                 try
@@ -1712,7 +1712,7 @@ public class CompositeCache<K, V>
             {
                 log.warn("Failed to init mem cache, using: LRUMemoryCache", e);
 
-                this.memCache = new LRUMemoryCache<K, V>();
+                this.memCache = new LRUMemoryCache<>();
                 this.memCache.initialize(this);
             }
         }

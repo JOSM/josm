@@ -129,7 +129,7 @@ public abstract class JCS
         throws CacheException
     {
         CompositeCache<K, V> cache = getCacheManager().getCache( region );
-        return new CacheAccess<K, V>( cache );
+        return new CacheAccess<>( cache );
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class JCS
         throws CacheException
     {
         CompositeCache<K, V> cache = getCacheManager().getCache( region, icca );
-        return new CacheAccess<K, V>( cache );
+        return new CacheAccess<>( cache );
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class JCS
         throws CacheException
     {
         CompositeCache<K, V> cache = getCacheManager().getCache( region, icca, eattr );
-        return new CacheAccess<K, V>( cache );
+        return new CacheAccess<>( cache );
     }
 
     /**
@@ -174,7 +174,7 @@ public abstract class JCS
         throws CacheException
     {
         CompositeCache<GroupAttrName<K>, V> cache = getCacheManager().getCache( region );
-        return new GroupCacheAccess<K, V>( cache );
+        return new GroupCacheAccess<>( cache );
     }
 
     /**
@@ -189,7 +189,7 @@ public abstract class JCS
         throws CacheException
     {
         CompositeCache<GroupAttrName<K>, V> cache = getCacheManager().getCache( region, icca );
-        return new GroupCacheAccess<K, V>( cache );
+        return new GroupCacheAccess<>( cache );
     }
 
     /**
@@ -205,6 +205,6 @@ public abstract class JCS
         throws CacheException
     {
         CompositeCache<GroupAttrName<K>, V> cache = getCacheManager().getCache( region, icca, eattr );
-        return new GroupCacheAccess<K, V>( cache );
+        return new GroupCacheAccess<>( cache );
     }
 }

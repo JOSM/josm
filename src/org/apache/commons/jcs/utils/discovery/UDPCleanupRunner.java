@@ -72,7 +72,7 @@ public class UDPCleanupRunner
         // html
         // TODO this should get a copy.  you can't simply remove from this.
         // the listeners need to be notified.
-        Set<DiscoveredService> toRemove = new HashSet<DiscoveredService>();
+        Set<DiscoveredService> toRemove = new HashSet<>();
         // can't remove via the iterator. must remove directly
         for (DiscoveredService service : discoveryService.getDiscoveredServices())
         {

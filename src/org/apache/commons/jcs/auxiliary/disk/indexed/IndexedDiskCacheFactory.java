@@ -57,7 +57,7 @@ public class IndexedDiskCacheFactory
             log.debug( "Creating DiskCache for attributes = " + idca );
         }
 
-        IndexedDiskCache<K, V> cache = new IndexedDiskCache<K, V>( idca, elementSerializer );
+        IndexedDiskCache<K, V> cache = new IndexedDiskCache<>( idca, elementSerializer );
         cache.setCacheEventLogger( cacheEventLogger );
 
         return cache;

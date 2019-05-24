@@ -47,7 +47,7 @@ public class CacheWatchRepairable
 
     /** Map of cache regions. */
     private final ConcurrentMap<String, Set<ICacheListener<?, ?>>> cacheMap =
-        new ConcurrentHashMap<String, Set<ICacheListener<?, ?>>>();
+        new ConcurrentHashMap<>();
 
     /**
      * Replaces the underlying cache watch service and re-attaches all existing listeners to the new
@@ -95,7 +95,7 @@ public class CacheWatchRepairable
         // Record the added cache listener locally, regardless of whether the
         // remote add-listener operation succeeds or fails.
         Set<ICacheListener<?, ?>> listenerSet = cacheMap.computeIfAbsent(cacheName, key -> {
-            return new CopyOnWriteArraySet<ICacheListener<?, ?>>();
+            return new CopyOnWriteArraySet<>();
         });
 
         listenerSet.add( obj );

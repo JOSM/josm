@@ -145,15 +145,15 @@ public class PooledCacheEventQueue<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Pooled Cache Event Queue" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
-        elems.add(new StatElement<Boolean>( "Working", Boolean.valueOf(isWorking()) ) );
-        elems.add(new StatElement<Boolean>( "Empty", Boolean.valueOf(this.isEmpty()) ) );
+        elems.add(new StatElement<>( "Working", Boolean.valueOf(isWorking()) ) );
+        elems.add(new StatElement<>( "Empty", Boolean.valueOf(this.isEmpty()) ) );
 
         if ( queue != null )
         {
-            elems.add(new StatElement<Integer>( "Queue Size", Integer.valueOf(queue.size()) ) );
-            elems.add(new StatElement<Integer>( "Queue Capacity", Integer.valueOf(queue.remainingCapacity()) ) );
+            elems.add(new StatElement<>( "Queue Size", Integer.valueOf(queue.size()) ) );
+            elems.add(new StatElement<>( "Queue Capacity", Integer.valueOf(queue.remainingCapacity()) ) );
         }
 
         stats.setStatElements( elems );

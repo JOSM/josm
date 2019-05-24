@@ -246,7 +246,7 @@ public class LateralCacheNoWaitFacade<K, V>
             return elements;
         }
 
-        return new HashMap<K, ICacheElement<K, V>>();
+        return new HashMap<>();
     }
 
     /**
@@ -259,7 +259,7 @@ public class LateralCacheNoWaitFacade<K, V>
     @Override
     public Map<K, ICacheElement<K, V>> getMatching(String pattern)
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
+        Map<K, ICacheElement<K, V>> elements = new HashMap<>();
         for (LateralCacheNoWait<K, V> nw : noWaits)
         {
             elements.putAll( nw.getMatching( pattern ) );
@@ -275,7 +275,7 @@ public class LateralCacheNoWaitFacade<K, V>
     @Override
     public Set<K> getKeySet() throws IOException
     {
-        HashSet<K> allKeys = new HashSet<K>();
+        HashSet<K> allKeys = new HashSet<>();
         for (LateralCacheNoWait<K, V> nw : noWaits)
         {
             if ( nw != null )
@@ -451,11 +451,11 @@ public class LateralCacheNoWaitFacade<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Lateral Cache No Wait Facade" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
         if ( noWaits != null )
         {
-            elems.add(new StatElement<Integer>( "Number of No Waits", Integer.valueOf(noWaits.length) ) );
+            elems.add(new StatElement<>( "Number of No Waits", Integer.valueOf(noWaits.length) ) );
 
             for ( LateralCacheNoWait<K, V> lcnw : noWaits )
             {

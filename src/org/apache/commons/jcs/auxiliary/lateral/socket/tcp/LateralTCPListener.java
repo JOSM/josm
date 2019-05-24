@@ -70,7 +70,7 @@ public class LateralTCPListener<K, V>
 
     /** Map of available instances, keyed by port */
     private static final HashMap<String, ILateralCacheListener<?, ?>> instances =
-        new HashMap<String, ILateralCacheListener<?, ?>>();
+        new HashMap<>();
 
     /** The socket listener */
     private ListenerThread receiver;
@@ -120,7 +120,7 @@ public class LateralTCPListener<K, V>
 
         if ( ins == null )
         {
-            ins = new LateralTCPListener<K, V>( ilca );
+            ins = new LateralTCPListener<>( ilca );
 
             ins.init();
             ins.setCacheManager( cacheMgr );

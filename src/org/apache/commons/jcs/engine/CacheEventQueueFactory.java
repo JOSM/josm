@@ -75,11 +75,11 @@ public class CacheEventQueueFactory<K, V>
         ICacheEventQueue<K, V> eventQueue = null;
         if ( poolType == null || ICacheEventQueue.QueueType.SINGLE == poolType )
         {
-            eventQueue = new CacheEventQueue<K, V>( listener, listenerId, cacheName, maxFailure, waitBeforeRetry );
+            eventQueue = new CacheEventQueue<>( listener, listenerId, cacheName, maxFailure, waitBeforeRetry );
         }
         else if ( ICacheEventQueue.QueueType.POOLED == poolType )
         {
-            eventQueue = new PooledCacheEventQueue<K, V>( listener, listenerId, cacheName, maxFailure, waitBeforeRetry,
+            eventQueue = new PooledCacheEventQueue<>( listener, listenerId, cacheName, maxFailure, waitBeforeRetry,
                                                     threadPoolName );
         }
 

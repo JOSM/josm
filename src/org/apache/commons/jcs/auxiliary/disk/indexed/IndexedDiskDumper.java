@@ -50,7 +50,7 @@ public class IndexedDiskDumper
         attr.setCacheName( args[0] );
         attr.setDiskPath( args[0] );
 
-        IndexedDiskCache<Serializable, Serializable> dc = new IndexedDiskCache<Serializable, Serializable>( attr );
+        IndexedDiskCache<Serializable, Serializable> dc = new IndexedDiskCache<>( attr );
         dc.dump( true );
         System.exit( 0 );
     }

@@ -63,7 +63,7 @@ public class UDPDiscoveryMessage
     private long requesterId;
 
     /** Names of regions */
-    private ArrayList<String> cacheNames = new ArrayList<String>();
+    private ArrayList<String> cacheNames = new ArrayList<>();
 
     /**
      * @param port The port to set.

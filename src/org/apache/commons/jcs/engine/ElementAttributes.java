@@ -365,7 +365,7 @@ public class ElementAttributes
         // lazy here, no concurrency problems expected
         if ( this.eventHandlers == null )
         {
-            this.eventHandlers = new ArrayList<IElementEventHandler>();
+            this.eventHandlers = new ArrayList<>();
         }
         this.eventHandlers.add( eventHandler );
     }

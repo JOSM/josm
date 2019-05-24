@@ -495,7 +495,7 @@ public abstract class AbstractRemoteCacheService<K, V>
     {
         if ( cacheEventLogger == null )
         {
-            return new CacheEvent<ICacheElement<K, V>>();
+            return new CacheEvent<>();
         }
         String ipAddress = getExtraInfoForRequesterId( requesterId );
         return cacheEventLogger.createICacheEvent( getEventLogSourceName(), item.getCacheName(), eventName, ipAddress,
@@ -515,7 +515,7 @@ public abstract class AbstractRemoteCacheService<K, V>
     {
         if ( cacheEventLogger == null )
         {
-            return new CacheEvent<T>();
+            return new CacheEvent<>();
         }
         String ipAddress = getExtraInfoForRequesterId( requesterId );
         return cacheEventLogger.createICacheEvent( getEventLogSourceName(), cacheName, eventName, ipAddress, key );

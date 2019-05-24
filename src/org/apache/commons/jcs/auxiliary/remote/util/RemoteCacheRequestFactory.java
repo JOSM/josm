@@ -45,7 +45,7 @@ public class RemoteCacheRequestFactory
      */
     private static <K, V> RemoteCacheRequest<K, V> createRequest(String cacheName, RemoteRequestType requestType, long requesterId)
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
+        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<>();
         request.setCacheName( cacheName );
         request.setRequestType( requestType );
         request.setRequesterId( requesterId );

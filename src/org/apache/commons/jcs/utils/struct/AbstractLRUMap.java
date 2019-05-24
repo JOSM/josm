@@ -62,11 +62,11 @@ public abstract class AbstractLRUMap<K, V>
      */
     public AbstractLRUMap()
     {
-        list = new DoubleLinkedList<LRUElementDescriptor<K, V>>();
+        list = new DoubleLinkedList<>();
 
         // normal hashtable is faster for
         // sequential keys.
-        map = new ConcurrentHashMap<K, LRUElementDescriptor<K, V>>();
+        map = new ConcurrentHashMap<>();
     }
 
 
@@ -278,7 +278,7 @@ public abstract class AbstractLRUMap<K, V>
         putCnt++;
 
         LRUElementDescriptor<K, V> old = null;
-        LRUElementDescriptor<K, V> me = new LRUElementDescriptor<K, V>(key, value);
+        LRUElementDescriptor<K, V> me = new LRUElementDescriptor<>(key, value);
 
         lock.lock();
         try
@@ -490,13 +490,13 @@ public abstract class AbstractLRUMap<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "LRUMap" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
-        elems.add(new StatElement<Integer>( "List Size", Integer.valueOf(list.size()) ) );
-        elems.add(new StatElement<Integer>( "Map Size", Integer.valueOf(map.size()) ) );
-        elems.add(new StatElement<Long>( "Put Count", Long.valueOf(putCnt) ) );
-        elems.add(new StatElement<Long>( "Hit Count", Long.valueOf(hitCnt) ) );
-        elems.add(new StatElement<Long>( "Miss Count", Long.valueOf(missCnt) ) );
+        elems.add(new StatElement<>( "List Size", Integer.valueOf(list.size()) ) );
+        elems.add(new StatElement<>( "Map Size", Integer.valueOf(map.size()) ) );
+        elems.add(new StatElement<>( "Put Count", Long.valueOf(putCnt) ) );
+        elems.add(new StatElement<>( "Hit Count", Long.valueOf(hitCnt) ) );
+        elems.add(new StatElement<>( "Miss Count", Long.valueOf(missCnt) ) );
 
         stats.setStatElements( elems );
 

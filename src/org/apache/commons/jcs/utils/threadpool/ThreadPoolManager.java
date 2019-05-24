@@ -91,8 +91,8 @@ public class ThreadPoolManager
      */
     private ThreadPoolManager()
     {
-        this.pools = new ConcurrentHashMap<String, ExecutorService>();
-        this.schedulerPools = new ConcurrentHashMap<String, ScheduledExecutorService>();
+        this.pools = new ConcurrentHashMap<>();
+        this.schedulerPools = new ConcurrentHashMap<>();
         configure();
     }
 
@@ -126,7 +126,7 @@ public class ThreadPoolManager
                 log.debug( "Creating a Bounded Buffer to use for the pool" );
             }
 
-            queue = new LinkedBlockingQueue<Runnable>(config.getBoundarySize());
+            queue = new LinkedBlockingQueue<>(config.getBoundarySize());
         }
         else
         {
@@ -134,7 +134,7 @@ public class ThreadPoolManager
             {
                 log.debug( "Creating a non bounded Linked Queue to use for the pool" );
             }
-            queue = new LinkedBlockingQueue<Runnable>();
+            queue = new LinkedBlockingQueue<>();
         }
 
         ThreadPoolExecutor pool = new ThreadPoolExecutor(
@@ -295,7 +295,7 @@ public class ThreadPoolManager
      */
     public ArrayList<String> getPoolNames()
     {
-        return new ArrayList<String>(pools.keySet());
+        return new ArrayList<>(pools.keySet());
     }
 
     /**

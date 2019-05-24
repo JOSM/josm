@@ -118,7 +118,7 @@ public class CacheAccess<K, V>
 
         if ( wrappedResults == null )
         {
-            unwrappedResults = new HashMap<K, V>();
+            unwrappedResults = new HashMap<>();
         }
         else
         {
@@ -260,7 +260,7 @@ public class CacheAccess<K, V>
         // should be wrapped by cache access.
         try
         {
-            CacheElement<K, V> ce = new CacheElement<K, V>( this.getCacheControl().getCacheName(), key,
+            CacheElement<K, V> ce = new CacheElement<>( this.getCacheControl().getCacheName(), key,
                                                 val );
 
             ce.setElementAttributes( attr );

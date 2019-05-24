@@ -89,7 +89,7 @@ public class LateralTCPCacheFactory
            ICacheEventLogger cacheEventLogger, IElementSerializer elementSerializer )
     {
         ITCPLateralCacheAttributes lac = (ITCPLateralCacheAttributes) iaca;
-        ArrayList<ICache<K, V>> noWaits = new ArrayList<ICache<K, V>>();
+        ArrayList<ICache<K, V>> noWaits = new ArrayList<>();
 
         // pairs up the tcp servers and set the tcpServer value and
         // get the manager and then get the cache
@@ -125,7 +125,7 @@ public class LateralTCPCacheFactory
         @SuppressWarnings("unchecked") // No generic arrays in java
         LateralCacheNoWait<K, V>[] lcnwArray = noWaits.toArray( new LateralCacheNoWait[0] );
         LateralCacheNoWaitFacade<K, V> lcnwf =
-            new LateralCacheNoWaitFacade<K, V>(listener, lcnwArray, lac );
+            new LateralCacheNoWaitFacade<>(listener, lcnwArray, lac );
 
         // create udp discovery if available.
         createDiscoveryService( lac, lcnwf, cacheMgr, cacheEventLogger, elementSerializer );
@@ -138,7 +138,7 @@ public class LateralTCPCacheFactory
     {
         ICacheServiceNonLocal<K, V> lateralService = getCSNLInstance(lca);
 
-        LateralCache<K, V> cache = new LateralCache<K, V>( lca, lateralService, this.monitor );
+        LateralCache<K, V> cache = new LateralCache<>( lca, lateralService, this.monitor );
         cache.setCacheEventLogger( cacheEventLogger );
         cache.setElementSerializer( elementSerializer );
 
@@ -147,7 +147,7 @@ public class LateralTCPCacheFactory
             log.debug( "Created cache for noWait, cache [" + cache + "]" );
         }
 
-        LateralCacheNoWait<K, V> lateralNoWait = new LateralCacheNoWait<K, V>( cache );
+        LateralCacheNoWait<K, V> lateralNoWait = new LateralCacheNoWait<>( cache );
         lateralNoWait.setCacheEventLogger( cacheEventLogger );
         lateralNoWait.setElementSerializer( elementSerializer );
 
@@ -166,8 +166,8 @@ public class LateralTCPCacheFactory
     @Override
     public void initialize()
     {
-        this.csnlInstances = new ConcurrentHashMap<String, ICacheServiceNonLocal<?, ?>>();
-        this.lTCPDLInstances = new ConcurrentHashMap<String, LateralTCPDiscoveryListener>();
+        this.csnlInstances = new ConcurrentHashMap<>();
+        this.lTCPDLInstances = new ConcurrentHashMap<>();
 
         // Create the monitoring daemon thread
         this.monitor = new LateralCacheMonitor(this);
@@ -253,7 +253,7 @@ public class LateralTCPCacheFactory
                             log.info( "Creating TCP service, lca = " + lca );
                         }
 
-                        return new LateralTCPService<K, V>( lca );
+                        return new LateralTCPService<>( lca );
                     }
                     catch ( IOException ex )
                     {
@@ -263,7 +263,7 @@ public class LateralTCPCacheFactory
                         log.error( "Failure, lateral instance will use zombie service", ex );
 
                         ICacheServiceNonLocal<K, V> zombieService =
-                                new ZombieCacheServiceNonLocal<K, V>( lca.getZombieQueueMaxSize() );
+                                new ZombieCacheServiceNonLocal<>( lca.getZombieQueueMaxSize() );
 
                         // Notify the cache monitor about the error, and kick off
                         // the recovery process.

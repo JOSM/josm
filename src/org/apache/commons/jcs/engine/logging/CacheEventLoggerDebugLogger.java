@@ -49,7 +49,7 @@ public class CacheEventLoggerDebugLogger
     public <T> ICacheEvent<T> createICacheEvent( String source, String region, String eventName,
             String optionalDetails, T key )
     {
-        ICacheEvent<T> event = new CacheEvent<T>();
+        ICacheEvent<T> event = new CacheEvent<>();
         event.setSource( source );
         event.setRegion( region );
         event.setEventName( eventName );

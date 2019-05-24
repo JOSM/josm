@@ -66,13 +66,13 @@ public class UDPDiscoveryService
     private boolean shutdown = false;
 
     /** This is a set of services that have been discovered. */
-    private Set<DiscoveredService> discoveredServices = new CopyOnWriteArraySet<DiscoveredService>();
+    private Set<DiscoveredService> discoveredServices = new CopyOnWriteArraySet<>();
 
     /** This a list of regions that are configured to use discovery. */
-    private final Set<String> cacheNames = new CopyOnWriteArraySet<String>();
+    private final Set<String> cacheNames = new CopyOnWriteArraySet<>();
 
     /** Set of listeners. */
-    private final Set<IDiscoveryListener> discoveryListeners = new CopyOnWriteArraySet<IDiscoveryListener>();
+    private final Set<IDiscoveryListener> discoveryListeners = new CopyOnWriteArraySet<>();
 
     /**
      * @param attributes
@@ -274,7 +274,7 @@ public class UDPDiscoveryService
      */
     protected ArrayList<String> getCacheNames()
     {
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
         names.addAll( cacheNames );
         return names;
     }
@@ -300,8 +300,8 @@ public class UDPDiscoveryService
      */
     public void startup()
     {
-        udpReceiverThread = new Thread( receiver );
-        udpReceiverThread.setDaemon( true );
+        udpReceiverThread = new Thread(receiver);
+        udpReceiverThread.setDaemon(true);
         // udpReceiverThread.setName( t.getName() + "--UDPReceiver" );
         udpReceiverThread.start();
     }
@@ -378,7 +378,7 @@ public class UDPDiscoveryService
      */
     public Set<IDiscoveryListener> getCopyOfDiscoveryListeners()
     {
-        Set<IDiscoveryListener> copy = new HashSet<IDiscoveryListener>();
+        Set<IDiscoveryListener> copy = new HashSet<>();
         copy.addAll( getDiscoveryListeners() );
         return copy;
     }

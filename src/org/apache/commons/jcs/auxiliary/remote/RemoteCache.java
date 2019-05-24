@@ -83,10 +83,10 @@ public class RemoteCache<K, V>
         IStats stats = new Stats();
         stats.setTypeName( "Remote Cache" );
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        ArrayList<IStatElement<?>> elems = new ArrayList<>();
 
-        elems.add(new StatElement<String>( "Remote Host:Port", getIPAddressForService() ) );
-        elems.add(new StatElement<String>( "Remote Type", this.getRemoteCacheAttributes().getRemoteTypeName() ) );
+        elems.add(new StatElement<>( "Remote Host:Port", getIPAddressForService() ) );
+        elems.add(new StatElement<>( "Remote Type", this.getRemoteCacheAttributes().getRemoteTypeName() ) );
 
 //      if ( this.getRemoteCacheAttributes().getRemoteType() == RemoteType.CLUSTER )
 //      {
@@ -144,7 +144,7 @@ public class RemoteCache<K, V>
         if ( getRemoteCacheService() == null || !( getRemoteCacheService() instanceof ZombieCacheServiceNonLocal ) )
         {
             // TODO make configurable
-            setRemoteCacheService( new ZombieCacheServiceNonLocal<K, V>( getRemoteCacheAttributes().getZombieQueueMaxSize() ) );
+            setRemoteCacheService( new ZombieCacheServiceNonLocal<>( getRemoteCacheAttributes().getZombieQueueMaxSize() ) );
         }
         // may want to flush if region specifies
         // Notify the cache monitor about the error, and kick off the recovery

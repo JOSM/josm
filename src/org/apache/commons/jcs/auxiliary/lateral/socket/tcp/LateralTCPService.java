@@ -125,7 +125,7 @@ public class LateralTCPService<K, V>
         // if we shouldn't remove on put, then put
         if ( !this.issueRemoveOnPut )
         {
-            LateralElementDescriptor<K, V> led = new LateralElementDescriptor<K, V>( item );
+            LateralElementDescriptor<K, V> led = new LateralElementDescriptor<>( item );
             led.requesterId = requesterId;
             led.command = LateralCommand.UPDATE;
             sender.send( led );
@@ -139,8 +139,8 @@ public class LateralTCPService<K, V>
                 log.debug( "Issuing a remove for a put" );
             }
             // set the value to null so we don't send the item
-            CacheElement<K, V> ce = new CacheElement<K, V>( item.getCacheName(), item.getKey(), null );
-            LateralElementDescriptor<K, V> led = new LateralElementDescriptor<K, V>( ce );
+            CacheElement<K, V> ce = new CacheElement<>( item.getCacheName(), item.getKey(), null );
+            LateralElementDescriptor<K, V> led = new LateralElementDescriptor<>( ce );
             led.requesterId = requesterId;
             led.command = LateralCommand.REMOVE;
             led.valHashCode = item.getVal().hashCode();
@@ -169,8 +169,8 @@ public class LateralTCPService<K, V>
     public void remove( String cacheName, K key, long requesterId )
         throws IOException
     {
-        CacheElement<K, V> ce = new CacheElement<K, V>( cacheName, key, null );
-        LateralElementDescriptor<K, V> led = new LateralElementDescriptor<K, V>( ce );
+        CacheElement<K, V> ce = new CacheElement<>( cacheName, key, null );
+        LateralElementDescriptor<K, V> led = new LateralElementDescriptor<>( ce );
         led.requesterId = requesterId;
         led.command = LateralCommand.REMOVE;
         sender.send( led );
@@ -230,8 +230,8 @@ public class LateralTCPService<K, V>
         // if get is not allowed return
         if ( this.allowGet )
         {
-            CacheElement<K, V> ce = new CacheElement<K, V>( cacheName, key, null );
-            LateralElementDescriptor<K, V> led = new LateralElementDescriptor<K, V>( ce );
+            CacheElement<K, V> ce = new CacheElement<>( cacheName, key, null );
+            LateralElementDescriptor<K, V> led = new LateralElementDescriptor<>( ce );
             // led.requesterId = requesterId; // later
             led.command = LateralCommand.GET;
             @SuppressWarnings("unchecked") // Need to cast from Object
@@ -283,8 +283,8 @@ public class LateralTCPService<K, V>
         // if get is not allowed return
         if ( this.allowGet )
         {
-            CacheElement<String, String> ce = new CacheElement<String, String>( cacheName, pattern, null );
-            LateralElementDescriptor<String, String> led = new LateralElementDescriptor<String, String>( ce );
+            CacheElement<String, String> ce = new CacheElement<>( cacheName, pattern, null );
+            LateralElementDescriptor<String, String> led = new LateralElementDescriptor<>( ce );
             // led.requesterId = requesterId; // later
             led.command = LateralCommand.GET_MATCHING;
 
@@ -334,7 +334,7 @@ public class LateralTCPService<K, V>
     public Map<K, ICacheElement<K, V>> getMultiple( String cacheName, Set<K> keys, long requesterId )
         throws IOException
     {
-        Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
+        Map<K, ICacheElement<K, V>> elements = new HashMap<>();
 
         if ( keys != null && !keys.isEmpty() )
         {
@@ -361,8 +361,8 @@ public class LateralTCPService<K, V>
     @SuppressWarnings("unchecked") // Need cast from Object
     public Set<K> getKeySet(String cacheName) throws IOException
     {
-        CacheElement<String, String> ce = new CacheElement<String, String>(cacheName, null, null);
-        LateralElementDescriptor<String, String> led = new LateralElementDescriptor<String, String>(ce);
+        CacheElement<String, String> ce = new CacheElement<>(cacheName, null, null);
+        LateralElementDescriptor<String, String> led = new LateralElementDescriptor<>(ce);
         // led.requesterId = requesterId; // later
         led.command = LateralCommand.GET_KEYSET;
         Object response = sender.sendAndReceive(led);
@@ -394,8 +394,8 @@ public class LateralTCPService<K, V>
     public void removeAll( String cacheName, long requesterId )
         throws IOException
     {
-        CacheElement<String, String> ce = new CacheElement<String, String>( cacheName, "ALL", null );
-        LateralElementDescriptor<String, String> led = new LateralElementDescriptor<String, String>( ce );
+        CacheElement<String, String> ce = new CacheElement<>( cacheName, "ALL", null );
+        LateralElementDescriptor<String, String> led = new LateralElementDescriptor<>( ce );
         led.requesterId = requesterId;
         led.command = LateralCommand.REMOVEALL;
         sender.send( led );
@@ -427,8 +427,8 @@ public class LateralTCPService<K, V>
                     continue;
                 }
 
-                CacheElement<String, String> ce = new CacheElement<String, String>( "test", "test", message );
-                LateralElementDescriptor<String, String> led = new LateralElementDescriptor<String, String>( ce );
+                CacheElement<String, String> ce = new CacheElement<>( "test", "test", message );
+                LateralElementDescriptor<String, String> led = new LateralElementDescriptor<>( ce );
                 sender.send( led );
             }
         }

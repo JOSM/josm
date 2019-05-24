@@ -214,7 +214,7 @@ public class RemoteHttpCacheServlet
      */
     protected RemoteCacheResponse<Object> processRequest( RemoteCacheRequest<Serializable, Serializable> request )
     {
-        RemoteCacheResponse<Object> response = new RemoteCacheResponse<Object>();
+        RemoteCacheResponse<Object> response = new RemoteCacheResponse<>();
 
         if ( request == null )
         {
@@ -239,7 +239,7 @@ public class RemoteHttpCacheServlet
                             remoteCacheService.getMultiple( request.getCacheName(), request.getKeySet(), request.getRequesterId() );
                         if ( elementMap != null )
                         {
-                            Map<Serializable, ICacheElement<Serializable, Serializable>> map = new HashMap<Serializable, ICacheElement<Serializable, Serializable>>();
+                            Map<Serializable, ICacheElement<Serializable, Serializable>> map = new HashMap<>();
                             map.putAll(elementMap);
                             response.setPayload(map);
                         }
@@ -249,7 +249,7 @@ public class RemoteHttpCacheServlet
                             remoteCacheService.getMatching( request.getCacheName(), request.getPattern(), request.getRequesterId() );
                         if ( elementMapMatching != null )
                         {
-                            Map<Serializable, ICacheElement<Serializable, Serializable>> map = new HashMap<Serializable, ICacheElement<Serializable, Serializable>>();
+                            Map<Serializable, ICacheElement<Serializable, Serializable>> map = new HashMap<>();
                             map.putAll(elementMapMatching);
                             response.setPayload(map);
                         }
@@ -304,7 +304,7 @@ public class RemoteHttpCacheServlet
         ICacheEventLogger cacheEventLogger = configureCacheEventLogger( props );
         RemoteHttpCacheServerAttributes attributes = configureRemoteHttpCacheServerAttributes( props );
 
-        RemoteHttpCacheService<K, V> service = new RemoteHttpCacheService<K, V>( cacheManager, attributes, cacheEventLogger );
+        RemoteHttpCacheService<K, V> service = new RemoteHttpCacheService<>( cacheManager, attributes, cacheEventLogger );
         if ( log.isInfoEnabled() )
         {
             log.info( "Created new RemoteHttpCacheService " + service );
