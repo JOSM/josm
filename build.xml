@@ -409,7 +409,8 @@ Build-Date: ${build.tstamp}
                 private="true"
                 linksource="true"
                 author="false">
-            <link href="https://docs.oracle.com/javase/8/docs/api"/>
+            <link href="https://docs.oracle.com/javase/8/docs/api" unless:set="isJava11" />
+            <link href="https://docs.oracle.com/en/java/javase/11/docs/api" if:set="isJava11" />
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
             <arg value="-html5" if:set="isJava9" />
