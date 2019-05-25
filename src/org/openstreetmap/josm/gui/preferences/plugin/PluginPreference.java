@@ -39,8 +39,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Preferences;
@@ -55,8 +53,8 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
@@ -191,11 +189,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        tfFilter = new JosmTextField();
+        tfFilter = new FilterField().filter(expr -> {
+            model.filterDisplayedPlugins(expr);
+            pnlPluginPreferences.refreshView();
+        });
         pnl.add(tfFilter, gc);
-        tfFilter.setToolTipText(tr("Enter a search expression"));
-        SelectAllOnFocusGainedDecorator.decorate(tfFilter);
-        tfFilter.getDocument().addDocumentListener(new SearchFieldAdapter());
         return pnl;
     }
 
@@ -561,35 +559,6 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             String message = "<html>" + tr("The following plugins were not found. Continue anyway?") + list + "</html>";
             return JOptionPane.showConfirmDialog(GuiHelper.getFrameForComponent(getTabPane()),
                     message) == JOptionPane.OK_OPTION;
-        }
-    }
-
-    /**
-     * Applies the current filter condition in the filter text field to the model.
-     */
-    class SearchFieldAdapter implements DocumentListener {
-        private void filter() {
-            String expr = tfFilter.getText().trim();
-            if (expr.isEmpty()) {
-                expr = null;
-            }
-            model.filterDisplayedPlugins(expr);
-            pnlPluginPreferences.refreshView();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent evt) {
-            filter();
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent evt) {
-            filter();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent evt) {
-            filter();
         }
     }
 

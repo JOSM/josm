@@ -58,6 +58,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -77,6 +78,8 @@ public class ImageryProvidersPanel extends JPanel {
     public final JTable activeTable;
     /** The table of default providers **/
     public final JTable defaultTable;
+    /** The filter of default providers **/
+    private final FilterField defaultFilter;
     /** The selection listener synchronizing map display with table of default providers **/
     private final transient DefListSelectionListener defaultTableListener;
     /** The map displaying imagery bounds of selected default providers **/
@@ -158,7 +161,8 @@ public class ImageryProvidersPanel extends JPanel {
             T obj = (T) value;
             JLabel label = (JLabel) super.getTableCellRendererComponent(
                     table, mapper.apply(obj), isSelected, hasFocus, row, column);
-            GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
+            GuiHelper.setBackgroundReadable(label,
+                    isSelected ? UIManager.getColor("Table.selectionBackground") : UIManager.getColor("Table.background"));
             if (obj != null) {
                 label.setToolTipText(tooltip.apply(obj));
                 if (decorator != null) {
@@ -224,6 +228,8 @@ public class ImageryProvidersPanel extends JPanel {
 
         defaultModel = new ImageryDefaultLayerTableModel();
         defaultTable = new JTable(defaultModel);
+        defaultTable.setAutoCreateRowSorter(true);
+        defaultFilter = new FilterField().filter(defaultTable, defaultModel);
 
         defaultModel.addTableModelListener(e -> activeTable.repaint());
         activeModel.addTableModelListener(e -> defaultTable.repaint());
@@ -250,9 +256,12 @@ public class ImageryProvidersPanel extends JPanel {
         add(new JLabel(tr("Boundaries of selected imagery entries:")), GBC.eol().insets(5, 5, 0, 0));
 
         // Add default item list
+        JPanel defaultPane = new JPanel(new GridBagLayout());
         JScrollPane scrolldef = new JScrollPane(defaultTable);
         scrolldef.setPreferredSize(new Dimension(200, 200));
-        add(scrolldef, GBC.std().insets(0, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(1.0, 0.6).insets(5, 0, 0, 0));
+        defaultPane.add(defaultFilter, GBC.eol().insets(0, 0, 0, 0).fill(GridBagConstraints.HORIZONTAL));
+        defaultPane.add(scrolldef, GBC.eol().insets(0, 0, 0, 0).fill(GridBagConstraints.BOTH));
+        add(defaultPane, GBC.std().fill(GridBagConstraints.BOTH).weight(1.0, 0.6).insets(5, 0, 0, 0));
 
         // Add default item map
         defaultMap = new JMapViewer();
@@ -267,7 +276,7 @@ public class ImageryProvidersPanel extends JPanel {
         });
         defaultMap.setZoomControlsVisible(false);
         defaultMap.setMinimumSize(new Dimension(100, 200));
-        add(defaultMap, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
+        add(defaultMap, GBC.std().fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
 
         defaultTableListener = new DefListSelectionListener();
         defaultTable.getSelectionModel().addListSelectionListener(defaultTableListener);
@@ -340,7 +349,7 @@ public class ImageryProvidersPanel extends JPanel {
             } else if (!e.getValueIsAdjusting()) {
                 // Only process complete (final) selection events
                 for (int i = e.getFirstIndex(); i <= e.getLastIndex(); i++) {
-                    updateBoundsAndShapes(i);
+                    updateBoundsAndShapes(defaultTable.convertRowIndexToModel(i));
                 }
                 // If needed, adjust map to show all map rectangles and polygons
                 if (!mapRectangles.isEmpty() || !mapPolygons.isEmpty()) {
@@ -350,12 +359,17 @@ public class ImageryProvidersPanel extends JPanel {
             }
         }
 
+        /**
+         * update bounds and shapes for a new entry
+         * @param i model index
+         */
         private void updateBoundsAndShapes(int i) {
             ImageryBounds bounds = defaultModel.getRow(i).getBounds();
             if (bounds != null) {
+                int viewIndex = defaultTable.convertRowIndexToView(i);
                 List<Shape> shapes = bounds.getShapes();
                 if (shapes != null && !shapes.isEmpty()) {
-                    if (defaultTable.getSelectionModel().isSelectedIndex(i)) {
+                    if (defaultTable.getSelectionModel().isSelectedIndex(viewIndex)) {
                         if (!mapPolygons.containsKey(i)) {
                             List<MapPolygon> list = new ArrayList<>();
                             mapPolygons.put(i, list);
@@ -375,7 +389,7 @@ public class ImageryProvidersPanel extends JPanel {
                     }
                     // Only display bounds when no polygons (shapes) are defined for this provider
                 } else {
-                    if (defaultTable.getSelectionModel().isSelectedIndex(i)) {
+                    if (defaultTable.getSelectionModel().isSelectedIndex(viewIndex)) {
                         if (!mapRectangles.containsKey(i)) {
                             // Add new map rectangle
                             Coordinate topLeft = new Coordinate(bounds.getMaxLat(), bounds.getMinLon());

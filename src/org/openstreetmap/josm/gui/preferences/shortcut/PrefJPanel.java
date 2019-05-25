@@ -15,11 +15,9 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.im.InputContext;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.PatternSyntaxException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -32,24 +30,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.KeyboardUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -88,12 +80,12 @@ public class PrefJPanel extends JPanel {
     private final JosmComboBox<String> tfKey = new JosmComboBox<>();
 
     private final JTable shortcutTable = new JTable();
-
-    private final JosmTextField filterField = new JosmTextField();
+    private final FilterField filterField;
 
     /** Creates new form prefJPanel */
     public PrefJPanel() {
         this.model = new ScListModel();
+        this.filterField = new FilterField();
         initComponents();
     }
 
@@ -206,6 +198,7 @@ public class PrefJPanel extends JPanel {
         shortcutTable.setFillsViewportHeight(true);
         shortcutTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         shortcutTable.setAutoCreateRowSorter(true);
+        filterField.filter(shortcutTable, model);
         TableColumnModel mod = shortcutTable.getColumnModel();
         mod.getColumn(0).setCellRenderer(new ShortcutTableCellRenderer(true));
         mod.getColumn(1).setCellRenderer(new ShortcutTableCellRenderer(false));
@@ -267,9 +260,6 @@ public class PrefJPanel extends JPanel {
         gc.gridx = 1;
         gc.weightx = 1.0;
         pnl.add(filterField, gc);
-        filterField.setToolTipText(tr("Enter a search expression"));
-        SelectAllOnFocusGainedDecorator.decorate(filterField);
-        filterField.getDocument().addDocumentListener(new FilterFieldAdapter());
         pnl.setMaximumSize(new Dimension(300, 10));
         return pnl;
     }
@@ -369,48 +359,6 @@ public class PrefJPanel extends JPanel {
                 disableAllModifierCheckboxes();
                 panel.tfKey.setEnabled(false);
             }
-        }
-    }
-
-    class FilterFieldAdapter implements DocumentListener {
-        private void filter() {
-            String expr = filterField.getText().trim();
-            if (expr.isEmpty()) {
-                expr = null;
-            }
-            try {
-                final TableRowSorter<? extends TableModel> sorter =
-                    (TableRowSorter<? extends TableModel>) shortcutTable.getRowSorter();
-                if (expr == null) {
-                    sorter.setRowFilter(null);
-                } else {
-                    expr = expr.replace("+", "\\+");
-                    // split search string on whitespace, do case-insensitive AND search
-                    List<RowFilter<Object, Object>> andFilters = new ArrayList<>();
-                    for (String word : expr.split("\\s+")) {
-                        andFilters.add(RowFilter.regexFilter("(?i)" + word));
-                    }
-                    sorter.setRowFilter(RowFilter.andFilter(andFilters));
-                }
-                model.fireTableDataChanged();
-            } catch (PatternSyntaxException | ClassCastException ex) {
-                Logging.warn(ex);
-            }
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            filter();
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            filter();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            filter();
         }
     }
 }
