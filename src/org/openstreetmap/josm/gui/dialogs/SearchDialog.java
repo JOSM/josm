@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -115,6 +117,7 @@ public class SearchDialog extends ExtendedDialog {
         standardSearch = new JRadioButton(tr("standard"), !searchSettings.regexSearch && !searchSettings.mapCSSSearch);
         regexSearch = new JRadioButton(tr("regular expression"), searchSettings.regexSearch);
         mapCSSSearch = new JRadioButton(tr("MapCSS selector"), searchSettings.mapCSSSearch);
+
         ButtonGroup bg2 = new ButtonGroup();
         bg2.add(standardSearch);
         bg2.add(regexSearch);
@@ -162,7 +165,7 @@ public class SearchDialog extends ExtendedDialog {
          * every time the content of the field has changed. If the query is incorrect, then
          * the text field is colored red.
          */
-        document.addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
+        AbstractTextComponentValidator validator = new AbstractTextComponentValidator(editorComponent) {
 
             @Override
             public void validate() {
@@ -187,7 +190,16 @@ public class SearchDialog extends ExtendedDialog {
                     return false;
                 }
             }
-        });
+        };
+        document.addDocumentListener(validator);
+        ItemListener validateActionListener = e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                validator.validate();
+            }
+        };
+        standardSearch.addItemListener(validateActionListener);
+        regexSearch.addItemListener(validateActionListener);
+        mapCSSSearch.addItemListener(validateActionListener);
 
         /*
          * Setup the logic to append preset queries to the search text field according to
