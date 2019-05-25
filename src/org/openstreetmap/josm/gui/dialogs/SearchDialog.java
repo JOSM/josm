@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -93,9 +92,7 @@ public class SearchDialog extends ExtendedDialog {
         hcbSearchString.setText(searchSettings.text);
         hcbSearchString.setToolTipText(tooltip);
 
-        // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        Collections.reverse(searchExpressionHistory);
-        hcbSearchString.setPossibleItems(searchExpressionHistory);
+        hcbSearchString.setPossibleItemsTopDown(searchExpressionHistory);
         hcbSearchString.setPreferredSize(new Dimension(40, hcbSearchString.getPreferredSize().height));
         label.setLabelFor(hcbSearchString);
 
@@ -326,7 +323,7 @@ public class SearchDialog extends ExtendedDialog {
                         trc("search string example", "user:anonymous (objects without an assigned author)"))
                 .addKeyword("id:", "id:", tr("objects with given ID"),
                         trc("search string example", "id:0 (new objects)"))
-                .addKeyword("version:", "version:", tr("objects with given version"), 
+                .addKeyword("version:", "version:", tr("objects with given version"),
                         trc("search string example", "version:0 (objects without an assigned version)"))
                 .addKeyword("changeset:", "changeset:", tr("objects with given changeset ID"),
                         trc("search string example", "changeset:0 (objects without an assigned changeset)"))
