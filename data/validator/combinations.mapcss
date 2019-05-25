@@ -222,7 +222,9 @@ way[incline                    ][!highway][!railway][aeroway!~/^(runway|taxiway)
   group: tr("missing tag");
 }
 
-/* {0.tag} together with {1.key}, see #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888 */
+/* {0.tag} together with {1.key}, see #17664, #17707, #16464, #10837, #14034, #9389, #11977, #13156, #16888 */
+*[power=plant][/^generator:/],
+*[power=generator][/^plant:/],
 *[power=plant][voltage],
 *[power=plant][frequency],
 *[internet_access=no][internet_access:fee],
@@ -236,6 +238,8 @@ way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidep
 way[oneway=-1 ][/:forward/ ][!traffic_sign:forward ][bicycle:forward!=use_sidepath ][oneway:bicycle!=no][oneway:psv!=no] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
   group: tr("suspicious tag combination");
+  assertMatch: "way power=plant generator:source=wind";
+  assertMatch: "way power=generator plant:source=combustion";
 }
 
 /* {0.tag} together with {1.tag} (info level), see #9696 */
