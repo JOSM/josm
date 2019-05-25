@@ -1,0 +1,10 @@
+<svg height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(0 -1036.3621)">
+        <path d="m0 1036.3621h16v16h-16z" fill="#21bd00"/>
+        <path d="m4.500001 1040.8621h7.000001v10.99992h-7.000001z" fill="#808080" stroke="#333"/>
+        <path d="m.00000191 1051.8621h16.00000009" fill="none" stroke="#c87137"/>
+        <text fill="#fff" font-family="sans-serif" font-size="8" letter-spacing="0" word-spacing="0" x="5.556641" y="1049.1941">
+            <tspan x="5.556641" y="1049.1941">T</tspan>
+        </text>
+    </g>
+</svg>

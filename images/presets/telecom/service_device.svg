@@ -1,0 +1,33 @@
+<svg height="16" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path id="a" d="m15.53.53-.08 16.88-14.99-.07.07-16.87z"/>
+        <path id="b" d="m11.2 3.5v10.4h-2.4v-10.4z"/>
+        <path id="c" d="m9.39 6.3v4.8h-4.59v-4.8z"/>
+        <path id="d" d="m5 10.5h4.5v3.41z"/>
+        <path id="e" d="m5 7h4.5v-3.5z"/>
+        <path id="f" d="m14.5 5h-3.3"/>
+        <path id="g" d="m1.5 8.5h3.36"/>
+        <path id="h" d="m14.5 12.5h-3.3"/>
+        <path id="i" d="m14.5 8.84h-3.3"/>
+    </defs>
+    <use fill="#232323" xlink:href="#a"/>
+    <use fill="none" stroke="#21bd00" stroke-width="2" xlink:href="#a"/>
+    <use fill="#dbdbdb" xlink:href="#b"/>
+    <use fill="none" xlink:href="#b"/>
+    <use fill="#dbdbdb" xlink:href="#c"/>
+    <use fill="none" xlink:href="#c"/>
+    <use fill="#dbdbdb" xlink:href="#d"/>
+    <use fill="none" xlink:href="#d"/>
+    <use fill="#dbdbdb" xlink:href="#e"/>
+    <g fill="none">
+        <use xlink:href="#e"/>
+        <use xlink:href="#f"/>
+        <use stroke="#00a8ff" stroke-width="1.5" xlink:href="#f"/>
+        <use xlink:href="#g"/>
+        <use stroke="#ffd500" stroke-width="1.5" xlink:href="#g"/>
+        <use xlink:href="#h"/>
+        <use stroke="#00a8ff" stroke-width="1.5" xlink:href="#h"/>
+        <use xlink:href="#i"/>
+        <use stroke="#00a8ff" stroke-width="1.5" xlink:href="#i"/>
+    </g>
+</svg>

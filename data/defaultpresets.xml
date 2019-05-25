@@ -115,10 +115,13 @@
         <text key="name" text="Name" />
         <text key="ref" text="Reference" />
     </chunk>
-    <chunk id="name_ref_operator">
-        <text key="name" text="Name" />
+    <chunk id="ref_operator">
         <text key="ref" text="Reference" />
         <text key="operator" text="Operator" />
+    </chunk>
+    <chunk id="name_ref_operator">
+        <text key="name" text="Name" />
+        <reference ref="ref_operator" />
     </chunk>
     <chunk id="name_operator">
         <text key="name" text="Name" />
@@ -325,10 +328,6 @@
         <combo key="voltage:tertiary" text="Tertiary voltage in Volts (V)" values="765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000" />
         <reference ref="frequency" />
     </chunk>
-    <chunk id="ref_operator">
-        <text key="ref" text="Reference" />
-        <text key="operator" text="Operator" />
-    </chunk>
     <chunk id="cables">
         <combo key="cables" text="Amount of Cables" values="1,2,3,4,6,9,12" />
     </chunk>
@@ -393,6 +392,9 @@
             <!-- #16364: don't use simple "power" context to avoid conflict with "delta" used for power towers -->
             <combo key="windings:configuration" text="Windings configuration" values="star,delta,open-delta,zigzag,open,scott,leblanc" values_context="power_windings" />
         </optional>
+    </chunk>
+    <chunk id="telecom_medium">
+        <combo key="telecom:medium" text="Local loop type" values="copper,fibre,coaxial" />
     </chunk>
     <chunk id="optional_bridge">
         <optional>
@@ -5315,6 +5317,36 @@
             </optional>
         </item> <!-- Power Cable -->
     </group> <!-- Power -->
+    <group name="Telecom" icon="presets/telecom/telecom.svg">
+        <item name="Telecom Street Cabinet" icon="presets/telecom/telecom_cabinet.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:man_made=street_cabinet" />
+            <space />
+            <key key="man_made" value="street_cabinet" />
+            <key key="street_cabinet" value="telecom" />
+            <reference ref="ref_operator" />
+        </item> <!-- Telecom Street Cabinet -->
+        <item name="Telephone Exchange" icon="presets/telecom/exchange.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:telecom=exchange" />
+            <space />
+            <key key="telecom" value="exchange" />
+            <reference ref="telecom_medium" />
+            <reference ref="ref_operator" />
+        </item> <!-- Telephone Exchange -->
+        <item name="Connection Point" icon="presets/telecom/connection_point.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:telecom=connection_point" />
+            <space />
+            <key key="telecom" value="connection_point" />
+            <reference ref="telecom_medium" />
+            <reference ref="ref_operator" />
+        </item> <!-- Connection Point -->
+        <item name="Service Device" icon="presets/telecom/service_device.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:telecom=service_device" />
+            <space />
+            <key key="telecom" value="service_device" />
+            <reference ref="telecom_medium" />
+            <reference ref="ref_operator" />
+        </item> <!-- Service Device -->
+    </group> <!-- Telecom -->
     <group name="Historic Places" icon="presets/sightseeing/castle.svg">
         <item name="Castle" icon="presets/sightseeing/castle.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:historic=castle" />

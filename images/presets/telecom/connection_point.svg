@@ -1,0 +1,57 @@
+<svg height="16" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path id="a" d="m14.5 2v12.8h-12.8v-12.8z"/>
+        <path id="b" d="m15.5.5v16.72h-15v-16.72z"/>
+        <path id="c" d="m5.7 3.7v2h-2v-2z"/>
+        <path id="d" d="m5.7 3v2.5h-2.7v-2.5z"/>
+        <path id="e" d="m5.7 7.2v2h-2v-2z"/>
+        <path id="f" d="m5.7 7.25v2.5h-2.7v-2.5z"/>
+        <path id="g" d="m5.7 11.2v2h-2v-2z"/>
+        <path id="h" d="m5.7 11.5v2.5h-2.7v-2.5z"/>
+        <path id="i" d="m12.5 3.7v2h-2.1v-2z"/>
+        <path id="j" d="m13 3v2.5h-2.5v-2.5z"/>
+        <path id="k" d="m12.5 7.2v2h-2.1v-2z"/>
+        <path id="l" d="m13 7.2v2.5h-2.5v-2.5z"/>
+        <path id="m" d="m12.5 11.1v2.1h-2.1v-2.1z"/>
+        <path id="n" d="m13 11.5v2.5h-2.6v-2.5z"/>
+        <path id="o" d="m10.9 4.76c-.93.49-2.78 1.48-5.54 2.97"/>
+        <path id="p" d="m10.93 9-5.63 3"/>
+        <path id="q" d="m5.26 5.26 5.62 6.63z"/>
+    </defs>
+    <use fill="#21bd00" xlink:href="#a"/>
+    <use fill="none" xlink:href="#a"/>
+    <use fill="#232323" xlink:href="#b"/>
+    <use fill="none" stroke="#21bd00" stroke-width="2" xlink:href="#b"/>
+    <use fill="#232323" xlink:href="#c"/>
+    <use fill="none" xlink:href="#c"/>
+    <use fill="#21bd00" xlink:href="#d"/>
+    <use fill="none" xlink:href="#d"/>
+    <use fill="#232323" xlink:href="#e"/>
+    <use fill="none" xlink:href="#e"/>
+    <use fill="#21bd00" xlink:href="#f"/>
+    <use fill="none" xlink:href="#f"/>
+    <use fill="#232323" xlink:href="#g"/>
+    <use fill="none" xlink:href="#g"/>
+    <use fill="#21bd00" xlink:href="#h"/>
+    <use fill="none" xlink:href="#h"/>
+    <use fill="#232323" xlink:href="#i"/>
+    <use fill="none" xlink:href="#i"/>
+    <use fill="#21bd00" xlink:href="#j"/>
+    <use fill="none" xlink:href="#j"/>
+    <use fill="#232323" xlink:href="#k"/>
+    <use fill="none" xlink:href="#k"/>
+    <use fill="#21bd00" xlink:href="#l"/>
+    <use fill="none" xlink:href="#l"/>
+    <use fill="#232323" xlink:href="#m"/>
+    <use fill="none" xlink:href="#m"/>
+    <use fill="#21bd00" xlink:href="#n"/>
+    <g fill="none">
+        <use xlink:href="#n"/>
+        <use xlink:href="#o"/>
+        <use stroke="#fff900" stroke-width="1.5" xlink:href="#o"/>
+        <use xlink:href="#p"/>
+        <use stroke="#bf002a" stroke-width="1.5" xlink:href="#p"/>
+        <use xlink:href="#q"/>
+        <use stroke="#00baff" stroke-width="1.5" xlink:href="#q"/>
+    </g>
+</svg>
