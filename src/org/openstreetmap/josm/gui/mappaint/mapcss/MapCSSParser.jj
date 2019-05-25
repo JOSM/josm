@@ -656,6 +656,16 @@ void rule():
     }
 }
 
+/** Read selectors, make sure that we read all tokens  See #17746 */
+List<Selector> selectors_for_search():
+{
+    List<Selector> selectors;
+}
+{
+    selectors=selectors() <EOF>
+    { return selectors; }
+}
+
 List<Selector> selectors():
 {
     List<Selector> selectors = new ArrayList<Selector>();

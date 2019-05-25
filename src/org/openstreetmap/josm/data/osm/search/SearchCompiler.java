@@ -1995,7 +1995,7 @@ public class SearchCompiler {
 
     static Match compileMapCSS(String mapCSS) throws SearchParseError {
         try {
-            final List<Selector> selectors = new MapCSSParser(new StringReader(mapCSS)).selectors();
+            final List<Selector> selectors = new MapCSSParser(new StringReader(mapCSS)).selectors_for_search();
             return new Match() {
                 @Override
                 public boolean match(OsmPrimitive osm) {
