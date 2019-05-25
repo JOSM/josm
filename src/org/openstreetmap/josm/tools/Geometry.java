@@ -1042,6 +1042,7 @@ public final class Geometry {
 
     /**
      * Find all primitives in the given collection which are inside the given polygon.
+     * Unclosed ways and multipolygon relations with unclosed outer rings are ignored.
      * @param primitives the primitives
      * @param polygon the polygon
      * @return a new list containing the found primitives, empty if polygon is invalid or nothing was found.
@@ -1060,12 +1061,14 @@ public final class Geometry {
                     res.add(p);
                 }
             } else if (p instanceof IWay) {
-                if (polygonArea == null) {
-                    polygonArea = getArea(polygon.getNodes());
-                }
-                if (PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(getArea(((IWay<?>) p).getNodes()),
-                        polygonArea)) {
-                    res.add(p);
+                if (((IWay<?>) p).isClosed()) {
+                    if (polygonArea == null) {
+                        polygonArea = getArea(polygon.getNodes());
+                    }
+                    if (PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(getArea(((IWay<?>) p).getNodes()),
+                            polygonArea)) {
+                        res.add(p);
+                    }
                 }
             } else if (p.isMultipolygon()) {
                 if (polygonArea == null) {
@@ -1075,8 +1078,9 @@ public final class Geometry {
                 boolean inside = true;
                 // a (valid) multipolygon is inside the polygon if all outer rings are inside
                 for (PolyData outer : mp.getOuterPolygons()) {
-                    if (PolygonIntersection.FIRST_INSIDE_SECOND != polygonIntersection(getArea(outer.getNodes()),
-                            polygonArea)) {
+                    if (!outer.isClosed()
+                            || PolygonIntersection.FIRST_INSIDE_SECOND != polygonIntersection(getArea(outer.getNodes()),
+                                    polygonArea)) {
                         inside = false;
                         break;
                     }
@@ -1091,7 +1095,7 @@ public final class Geometry {
 
     /**
      * Find all primitives in the given collection which are inside the given multipolygon. Members of the multipolygon are
-     * ignored.
+     * ignored. Unclosed ways and multipolygon relations with unclosed outer rings are ignored.
      * @param primitives the primitives
      * @param multiPolygon the multipolygon relation
      * @return a new list containing the found primitives, empty if multipolygon is invalid or nothing was found.
@@ -1120,7 +1124,7 @@ public final class Geometry {
                     res.add(p);
                 }
             } else if (p instanceof Way) {
-                if (isPolygonInsideMultiPolygon(((Way) p).getNodes(), outerInner, null)) {
+                if (((IWay<?>) p).isClosed() && isPolygonInsideMultiPolygon(((Way) p).getNodes(), outerInner, null)) {
                     res.add(p);
                 }
             } else if (p.isMultipolygon()) {
@@ -1128,7 +1132,7 @@ public final class Geometry {
                 boolean inside = true;
                 // a (valid) multipolygon is inside multiPolygon if all outer rings are inside
                 for (PolyData outer : mp.getOuterPolygons()) {
-                    if (!isPolygonInsideMultiPolygon(outer.getNodes(), outerInner, null)) {
+                    if (!outer.isClosed() || !isPolygonInsideMultiPolygon(outer.getNodes(), outerInner, null)) {
                         inside = false;
                         break;
                     }
