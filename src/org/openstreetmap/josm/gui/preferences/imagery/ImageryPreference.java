@@ -22,10 +22,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -288,21 +291,63 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
 
         /**
-         * class to render the name information of Imagery source
-         * @since 8064
+         * class to render an information of Imagery source
+         * @param <T> type of information
          */
-        private static class ImageryNameTableCellRenderer extends DefaultTableCellRenderer {
+        private static class ImageryTableCellRenderer<T> extends DefaultTableCellRenderer {
+            private final Function<T, Object> mapper;
+            private final Function<T, String> tooltip;
+            private final BiConsumer<T, JLabel> decorator;
+
+            ImageryTableCellRenderer(Function<T, Object> mapper, Function<T, String> tooltip, BiConsumer<T, JLabel> decorator) {
+                this.mapper = mapper;
+                this.tooltip = tooltip;
+                this.decorator = decorator;
+            }
+
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean
+            @SuppressWarnings("unchecked")
+            public final Component getTableCellRendererComponent(JTable table, Object value, boolean
                     isSelected, boolean hasFocus, int row, int column) {
-                ImageryInfo info = (ImageryInfo) value;
+                T obj = (T) value;
                 JLabel label = (JLabel) super.getTableCellRendererComponent(
-                        table, info == null ? null : info.getName(), isSelected, hasFocus, row, column);
+                        table, mapper.apply(obj), isSelected, hasFocus, row, column);
                 GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
-                if (info != null) {
-                    label.setToolTipText(info.getToolTipText());
+                if (obj != null) {
+                    label.setToolTipText(tooltip.apply(obj));
+                    if (decorator != null) {
+                        decorator.accept(obj, label);
+                    }
                 }
                 return label;
+            }
+        }
+
+        /**
+         * class to render the category information of Imagery source
+         */
+        private static class ImageryCategoryTableCellRenderer extends ImageryTableCellRenderer<ImageryCategory> {
+            ImageryCategoryTableCellRenderer() {
+                super(cat -> null, cat -> tr("Imagery category: {0}", cat.getDescription()),
+                      (cat, label) -> label.setIcon(cat.getIcon(ImageSizes.TABLE)));
+            }
+        }
+
+        /**
+         * class to render the country information of Imagery source
+         */
+        private static class ImageryCountryTableCellRenderer extends ImageryTableCellRenderer<String> {
+            ImageryCountryTableCellRenderer() {
+                super(code -> code, code -> code.isEmpty() ? tr("Worldwide") : new Locale("en", code).getDisplayCountry(), null);
+            }
+        }
+
+        /**
+         * class to render the name information of Imagery source
+         */
+        private static class ImageryNameTableCellRenderer extends ImageryTableCellRenderer<ImageryInfo> {
+            ImageryNameTableCellRenderer() {
+                super(info -> info == null ? null : info.getName(), ImageryInfo::getToolTipText, null);
             }
         }
 
@@ -342,7 +387,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             mod.getColumn(3).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getLayers()));
             mod.getColumn(2).setPreferredWidth(475);
             mod.getColumn(2).setCellRenderer(new ImageryNameTableCellRenderer());
+            mod.getColumn(1).setCellRenderer(new ImageryCountryTableCellRenderer());
             mod.getColumn(0).setPreferredWidth(50);
+            mod.getColumn(0).setCellRenderer(new ImageryCategoryTableCellRenderer());
             mod.getColumn(0).setPreferredWidth(50);
 
             mod = activeTable.getColumnModel();
@@ -786,10 +833,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             @Override
             public Object getValueAt(int row, int column) {
                 ImageryInfo info = layerInfo.getAllDefaultLayers().get(row);
-                ImageryCategory cat = Optional.ofNullable(info.getImageryCategory()).orElse(ImageryCategory.OTHER);
                 switch (column) {
                 case 0:
-                    return cat.getIcon(ImageSizes.TABLE);
+                    return Optional.ofNullable(info.getImageryCategory()).orElse(ImageryCategory.OTHER);
                 case 1:
                     return info.getCountryCode();
                 case 2:
