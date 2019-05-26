@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
@@ -161,12 +160,12 @@ public class BasicUploadSettingsPanel extends JPanel {
         build();
     }
 
-    public void setUploadTagDownFocusTraversalHandlers(final Action handler) {
+    void setUploadTagDownFocusTraversalHandlers(final ActionListener handler) {
         setHistoryComboBoxDownFocusTraversalHandler(handler, hcbUploadComment);
         setHistoryComboBoxDownFocusTraversalHandler(handler, hcbUploadSource);
     }
 
-    public void setHistoryComboBoxDownFocusTraversalHandler(final Action handler, final HistoryComboBox hcb) {
+    private static void setHistoryComboBoxDownFocusTraversalHandler(ActionListener handler, HistoryComboBox hcb) {
         hcb.getEditor().addActionListener(handler);
         hcb.getEditorComponent().addKeyListener(new HistoryComboBoxKeyAdapter(hcb, handler));
     }
@@ -176,9 +175,11 @@ public class BasicUploadSettingsPanel extends JPanel {
      */
     public void rememberUserInput() {
         // store the history of comments
-        hcbUploadComment.addCurrentItemToHistory();
-        Config.getPref().putList(HISTORY_KEY, hcbUploadComment.getHistory());
-        Config.getPref().putLong(HISTORY_LAST_USED_KEY, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+        if (getHistoryMaxAgeKey() > 0) {
+            hcbUploadComment.addCurrentItemToHistory();
+            Config.getPref().putList(HISTORY_KEY, hcbUploadComment.getHistory());
+            Config.getPref().putLong(HISTORY_LAST_USED_KEY, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+        }
         // store the history of sources
         hcbUploadSource.addCurrentItemToHistory();
         Config.getPref().putList(SOURCE_HISTORY_KEY, hcbUploadSource.getHistory());
@@ -231,11 +232,19 @@ public class BasicUploadSettingsPanel extends JPanel {
         }
     }
 
+    static long getHistoryMaxAgeKey() {
+        return Config.getPref().getLong(HISTORY_MAX_AGE_KEY, TimeUnit.HOURS.toSeconds(4));
+    }
+
+    static long getHistoryLastUsedKey() {
+        return Config.getPref().getLong(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0);
+    }
+
     static final class HistoryComboBoxKeyAdapter extends KeyAdapter {
         private final HistoryComboBox hcb;
-        private final Action handler;
+        private final ActionListener handler;
 
-        HistoryComboBoxKeyAdapter(HistoryComboBox hcb, Action handler) {
+        HistoryComboBoxKeyAdapter(HistoryComboBox hcb, ActionListener handler) {
             this.hcb = hcb;
             this.handler = handler;
         }

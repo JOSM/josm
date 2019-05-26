@@ -26,7 +26,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -237,14 +236,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 }
         );
 
-        pnlBasicUploadSettings.setUploadTagDownFocusTraversalHandlers(
-                new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        btnUpload.requestFocusInWindow();
-                    }
-                }
-        );
+        pnlBasicUploadSettings.setUploadTagDownFocusTraversalHandlers(e -> btnUpload.requestFocusInWindow());
 
         setMinimumSize(new Dimension(600, 350));
 
@@ -777,9 +769,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
     private static String getLastChangesetTagFromHistory(String historyKey, List<String> def) {
         Collection<String> history = Config.getPref().getList(historyKey, def);
-        long age = System.currentTimeMillis() / 1000 - Config.getPref().getLong(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0);
-        if (age < Config.getPref().getLong(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, TimeUnit.HOURS.toSeconds(4))
-                && !history.isEmpty()) {
+        long age = System.currentTimeMillis() / 1000 - BasicUploadSettingsPanel.getHistoryLastUsedKey();
+        if (age < BasicUploadSettingsPanel.getHistoryMaxAgeKey() && !history.isEmpty()) {
             return history.iterator().next();
         }
         return null;
