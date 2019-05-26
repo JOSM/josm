@@ -142,8 +142,8 @@ way[highway][area!=yes][!tunnel][!covered] >[index=1] node,
 way[highway][area!=yes][!tunnel][!covered] >[index=-1] node {
   set first_last_highway_node;
 }
-way[building][building!=no] > node.node_in_closed_highway,
-way[building][building!=no] > node.node_in_highway!.first_last_highway_node {
+way[building][building!=no] > node[!entrance].node_in_closed_highway,
+way[building][building!=no] > node[!entrance].node_in_highway!.first_last_highway_node {
   throwWarning: tr("node connects highway and building");
 }
 
