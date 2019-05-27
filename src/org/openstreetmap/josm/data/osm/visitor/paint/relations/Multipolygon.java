@@ -331,7 +331,9 @@ public class Multipolygon {
         }
 
         /**
-         * Checks if this multipolygon contains or crosses an other polygon
+         * Checks if this multipolygon contains or crosses an other polygon. This is a quick+lazy test which assumes
+         * that a polygon is inside when all points are inside. It will fail when the polygon encloses a hole or crosses
+         * the edges of poly so that both end points are inside poly (think of a square overlapping a U-shape).
          * @param p The path to check. Needs to be in east/north space.
          * @return a {@link Intersection} constant
          */
