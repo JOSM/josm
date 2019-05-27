@@ -10,7 +10,9 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -355,13 +357,10 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         final Command cmd = DeleteCommand.delete(toDelete);
         if (cmd != null) {
             // cmd can be null if the user cancels dialogs DialogCommand displays
+            List<Relation> toUnselect = toDelete.stream().filter(Relation::isSelected).collect(Collectors.toList());
             UndoRedoHandler.getInstance().add(cmd);
-            for (Relation relation : toDelete) {
-                if (layer.data.getSelectedRelations().contains(relation)) {
-                    layer.data.toggleSelected(relation);
-                }
-                RelationDialogManager.getRelationDialogManager().close(layer, relation);
-            }
+            toDelete.forEach(relation -> RelationDialogManager.getRelationDialogManager().close(layer, relation));
+            toUnselect.forEach(layer.data::toggleSelected);
         }
     }
 
