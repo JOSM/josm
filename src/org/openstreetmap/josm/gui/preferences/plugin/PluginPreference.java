@@ -54,7 +54,6 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.FilterField;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
@@ -81,7 +80,6 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
     }
 
-    private JosmTextField tfFilter;
     private PluginListPanel pnlPluginPreferences;
     private PluginPreferencesModel model;
     private JScrollPane spPluginPreferences;
@@ -189,11 +187,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        tfFilter = new FilterField().filter(expr -> {
+        pnl.add(new FilterField().filter(expr -> {
             model.filterDisplayedPlugins(expr);
             pnlPluginPreferences.refreshView();
-        });
-        pnl.add(tfFilter, gc);
+        }), gc);
         return pnl;
     }
 

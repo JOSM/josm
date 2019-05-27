@@ -9,6 +9,8 @@ import java.util.EventObject;
  */
 public class DefaultPreferenceChangeEvent extends EventObject implements PreferenceChangeEvent {
 
+    private static final long serialVersionUID = 1L;
+
     private final String key;
     private final Setting<?> oldValue;
     private final Setting<?> newValue;

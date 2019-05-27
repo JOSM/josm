@@ -151,32 +151,31 @@ public class ExportRelationToGpxAction extends GpxExportAction
             List<WayConnectionType> wct = new WayConnectionTypeCalculator().updateLinks(flat);
             final HashMap<String, Integer> names = new HashMap<>();
             for (int i = 0; i < flat.size(); i++) {
-                if (!wct.get(i).isOnewayLoopBackwardPart) {
-                    if (!wct.get(i).direction.isRoundabout()) {
-                        if (!wct.get(i).linkPrev && !trkseg.isEmpty()) {
-                            gpxData.addTrack(new ImmutableGpxTrack(trk, trkAttr));
-                            trkAttr.clear();
-                            trk.clear();
-                            trkseg.clear();
-                            trk.add(trkseg);
-                        }
-                        if (trkAttr.isEmpty()) {
-                            flat.get(i).getWay().referrers(Relation.class)
-                                    .filter(relsFound::contains)
-                                    .findFirst()
-                                    .ifPresent(r -> {
-                                        trkAttr.put("name", r.getName() != null ? r.getName() : r.getId());
-                                        trkAttr.put("desc", tr("based on osm route relation data, timestamps are synthetic"));
-                                    });
-                            GpxData.ensureUniqueName(trkAttr, names);
-                        }
-                        List<Node> ln = flat.get(i).getWay().getNodes();
-                        if (wct.get(i).direction == WayConnectionType.Direction.BACKWARD)
-                            Collections.reverse(ln);
-                        for (Node n: ln) {
-                            trkseg.add(OsmDataLayer.nodeToWayPoint(n, TimeUnit.SECONDS.toMillis(time)));
-                            time += 1;
-                        }
+                WayConnectionType wayConnectionType = wct.get(i);
+                if (!wayConnectionType.isOnewayLoopBackwardPart && !wayConnectionType.direction.isRoundabout()) {
+                    if (!wayConnectionType.linkPrev && !trkseg.isEmpty()) {
+                        gpxData.addTrack(new ImmutableGpxTrack(trk, trkAttr));
+                        trkAttr.clear();
+                        trk.clear();
+                        trkseg.clear();
+                        trk.add(trkseg);
+                    }
+                    if (trkAttr.isEmpty()) {
+                        flat.get(i).getWay().referrers(Relation.class)
+                                .filter(relsFound::contains)
+                                .findFirst()
+                                .ifPresent(r -> {
+                                    trkAttr.put("name", r.getName() != null ? r.getName() : r.getId());
+                                    trkAttr.put("desc", tr("based on osm route relation data, timestamps are synthetic"));
+                                });
+                        GpxData.ensureUniqueName(trkAttr, names);
+                    }
+                    List<Node> ln = flat.get(i).getWay().getNodes();
+                    if (wayConnectionType.direction == WayConnectionType.Direction.BACKWARD)
+                        Collections.reverse(ln);
+                    for (Node n: ln) {
+                        trkseg.add(OsmDataLayer.nodeToWayPoint(n, TimeUnit.SECONDS.toMillis(time)));
+                        time += 1;
                     }
                 }
             }

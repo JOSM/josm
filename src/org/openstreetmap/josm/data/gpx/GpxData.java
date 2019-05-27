@@ -460,13 +460,11 @@ public class GpxData extends WithAttributes implements Data {
         final HashMap<String, Integer> counts = new HashMap<>();
 
         List<GpxTrack> trks = getTracks().stream()
-            .flatMap(trk -> {
-                return trk.getSegments().stream().map(seg -> {
+            .flatMap(trk -> trk.getSegments().stream().map(seg -> {
                     HashMap<String, Object> attrs = new HashMap<>(trk.getAttributes());
                     ensureUniqueName(attrs, counts);
                     return new ImmutableGpxTrack(Arrays.asList(seg), attrs);
-                });
-            })
+                }))
             .collect(Collectors.toCollection(ArrayList<GpxTrack>::new));
 
         clearTracks();

@@ -98,7 +98,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      * @param doSaveToFile true to save; false, to skip saving
      */
     public void setDoSaveToFile(boolean doSaveToFile) {
-        this.doSaveToFile = isSavable() ? doSaveToFile : false;
+        this.doSaveToFile = isSavable() && doSaveToFile;
     }
 
     /**
@@ -116,7 +116,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      * @param doUploadToServer {@code true} to upload; {@code false}, to skip uploading
      */
     public void setDoUploadToServer(boolean doUploadToServer) {
-        this.doUploadToServer = isUploadable() ? doUploadToServer : false;
+        this.doUploadToServer = isUploadable() && doUploadToServer;
     }
 
     /**

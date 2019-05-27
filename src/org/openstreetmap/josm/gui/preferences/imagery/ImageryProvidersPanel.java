@@ -318,7 +318,6 @@ public class ImageryProvidersPanel extends JPanel {
         activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.WMS));
         activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.TMS));
         activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.WMTS));
-        //activeToolbar.add(edit); TODO
         activeToolbar.add(remove);
         add(activeToolbar, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
     }
@@ -697,8 +696,9 @@ public class ImageryProvidersPanel extends JPanel {
                 return info;
             case 3:
                 return info.getExtendedUrl();
+            default:
+                return null;
             }
-            return null;
         }
 
         @Override

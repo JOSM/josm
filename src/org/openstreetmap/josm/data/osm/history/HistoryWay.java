@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
@@ -136,7 +137,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @return true if this way is closed.
      */
     public boolean isClosed() {
-        return getNumNodes() >= 3 && nodeIds.get(0) == nodeIds.get(nodeIds.size()-1);
+        return getNumNodes() >= 3 && Objects.equals(nodeIds.get(0), nodeIds.get(nodeIds.size()-1));
     }
 
     @Override

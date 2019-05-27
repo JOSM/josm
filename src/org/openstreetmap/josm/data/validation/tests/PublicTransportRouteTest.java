@@ -51,7 +51,7 @@ public class PublicTransportRouteTest extends Test {
                         .primitives(r)
                         .build());
                 return;
-            } else if (member.hasRole("") && OsmPrimitiveType.WAY.equals(member.getType())) {
+            } else if (member.hasRole("") && OsmPrimitiveType.WAY == member.getType()) {
                 membersToCheck.add(member);
                 routeNodes.addAll(member.getWay().getNodes());
             }
@@ -66,7 +66,7 @@ public class PublicTransportRouteTest extends Test {
             final boolean hasError = !(i == 0 || link.linkPrev)
                     || !(i == links.size() - 1 || link.linkNext)
                     || link.direction == null
-                    || WayConnectionType.Direction.NONE.equals(link.direction);
+                    || WayConnectionType.Direction.NONE == link.direction;
             if (hasError) {
                 errors.add(TestError.builder(this, Severity.WARNING, 3602)
                         .message(tr("Route relation contains a gap"))
@@ -78,7 +78,7 @@ public class PublicTransportRouteTest extends Test {
 
         for (RelationMember member : r.getMembers()) {
             if (member.hasRole("stop", "stop_exit_only", "stop_entry_only")
-                    && OsmPrimitiveType.NODE.equals(member.getType())
+                    && OsmPrimitiveType.NODE == member.getType()
                     && !routeNodes.contains(member.getNode())) {
                 errors.add(TestError.builder(this, Severity.WARNING, 3603)
                         .message(tr("Stop position not part of route"))

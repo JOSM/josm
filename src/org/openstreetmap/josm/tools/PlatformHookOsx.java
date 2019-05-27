@@ -32,7 +32,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
 
 /**
- * {@code PlatformHook} implementation for Apple Mac OS X systems.
+ * {@code PlatformHook} implementation for Apple macOS (formerly Mac OS X) systems.
  * @since 1023
  */
 public class PlatformHookOsx implements PlatformHook, InvocationHandler {

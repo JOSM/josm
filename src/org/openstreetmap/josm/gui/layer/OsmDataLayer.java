@@ -1131,15 +1131,15 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
     @Override
     public boolean checkSaveConditions() {
-        if (isDataSetEmpty() && 1 != GuiHelper.runInEDTAndWaitAndReturn(() -> {
-            return new ExtendedDialog(
+        if (isDataSetEmpty() && 1 != GuiHelper.runInEDTAndWaitAndReturn(() ->
+            new ExtendedDialog(
                     MainApplication.getMainFrame(),
                     tr("Empty document"),
                     tr("Save anyway"), tr("Cancel"))
                 .setContent(tr("The document contains no data."))
                 .setButtonIcons("save", "cancel")
-                .showDialog().getValue();
-        })) {
+                .showDialog().getValue()
+        )) {
             return false;
         }
 

@@ -146,7 +146,7 @@ public final class StructUtils {
      * @param klass the class T
      * @return the resulting map (same data content as <code>struct</code>)
      */
-    public static <T> Map<String, String> serializeStruct(T struct, Class<T> klass) {
+    public static <T> HashMap<String, String> serializeStruct(T struct, Class<T> klass) {
         T structPrototype;
         try {
             structPrototype = klass.getConstructor().newInstance();
@@ -154,7 +154,7 @@ public final class StructUtils {
             throw new IllegalArgumentException(ex);
         }
 
-        Map<String, String> hash = new LinkedHashMap<>();
+        HashMap<String, String> hash = new LinkedHashMap<>();
         for (Field f : klass.getDeclaredFields()) {
             if (f.getAnnotation(StructEntry.class) == null) {
                 continue;

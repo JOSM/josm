@@ -603,7 +603,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             List<String> exceptions = Config.getPref().getList(preferencePrefix+".exception-terms", defException);
             List<String> forbiddenTerms = Config.getPref().getList(preferencePrefix+".forbidden-terms", defForbidden)
                     .stream().map(UploadAction::lower)
-                    .filter(x -> uploadValueLc.contains(x) && !exceptions.stream().anyMatch(uploadValueLc::contains))
+                    .filter(x -> uploadValueLc.contains(x) && exceptions.stream().noneMatch(uploadValueLc::contains))
                     .collect(Collectors.toList());
             if (!forbiddenTerms.isEmpty()) {
                 return tr("The following forbidden terms have been found: {0}", forbiddenTerms);

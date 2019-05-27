@@ -323,7 +323,7 @@ public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
      * @return {@code true} if the test has been canceled, {@code false} otherwise
      */
     public boolean isCanceled() {
-        return progressMonitor != null ? progressMonitor.isCanceled() : false;
+        return progressMonitor != null && progressMonitor.isCanceled();
     }
 
     /**

@@ -405,11 +405,9 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
             d.toProperty().remove();
         }
         for (ColorEntry e : tableModel.getData()) {
-            if (e.info.getValue() != null) {
-                if (e.toProperty().put(e.info.getValue())
-                        && NamedColorProperty.COLOR_CATEGORY_MAPPAINT.equals(e.info.getCategory())) {
-                    ret = true;
-                }
+            if (e.info.getValue() != null && e.toProperty().put(e.info.getValue())
+                    && NamedColorProperty.COLOR_CATEGORY_MAPPAINT.equals(e.info.getCategory())) {
+                ret = true;
             }
         }
         OsmDataLayer.createHatchTexture();

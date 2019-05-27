@@ -101,13 +101,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         MapPaintStyles.addMapPaintSylesUpdateListener(new MapPaintSylesUpdateListener() {
             @Override
             public void mapPaintStylesUpdated() {
-                SwingUtilities.invokeLater(() -> {
+                SwingUtilities.invokeLater(() ->
                     // Trigger a repaint of all data layers
                     MainApplication.getLayerManager().getLayers()
                         .stream()
                         .filter(layer -> layer instanceof OsmDataLayer)
-                        .forEach(Layer::invalidate);
-                });
+                        .forEach(Layer::invalidate)
+                );
             }
 
             @Override

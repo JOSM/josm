@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://josm.openstreetmap.de/gpx-extensions-1.0"
-	xmlns:tns="http://josm.openstreetmap.de/gpx-extensions-1.0" elementFormDefault="qualified">
+    xmlns:tns="http://josm.openstreetmap.de/gpx-extensions-1.0" elementFormDefault="qualified">
 
     <!-- true, if gpx data has been downloaded from the osm server -->
     <!-- it this case, JOSM improves the rendering of clouds of anonymous TrackPoints -->
