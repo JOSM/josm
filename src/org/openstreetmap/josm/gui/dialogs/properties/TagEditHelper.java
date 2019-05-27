@@ -67,6 +67,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
@@ -233,19 +234,25 @@ public class TagEditHelper {
      */
     public void addTag() {
         changedKey = null;
-        sel = OsmDataManager.getInstance().getInProgressSelection();
-        if (sel == null || sel.isEmpty())
-            return;
+        DataSet activeDataSet = OsmDataManager.getInstance().getActiveDataSet();
+        try {
+            activeDataSet.beginUpdate();
+            sel = OsmDataManager.getInstance().getInProgressSelection();
+            if (sel == null || sel.isEmpty())
+                return;
 
-        final AddTagsDialog addDialog = getAddTagsDialog();
+            final AddTagsDialog addDialog = getAddTagsDialog();
 
-        addDialog.showDialog();
+            addDialog.showDialog();
 
-        addDialog.destroyActions();
-        if (addDialog.getValue() == 1)
-            addDialog.performTagAdding();
-        else
-            addDialog.undoAllTagsAdding();
+            addDialog.destroyActions();
+            if (addDialog.getValue() == 1)
+                addDialog.performTagAdding();
+            else
+                addDialog.undoAllTagsAdding();
+        } finally {
+            activeDataSet.endUpdate();
+        }
     }
 
     /**
