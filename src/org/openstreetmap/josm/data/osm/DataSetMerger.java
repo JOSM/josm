@@ -405,6 +405,20 @@ public class DataSetMerger {
      * @param progressMonitor The progress monitor
      */
     public void merge(ProgressMonitor progressMonitor) {
+        merge(progressMonitor, true);
+    }
+
+    /**
+     * Runs the merge operation. Successfully merged {@link OsmPrimitive}s are in
+     * {@link #getTargetDataSet()}.
+     *
+     * See {@link #getConflicts()} for a map of conflicts after the merge operation.
+     * @param progressMonitor The progress monitor
+     * @param mergeBounds Whether or not to merge the bounds of the new DataSet to
+     * the existing DataSet
+     * @since 15127
+     */
+    public void merge(ProgressMonitor progressMonitor, boolean mergeBounds) {
         if (sourceDataSet == null)
             return;
         if (progressMonitor != null) {
@@ -442,9 +456,11 @@ public class DataSetMerger {
 
             // copy the merged layer's data source info.
             // only add source rectangles if they are not contained in the layer already.
-            for (DataSource src : sourceDataSet.getDataSources()) {
-                if (a == null || !a.contains(src.bounds.asRect())) {
-                    targetDataSet.addDataSource(src);
+            if (mergeBounds) {
+                for (DataSource src : sourceDataSet.getDataSources()) {
+                    if (a == null || !a.contains(src.bounds.asRect())) {
+                        targetDataSet.addDataSource(src);
+                    }
                 }
             }
 
