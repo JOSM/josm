@@ -14,13 +14,15 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.InDataSourceArea;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -637,9 +639,9 @@ public final class ConditionFactory {
          * @return {@code true} if the way is closed or the relation is a closed multipolygon
          */
         static boolean closed(Environment e) { // NO_UCD (unused code)
-            if (e.osm instanceof Way && ((Way) e.osm).isClosed())
+            if (e.osm instanceof IWay<?> && ((IWay<?>) e.osm).isClosed())
                 return true;
-            return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon();
+            return e.osm instanceof IRelation<?> && ((IRelation<?>) e.osm).isMultipolygon();
         }
 
         /**
@@ -669,7 +671,7 @@ public final class ConditionFactory {
          * @see Node#isConnectionNode()
          */
         static boolean connection(Environment e) { // NO_UCD (unused code)
-            return e.osm instanceof Node && e.osm.getDataSet() != null && ((Node) e.osm).isConnectionNode();
+            return e.osm instanceof INode && e.osm.getDataSet() != null && ((INode) e.osm).isConnectionNode();
         }
 
         /**
@@ -768,15 +770,15 @@ public final class ConditionFactory {
         }
 
         static boolean completely_downloaded(Environment e) { // NO_UCD (unused code)
-            if (e.osm instanceof Relation) {
-                return !((Relation) e.osm).hasIncompleteMembers();
+            if (e.osm instanceof IRelation<?>) {
+                return !((IRelation<?>) e.osm).hasIncompleteMembers();
             } else {
                 return true;
             }
         }
 
         static boolean closed2(Environment e) { // NO_UCD (unused code)
-            if (e.osm instanceof Way && ((Way) e.osm).isClosed())
+            if (e.osm instanceof IWay<?> && ((IWay<?>) e.osm).isClosed())
                 return true;
             if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon()) {
                 Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) e.osm);
