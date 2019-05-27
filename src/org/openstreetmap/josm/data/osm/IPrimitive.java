@@ -146,7 +146,7 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
     /**
      * Determines if this object is drawable.
      * <p>
-     * A primitive is complete if all conditions are met:
+     * A primitive is drawable if all conditions are met:
      * <ul>
      * <li>type and id is known
      * <li>tags are known
