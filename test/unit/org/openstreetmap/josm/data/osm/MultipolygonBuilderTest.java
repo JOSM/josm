@@ -26,7 +26,7 @@ public class MultipolygonBuilderTest {
     public JOSMTestRules test = new JOSMTestRules().projection().timeout(15000);
 
     /**
-     * Non-regression test for ticket #12060.
+     * Non-regression test for ticket #12376.
      * @throws Exception if an error occurs
      */
     @Test
