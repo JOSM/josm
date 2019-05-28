@@ -586,7 +586,7 @@ way[highway=pedestrian][width][width<3] {
 }
 
 /* see #17623 */
-way:areaStyle[highway][highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|pedestrian|track|path|footway|cycleway|bus_guideway|bridleway/][area!=yes] {
+way:areaStyle[highway][highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service$|living_street|pedestrian|track|path|footway|cycleway|bus_guideway|bridleway/][area!=yes] {
   throwOther: tr("A linear object {0} without {1} has a tag indicating that it is an area.", "{1.tag}", "{3.tag}");
   group: tr("suspicious tag combination");
 }
