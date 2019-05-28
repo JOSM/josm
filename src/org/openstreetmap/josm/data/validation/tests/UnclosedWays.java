@@ -7,8 +7,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -16,6 +18,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 
 /**
  * Check area type ways for errors
@@ -155,6 +158,7 @@ public class UnclosedWays extends Test {
         new UnclosedWaysCheck(1110, "area:highway", marktr("area:highway type {0}")),
         new UnclosedWaysBooleanCheck(1120, "building", marktr("building")),
         new UnclosedWaysBooleanCheck(1130, "area",     marktr("area")),
+        // 1131: Area style way is not closed
         // CHECKSTYLE.ON: SingleSpaceSeparator
     };
 
@@ -188,6 +192,16 @@ public class UnclosedWays extends Test {
                 errors.add(error);
                 return;
             }
+        }
+        // code 1131: other area style ways
+        if (ElemStyles.hasOnlyAreaElements(w)) {
+            List<Node> nodes = w.getNodes();
+            if (nodes.isEmpty()) return; // fix zero nodes bug
+            errors.add(TestError.builder(this, Severity.WARNING, 1131)
+                    .message(tr("Unclosed way"), marktr("Area style way is not closed"), new Object())
+                    .primitives(w)
+                    .highlight(Arrays.asList(w.firstNode(), w.lastNode()))
+                    .build());
         }
     }
 }

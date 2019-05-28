@@ -29,14 +29,12 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
-import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.Logging;
@@ -61,8 +59,7 @@ public class MultipolygonTest extends Test {
     public static final int OUTER_STYLE_MISMATCH = 1607;
     /** With the currently used mappaint style the style for inner way equals the multipolygon style */
     public static final int INNER_STYLE_MISMATCH = 1608;
-    /** Area style way is not closed */
-    public static final int NOT_CLOSED = 1609;
+    // no longer used: Area style way is not closed NOT_CLOSED = 1609
     /** No area style for multipolygon */
     public static final int NO_STYLE = 1610;
     /** Multipolygon relation should be tagged with area tags and not the outer way(s) */
@@ -81,50 +78,12 @@ public class MultipolygonTest extends Test {
     private static final int FOUND_INSIDE = 1;
     private static final int FOUND_OUTSIDE = 2;
 
-    private final Set<String> keysCheckedByAnotherTest = new HashSet<>();
-
     /**
      * Constructs a new {@code MultipolygonTest}.
      */
     public MultipolygonTest() {
         super(tr("Multipolygon"),
                 tr("This test checks if multipolygons are valid."));
-    }
-
-    @Override
-    public void startTest(ProgressMonitor progressMonitor) {
-        super.startTest(progressMonitor);
-        keysCheckedByAnotherTest.clear();
-        for (Test t : OsmValidator.getEnabledTests(false)) {
-            if (t instanceof UnclosedWays) {
-                keysCheckedByAnotherTest.addAll(((UnclosedWays) t).getCheckedKeys());
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void endTest() {
-        keysCheckedByAnotherTest.clear();
-        super.endTest();
-    }
-
-    @Override
-    public void visit(Way w) {
-        if (!w.isArea() && ElemStyles.hasOnlyAreaElements(w)) {
-            List<Node> nodes = w.getNodes();
-            if (nodes.isEmpty()) return; // fix zero nodes bug
-            for (String key : keysCheckedByAnotherTest) {
-                if (w.hasKey(key)) {
-                    return;
-                }
-            }
-            errors.add(TestError.builder(this, Severity.WARNING, NOT_CLOSED)
-                    .message(tr("Area style way is not closed"))
-                    .primitives(w)
-                    .highlight(Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1)))
-                    .build());
-        }
     }
 
     @Override
