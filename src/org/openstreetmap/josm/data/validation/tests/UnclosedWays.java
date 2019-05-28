@@ -7,10 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -194,9 +192,7 @@ public class UnclosedWays extends Test {
             }
         }
         // code 1131: other area style ways
-        if (ElemStyles.hasOnlyAreaElements(w)) {
-            List<Node> nodes = w.getNodes();
-            if (nodes.isEmpty()) return; // fix zero nodes bug
+        if (ElemStyles.hasOnlyAreaElements(w) && !w.getNodes().isEmpty()) {
             errors.add(TestError.builder(this, Severity.WARNING, 1131)
                     .message(tr("Unclosed way"), marktr("Area style way is not closed"), new Object())
                     .primitives(w)
