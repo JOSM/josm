@@ -7,6 +7,7 @@ import java.net.URL;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.HttpClient;
 
@@ -34,6 +35,9 @@ public class ImageryCompareTestIT {
      */
     @Test
     public void testImageryEntries() throws Exception {
+        // Increase traditional timeouts to avoid random problems
+        Config.getPref().putInt("socket.timeout.connect", 60);
+        Config.getPref().putInt("socket.timeout.read", 90);
         System.out.println("Displaying only red entries. The test fails if at least one is found");
         boolean rubricDisplayed = false;
         boolean redFound = false;
