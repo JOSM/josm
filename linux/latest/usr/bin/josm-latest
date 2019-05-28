@@ -14,8 +14,10 @@ if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null ; then
 	JAVA_CMDS="$JAVA_HOME/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java"
+	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-12-openjdk/bin/java /usr/lib/jvm/java-12-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-10-openjdk/bin/java /usr/lib/jvm/java-10-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-9-openjdk/bin/java /usr/lib/jvm/java-9-openjdk-$ARCH/bin/java"
+	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-13-openjdk/bin/java /usr/lib/jvm/java-13-openjdk-$ARCH/bin/java"
 else
 	JAVA_CMDS="$JAVA_HOME/bin/java /usr/bin/java"
 fi
@@ -48,6 +50,8 @@ if [ "$JAVACMD" ]; then
     echo "Using $JAVACMD to execute josm-latest." || true
     if [ "`expr match \"${JAVACMD}\" 'java-9'`" != "0" ] || [ "`expr match \"${JAVACMD}\" 'java-10'`" != "0" ]; then
         JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
+    elif [ "`expr match \"${JAVACMD}\" 'java-1'`" != "0" ]; then
+        JAVA_OPTS="--add-modules java.scripting $JAVA_OPTS"
     fi
     set +e
     while true; do
