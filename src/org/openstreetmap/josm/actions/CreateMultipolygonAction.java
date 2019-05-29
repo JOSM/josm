@@ -178,21 +178,24 @@ public class CreateMultipolygonAction extends JosmAction {
         MainApplication.worker.submit(new CreateUpdateMultipolygonTask(selectedWays, multipolygonRelation));
     }
 
-    private Relation getSelectedMultipolygonRelation() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        return getSelectedMultipolygonRelation(ds.getSelectedWays(), ds.getSelectedRelations());
-    }
-
     private static Relation getSelectedMultipolygonRelation(Collection<Way> selectedWays, Collection<Relation> selectedRelations) {
-        if (selectedRelations.size() == 1 && "multipolygon".equals(selectedRelations.iterator().next().get("type"))) {
-            return selectedRelations.iterator().next();
-        } else {
-            final Set<Relation> relatedRelations = new HashSet<>();
+        Relation candidate = null;
+        if (selectedRelations.size() == 1) {
+            candidate = selectedRelations.iterator().next();
+            if (!candidate.hasTag("type", "multipolygon"))
+                candidate = null;
+        } else if (!selectedWays.isEmpty()) {
             for (final Way w : selectedWays) {
-                w.referrers(Relation.class).forEach(relatedRelations::add);
+                for (OsmPrimitive r : w.getReferrers()) {
+                    if (r != candidate && r instanceof Relation && r.hasTag("type", "multipolygon")) {
+                        if (candidate != null)
+                            return null; // found another multipolygon relation
+                        candidate = (Relation) r;
+                    }
+                }
             }
-            return relatedRelations.size() == 1 ? relatedRelations.iterator().next() : null;
         }
+        return candidate;
     }
 
     /**
@@ -270,17 +273,17 @@ public class CreateMultipolygonAction extends JosmAction {
     /**
       * Enable this action only if something is selected
       *
-      * @param selection the current selection, gets tested for emptyness
+      * @param selection the current selection, gets tested for emptiness
       */
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
+        if (ds == null || selection.isEmpty()) {
             setEnabled(false);
         } else if (update) {
-            setEnabled(getSelectedMultipolygonRelation() != null);
+            setEnabled(getSelectedMultipolygonRelation(ds.getSelectedWays(), ds.getSelectedRelations()) != null);
         } else {
-            setEnabled(!getLayerManager().getEditDataSet().getSelectedWays().isEmpty());
+            setEnabled(!ds.getSelectedWays().isEmpty());
         }
     }
 
