@@ -14,6 +14,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -71,6 +73,29 @@ public class UnclosedWaysTest {
         uwTest.visit(w);
         assertFalse(ElemStyles.hasAreaElemStyle(w, false));
         assertEquals(2, uwTest.getErrors().size());
+
+        uwTest.endTest();
+    }
+
+    /**
+     * Test to make sure the multipolygon ways are ignored
+     * @throws Exception if an exception occurs
+     */
+    @Test
+    public void testWayInMultiPolygon() throws Exception {
+        UnclosedWays uwTest = new UnclosedWays();
+        uwTest.initialize();
+        uwTest.startTest(null);
+        DataSet ds = new DataSet();
+
+        // Erroneous tag
+        Way w = createUnclosedWay("natural=water", ds);
+        Relation r = (Relation) OsmUtils.createPrimitive("relation type=multipolygon natural=wood");
+        r.addMember(new RelationMember("inner", w));
+        ds.addPrimitive(r);
+        uwTest.visit(w);
+        assertTrue(ElemStyles.hasAreaElemStyle(w, false));
+        assertEquals(0, uwTest.getErrors().size());
 
         uwTest.endTest();
     }
