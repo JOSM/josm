@@ -4734,8 +4734,12 @@
             <link wiki="Tag:pipeline=valve" />
             <space />
             <key key="pipeline" value="valve" />
-            <text key="ref" text="Reference" />
-            <reference ref="operator_substance" />
+            <combo key="valve" text="Valve type" values="butterfly,globe,ball,plug,gate,needle,spool" values_context="valve" />
+            <combo key="actuator" text="Actuator" values="manual,electric_motor,pneumatic_cylinder,hydraulic_cylinder,thermostatic,solenoid" values_context="actuator" />
+            <combo key="handle" text="Handle" values="lever,wheel,cross,button" values_context="handle" />
+            <combo key="turn_to_close" text="Direction to close" values="clockwise,anti_clockwise" />
+            <combo key="sensor:position" values="optical,mechanical,inductive,yes" />
+            <reference ref="ref_operator" />
         </item> <!-- Pipeline Valve -->
         <separator/>
         <item name="Water Tower" icon="presets/landmark/water_tower.svg" type="node,closedway" preset_name_label="true">
