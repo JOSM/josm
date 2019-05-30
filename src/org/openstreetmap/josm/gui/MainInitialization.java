@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter.SettingsAdapter;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
@@ -143,11 +144,25 @@ public class MainInitialization implements InitializationSequence {
                 FeatureAdapter.registerImageAdapter(ImageProvider::read);
                 FeatureAdapter.registerTranslationAdapter(I18n::tr);
                 FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
+                FeatureAdapter.registerSettingsAdapter(new JosmSettingsAdapter());
                 // UI update
                 MainApplication.toolbar.refreshToolbarControl();
                 MainApplication.toolbar.control.updateUI();
                 MainApplication.contentPanePrivate.updateUI();
             }))
         );
+    }
+
+    private static class JosmSettingsAdapter implements SettingsAdapter {
+
+        @Override
+        public String get(String key, String def) {
+            return Config.getPref().get(key, def);
+        }
+
+        @Override
+        public boolean put(String key, String value) {
+            return Config.getPref().put(key, value);
+        }
     }
 }
