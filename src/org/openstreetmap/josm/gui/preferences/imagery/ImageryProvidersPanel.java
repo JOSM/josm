@@ -43,7 +43,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapPolygonImpl;
 import org.openstreetmap.gui.jmapviewer.MapRectangleImpl;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
@@ -55,6 +54,7 @@ import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.bbox.JosmMapViewer;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -73,7 +73,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 15115 (extracted from ImageryPreferences)
  */
 public class ImageryProvidersPanel extends JPanel {
-    // Public JTables and JMapViewer
+    // Public JTables and JosmMapViewer
     /** The table of active providers **/
     public final JTable activeTable;
     /** The table of default providers **/
@@ -83,7 +83,7 @@ public class ImageryProvidersPanel extends JPanel {
     /** The selection listener synchronizing map display with table of default providers **/
     private final transient DefListSelectionListener defaultTableListener;
     /** The map displaying imagery bounds of selected default providers **/
-    public final JMapViewer defaultMap;
+    public final JosmMapViewer defaultMap;
 
     // Public models
     /** The model of active providers **/
@@ -264,7 +264,7 @@ public class ImageryProvidersPanel extends JPanel {
         add(defaultPane, GBC.std().fill(GridBagConstraints.BOTH).weight(1.0, 0.6).insets(5, 0, 0, 0));
 
         // Add default item map
-        defaultMap = new JMapViewer();
+        defaultMap = new JosmMapViewer();
         defaultMap.setTileSource(SlippyMapBBoxChooser.DefaultOsmTileSourceProvider.get()); // for attribution
         defaultMap.addMouseListener(new MouseAdapter() {
             @Override

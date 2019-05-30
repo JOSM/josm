@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.bbox;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -12,159 +10,40 @@ import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.swing.ButtonModel;
-import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
-import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
-import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
-import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
-import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This panel displays a map and lets the user chose a {@link BBox}.
  */
-public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, ChangeListener,
+public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, ChangeListener,
     MainLayerManager.ActiveLayerChangeListener, MainLayerManager.LayerChangeListener {
-    /**
-     * A list of tile sources that can be used for displaying the map.
-     */
-    @FunctionalInterface
-    public interface TileSourceProvider {
-        /**
-         * Gets the tile sources that can be displayed
-         * @return The tile sources
-         */
-        List<TileSource> getTileSources();
-    }
-
-    /**
-     * TileSource provider for the slippymap chooser.
-     * @since 14300
-     */
-    public abstract static class AbstractImageryInfoBasedTileSourceProvider implements TileSourceProvider {
-        /**
-         * Returns the list of imagery infos backing tile sources.
-         * @return the list of imagery infos backing tile sources
-         */
-        public abstract List<ImageryInfo> getImageryInfos();
-
-        @Override
-        public List<TileSource> getTileSources() {
-            if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
-            return imageryInfosToTileSources(getImageryInfos());
-        }
-    }
-
-    /**
-     * TileSource provider for the slippymap chooser - providing default OSM tile source
-     * @since 14495
-     */
-    public static class DefaultOsmTileSourceProvider implements TileSourceProvider {
-
-        protected static final StringProperty DEFAULT_OSM_TILE_URL = new StringProperty(
-                "default.osm.tile.source.url", "https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");
-
-        @Override
-        public List<TileSource> getTileSources() {
-            List<TileSource> result = imageryInfosToTileSources(ImageryLayerInfo.instance.getLayers().stream()
-                   .filter(l -> l.getUrl().equals(DEFAULT_OSM_TILE_URL.get())).collect(Collectors.toList()));
-            if (result.isEmpty()) {
-                result.add(new OsmTileSource.Mapnik());
-            }
-            return result;
-        }
-
-        /**
-         * Returns the default OSM tile source.
-         * @return the default OSM tile source
-         */
-        public static TileSource get() {
-            return new DefaultOsmTileSourceProvider().getTileSources().get(0);
-        }
-    }
-
-    /**
-     * TileSource provider for the slippymap chooser - providing sources from imagery sources menu
-     * @since 14300
-     */
-    public static class TMSTileSourceProvider extends AbstractImageryInfoBasedTileSourceProvider {
-        @Override
-        public List<ImageryInfo> getImageryInfos() {
-            return ImageryLayerInfo.instance.getLayers();
-        }
-    }
-
-    /**
-     * TileSource provider for the slippymap chooser - providing sources from current layers
-     * @since 14300
-     */
-    public static class CurrentLayersTileSourceProvider extends AbstractImageryInfoBasedTileSourceProvider {
-        @Override
-        public List<ImageryInfo> getImageryInfos() {
-            return MainApplication.getLayerManager().getLayers().stream().filter(
-                layer -> layer instanceof ImageryLayer
-            ).map(
-                layer -> ((ImageryLayer) layer).getInfo()
-            ).collect(Collectors.toList());
-        }
-    }
-
-    static List<TileSource> imageryInfosToTileSources(List<ImageryInfo> imageryInfos) {
-        List<TileSource> sources = new ArrayList<>();
-        for (ImageryInfo info : imageryInfos) {
-            try {
-                TileSource source = TMSLayer.getTileSourceStatic(info);
-                if (source != null) {
-                    sources.add(source);
-                }
-            } catch (IllegalArgumentException ex) {
-                Logging.warn(ex);
-                if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                            ex.getMessage(), tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        }
-        return sources;
-    }
 
     /**
      * Plugins that wish to add custom tile sources to slippy map choose should call this method
@@ -189,9 +68,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
      */
     public static final String RESIZE_PROP = SlippyMapBBoxChooser.class.getName() + ".resize";
 
-    private final transient TileLoader cachedLoader;
-    private final transient OsmTileLoader uncachedLoader;
-
     private final SizeButton iSizeButton;
     private final ButtonModel showDownloadAreaButtonModel;
     private final SourceButton iSourceButton;
@@ -209,18 +85,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         SpringLayout springLayout = new SpringLayout();
         setLayout(springLayout);
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("User-Agent", Version.getInstance().getFullAgentString());
-
-        TileLoaderFactory cachedLoaderFactory = AbstractCachedTileSourceLayer.getTileLoaderFactory("TMS", TMSCachedTileLoader.class);
-        if (cachedLoaderFactory != null) {
-            cachedLoader = cachedLoaderFactory.makeTileLoader(this, headers, TimeUnit.HOURS.toSeconds(1));
-        } else {
-            cachedLoader = null;
-        }
-
-        uncachedLoader = new OsmTileLoader(this);
-        uncachedLoader.headers.putAll(headers);
         setZoomControlsVisible(Config.getPref().getBoolean("slippy_map_chooser.zoomcontrols", false));
         setMapMarkerVisible(false);
         setMinimumSize(new Dimension(350, 350 / 2));
@@ -349,26 +213,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Cha
         // fired for the stateChanged event of this.showDownloadAreaButtonModel
         PROP_SHOWDLAREA.put(this.showDownloadAreaButtonModel.isSelected());
         this.repaint();
-    }
-
-    /**
-     * Enables the disk tile cache.
-     * @param enabled true to enable, false to disable
-     */
-    public final void setFileCacheEnabled(boolean enabled) {
-        if (enabled && cachedLoader != null) {
-            setTileLoader(cachedLoader);
-        } else {
-            setTileLoader(uncachedLoader);
-        }
-    }
-
-    /**
-     * Sets the maximum number of tiles that may be held in memory
-     * @param tiles The maximum number of tiles.
-     */
-    public final void setMaxTilesInMemory(int tiles) {
-        ((MemoryTileCache) getTileCache()).setCacheSize(tiles);
     }
 
     /**

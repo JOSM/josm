@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateForma
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.bbox.JosmMapViewer;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -316,7 +317,7 @@ public class CoordinateInfoViewer extends HistoryBrowserPanel {
         }
     }
 
-    private static class MapViewer extends JMapViewer implements ChangeListener {
+    private static class MapViewer extends JosmMapViewer implements ChangeListener {
 
         private final transient Updater updater;
 
