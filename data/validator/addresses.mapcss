@@ -26,7 +26,10 @@ way[addr:interpolation] {
 }
 
 /* #17486 */
-*[addr:housenumber][addr:housenumber!~/[0-9]/] {
+*[addr:housenumber=bb][inside("BA")] {
+  set ok_housenumber;
+}
+*[addr:housenumber][addr:housenumber!~/[0-9]/]!.ok_housenumber {
   throwWarning: tr("{0} without number", "{0.key}");
   assertNoMatch: "way addr:housenumber=0";
   assertNoMatch: "way addr:housenumber=5a";
