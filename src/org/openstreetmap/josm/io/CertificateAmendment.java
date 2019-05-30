@@ -185,7 +185,7 @@ public final class CertificateAmendment {
                 "7600295eefe85b9e1fd624db76062aaaae59818a54d2774cd4c0b2c01131e1b3",
                 "https://grca.nat.gov.tw"),
         // #17668 - used by city of Budapest - for https://terinfo.ujbuda.hu - https://e-szigno.hu/
-        new NativeCertAmend(Collections.singleton("Microsec e-Szigno Root CA 2009"),
+        new NativeCertAmend(Collections.singleton("MicroSec e-Szigno Root CA 2009"),
                 "Microsec_e-Szigno_Root_CA_2009.pem",
                 "3c5f81fea5fab82c64bfa2eaecafcde8e077fc8620a7cae537163df36edbf378",
                 "https://e-szigno.hu"),
