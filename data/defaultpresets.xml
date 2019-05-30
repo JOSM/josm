@@ -4738,7 +4738,7 @@
             <combo key="actuator" text="Actuator" values="manual,electric_motor,pneumatic_cylinder,hydraulic_cylinder,thermostatic,solenoid" values_context="actuator" />
             <combo key="handle" text="Handle" values="lever,wheel,cross,button" values_context="handle" />
             <combo key="turn_to_close" text="Direction to close" values="clockwise,anti_clockwise" />
-            <combo key="sensor:position" values="optical,mechanical,inductive,yes" />
+            <combo key="sensor:position" text="Position sensor" values="optical,mechanical,inductive,yes" />
             <reference ref="ref_operator" />
         </item> <!-- Pipeline Valve -->
         <separator/>
