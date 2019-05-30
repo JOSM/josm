@@ -160,6 +160,8 @@ public class CreateMultipolygonAction extends JosmAction {
                 ? getSelectedMultipolygonRelation(selectedWays, selectedRelations)
                 : null;
 
+        if (update && multipolygonRelation == null)
+            return;
         // download incomplete relation or incomplete members if necessary
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
         if (multipolygonRelation != null && editLayer != null && editLayer.isDownloadable()) {
@@ -187,7 +189,7 @@ public class CreateMultipolygonAction extends JosmAction {
         } else if (!selectedWays.isEmpty()) {
             for (final Way w : selectedWays) {
                 for (OsmPrimitive r : w.getReferrers()) {
-                    if (r != candidate && r instanceof Relation && r.hasTag("type", "multipolygon")) {
+                    if (r != candidate && !r.isDisabled() && r instanceof Relation && r.hasTag("type", "multipolygon")) {
                         if (candidate != null)
                             return null; // found another multipolygon relation
                         candidate = (Relation) r;
