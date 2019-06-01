@@ -384,3 +384,11 @@ way[route=ferry]!:closed >[index= 1] node[amenity!=ferry_terminal][man_made!=pie
 way[route=ferry]!:closed >[index=-1] node[amenity!=ferry_terminal][man_made!=pier]!.node_in_terminal_pier!.node_in_ferry_bridge_tunnel:in-downloaded-area { 
   throwWarning: tr("Ferry route is not connected to a ferry terminal or branches.");
 }
+
+/* #10391 - Many misuses of building=hangar instead of building=barn/industrial/warehouse */
+area:closed2[aeroway] ⊉ way[building=hangar][!aeroway] {
+  throwWarning: tr("{0} outside of {1}", "{0.tag}", "aeroway");
+  suggestAlternative: "building=barn";
+  suggestAlternative: "building=industrial";
+  suggestAlternative: "building=warehouse";
+}
