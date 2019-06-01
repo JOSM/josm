@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import org.openstreetmap.josm.tools.Logging;
-
 /**
  * Wrapper for {@link NTV2GridShiftFile}.
  *
@@ -68,7 +66,7 @@ public class NTV2GridShiftFileWrapper {
                 }
             }
             if (instance == null) {
-                Logging.error("Unable to find NTV2 grid shift file for {0}", gridFileName);
+                throw new IOException("Unable to find NTV2 grid shift file for " + gridFileName);
             }
         }
         return instance;
