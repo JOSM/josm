@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -69,23 +70,15 @@ public class UploadSelectionAction extends JosmAction {
     }
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (OsmPrimitive p: ds.allPrimitives()) {
-            if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
-                ret.add(p);
-            }
-        }
-        return ret;
+        return ds.allPrimitives().stream()
+                .filter(p -> p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified())
+                .collect(Collectors.toSet());
     }
 
     protected Set<OsmPrimitive> getModifiedPrimitives(Collection<OsmPrimitive> primitives) {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (OsmPrimitive p: primitives) {
-            if (p.isNewOrUndeleted() || (p.isModified() && !p.isIncomplete())) {
-                ret.add(p);
-            }
-        }
-        return ret;
+        return primitives.stream()
+                .filter(p -> p.isNewOrUndeleted() || (p.isModified() && !p.isIncomplete()))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -291,13 +284,7 @@ public class UploadSelectionAction extends JosmAction {
          * @return primitives to check
          */
         protected Set<OsmPrimitive> getPrimitivesToCheckForParents() {
-            Set<OsmPrimitive> ret = new HashSet<>();
-            for (OsmPrimitive p: toUpload) {
-                if (p.isDeleted() && !p.isNewOrUndeleted()) {
-                    ret.add(p);
-                }
-            }
-            return ret;
+            return toUpload.stream().filter(p -> p.isDeleted() && !p.isNewOrUndeleted()).collect(Collectors.toSet());
         }
 
         @Override

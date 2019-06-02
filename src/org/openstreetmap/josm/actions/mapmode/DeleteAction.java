@@ -201,24 +201,18 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         if (!drawTargetHighlight)
             return;
 
-        Set<OsmPrimitive> newHighlights = new HashSet<>();
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
 
         if (parameters.mode == DeleteMode.segment) {
             // deleting segments is the only action not working on OsmPrimitives
             // so we have to handle them separately.
-            repaintIfRequired(newHighlights, parameters.nearestSegment);
+            repaintIfRequired(Collections.emptySet(), parameters.nearestSegment);
         } else {
             // don't call buildDeleteCommands for DeleteMode.segment because it doesn't support
             // silent operation and SplitWayAction will show dialogs. A lot.
             Command delCmd = buildDeleteCommands(e, modifiers, true);
-            if (delCmd != null) {
-                // all other cases delete OsmPrimitives directly, so we can safely do the following
-                for (OsmPrimitive osm : delCmd.getParticipatingPrimitives()) {
-                    newHighlights.add(osm);
-                }
-            }
-            repaintIfRequired(newHighlights, null);
+            // all other cases delete OsmPrimitives directly, so we can safely do the following
+            repaintIfRequired(delCmd == null ? Collections.emptySet() : new HashSet<>(delCmd.getParticipatingPrimitives()), null);
         }
     }
 

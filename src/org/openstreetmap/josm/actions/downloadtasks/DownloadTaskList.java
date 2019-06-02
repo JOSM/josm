@@ -10,14 +10,15 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -125,13 +126,7 @@ public class DownloadTaskList {
      * @return the set of ids of all complete, non-new primitives
      */
     protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (OsmPrimitive primitive : ds.allPrimitives()) {
-            if (!primitive.isIncomplete() && !primitive.isNew()) {
-                ret.add(primitive);
-            }
-        }
-        return ret;
+        return ds.allPrimitives().stream().filter(p -> !p.isIncomplete() && !p.isNew()).collect(Collectors.toSet());
     }
 
     /**
@@ -209,16 +204,12 @@ public class DownloadTaskList {
      * @return the set of primitive ids which have been downloaded by this task list
      */
     public Set<OsmPrimitive> getDownloadedPrimitives() {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (DownloadTask task : tasks) {
-            if (task instanceof DownloadOsmTask) {
-                DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
-                if (ds != null) {
-                    ret.addAll(ds.allPrimitives());
-                }
-            }
-        }
-        return ret;
+        return tasks.stream()
+                .filter(t -> t instanceof DownloadOsmTask)
+                .map(t -> ((DownloadOsmTask) t).getDownloadedData())
+                .filter(Objects::nonNull)
+                .flatMap(ds -> ds.allPrimitives().stream())
+                .collect(Collectors.toSet());
     }
 
     class PostDownloadProcessor implements Runnable {

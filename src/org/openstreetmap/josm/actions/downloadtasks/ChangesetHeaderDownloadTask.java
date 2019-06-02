@@ -8,14 +8,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -133,18 +134,11 @@ public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
      * Must not be null.
      * @param changesets the collection of changesets. Assumes an empty collection if null.
      * @return the download task
-     * @throws IllegalArgumentException if parent is null
+     * @throws NullPointerException if parent is null
      */
     public static ChangesetHeaderDownloadTask buildTaskForChangesets(Component parent, Collection<Changeset> changesets) {
-        CheckParameterUtil.ensureParameterNotNull(parent, "parent");
-
-        Set<Integer> ids = new HashSet<>();
-        for (Changeset cs: changesets != null ? changesets : Collections.<Changeset>emptyList()) {
-            if (cs == null || cs.isNew()) {
-                continue;
-            }
-            ids.add(cs.getId());
-        }
-        return new ChangesetHeaderDownloadTask(parent, ids);
+        return new ChangesetHeaderDownloadTask(Objects.requireNonNull(parent, "parent"),
+                changesets == null ? Collections.<Integer>emptySet() :
+                    changesets.stream().filter(cs -> cs != null && !cs.isNew()).map(Changeset::getId).collect(Collectors.toSet()));
     }
 }

@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -609,23 +610,21 @@ public class UnGlueAction extends JosmAction {
         }
     }
 
-    protected void notifyWayPartOfRelation(final Iterable<Way> ways) {
-        final Set<String> affectedRelations = new HashSet<>();
-        for (Way way : ways) {
-            for (OsmPrimitive ref : way.getReferrers()) {
-                if (ref instanceof Relation && ref.isUsable()) {
-                    affectedRelations.add(ref.getDisplayName(DefaultNameFormatter.getInstance()));
-                }
-            }
-        }
+    protected void notifyWayPartOfRelation(final Collection<Way> ways) {
+        final Set<String> affectedRelations = ways.stream()
+                .flatMap(w -> w.getReferrers().stream())
+                .filter(ref -> ref instanceof Relation && ref.isUsable())
+                .map(ref -> ref.getDisplayName(DefaultNameFormatter.getInstance()))
+                .collect(Collectors.toSet());
         if (affectedRelations.isEmpty()) {
             return;
         }
 
+        final int size = affectedRelations.size();
         final String msg1 = trn("Unglueing affected {0} relation: {1}", "Unglueing affected {0} relations: {1}",
-                affectedRelations.size(), affectedRelations.size(), Utils.joinAsHtmlUnorderedList(affectedRelations));
+                size, size, Utils.joinAsHtmlUnorderedList(affectedRelations));
         final String msg2 = trn("Ensure that the relation has not been broken!", "Ensure that the relations have not been broken!",
-                affectedRelations.size());
+                size);
         new Notification("<html>" + msg1 + msg2).setIcon(JOptionPane.WARNING_MESSAGE).show();
     }
 }

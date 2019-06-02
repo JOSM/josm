@@ -6,8 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -45,19 +46,14 @@ public class EditRelationAction extends AbstractRelationAction {
      * @return The set of currently selected relation members for the given relation.
      */
     public static Set<RelationMember> getMembersForCurrentSelection(Relation r) {
-        Set<RelationMember> members = new HashSet<>();
         if (MainApplication.isDisplayingMapView()) {
             OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             if (editLayer != null && editLayer.data != null) {
                 Collection<OsmPrimitive> selection = editLayer.data.getSelected();
-                for (RelationMember member: r.getMembers()) {
-                    if (selection.contains(member.getMember())) {
-                        members.add(member);
-                    }
-                }
+                return r.getMembers().stream().filter(m -> selection.contains(m.getMember())).collect(Collectors.toSet());
             }
         }
-        return members;
+        return Collections.emptySet();
     }
 
     /**

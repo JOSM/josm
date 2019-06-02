@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -366,10 +367,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // put the nodes of all ways in a set
-        final Set<Node> allNodes = new HashSet<>();
-        for (WayData w : wayDataList) {
-            allNodes.addAll(w.wayNodes);
-        }
+        final Set<Node> allNodes = wayDataList.stream().flatMap(w -> w.wayNodes.stream()).collect(Collectors.toSet());
 
         // the new x and y value for each node
         final Map<Node, Double> nX = new HashMap<>();

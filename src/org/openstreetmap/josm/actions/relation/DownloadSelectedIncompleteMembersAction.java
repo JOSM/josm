@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -41,11 +41,9 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
      * @return The set of incomplete members of the given relations.
      */
     public static Set<IPrimitive> buildSetOfIncompleteMembers(Collection<IRelation<?>> rels) {
-        Set<IPrimitive> ret = new HashSet<>();
-        for (IRelation<?> r : rels) {
-            ret.addAll(SubclassFilteredCollection.filter(r.getIncompleteMembers(), osm -> !osm.isNew()));
-        }
-        return ret;
+        return rels.stream()
+                .flatMap(r -> SubclassFilteredCollection.filter(r.getIncompleteMembers(), osm -> !osm.isNew()).stream())
+                .collect(Collectors.toSet());
     }
 
     @Override

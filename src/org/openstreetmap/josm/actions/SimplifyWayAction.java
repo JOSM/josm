@@ -228,8 +228,7 @@ public class SimplifyWayAction extends JosmAction {
 
         if (newNodes.size() == w.getNodesCount()) return null;
 
-        Set<Node> delNodes = new HashSet<>();
-        delNodes.addAll(w.getNodes());
+        Set<Node> delNodes = new HashSet<>(w.getNodes());
         delNodes.removeAll(newNodes);
 
         if (delNodes.isEmpty()) return null;

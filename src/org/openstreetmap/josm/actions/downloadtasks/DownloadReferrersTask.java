@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -147,13 +147,9 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         }
         Collection<Way> ways = ds.getWays();
 
-        DataSetMerger merger;
         if (!ways.isEmpty()) {
-            Set<Node> nodes = new HashSet<>();
-            for (Way w: ways) {
-                // Ensure each node is only listed once
-                nodes.addAll(w.getNodes());
-            }
+            // Ensure each node is only listed once
+            Set<Node> nodes = ways.stream().flatMap(w -> w.getNodes().stream()).collect(Collectors.toSet());
             // Don't retrieve any nodes we've already grabbed
             nodes.removeAll(targetLayer.data.getNodes());
             if (!nodes.isEmpty()) {
@@ -163,12 +159,10 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                 synchronized (this) { // avoid race condition in cancel()
                     reader = null;
                 }
-                merger = new DataSetMerger(ds, wayNodes);
-                merger.merge();
+                new DataSetMerger(ds, wayNodes).merge();
             }
         }
-        merger = new DataSetMerger(parents, ds);
-        merger.merge();
+        new DataSetMerger(parents, ds).merge();
     }
 
     @Override

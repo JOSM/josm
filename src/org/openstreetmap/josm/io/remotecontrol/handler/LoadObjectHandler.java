@@ -3,13 +3,11 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -74,11 +72,7 @@ public class LoadObjectHandler extends RequestHandler {
                 final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (downloaded != null) {
                     GuiHelper.runInEDT(() -> ds.setSelected(downloaded));
-                    Collection<OsmPrimitive> downlPrim = new HashSet<>();
-                    for (PrimitiveId id : downloaded) {
-                        downlPrim.add(ds.getPrimitiveById(id));
-                    }
-                    AddTagsDialog.addTags(args, sender, downlPrim);
+                    AddTagsDialog.addTags(args, sender, downloaded.stream().map(ds::getPrimitiveById).collect(Collectors.toSet()));
                 }
                 ps.clear();
             });
