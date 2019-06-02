@@ -534,7 +534,7 @@ public class ImageryProvidersPanel extends JPanel {
 
             outer:
             for (int line : lines) {
-                ImageryInfo info = defaultModel.getRow(line);
+                ImageryInfo info = defaultModel.getRow(defaultTable.convertRowIndexToModel(line));
 
                 // Check if an entry with exactly the same values already exists
                 for (int j = 0; j < activeModel.getRowCount(); j++) {

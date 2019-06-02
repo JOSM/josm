@@ -41,7 +41,7 @@ public class ChangesetHeaderDownloadTaskTest {
     /**
      * Unit test of {@code ChangesetHeaderDownloadTask#buildTaskForChangesets} - null parent.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testBuildTaskForChangesetsNullParent() {
         ChangesetHeaderDownloadTask.buildTaskForChangesets(Collections.singleton(new Changeset(1)));
     }
