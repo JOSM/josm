@@ -151,7 +151,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      */
     private static boolean isPosInOneShapeIfAny(ImageryInfo info, LatLon pos) {
         List<Shape> shapes = info.getBounds().getShapes();
-        return shapes == null || shapes.stream().anyMatch(s -> s.contains(pos));
+        return shapes == null || shapes.isEmpty() || shapes.stream().anyMatch(s -> s.contains(pos));
     }
 
     /**
@@ -184,7 +184,9 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
                     .sorted(alphabeticImageryComparator)
                     .collect(Collectors.toList());
             if (!inViewLayers.isEmpty()) {
-                addDynamicSeparator();
+                if (inViewLayers.stream().anyMatch(i -> i.getImageryCategory() == ImageryCategory.PHOTO)) {
+                    addDynamicSeparator();
+                }
                 for (ImageryInfo i : inViewLayers) {
                     addDynamic(trackJosmAction(new AddImageryLayerAction(i)), i.getImageryCategory());
                 }
