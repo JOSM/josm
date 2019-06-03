@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -699,14 +700,35 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         return imageryType == that.imageryType && Objects.equals(url, that.url);
     }
 
+    private static final Map<String, String> localizedCountriesCache = new HashMap<>();
+    static {
+        localizedCountriesCache.put("", tr("Worldwide"));
+    }
+
+    /**
+     * Returns a localized name for the given country code, or "Worldwide" if empty.
+     * This function falls back on the English name, and uses the ISO code as a last-resortvalue.
+     *
+     * @param countryCode An ISO 3166 alpha-2 country code or a UN M.49 numeric-3 area code
+     * @return The name of the country appropriate to the current locale.
+     * @see Locale#getDisplayCountry
+     * @since 15158
+     */
+    public static String getLocalizedCountry(String countryCode) {
+        return localizedCountriesCache.computeIfAbsent(countryCode, code -> new Locale("en", code).getDisplayCountry());
+    }
+
     @Override
     public String toString() {
-        return "ImageryInfo{" +
-                "name='" + name + '\'' +
-                ", countryCode='" + countryCode + '\'' +
-                ", url='" + url + '\'' +
-                ", imageryType=" + imageryType +
-                '}';
+        // Used in imagery preferences filtering, so must be efficient
+        return new StringBuilder("ImageryInfo{")
+                .append("name='").append(name).append('\'')
+                .append(", countryCode='").append(countryCode).append('\'')
+                // appending the localized country in toString() allows us to filter imagery preferences table with it!
+                .append(", localizedCountry='").append(getLocalizedCountry(countryCode)).append('\'')
+                .append(", url='").append(url).append('\'')
+                .append(", imageryType=").append(imageryType)
+                .append('}').toString();
     }
 
     @Override

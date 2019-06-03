@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -188,7 +187,7 @@ public class ImageryProvidersPanel extends JPanel {
      */
     private static class ImageryCountryTableCellRenderer extends ImageryProvidersPanel.ImageryTableCellRenderer<String> {
         ImageryCountryTableCellRenderer() {
-            super(code -> code, code -> code.isEmpty() ? tr("Worldwide") : new Locale("en", code).getDisplayCountry(), null);
+            super(code -> code, ImageryInfo::getLocalizedCountry, null);
         }
     }
 
@@ -682,6 +681,22 @@ public class ImageryProvidersPanel extends JPanel {
         @Override
         public int getRowCount() {
             return layerInfo.getAllDefaultLayers().size();
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            switch (columnIndex) {
+            case 0:
+                return ImageryCategory.class;
+            case 1:
+                return String.class;
+            case 2:
+                return ImageryInfo.class;
+            case 3:
+                return String.class;
+            default:
+                return super.getColumnClass(columnIndex);
+            }
         }
 
         @Override
