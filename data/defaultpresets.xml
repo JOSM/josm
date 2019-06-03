@@ -509,6 +509,9 @@
       <combo key="access" text="Access" values="yes,no,customers,private" />
     </optional>
   </chunk>
+  <chunk id="nudism">
+    <combo key="nudism" text="Nudism" values="yes,no,obligatory,designated,customary,permissive" />
+  </chunk>
   <!--  Groups -->
   <group name="Highways" icon="presets/transport/way/way_secondary.svg">
     <group name="Streets" icon="presets/transport/way/way_secondary.svg">
@@ -1702,6 +1705,7 @@
                 <reference ref="general_access" />
                 <combo key="surface" text="Surface" values="gravel,pebblestone,sand" />
                 <combo key="sport" text="Sport" values="swimming,surfing" />
+                <reference ref="nudism" />
             </optional>
         </item> <!-- Beach -->
         <item name="Bay" icon="presets/nautical/bay.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
@@ -2820,6 +2824,7 @@
             <reference ref="wheelchair" />
             <reference ref="internet" />
             <space />
+            <reference ref="nudism" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Campsite -->
     </group> <!-- Accommodation -->
@@ -3129,6 +3134,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="fee_interval" />
             <space />
+            <reference ref="nudism" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Beach Resort -->
         <item name="Swimming Pool" icon="presets/sport/swimming.svg" type="node,closedway" preset_name_label="true">
