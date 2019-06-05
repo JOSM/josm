@@ -3711,7 +3711,7 @@
             <text key="operator" text="Operator" />
             <space />
             <combo key="siren:type" text="Type" values="pneumatic,electronic,mechanical" />
-            <combo key="siren:purpose" text="Purpose" values="tornado,fire,air_raid,civil_defense" />
+            <multiselect key="siren:purpose" text="Purpose" values="tornado;fire;air_raid;civil_defense" values_searchable="true" />
             <text key="siren:range" text="Range (in meters)" />
         </item> <!-- Siren -->
     </group> <!-- Emergency -->
