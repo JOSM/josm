@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -11,6 +12,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,13 +31,13 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
-import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
@@ -204,7 +207,7 @@ public class CreateMultipolygonAction extends JosmAction {
      * Returns a {@link Pair} of the old multipolygon {@link Relation} (or null) and the newly created/modified multipolygon {@link Relation}.
      * @param selectedWays selected ways
      * @param selectedMultipolygonRelation selected multipolygon relation
-     * @return pair of old and new multipolygon relation
+     * @return pair of old and new multipolygon relation if a difference was found, else the pair contains the old relation twice
      */
     public static Pair<Relation, Relation> updateMultipolygonRelation(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
@@ -212,12 +215,55 @@ public class CreateMultipolygonAction extends JosmAction {
         Set<Way> ways = new HashSet<>(selectedWays);
         ways.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
 
-        final MultipolygonBuilder polygon = analyzeWays(ways, true);
-        if (polygon == null) {
-            return null; //could not make multipolygon.
-        } else {
-            return Pair.create(selectedMultipolygonRelation, createRelation(polygon, selectedMultipolygonRelation));
+        // even if no way was added the inner/outer roles might be different
+        MultipolygonTest mpTest = new MultipolygonTest();
+        Relation calculated = mpTest.makeFromWays(ways);
+        if (mpTest.getErrors().isEmpty()) {
+            return mergeRelationsMembers(selectedMultipolygonRelation, calculated);
         }
+        showErrors(mpTest.getErrors());
+        return null; //could not make multipolygon.
+    }
+
+    /**
+     * Merge members of multipolygon relation. Maintains the order of the old relation. May change roles,
+     * removes duplicate and non-way members and adds new members found in {@code calculated}.
+     * @param old old multipolygon relation
+     * @param calculated calculated multipolygon relation
+     * @return pair of old and new multipolygon relation if a difference was found, else the pair contains the old relation twice
+     */
+    private static Pair<Relation, Relation> mergeRelationsMembers(Relation old, Relation calculated) {
+        Set<RelationMember> merged = new LinkedHashSet<>();
+        boolean foundDiff = false;
+        int nonWayMember = 0;
+        // maintain order of members in updated relation
+        for (RelationMember oldMem :old.getMembers()) {
+            if (oldMem.isNode() || oldMem.isRelation()) {
+                nonWayMember++;
+                continue;
+            }
+            for (RelationMember newMem : calculated.getMembers()) {
+                if (newMem.getMember().equals(oldMem.getMember())) {
+                    if (!newMem.getRole().equals(oldMem.getRole())) {
+                        foundDiff = true;
+                    }
+                    foundDiff |= !merged.add(newMem); // detect duplicate members in old relation
+                    break;
+                }
+            }
+        }
+        if (nonWayMember > 0) {
+            foundDiff = true;
+            String msg = trn("Non-Way member removed from multipolygon", "Non-Way members removed from multipolygon", nonWayMember);
+            GuiHelper.runInEDT(() -> new Notification(msg).setIcon(JOptionPane.WARNING_MESSAGE).show());
+        }
+        foundDiff |= merged.addAll(calculated.getMembers());
+        if (!foundDiff) {
+            return Pair.create(old, old); // unchanged
+        }
+        Relation toModify = new Relation(old);
+        toModify.setMembers(new ArrayList<>(merged));
+        return Pair.create(old, toModify);
     }
 
     /**
@@ -227,12 +273,29 @@ public class CreateMultipolygonAction extends JosmAction {
      * @return pair of null and new multipolygon relation
      */
     public static Pair<Relation, Relation> createMultipolygonRelation(Collection<Way> selectedWays, boolean showNotif) {
+        MultipolygonTest mpTest = new MultipolygonTest();
+        Relation calculated = mpTest.makeFromWays(selectedWays);
+        calculated.setMembers(RelationSorter.sortMembersByConnectivity(calculated.getMembers()));
+        if (mpTest.getErrors().isEmpty())
+            return Pair.create(null, calculated);
+        if (showNotif) {
+            showErrors(mpTest.getErrors());
+        }
+        return null; //could not make multipolygon.
+    }
 
-        final MultipolygonBuilder polygon = analyzeWays(selectedWays, showNotif);
-        if (polygon == null) {
-            return null; //could not make multipolygon.
-        } else {
-            return Pair.create(null, createRelation(polygon, null));
+    private static void showErrors(List<TestError> errors) {
+        if (!errors.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            Set<String> errorMessages = new LinkedHashSet<>();
+            errors.forEach(e-> errorMessages.add(e.getMessage()));
+            Iterator<String> iter = errorMessages.iterator();
+            while (iter.hasNext()) {
+                sb.append(iter.next());
+                if (iter.hasNext())
+                    sb.append('\n');
+            }
+            GuiHelper.runInEDT(() -> new Notification(sb.toString()).setIcon(JOptionPane.INFORMATION_MESSAGE).show());
         }
     }
 
@@ -251,6 +314,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if (rr == null) {
             return null;
         }
+        boolean unchanged = rr.a == rr.b;
         final Relation existingRelation = rr.a;
         final Relation relation = rr.b;
 
@@ -260,7 +324,22 @@ public class CreateMultipolygonAction extends JosmAction {
             list.add(new AddCommand(selectedWays.iterator().next().getDataSet(), relation));
             commandName = getName(false);
         } else {
-            list.add(new ChangeCommand(existingRelation, relation));
+            if (!unchanged) {
+                list.add(new ChangeCommand(existingRelation, relation));
+            }
+            if (list.isEmpty()) {
+                if (unchanged) {
+                    MultipolygonTest mpTest = new MultipolygonTest();
+                    mpTest.visit(existingRelation);
+                    if (!mpTest.getErrors().isEmpty()) {
+                        showErrors(mpTest.getErrors());
+                        return null;
+                    }
+                }
+
+                GuiHelper.runInEDT(() -> new Notification(tr("Nothing changed")).setDuration(Notification.TIME_SHORT).setIcon(JOptionPane.INFORMATION_MESSAGE).show());
+                return null;
+            }
             commandName = getName(true);
         }
         return Pair.create(new SequenceCommand(commandName, list), relation);
@@ -286,71 +365,6 @@ public class CreateMultipolygonAction extends JosmAction {
             setEnabled(getSelectedMultipolygonRelation(ds.getSelectedWays(), ds.getSelectedRelations()) != null);
         } else {
             setEnabled(!ds.getSelectedWays().isEmpty());
-        }
-    }
-
-    /**
-     * This method analyzes ways and creates multipolygon.
-     * @param selectedWays list of selected ways
-     * @param showNotif if {@code true}, shows a notification if an error occurs
-     * @return <code>null</code>, if there was a problem with the ways.
-     */
-    private static MultipolygonBuilder analyzeWays(Collection<Way> selectedWays, boolean showNotif) {
-
-        MultipolygonBuilder pol = new MultipolygonBuilder();
-        final String error = pol.makeFromWays(selectedWays);
-
-        if (error != null) {
-            if (showNotif) {
-                GuiHelper.runInEDT(() ->
-                        new Notification(error)
-                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                        .show());
-            }
-            return null;
-        } else {
-            return pol;
-        }
-    }
-
-    /**
-     * Builds a relation from polygon ways.
-     * @param pol data storage class containing polygon information
-     * @param clone relation to clone, can be null
-     * @return multipolygon relation
-     */
-    private static Relation createRelation(MultipolygonBuilder pol, Relation clone) {
-        // Create new relation
-        Relation rel = clone != null ? new Relation(clone) : new Relation();
-        rel.put("type", "multipolygon");
-        // Add ways to it
-        for (JoinedPolygon jway:pol.outerWays) {
-            addMembers(jway, rel, "outer");
-        }
-
-        for (JoinedPolygon jway:pol.innerWays) {
-            addMembers(jway, rel, "inner");
-        }
-
-        if (clone == null) {
-            rel.setMembers(RelationSorter.sortMembersByConnectivity(rel.getMembers()));
-        }
-
-        return rel;
-    }
-
-    private static void addMembers(JoinedPolygon polygon, Relation rel, String role) {
-        final int count = rel.getMembersCount();
-        final Set<Way> ways = new HashSet<>(polygon.ways);
-        for (int i = 0; i < count; i++) {
-            final RelationMember m = rel.getMember(i);
-            if (ways.contains(m.getMember()) && !role.equals(m.getRole())) {
-                rel.setMember(i, new RelationMember(role, m.getMember()));
-            }
-        }
-        ways.removeAll(rel.getMemberPrimitivesList());
-        for (final Way way : ways) {
-            rel.addMember(new RelationMember(role, way));
         }
     }
 

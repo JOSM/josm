@@ -78,6 +78,9 @@ public class MultipolygonTest extends Test {
     private static final int FOUND_INSIDE = 1;
     private static final int FOUND_OUTSIDE = 2;
 
+    /** set when used to build a multipolygon relation */
+    private Relation createdRelation;
+
     /**
      * Constructs a new {@code MultipolygonTest}.
      */
@@ -463,9 +466,20 @@ public class MultipolygonTest extends Test {
         if (list == null || list.isEmpty()) {
             return;
         }
-
+        if (r == createdRelation) {
+            List<RelationMember> modMembers = new ArrayList<>();
+            for (PolygonLevel pol : list) {
+                final String calculatedRole = (pol.level % 2 == 0) ? "outer" : "inner";
+                for (long wayId : pol.outerWay.getWayIds()) {
+                    RelationMember member = wayMap.get(wayId);
+                    modMembers.add(new RelationMember(calculatedRole, member.getMember()));
+                }
+            }
+            r.setMembers(modMembers);
+            return;
+        }
         for (PolygonLevel pol : list) {
-            String calculatedRole = (pol.level % 2 == 0) ? "outer" : "inner";
+            final String calculatedRole = (pol.level % 2 == 0) ? "outer" : "inner";
             for (long wayId : pol.outerWay.getWayIds()) {
                 RelationMember member = wayMap.get(wayId);
                 if (!calculatedRole.equals(member.getRole())) {
@@ -893,4 +907,31 @@ public class MultipolygonTest extends Test {
             return null;
         }
     }
+
+    /**
+     * Create a multipolygon relation from the given ways and test it.
+     * @param ways the collection of ways
+     * @return a pair of a {@link Multipolygon} instance and the relation.
+     * @since 15160
+     */
+    public Relation makeFromWays(Collection<Way> ways) {
+        Relation r = new Relation();
+        createdRelation = r;
+        r.put("type", "multipolygon");
+        for (Way w : ways) {
+            r.addMember(new RelationMember("", w));
+        }
+        errors.clear();
+        Multipolygon polygon = null;
+        boolean hasRepeatedMembers = checkRepeatedWayMembers(r);
+        if (!hasRepeatedMembers) {
+            polygon = new Multipolygon(r);
+            // don't check style consistency here
+            checkGeometryAndRoles(r, polygon);
+        }
+        createdRelation = null;
+        errors.removeIf(e->e.getSeverity() == Severity.OTHER);
+        return r;
+    }
+
 }

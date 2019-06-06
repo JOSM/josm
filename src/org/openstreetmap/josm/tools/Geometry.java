@@ -1015,12 +1015,12 @@ public final class Geometry {
         // Test if object is inside an outer member
         for (JoinedPolygon out : outerInner.a) {
             if (a1 == null
-                    ? nodeInsidePolygon(nodes.get(0), out.getNodes())
+                    ? nodeInsidePolygon(nodes.get(0), out.nodes)
                     : PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(a1, out.area)) {
                 boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
                 for (JoinedPolygon in : outerInner.b) {
-                    if (a1 == null ? nodeInsidePolygon(nodes.get(0), in.getNodes())
+                    if (a1 == null ? nodeInsidePolygon(nodes.get(0), in.nodes)
                             : in.area.getBounds2D().contains(a1.getBounds2D())
                                     && polygonIntersection(a1, in.area) == PolygonIntersection.FIRST_INSIDE_SECOND
                                     && polygonIntersection(in.area, out.area) == PolygonIntersection.FIRST_INSIDE_SECOND) {
