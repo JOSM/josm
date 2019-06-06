@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -141,7 +140,6 @@ public class CreateMultipolygonActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore
     public void testTicket17768() throws Exception {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(17768, "dupmem.osm"), null);
         Layer layer = new OsmDataLayer(ds, null, null);
