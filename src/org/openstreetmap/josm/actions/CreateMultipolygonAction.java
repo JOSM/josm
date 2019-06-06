@@ -337,7 +337,8 @@ public class CreateMultipolygonAction extends JosmAction {
                     }
                 }
 
-                GuiHelper.runInEDT(() -> new Notification(tr("Nothing changed")).setDuration(Notification.TIME_SHORT).setIcon(JOptionPane.INFORMATION_MESSAGE).show());
+                GuiHelper.runInEDT(() -> new Notification(tr("Nothing changed")).setDuration(Notification.TIME_SHORT)
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE).show());
                 return null;
             }
             commandName = getName(true);
