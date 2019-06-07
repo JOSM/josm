@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -1080,18 +1082,22 @@ public class SyncEditorLayerIndex {
             jt = getIcon(j);
             if (isNotBlank(jt) && !jt.startsWith("data:image/png;base64,"))
                 urls.add(jt);
-            Pattern patternU = Pattern.compile("^https?://([^/]+?)(:\\d+)?/.*");
+            Pattern patternU = Pattern.compile("^https?://([^/]+?)(:\\d+)?(/.*)?");
             for (String u : urls) {
-                Matcher m = patternU.matcher(u);
-                if (!m.matches() || u.matches(".*[ \t]+$")) {
+                if (!patternU.matcher(u).matches() || u.matches(".*[ \t]+$")) {
                     myprintln("* Strange URL '"+u+"': "+getDescription(j));
                 } else {
-                    String domain = m.group(1).replaceAll("\\{switch:.*\\}", "x");
-                    String port = m.group(2);
-                    if (!(domain.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) && !dv.isValid(domain))
-                        myprintln("* Strange Domain '"+domain+"': "+getDescription(j));
-                    else if (":80".equals(port) || ":443".equals(port)) {
-                        myprintln("* Useless port '"+port+"': "+getDescription(j));
+                    try {
+                        URL jurl = new URL(u.replaceAll("\\{switch:[^\\}]*\\}", "x"));
+                        String domain = jurl.getHost();
+                        int port = jurl.getPort();
+                        if (!(domain.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) && !dv.isValid(domain))
+                            myprintln("* Strange Domain '"+domain+"': "+getDescription(j));
+                        else if (80 == port || 443 == port) {
+                            myprintln("* Useless port '"+port+"': "+getDescription(j));
+                        }
+                    } catch (MalformedURLException e) {
+                        myprintln("* Malformed URL '"+u+"': "+getDescription(j)+" => "+e.getMessage());
                     }
                 }
             }
