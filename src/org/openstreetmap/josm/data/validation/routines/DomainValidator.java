@@ -775,7 +775,6 @@ public final class DomainValidator extends AbstractValidator {
         "homes", // homes DERHomes, LLC
         "homesense", // homesense The TJX Companies, Inc.
         "honda", // honda Honda Motor Co., Ltd.
-        "honeywell", // honeywell Honeywell GTLD LLC
         "horse", // horse Top Level Domain Holdings Limited
         "hospital", // hospital Ruby Pike, LLC
         "host", // host DotHost Inc.
