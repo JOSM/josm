@@ -164,7 +164,7 @@
         <reference ref="oh_wheelchair" />
     </chunk>
     <chunk id="cuisine">
-    <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;coffee_shop;sushi;steak_house;fish_and_chips;chicken;american;ice_cream;international;seafood;spanish;vietnamese;fish;noodle;barbecue;vegetarian;korean;donut;mediterranean;friture;crepe" values_searchable="true" />
+    <multiselect key="cuisine" text="Cuisine" values="african;american;arab;argentinian;asian;bagel;balkan;barbecue;bavarian;brazilian;burger;cake;caribbean;chicken;chinese;coffee_shop;crepe;curry;danish;donut;ethiopian;fish;fish_and_chips;french;friture;german;greek;ice_cream;indian;indonesian;international;italian;japanese;kebab;korean;lebanese;mediterranean;mexican;moroccan;noodle;pancake;pasta;peruvian;pizza;polish;portuguese;regional;russian;sandwich;sausage;seafood;spanish;steak_house;sushi;tapas;thai;turkish;vietnamese" values_searchable="true" />
     </chunk>
     <chunk id="internet">
         <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
@@ -1683,7 +1683,7 @@
             <space />
             <key key="natural" value="wetland" />
             <text key="name" text="Name" />
-            <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove,wet_meadow,string_bog,saltern" values_searchable="true" />
+            <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove,wet_meadow,string_bog,saltern,fen" values_searchable="true" />
             <check key="seasonal" text="Seasonal" disable_off="true" />
         </item> <!-- Wetland -->
         <item name="Mud" icon="presets/landuse/mud.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -2207,7 +2207,7 @@
             <key key="shop" value="car" />
             <reference ref="car_brands" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="second_hand" text="Second hand" values="only,yes,no" />
+            <combo key="second_hand" text="Second hand" values="yes,no,only" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Car Dealer -->
         <item name="Repair" icon="presets/vehicle/repair_shop.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -2281,7 +2281,7 @@
             <reference ref="motorcycle_brands" />
             <text key="operator" text="Operator" />
             <reference ref="oh_wheelchair" />
-            <combo key="second_hand" text="Second hand" values="only,yes,no" />
+            <combo key="second_hand" text="Second hand" values="yes,no,only" />
             <optional text="Services:">
                 <combo key="sale" text="Sale" values="yes,brand,no" />
                 <combo key="rental" text="Rental" values="yes,brand,no" />
@@ -2763,6 +2763,7 @@
             <text key="ele" text="Elevation" />
             <text key="rooms" text="Rooms" />
             <text key="beds" text="Beds" />
+            <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
             <space />
             <reference ref="internet_smoking" />
             <space />
@@ -2839,11 +2840,13 @@
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
+            <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
             <reference ref="oh_wheelchair" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
             <reference ref="internet_smoking" />
             <space />
+            <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Restaurant -->
         <item name="Fast Food" icon="presets/food/fast_food.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -2855,10 +2858,13 @@
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
-            <reference ref="oh_wheelchair" />
+            <reference ref="oh" />
+            <combo key="opening_hours:kitchen " text="Kitchen Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00, Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 01-53/2 Fr 09:00-12:00; week 02-52/2 We 09:00-12:00" values_no_i18n="true" />
             <space />
+            <reference ref="wheelchair" />
             <reference ref="internet_smoking" />
             <space />
+            <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Fast Food -->
@@ -2887,6 +2893,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
+            <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Cafe -->
         <item name="Ice cream" icon="presets/food/ice_cream.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -2901,6 +2908,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
+            <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Ice cream -->
         <item name="Pub" icon="presets/food/pub.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -2916,6 +2924,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
+            <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pub -->
         <item name="Beer Garden" icon="presets/food/biergarten.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -2928,6 +2937,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
+            <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Beer Garden -->
         <item name="Bar" icon="presets/food/bar.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -2940,15 +2950,37 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
+            <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Bar -->
+        <separator/>
+        <item name="Diet" icon="presets/food/diet.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Key:diet" />
+            <space />
+            <combo key="diet:vegetarian" text="Vegetarian" values="yes,no,only" />
+            <combo key="diet:vegan" text="Vegan" values="yes,no,only" />
+            <combo key="diet:lacto_vegetarian" text="Lacto-vegetarian" values="yes,no,only" />
+            <combo key="diet:ovo_vegetarian" text="Ovo-vegetarian" values="yes,no,only" />
+            <combo key="diet:pescetarian" text="Pescetarian" values="yes,no,only" />
+            <combo key="diet:fruitarian" text="Fruitarian" values="yes,no,only" />
+            <combo key="diet:raw" text="Raw" values="yes,no,only" />
+            <space />
+            <combo key="diet:dairy_free" text="Dairy free" values="yes,no,only" />
+            <combo key="diet:gluten_free" text="Gluten free" values="yes,no,only" />
+            <combo key="diet:lactose_free" text="Lactose free" values="yes,no,only" />
+            <space />
+            <combo key="diet:halal" text="Halal" values="yes,no,only" />
+            <combo key="diet:kosher" text="Kosher" values="yes,no,only" />
+        </item> <!-- Diet -->
     </group> <!-- Food+Drinks -->
     <group name="Tourism" icon="presets/sightseeing/attraction.svg">
         <item name="Attraction" icon="presets/sightseeing/attraction.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:tourism=attraction" />
             <space />
             <key key="tourism" value="attraction" />
-            <reference ref="name_oh_wheelchair" />
+            <text key="name" text="Name" />
+            <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
+            <reference ref="oh_wheelchair" />
         </item> <!-- Attraction -->
         <item name="Viewpoint" icon="presets/sightseeing/viewpoint.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:tourism=viewpoint" />
@@ -5566,14 +5598,14 @@
             <key key="amenity" value="marketplace" />
             <reference ref="name_operator_oh_wheelchair" />
             <text key="website" text="Website" />
-            <combo key="organic" text="Organic" values="only,yes,no" />
+            <combo key="organic" text="Organic" values="yes,no,only" />
         </item> <!-- Public Market -->
         <item name="Greengrocer" icon="presets/shop/groceries/greengrocer.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=greengrocer" />
             <space />
             <key key="shop" value="greengrocer" />
             <reference ref="name_oh_wheelchair" />
-            <combo key="organic" text="Organic" values="only,yes,no" />
+            <combo key="organic" text="Organic" values="yes,no,only" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Greengrocer -->
         <item name="Farm Stand" icon="presets/shop/groceries/farm.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -5582,14 +5614,14 @@
             <key key="shop" value="farm" />
             <reference ref="name_oh_wheelchair" />
             <text key="description" text="Description" />
-            <combo key="organic" text="Organic" values="only,yes,no" />
+            <combo key="organic" text="Organic" values="yes,no,only" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Farm Stand -->
         <separator/>
         <item name="Organic" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:organic" />
             <space />
-            <combo text="Organic/Bio" key="organic" values="only,yes,no" match="key" />
+            <combo text="Organic/Bio" key="organic" values="yes,no,only" match="key" />
         </item> <!-- Organic -->
         <item name="Fair Trade" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:fair_trade" />
@@ -5625,8 +5657,8 @@
             <space />
             <key key="shop" value="clothes" />
             <reference ref="name_oh_wheelchair" />
-            <combo key="second_hand" text="Second hand" values="only,yes,no" />
-            <combo key="organic" text="Organic" values="only,yes,no" />
+            <combo key="second_hand" text="Second hand" values="yes,no,only" />
+            <combo key="organic" text="Organic" values="yes,no,only" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Clothes -->
         <item name="Boutique" icon="presets/shop/boutique.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -5641,8 +5673,8 @@
             <space />
             <key key="shop" value="shoes" />
             <reference ref="name_oh_wheelchair" />
-            <combo key="second_hand" text="Second hand" values="only,yes,no" />
-            <combo key="organic" text="Organic" values="only,yes,no" />
+            <combo key="second_hand" text="Second hand" values="yes,no,only" />
+            <combo key="organic" text="Organic" values="yes,no,only" />
             <check key="shoes:repair" text="Offers repairs" text_context="shoes" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Shoes -->
@@ -5883,7 +5915,7 @@
             <space />
             <key key="shop" value="books" />
             <reference ref="name_brand_oh_wheelchair" />
-            <combo key="second_hand" text="Second hand" values="only,yes,no" />
+            <combo key="second_hand" text="Second hand" values="yes,no,only" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Book Store -->
         <item name="Newspaper Stand" icon="presets/shop/news.svg" type="node,closedway,multipolygon" preset_name_label="true">

@@ -1442,3 +1442,20 @@ way[/^is_in:.*$/] {
   suggestAlternative: "designation=common";
   group: tr("deprecated tagging");
 }
+
+/* #17043 */
+*[cuisine=vegan],
+*[cuisine=vegetarian] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("diet:", "{0.value}", "=yes");
+  suggestAlternative: concat("diet:", "{0.value}", "=only");
+  group: tr("deprecated tagging");
+}
+
+/* #17798 */
+*[kitchen_hours] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "opening_hours:kitchen";
+  fixChangeKey: "kitchen_hours => opening_hours:kitchen";
+  group: tr("deprecated tagging");
+}
