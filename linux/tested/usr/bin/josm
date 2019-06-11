@@ -51,7 +51,7 @@ if [ "$JAVACMD" ]; then
     if [ "`expr match \"${JAVACMD}\" 'java-9'`" != "0" ] || [ "`expr match \"${JAVACMD}\" 'java-10'`" != "0" ]; then
         JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
     elif [ "`expr match \"${JAVACMD}\" 'java-1'`" != "0" ]; then
-        JAVA_OPTS="--add-modules java.scripting $JAVA_OPTS"
+        JAVA_OPTS="--add-modules java.scripting,java.sql $JAVA_OPTS"
     fi
     set +e
     while true; do
