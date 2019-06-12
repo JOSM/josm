@@ -591,3 +591,9 @@ way:areaStyle[highway][highway =~ /motorway|trunk|primary|secondary|tertiary|unc
   throwOther: tr("A linear object {0} without {1} has a tag indicating that it is an area.", "{1.tag}", "{3.tag}");
   group: tr("suspicious tag combination");
 }
+
+/* #17804 */
+area[cemetery=sector][landuse=cemetery] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+}

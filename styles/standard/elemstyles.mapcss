@@ -3307,6 +3307,13 @@ node[cemetery=grave] {
     icon-image: "presets/misc/grave.svg";
     set icon_z17;
 }
+area[cemetery=sector] {
+    fill-color: cemetery_sector#dbf8e6;
+}
+node[cemetery=sector] {
+    icon-image: "presets/misc/cemetery_sector.svg";
+    set icon_z17;
+}
 node[historic=tomb] {
     icon-image: "presets/misc/tomb.svg";
     set icon_z17;

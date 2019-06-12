@@ -7077,26 +7077,6 @@
             <reference ref="optional_name" />
         </item> <!-- Recreation Ground -->
         <separator/>
-        <item name="Residential Area" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:landuse=residential" />
-            <space />
-            <key key="landuse" value="residential" />
-            <reference ref="optional_name" />
-        </item> <!-- Residential Area -->
-        <item name="Graveyard" icon="presets/landuse/graveyard.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=grave_yard" />
-            <space />
-            <key key="amenity" value="grave_yard" />
-            <text key="name" text="Name" />
-            <reference ref="religious" />
-        </item> <!-- Graveyard -->
-        <item name="Cemetery" icon="presets/landuse/cemetery.svg" type="closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:landuse=cemetery" />
-            <space />
-            <key key="landuse" value="cemetery" />
-            <text key="name" text="Name" />
-            <reference ref="religious" />
-        </item> <!-- Cemetery -->
         <item name="Religious" icon="presets/religion/religion.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=religious" />
             <space />
@@ -7104,6 +7084,36 @@
             <text key="name" text="Name" />
             <reference ref="religious" />
         </item> <!-- Religious -->
+        <item name="Cemetery" icon="presets/landuse/cemetery.svg" type="closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:landuse=cemetery" />
+            <space />
+            <key key="landuse" value="cemetery" />
+            <text key="name" text="Name" />
+            <reference ref="religious" />
+        </item> <!-- Cemetery -->
+        <item name="Graveyard" icon="presets/landuse/graveyard.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=grave_yard" />
+            <space />
+            <key key="amenity" value="grave_yard" />
+            <text key="name" text="Name" />
+            <reference ref="religious" />
+        </item> <!-- Graveyard -->
+        <item name="Cemetery sector" icon="presets/misc/cemetery_sector.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:cemetery=sector" />
+            <space />
+            <key key="cemetery" value="sector" />
+            <optional>
+                <text key="ref" text="Reference" />
+                <text key="name" text="Name" />
+            </optional>
+        </item> <!-- Cemetery sector-->
+        <separator/>
+        <item name="Residential Area" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:landuse=residential" />
+            <space />
+            <key key="landuse" value="residential" />
+            <reference ref="optional_name" />
+        </item> <!-- Residential Area -->
         <item name="Retail" icon="presets/shop/mall.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=retail" />
             <space />
