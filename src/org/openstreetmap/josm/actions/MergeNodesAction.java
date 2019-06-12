@@ -350,7 +350,7 @@ public class MergeNodesAction extends JosmAction {
             if (!nodesToDelete.isEmpty()) {
                 cmds.add(new DeleteCommand(nodesToDelete));
             }
-            return new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
+            return cmds.isEmpty() ? null : new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
                     trn("Merge {0} node", "Merge {0} nodes", nodes.size(), nodes.size()), cmds);
         } catch (UserCancelException ex) {
             Logging.trace(ex);
