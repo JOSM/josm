@@ -3036,8 +3036,8 @@ node[craft=winery][!is_prop_set(icon-image)] {
     icon-image: "presets/misc/no_icon.svg";
     set icon_z17;
 }
-node[craft=hvac][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=hvac] {
+    icon-image: "presets/craft/hvac.svg";
     set icon_z17;
 }
 node[craft=painter] {

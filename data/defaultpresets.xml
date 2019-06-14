@@ -371,7 +371,7 @@
     </chunk>
     <chunk id="power_pole">
         <text key="height" text="Height (meters)" />
-        <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+        <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
         <check key="location:transition" text="Location transition" disable_off="true" />
         <reference ref="ref_operator" />
     </chunk>
@@ -1617,7 +1617,7 @@
             <key key="man_made" value="pipeline" />
             <key key="substance" value="water" />
             <key key="usage" value="penstock" />
-            <combo key="location" text="Location" values="underground,overground" values_context="pipeline" />
+            <combo key="location" text="Location" values="overground,underground" values_context="pipeline" />
             <optional>
                 <text key="name" text="Name" />
                 <text key="operator" text="Operator" />
@@ -1683,7 +1683,7 @@
             <space />
             <key key="natural" value="wetland" />
             <text key="name" text="Name" />
-            <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove,wet_meadow,string_bog,saltern,fen" values_searchable="true" />
+            <combo key="wetland" text="Type" values="bog,fen,mangrove,marsh,reedbed,saltern,saltmarsh,string_bog,swamp,tidalflat,wet_meadow" values_searchable="true" />
             <check key="seasonal" text="Seasonal" disable_off="true" />
         </item> <!-- Wetland -->
         <item name="Mud" icon="presets/landuse/mud.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -3336,7 +3336,7 @@
             <text key="name" text="Name" />
             <text key="artwork_subject" text="Subject" />
             <text key="artist_name" text="Artist Name" />
-            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
             <text key="start_date" text="Start date" />
         </item> <!-- Artwork -->
         <item name="Studio" icon="presets/service/studio.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -4590,7 +4590,7 @@
         <item name="Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,carport,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,college,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,silo,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower,public,ruins,bakehouse" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="bakehouse,barn,basilica,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,farm_auxiliary,garage,garages,gasometer,greenhouse,hangar,hospital,industrial,kindergarten,manufacture,mosque,office,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,supermarket,synagogue,temple,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -4612,7 +4612,7 @@
         <item name="Building part" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building:part" />
             <space />
-            <combo key="building:part" text="Building part" values="yes,roof,garage,garages,industrial,school,hangar,commercial,barn,farm_auxiliary,transportation,greenhouse,office,university,college,hospital,warehouse,retail,shed,supermarket,cowshed,construction,ruins,bakehouse" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building:part" text="Building part" values="bakehouse,barn,college,commercial,construction,cowshed,farm_auxiliary,garage,garages,greenhouse,hangar,hospital,industrial,office,retail,roof,ruins,school,shed,supermarket,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <combo key="building:min_level" text="Skipped Levels" values="1,2,3,4,5,6,7,8,9,10" text_context="building" />
@@ -4783,7 +4783,7 @@
             <space />
             <key key="pipeline" value="valve" />
             <combo key="valve" text="Valve type" values="butterfly,globe,ball,plug,gate,needle,spool" values_context="valve" />
-            <combo key="actuator" text="Actuator" values="manual,electric_motor,pneumatic_cylinder,hydraulic_cylinder,thermostatic,solenoid" values_context="actuator" />
+            <combo key="actuator" text="Actuator" values="electric_motor,hydraulic_cylinder,manual,pneumatic_cylinder,solenoid,thermostatic" values_context="actuator" />
             <combo key="handle" text="Handle" values="lever,wheel,cross,button" values_context="handle" />
             <combo key="turn_to_close" text="Direction to close" values="clockwise,anti_clockwise" />
             <combo key="sensor:position" text="Position sensor" values="optical,mechanical,inductive,yes" />
@@ -4923,7 +4923,7 @@
             <link wiki="Key:bridge" />
             <space />
             <combo key="bridge" text="Bridge" values="yes,aqueduct,boardwalk,cantilever,covered,low_water_crossing,trestle,viaduct" match="keyvalue!" default="yes" />
-            <combo key="bridge:structure" text="Structure" values="arch,beam,truss,floating,suspension,cable-stayed,simple-suspension,humpback" match="key" />
+            <combo key="bridge:structure" text="Structure" values="arch,beam,cable-stayed,floating,humpback,simple-suspension,suspension,truss" match="key" />
             <reference ref="optional_bridge" />
         </item> <!-- Bridge -->
         <item name="Movable Bridge" icon="presets/transport/bridge/bridge_movable.svg" type="way,relation,multipolygon" preset_name_label="true">
@@ -4936,7 +4936,7 @@
         <item name="Bridge Support" icon="presets/transport/bridge/bridge_support.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Key:bridge:support" />
             <space />
-            <combo key="bridge:support" text="Type" values="pier,abutment,lift_pier,pivot_pier,pylon" match="key" />
+            <combo key="bridge:support" text="Type" values="abutment,lift_pier,pier,pivot_pier,pylon" match="key" />
         </item> <!-- Bridge Support -->
         <item name="Bridge outline" icon="presets/transport/bridge/bridge_outline.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:man_made=bridge" />
@@ -4963,8 +4963,8 @@
             <link wiki="Tag:military=bunker" />
             <space />
             <key key="military" value="bunker" />
-            <combo key="bunker_type" text="Type" values="pillbox,munitions,hardened_aircraft_shelter" match="key" />
-            <combo key="location" text="Location" values="underground,overground" values_context="bunker" />
+            <combo key="bunker_type" text="Type" values="hardened_aircraft_shelter,munitions,pillbox" match="key" />
+            <combo key="location" text="Location" values="overground,underground" values_context="bunker" />
             <text key="name" text="Name" />
             <check key="historic" text="Historic" />
             <check key="ruins" text="Ruins" />
@@ -4992,7 +4992,7 @@
                 <combo key="plant:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="plant:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <space />
-                <combo key="plant:source" text="Plant source" values="biofuel,biogas,biomass,coal,gas,oil,diesel,gasoline,nuclear,solar,waste,hydro,tidal,wave,osmotic,geothermal,wind" />
+                <combo key="plant:source" text="Plant source" values="biofuel,biogas,biomass,coal,diesel,gas,gasoline,geothermal,hydro,nuclear,oil,osmotic,solar,tidal,waste,wave,wind" />
             </optional>
         </item> <!-- Power Plant -->
         <group name="Power Generator" icon="presets/power/generator.svg">
@@ -5159,7 +5159,7 @@
             <space />
             <key key="power" value="substation" />
             <text key="name" text="Name" />
-            <combo key="substation" text="Type of substation" values="transmission,distribution,minor_distribution,converter,compensation,transition,traction,industrial" values_context="power" />
+            <combo key="substation" text="Type of substation" values="compensation,converter,distribution,industrial,minor_distribution,traction,transition,transmission" values_context="power" />
             <reference ref="power_extra" />
             <optional>
                 <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
@@ -5171,7 +5171,7 @@
             <link wiki="Tag:power=transformer" />
             <space />
             <key key="power" value="transformer" />
-            <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,auxiliary,yes" match="key" values_context="power" />
+            <combo key="transformer" text="Type of transformer" values="auto,auxiliary,converter,distribution,generator,phase_angle_regulator,traction,yes" match="key" values_context="power" />
             <reference ref="power_loc" />
             <reference ref="transformer_voltage_frequency" />
             <reference ref="ref_operator" />
@@ -5207,7 +5207,7 @@
             <link wiki="Tag:power=switch" />
             <space />
             <key key="power" value="switch" />
-            <combo key="switch" text="Type of switch" values="mechanical,circuit_breaker,disconnector,earthing" match="key" values_context="power" />
+            <combo key="switch" text="Type of switch" values="circuit_breaker,disconnector,earthing,mechanical" match="key" values_context="power" />
             <reference ref="power_loc" />
             <optional>
                 <reference ref="voltage" />
@@ -5232,7 +5232,7 @@
             <link wiki="Tag:power=compensator" />
             <space />
             <key key="power" value="compensator" />
-            <combo key="compensator" text="Type of compensator" values="shunt_reactor,shunt_capacitor,static_var,statcom,synchronous_condenser,filter,series_reactor,series_capacitor" match="key" values_context="power" />
+            <combo key="compensator" text="Type of compensator" values="filter,series_capacitor,series_reactor,shunt_capacitor,shunt_reactor,statcom,static_var,synchronous_condenser" match="key" values_context="power" />
             <reference ref="voltage_frequency" />
             <reference ref="ref_operator" />
             <optional>
@@ -5272,7 +5272,7 @@
             <key key="power" value="portal" />
             <text key="height" text="Height (meters)" />
             <combo key="structure" text="Type of construction" values="lattice,tubular,solid" />
-            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
             <reference ref="ref_operator" />
             <combo key="design" text="Portal design" values="portal,portal_two-level,portal_three-level" values_context="power" />
@@ -5283,7 +5283,7 @@
             <key key="power" value="tower" />
             <text key="height" text="Height (meters)" />
             <combo key="structure" text="Type of construction" values="lattice,tubular,solid" />
-            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
             <reference ref="ref_operator" />
             <optional>
@@ -5309,7 +5309,7 @@
             <reference ref="power_pole" />
             <space />
             <label text="Switch Attributes:" />
-            <combo key="switch" text="Type" values="mechanical,circuit_breaker,disconnector,earthing" match="key!" values_context="power" />
+            <combo key="switch" text="Type" values="circuit_breaker,disconnector,earthing,mechanical" match="key!" values_context="power" />
             <optional>
                 <reference ref="voltage" />
                 <reference ref="cables" />
@@ -5350,7 +5350,7 @@
             <reference ref="ref_operator" />
             <optional>
                 <reference ref="cables_circuits" />
-                <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" />
+                <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" values_sort="false" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
             </optional>
@@ -5445,7 +5445,7 @@
             <link wiki="Tag:historic=tomb" />
             <space />
             <key key="historic" value="tomb" />
-            <combo key="tomb" text="Type" values="tumulus,rock-cut,hypogeum,war_grave,mausoleum,columbarium,crypt,pyramid,sarcophagus,vault" values_context="tomb" values_searchable="true" />
+            <combo key="tomb" text="Type" values="columbarium,crypt,hypogeum,mausoleum,pyramid,rock-cut,sarcophagus,tumulus,vault,war_grave" values_context="tomb" values_searchable="true" />
             <text key="name" text="Name" />
         </item> <!-- Tomb -->
         <separator/>
@@ -5460,11 +5460,11 @@
             <space />
             <key key="historic" value="memorial" />
             <text key="name" text="Name" />
-            <combo key="memorial" text="Type" values="statue,bust,plaque,stele,stone,war_memorial" values_context="memorial" values_searchable="true" />
+            <combo key="memorial" text="Type" values="bust,plaque,statue,stele,stone,war_memorial" values_context="memorial" values_searchable="true" />
             <optional>
                 <text key="inscription" text="Inscription" />
                 <text key="artist_name" text="Artist Name" />
-                <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
                 <text key="start_date" text="Start date" />
                 <text key="wikipedia" text="Wikipedia" />
             </optional>
@@ -6467,7 +6467,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Plumber -->
-    <item name="Hvac" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Hvac" icon="presets/craft/hvac.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=hvac" />
         <space />
         <key key="craft" value="hvac" />
@@ -6622,7 +6622,7 @@
             <link wiki="Tag:boundary=maritime" />
             <space />
             <key key="boundary" value="maritime" />
-            <combo key="border_type" text="Border type" values="baseline,territorial,contiguous,eez" />
+            <combo key="border_type" text="Border type" values="baseline,contiguous,eez,territorial" />
             <text key="name" text="Name" />
         </item> <!-- Maritime -->
     </group> <!-- Boundaries -->
@@ -7002,7 +7002,7 @@
             <link wiki="Tag:landuse=orchard" />
             <space />
             <key key="landuse" value="orchard" />
-            <combo key="trees" text="Trees" values="olive_trees,apple_trees,oil_palms,orange_trees,almond_trees,banana_plants,coconut_palms,hazel_plants,cherry_trees,persimmon_trees,walnut_trees,plum_trees,peach_trees,tea_plants" />
+            <combo key="trees" text="Trees" values="almond_trees,apple_trees,banana_plants,cherry_trees,coconut_palms,hazel_plants,oil_palms,olive_trees,orange_trees,peach_trees,persimmon_trees,plum_trees,tea_plants,walnut_trees" />
             <reference ref="optional_name" />
         </item> <!-- Orchard -->
         <item name="Vineyard" icon="presets/landuse/vineyard.svg" type="closedway,multipolygon" preset_name_label="true">
