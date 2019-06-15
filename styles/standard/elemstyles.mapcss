@@ -1550,6 +1550,32 @@ node[man_made=cutline] {
     set icon_z17;
 }
 
+/****************/
+/* telecom tags */
+/****************/
+
+area[telecom=exchange],
+area[telecom=connection_point],
+area[telecom=service_device] {
+    fill-color: telecom#d8d8d8; /* same as man_made */
+}
+node[telecom=exchange] {
+    icon-image: "presets/telecom/exchange.svg";
+    set icon_z17;
+}
+node[telecom=connection_point] {
+    icon-image: "presets/telecom/connection_point.svg";
+    set icon_z17;
+}
+node[telecom=service_device] {
+    icon-image: "presets/telecom/service_device.svg";
+    set icon_z17;
+}
+node[man_made=street_cabinet][street_cabinet=telecom] {
+    icon-image: "presets/telecom/telecom_cabinet.svg";
+    set icon_z17;
+}
+
 /***************/
 /* office tags */
 /***************/
