@@ -21,9 +21,11 @@ public final class TableHelper {
         TableColumn tableColumn = tbl.getColumnModel().getColumn(col);
         TableCellRenderer renderer = tableColumn.getHeaderRenderer();
 
-        if (renderer == null) {
+        if (renderer == null && tbl.getTableHeader() != null)
             renderer = tbl.getTableHeader().getDefaultRenderer();
-        }
+
+        if (renderer == null)
+            return 0;
 
         Component c = renderer.getTableCellRendererComponent(tbl, tableColumn.getHeaderValue(), false, false, -1, col);
         return c.getPreferredSize().width;
