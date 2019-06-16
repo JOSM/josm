@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.util.MultikeyActionsHandler;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -118,16 +119,12 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         userTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        userTable.setAutoCreateRowSorter(true);
 
-        userTable.getColumnModel().getColumn(0).setMaxWidth(1);
-        userTable.getColumnModel().getColumn(1).setMaxWidth(1);
-        userTable.getColumnModel().getColumn(3).setMaxWidth(1);
-        userTable.getColumnModel().getColumn(4).setMaxWidth(1);
-
-        userTable.getColumnModel().getColumn(0).setResizable(false);
-        userTable.getColumnModel().getColumn(1).setResizable(false);
-        userTable.getColumnModel().getColumn(3).setResizable(false);
-        userTable.getColumnModel().getColumn(4).setResizable(false);
+        TableHelper.adjustColumnWidth(userTable, 0, false);
+        TableHelper.adjustColumnWidth(userTable, 1, false);
+        TableHelper.adjustColumnWidth(userTable, 3, false);
+        TableHelper.adjustColumnWidth(userTable, 4, false);
 
         userTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
         userTable.setDefaultRenderer(String.class, new StringRenderer());
