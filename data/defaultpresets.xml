@@ -4854,6 +4854,16 @@
             <key key="highway" value="street_lamp" />
             <combo key="opening_hours" text="Operation times" values="Mo-Fr 22:00-05:00" values_no_i18n="true" />
         </item> <!-- Street Lamp -->
+        <item name="Street cabinet" icon="presets/misc/street_cabinet.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:man_made=street_cabinet" />
+            <key key="man_made" value="street_cabinet" />
+            <optional>
+                <combo key="street_cabinet" text="Type" values="cable_tv,gas,postal_service,power,street_lighting,telecom,traffic_control,traffic_monitoring,transport_management,waste,water,water_management" />
+                <reference ref="ref_operator" />
+                <text key="manufacturer" text="Manufacturer" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+             </optional>
+        </item> <!-- Street cabinet -->
         <item name="Monitoring Station" icon="presets/misc/monitoring_station.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=monitoring_station" />
             <space />
@@ -5242,11 +5252,14 @@
         <separator/>
         <item name="Power Street Cabinet" icon="presets/power/cable_distribution_cabinet.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
-            <space />
             <key key="man_made" value="street_cabinet" />
             <key key="street_cabinet" value="power" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110" /> <!-- Recheck values -->
-            <reference ref="ref_operator" />
+            <optional>
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110" /> <!-- Recheck values -->
+                <reference ref="ref_operator" />
+                <text key="manufacturer" text="Manufacturer" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+             </optional>
         </item> <!-- Power Street Cabinet -->
         <separator/>
         <item name="Transformer Tower" icon="presets/power/transformer_tower.svg" type="node,closedway" preset_name_label="true">
@@ -5372,10 +5385,13 @@
     <group name="Telecom" icon="presets/telecom/telecom.svg">
         <item name="Telecom Street Cabinet" icon="presets/telecom/telecom_cabinet.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
-            <space />
             <key key="man_made" value="street_cabinet" />
             <key key="street_cabinet" value="telecom" />
-            <reference ref="ref_operator" />
+            <optional>
+                <reference ref="ref_operator" />
+                <text key="manufacturer" text="Manufacturer" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+             </optional>
         </item> <!-- Telecom Street Cabinet -->
         <item name="Telephone Exchange" icon="presets/telecom/exchange.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:telecom=exchange" />

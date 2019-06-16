@@ -1219,6 +1219,10 @@ area[power=switchgear],
 area[power=generator] {
     fill-color: power#eeeeee;
 }
+node[man_made=street_cabinet] {
+    icon-image: "presets/misc/street_cabinet.svg";
+    set icon_z17;
+}
 node[man_made=street_cabinet][street_cabinet=power] {
     icon-image: "presets/power/cable_distribution_cabinet.svg";
     set icon_z17;
