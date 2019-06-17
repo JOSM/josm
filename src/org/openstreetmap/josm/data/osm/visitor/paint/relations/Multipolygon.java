@@ -184,7 +184,12 @@ public class Multipolygon {
          */
         public JoinedWay(List<Node> nodes, Collection<Long> wayIds, boolean selected) {
             this.nodes = new ArrayList<>(nodes);
-            this.wayIds = new ArrayList<>(wayIds);
+            // see #17819
+            if (wayIds.size() == 1) {
+                this.wayIds = Collections.singleton(wayIds.iterator().next());
+            } else {
+                this.wayIds = wayIds.size() <= 10 ? new ArrayList<>(wayIds) : new HashSet<>(wayIds);
+            }
             this.selected = selected;
         }
 
@@ -637,21 +642,20 @@ public class Multipolygon {
                                 }
                                 --left;
                                 if (nodes == null) {
-                                    nodes = w.getNodes();
+                                    nodes = new ArrayList<>(w.getNodes());
                                     wayIds.add(w.getUniqueId());
                                 }
-                                nodes.remove((mode == 21 || mode == 22) ? nl : 0);
                                 if (mode == 21) {
-                                    nodes.addAll(c.getNodes());
+                                    nodes.addAll(c.getNodes().subList(1, cl + 1));
                                 } else if (mode == 12) {
-                                    nodes.addAll(0, c.getNodes());
-                                } else if (mode == 22) {
-                                    for (Node node : c.getNodes()) {
-                                        nodes.add(nl, node);
-                                    }
-                                } else /* mode == 11 */ {
-                                    for (Node node : c.getNodes()) {
-                                        nodes.add(0, node);
+                                    nodes.addAll(0, c.getNodes().subList(0, cl));
+                                } else {
+                                    ArrayList<Node> reversed = new ArrayList<>(c.getNodes());
+                                    Collections.reverse(reversed);
+                                    if (mode == 22) {
+                                        nodes.addAll(reversed.subList(1, cl + 1));
+                                    } else /* mode == 11 */ {
+                                        nodes.addAll(0, reversed.subList(0, cl));
                                     }
                                 }
                                 wayIds.add(c.getUniqueId());
