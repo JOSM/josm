@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  * @since 12633 (extracted from {@code Main})
  */
 public enum DownloadParamType {
-    /** http(s):// URL */
+    /** http(s):// or geo:// URL */
     httpUrl {
         @Override
         public List<Future<?>> download(String s, Collection<File> fileList) {
@@ -141,7 +141,7 @@ public enum DownloadParamType {
      * @return The guessed parameter type
      */
     public static DownloadParamType paramType(String s) {
-        if (s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
+        if (s.startsWith("http:") || s.startsWith("https:") || s.startsWith("geo:")) return DownloadParamType.httpUrl;
         if (s.startsWith("file:")) return DownloadParamType.fileUrl;
         String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
         if (s.matches(coorPattern + "(," + coorPattern + "){3}")) return DownloadParamType.bounds;
