@@ -185,10 +185,11 @@ public class Multipolygon {
         public JoinedWay(List<Node> nodes, Collection<Long> wayIds, boolean selected) {
             this.nodes = new ArrayList<>(nodes);
             // see #17819
-            if (wayIds.size() == 1) {
+            final int size = wayIds.size();
+            if (size == 1) {
                 this.wayIds = Collections.singleton(wayIds.iterator().next());
             } else {
-                this.wayIds = wayIds.size() <= 10 ? new ArrayList<>(wayIds) : new HashSet<>(wayIds);
+                this.wayIds = size <= 10 ? new ArrayList<>(wayIds) : new HashSet<>(wayIds);
             }
             this.selected = selected;
         }
