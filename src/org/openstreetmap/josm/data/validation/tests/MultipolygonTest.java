@@ -80,6 +80,8 @@ public class MultipolygonTest extends Test {
 
     /** set when used to build a multipolygon relation */
     private Relation createdRelation;
+    /** might be set when creating a relation and touching rings were found. */
+    private boolean repeatCheck;
 
     /**
      * Constructs a new {@code MultipolygonTest}.
@@ -249,7 +251,7 @@ public class MultipolygonTest extends Test {
         if (checkRoles) {
             // we found no intersection or crossing between the polygons and they are closed
             // now we can calculate the nesting level to verify the roles with some simple node checks
-            checkRoles(r, allPolygons, wayMap, sharedNodes);
+            checkOrSetRoles(r, allPolygons, wayMap, sharedNodes);
         }
     }
 
@@ -460,7 +462,7 @@ public class MultipolygonTest extends Test {
      * @param wayMap maps way ids to relation members
      * @param sharedNodes all nodes shared by multiple ways of this multipolygon
      */
-    private void checkRoles(Relation r, List<PolyData> allPolygons, Map<Long, RelationMember> wayMap, Set<Node> sharedNodes) {
+    private void checkOrSetRoles(Relation r, List<PolyData> allPolygons, Map<Long, RelationMember> wayMap, Set<Node> sharedNodes) {
         PolygonLevelFinder levelFinder = new PolygonLevelFinder(sharedNodes);
         List<PolygonLevel> list = levelFinder.findOuterWays(allPolygons);
         if (list == null || list.isEmpty()) {
@@ -576,7 +578,9 @@ public class MultipolygonTest extends Test {
                             samePoly = true;
                         }
                     }
-                    if (loop == 0 || samePoly || (loop == 1 && !allInner)) {
+                    if (r == createdRelation && loop == 1 && !allInner) {
+                        repeatCheck = true;
+                    } else if (loop == 0 || samePoly || (loop == 1 && !allInner)) {
                         String msg = loop == 0 ? tr("Intersection between multipolygon ways")
                                 : samePoly ? tr("Multipolygon ring contains segments twice")
                                         : tr("Multipolygon outer way shares segment(s) with other ring");
@@ -921,15 +925,18 @@ public class MultipolygonTest extends Test {
         for (Way w : ways) {
             r.addMember(new RelationMember("", w));
         }
-        errors.clear();
-        Multipolygon polygon = null;
-        boolean hasRepeatedMembers = checkRepeatedWayMembers(r);
-        if (!hasRepeatedMembers) {
-            polygon = new Multipolygon(r);
-            // don't check style consistency here
-            checkGeometryAndRoles(r, polygon);
-        }
-        createdRelation = null;
+        do {
+            repeatCheck = false;
+            errors.clear();
+            Multipolygon polygon = null;
+            boolean hasRepeatedMembers = checkRepeatedWayMembers(r);
+            if (!hasRepeatedMembers) {
+                polygon = new Multipolygon(r);
+                // don't check style consistency here
+                checkGeometryAndRoles(r, polygon);
+            }
+            createdRelation = null; // makes sure that repeatCheck is only set once
+        } while (repeatCheck);
         errors.removeIf(e->e.getSeverity() == Severity.OTHER);
         return r;
     }
