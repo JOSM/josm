@@ -122,7 +122,7 @@ import org.openstreetmap.josm.tools.Utils;
 public final class MapStatus extends JPanel implements
     Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener, DataSelectionListener, DataSetListener, ZoomChangeListener {
 
-    private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Config.getPref().get("statusbar.decimal-format", "0.0"));
+    private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Config.getPref().get("statusbar.decimal-format", "0.00"));
     private static final AbstractProperty<Double> DISTANCE_THRESHOLD = new DoubleProperty("statusbar.distance-threshold", 0.01).cached();
 
     private static final AbstractProperty<Boolean> SHOW_ID = new BooleanProperty("osm-primitives.showid", false);
