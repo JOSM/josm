@@ -39,6 +39,25 @@ public class GeoUrlToBoundsTest {
     }
 
     /**
+     * Tests parsing Geo URLs with a CRS and/or uncertainty.
+     */
+    @Test
+    public void testParseCrsUncertainty() {
+        assertThat(
+                GeoUrlToBounds.parse("geo:60.00000,17.000000;crs=wgs84"),
+                is(OsmUrlToBounds.positionToBounds(60.0, 17.0, 18))
+        );
+        assertThat(
+                GeoUrlToBounds.parse("geo:60.00000,17.000000;crs=wgs84;u=0"),
+                is(OsmUrlToBounds.positionToBounds(60.0, 17.0, 18))
+        );
+        assertThat(
+                GeoUrlToBounds.parse("geo:60.00000,17.000000;u=20"),
+                is(OsmUrlToBounds.positionToBounds(60.0, 17.0, 18))
+        );
+    }
+
+    /**
      * Tests parsing invalid Geo URL.
      */
     @Test

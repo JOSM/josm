@@ -18,7 +18,8 @@ public final class GeoUrlToBounds {
     /**
      * The pattern of a geo: url, having named match groups.
      */
-    public static final Pattern PATTERN = Pattern.compile("geo:(?<lat>[+-]?[0-9.]+),(?<lon>[+-]?[0-9.]+)(\\?z=(?<zoom>[0-9]+))?");
+    public static final Pattern PATTERN = Pattern.compile(
+            "geo:(?<lat>[+-]?[0-9.]+),(?<lon>[+-]?[0-9.]+)(?<crs>;crs=wgs84)?(?<uncertainty>;u=[0-9.]+)?(\\?z=(?<zoom>[0-9]+))?");
 
     private GeoUrlToBounds() {
         // Hide default constructor for utils classes
