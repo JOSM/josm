@@ -294,7 +294,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
         soundPlayer.addAudioListener(this);
         start();
         while (state == State.INITIALIZING) {
-            yield();
+            Thread.yield();
         }
     }
 
