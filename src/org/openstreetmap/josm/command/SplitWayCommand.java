@@ -42,6 +42,12 @@ public class SplitWayCommand extends SequenceCommand {
 
     private static volatile Consumer<String> warningNotifier = Logging::warn;
 
+    private static final class RelationInformation {
+        boolean warnme;
+        boolean insert;
+        Relation relation;
+    }
+
     /**
      * Sets the global warning notifier.
      * @param notifier warning notifier in charge of displaying warning message, if any. Must not be null
@@ -319,9 +325,10 @@ public class SplitWayCommand extends SequenceCommand {
                 if (rm.isWay() && rm.getMember() == way) {
                     boolean insert = true;
                     if (relationSpecialTypes.containsKey(type) && "restriction".equals(relationSpecialTypes.get(type))) {
-                        Map<String, Boolean> rValue = treatAsRestriction(r, rm, c, newWays, way, changedWay);
-                        warnme = rValue.containsKey("warnme") ? rValue.get("warnme") : warnme;
-                        insert = rValue.containsKey("insert") ? rValue.get("insert") : insert;
+                        RelationInformation rValue = treatAsRestriction(r, rm, c, newWays, way, changedWay);
+                        warnme = rValue.warnme;
+                        insert = rValue.insert;
+                        c = rValue.relation;
                     } else if (!("route".equals(type)) && !("multipolygon".equals(type))) {
                         warnme = true;
                     }
@@ -409,10 +416,10 @@ public class SplitWayCommand extends SequenceCommand {
             );
     }
 
-    private static Map<String, Boolean> treatAsRestriction(Relation r,
+    private static RelationInformation treatAsRestriction(Relation r,
             RelationMember rm, Relation c, Collection<Way> newWays, Way way,
             Way changedWay) {
-        HashMap<String, Boolean> rMap = new HashMap<>();
+        RelationInformation relationInformation = new RelationInformation();
         /* this code assumes the restriction is correct. No real error checking done */
         String role = rm.getRole();
         String type = Optional.ofNullable(r.get("type")).orElse("");
@@ -447,15 +454,16 @@ public class SplitWayCommand extends SequenceCommand {
                     }
                     c.addMember(new RelationMember(role, res));
                     c.removeMembersFor(way);
-                    rMap.put("insert", false);
+                    relationInformation.insert = false;
                 }
             } else {
-                rMap.put("insert", false);
+                relationInformation.insert = false;
             }
         } else if (!"via".equals(role)) {
-            rMap.put("warnme", true);
+            relationInformation.warnme = true;
         }
-        return rMap;
+        relationInformation.relation = c;
+        return relationInformation;
     }
 
     static OsmPrimitive findVia(Relation r, String type) {

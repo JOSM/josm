@@ -6,11 +6,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -76,6 +81,41 @@ public final class SplitWayActionTest {
         for (int i = 0; i < 3; i++) {
             assertSame("Node change in unselected way during split action.",
                        w1.getNode(i), w1NodesArray[i]);
+        }
+    }
+
+    /**
+     * Test case: when a way is split with a turn restriction relation,
+     * the relation should not be broken.
+     * see #17810
+     */
+    @Test
+    public void testTicket17810() {
+        DataSet dataSet = new DataSet();
+        Way from = TestUtils.newWay("highway=residential", new Node(new LatLon(0.0, 0.0)),
+                new Node(new LatLon(0.00033, 0.00033)), new Node(new LatLon(0.00066, 0.00066)),
+                new Node(new LatLon(0.001, 0.001)));
+        from.getNodes().forEach(node -> dataSet.addPrimitive(node));
+        dataSet.addPrimitive(from);
+        Node via = from.lastNode();
+        Way to = TestUtils.newWay("highway=residential", new Node(new LatLon(0.002, 0.001)), via);
+        to.getNodes().forEach(node -> {
+            if (!dataSet.containsNode(node)) {
+                dataSet.addPrimitive(node);
+            }
+        });
+        dataSet.addPrimitive(to);
+        Relation restriction = TestUtils.newRelation("type=restriction restriction=no_left_turn",
+                new RelationMember("from", from), new RelationMember("to", to),
+                new RelationMember("via", via));
+        dataSet.addPrimitive(restriction);
+        dataSet.clearSelection();
+        dataSet.addSelected(from.getNode(2), from);
+        SplitWayAction.runOn(dataSet);
+        for (RelationMember member : restriction.getMembers()) {
+            if ("from".equals(member.getRole())) {
+                Assert.assertTrue(member.getWay().containsNode(via));
+            }
         }
     }
 }
