@@ -245,6 +245,9 @@ public class PluginInformation {
         String stageStr = attr.getValue("Plugin-Stage");
         stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
         version = attr.getValue("Plugin-Version");
+        if (version != null && !version.isEmpty() && version.charAt(0) == '$') {
+            invalidManifestEntries.add("Plugin-Version");
+        }
         s = attr.getValue("Plugin-Mainversion");
         if (s != null) {
             try {
