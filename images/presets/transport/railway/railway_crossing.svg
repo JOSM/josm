@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="switch9.svg">
+   sodipodi:docname="crossing5.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -37,8 +37,7 @@
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     viewbox-height="16"
-     showguides="false">
+     viewbox-height="16">
     <inkscape:grid
        type="xygrid"
        id="grid4136"
@@ -84,14 +83,14 @@
        y="1042.3622" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:0.99995613;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 2.5,1051.8551 v -8"
-       id="path841-8"
+       d="m 1.5,1043.8622 6,8"
+       id="path841"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.99995613;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 2.5,1051.8552 c 1.1516408,-2.7975 1.5,-5.493 5,-7.993"
-       id="path841-8-3"
+       style="fill:#000000;stroke:#000000;stroke-width:0.99995613;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 1.5,1051.8622 6,-8"
+       id="path841-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
   </g>

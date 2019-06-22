@@ -1955,6 +1955,7 @@ area[shop=curtain],
 area[shop=cycle_repair],
 area[shop=department_store],
 area[shop=deli],
+area[shop=doors],
 area[shop=electronics],
 area[shop=erotic],
 area[shop=furniture],
@@ -1982,6 +1983,7 @@ area[shop=newsagent],
 area[shop=optician],
 area[shop=medical_supply],
 area[shop=paint],
+area[shop=party],
 area[shop=pawnbroker],
 area[shop=seafood],
 area[shop=dairy],
@@ -2130,6 +2132,10 @@ node[shop=deli] {
     icon-image: "presets/shop/groceries/deli.svg";
     set icon_z17;
 }
+node[shop=doors] {
+    icon-image: "presets/shop/doors.svg";
+    set icon_z17;
+}
 node[shop=electronics] {
     icon-image: "presets/shop/electronics.svg";
     set icon_z17;
@@ -2236,6 +2242,10 @@ node[shop=medical_supply] {
 }
 node[shop=paint] {
     icon-image: "presets/shop/paint.svg";
+    set icon_z17;
+}
+node[shop=party] {
+    icon-image: "presets/shop/party.svg";
     set icon_z17;
 }
 node[shop=pawnbroker] {
@@ -3641,6 +3651,10 @@ way[railway=funicular] {
 }
 node[railway=switch] {
     icon-image: "presets/transport/railway/switch.svg";
+    set icon_z17;
+}
+node[railway=railway_crossing] {
+    icon-image: "presets/transport/railway/railway_crossing.svg";
     set icon_z17;
 }
 node[railway=signal] {

@@ -1948,9 +1948,16 @@
         <item name="Railway Switch" icon="presets/transport/railway/switch.svg" type="node" preset_name_label="true">
             <link wiki="Tag:railway=switch" />
             <key key="railway" value="switch" />
+            <combo key="railway:switch" text="Type" values="abt,default,double_slip,single_slip,three_way,wye" />
             <text key="ref" text="Reference" />
             <text key="operator" text="Operator" />
         </item> <!-- Railway Switch -->
+        <item name="Railway crossing" icon="presets/transport/railway/railway_crossing.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:railway=railway_crossing" />
+            <key key="railway" value="railway_crossing" />
+            <text key="ref" text="Reference" />
+            <text key="operator" text="Operator" />
+        </item> <!-- Railway crossing -->
         <item name="Railway Signal" icon="presets/transport/railway/signal.svg" type="node" preset_name_label="true">
             <link wiki="Tag:railway=signal" />
             <key key="railway" value="signal" />
@@ -5840,6 +5847,13 @@
         </item> <!-- Pawnbroker -->
     </group> <!-- Cash -->
     <group name="Home decoration" icon="presets/shop/interior_decoration.svg">
+        <item name="Doors" icon="presets/shop/doors.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=doors" />
+            <space />
+            <key key="shop" value="doors" />
+            <reference ref="name_brand_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Doors -->
         <item name="Furniture" icon="presets/shop/furniture.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=furniture" />
             <space />
@@ -6147,6 +6161,13 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Variety Store -->
+        <item name="Party supplies" icon="presets/shop/party.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=party" />
+            <space />
+            <key key="shop" value="party" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Party supplies -->
         <item name="Charity" icon="presets/shop/charity.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=charity" />
             <space />
