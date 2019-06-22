@@ -546,6 +546,7 @@
                 <reference ref="highway_base" />
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
+                <text key="junction:ref" text="Junction reference" />
                 <text key="width" text="Width (meters)" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
@@ -594,6 +595,7 @@
                 <reference ref="highway_base" />
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
+                <text key="junction:ref" text="Junction reference" />
                 <text key="width" text="Width (meters)" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
@@ -631,6 +633,9 @@
             <key key="highway" value="primary_link" />
             <optional>
                 <reference ref="highway_base" />
+                <text key="destination" text="Destination" />
+                <text key="destination:ref" text="Destination reference" />
+                <text key="junction:ref" text="Junction reference" />
                 <check key="motorroad" text="Motorroad" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
@@ -657,6 +662,8 @@
             <key key="highway" value="secondary_link" />
             <optional>
                 <reference ref="highway_base" />
+                <text key="destination" text="Destination" />
+                <text key="destination:ref" text="Destination reference" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
@@ -682,6 +689,8 @@
             <key key="highway" value="tertiary_link" />
             <optional>
                 <reference ref="highway_base" />
+                <text key="destination" text="Destination" />
+                <text key="destination:ref" text="Destination reference" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
