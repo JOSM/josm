@@ -130,14 +130,14 @@ node[restriction] {
 /******************/
 
 way[bridge=yes]::core_bridge,
-way[bridge=viaduct]::core_bridge,
-way[bridge=swing]::core_bridge,
-way[bridge=movable]::core_bridge,
+way[bridge=aqueduct]::core_bridge,
+way[bridge=boardwalk]::core_bridge,
 way[bridge=cantilever]::core_bridge,
 way[bridge=covered]::core_bridge,
 way[bridge=low_water_crossing]::core_bridge,
+way[bridge=movable]::core_bridge,
 way[bridge=trestle]::core_bridge,
-way[bridge=aqueduct]::core_bridge {
+way[bridge=viaduct]::core_bridge {
     major-z-index: 2;
     object-z-index: -1;
     width: +4;
