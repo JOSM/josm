@@ -1109,10 +1109,16 @@
         <item name="Stop" icon="presets/vehicle/restriction/stop.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=stop" />
             <key key="highway" value="stop" />
+            <optional>
+                <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270,forward,backward" values_sort="false" />
+            </optional>
         </item> <!-- Stop -->
         <item name="Give Way" icon="presets/vehicle/restriction/give_way.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=give_way" />
             <key key="highway" value="give_way" />
+            <optional>
+                <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270,forward,backward" values_sort="false" />
+            </optional>
         </item> <!-- Give Way -->
         <item name="Mini-Roundabout" icon="presets/vehicle/restriction/mini_roundabout_left.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=mini_roundabout" />
@@ -1204,13 +1210,19 @@
             <space />
             <key key="traffic_sign" value="city_limit" />
             <text key="name" text="Name" />
-            <text key="alt_name" text="Second Name" />
+            <optional>
+                <text key="alt_name" text="Second Name" />
+                <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270,forward,backward" values_sort="false" />
+            </optional>
         </item> <!-- City Limit -->
         <item name="Speed Limit Sign" icon="presets/vehicle/restriction/maxspeed.svg" type="node" preset_name_label="true">
             <link wiki="Key:traffic_sign" />
             <space />
             <key key="traffic_sign" value="maxspeed" />
             <text key="maxspeed" text="Max. speed (km/h)" />
+            <optional>
+                <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270,forward,backward" values_sort="false" />
+            </optional>
         </item> <!-- Speed Limit -->
         <item name="Speed Camera" icon="presets/vehicle/restriction/speed_camera.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=speed_camera" />

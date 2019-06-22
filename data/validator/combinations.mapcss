@@ -117,6 +117,7 @@ way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
 }
 
 /* {0.tag} without {1.key} (warning level) */
+node[traffic_sign=maxspeed][!maxspeed],
 node[actuator=manual][!handle],
 node[emergency=fire_hydrant][!fire_hydrant:type],
 way[     boundary=administrative][!admin_level],
