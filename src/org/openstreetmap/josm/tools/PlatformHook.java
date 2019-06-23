@@ -290,10 +290,14 @@ public interface PlatformHook {
     default void checkExpiredJava(JavaExpirationCallback callback) {
         Date expiration = Utils.getJavaExpirationDate();
         if (expiration != null && expiration.before(new Date())) {
-            String version = Utils.getJavaLatestVersion();
-            callback.askUpdateJava(version != null ? version : "latest",
-                    Config.getPref().get("java.update.url", "https://www.java.com/download"),
-                    DateUtils.getDateFormat(DateFormat.MEDIUM).format(expiration), false);
+            String latestVersion = Utils.getJavaLatestVersion();
+            String currentVersion = Utils.getSystemProperty("java.version");
+            // #17831 WebStart may be launched with an expired JRE but then launching JOSM with up-to-date JRE
+            if (latestVersion == null || !latestVersion.equalsIgnoreCase(currentVersion)) {
+                callback.askUpdateJava(latestVersion != null ? latestVersion : "latest",
+                        Config.getPref().get("java.update.url", "https://www.java.com/download"),
+                        DateUtils.getDateFormat(DateFormat.MEDIUM).format(expiration), false);
+            }
         }
     }
 
