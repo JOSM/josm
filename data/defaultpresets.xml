@@ -1093,6 +1093,9 @@
         <item name="Traffic Signal" icon="presets/vehicle/traffic_signals.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=traffic_signals" />
             <key key="highway" value="traffic_signals" />
+            <optional>
+                <combo key="traffic_signals:direction" text="Direction" values="forward,backward,both" />
+            </optional>
             <optional text="Optional crossing attributes:">
                 <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
