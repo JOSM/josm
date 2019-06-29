@@ -28,6 +28,8 @@ import org.openstreetmap.josm.data.gpx.GpxDistance;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
@@ -567,6 +569,25 @@ public final class ExpressionFactory {
          */
         public static String role(final Environment env) { // NO_UCD (unused code)
             return env.getRole();
+        }
+
+        /**
+         * Returns true if role is in relation. Returns false if not a relation or it does not have the role.
+         * @param env the environment
+         * @param roles The roles to count in the relation
+         * @return The number of relation members with the specified role
+         * @since 15196
+         */
+        public static int count_roles(final Environment env, String... roles) { // NO_UCD (unused code)
+            int rValue = 0;
+            if (env.osm instanceof Relation) {
+                List<String> roleList = Arrays.asList(roles);
+                Relation rel = (Relation) env.osm;
+                for (RelationMember member : rel.getMembers()) {
+                    if (roleList.contains(member.getRole())) rValue++;
+                }
+            }
+            return rValue;
         }
 
         /**

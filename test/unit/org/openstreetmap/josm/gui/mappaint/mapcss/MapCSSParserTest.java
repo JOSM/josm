@@ -13,10 +13,13 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
@@ -401,6 +404,47 @@ public class MapCSSParserTest {
         assertTrue(source.rules.get(0).selector.matches(e));
         source.rules.get(0).declaration.execute(e);
         assertEquals("x2;x10", e.getCascade(Environment.DEFAULT_LAYER).get("refs", null, String.class));
+    }
+
+    @Test
+    public void testCountRoles() throws Exception {
+        DataSet ds = new DataSet();
+        Way way1 = TestUtils.newWay("highway=residential name=1",
+                new Node(new LatLon(0, 0)), new Node((new LatLon(0.001, 0.001))));
+        for (Node node : way1.getNodes()) {
+            ds.addPrimitive(node);
+        }
+        ds.addPrimitive(way1);
+
+        Relation rel1 = TestUtils.newRelation("type=destination_sign", new RelationMember("", way1));
+        ds.addPrimitive(rel1);
+
+        /* Check with empty role and one object */
+        Environment e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        assertEquals(1, ExpressionFactory.Functions.count_roles(e, ""));
+
+        /* Check with non-empty role and one object */
+        e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        assertEquals(0, ExpressionFactory.Functions.count_roles(e, "from"));
+
+        /* Check with empty role and two objects */
+        Way way2 = TestUtils.newWay("highway=residential name=2", way1.firstNode(), way1.lastNode());
+        ds.addPrimitive(way2);
+        rel1.addMember(new RelationMember("", way2));
+        e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        assertEquals(2, ExpressionFactory.Functions.count_roles(e, ""));
+
+        /* Check with non-empty role and two objects */
+        rel1.setMember(0, new RelationMember("from", way1));
+        e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        assertEquals(1, ExpressionFactory.Functions.count_roles(e, "from"));
+
+        /* Check with multiple roles */
+        assertEquals(1, ExpressionFactory.Functions.count_roles(e, "from", "to"));
+
+        /* Check with non-relation */
+        e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        assertEquals(0, ExpressionFactory.Functions.count_roles(e, "from", "to"));
     }
 
     @Test
