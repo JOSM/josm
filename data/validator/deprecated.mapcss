@@ -1467,3 +1467,9 @@ way[/^is_in:.*$/] {
   fixChangeKey: "shop => amenity";
   group: tr("deprecated tagging");
 }
+
+*[contact:google_plus] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  fixRemove: "contact:google_plus";
+  group: tr("deprecated tagging");
+}
