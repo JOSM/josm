@@ -1411,9 +1411,12 @@ way[man_made=breakwater] {
     width: 2;
     color: manmade#d8d8d8;
 }
-way[man_made=dyke] {
-    width: 2;
+way[man_made=dyke]::man_made_dyke {
+    width: 4;
     color: dyke#0aa846;
+    z-index: -2;
+    object-z-index: -1; /* below highway=* */
+    modifier: false; /* don't draw default way if there is no line on default layer */
 }
 node[man_made=lighthouse] {
     icon-image: "presets/landmark/lighthouse.svg";
