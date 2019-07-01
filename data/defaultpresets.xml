@@ -1123,6 +1123,10 @@
                 <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270,forward,backward" values_sort="false" />
             </optional>
         </item> <!-- Give Way -->
+        <item name="Advanced stop line" icon="presets/transport/way/asl.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:cycleway=asl" />
+            <key key="cycleway" value="asl" />
+        </item> <!-- Advanced stop line -->
         <item name="Mini-Roundabout" icon="presets/vehicle/restriction/mini_roundabout_left.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=mini_roundabout" />
             <key key="highway" value="mini_roundabout" />
