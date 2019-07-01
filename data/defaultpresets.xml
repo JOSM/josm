@@ -1123,7 +1123,7 @@
                 <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270,forward,backward" values_sort="false" />
             </optional>
         </item> <!-- Give Way -->
-        <item name="Advanced stop line" icon="presets/transport/way/asl.svg" type="node" preset_name_label="true">
+        <item name="Advanced stop line" icon="presets/vehicle/asl.svg" type="node" preset_name_label="true">
             <link wiki="Tag:cycleway=asl" />
             <key key="cycleway" value="asl" />
         </item> <!-- Advanced stop line -->
@@ -1238,6 +1238,13 @@
                 <text key="maxspeed" text="Max. speed (km/h)" />
             </optional>
         </item> <!-- Speed Camera -->
+        <item name="Toll gantry" icon="presets/vehidle/restriction/toll_gantry.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:highway=toll_gantry" />
+            <key key="highway" value="toll_gantry" />
+            <optional>
+                <text key="operator" text="Operator" />
+            </optional>
+        </item> <!-- Toll gantry -->
         <item name="Traffic Mirror" icon="presets/vehicle/traffic_mirror.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=traffic_mirror" />
             <key key="highway" value="traffic_mirror" />
@@ -7439,7 +7446,7 @@
             <link wiki="Relation:enforcement" />
             <space />
             <key key="type" value="enforcement" />
-            <combo key="enforcement" text="Type of enforcement" values="maxheight,maxweight,maxspeed,mindistance,traffic_signals,check" />
+            <combo key="enforcement" text="Type of enforcement" values="check,maxheight,maxspeed,maxweight,mindistance,toll,traffic_signals" />
             <text key="maxheight" text="Max. height (meters, only if enforcement=maxheight)" />
             <text key="maxweight" text="Max. weight (tonnes, only if enforcement=maxweight)" />
             <text key="maxspeed" text="Max. speed (km/h, only if enforcement=maxspeed)" />

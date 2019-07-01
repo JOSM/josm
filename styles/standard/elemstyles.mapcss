@@ -699,7 +699,7 @@ node[highway=give_way] {
     set icon_z17;
 }
 node[cycleway=asl] {
-    icon-image: "presets/transport/way/asl.svg";
+    icon-image: "presets/vehicle/asl.svg";
     set icon_z17;
 }
 node[highway=traffic_signals] {
@@ -732,6 +732,10 @@ node[highway=speed_camera] {
 }
 relation[type=enforcement] >[role="device"] node {
     icon-image: "presets/vehicle/restriction/speed_camera.svg";
+    set icon_z17;
+}
+node[highway=toll_gantry] {
+    icon-image: "presets/vehicle/restriction/toll_gantry.svg";
     set icon_z17;
 }
 node[traffic_sign=city_limit] {
