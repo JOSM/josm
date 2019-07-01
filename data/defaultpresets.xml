@@ -5858,6 +5858,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Money Exchange -->
+        <item name="Money transfer" icon="presets/money/money_transfer.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=money_transfer" />
+            <space />
+            <key key="amenity" value="money_transfer" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address" />
+        </item> <!-- Money transfer -->
         <item name="Automated Teller Machine" icon="presets/money/atm.svg" type="node" preset_name_label="true">
             <link wiki="Tag:amenity=atm" />
             <space />

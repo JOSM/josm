@@ -1459,3 +1459,11 @@ way[/^is_in:.*$/] {
   fixChangeKey: "kitchen_hours => opening_hours:kitchen";
   group: tr("deprecated tagging");
 }
+
+/* #17681 */
+*[shop=money_transfer] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=money_transfer";
+  fixChangeKey: "shop => amenity";
+  group: tr("deprecated tagging");
+}

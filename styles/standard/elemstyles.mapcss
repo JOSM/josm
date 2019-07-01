@@ -2892,6 +2892,7 @@ area[amenity=courthouse],
 area[amenity=prison],
 area[amenity=bank],
 area[amenity=bureau_de_change],
+area[amenity=money_transfer],
 area[amenity=bbq],
 area[amenity=watering_place] {
     fill-color: amenity_light#f7efb7;
@@ -2946,6 +2947,10 @@ node[amenity=bank] {
 }
 node[amenity=bureau_de_change] {
     icon-image: "presets/money/exchange.svg";
+    set icon_z17;
+}
+node[amenity=money_transfer] {
+    icon-image: "presets/money/money_transfer.svg";
     set icon_z17;
 }
 node[amenity=atm] {
