@@ -1238,7 +1238,7 @@
                 <text key="maxspeed" text="Max. speed (km/h)" />
             </optional>
         </item> <!-- Speed Camera -->
-        <item name="Toll gantry" icon="presets/vehidle/restriction/toll_gantry.svg" type="node" preset_name_label="true">
+        <item name="Toll gantry" icon="presets/vehicle/restriction/toll_gantry.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=toll_gantry" />
             <key key="highway" value="toll_gantry" />
             <optional>
