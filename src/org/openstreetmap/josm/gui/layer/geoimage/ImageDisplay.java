@@ -549,7 +549,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             if (image == null)
                 return;
 
-            if (mouseIsDragging(e)) {
+            if (mouseIsDragging(e) && mousePointInImg != null) {
                 Point p = comp2imgCoord(visibleRect, e.getX(), e.getY(), getSize());
                 visibleRect.isDragUpdate = true;
                 visibleRect.x += mousePointInImg.x - p.x;
@@ -563,7 +563,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                 ImageDisplay.this.repaint();
             }
 
-            if (mouseIsZoomSelecting(e)) {
+            if (mouseIsZoomSelecting(e) && mousePointInImg != null) {
                 Point p = comp2imgCoord(visibleRect, e.getX(), e.getY(), getSize());
                 visibleRect.checkPointInside(p);
                 VisRect selectedRect = new VisRect(
