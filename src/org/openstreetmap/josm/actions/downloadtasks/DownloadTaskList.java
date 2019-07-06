@@ -49,11 +49,29 @@ import org.openstreetmap.josm.tools.Utils;
 public class DownloadTaskList {
     private final List<DownloadTask> tasks = new LinkedList<>();
     private final List<Future<?>> taskFutures = new LinkedList<>();
+    private final boolean zoomAfterDownload;
     private ProgressMonitor progressMonitor;
+
+    /**
+     * Constructs a new {@code DownloadTaskList}. Zooms to each download area.
+     */
+    public DownloadTaskList() {
+        this(true);
+    }
+
+    /**
+     * Constructs a new {@code DownloadTaskList}.
+     * @param zoomAfterDownload whether to zoom to each download area
+     * @since 15205
+     */
+    public DownloadTaskList(boolean zoomAfterDownload) {
+        this.zoomAfterDownload = zoomAfterDownload;
+    }
 
     private void addDownloadTask(ProgressMonitor progressMonitor, DownloadTask dt, Rectangle2D td, int i, int n) {
         ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
         childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, n, n - i));
+        dt.setZoomAfterDownload(zoomAfterDownload);
         Future<?> future = dt.download(new DownloadParams(), new Bounds(td), childProgress);
         taskFutures.add(future);
         tasks.add(dt);
@@ -108,11 +126,7 @@ public class DownloadTaskList {
     public Future<?> download(boolean newLayer, Collection<Area> areas, boolean osmData, boolean gpxData, ProgressMonitor progressMonitor) {
         progressMonitor.beginTask(tr("Updating data"));
         try {
-            List<Rectangle2D> rects = new ArrayList<>(areas.size());
-            for (Area a : areas) {
-                rects.add(a.getBounds2D());
-            }
-
+            List<Rectangle2D> rects = areas.stream().map(Area::getBounds2D).collect(Collectors.toList());
             return download(newLayer, rects, osmData, gpxData, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
         } finally {
             progressMonitor.finishTask();

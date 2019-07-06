@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -90,7 +91,8 @@ public class UpdateDataAction extends JosmAction {
         } else {
             // bounds defined? => use the bbox downloader
             final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
-            final Future<?> future = new DownloadTaskList().download(false /* no new layer */, areasToDownload, true, false, monitor);
+            final Future<?> future = new DownloadTaskList(Config.getPref().getBoolean("update.data.zoom-after-download"))
+                    .download(false /* no new layer */, areasToDownload, true, false, monitor);
             waitFuture(future, monitor);
         }
     }

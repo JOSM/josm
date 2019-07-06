@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadAlongPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -127,7 +128,8 @@ public abstract class DownloadAlongAction extends JosmAction {
             return;
         }
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
-        final Future<?> future = new DownloadTaskList().download(false, toDownload, osmDownload, gpxDownload, monitor);
+        final Future<?> future = new DownloadTaskList(Config.getPref().getBoolean("download.along.zoom-after-download"))
+                .download(false, toDownload, osmDownload, gpxDownload, monitor);
         waitFuture(future, monitor);
     }
 
