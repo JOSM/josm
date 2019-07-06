@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.preferences.sources;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -16,6 +17,8 @@ public class ExtendedSourceEntry extends SourceEntry implements Comparable<Exten
     public String version;
     /** author name used for display */
     public String author;
+    /** icon used for display */
+    public ImageResource icon;
     /** webpage link used for display */
     public String link;
     /** short description used for display */

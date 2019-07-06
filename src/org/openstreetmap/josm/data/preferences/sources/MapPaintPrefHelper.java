@@ -6,13 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -83,11 +83,13 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
         ExtendedSourceEntry defJosmMapcss = new ExtendedSourceEntry(type, "elemstyles.mapcss", "resource://styles/standard/elemstyles.mapcss");
         defJosmMapcss.active = true;
         defJosmMapcss.name = "standard";
+        defJosmMapcss.icon = new ImageProvider("logo").getResource();
         defJosmMapcss.title = tr("JOSM default (MapCSS)");
         defJosmMapcss.description = tr("Internal style to be used as base for runtime switchable overlay styles");
         ExtendedSourceEntry defPL2 = new ExtendedSourceEntry(type, "potlatch2.mapcss", "resource://styles/standard/potlatch2.mapcss");
         defPL2.active = false;
         defPL2.name = "standard";
+        defPL2.icon = new ImageProvider("dialogs/mappaint", "pl2_small").getResource();
         defPL2.title = tr("Potlatch 2");
         defPL2.description = tr("the main Potlatch 2 style");
 
@@ -96,9 +98,7 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
 
     @Override
     public Map<String, String> serialize(SourceEntry entry) {
-        Map<String, String> res = new HashMap<>();
-        res.put("url", entry.url == null ? "" : entry.url);
-        res.put("title", entry.title == null ? "" : entry.title);
+        Map<String, String> res = super.serialize(entry);
         res.put("active", Boolean.toString(entry.active));
         if (entry.name != null) {
             res.put("ptoken", entry.name);

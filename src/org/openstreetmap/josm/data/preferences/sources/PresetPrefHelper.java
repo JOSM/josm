@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Helper class for tagging presets preferences.
@@ -30,20 +30,8 @@ public class PresetPrefHelper extends SourcePrefHelper {
     public Collection<ExtendedSourceEntry> getDefault() {
         ExtendedSourceEntry i = new ExtendedSourceEntry(type, "defaultpresets.xml", "resource://data/defaultpresets.xml");
         i.title = tr("Internal Preset");
+        i.icon = new ImageProvider("logo").getResource();
         i.description = tr("The default preset for JOSM");
         return Collections.singletonList(i);
-    }
-
-    @Override
-    public Map<String, String> serialize(SourceEntry entry) {
-        Map<String, String> res = new HashMap<>();
-        res.put("url", entry.url);
-        res.put("title", entry.title == null ? "" : entry.title);
-        return res;
-    }
-
-    @Override
-    public SourceEntry deserialize(Map<String, String> s) {
-        return new SourceEntry(type, s.get("url"), null, s.get("title"), true);
     }
 }

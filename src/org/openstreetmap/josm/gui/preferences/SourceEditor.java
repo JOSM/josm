@@ -2,8 +2,10 @@
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -41,7 +43,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -57,6 +58,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -73,6 +75,7 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourcePrefHelper;
@@ -1352,8 +1355,13 @@ public abstract class SourceEditor extends JPanel {
 
     static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer<ExtendedSourceEntry> {
 
-        private final ImageIcon GREEN_CHECK = ImageProvider.getIfAvailable("misc", "green_check");
-        private final ImageIcon GRAY_CHECK = ImageProvider.getIfAvailable("misc", "gray_check");
+        private static final NamedColorProperty SOURCE_ENTRY_ACTIVE_BACKGROUND_COLOR = new NamedColorProperty(
+                marktr("External resource entry: Active"),
+                new Color(200, 255, 200));
+        private static final NamedColorProperty SOURCE_ENTRY_INACTIVE_BACKGROUND_COLOR = new NamedColorProperty(
+                marktr("External resource entry: Inactive"),
+                new Color(200, 200, 200));
+
         private final Map<String, SourceEntry> entryByUrl = new HashMap<>();
 
         @Override
@@ -1373,8 +1381,13 @@ public abstract class SourceEditor extends JPanel {
             setFont(getFont().deriveFont(Font.PLAIN));
             setOpaque(true);
             setToolTipText(value.getTooltip());
-            final SourceEntry sourceEntry = entryByUrl.get(value.url);
-            setIcon(sourceEntry == null ? null : sourceEntry.active ? GREEN_CHECK : GRAY_CHECK);
+            if (!isSelected) {
+                final SourceEntry sourceEntry = entryByUrl.get(value.url);
+                GuiHelper.setBackgroundReadable(this, sourceEntry == null ? UIManager.getColor("Table.background") :
+                    sourceEntry.active ? SOURCE_ENTRY_ACTIVE_BACKGROUND_COLOR.get() : SOURCE_ENTRY_INACTIVE_BACKGROUND_COLOR.get());
+            }
+            final ImageSizes size = ImageSizes.TABLE;
+            setIcon(value.icon == null ? ImageProvider.getEmpty(size) : value.icon.getImageIcon(size.getImageDimension()));
             return this;
         }
 
@@ -1474,6 +1487,8 @@ public abstract class SourceEditor extends JPanel {
                                 last.author = value;
                             } else if ("version".equals(key)) {
                                 last.version = value;
+                            } else if ("icon".equals(key) && last.icon == null) {
+                                last.icon = new ImageProvider(value).setOptional(true).getResource();
                             } else if ("link".equals(key) && last.link == null) {
                                 last.link = value;
                             } else if ("description".equals(key) && last.description == null) {

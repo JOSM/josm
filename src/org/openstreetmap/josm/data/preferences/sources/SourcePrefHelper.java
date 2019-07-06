@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,14 +44,25 @@ public abstract class SourcePrefHelper {
      * @param entry source entry to serialize
      * @return map (key=value)
      */
-    public abstract Map<String, String> serialize(SourceEntry entry);
+    public Map<String, String> serialize(SourceEntry entry) {
+        Map<String, String> res = new HashMap<>();
+        res.put("url", entry.url);
+        res.put("title", entry.title == null ? "" : entry.title);
+        return res;
+    }
 
     /**
      * Deserializes the given map as a source entry.
      * @param entryStr map (key=value)
      * @return source entry
      */
-    public abstract SourceEntry deserialize(Map<String, String> entryStr);
+    public SourceEntry deserialize(Map<String, String> entryStr) {
+        return new SourceEntry(type,
+                entryStr.get("url"),
+                entryStr.get("name"),
+                entryStr.get("title"),
+                Optional.ofNullable(entryStr.get("active")).map(Boolean::parseBoolean).orElse(true));
+    }
 
     /**
      * Returns the list of sources.

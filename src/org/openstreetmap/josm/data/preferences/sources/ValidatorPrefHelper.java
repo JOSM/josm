@@ -5,12 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Helper class for validator tag checker rules preferences.
@@ -85,21 +85,15 @@ public class ValidatorPrefHelper extends SourcePrefHelper {
     private void addDefault(List<ExtendedSourceEntry> defaults, String filename, String title, String description) {
         ExtendedSourceEntry i = new ExtendedSourceEntry(type, filename+".mapcss", "resource://data/validator/"+filename+".mapcss");
         i.title = title;
+        i.icon = new ImageProvider("logo").getResource();
         i.description = description;
         defaults.add(i);
     }
 
     @Override
     public Map<String, String> serialize(SourceEntry entry) {
-        Map<String, String> res = new HashMap<>();
-        res.put("url", entry.url);
-        res.put("title", entry.title == null ? "" : entry.title);
+        Map<String, String> res = super.serialize(entry);
         res.put("active", Boolean.toString(entry.active));
         return res;
-    }
-
-    @Override
-    public SourceEntry deserialize(Map<String, String> s) {
-        return new SourceEntry(type, s.get("url"), null, s.get("title"), Boolean.parseBoolean(s.get("active")));
     }
 }
