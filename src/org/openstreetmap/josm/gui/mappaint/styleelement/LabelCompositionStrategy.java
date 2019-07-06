@@ -167,6 +167,7 @@ public interface LabelCompositionStrategy {
          * <p>Creates the strategy and initializes its name tags from the preferences.</p>
          */
         public DeriveLabelFromNameTagsCompositionStrategy() {
+            Config.getPref().addPreferenceChangeListener(this);
             initNameTagsFromPreferences();
         }
 
