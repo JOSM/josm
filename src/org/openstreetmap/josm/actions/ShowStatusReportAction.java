@@ -143,6 +143,22 @@ public final class ShowStatusReportAction extends JosmAction {
                     .append(atkWrapperDetails)
                     .append('\n');
             }
+            // Add dependencies details if found
+            for (String p : new String[] {
+                    "apache-commons-compress", "libcommons-compress-java",
+                    "apache-commons-jcs-core",
+                    "apache-commons-logging", "libcommons-logging-java",
+                    "fonts-noto",
+                    "jsonp",
+                    "metadata-extractor2",
+                    "signpost-core", "liboauth-signpost-java",
+                    "svgsalamander"
+            }) {
+                String details = PlatformHookUnixoid.getPackageDetails(p);
+                if (details != null) {
+                    text.append(p).append(": ").append(details).append('\n');
+                }
+            }
         }
         try {
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
