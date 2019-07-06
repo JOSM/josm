@@ -87,7 +87,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.gui.util.ReorderableTableModel;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
@@ -627,7 +626,7 @@ public abstract class SourceEditor extends JPanel {
     /**
      * Table model of active sources.
      */
-    protected class ActiveSourcesModel extends AbstractTableModel implements ReorderableTableModel<SourceEntry> {
+    protected class ActiveSourcesModel extends AbstractTableModel {
         private transient List<SourceEntry> data;
         private final DefaultListSelectionModel selectionModel;
 
@@ -767,19 +766,33 @@ public abstract class SourceEditor extends JPanel {
             return new ArrayList<>(data);
         }
 
-        @Override
-        public DefaultListSelectionModel getSelectionModel() {
-            return selectionModel;
+        public boolean canMove(int i) {
+            int[] sel = tblActiveSources.getSelectedRows();
+            if (sel.length == 0)
+                return false;
+            if (i < 0)
+                return sel[0] >= -i;
+                else if (i > 0)
+                    return sel[sel.length-1] <= getRowCount()-1 - i;
+                else
+                    return true;
         }
 
-        @Override
-        public SourceEntry getValue(int index) {
-            return data.get(index);
-        }
-
-        @Override
-        public SourceEntry setValue(int index, SourceEntry value) {
-            return data.set(index, value);
+        public void move(int i) {
+            if (!canMove(i)) return;
+            int[] sel = tblActiveSources.getSelectedRows();
+            for (int row: sel) {
+                SourceEntry t1 = data.get(row);
+                SourceEntry t2 = data.get(row + i);
+                data.set(row, t2);
+                data.set(row + i, t1);
+            }
+            selectionModel.setValueIsAdjusting(true);
+            selectionModel.clearSelection();
+            for (int row: sel) {
+                selectionModel.addSelectionInterval(row + i, row + i);
+            }
+            selectionModel.setValueIsAdjusting(false);
         }
     }
 
