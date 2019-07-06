@@ -122,7 +122,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
             formats.setEnabled(enabled);
             wmsUrl.setEnabled(enabled);
             if (endpoint.isSelected() && !setDefaultLayers.isSelected() && wms != null) {
-                name.setText(wms.buildRootUrl());
+                name.setText(wms.buildRootUrlWithoutCapabilities());
             }
             onLayerSelectionChanged();
         };
@@ -160,7 +160,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                     true // TODO: ask user about transparency
                 )
             );
-            name.setText(wms.buildRootUrl() + ": " + Utils.join(", ", tree.getSelectedLayers()));
+            name.setText(wms.buildRootUrlWithoutCapabilities() + ": " + Utils.join(", ", tree.getSelectedLayers()));
         }
         showBounds.setEnabled(tree.getSelectedLayers().size() == 1);
     }

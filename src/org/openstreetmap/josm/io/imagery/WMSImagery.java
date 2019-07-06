@@ -44,7 +44,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class WMSImagery {
 
-    private static final String CAPABILITIES_QUERY_STRING = "SERVICE=WMS&REQUEST=GetCapabilities";
+    private static final String SERVICE_WMS = "SERVICE=WMS";
+    private static final String REQUEST_GET_CAPABILITIES = "REQUEST=GetCapabilities";
+    private static final String CAPABILITIES_QUERY_STRING = SERVICE_WMS + "&" + REQUEST_GET_CAPABILITIES;
 
     /**
      * WMS namespace address
@@ -269,6 +271,18 @@ public class WMSImagery {
     }
 
     /**
+     * @return root URL of services without the GetCapabilities call
+     * @since 15209
+     */
+    public String buildRootUrlWithoutCapabilities() {
+        return buildRootUrl()
+                .replace(CAPABILITIES_QUERY_STRING, "")
+                .replace(SERVICE_WMS, "")
+                .replace(REQUEST_GET_CAPABILITIES, "")
+                .replace("?&", "?");
+    }
+
+    /**
      * Returns URL for accessing GetMap service. String will contain following parameters:
      * * {proj} - that needs to be replaced with projection (one of {@link #getServerProjections(List)})
      * * {width} - that needs to be replaced with width of the tile
@@ -321,8 +335,9 @@ public class WMSImagery {
                 selectedStyles == null ? 0 : selectedStyles.size(),
                         selectedLayers.size());
 
-        return buildRootUrl() + "FORMAT=" + format + ((imageFormatHasTransparency(format) && transparent) ? "&TRANSPARENT=TRUE" : "")
-                + "&VERSION=" + this.version + "&SERVICE=WMS&REQUEST=GetMap&LAYERS="
+        return buildRootUrlWithoutCapabilities()
+                + "FORMAT=" + format + ((imageFormatHasTransparency(format) && transparent) ? "&TRANSPARENT=TRUE" : "")
+                + "&VERSION=" + this.version + "&" + SERVICE_WMS + "&REQUEST=GetMap&LAYERS="
                 + selectedLayers.stream().collect(Collectors.joining(","))
                 + "&STYLES="
                 + (selectedStyles != null ? Utils.join(",", selectedStyles) : "")
