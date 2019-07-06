@@ -46,7 +46,7 @@ public abstract class SourcePrefHelper {
      */
     public Map<String, String> serialize(SourceEntry entry) {
         Map<String, String> res = new HashMap<>();
-        res.put("url", entry.url);
+        res.put("url", entry.url == null ? "" : entry.url);
         res.put("title", entry.title == null ? "" : entry.title);
         return res;
     }
