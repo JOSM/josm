@@ -62,7 +62,7 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
             new ChangesetViewerEntry(tr("View changeset in web browser"), Config.getUrls().getBaseBrowseUrl() + "/changeset/{0}"),
             new ChangesetViewerEntry(tr("Open {0}", "achavi (Augmented OSM Change Viewer)"), "https://overpass-api.de/achavi/?changeset={0}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSMCha (OSM Changeset Analyzer)"), "https://osmcha.mapbox.com/changesets/{0}"),
-            new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer (osmrmhv)"), "http://osmhv.openstreetmap.de/changeset.jsp?id={0}"),
+            new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer (Mapki)"), "http://osm.mapki.com/history/{1}.php?id={2}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer (Pewu)"), "https://pewu.github.io/osm-history/#/{1}/{2}"),
             new ChangesetViewerEntry(tr("Open {0}", "WhoDidIt (OSM Changeset Analyzer)"),
                     "http://simon04.dev.openstreetmap.org/whodidit/index.html?changeset={0}&show=1")
