@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -188,6 +188,7 @@ public abstract class ExifDirectoryBase extends Directory
      */
     public static final int TAG_FNUMBER                           = 0x829D;
     public static final int TAG_IPTC_NAA                          = 0x83BB;
+    public static final int TAG_PHOTOSHOP_SETTINGS                = 0x8649;
     public static final int TAG_INTER_COLOR_PROFILE               = 0x8773;
     /**
      * Exposure program that the camera used when image was taken. '1' means
@@ -229,13 +230,16 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_SENSITIVITY_TYPE                  = 0x8830;
     public static final int TAG_STANDARD_OUTPUT_SENSITIVITY       = 0x8831;
     public static final int TAG_RECOMMENDED_EXPOSURE_INDEX        = 0x8832;
-    /** Non-standard, but in use. */
-    public static final int TAG_TIME_ZONE_OFFSET                  = 0x882A;
-    public static final int TAG_SELF_TIMER_MODE                   = 0x882B;
+    public static final int TAG_ISO_SPEED                         = 0x8833;
+    public static final int TAG_ISO_SPEED_LATITUDE_YYY            = 0x8834;
+    public static final int TAG_ISO_SPEED_LATITUDE_ZZZ            = 0x8835;
 
     public static final int TAG_EXIF_VERSION                      = 0x9000;
     public static final int TAG_DATETIME_ORIGINAL                 = 0x9003;
     public static final int TAG_DATETIME_DIGITIZED                = 0x9004;
+    public static final int TAG_OFFSET_TIME                       = 0x9010;
+    public static final int TAG_OFFSET_TIME_ORIGINAL              = 0x9011;
+    public static final int TAG_OFFSET_TIME_DIGITIZED             = 0x9012;
 
     public static final int TAG_COMPONENTS_CONFIGURATION          = 0x9101;
     /**
@@ -356,6 +360,13 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_SUBSECOND_TIME                    = 0x9290;
     public static final int TAG_SUBSECOND_TIME_ORIGINAL           = 0x9291;
     public static final int TAG_SUBSECOND_TIME_DIGITIZED          = 0x9292;
+
+    public static final int TAG_TEMPERATURE                       = 0x9400;
+    public static final int TAG_HUMIDITY                          = 0x9401;
+    public static final int TAG_PRESSURE                          = 0x9402;
+    public static final int TAG_WATER_DEPTH                       = 0x9403;
+    public static final int TAG_ACCELERATION                      = 0x9404;
+    public static final int TAG_CAMERA_ELEVATION_ANGLE            = 0x9405;
 
     /** The image title, as used by Windows XP. */
     public static final int TAG_WIN_TITLE                         = 0x9C9B;
@@ -670,6 +681,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_EXPOSURE_TIME, "Exposure Time");
         map.put(TAG_FNUMBER, "F-Number");
         map.put(TAG_IPTC_NAA, "IPTC/NAA");
+        map.put(TAG_PHOTOSHOP_SETTINGS, "Photoshop Settings");
         map.put(TAG_INTER_COLOR_PROFILE, "Inter Color Profile");
         map.put(TAG_EXPOSURE_PROGRAM, "Exposure Program");
         map.put(TAG_SPECTRAL_SENSITIVITY, "Spectral Sensitivity");
@@ -681,11 +693,15 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_SENSITIVITY_TYPE, "Sensitivity Type");
         map.put(TAG_STANDARD_OUTPUT_SENSITIVITY, "Standard Output Sensitivity");
         map.put(TAG_RECOMMENDED_EXPOSURE_INDEX, "Recommended Exposure Index");
-        map.put(TAG_TIME_ZONE_OFFSET, "Time Zone Offset");
-        map.put(TAG_SELF_TIMER_MODE, "Self Timer Mode");
+        map.put(TAG_ISO_SPEED, "ISO Speed");
+        map.put(TAG_ISO_SPEED_LATITUDE_YYY, "ISO Speed Latitude yyy");
+        map.put(TAG_ISO_SPEED_LATITUDE_ZZZ, "ISO Speed Latitude zzz");
         map.put(TAG_EXIF_VERSION, "Exif Version");
         map.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
         map.put(TAG_DATETIME_DIGITIZED, "Date/Time Digitized");
+        map.put(TAG_OFFSET_TIME, "Offset Time");
+        map.put(TAG_OFFSET_TIME_ORIGINAL, "Offset Time Original");
+        map.put(TAG_OFFSET_TIME_DIGITIZED, "Offset Time Digitized");
         map.put(TAG_COMPONENTS_CONFIGURATION, "Components Configuration");
         map.put(TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL, "Compressed Bits Per Pixel");
         map.put(TAG_SHUTTER_SPEED, "Shutter Speed Value");
@@ -714,6 +730,12 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_SUBSECOND_TIME, "Sub-Sec Time");
         map.put(TAG_SUBSECOND_TIME_ORIGINAL, "Sub-Sec Time Original");
         map.put(TAG_SUBSECOND_TIME_DIGITIZED, "Sub-Sec Time Digitized");
+        map.put(TAG_TEMPERATURE, "Temperature");
+        map.put(TAG_HUMIDITY, "Humidity");
+        map.put(TAG_PRESSURE, "Pressure");
+        map.put(TAG_WATER_DEPTH, "Water Depth");
+        map.put(TAG_ACCELERATION, "Acceleration");
+        map.put(TAG_CAMERA_ELEVATION_ANGLE, "Camera Elevation Angle");
         map.put(TAG_WIN_TITLE, "Windows XP Title");
         map.put(TAG_WIN_COMMENT, "Windows XP Comment");
         map.put(TAG_WIN_AUTHOR, "Windows XP Author");

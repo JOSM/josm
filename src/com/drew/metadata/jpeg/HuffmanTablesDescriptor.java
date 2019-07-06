@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import com.drew.metadata.TagDescriptor;
 import static com.drew.metadata.jpeg.HuffmanTablesDirectory.*;
 
 /**
- * Provides a human-readable string version of the tag stored in a HuffmanTableDirectory.
+ * Provides a human-readable string version of the tag stored in a {@link HuffmanTablesDirectory}.
  *
  * <ul>
  *   <li>https://en.wikipedia.org/wiki/Huffman_coding</li>
@@ -60,7 +60,7 @@ public class HuffmanTablesDescriptor extends TagDescriptor<HuffmanTablesDirector
     public String getNumberOfTablesDescription()
     {
         Integer value = _directory.getInteger(TAG_NUMBER_OF_TABLES);
-        if (value==null)
+        if (value == null)
             return null;
         return value + (value == 1 ? " Huffman table" : " Huffman tables");
     }

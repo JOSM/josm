@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 
 import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.*;
@@ -104,7 +105,15 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getPowerUpTimeDescription()
     {
-        return getEpochTimeDescription(TAG_POWER_UP_TIME);
+        // this is generally a byte[] of length 8 directly representing a date and time.
+        // the format is : first 2 bytes together are the year, and then each byte after
+        //                 is month, day, hour, minute, second with the eighth byte unused
+        // e.g., 2011:04:25 01:54:58
+
+        byte[] values = _directory.getByteArray(TAG_POWER_UP_TIME);
+        short year = ByteBuffer.wrap(new byte[]{values[0], values[1]}).getShort();
+        return String.format("%04d:%02d:%02d %02d:%02d:%02d", year, values[2], values[3], 
+                                                        values[4], values[5], values[6]);
     }
 
     @Nullable
@@ -333,6 +342,17 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     }
 
     @Nullable
+    public String getLensFocusDistance()
+    {
+        int[] values = _directory.getDecryptedIntArray(TAG_LENS_DATA);
+
+        if (values == null || values.length < 11)
+            return null;
+
+        return String.format("%.2fm", getDistanceInMeters(values[10]));
+    }
+
+    @Nullable
     public String getHueAdjustmentDescription()
     {
         return getFormattedString(TAG_CAMERA_HUE_ADJUSTMENT, "%s degrees");
@@ -349,5 +369,12 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     public String getFirmwareVersionDescription()
     {
         return getVersionBytesDescription(TAG_FIRMWARE_VERSION, 2);
+    }
+
+    private double getDistanceInMeters(int val)
+    {
+        if (val < 0)
+            val += 256;
+        return 0.01 * Math.pow(10, val / 40.0f);
     }
 }

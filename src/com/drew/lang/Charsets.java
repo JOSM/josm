@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -37,4 +37,5 @@ public final class Charsets
     public static final Charset ASCII = Charset.forName("US-ASCII");
     public static final Charset UTF_16BE = Charset.forName("UTF-16BE");
     public static final Charset UTF_16LE = Charset.forName("UTF-16LE");
+    public static final Charset WINDOWS_1252 = Charset.forName("Cp1252");
 }

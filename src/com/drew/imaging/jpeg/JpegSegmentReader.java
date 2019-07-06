@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -152,8 +152,9 @@ public class JpegSegmentReader
                 assert (segmentLength == segmentBytes.length);
                 segmentData.addSegment(segmentType, segmentBytes);
             } else {
-                // Some if the JPEG is truncated, just return what data we've already gathered
+                // Skip this segment
                 if (!reader.trySkip(segmentLength)) {
+                    // If skipping failed, just return the segments we found so far
                     return segmentData;
                 }
             }

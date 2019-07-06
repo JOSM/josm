@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,11 +21,10 @@
 
 package com.drew.metadata.exif;
 
-import static com.drew.metadata.exif.ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH;
-import static com.drew.metadata.exif.ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET;
-
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+
+import static com.drew.metadata.exif.ExifThumbnailDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifThumbnailDirectory}.

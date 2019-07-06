@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.MetadataException;
@@ -167,7 +168,7 @@ public class HuffmanTablesDirectory extends Directory {
 
     /**
      * @return The {@link List} of {@link HuffmanTable}s in this
-     *         {@link Directory}.
+     * {@link Directory}.
      */
     @NotNull
     protected List<HuffmanTable> getTables() {
@@ -226,70 +227,69 @@ public class HuffmanTablesDirectory extends Directory {
      * An instance of this class holds a JPEG Huffman table.
      */
     public static class HuffmanTable {
-        private final int tableLength;
-        private final HuffmanTableClass tableClass;
-        private final int tableDestinationId;
-        private final byte[] lengthBytes;
-        private final byte[] valueBytes;
+        private final int _tableLength;
+        private final HuffmanTableClass _tableClass;
+        private final int _tableDestinationId;
+        private final byte[] _lengthBytes;
+        private final byte[] _valueBytes;
 
-        public HuffmanTable (
-            @NotNull HuffmanTableClass
-            tableClass,
+        @SuppressWarnings("ConstantConditions")
+        public HuffmanTable(
+            @NotNull HuffmanTableClass tableClass,
             int tableDestinationId,
-            @NotNull byte[] lBytes,
-            @NotNull byte[] vBytes
-        ) {
-            this.tableClass = tableClass;
-            this.tableDestinationId = tableDestinationId;
-            this.lengthBytes = lBytes;
-            this.valueBytes = vBytes;
-            this.tableLength = vBytes.length + 17;
+            @NotNull byte[] lengthBytes,
+            @NotNull byte[] valueBytes)
+        {
+            if (lengthBytes == null)
+                throw new IllegalArgumentException("lengthBytes cannot be null.");
+            if (valueBytes == null)
+                throw new IllegalArgumentException("valueBytes cannot be null.");
+
+            _tableClass = tableClass;
+            _tableDestinationId = tableDestinationId;
+            _lengthBytes = lengthBytes;
+            _valueBytes = valueBytes;
+            _tableLength = _valueBytes.length + 17;
         }
 
         /**
          * @return The table length in bytes.
          */
         public int getTableLength() {
-            return tableLength;
+            return _tableLength;
         }
-
 
         /**
          * @return The {@link HuffmanTableClass} of this table.
          */
         public HuffmanTableClass getTableClass() {
-            return tableClass;
+            return _tableClass;
         }
-
 
         /**
          * @return the the destination identifier for this table.
          */
         public int getTableDestinationId() {
-            return tableDestinationId;
+            return _tableDestinationId;
         }
-
 
         /**
          * @return A byte array with the L values for this table.
          */
+        @NotNull
         public byte[] getLengthBytes() {
-            if (lengthBytes == null)
-                return null;
-            byte[] result = new byte[lengthBytes.length];
-            System.arraycopy(lengthBytes, 0, result, 0, lengthBytes.length);
+            byte[] result = new byte[_lengthBytes.length];
+            System.arraycopy(_lengthBytes, 0, result, 0, _lengthBytes.length);
             return result;
         }
-
 
         /**
          * @return A byte array with the V values for this table.
          */
+        @NotNull
         public byte[] getValueBytes() {
-            if (valueBytes == null)
-                return null;
-            byte[] result = new byte[valueBytes.length];
-            System.arraycopy(valueBytes, 0, result, 0, valueBytes.length);
+            byte[] result = new byte[_valueBytes.length];
+            System.arraycopy(_valueBytes, 0, result, 0, _valueBytes.length);
             return result;
         }
 
@@ -317,18 +317,18 @@ public class HuffmanTablesDirectory extends Directory {
          *         Huffman tables.
          */
         public boolean isTypical() {
-            if (tableClass == HuffmanTableClass.DC) {
+            if (_tableClass == HuffmanTableClass.DC) {
                 return
-                    Arrays.equals(lengthBytes, TYPICAL_LUMINANCE_DC_LENGTHS) &&
-                    Arrays.equals(valueBytes, TYPICAL_LUMINANCE_DC_VALUES) ||
-                    Arrays.equals(lengthBytes, TYPICAL_CHROMINANCE_DC_LENGTHS) &&
-                    Arrays.equals(valueBytes, TYPICAL_CHROMINANCE_DC_VALUES);
-            } else if (tableClass == HuffmanTableClass.AC) {
+                    Arrays.equals(_lengthBytes, TYPICAL_LUMINANCE_DC_LENGTHS) &&
+                    Arrays.equals(_valueBytes, TYPICAL_LUMINANCE_DC_VALUES) ||
+                    Arrays.equals(_lengthBytes, TYPICAL_CHROMINANCE_DC_LENGTHS) &&
+                    Arrays.equals(_valueBytes, TYPICAL_CHROMINANCE_DC_VALUES);
+            } else if (_tableClass == HuffmanTableClass.AC) {
                 return
-                    Arrays.equals(lengthBytes, TYPICAL_LUMINANCE_AC_LENGTHS) &&
-                    Arrays.equals(valueBytes, TYPICAL_LUMINANCE_AC_VALUES) ||
-                    Arrays.equals(lengthBytes, TYPICAL_CHROMINANCE_AC_LENGTHS) &&
-                    Arrays.equals(valueBytes, TYPICAL_CHROMINANCE_AC_VALUES);
+                    Arrays.equals(_lengthBytes, TYPICAL_LUMINANCE_AC_LENGTHS) &&
+                    Arrays.equals(_valueBytes, TYPICAL_LUMINANCE_AC_VALUES) ||
+                    Arrays.equals(_lengthBytes, TYPICAL_CHROMINANCE_AC_LENGTHS) &&
+                    Arrays.equals(_valueBytes, TYPICAL_CHROMINANCE_AC_VALUES);
             }
             return false;
         }
@@ -350,9 +350,12 @@ public class HuffmanTablesDirectory extends Directory {
 
             public static HuffmanTableClass typeOf(int value) {
                 switch (value) {
-                    case 0: return DC;
-                    case 1 : return AC;
-                    default: return UNKNOWN;
+                    case 0:
+                        return DC;
+                    case 1:
+                        return AC;
+                    default:
+                        return UNKNOWN;
                 }
             }
         }

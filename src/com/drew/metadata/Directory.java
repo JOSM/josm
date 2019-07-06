@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -756,15 +756,31 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null)
             return null;
+        if (o instanceof Number)
+            return ((Number)o).longValue();
         if (o instanceof String || o instanceof StringValue) {
             try {
                 return Long.parseLong(o.toString());
             } catch (NumberFormatException nfe) {
                 return null;
             }
+        } else if (o instanceof Rational[]) {
+            Rational[] rationals = (Rational[])o;
+            if (rationals.length == 1)
+                return rationals[0].longValue();
+        } else if (o instanceof byte[]) {
+            byte[] bytes = (byte[])o;
+            if (bytes.length == 1)
+                return (long)bytes[0];
+        } else if (o instanceof int[]) {
+            int[] ints = (int[])o;
+            if (ints.length == 1)
+                return (long)ints[0];
+        } else if (o instanceof short[]) {
+            short[] shorts = (short[])o;
+            if (shorts.length == 1)
+                return (long)shorts[0];
         }
-        if (o instanceof Number)
-            return ((Number)o).longValue();
         return null;
     }
 
@@ -1008,16 +1024,20 @@ public abstract class Directory
                     string.append(Array.getLong(o, i));
                 }
             } else if (componentType.getName().equals("float")) {
+                DecimalFormat format = new DecimalFormat(_floatFormatPattern);
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(new DecimalFormat(_floatFormatPattern).format(Array.getFloat(o, i)));
+                    String s = format.format(Array.getFloat(o, i));
+                    string.append(s.equals("-0") ? "0" : s);
                 }
             } else if (componentType.getName().equals("double")) {
+                DecimalFormat format = new DecimalFormat(_floatFormatPattern);
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(new DecimalFormat(_floatFormatPattern).format(Array.getDouble(o, i)));
+                    String s = format.format(Array.getDouble(o, i));
+                    string.append(s.equals("-0") ? "0" : s);
                 }
             } else if (componentType.getName().equals("byte")) {
                 for (int i = 0; i < arrayLength; i++) {

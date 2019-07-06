@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import java.util.HashMap;
  * @author Drew Noakes https://drewnoakes.com
  */
 @SuppressWarnings("WeakerAccess")
-public class FileMetadataDirectory extends Directory
+public class FileSystemDirectory extends Directory
 {
     public static final int TAG_FILE_NAME = 1;
     public static final int TAG_FILE_SIZE = 2;
@@ -44,9 +44,9 @@ public class FileMetadataDirectory extends Directory
         _tagNameMap.put(TAG_FILE_MODIFIED_DATE, "File Modified Date");
     }
 
-    public FileMetadataDirectory()
+    public FileSystemDirectory()
     {
-        this.setDescriptor(new FileMetadataDescriptor(this));
+        this.setDescriptor(new FileSystemDescriptor(this));
     }
 
     @Override

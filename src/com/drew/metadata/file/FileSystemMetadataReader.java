@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,11 +23,10 @@ package com.drew.metadata.file;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 
-public class FileMetadataReader
+public class FileSystemMetadataReader
 {
     public void read(@NotNull File file, @NotNull Metadata metadata) throws IOException
     {
@@ -38,12 +37,15 @@ public class FileMetadataReader
         if (!file.canRead())
             throw new IOException("File is not readable");
 
-        FileMetadataDirectory directory = new FileMetadataDirectory();
+        FileSystemDirectory directory = metadata.getFirstDirectoryOfType(FileSystemDirectory.class);
 
-        directory.setString(FileMetadataDirectory.TAG_FILE_NAME, file.getName());
-        directory.setLong(FileMetadataDirectory.TAG_FILE_SIZE, file.length());
-        directory.setDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()));
+        if (directory == null) {
+            directory = new FileSystemDirectory();
+            metadata.addDirectory(directory);
+        }
 
-        metadata.addDirectory(directory);
+        directory.setString(FileSystemDirectory.TAG_FILE_NAME, file.getName());
+        directory.setLong(FileSystemDirectory.TAG_FILE_SIZE, file.length());
+        directory.setDate(FileSystemDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()));
     }
 }

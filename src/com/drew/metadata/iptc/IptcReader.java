@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -117,8 +117,8 @@ public class IptcReader implements JpegSegmentMetadataReader
                 return;
             }
 
-            // we need at least five bytes left to read a tag
-            if (offset + 5 > length) {
+            // we need at least four bytes left to read a tag
+            if (offset + 4 > length) {
                 directory.addError("Too few bytes remain for a valid IPTC tag");
                 return;
             }
@@ -129,8 +129,12 @@ public class IptcReader implements JpegSegmentMetadataReader
             try {
                 directoryType = reader.getUInt8();
                 tagType = reader.getUInt8();
-                // TODO support Extended DataSet Tag (see 1.5(c), p14, IPTC-IIMV4.2.pdf)
                 tagByteCount = reader.getUInt16();
+                if (tagByteCount > 32767) {
+                    // Extended DataSet Tag (see 1.5(c), p14, IPTC-IIMV4.2.pdf)
+                    tagByteCount = ((tagByteCount & 0x7FFF) << 16) | reader.getUInt16();
+                    offset += 2;
+                }
                 offset += 4;
             } catch (IOException e) {
                 directory.addError("IPTC data segment ended mid-way through tag descriptor");
