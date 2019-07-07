@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Optional;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -472,6 +473,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             if (entry.hasGpsTime()) {
                 osd.append(tr("\nGPS time: {0}", dtf.format(entry.getGpsTime())));
             }
+            Optional.ofNullable(entry.getIptcCaption()).map(s -> tr("\nCaption: {0}", s)).ifPresent(osd::append);
+            Optional.ofNullable(entry.getIptcHeadline()).map(s -> tr("\nHeadline: {0}", s)).ifPresent(osd::append);
+            Optional.ofNullable(entry.getIptcKeywords()).map(s -> tr("\nKeywords: {0}", s)).ifPresent(osd::append);
+            Optional.ofNullable(entry.getIptcObjectName()).map(s -> tr("\nObject name: {0}", s)).ifPresent(osd::append);
 
             imgDisplay.setOsdText(osd.toString());
         } else {

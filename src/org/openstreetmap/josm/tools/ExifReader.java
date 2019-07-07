@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.data.SystemOfMeasurement;
@@ -23,6 +24,7 @@ import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.iptc.IptcDirectory;
 
 /**
  * Read out EXIF information from a JPEG file
@@ -323,6 +325,46 @@ public final class ExifReader {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the caption of the given IPTC directory.
+     * @param dirIptc The IPTC directory
+     * @return The caption entered, or {@code null} if missing or if {@code dirIptc} is null
+     * @since 15219
+     */
+    public static String readCaption(IptcDirectory dirIptc) {
+        return dirIptc == null ? null : dirIptc.getDescription(IptcDirectory.TAG_CAPTION);
+    }
+
+    /**
+     * Returns the headline of the given IPTC directory.
+     * @param dirIptc The IPTC directory
+     * @return The headline entered, or {@code null} if missing or if {@code dirIptc} is null
+     * @since 15219
+     */
+    public static String readHeadline(IptcDirectory dirIptc) {
+        return dirIptc == null ? null : dirIptc.getDescription(IptcDirectory.TAG_HEADLINE);
+    }
+
+    /**
+     * Returns the keywords of the given IPTC directory.
+     * @param dirIptc The IPTC directory
+     * @return The keywords entered, or {@code null} if missing or if {@code dirIptc} is null
+     * @since 15219
+     */
+    public static List<String> readKeywords(IptcDirectory dirIptc) {
+        return dirIptc == null ? null : dirIptc.getKeywords();
+    }
+
+    /**
+     * Returns the object name of the given IPTC directory.
+     * @param dirIptc The IPTC directory
+     * @return The object name entered, or {@code null} if missing or if {@code dirIptc} is null
+     * @since 15219
+     */
+    public static String readObjectName(IptcDirectory dirIptc) {
+        return dirIptc == null ? null : dirIptc.getDescription(IptcDirectory.TAG_OBJECT_NAME);
     }
 
     /**

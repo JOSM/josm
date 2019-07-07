@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.gpx;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -20,6 +21,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.jpeg.JpegDirectory;
 
 /**
@@ -40,6 +42,11 @@ public class GpxImageEntry implements Comparable<GpxImageEntry> {
     private boolean isNewGpsData;
     /** Temporary source of GPS time if not correlated with GPX track. */
     private Date exifGpsTime;
+
+    private String iptcCaption;
+    private String iptcHeadline;
+    private List<String> iptcKeywords;
+    private String iptcObjectName;
 
     /**
      * The following values are computed from the correlation with the gpx track
@@ -334,6 +341,78 @@ public class GpxImageEntry implements Comparable<GpxImageEntry> {
         this.exifImgDir = exifDir;
     }
 
+    /**
+     * Sets the IPTC caption.
+     * @param iptcCaption the IPTC caption
+     * @since 15219
+     */
+    public void setIptcCaption(String iptcCaption) {
+        this.iptcCaption = iptcCaption;
+    }
+
+    /**
+     * Sets the IPTC headline.
+     * @param iptcHeadline the IPTC headline
+     * @since 15219
+     */
+    public void setIptcHeadline(String iptcHeadline) {
+        this.iptcHeadline = iptcHeadline;
+    }
+
+    /**
+     * Sets the IPTC keywords.
+     * @param iptcKeywords the IPTC keywords
+     * @since 15219
+     */
+    public void setIptcKeywords(List<String> iptcKeywords) {
+        this.iptcKeywords = iptcKeywords;
+    }
+
+    /**
+     * Sets the IPTC object name.
+     * @param iptcObjectName the IPTC object name
+     * @since 15219
+     */
+    public void setIptcObjectName(String iptcObjectName) {
+        this.iptcObjectName = iptcObjectName;
+    }
+
+    /**
+     * Returns the IPTC caption.
+     * @return the IPTC caption
+     * @since 15219
+     */
+    public String getIptcCaption() {
+        return iptcCaption;
+    }
+
+    /**
+     * Returns the IPTC headline.
+     * @return the IPTC headline
+     * @since 15219
+     */
+    public String getIptcHeadline() {
+        return iptcHeadline;
+    }
+
+    /**
+     * Returns the IPTC keywords.
+     * @return the IPTC keywords
+     * @since 15219
+     */
+    public List<String> getIptcKeywords() {
+        return iptcKeywords;
+    }
+
+    /**
+     * Returns the IPTC object name.
+     * @return the IPTC object name
+     * @since 15219
+     */
+    public String getIptcObjectName() {
+        return iptcObjectName;
+    }
+
     @Override
     public int compareTo(GpxImageEntry image) {
         if (exifTime != null && image.exifTime != null)
@@ -555,6 +634,14 @@ public class GpxImageEntry implements Comparable<GpxImageEntry> {
         }
 
         ifNotNull(dirGps.getGpsDate(), this::setExifGpsTime);
+
+        IptcDirectory dirIptc = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+        if (dirIptc != null) {
+            ifNotNull(ExifReader.readCaption(dirIptc), this::setIptcCaption);
+            ifNotNull(ExifReader.readHeadline(dirIptc), this::setIptcHeadline);
+            ifNotNull(ExifReader.readKeywords(dirIptc), this::setIptcKeywords);
+            ifNotNull(ExifReader.readObjectName(dirIptc), this::setIptcObjectName);
+        }
     }
 
     private static <T> void ifNotNull(T value, Consumer<T> setter) {
