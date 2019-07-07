@@ -303,7 +303,7 @@ public final class PluginHandler {
     /**
      * Plugin class loaders.
      */
-    private static final Map<PluginInformation, PluginClassLoader> classLoaders = new HashMap<>();
+    private static final Map<String, PluginClassLoader> classLoaders = new HashMap<>();
 
     private static PluginDownloadTask pluginDownloadTask;
 
@@ -858,17 +858,17 @@ public final class PluginHandler {
                         info.libraries.toArray(new URL[0]),
                         PluginHandler.class.getClassLoader(),
                         null));
-                classLoaders.put(info, cl);
+                classLoaders.put(info.name, cl);
             }
 
             // resolve dependencies
             for (PluginInformation info : toLoad) {
-                PluginClassLoader cl = classLoaders.get(info);
+                PluginClassLoader cl = classLoaders.get(info.name);
                 DEPENDENCIES:
                 for (String depName : info.getLocalRequiredPlugins()) {
                     for (PluginInformation depInfo : toLoad) {
                         if (isDependency(depInfo, depName)) {
-                            cl.addDependency(classLoaders.get(depInfo));
+                            cl.addDependency(classLoaders.get(depInfo.name));
                             continue DEPENDENCIES;
                         }
                     }
@@ -887,7 +887,7 @@ public final class PluginHandler {
             monitor.setTicksCount(toLoad.size());
             for (PluginInformation info : toLoad) {
                 monitor.setExtraText(tr("Loading plugin ''{0}''...", info.name));
-                loadPlugin(parent, info, classLoaders.get(info));
+                loadPlugin(parent, info, classLoaders.get(info.name));
                 monitor.worked(1);
             }
         } finally {
