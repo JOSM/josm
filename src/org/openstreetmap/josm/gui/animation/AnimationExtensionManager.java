@@ -13,7 +13,7 @@ import java.util.GregorianCalendar;
  */
 public final class AnimationExtensionManager {
 
-    private static AnimationExtension currentExtension;
+    private static volatile AnimationExtension currentExtension;
 
     private AnimationExtensionManager() {
         // Hide default constructor for utility classes

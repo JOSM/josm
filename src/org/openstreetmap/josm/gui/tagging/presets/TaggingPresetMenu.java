@@ -34,6 +34,7 @@ public class TaggingPresetMenu extends TaggingPreset {
     public JMenu menu; // set by TaggingPresets
 
     private static class PresetTextComparator implements Comparator<JMenuItem>, Serializable {
+        private static final long serialVersionUID = 1L;
         @Override
         public int compare(JMenuItem o1, JMenuItem o2) {
             if (MainApplication.getMenu().presetSearchAction.equals(o1.getAction()))

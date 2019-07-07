@@ -205,6 +205,7 @@ public class UploadSelectionDialog extends JDialog {
 
     static class OsmPrimitiveListModel extends AbstractListModel<OsmPrimitive> {
         static final class OsmPrimitiveComparator implements Comparator<OsmPrimitive>, Serializable {
+            private static final long serialVersionUID = 1L;
             @Override
             public int compare(OsmPrimitive o1, OsmPrimitive o2) {
                 int ret = OsmPrimitiveType.from(o1).compareTo(OsmPrimitiveType.from(o2));

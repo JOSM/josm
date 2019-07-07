@@ -185,6 +185,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
      */
     public static class RelationMemberTableModel extends DefaultTableModel {
         private static class RelationToChildReferenceComparator implements Comparator<RelationToChildReference>, Serializable {
+            private static final long serialVersionUID = 1L;
             @Override
             public int compare(RelationToChildReference o1, RelationToChildReference o2) {
                 NameFormatter nf = DefaultNameFormatter.getInstance();
