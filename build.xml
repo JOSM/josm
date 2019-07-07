@@ -726,6 +726,10 @@ Build-Date: ${build.tstamp}
                     <!-- Skip javafx on Java 8/9, built for Java 10+ only -->
                     <regexp pattern="javafx.*"/>
                 </linecontainsregexp>
+                <linecontainsregexp negate="true" unless:set="isJava11">
+                    <!-- Skip http2 on Java 8/9/10, built for Java 11+ only -->
+                    <regexp pattern="http2.*"/>
+                </linecontainsregexp>
                 <tokenfilter>
                     <replaceregex pattern="^.*;" replace="" flags="gi"/>
                 </tokenfilter>
