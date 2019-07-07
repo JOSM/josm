@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.data.SortableModel;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
@@ -28,7 +30,7 @@ import org.openstreetmap.josm.tools.Utils;
  * The model that is used both for auto and manual filters.
  * @since 12400
  */
-public class FilterModel {
+public class FilterModel implements SortableModel<Filter> {
 
     /**
      * number of primitives that are disabled but not hidden
@@ -235,16 +237,27 @@ public class FilterModel {
     }
 
     /**
+     * Moves the filters in the given rows by a number of positions.
+     * @param delta negative or positive increment
+     * @param rowIndexes The filter rows
+     * @return true if the filters have been moved down
+     * @since 15226
+     */
+    public boolean moveFilters(int delta, int... rowIndexes) {
+        if (!canMove(delta, filters::size, rowIndexes))
+            return false;
+        doMove(delta, rowIndexes);
+        updateFilterMatcher();
+        return true;
+    }
+
+    /**
      * Moves down the filter in the given row.
      * @param rowIndex The filter row
      * @return true if the filter has been moved down
      */
     public boolean moveDownFilter(int rowIndex) {
-        if (rowIndex >= filters.size() - 1)
-            return false;
-        filters.add(rowIndex + 1, filters.remove(rowIndex));
-        updateFilterMatcher();
-        return true;
+        return moveFilters(1, rowIndex);
     }
 
     /**
@@ -253,11 +266,7 @@ public class FilterModel {
      * @return true if the filter has been moved up
      */
     public boolean moveUpFilter(int rowIndex) {
-        if (rowIndex <= 0 || rowIndex >= filters.size())
-            return false;
-        filters.add(rowIndex - 1, filters.remove(rowIndex));
-        updateFilterMatcher();
-        return true;
+        return moveFilters(-1, rowIndex);
     }
 
     /**
@@ -276,8 +285,15 @@ public class FilterModel {
      * @param rowIndex The row index
      * @param filter The filter that should be placed in that row
      * @return the filter previously at the specified position
+     * @deprecated Use {@link #setValue}
      */
+    @Deprecated
     public Filter setFilter(int rowIndex, Filter filter) {
+        return setValue(rowIndex, filter);
+    }
+
+    @Override
+    public Filter setValue(int rowIndex, Filter filter) {
         Filter result = filters.set(rowIndex, filter);
         updateFilterMatcher();
         return result;
@@ -287,8 +303,15 @@ public class FilterModel {
      * Gets the filter by row index
      * @param rowIndex The row index
      * @return The filter in that row
+     * @deprecated Use {@link #getValue}
      */
+    @Deprecated
     public Filter getFilter(int rowIndex) {
+        return getValue(rowIndex);
+    }
+
+    @Override
+    public Filter getValue(int rowIndex) {
         return filters.get(rowIndex);
     }
 
@@ -416,5 +439,17 @@ public class FilterModel {
         }
 
         return result;
+    }
+
+    @Override
+    public void sort() {
+        Collections.sort(filters);
+        updateFilterMatcher();
+    }
+
+    @Override
+    public void reverse() {
+        Collections.reverse(filters);
+        updateFilterMatcher();
     }
 }

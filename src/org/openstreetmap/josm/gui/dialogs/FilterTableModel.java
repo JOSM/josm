@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.data.osm.Filter;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
+import org.openstreetmap.josm.gui.util.SortableTableModel;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -23,8 +25,9 @@ import org.openstreetmap.josm.tools.Logging;
  * The model that is used for the table in the {@link FilterDialog}.
  *
  * @author Petr_Dlouhý
+ * @since 2125
  */
-public class FilterTableModel extends AbstractTableModel {
+public class FilterTableModel extends AbstractTableModel implements SortableTableModel<Filter> {
 
     /**
      * The filter enabled column
@@ -49,14 +52,21 @@ public class FilterTableModel extends AbstractTableModel {
     final FilterModel model = new FilterModel();
 
     /**
-     * A helper for {@link #drawOSDText(Graphics2D)}.
+     * The selection model
+     */
+    final ListSelectionModel selectionModel;
+
+    /**
+     * A helper for {@link #drawOSDText(Graphics2D)}
      */
     private final OSDLabel lblOSD = new OSDLabel("");
 
     /**
      * Constructs a new {@code FilterTableModel}.
+     * @param listSelectionModel selection model
      */
-    public FilterTableModel() {
+    public FilterTableModel(ListSelectionModel listSelectionModel) {
+        this.selectionModel = listSelectionModel;
         loadPrefs();
     }
 
@@ -133,28 +143,43 @@ public class FilterTableModel extends AbstractTableModel {
         }
     }
 
+    @Override
+    public boolean doMove(int delta, int... selectedRows) {
+        return model.moveFilters(delta, selectedRows);
+    }
+
+    @Override
+    public boolean move(int delta, int... selectedRows) {
+        if (!SortableTableModel.super.move(delta, selectedRows))
+            return false;
+        savePrefs();
+        updateFilters();
+        int rowIndex = selectedRows[0];
+        if (delta < 0)
+            fireTableRowsUpdated(rowIndex + delta, rowIndex);
+        else if (delta > 0)
+            fireTableRowsUpdated(rowIndex, rowIndex + delta);
+        return true;
+    }
+
     /**
      * Moves down the filter in the given row.
      * @param rowIndex The filter row
+     * @deprecated Use {@link #moveDown(int...)}
      */
+    @Deprecated
     public void moveDownFilter(int rowIndex) {
-        if (model.moveDownFilter(rowIndex)) {
-            savePrefs();
-            updateFilters();
-            fireTableRowsUpdated(rowIndex, rowIndex + 1);
-        }
+        moveDown(rowIndex);
     }
 
     /**
      * Moves up the filter in the given row
      * @param rowIndex The filter row
+     * @deprecated Use {@link #moveUp(int...)}
      */
+    @Deprecated
     public void moveUpFilter(int rowIndex) {
-        if (model.moveUpFilter(rowIndex)) {
-            savePrefs();
-            updateFilters();
-            fireTableRowsUpdated(rowIndex - 1, rowIndex);
-        }
+        moveUp(rowIndex);
     }
 
     /**
@@ -173,21 +198,41 @@ public class FilterTableModel extends AbstractTableModel {
      * Sets/replaces the filter for a given row.
      * @param rowIndex The row index
      * @param filter The filter that should be placed in that row
+     * @deprecated Use {@link #setValue}
      */
+    @Deprecated
     public void setFilter(int rowIndex, Filter filter) {
-        model.setFilter(rowIndex, filter);
+        setValue(rowIndex, filter);
+    }
+
+    @Override
+    public Filter setValue(int rowIndex, Filter filter) {
+        Filter result = model.setValue(rowIndex, filter);
         savePrefs();
         updateFilters();
         fireTableRowsUpdated(rowIndex, rowIndex);
+        return result;
     }
 
     /**
      * Gets the filter by row index
      * @param rowIndex The row index
      * @return The filter in that row
+     * @deprecated Use {@link #getValue}
      */
+    @Deprecated
     public Filter getFilter(int rowIndex) {
-        return model.getFilter(rowIndex);
+        return getValue(rowIndex);
+    }
+
+    @Override
+    public Filter getValue(int rowIndex) {
+        return model.getValue(rowIndex);
+    }
+
+    @Override
+    public ListSelectionModel getSelectionModel() {
+        return selectionModel;
     }
 
     @Override
@@ -224,7 +269,7 @@ public class FilterTableModel extends AbstractTableModel {
      * @return {@code true} if the cell at (row, column) is enabled
      */
     public boolean isCellEnabled(int row, int column) {
-        return model.getFilter(row).enable || column == 0;
+        return model.getValue(row).enable || column == 0;
     }
 
     @Override
@@ -237,7 +282,7 @@ public class FilterTableModel extends AbstractTableModel {
         if (row >= model.getFiltersCount()) {
             return;
         }
-        Filter f = model.getFilter(row);
+        Filter f = model.getValue(row);
         switch (column) {
         case COL_ENABLED:
             f.enable = (Boolean) aValue;
@@ -253,7 +298,7 @@ public class FilterTableModel extends AbstractTableModel {
             break;
         default: // Do nothing
         }
-        setFilter(row, f);
+        setValue(row, f);
     }
 
     @Override
@@ -261,7 +306,7 @@ public class FilterTableModel extends AbstractTableModel {
         if (row >= model.getFiltersCount()) {
             return null;
         }
-        Filter f = model.getFilter(row);
+        Filter f = model.getValue(row);
         switch (column) {
         case COL_ENABLED:
             return f.enable;
@@ -306,5 +351,17 @@ public class FilterTableModel extends AbstractTableModel {
      */
     public List<Filter> getFilters() {
         return model.getFilters();
+    }
+
+    @Override
+    public void sort() {
+        model.sort();
+        fireTableDataChanged();
+    }
+
+    @Override
+    public void reverse() {
+        model.reverse();
+        fireTableDataChanged();
     }
 }

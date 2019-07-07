@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +43,9 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.SortableTableModel;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
+import org.openstreetmap.josm.tools.ArrayUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -52,7 +53,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * This is the base model used for the {@link MemberTable}. It holds the member data.
  */
 public class MemberTableModel extends AbstractTableModel
-implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimitivesTableModel {
+implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimitivesTableModel, SortableTableModel<RelationMember> {
 
     /**
      * data of the table model: The list of members and the cached WayConnectionType of each member.
@@ -180,12 +181,20 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
 
     /* --------------------------------------------------------------------------- */
 
+    /**
+     * Add a new member model listener.
+     * @param listener member model listener to add
+     */
     public void addMemberModelListener(IMemberModelListener listener) {
         if (listener != null) {
             listeners.addIfAbsent(listener);
         }
     }
 
+    /**
+     * Remove a member model listener.
+     * @param listener member model listener to remove
+     */
     public void removeMemberModelListener(IMemberModelListener listener) {
         listeners.remove(listener);
     }
@@ -259,62 +268,24 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         return members.get(idx).getMember();
     }
 
-    /**
-     * Move up selected rows, if possible.
-     * @param selectedRows rows to move up
-     * @see #canMoveUp
-     */
-    public void moveUp(int... selectedRows) {
-        if (!canMoveUp(selectedRows))
-            return;
-
-        for (int row : selectedRows) {
-            RelationMember member1 = members.get(row);
-            RelationMember member2 = members.get(row - 1);
-            members.set(row, member2);
-            members.set(row - 1, member1);
-        }
+    @Override
+    public boolean move(int delta, int... selectedRows) {
+        if (!canMove(delta, this::getRowCount, selectedRows))
+            return false;
+        doMove(delta, selectedRows);
         fireTableDataChanged();
-        getSelectionModel().setValueIsAdjusting(true);
-        getSelectionModel().clearSelection();
+        final ListSelectionModel selectionModel = getSelectionModel();
+        selectionModel.setValueIsAdjusting(true);
+        selectionModel.clearSelection();
         BitSet selected = new BitSet();
         for (int row : selectedRows) {
             row--;
             selected.set(row);
         }
         addToSelectedMembers(selected);
-        getSelectionModel().setValueIsAdjusting(false);
-        fireMakeMemberVisible(selectedRows[0] - 1);
-    }
-
-    /**
-     * Move down selected rows, if possible.
-     * @param selectedRows rows to move down
-     * @see #canMoveDown
-     */
-    public void moveDown(int... selectedRows) {
-        if (!canMoveDown(selectedRows))
-            return;
-
-        for (int i = selectedRows.length - 1; i >= 0; i--) {
-            int row = selectedRows[i];
-            RelationMember member1 = members.get(row);
-            RelationMember member2 = members.get(row + 1);
-            members.set(row, member2);
-            members.set(row + 1, member1);
-        }
-        fireTableDataChanged();
-        getSelectionModel();
-        getSelectionModel().setValueIsAdjusting(true);
-        getSelectionModel().clearSelection();
-        BitSet selected = new BitSet();
-        for (int row : selectedRows) {
-            row++;
-            selected.set(row);
-        }
-        addToSelectedMembers(selected);
-        getSelectionModel().setValueIsAdjusting(false);
-        fireMakeMemberVisible(selectedRows[0] + 1);
+        selectionModel.setValueIsAdjusting(false);
+        fireMakeMemberVisible(selectedRows[0] + delta);
+        return true;
     }
 
     /**
@@ -337,30 +308,6 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     }
 
     /**
-     * Checks that a range of rows can be moved up.
-     * @param rows indexes of rows to move up
-     * @return {@code true} if rows can be moved up
-     */
-    public boolean canMoveUp(int... rows) {
-        if (rows == null || rows.length == 0)
-            return false;
-        Arrays.sort(rows);
-        return rows[0] > 0 && rows[rows.length - 1] < members.size();
-    }
-
-    /**
-     * Checks that a range of rows can be moved down.
-     * @param rows indexes of rows to move down
-     * @return {@code true} if rows can be moved down
-     */
-    public boolean canMoveDown(int... rows) {
-        if (rows == null || rows.length == 0)
-            return false;
-        Arrays.sort(rows);
-        return rows[0] >= 0 && rows[rows.length - 1] < members.size() - 1;
-    }
-
-    /**
      * Checks that a range of rows can be removed.
      * @param rows indexes of rows to remove
      * @return {@code true} if rows can be removed
@@ -369,10 +316,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         return rows != null && rows.length != 0;
     }
 
-    /**
-     * Returns the selection model.
-     * @return the selection model (never null)
-     */
+    @Override
     public DefaultListSelectionModel getSelectionModel() {
         if (listSelectionModel == null) {
             listSelectionModel = new DefaultListSelectionModel();
@@ -381,11 +325,25 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         return listSelectionModel;
     }
 
+    @Override
+    public RelationMember getValue(int index) {
+        return members.get(index);
+    }
+
+    @Override
+    public RelationMember setValue(int index, RelationMember value) {
+        return members.set(index, value);
+    }
+
+    /**
+     * Remove members referring to the given list of primitives.
+     * @param primitives list of OSM primitives
+     */
     public void removeMembersReferringTo(List<? extends OsmPrimitive> primitives) {
         if (primitives == null)
             return;
-        members.removeIf(member -> primitives.contains(member.getMember()));
-        fireTableDataChanged();
+        if (members.removeIf(member -> primitives.contains(member.getMember())))
+            fireTableDataChanged();
     }
 
     /**
@@ -397,10 +355,13 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
                 .filter(rm -> !rm.getMember().isDeleted()).collect(Collectors.toList()));
     }
 
+    /**
+     * Determines if this model has the same members as the given relation.
+     * @param relation relation
+     * @return {@code true} if this model has the same members as {@code relation}
+     */
     public boolean hasSameMembersAs(Relation relation) {
-        if (relation == null)
-            return false;
-        if (relation.getMembersCount() != members.size())
+        if (relation == null || relation.getMembersCount() != members.size())
             return false;
         for (int i = 0; i < relation.getMembersCount(); i++) {
             if (!relation.getMember(i).equals(members.get(i)))
@@ -463,16 +424,6 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
                 return true;
         }
         return false;
-    }
-
-    protected List<Integer> getSelectedIndices() {
-        List<Integer> selectedIndices = new ArrayList<>();
-        for (int i = 0; i < members.size(); i++) {
-            if (getSelectionModel().isSelectedIndex(i)) {
-                selectedIndices.add(i);
-            }
-        }
-        return selectedIndices;
     }
 
     private void addMembersAtIndex(List<? extends OsmPrimitive> primitives, int index) {
@@ -772,8 +723,9 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         }
         addToSelectedMembers(selected);
         getSelectionModel().setValueIsAdjusting(false);
-        if (!getSelectedIndices().isEmpty()) {
-            fireMakeMemberVisible(getSelectedIndices().get(0));
+        int[] selectedIndices = getSelectedIndices();
+        if (selectedIndices.length > 0) {
+            fireMakeMemberVisible(selectedIndices[0]);
         }
     }
 
@@ -792,6 +744,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     /**
      * Sort the selected relation members by the way they are linked.
      */
+    @Override
     public void sort() {
         List<RelationMember> selectedMembers = new ArrayList<>(getSelectedMembers());
         List<RelationMember> sortedMembers;
@@ -801,7 +754,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
             sortedMembers = newMembers;
         } else {
             sortedMembers = relationSorter.sortMembers(selectedMembers);
-            List<Integer> selectedIndices = getSelectedIndices();
+            List<Integer> selectedIndices = ArrayUtils.toList(getSelectedIndices());
             newMembers = new ArrayList<>();
             boolean inserted = false;
             for (int i = 0; i < members.size(); i++) {
@@ -860,9 +813,10 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     /**
      * Reverse the relation members.
      */
+    @Override
     public void reverse() {
-        List<Integer> selectedIndices = getSelectedIndices();
-        List<Integer> selectedIndicesReversed = getSelectedIndices();
+        List<Integer> selectedIndices = ArrayUtils.toList(getSelectedIndices());
+        List<Integer> selectedIndicesReversed = ArrayUtils.toList(getSelectedIndices());
 
         if (selectedIndices.size() <= 1) {
             Collections.reverse(members);

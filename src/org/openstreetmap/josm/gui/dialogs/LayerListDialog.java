@@ -16,7 +16,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -73,11 +72,14 @@ import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.Displa
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeListener;
 import org.openstreetmap.josm.gui.util.MultikeyActionsHandler;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction.MultikeyInfo;
+import org.openstreetmap.josm.gui.util.ReorderableTableModel;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.gui.widgets.ScrollableTable;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ArrayUtils;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -267,36 +269,36 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
 
         // -- move up action
         MoveUpAction moveUpAction = new MoveUpAction(model);
-        adaptTo(moveUpAction, model);
-        adaptTo(moveUpAction, selectionModel);
+        TableHelper.adaptTo(moveUpAction, model);
+        TableHelper.adaptTo(moveUpAction, selectionModel);
 
         // -- move down action
         MoveDownAction moveDownAction = new MoveDownAction(model);
-        adaptTo(moveDownAction, model);
-        adaptTo(moveDownAction, selectionModel);
+        TableHelper.adaptTo(moveDownAction, model);
+        TableHelper.adaptTo(moveDownAction, selectionModel);
 
         // -- activate action
         activateLayerAction = new ActivateLayerAction(model);
         activateLayerAction.updateEnabledState();
         MultikeyActionsHandler.getInstance().addAction(activateLayerAction);
-        adaptTo(activateLayerAction, selectionModel);
+        TableHelper.adaptTo(activateLayerAction, selectionModel);
 
         JumpToMarkerActions.initialize();
 
         // -- show hide action
         showHideLayerAction = new ShowHideLayerAction(model);
         MultikeyActionsHandler.getInstance().addAction(showHideLayerAction);
-        adaptTo(showHideLayerAction, selectionModel);
+        TableHelper.adaptTo(showHideLayerAction, selectionModel);
 
         LayerVisibilityAction visibilityAction = new LayerVisibilityAction(model);
-        adaptTo(visibilityAction, selectionModel);
+        TableHelper.adaptTo(visibilityAction, selectionModel);
         SideButton visibilityButton = new SideButton(visibilityAction, false);
         visibilityAction.setCorrespondingSideButton(visibilityButton);
 
         // -- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction(model);
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
-        adaptTo(deleteLayerAction, selectionModel);
+        TableHelper.adaptTo(deleteLayerAction, selectionModel);
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete"
                 );
@@ -364,9 +366,11 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
      *
      * @param listener  the listener
      * @param listSelectionModel  the source emitting {@link ListSelectionEvent}s
+     * @deprecated Use {@link TableHelper#adaptTo}
      */
+    @Deprecated
     protected void adaptTo(final IEnabledStateUpdating listener, ListSelectionModel listSelectionModel) {
-        listSelectionModel.addListSelectionListener(e -> listener.updateEnabledState());
+        TableHelper.adaptTo(listener, listSelectionModel);
     }
 
     /**
@@ -376,9 +380,11 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
      *
      * @param listener the listener
      * @param listModel the source emitting {@link ListDataEvent}s
+     * @deprecated Use {@link TableHelper#adaptTo}
      */
+    @Deprecated
     protected void adaptTo(final IEnabledStateUpdating listener, LayerListModel listModel) {
-        listModel.addTableModelListener(e -> listener.updateEnabledState());
+        TableHelper.adaptTo(listener, listModel);
     }
 
     @Override
@@ -678,7 +684,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
      * the properties {@link Layer#VISIBLE_PROP} and {@link Layer#NAME_PROP}.
      */
     public static final class LayerListModel extends AbstractTableModel
-            implements LayerChangeListener, ActiveLayerChangeListener, PropertyChangeListener {
+            implements LayerChangeListener, ActiveLayerChangeListener, PropertyChangeListener, ReorderableTableModel<Layer> {
         /** manages list selection state*/
         private final DefaultListSelectionModel selectionModel;
         private final CopyOnWriteArrayList<LayerListModelListener> listeners;
@@ -800,13 +806,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
          * @return  the list of indices of the selected rows. Never null, but may be empty.
          */
         public List<Integer> getSelectedRows() {
-            List<Integer> selected = new ArrayList<>();
-            for (int i = 0; i < getLayers().size(); i++) {
-                if (selectionModel.isSelectedIndex(i)) {
-                    selected.add(i);
-                }
-            }
-            return selected;
+            return ArrayUtils.toList(TableHelper.getSelectedIndices(selectionModel));
         }
 
         /**
@@ -819,9 +819,9 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                 return;
             layer.removePropertyChangeListener(this);
             final int size = getRowCount();
-            final List<Integer> rows = getSelectedRows();
+            final int[] rows = TableHelper.getSelectedIndices(selectionModel);
 
-            if (rows.isEmpty() && size > 0) {
+            if (rows.length == 0 && size > 0) {
                 selectionModel.setSelectionInterval(size-1, size-1);
             }
             fireTableDataChanged();
@@ -875,72 +875,46 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             return getLayers().get(index);
         }
 
-        /**
-         * Replies true if the currently selected layers can move up by one position
-         *
-         * @return true if the currently selected layers can move up by one position
-         */
-        public boolean canMoveUp() {
-            List<Integer> sel = getSelectedRows();
-            return !sel.isEmpty() && sel.get(0) > 0;
+        @Override
+        public DefaultListSelectionModel getSelectionModel() {
+            return selectionModel;
         }
 
-        /**
-         * Move up the currently selected layers by one position
-         *
-         */
-        public void moveUp() {
-            if (!canMoveUp())
-                return;
-            List<Integer> sel = getSelectedRows();
-            List<Layer> layers = getLayers();
-            MapView mapView = MainApplication.getMap().mapView;
-            for (int row : sel) {
-                Layer l1 = layers.get(row);
-                mapView.moveLayer(l1, row-1);
+        @Override
+        public Layer getValue(int index) {
+            return getLayer(index);
+        }
+
+        @Override
+        public Layer setValue(int index, Layer value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean doMove(int delta, int... selectedRows) {
+            if (delta != 0) {
+                List<Layer> layers = getLayers();
+                MapView mapView = MainApplication.getMap().mapView;
+                if (delta < 0) {
+                    for (int row : selectedRows) {
+                        mapView.moveLayer(layers.get(row), row + delta);
+                    }
+                } else if (delta > 0) {
+                    for (int i = selectedRows.length - 1; i >= 0; i--) {
+                        mapView.moveLayer(layers.get(selectedRows[i]), selectedRows[i] + delta);
+                    }
+                }
+                fireTableDataChanged();
             }
-            fireTableDataChanged();
-            selectionModel.setValueIsAdjusting(true);
-            selectionModel.clearSelection();
-            for (int row : sel) {
-                selectionModel.addSelectionInterval(row-1, row-1);
-            }
-            selectionModel.setValueIsAdjusting(false);
+            return delta != 0;
+        }
+
+        @Override
+        public boolean move(int delta, int... selectedRows) {
+            if (!ReorderableTableModel.super.move(delta, selectedRows))
+                return false;
             ensureSelectedIsVisible();
-        }
-
-        /**
-         * Replies true if the currently selected layers can move down by one position
-         *
-         * @return true if the currently selected layers can move down by one position
-         */
-        public boolean canMoveDown() {
-            List<Integer> sel = getSelectedRows();
-            return !sel.isEmpty() && sel.get(sel.size()-1) < getLayers().size()-1;
-        }
-
-        /**
-         * Move down the currently selected layers by one position
-         */
-        public void moveDown() {
-            if (!canMoveDown())
-                return;
-            List<Integer> sel = getSelectedRows();
-            Collections.reverse(sel);
-            List<Layer> layers = getLayers();
-            MapView mapView = MainApplication.getMap().mapView;
-            for (int row : sel) {
-                Layer l1 = layers.get(row);
-                mapView.moveLayer(l1, row+1);
-            }
-            fireTableDataChanged();
-            selectionModel.setValueIsAdjusting(true);
-            selectionModel.clearSelection();
-            for (int row : sel) {
-                selectionModel.addSelectionInterval(row+1, row+1);
-            }
-            selectionModel.setValueIsAdjusting(false);
-            ensureSelectedIsVisible();
+            return true;
         }
 
         /**

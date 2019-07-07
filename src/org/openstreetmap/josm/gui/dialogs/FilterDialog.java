@@ -11,9 +11,11 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -61,10 +63,17 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class FilterDialog extends ToggleDialog implements DataSetListener, MapModeChangeListener {
 
     private JTable userTable;
-    private final FilterTableModel filterModel = new FilterTableModel();
+    private final FilterTableModel filterModel = new FilterTableModel(new DefaultListSelectionModel());
 
-    private final EnableFilterAction enableFilterAction;
-    private final HidingFilterAction hidingFilterAction;
+    private final AddAction addAction = new AddAction();
+    private final EditAction editAction = new EditAction();
+    private final DeleteAction deleteAction = new DeleteAction();
+    private final MoveUpAction moveUpAction = new MoveUpAction();
+    private final MoveDownAction moveDownAction = new MoveDownAction();
+    private final SortAction sortAction = new SortAction();
+    private final ReverseAction reverseAction = new ReverseAction();
+    private final EnableFilterAction enableFilterAction = new EnableFilterAction();
+    private final HidingFilterAction hidingFilterAction = new HidingFilterAction();
 
     /**
      * Constructs a new {@code FilterDialog}
@@ -74,8 +83,6 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
                 Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")),
                         KeyEvent.VK_F, Shortcut.ALT_SHIFT), 162);
         build();
-        enableFilterAction = new EnableFilterAction();
-        hidingFilterAction = new HidingFilterAction();
         MultikeyActionsHandler.getInstance().addAction(enableFilterAction);
         MultikeyActionsHandler.getInstance().addAction(hidingFilterAction);
     }
@@ -111,6 +118,140 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             tr("Filter mode")
     };
 
+    private abstract class FilterAction extends AbstractAction implements IEnabledStateUpdating {
+
+        FilterAction(String name, String description, String icon) {
+            putValue(NAME, name);
+            putValue(SHORT_DESCRIPTION, description);
+            new ImageProvider("dialogs", icon).getResource().attachImageIcon(this, true);
+        }
+
+        @Override
+        public void updateEnabledState() {
+            setEnabled(!filterModel.getSelectionModel().isSelectionEmpty());
+        }
+    }
+
+    private class AddAction extends FilterAction {
+        AddAction() {
+            super(tr("Add"), tr("Add filter."), /* ICON(dialogs/) */ "add");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SearchSetting searchSetting = SearchAction.showSearchDialog(new Filter());
+            if (searchSetting != null) {
+                filterModel.addFilter(new Filter(searchSetting));
+            }
+        }
+
+        @Override
+        public void updateEnabledState() {
+            // Do nothing
+        }
+    }
+
+    private class EditAction extends FilterAction {
+        EditAction() {
+            super(tr("Edit"), tr("Edit filter."), /* ICON(dialogs/) */ "edit");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int index = filterModel.getSelectionModel().getMinSelectionIndex();
+            if (index < 0) return;
+            Filter f = filterModel.getValue(index);
+            SearchSetting searchSetting = SearchAction.showSearchDialog(f);
+            if (searchSetting != null) {
+                filterModel.setValue(index, new Filter(searchSetting));
+            }
+        }
+    }
+
+    private class DeleteAction extends FilterAction {
+        DeleteAction() {
+            super(tr("Delete"), tr("Delete filter."), /* ICON(dialogs/) */ "delete");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int index = filterModel.getSelectionModel().getMinSelectionIndex();
+            if (index >= 0) {
+                filterModel.removeFilter(index);
+            }
+        }
+    }
+
+    private class MoveUpAction extends FilterAction {
+        MoveUpAction() {
+            super(tr("Up"), tr("Move filter up."), /* ICON(dialogs/) */ "up");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int index = userTable.convertRowIndexToModel(userTable.getSelectionModel().getMinSelectionIndex());
+            if (index >= 0 && filterModel.moveUp(index)) {
+                filterModel.getSelectionModel().setSelectionInterval(index-1, index-1);
+            }
+        }
+
+        @Override
+        public void updateEnabledState() {
+            setEnabled(filterModel.canMoveUp());
+        }
+    }
+
+    private class MoveDownAction extends FilterAction {
+        MoveDownAction() {
+            super(tr("Down"), tr("Move filter down."), /* ICON(dialogs/) */ "down");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int index = userTable.convertRowIndexToModel(userTable.getSelectionModel().getMinSelectionIndex());
+            if (index >= 0 && filterModel.moveDown(index)) {
+                filterModel.getSelectionModel().setSelectionInterval(index+1, index+1);
+            }
+        }
+
+        @Override
+        public void updateEnabledState() {
+            setEnabled(filterModel.canMoveDown());
+        }
+    }
+
+    private class SortAction extends FilterAction {
+        SortAction() {
+            super(tr("Sort"), tr("Sort filters."), /* ICON(dialogs/) */ "sort");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            filterModel.sort();
+        }
+
+        @Override
+        public void updateEnabledState() {
+            setEnabled(filterModel.getRowCount() > 1);
+        }
+    }
+
+    private class ReverseAction extends FilterAction {
+        ReverseAction() {
+            super(tr("Reverse"), tr("Reverse the filters order."), /* ICON(dialogs/) */ "reverse");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            filterModel.reverse();
+        }
+
+        @Override
+        public void updateEnabledState() {
+            setEnabled(filterModel.getRowCount() > 1);
+        }
+    }
+
     /**
      * Builds the GUI.
      */
@@ -119,7 +260,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         userTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        userTable.setAutoCreateRowSorter(true);
+        userTable.setSelectionModel(filterModel.getSelectionModel());
 
         TableHelper.adjustColumnWidth(userTable, 0, false);
         TableHelper.adjustColumnWidth(userTable, 1, false);
@@ -130,94 +271,13 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
         userTable.setDefaultRenderer(String.class, new StringRenderer());
         userTable.setDefaultEditor(String.class, new DefaultCellEditor(new DisableShortcutsOnFocusGainedTextField()));
 
-        SideButton addButton = new SideButton(new AbstractAction() {
-            {
-                putValue(NAME, tr("Add"));
-                putValue(SHORT_DESCRIPTION, tr("Add filter."));
-                new ImageProvider("dialogs", "add").getResource().attachImageIcon(this, true);
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SearchSetting searchSetting = SearchAction.showSearchDialog(new Filter());
-                if (searchSetting != null) {
-                    filterModel.addFilter(new Filter(searchSetting));
-                }
-            }
-        });
-        SideButton editButton = new SideButton(new AbstractAction() {
-            {
-                putValue(NAME, tr("Edit"));
-                putValue(SHORT_DESCRIPTION, tr("Edit filter."));
-                new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if (index < 0) return;
-                Filter f = filterModel.getFilter(index);
-                SearchSetting searchSetting = SearchAction.showSearchDialog(f);
-                if (searchSetting != null) {
-                    filterModel.setFilter(index, new Filter(searchSetting));
-                }
-            }
-        });
-        SideButton deleteButton = new SideButton(new AbstractAction() {
-            {
-                putValue(NAME, tr("Delete"));
-                putValue(SHORT_DESCRIPTION, tr("Delete filter."));
-                new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if (index >= 0) {
-                    filterModel.removeFilter(index);
-                }
-            }
-        });
-        SideButton upButton = new SideButton(new AbstractAction() {
-            {
-                putValue(NAME, tr("Up"));
-                putValue(SHORT_DESCRIPTION, tr("Move filter up."));
-                new ImageProvider("dialogs", "up").getResource().attachImageIcon(this, true);
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if (index >= 0) {
-                    filterModel.moveUpFilter(index);
-                    userTable.getSelectionModel().setSelectionInterval(index-1, index-1);
-                }
-            }
-        });
-        SideButton downButton = new SideButton(new AbstractAction() {
-            {
-                putValue(NAME, tr("Down"));
-                putValue(SHORT_DESCRIPTION, tr("Move filter down."));
-                new ImageProvider("dialogs", "down").getResource().attachImageIcon(this, true);
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if (index >= 0) {
-                    filterModel.moveDownFilter(index);
-                    userTable.getSelectionModel().setSelectionInterval(index+1, index+1);
-                }
-            }
-        });
-
         // Toggle filter "enabled" on Enter
         InputMapUtils.addEnterAction(userTable, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectedRow();
                 if (index >= 0) {
-                    Filter filter = filterModel.getFilter(index);
+                    Filter filter = filterModel.getValue(index);
                     filterModel.setValueAt(!filter.enable, index, FilterTableModel.COL_ENABLED);
                 }
             }
@@ -229,15 +289,19 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectedRow();
                 if (index >= 0) {
-                    Filter filter = filterModel.getFilter(index);
+                    Filter filter = filterModel.getValue(index);
                     filterModel.setValueAt(!filter.hiding, index, FilterTableModel.COL_HIDING);
                 }
             }
         });
 
-        createLayout(userTable, true, Arrays.asList(
-                addButton, editButton, deleteButton, upButton, downButton
-        ));
+        List<FilterAction> actions = Arrays.asList(addAction, editAction, deleteAction, moveUpAction, moveDownAction, sortAction, reverseAction);
+        for (FilterAction action : actions) {
+            TableHelper.adaptTo(action, filterModel);
+            TableHelper.adaptTo(action, filterModel.getSelectionModel());
+            action.updateEnabledState();
+        }
+        createLayout(userTable, true, actions.stream().map(a -> new SideButton(a, false)).collect(Collectors.toList()));
     }
 
     @Override
@@ -383,9 +447,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             List<MultikeyInfo> result = new ArrayList<>();
 
             for (int i = 0; i < filterModel.getRowCount(); i++) {
-                Filter filter = filterModel.getFilter(i);
-                MultikeyInfo info = new MultikeyInfo(i, filter.text);
-                result.add(info);
+                result.add(new MultikeyInfo(i, filterModel.getValue(i).text));
             }
 
             return result;
@@ -419,7 +481,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
         @Override
         public void executeMultikeyAction(int index, boolean repeatLastAction) {
             if (index >= 0 && index < filterModel.getRowCount()) {
-                Filter filter = filterModel.getFilter(index);
+                Filter filter = filterModel.getValue(index);
                 filterModel.setValueAt(!filter.enable, index, FilterTableModel.COL_ENABLED);
                 lastFilter = filter;
             } else if (repeatLastAction && isLastFilterValid()) {
@@ -443,7 +505,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
         @Override
         public void executeMultikeyAction(int index, boolean repeatLastAction) {
             if (index >= 0 && index < filterModel.getRowCount()) {
-                Filter filter = filterModel.getFilter(index);
+                Filter filter = filterModel.getValue(index);
                 filterModel.setValueAt(!filter.hiding, index, FilterTableModel.COL_HIDING);
                 lastFilter = filter;
             } else if (repeatLastAction && isLastFilterValid()) {

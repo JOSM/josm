@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
@@ -14,7 +15,7 @@ import org.openstreetmap.josm.data.osm.search.SearchSetting;
  * @author Petr_Dlouhý
  * @since 2125
  */
-public class Filter extends SearchSetting {
+public class Filter extends SearchSetting implements Comparable<Filter> {
     private static final String version = "1";
 
     /**
@@ -165,5 +166,19 @@ public class Filter extends SearchSetting {
         e.hiding = hiding;
         e.inverted = inverted;
         return e;
+    }
+
+    @Override
+    public int compareTo(Filter o) {
+        return Comparator
+                .<Filter, String>comparing(f -> f.text)
+                .thenComparing(f -> f.mode)
+                .thenComparing(f -> f.caseSensitive)
+                .thenComparing(f -> f.regexSearch)
+                .thenComparing(f -> f.mapCSSSearch)
+                .thenComparing(f -> f.enable)
+                .thenComparing(f -> f.hiding)
+                .thenComparing(f -> f.inverted)
+                .compare(this, o);
     }
 }

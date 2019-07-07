@@ -22,7 +22,7 @@ public class ReverseAction extends AbstractRelationEditorAction {
         super(editorAccess, IRelationEditorUpdateOn.MEMBER_TABLE_CHANGE);
 
         putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
-        new ImageProvider("dialogs/relation", "reverse").getResource().attachImageIcon(this, true);
+        new ImageProvider("dialogs/", "reverse").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Reverse"));
         updateEnabledState();
     }
