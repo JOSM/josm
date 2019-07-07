@@ -996,6 +996,8 @@ public class MainApplication {
         if (Config.getPref().getBoolean("jdk.tls.disableSNIExtension", false)) {
             Utils.updateSystemProperty("jsse.enableSNIExtension", "false");
         }
+        // Disable automatic POST retry after 5 minutes, see #17882 / https://bugs.openjdk.java.net/browse/JDK-6382788
+        Utils.updateSystemProperty("sun.net.http.retryPost", "false");
     }
 
     /**

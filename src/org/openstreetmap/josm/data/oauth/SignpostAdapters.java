@@ -39,7 +39,7 @@ public final class SignpostAdapters {
 
         @Override
         protected HttpRequest createRequest(String endpointUrl) throws Exception {
-            return new HttpRequest(HttpClient.create(new URL(endpointUrl), "GET"));
+            return new HttpRequest(HttpClient.create(new URL(endpointUrl)));
         }
 
         @Override
