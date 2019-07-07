@@ -35,7 +35,7 @@ import com.drew.metadata.Metadata;
 //import com.drew.metadata.adobe.AdobeJpegReader;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.file.FileSystemMetadataReader;
-//import com.drew.metadata.icc.IccReader;
+import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 //import com.drew.metadata.jfif.JfifReader;
 //import com.drew.metadata.jfxx.JfxxReader;
@@ -43,8 +43,8 @@ import com.drew.metadata.jpeg.JpegCommentReader;
 import com.drew.metadata.jpeg.JpegDhtReader;
 import com.drew.metadata.jpeg.JpegDnlReader;
 import com.drew.metadata.jpeg.JpegReader;
-//import com.drew.metadata.photoshop.DuckyReader;
-//import com.drew.metadata.photoshop.PhotoshopReader;
+import com.drew.metadata.photoshop.DuckyReader;
+import com.drew.metadata.photoshop.PhotoshopReader;
 //import com.drew.metadata.xmp.XmpReader;
 
 /**
@@ -61,9 +61,9 @@ public class JpegMetadataReader
             //new JfxxReader(),
             new ExifReader(),
             //new XmpReader(),
-            //new IccReader(),
-            //new PhotoshopReader(),
-            //new DuckyReader(),
+            new IccReader(),
+            new PhotoshopReader(),
+            new DuckyReader(),
             new IptcReader(),
             //new AdobeJpegReader(),
             new JpegDhtReader(),
