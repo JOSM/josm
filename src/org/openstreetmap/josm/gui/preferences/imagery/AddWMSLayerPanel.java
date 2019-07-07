@@ -184,7 +184,8 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         } else {
             if (wms != null && wms.buildRootUrl() != null) {
                 // TODO: ask user about transparency
-                info = wms.toImageryInfo(getImageryName(), tree.getSelectedLayers(), (List<String>) null, true);
+                info = wms.toImageryInfo(
+                        getImageryName(), tree.getSelectedLayers(), (List<String>) null, (String) formats.getSelectedItem(), true);
             } else {
                 info = new ImageryInfo(getImageryName(), getWmsUrl());
             }

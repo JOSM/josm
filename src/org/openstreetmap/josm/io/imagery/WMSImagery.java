@@ -310,10 +310,23 @@ public class WMSImagery {
      * @see #buildGetMapUrl(List, boolean)
      */
     public String buildGetMapUrl(List<LayerDetails> selectedLayers, List<String> selectedStyles, boolean transparent) {
+        return buildGetMapUrl(selectedLayers, selectedStyles, getPreferredFormat(), transparent);
+    }
+
+    /**
+     * @param selectedLayers selected layers as subset of the tree returned by {@link #getLayers()}
+     * @param selectedStyles selected styles for all selectedLayers
+     * @param format format of the response - one of {@link #getFormats()}
+     * @param transparent whether returned images should contain transparent pixels (if supported by format)
+     * @return URL template for GetMap service
+     * @see #buildGetMapUrl(List, boolean)
+     * @since 15228
+     */
+    public String buildGetMapUrl(List<LayerDetails> selectedLayers, List<String> selectedStyles, String format, boolean transparent) {
         return buildGetMapUrl(
                 selectedLayers.stream().map(LayerDetails::getName).collect(Collectors.toList()),
                 selectedStyles,
-                getPreferredFormat(),
+                format,
                 transparent);
     }
 
@@ -661,11 +674,14 @@ public class WMSImagery {
      * @param name name of imagery layer
      * @param selectedLayers layers which are to be used by this imagery layer
      * @param selectedStyles styles that should be used for selectedLayers
+     * @param format format of the response - one of {@link #getFormats()}
      * @param transparent if layer should be transparent
      * @return ImageryInfo object
+     * @since 15228
      */
-    public ImageryInfo toImageryInfo(String name, List<LayerDetails> selectedLayers, List<String> selectedStyles, boolean transparent) {
-        ImageryInfo i = new ImageryInfo(name, buildGetMapUrl(selectedLayers, selectedStyles, transparent));
+    public ImageryInfo toImageryInfo(
+            String name, List<LayerDetails> selectedLayers, List<String> selectedStyles, String format, boolean transparent) {
+        ImageryInfo i = new ImageryInfo(name, buildGetMapUrl(selectedLayers, selectedStyles, format, transparent));
         if (selectedLayers != null && !selectedLayers.isEmpty()) {
             i.setServerProjections(getServerProjections(selectedLayers));
         }
