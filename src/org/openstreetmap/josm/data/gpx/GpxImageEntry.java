@@ -429,6 +429,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry> {
     public int hashCode() {
         return Objects.hash(height, width, isNewGpsData,
             elevation, exifCoor, exifGpsTime, exifImgDir, exifOrientation, exifTime,
+            iptcCaption, iptcHeadline, iptcKeywords, iptcObjectName,
             file, gpsTime, pos, speed, tmp);
     }
 
@@ -448,6 +449,10 @@ public class GpxImageEntry implements Comparable<GpxImageEntry> {
             && Objects.equals(exifImgDir, other.exifImgDir)
             && Objects.equals(exifOrientation, other.exifOrientation)
             && Objects.equals(exifTime, other.exifTime)
+            && Objects.equals(iptcCaption, other.iptcCaption)
+            && Objects.equals(iptcHeadline, other.iptcHeadline)
+            && Objects.equals(iptcKeywords, other.iptcKeywords)
+            && Objects.equals(iptcObjectName, other.iptcObjectName)
             && Objects.equals(file, other.file)
             && Objects.equals(gpsTime, other.gpsTime)
             && Objects.equals(pos, other.pos)
