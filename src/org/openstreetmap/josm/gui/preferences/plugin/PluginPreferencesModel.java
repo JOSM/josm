@@ -367,7 +367,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
                     PluginInformation newinfo = new PluginInformation(downloadedPluginFile, pi.name);
                     PluginInformation oldinfo = getPluginInformation(pi.name);
                     if (oldinfo != null) {
-                        oldinfo.updateLocalInfo(newinfo);
+                        oldinfo.updateFromJar(newinfo);
                     }
                 } catch (PluginException e) {
                     Logging.error(e);
