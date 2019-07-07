@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
 
 import javax.swing.ImageIcon;
 
@@ -382,6 +383,8 @@ public class PluginInformation {
         try {
             return Class.forName(className, true, classLoader);
         } catch (NoClassDefFoundError | ClassNotFoundException | ClassCastException e) {
+            Logging.logWithStackTrace(Level.SEVERE, e,
+                    "Unable to load class {0} from plugin {1} using classloader {2}", className, name, classLoader);
             throw new PluginException(name, e);
         }
     }
