@@ -3,25 +3,19 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -29,14 +23,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.validation.routines.DomainValidator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.ProgressInputStream;
-import org.openstreetmap.josm.io.ProgressOutputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -45,7 +37,23 @@ import org.openstreetmap.josm.spi.preferences.Config;
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
  * @since 9168
  */
-public final class HttpClient {
+public abstract class HttpClient {
+
+    /**
+     * HTTP client factory.
+     * @since 15229
+     */
+    @FunctionalInterface
+    public interface HttpClientFactory {
+        /**
+         * Creates a new instance for the given URL and a {@code GET} request
+         *
+         * @param url the URL
+         * @param requestMethod the HTTP request method to perform when calling
+         * @return a new instance
+         */
+        HttpClient create(URL url, String requestMethod);
+    }
 
     private URL url;
     private final String requestMethod;
@@ -58,7 +66,6 @@ public final class HttpClient {
     private boolean useCache;
     private String reasonForRequest;
     private String outputMessage = tr("Uploading data ...");
-    private HttpURLConnection connection; // to allow disconnecting before `response` is set
     private Response response;
     private boolean finishOnCloseOutput = true;
 
@@ -70,6 +77,8 @@ public final class HttpClient {
         ".*<p><b>[^<]+</b>[^<]+</p><p><b>[^<]+</b> (?:<u>)?([^<]*)(?:</u>)?</p><p><b>[^<]+</b> (?:<u>)?[^<]*(?:</u>)?</p>.*",
         Pattern.CASE_INSENSITIVE);
 
+    private static HttpClientFactory factory;
+
     static {
         try {
             CookieHandler.setDefault(new CookieManager());
@@ -78,7 +87,21 @@ public final class HttpClient {
         }
     }
 
-    private HttpClient(URL url, String requestMethod) {
+    /**
+     * Registers a new HTTP client factory.
+     * @param newFactory new HTTP client factory
+     * @since 15229
+     */
+    public static void setFactory(HttpClientFactory newFactory) {
+        factory = Objects.requireNonNull(newFactory);
+    }
+
+    /**
+     * Constructs a new {@code HttpClient}.
+     * @param url URL to access
+     * @param requestMethod HTTP request method (GET, POST, PUT, DELETE...)
+     */
+    protected HttpClient(URL url, String requestMethod) {
         try {
             String host = url.getHost();
             String asciiHost = DomainValidator.unicodeToASCII(host);
@@ -95,7 +118,7 @@ public final class HttpClient {
      * @return HTTP response
      * @throws IOException if any I/O error occurs
      */
-    public Response connect() throws IOException {
+    public final Response connect() throws IOException {
         return connect(null);
     }
 
@@ -106,82 +129,48 @@ public final class HttpClient {
      * @throws IOException if any I/O error occurs
      * @since 9179
      */
-    public Response connect(ProgressMonitor progressMonitor) throws IOException {
+    public final Response connect(ProgressMonitor progressMonitor) throws IOException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
-        final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        this.connection = connection;
-        connection.setRequestMethod(requestMethod);
-        connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
-        connection.setConnectTimeout(connectTimeout);
-        connection.setReadTimeout(readTimeout);
-        connection.setInstanceFollowRedirects(false); // we do that ourselves
-        if (ifModifiedSince > 0) {
-            connection.setIfModifiedSince(ifModifiedSince);
-        }
-        connection.setUseCaches(useCache);
-        if (!useCache) {
-            connection.setRequestProperty("Cache-Control", "no-cache");
-        }
-        for (Map.Entry<String, String> header : headers.entrySet()) {
-            if (header.getValue() != null) {
-                connection.setRequestProperty(header.getKey(), header.getValue());
-            }
-        }
-
-        progressMonitor.beginTask(tr("Contacting Server..."), 1);
-        progressMonitor.indeterminateSubTask(null);
-
-        if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
-            Logging.info("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
-            if (Logging.isTraceEnabled() && requestBody.length > 0) {
-                Logging.trace("BODY: {0}", new String(requestBody, StandardCharsets.UTF_8));
-            }
-            connection.setFixedLengthStreamingMode(requestBody.length);
-            connection.setDoOutput(true);
-            try (OutputStream out = new BufferedOutputStream(
-                    new ProgressOutputStream(connection.getOutputStream(), requestBody.length,
-                            progressMonitor, outputMessage, finishOnCloseOutput))) {
-                out.write(requestBody);
-            }
-        }
+        setupConnection(progressMonitor);
 
         boolean successfulConnection = false;
         try {
+            ConnectionResponse cr;
             try {
-                connection.connect();
+                cr = performConnection();
                 final boolean hasReason = reasonForRequest != null && !reasonForRequest.isEmpty();
-                Logging.info("{0} {1}{2} -> {3}{4}",
-                        requestMethod, url, hasReason ? (" (" + reasonForRequest + ')') : "",
-                        connection.getResponseCode(),
-                        connection.getContentLengthLong() > 0
-                                ? (" (" + Utils.getSizeString(connection.getContentLengthLong(), Locale.getDefault()) + ')')
+                Logging.info("{0} {1}{2} -> {3} {4}{5}",
+                        getRequestMethod(), getURL(), hasReason ? (" (" + reasonForRequest + ')') : "",
+                        cr.getResponseVersion(), cr.getResponseCode(),
+                        cr.getContentLengthLong() > 0
+                                ? (" (" + Utils.getSizeString(cr.getContentLengthLong(), Locale.getDefault()) + ')')
                                 : ""
                 );
                 if (Logging.isDebugEnabled()) {
                     try {
-                        Logging.debug("RESPONSE: {0}", connection.getHeaderFields());
+                        Logging.debug("RESPONSE: {0}", cr.getHeaderFields());
                     } catch (IllegalArgumentException e) {
                         Logging.warn(e);
                     }
                 }
-                if (DefaultAuthenticator.getInstance().isEnabled() && connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                if (DefaultAuthenticator.getInstance().isEnabled() && cr.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     DefaultAuthenticator.getInstance().addFailedCredentialHost(url.getHost());
                 }
-            } catch (IOException | IllegalArgumentException | NoSuchElementException e) {
+            } catch (IOException | RuntimeException e) {
                 Logging.info("{0} {1} -> !!!", requestMethod, url);
                 Logging.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 NetworkManager.addNetworkError(url, Utils.getRootCause(e));
                 throw e;
             }
-            if (isRedirect(connection.getResponseCode())) {
-                final String redirectLocation = connection.getHeaderField("Location");
+            if (isRedirect(cr.getResponseCode())) {
+                final String redirectLocation = cr.getHeaderField("Location");
                 if (redirectLocation == null) {
                     /* I18n: argument is HTTP response code */
                     throw new IOException(tr("Unexpected response from HTTP server. Got {0} response without ''Location'' header." +
-                            " Can''t redirect. Aborting.", connection.getResponseCode()));
+                            " Can''t redirect. Aborting.", cr.getResponseCode()));
                 } else if (maxRedirects > 0) {
                     url = new URL(url, redirectLocation);
                     maxRedirects--;
@@ -192,13 +181,33 @@ public final class HttpClient {
                     throw new IOException(msg);
                 }
             }
-            response = new Response(connection, progressMonitor);
+            response = buildResponse(progressMonitor);
             successfulConnection = true;
             return response;
         } finally {
             if (!successfulConnection) {
-                connection.disconnect();
+                performDisconnection();
             }
+        }
+    }
+
+    protected abstract void setupConnection(ProgressMonitor progressMonitor) throws IOException;
+
+    protected abstract ConnectionResponse performConnection() throws IOException;
+
+    protected abstract void performDisconnection() throws IOException;
+
+    protected abstract Response buildResponse(ProgressMonitor progressMonitor) throws IOException;
+
+    protected final void notifyConnect(ProgressMonitor progressMonitor) {
+        progressMonitor.beginTask(tr("Contacting Server..."), 1);
+        progressMonitor.indeterminateSubTask(null);
+    }
+
+    protected final void logRequestBody() {
+        Logging.info("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
+        if (Logging.isTraceEnabled() && hasRequestBody()) {
+            Logging.trace("BODY: {0}", new String(requestBody, StandardCharsets.UTF_8));
         }
     }
 
@@ -209,15 +218,67 @@ public final class HttpClient {
      * @return the HTTP response
      * @since 9309
      */
-    public Response getResponse() {
+    public final Response getResponse() {
         return response;
+    }
+
+    /**
+     * A wrapper for the HTTP connection response.
+     * @since 15229
+     */
+    public interface ConnectionResponse {
+        /**
+         * Gets the HTTP version from the HTTP response.
+         * @return the HTTP version from the HTTP response
+         */
+        String getResponseVersion();
+
+        /**
+         * Gets the status code from an HTTP response message.
+         * For example, in the case of the following status lines:
+         * <PRE>
+         * HTTP/1.0 200 OK
+         * HTTP/1.0 401 Unauthorized
+         * </PRE>
+         * It will return 200 and 401 respectively.
+         * Returns -1 if no code can be discerned
+         * from the response (i.e., the response is not valid HTTP).
+         * @return the HTTP Status-Code, or -1
+         * @throws IOException if an error occurred connecting to the server.
+         */
+        int getResponseCode() throws IOException;
+
+        /**
+         * Returns the value of the {@code content-length} header field as a long.
+         *
+         * @return  the content length of the resource that this connection's URL
+         *          references, or {@code -1} if the content length is not known.
+         */
+        long getContentLengthLong();
+
+        /**
+         * Returns an unmodifiable Map of the header fields.
+         * The Map keys are Strings that represent the response-header field names.
+         * Each Map value is an unmodifiable List of Strings that represents
+         * the corresponding field values.
+         *
+         * @return a Map of header fields
+         */
+        Map<String, List<String>> getHeaderFields();
+
+        /**
+         * Returns the value of the named header field.
+         * @param name the name of a header field.
+         * @return the value of the named header field, or {@code null}
+         *          if there is no such field in the header.
+         */
+        String getHeaderField(String name);
     }
 
     /**
      * A wrapper for the HTTP response.
      */
-    public static final class Response {
-        private final HttpURLConnection connection;
+    public abstract static class Response {
         private final ProgressMonitor monitor;
         private final int responseCode;
         private final String responseMessage;
@@ -225,29 +286,24 @@ public final class HttpClient {
         private boolean uncompressAccordingToContentDisposition;
         private String responseData;
 
-        private Response(HttpURLConnection connection, ProgressMonitor monitor) throws IOException {
-            CheckParameterUtil.ensureParameterNotNull(connection, "connection");
-            CheckParameterUtil.ensureParameterNotNull(monitor, "monitor");
-            this.connection = connection;
-            this.monitor = monitor;
-            this.responseCode = connection.getResponseCode();
-            this.responseMessage = connection.getResponseMessage();
-            if (this.responseCode >= 300) {
+        protected Response(ProgressMonitor monitor, int responseCode, String responseMessage) {
+            this.monitor = Objects.requireNonNull(monitor, "monitor");
+            this.responseCode = responseCode;
+            this.responseMessage = responseMessage;
+        }
+
+        protected final void debugRedirect() throws IOException {
+            if (responseCode >= 300) {
                 String contentType = getContentType();
-                if (contentType == null || (
-                        contentType.contains("text") ||
-                        contentType.contains("html") ||
-                        contentType.contains("xml"))
-                        ) {
-                    String content = this.fetchContent();
-                    if (content.isEmpty()) {
-                        Logging.debug("Server did not return any body");
-                    } else {
-                        Logging.debug("Response body: ");
-                        Logging.debug(this.fetchContent());
-                    }
+                if (contentType == null ||
+                    contentType.contains("text") ||
+                    contentType.contains("html") ||
+                    contentType.contains("xml")
+                ) {
+                    String content = fetchContent();
+                    Logging.debug(content.isEmpty() ? "Server did not return any body" : "Response body: \n" + content);
                 } else {
-                    Logging.debug("Server returned content: {0} of length: {1}. Not printing.", contentType, this.getContentLength());
+                    Logging.debug("Server returned content: {0} of length: {1}. Not printing.", contentType, getContentLength());
                 }
             }
         }
@@ -258,7 +314,7 @@ public final class HttpClient {
          * @param uncompress whether the input stream should be uncompressed if necessary
          * @return {@code this}
          */
-        public Response uncompress(boolean uncompress) {
+        public final Response uncompress(boolean uncompress) {
             this.uncompress = uncompress;
             return this;
         }
@@ -271,7 +327,7 @@ public final class HttpClient {
          * @return {@code this}
          * @since 9172
          */
-        public Response uncompressAccordingToContentDisposition(boolean uncompressAccordingToContentDisposition) {
+        public final Response uncompressAccordingToContentDisposition(boolean uncompressAccordingToContentDisposition) {
             this.uncompressAccordingToContentDisposition = uncompressAccordingToContentDisposition;
             return this;
         }
@@ -282,9 +338,7 @@ public final class HttpClient {
          * @see HttpURLConnection#getURL()
          * @since 9172
          */
-        public URL getURL() {
-            return connection.getURL();
-        }
+        public abstract URL getURL();
 
         /**
          * Returns the request method.
@@ -292,9 +346,7 @@ public final class HttpClient {
          * @see HttpURLConnection#getRequestMethod()
          * @since 9172
          */
-        public String getRequestMethod() {
-            return connection.getRequestMethod();
-        }
+        public abstract String getRequestMethod();
 
         /**
          * Returns an input stream that reads from this HTTP connection, or,
@@ -309,14 +361,8 @@ public final class HttpClient {
          * @see HttpURLConnection#getErrorStream()
          */
         @SuppressWarnings("resource")
-        public InputStream getContent() throws IOException {
-            InputStream in;
-            try {
-                in = connection.getInputStream();
-            } catch (IOException ioe) {
-                Logging.debug(ioe);
-                in = Optional.ofNullable(connection.getErrorStream()).orElseGet(() -> new ByteArrayInputStream(new byte[]{}));
-            }
+        public final InputStream getContent() throws IOException {
+            InputStream in = getInputStream();
             in = new ProgressInputStream(in, getContentLength(), monitor);
             in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
             Compression compression = Compression.NONE;
@@ -338,6 +384,8 @@ public final class HttpClient {
             return in;
         }
 
+        protected abstract InputStream getInputStream() throws IOException;
+
         /**
          * Returns {@link #getContent()} wrapped in a buffered reader.
          *
@@ -345,7 +393,7 @@ public final class HttpClient {
          * @return buffered reader
          * @throws IOException if any I/O error occurs
          */
-        public BufferedReader getContentReader() throws IOException {
+        public final BufferedReader getContentReader() throws IOException {
             return new BufferedReader(
                     UTFInputStreamReader.create(getContent())
             );
@@ -356,7 +404,7 @@ public final class HttpClient {
          * @return the response
          * @throws IOException if any I/O error occurs
          */
-        public synchronized String fetchContent() throws IOException {
+        public final synchronized String fetchContent() throws IOException {
             if (responseData == null) {
                 try (Scanner scanner = new Scanner(getContentReader()).useDelimiter("\\A")) { // \A - beginning of input
                     responseData = scanner.hasNext() ? scanner.next() : "";
@@ -371,7 +419,7 @@ public final class HttpClient {
          *
          * @see HttpURLConnection#getResponseCode()
          */
-        public int getResponseCode() {
+        public final int getResponseCode() {
             return responseCode;
         }
 
@@ -382,7 +430,7 @@ public final class HttpClient {
          * @see HttpURLConnection#getResponseMessage()
          * @since 9172
          */
-        public String getResponseMessage() {
+        public final String getResponseMessage() {
             return responseMessage;
         }
 
@@ -391,17 +439,14 @@ public final class HttpClient {
          * @return {@code Content-Encoding} HTTP header
          * @see HttpURLConnection#getContentEncoding()
          */
-        public String getContentEncoding() {
-            return connection.getContentEncoding();
-        }
+        public abstract String getContentEncoding();
 
         /**
          * Returns the {@code Content-Type} header.
          * @return {@code Content-Type} HTTP header
+         * @see HttpURLConnection#getContentType()
          */
-        public String getContentType() {
-            return connection.getHeaderField("Content-Type");
-        }
+        public abstract String getContentType();
 
         /**
          * Returns the {@code Expire} header.
@@ -409,9 +454,7 @@ public final class HttpClient {
          * @see HttpURLConnection#getExpiration()
          * @since 9232
          */
-        public long getExpiration() {
-            return connection.getExpiration();
-        }
+        public abstract long getExpiration();
 
         /**
          * Returns the {@code Last-Modified} header.
@@ -419,18 +462,14 @@ public final class HttpClient {
          * @see HttpURLConnection#getLastModified()
          * @since 9232
          */
-        public long getLastModified() {
-            return connection.getLastModified();
-        }
+        public abstract long getLastModified();
 
         /**
          * Returns the {@code Content-Length} header.
          * @return {@code Content-Length} HTTP header
          * @see HttpURLConnection#getContentLengthLong()
          */
-        public long getContentLength() {
-            return connection.getContentLengthLong();
-        }
+        public abstract long getContentLength();
 
         /**
          * Returns the value of the named header field.
@@ -439,9 +478,7 @@ public final class HttpClient {
          * @see HttpURLConnection#getHeaderField(String)
          * @since 9172
          */
-        public String getHeaderField(String name) {
-            return connection.getHeaderField(name);
-        }
+        public abstract String getHeaderField(String name);
 
         /**
          * Returns an unmodifiable Map mapping header keys to a List of header values.
@@ -450,23 +487,12 @@ public final class HttpClient {
          * @see HttpURLConnection#getHeaderFields()
          * @since 9232
          */
-        public Map<String, List<String>> getHeaderFields() {
-            // returned map from HttpUrlConnection is case sensitive, use case insensitive TreeMap to conform to RFC 2616
-            Map<String, List<String>> ret = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-            for (Entry<String, List<String>> e: connection.getHeaderFields().entrySet()) {
-                if (e.getKey() != null) {
-                    ret.put(e.getKey(), e.getValue());
-                }
-            }
-            return Collections.unmodifiableMap(ret);
-        }
+        public abstract Map<String, List<String>> getHeaderFields();
 
         /**
          * @see HttpURLConnection#disconnect()
          */
-        public void disconnect() {
-            HttpClient.disconnect(connection);
-        }
+        public abstract void disconnect();
     }
 
     /**
@@ -487,7 +513,7 @@ public final class HttpClient {
      * @return a new instance
      */
     public static HttpClient create(URL url, String requestMethod) {
-        return new HttpClient(url, requestMethod);
+        return factory.create(url, requestMethod);
     }
 
     /**
@@ -497,8 +523,35 @@ public final class HttpClient {
      * @see #create(URL, String)
      * @since 9172
      */
-    public URL getURL() {
+    public final URL getURL() {
         return url;
+    }
+
+    /**
+     * Returns the request body set for this connection.
+     * @return the HTTP request body, or null
+     * @since 15229
+     */
+    public final byte[] getRequestBody() {
+        return requestBody;
+    }
+
+    /**
+     * Determines if a non-empty request body has been set for this connection.
+     * @return {@code true} if the request body is set and non-empty
+     * @since 15229
+     */
+    public final boolean hasRequestBody() {
+        return requestBody != null && requestBody.length > 0;
+    }
+
+    /**
+     * Determines if the underlying HTTP method requires a body.
+     * @return {@code true} if the underlying HTTP method requires a body
+     * @since 15229
+     */
+    public final boolean requiresBody() {
+        return "PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod);
     }
 
     /**
@@ -507,7 +560,7 @@ public final class HttpClient {
      * @see #create(URL, String)
      * @since 9172
      */
-    public String getRequestMethod() {
+    public final String getRequestMethod() {
         return requestMethod;
     }
 
@@ -517,8 +570,78 @@ public final class HttpClient {
      * @return HTTP header value
      * @since 9172
      */
-    public String getRequestHeader(String header) {
+    public final String getRequestHeader(String header) {
         return headers.get(header);
+    }
+
+    /**
+     * Returns the connect timeout.
+     * @return the connect timeout, in milliseconds
+     * @since 15229
+     */
+    public final int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Returns the read timeout.
+     * @return the read timeout, in milliseconds
+     * @since 15229
+     */
+    public final int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Returns the {@code If-Modified-Since} header value.
+     * @return the {@code If-Modified-Since} header value
+     * @since 15229
+     */
+    public final long getIfModifiedSince() {
+        return ifModifiedSince;
+    }
+
+    /**
+     * Determines whether not to set header {@code Cache-Control=no-cache}
+     * @return whether not to set header {@code Cache-Control=no-cache}
+     * @since 15229
+     */
+    public final boolean isUseCache() {
+        return useCache;
+    }
+
+    /**
+     * Returns the headers.
+     * @return the headers
+     * @since 15229
+     */
+    public final Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    /**
+     * Returns the reason for request.
+     * @return the reason for request
+     * @since 15229
+     */
+    public final String getReasonForRequest() {
+        return reasonForRequest;
+    }
+
+    /**
+     * Returns the output message.
+     * @return the output message
+     */
+    protected final String getOutputMessage() {
+        return outputMessage;
+    }
+
+    /**
+     * Determines whether the progress monitor task will be finished when the output stream is closed. {@code true} by default.
+     * @return the finishOnCloseOutput
+     */
+    protected final boolean isFinishOnCloseOutput() {
+        return finishOnCloseOutput;
     }
 
     /**
@@ -528,7 +651,7 @@ public final class HttpClient {
      * @return {@code this}
      * @see HttpURLConnection#setUseCaches(boolean)
      */
-    public HttpClient useCache(boolean useCache) {
+    public final HttpClient useCache(boolean useCache) {
         this.useCache = useCache;
         return this;
     }
@@ -542,7 +665,7 @@ public final class HttpClient {
      * @param keepAlive whether not to set header {@code Connection=close}
      * @return {@code this}
      */
-    public HttpClient keepAlive(boolean keepAlive) {
+    public final HttpClient keepAlive(boolean keepAlive) {
         return setHeader("Connection", keepAlive ? null : "close");
     }
 
@@ -554,7 +677,7 @@ public final class HttpClient {
      * @return {@code this}
      * @see HttpURLConnection#setConnectTimeout(int)
      */
-    public HttpClient setConnectTimeout(int connectTimeout) {
+    public final HttpClient setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
     }
@@ -567,7 +690,7 @@ public final class HttpClient {
      * @return {@code this}
      * @see HttpURLConnection#setReadTimeout(int)
      */
-    public HttpClient setReadTimeout(int readTimeout) {
+    public final HttpClient setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
@@ -578,7 +701,7 @@ public final class HttpClient {
      *
      * @return {@code this}
      */
-    public HttpClient setAccept(String accept) {
+    public final HttpClient setAccept(String accept) {
         return setHeader("Accept", accept);
     }
 
@@ -588,7 +711,7 @@ public final class HttpClient {
      *
      * @return {@code this}
      */
-    public HttpClient setRequestBody(byte[] requestBody) {
+    public final HttpClient setRequestBody(byte[] requestBody) {
         this.requestBody = Utils.copyArray(requestBody);
         return this;
     }
@@ -599,7 +722,7 @@ public final class HttpClient {
      *
      * @return {@code this}
      */
-    public HttpClient setIfModifiedSince(long ifModifiedSince) {
+    public final HttpClient setIfModifiedSince(long ifModifiedSince) {
         this.ifModifiedSince = ifModifiedSince;
         return this;
     }
@@ -613,7 +736,7 @@ public final class HttpClient {
      *
      * @return {@code this}
      */
-    public HttpClient setMaxRedirects(int maxRedirects) {
+    public final HttpClient setMaxRedirects(int maxRedirects) {
         this.maxRedirects = maxRedirects;
         return this;
     }
@@ -625,7 +748,7 @@ public final class HttpClient {
      *
      * @return {@code this}
      */
-    public HttpClient setHeader(String key, String value) {
+    public final HttpClient setHeader(String key, String value) {
         this.headers.put(key, value);
         return this;
     }
@@ -636,7 +759,7 @@ public final class HttpClient {
      *
      * @return {@code this}
      */
-    public HttpClient setHeaders(Map<String, String> headers) {
+    public final HttpClient setHeaders(Map<String, String> headers) {
         this.headers.putAll(headers);
         return this;
     }
@@ -647,7 +770,7 @@ public final class HttpClient {
      * @return {@code this}
      * @since 9172
      */
-    public HttpClient setReasonForRequest(String reasonForRequest) {
+    public final HttpClient setReasonForRequest(String reasonForRequest) {
         this.reasonForRequest = reasonForRequest;
         return this;
     }
@@ -659,7 +782,7 @@ public final class HttpClient {
      * @return {@code this}
      * @since 12711
      */
-    public HttpClient setOutputMessage(String outputMessage) {
+    public final HttpClient setOutputMessage(String outputMessage) {
         this.outputMessage = outputMessage;
         return this;
     }
@@ -670,7 +793,7 @@ public final class HttpClient {
      * @return {@code this}
      * @since 10302
      */
-    public HttpClient setFinishOnCloseOutput(boolean finishOnCloseOutput) {
+    public final HttpClient setFinishOnCloseOutput(boolean finishOnCloseOutput) {
         this.finishOnCloseOutput = finishOnCloseOutput;
         return this;
     }
@@ -689,27 +812,11 @@ public final class HttpClient {
     }
 
     /**
+     * Disconnect client.
      * @see HttpURLConnection#disconnect()
      * @since 9309
      */
-    public void disconnect() {
-        HttpClient.disconnect(connection);
-    }
-
-    private static void disconnect(final HttpURLConnection connection) {
-        if (connection != null) {
-            // Fix upload aborts - see #263
-            connection.setConnectTimeout(100);
-            connection.setReadTimeout(100);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                Logging.warn("InterruptedException in " + HttpClient.class + " during cancel");
-                Thread.currentThread().interrupt();
-            }
-            connection.disconnect();
-        }
-    }
+    public abstract void disconnect();
 
     /**
      * Returns a {@link Matcher} against predefined Tomcat error messages.

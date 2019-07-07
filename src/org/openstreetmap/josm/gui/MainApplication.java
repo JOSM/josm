@@ -149,6 +149,8 @@ import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Http1Client;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -1041,6 +1043,7 @@ public class MainApplication {
     }
 
     static void setupCallbacks() {
+        HttpClient.setFactory(Http1Client::new);
         OsmConnection.setOAuthAccessTokenFetcher(OAuthAuthorizationWizard::obtainAccessToken);
         AbstractCredentialsAgent.setCredentialsProvider(CredentialDialog::promptCredentials);
         MessageNotifier.setNotifierCallback(MainApplication::notifyNewMessages);
