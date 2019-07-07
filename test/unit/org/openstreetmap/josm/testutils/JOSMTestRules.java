@@ -57,6 +57,8 @@ import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.testutils.mockers.EDTAssertionMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowlessMapViewStateMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowlessNavigatableComponentMocker;
+import org.openstreetmap.josm.tools.Http1Client;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -478,6 +480,7 @@ public class JOSMTestRules implements TestRule {
         // Setup callbacks
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
         OsmConnection.setOAuthAccessTokenFetcher(OAuthAuthorizationWizard::obtainAccessToken);
+        HttpClient.setFactory(Http1Client::new);
 
         // Set up i18n
         if (i18n != null) {

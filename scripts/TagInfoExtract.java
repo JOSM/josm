@@ -71,6 +71,8 @@ import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Http1Client;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
@@ -91,8 +93,11 @@ public class TagInfoExtract {
 
     /**
      * Main method.
+     * @param args Main program arguments
+     * @throws Exception if any error occurs
      */
     public static void main(String[] args) throws Exception {
+        HttpClient.setFactory(Http1Client::new);
         TagInfoExtract script = new TagInfoExtract();
         script.parseCommandLineArguments(args);
         script.init();
