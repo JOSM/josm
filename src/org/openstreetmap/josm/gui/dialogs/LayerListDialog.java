@@ -899,7 +899,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                     for (int row : selectedRows) {
                         mapView.moveLayer(layers.get(row), row + delta);
                     }
-                } else if (delta > 0) {
+                } else {
                     for (int i = selectedRows.length - 1; i >= 0; i--) {
                         mapView.moveLayer(layers.get(selectedRows[i]), selectedRows[i] + delta);
                     }
