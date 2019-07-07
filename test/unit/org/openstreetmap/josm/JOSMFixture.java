@@ -30,6 +30,8 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.lifecycle.Lifecycle;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Http1Client;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -108,6 +110,7 @@ public class JOSMFixture {
         Config.setPreferencesInstance(pref);
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         Config.setUrlsProvider(JosmUrls.getInstance());
+        HttpClient.setFactory(Http1Client::new);
         pref.resetToInitialState();
         pref.enableSaveOnPut(false);
         I18n.init();

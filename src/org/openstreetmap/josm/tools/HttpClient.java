@@ -175,7 +175,9 @@ public abstract class HttpClient {
                     url = new URL(url, redirectLocation);
                     maxRedirects--;
                     Logging.info(tr("Download redirected to ''{0}''", redirectLocation));
-                    return connect();
+                    response = connect();
+                    successfulConnection = true;
+                    return response;
                 } else if (maxRedirects == 0) {
                     String msg = tr("Too many redirects to the download URL detected. Aborting.");
                     throw new IOException(msg);
@@ -533,7 +535,7 @@ public abstract class HttpClient {
      * @since 15229
      */
     public final byte[] getRequestBody() {
-        return requestBody;
+        return Utils.copyArray(requestBody);
     }
 
     /**

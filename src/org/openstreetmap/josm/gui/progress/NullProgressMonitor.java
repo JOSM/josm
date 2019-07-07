@@ -56,7 +56,8 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void indeterminateSubTask(String title) {
-        Logging.debug(title);
+        if (title != null)
+            Logging.debug(title);
     }
 
     @Override
