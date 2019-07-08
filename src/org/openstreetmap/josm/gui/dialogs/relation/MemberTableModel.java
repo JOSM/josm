@@ -301,6 +301,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
             row -= offset;
             if (members.size() > row) {
                 members.remove(row);
+                getSelectionModel().removeIndexInterval(row, row);
                 offset++;
             }
         }
