@@ -279,7 +279,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         selectionModel.clearSelection();
         BitSet selected = new BitSet();
         for (int row : selectedRows) {
-            row--;
+            row += delta;
             selected.set(row);
         }
         addToSelectedMembers(selected);
