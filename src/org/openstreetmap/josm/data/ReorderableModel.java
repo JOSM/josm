@@ -72,15 +72,21 @@ public interface ReorderableModel<T> {
      * Performs the move operation, without any check nor selection handling.
      * @param delta negative or positive delta
      * @param selectedRows rows to move
-     * @return {@code true} if rows have been moved down
+     * @return {@code true} if rows have been moved
      */
     default boolean doMove(int delta, int... selectedRows) {
-        for (int row: selectedRows) {
-            T t1 = getValue(row);
-            T t2 = getValue(row + delta);
-            setValue(row, t2);
-            setValue(row + delta, t1);
+        if (delta != 0) {
+            if (delta < 0) {
+                for (int row: selectedRows) {
+                    setValue(row + delta, setValue(row, getValue(row + delta)));
+                }
+            } else {
+                for (int i = selectedRows.length - 1; i >= 0; i--) {
+                    int row = selectedRows[i];
+                    setValue(row + delta, setValue(row, getValue(row + delta)));
+                }
+            }
         }
-        return true;
+        return delta != 0 && selectedRows.length > 0;
     }
 }

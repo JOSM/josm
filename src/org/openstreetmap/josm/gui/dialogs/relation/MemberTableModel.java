@@ -297,14 +297,17 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         if (!canRemove(selectedRows))
             return;
         int offset = 0;
+        final ListSelectionModel selectionModel = getSelectionModel();
+        selectionModel.setValueIsAdjusting(true);
         for (int row : selectedRows) {
             row -= offset;
             if (members.size() > row) {
                 members.remove(row);
-                getSelectionModel().removeIndexInterval(row, row);
+                selectionModel.removeIndexInterval(row, row);
                 offset++;
             }
         }
+        selectionModel.setValueIsAdjusting(false);
         fireTableDataChanged();
     }
 
