@@ -19,6 +19,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -380,13 +381,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @return the set of incomplete primitives
      */
     public Set<OsmPrimitive> getIncompleteMemberPrimitives() {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (RelationMember member : members) {
-            if (member.getMember().isIncomplete()) {
-                ret.add(member.getMember());
-            }
-        }
-        return ret;
+        return members.stream().map(RelationMember::getMember).filter(AbstractPrimitive::isIncomplete).collect(Collectors.toSet());
     }
 
     /**
@@ -395,13 +390,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @return the set of selected incomplete primitives
      */
     public Set<OsmPrimitive> getSelectedIncompleteMemberPrimitives() {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (RelationMember member : getSelectedMembers()) {
-            if (member.getMember().isIncomplete()) {
-                ret.add(member.getMember());
-            }
-        }
-        return ret;
+        return getSelectedMembers().stream().map(RelationMember::getMember).filter(AbstractPrimitive::isIncomplete).collect(Collectors.toSet());
     }
 
     /**
@@ -410,11 +399,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @return true if at least one the relation members is incomplete
      */
     public boolean hasIncompleteMembers() {
-        for (RelationMember member : members) {
-            if (member.getMember().isIncomplete())
-                return true;
-        }
-        return false;
+        return members.stream().anyMatch(rm -> rm.getMember().isIncomplete());
     }
 
     /**
@@ -423,11 +408,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @return true if at least one of the selected members is incomplete
      */
     public boolean hasIncompleteSelectedMembers() {
-        for (RelationMember member : getSelectedMembers()) {
-            if (member.getMember().isIncomplete())
-                return true;
-        }
-        return false;
+        return getSelectedMembers().stream().anyMatch(rm -> rm.getMember().isIncomplete());
     }
 
     private void addMembersAtIndex(List<? extends OsmPrimitive> primitives, int index) {

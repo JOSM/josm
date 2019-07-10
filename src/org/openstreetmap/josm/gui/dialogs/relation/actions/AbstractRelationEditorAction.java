@@ -89,9 +89,7 @@ public abstract class AbstractRelationEditorAction extends AbstractAction
     protected abstract void updateEnabledState();
 
     protected final boolean canDownload() {
-        if (editorAccess.getEditor().getRelation() == null)
-            return false;
-        DataSet ds = editorAccess.getEditor().getRelation().getDataSet();
+        DataSet ds = editorAccess.getEditor().getLayer().getDataSet();
         return !NetworkManager.isOffline(OnlineResource.OSM_API) && ds != null && !ds.isLocked()
                 && DownloadPolicy.BLOCKED != ds.getDownloadPolicy();
     }
