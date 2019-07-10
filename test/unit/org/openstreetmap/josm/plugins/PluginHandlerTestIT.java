@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ public class PluginHandlerTestIT {
         loadAllPlugins();
 
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
+                .filter(e -> !(e.getValue() instanceof HeadlessException))
                 .collect(Collectors.toMap(e -> e.getKey(), e -> ExceptionUtils.getRootCause(e.getValue())));
 
         List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
