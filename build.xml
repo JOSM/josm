@@ -413,6 +413,8 @@ Build-Date: ${build.tstamp}
             <link href="https://docs.oracle.com/en/java/javase/11/docs/api" if:set="isJava11" />
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
+            <!-- Disable HTML checking until we switch to Java13+, see https://bugs.openjdk.java.net/browse/JDK-8223552 -->
+            <arg value="-Xdoclint:-html" if:set="isJava13" />
             <arg value="-html5" if:set="isJava9" />
             <arg value="--add-exports" if:set="isJava9" />
             <arg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
