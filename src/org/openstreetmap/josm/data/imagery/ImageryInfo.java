@@ -721,14 +721,13 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     @Override
     public String toString() {
         // Used in imagery preferences filtering, so must be efficient
-        return new StringBuilder("ImageryInfo{")
-                .append("name='").append(name).append('\'')
-                .append(", countryCode='").append(countryCode).append('\'')
+        return new StringBuilder(name)
+                .append('[').append(countryCode)
                 // appending the localized country in toString() allows us to filter imagery preferences table with it!
-                .append(", localizedCountry='").append(getLocalizedCountry(countryCode)).append('\'')
-                .append(", url='").append(url).append('\'')
-                .append(", imageryType=").append(imageryType)
-                .append('}').toString();
+                .append("] ('").append(getLocalizedCountry(countryCode)).append(')')
+                .append(" - ").append(url)
+                .append(" - ").append(imageryType)
+                .toString();
     }
 
     @Override
