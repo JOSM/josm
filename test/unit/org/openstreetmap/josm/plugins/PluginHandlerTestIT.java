@@ -54,7 +54,7 @@ public class PluginHandlerTestIT {
         loadAllPlugins();
 
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
-                .filter(e -> !(e.getValue() instanceof HeadlessException))
+                .filter(e -> !(ExceptionUtils.getRootCause(e.getValue()) instanceof HeadlessException))
                 .collect(Collectors.toMap(e -> e.getKey(), e -> ExceptionUtils.getRootCause(e.getValue())));
 
         List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
