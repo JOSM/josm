@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
@@ -62,8 +61,7 @@ public class MultipolygonTest extends Test {
     // no longer used: Area style way is not closed NOT_CLOSED = 1609
     /** No area style for multipolygon */
     public static final int NO_STYLE = 1610;
-    /** Multipolygon relation should be tagged with area tags and not the outer way(s) */
-    public static final int NO_STYLE_POLYGON = 1611;
+    // no longer used: Multipolygon relation should be tagged with area tags and not the outer way(s) NO_STYLE_POLYGON = 1611;
     /** Area style on outer way */
     public static final int OUTER_STYLE = 1613;
     /** Multipolygon member repeated (same primitive, same role */
@@ -111,7 +109,6 @@ public class MultipolygonTest extends Test {
 
     /**
      * Various style-related checks:<ul>
-     * <li>{@link #NO_STYLE_POLYGON}: Multipolygon relation should be tagged with area tags and not the outer way</li>
      * <li>{@link #INNER_STYLE_MISMATCH}: With the currently used mappaint style the style for inner way equals the multipolygon style</li>
      * <li>{@link #OUTER_STYLE_MISMATCH}: Style for outer way mismatches</li>
      * <li>{@link #OUTER_STYLE}: Area style on outer way</li>
@@ -135,14 +132,6 @@ public class MultipolygonTest extends Test {
                 if (area == null) {
                     errors.add(TestError.builder(this, Severity.OTHER, NO_STYLE)
                             .message(tr("No area style for multipolygon"))
-                            .primitives(r)
-                            .build());
-                } else {
-                    /* old style multipolygon - solve: copy tags from outer way to multipolygon */
-                    errors.add(TestError.builder(this, Severity.ERROR, NO_STYLE_POLYGON)
-                            .message(trn("Multipolygon relation should be tagged with area tags and not the outer way",
-                                    "Multipolygon relation should be tagged with area tags and not the outer ways",
-                                    polygon.getOuterWays().size()))
                             .primitives(r)
                             .build());
                 }

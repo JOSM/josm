@@ -3912,7 +3912,7 @@
     <member type='way' ref='-41633' role='outer' />
     <member type='way' ref='-41659' role='outer' />
     <member type='way' ref='-41651' role='outer' />
-    <tag k='josm_error_codes' v='1606,1611,1617' />
+    <tag k='josm_error_codes' v='1606,1617' />
     <tag k='name' v='07/04 - Mixed Geometry' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4020,7 +4020,7 @@
     <member type='node' ref='-39409' role='outer' />
     <member type='way' ref='-41737' role='' />
     <member type='relation' ref='-42089' role='' />
-    <tag k='josm_error_codes' v='1601,1602,1611' />
+    <tag k='josm_error_codes' v='1601,1602' />
     <tag k='name' v='06/05 - wrong roles' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4142,7 +4142,7 @@
     <member type='way' ref='-41747' role='outer' />
     <member type='way' ref='-41777' role='outer' />
     <tag k='comment' v='For this test the display style depends on the order of ways and is unpredictable' />
-    <tag k='josm_error_codes' v='1607,1611' />
+    <tag k='josm_error_codes' v='1607' />
     <tag k='name' v='06/04 - Mismatching way styles' />
     <tag k='type' v='multipolygon' />
   </relation>
