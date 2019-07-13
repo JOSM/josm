@@ -49,7 +49,7 @@ import org.openstreetmap.josm.tools.Utils;
  * expected type or is null, the function is not called and it returns null
  * immediately. Add the annotation {@link NullableArguments} to allow null arguments.
  * Every method must be static.
- * 
+ *
  * @since 15245 (extracted from {@link ExpressionFactory})
  */
 @SuppressWarnings("UnusedDeclaration")
@@ -763,6 +763,61 @@ public final class Functions {
      */
     public static long osm_id(final Environment env) { // NO_UCD (unused code)
         return env.osm.getUniqueId();
+    }
+
+    /**
+     * Returns the OSM user name who last touched the current object.
+     * @param env the environment
+     * @return the OSM user name who last touched the current object
+     * @see IPrimitive#getUser
+     * @since 15246
+     */
+    public static String osm_user_name(final Environment env) { // NO_UCD (unused code)
+        return env.osm.getUser().getName();
+    }
+
+    /**
+     * Returns the OSM user id who last touched the current object.
+     * @param env the environment
+     * @return the OSM user id who last touched the current object
+     * @see IPrimitive#getUser
+     * @since 15246
+     */
+    public static long osm_user_id(final Environment env) { // NO_UCD (unused code)
+        return env.osm.getUser().getId();
+    }
+
+    /**
+     * Returns the version number of the current object.
+     * @param env the environment
+     * @return the version number of the current object
+     * @see IPrimitive#getVersion
+     * @since 15246
+     */
+    public static int osm_version(final Environment env) { // NO_UCD (unused code)
+        return env.osm.getVersion();
+    }
+
+    /**
+     * Returns the id of the changeset the current object was last uploaded to.
+     * @param env the environment
+     * @return the id of the changeset the current object was last uploaded to
+     * @see IPrimitive#getChangesetId
+     * @since 15246
+     */
+    public static int osm_changeset_id(final Environment env) { // NO_UCD (unused code)
+        return env.osm.getChangesetId();
+    }
+
+    /**
+     * Returns the time of last modification to the current object, as timestamp.
+     * @param env the environment
+     * @return the time of last modification to the current object, as timestamp
+     * @see IPrimitive#getRawTimestamp
+     * @since 15246
+     */
+    public static int osm_timestamp(final Environment env) { // NO_UCD (unused code)
+        return env.osm.getRawTimestamp();
     }
 
     /**
