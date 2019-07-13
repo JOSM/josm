@@ -718,10 +718,10 @@ public final class ConditionFactory {
          * {@code righthandtraffic} checks if there is right-hand traffic at the current location.
          * @param e MapCSS environment
          * @return {@code true} if there is right-hand traffic at the current location
-         * @see ExpressionFactory.Functions#is_right_hand_traffic(Environment)
+         * @see Functions#is_right_hand_traffic(Environment)
          */
         static boolean righthandtraffic(Environment e) { // NO_UCD (unused code)
-            return ExpressionFactory.Functions.is_right_hand_traffic(e);
+            return Functions.is_right_hand_traffic(e);
         }
 
         /**
@@ -729,10 +729,10 @@ public final class ConditionFactory {
          * or non-closed and the 1st, 2nd and last node are in clockwise order.
          * @param e MapCSS environment
          * @return {@code true} if the way clockwise
-         * @see ExpressionFactory.Functions#is_clockwise(Environment)
+         * @see Functions#is_clockwise(Environment)
          */
         static boolean clockwise(Environment e) { // NO_UCD (unused code)
-            return ExpressionFactory.Functions.is_clockwise(e);
+            return Functions.is_clockwise(e);
         }
 
         /**
@@ -740,10 +740,10 @@ public final class ConditionFactory {
          * or non-closed and the 1st, 2nd and last node are in anticlockwise order.
          * @param e MapCSS environment
          * @return {@code true} if the way clockwise
-         * @see ExpressionFactory.Functions#is_anticlockwise(Environment)
+         * @see Functions#is_anticlockwise(Environment)
          */
         static boolean anticlockwise(Environment e) { // NO_UCD (unused code)
-            return ExpressionFactory.Functions.is_anticlockwise(e);
+            return Functions.is_anticlockwise(e);
         }
 
         /**

@@ -421,30 +421,30 @@ public class MapCSSParserTest {
 
         /* Check with empty role and one object */
         Environment e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertEquals(1, ExpressionFactory.Functions.count_roles(e, ""));
+        assertEquals(1, Functions.count_roles(e, ""));
 
         /* Check with non-empty role and one object */
         e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertEquals(0, ExpressionFactory.Functions.count_roles(e, "from"));
+        assertEquals(0, Functions.count_roles(e, "from"));
 
         /* Check with empty role and two objects */
         Way way2 = TestUtils.newWay("highway=residential name=2", way1.firstNode(), way1.lastNode());
         ds.addPrimitive(way2);
         rel1.addMember(new RelationMember("", way2));
         e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertEquals(2, ExpressionFactory.Functions.count_roles(e, ""));
+        assertEquals(2, Functions.count_roles(e, ""));
 
         /* Check with non-empty role and two objects */
         rel1.setMember(0, new RelationMember("from", way1));
         e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertEquals(1, ExpressionFactory.Functions.count_roles(e, "from"));
+        assertEquals(1, Functions.count_roles(e, "from"));
 
         /* Check with multiple roles */
-        assertEquals(1, ExpressionFactory.Functions.count_roles(e, "from", "to"));
+        assertEquals(1, Functions.count_roles(e, "from", "to"));
 
         /* Check with non-relation */
         e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertEquals(0, ExpressionFactory.Functions.count_roles(e, "from", "to"));
+        assertEquals(0, Functions.count_roles(e, "from", "to"));
     }
 
     @Test

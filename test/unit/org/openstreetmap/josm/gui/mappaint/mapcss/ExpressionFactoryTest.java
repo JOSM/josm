@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory.Functions;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
