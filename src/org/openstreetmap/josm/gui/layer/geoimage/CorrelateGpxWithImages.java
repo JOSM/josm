@@ -78,6 +78,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
 import org.openstreetmap.josm.gui.io.importexport.NMEAImporter;
+import org.openstreetmap.josm.gui.io.importexport.RtkLibImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
@@ -266,7 +267,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
         public void actionPerformed(ActionEvent e) {
             ExtensionFileFilter gpxFilter = GpxImporter.getFileFilter();
             AbstractFileChooser fc = new FileChooserManager(true, null).createFileChooser(false, null,
-                    Arrays.asList(gpxFilter, NMEAImporter.FILE_FILTER), gpxFilter, JFileChooser.FILES_ONLY).openFileChooser();
+                    Arrays.asList(gpxFilter, NMEAImporter.FILE_FILTER, RtkLibImporter.FILE_FILTER), gpxFilter, JFileChooser.FILES_ONLY)
+                    .openFileChooser();
             if (fc == null)
                 return;
             File sel = fc.getSelectedFile();

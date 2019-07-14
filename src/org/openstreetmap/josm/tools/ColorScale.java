@@ -24,6 +24,20 @@ public final class ColorScale {
     }
 
     /**
+     * Gets a fixed color range.
+     * @param colors the fixed colors list
+     * @return The scale
+     * @since 15247
+     */
+    public static ColorScale createFixedScale(Color[] colors) {
+        ColorScale sc = new ColorScale();
+        sc.colors = Utils.copyArray(colors);
+        sc.setRange(0, colors.length - 1);
+        sc.addBounds();
+        return sc;
+    }
+
+    /**
      * Gets a HSB color range.
      * @param count The number of colors the scale should have
      * @return The scale

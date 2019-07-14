@@ -164,4 +164,39 @@ public interface GpxConstants {
      */
     Collection<String> FIX_VALUES = Collections.unmodifiableList(
             Arrays.asList("none", "2d", "3d", "dgps", "pps", "rtk", "float rtk", "estimated", "manual", "simulated"));
+
+    /**
+     * The flag which indicates the solution quality.<ul>
+     * <li>1 : Fixed, solution by carrier‐based relative positioning and the integer ambiguity is properly resolved.</li>
+     * <li>2 : Float, solution by carrier‐based relative positioning but the integer ambiguity is not resolved.</li>
+     * <li>3 : Reserved</li>
+     * <li>4 : DGPS, solution by code‐based DGPS solutions or single point positioning with SBAS corrections</li>
+     * <li>5 : Single, solution by single point positioning</li></ul>
+     * @since 15247
+     */
+    String RTKLIB_Q = "Q";
+    /** N (north) component of the standard deviations in m. */
+    String RTKLIB_SDN = "sdn";
+    /** E (east) component of the standard deviations in m. */
+    String RTKLIB_SDE = "sde";
+    /** U (up) component of the standard deviations in m. */
+    String RTKLIB_SDU = "sdu";
+    /**
+     * The absolute value of sdne means square root of the absolute value of NE component of the estimated covariance matrix.
+     * The sign represents the sign of the covariance. */
+    String RTKLIB_SDNE = "sdne";
+    /**
+     * The absolute value of sdeu means square root of the absolute value of EU component of the estimated covariance matrix.
+     * The sign represents the sign of the covariance. */
+    String RTKLIB_SDEU = "sdeu";
+    /**
+     * The absolute value of sdun means square root of the absolute value of UN component of the estimated covariance matrix.
+     * The sign represents the sign of the covariance. */
+    String RTKLIB_SDUN = "sdun";
+    /** The time difference between the observation data epochs of the rover receiver and the base station in second. */
+    String RTKLIB_AGE = "age";
+    /**
+     * The ratio factor of ʺratio‐testʺ for standard integer ambiguity validation strategy.
+     * The value means the ratio of the squared sum of the residuals with the second best integer vector to with the best integer vector. */
+    String RTKLIB_RATIO = "ration";
 }

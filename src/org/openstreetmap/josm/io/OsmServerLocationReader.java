@@ -61,7 +61,9 @@ public class OsmServerLocationReader extends OsmServerReader {
         TRACKPOINTS_BBOX("https?://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*"),
         TASKING_MANAGER("https?://.*/api/v\\p{Digit}+/project/\\p{Digit}+/tasks_as_gpx?.*"),
 
+        /** External GPX script */
         EXTERNAL_GPX_SCRIPT("https?://.*exportgpx.*"),
+        /** External GPX file */
         EXTERNAL_GPX_FILE  ("https?://.*/(.*\\.gpx)");
 
         private final String urlPattern;
@@ -115,6 +117,15 @@ public class OsmServerLocationReader extends OsmServerReader {
      */
     public OsmServerLocationReader(String url) {
         this.url = url;
+    }
+
+    /**
+     * Returns the URL to fetch
+     * @return the URL to fetch
+     * @since 15247
+     */
+    public final String getUrl() {
+        return url;
     }
 
     protected abstract static class Parser<T> {

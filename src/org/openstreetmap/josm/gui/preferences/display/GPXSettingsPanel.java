@@ -64,6 +64,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
     private final JRadioButton colorTypeDirection = new JRadioButton(tr("Direction (red = west, yellow = north, green = east, blue = south)"));
     private final JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
+    private final JRadioButton colorTypeQuality = new JRadioButton(tr("Quality (RTKLib only, if available)"));
     private final JRadioButton colorTypeTime = new JRadioButton(tr("Track date"));
     private final JRadioButton colorTypeHeatMap = new JRadioButton(tr("Heat Map (dark = few, bright = many)"));
     private final JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
@@ -248,6 +249,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorGroup.add(colorTypeVelocity);
         colorGroup.add(colorTypeDirection);
         colorGroup.add(colorTypeDilution);
+        colorGroup.add(colorTypeQuality);
         colorGroup.add(colorTypeTime);
         colorGroup.add(colorTypeHeatMap);
 
@@ -256,6 +258,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorTypeDirection.setToolTipText(tr("Colors points and track segments by direction."));
         colorTypeDilution.setToolTipText(
                 tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to log that information."));
+        colorTypeQuality.setToolTipText(
+                tr("Colors points and track segments by RTKLib quality flag (Q). Your capture device needs to log that information."));
         colorTypeTime.setToolTipText(tr("Colors points and track segments by its timestamp."));
         colorTypeHeatMap.setToolTipText(tr("Collected points and track segments for a position and displayed as heat map."));
 
@@ -276,6 +280,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorTypeVelocityTune, GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
         add(colorTypeDirection, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeDilution, GBC.eol().insets(40, 0, 0, 0));
+        add(colorTypeQuality, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeTime, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeHeatMap, GBC.std().insets(40, 0, 0, 0));
         add(colorTypeHeatIconLabel, GBC.std().insets(5, 0, 0, 5));
@@ -340,6 +345,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDirection);
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDilution);
+        ExpertToggleAction.addVisibilitySwitcher(colorTypeQuality);
         ExpertToggleAction.addVisibilitySwitcher(colorTypeHeatMapLowerLimit);
         ExpertToggleAction.addVisibilitySwitcher(colorTypeHeatMapLowerLimitLabel);
 
@@ -444,6 +450,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             case 3: colorTypeDirection.setSelected(true); break;
             case 4: colorTypeTime.setSelected(true); break;
             case 5: colorTypeHeatMap.setSelected(true); break;
+            case 6: colorTypeQuality.setSelected(true); break;
             default: Logging.warn("Unknown color type: " + colorType);
             }
             int ccts = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colorTracksTune", layerName, 45);
@@ -524,6 +531,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 4);
         } else if (colorTypeHeatMap.isSelected()) {
             Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 5);
+        } else if (colorTypeQuality.isSelected()) {
+            Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 6);
         } else {
             Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 0);
         }

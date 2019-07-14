@@ -14,6 +14,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.io.importexport.NMEAImporter;
+import org.openstreetmap.josm.gui.io.importexport.RtkLibImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -47,6 +48,8 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
 
                 if (NMEAImporter.FILE_FILTER.acceptName(fileStr)) {
                     importData = NMEAImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null);
+                } else if (RtkLibImporter.FILE_FILTER.acceptName(fileStr)) {
+                    importData = RtkLibImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null);
                 } else {
                     importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
                 }

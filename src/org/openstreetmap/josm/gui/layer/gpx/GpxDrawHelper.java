@@ -125,6 +125,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private ColorScale velocityScale;
     /** Colors (without custom alpha channel, if given) for HDOP painting. **/
     private ColorScale hdopScale;
+    private ColorScale qualityScale;
     private ColorScale dateScale;
     private ColorScale directionScale;
 
@@ -176,6 +177,15 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private static Color[] heatMapLutColorJosmBrown2Green = createColorFromResource("brown2green");
     private static Color[] heatMapLutColorJosmRed2Blue = createColorFromResource("red2blue");
 
+    private static Color[] rtkLibQualityColors = new Color[] {
+        Color.GREEN, // Fixed, solution by carrier‐based relative positioning and the integer ambiguity is properly resolved.
+        Color.ORANGE, // Float, solution by carrier‐based relative positioning but the integer ambiguity is not resolved.
+        Color.PINK, // Reserved
+        Color.BLUE, // DGPS, solution by code‐based DGPS solutions or single point positioning with SBAS corrections
+        Color.RED, // Single, solution by single point positioning
+        Color.CYAN // PPP
+    };
+
     // user defined heatmap color
     private Color[] heatMapLutColor = createColorLut(0, Color.BLACK, Color.WHITE);
 
@@ -187,6 +197,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         velocityScale = ColorScale.createHSBScale(256);
         /** Colors (without custom alpha channel, if given) for HDOP painting. **/
         hdopScale = ColorScale.createHSBScale(256).makeReversed().addTitle(tr("HDOP"));
+        qualityScale = ColorScale.createFixedScale(rtkLibQualityColors).addTitle(tr("Quality"));
         dateScale = ColorScale.createHSBScale(256).addTitle(tr("Time"));
         directionScale = ColorScale.createCyclicScale(256).setIntervalCount(4).addTitle(tr("Direction"));
 
@@ -227,7 +238,11 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         /**
          * Color using a heatmap instead of normal lines
          */
-        HEATMAP;
+        HEATMAP,
+        /**
+         * Color by quality (RTKLib)
+         */
+        QUALITY;
 
         static ColorMode fromIndex(final int index) {
             return values()[index];
@@ -342,6 +357,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         velocityScale.setNoDataColor(neutralColor);
         dateScale.setNoDataColor(neutralColor);
         hdopScale.setNoDataColor(neutralColor);
+        qualityScale.setNoDataColor(neutralColor);
         directionScale.setNoDataColor(neutralColor);
 
         largesize += lineWidth;
@@ -556,6 +572,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         } else { // color mode not dynamic
             velocityScale.setRange(0, colorTracksTune);
             hdopScale.setRange(0, hdoprange);
+            qualityScale.setRange(1, rtkLibQualityColors.length);
         }
         double now = System.currentTimeMillis()/1000.0;
         if (colored == ColorMode.TIME) {
@@ -585,8 +602,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 Color color = null;
 
                 if (colored == ColorMode.HDOP) {
-                    Float hdop = (Float) trkPnt.get(GpxConstants.PT_HDOP);
-                    color = hdopScale.getColor(hdop);
+                    color = hdopScale.getColor((Float) trkPnt.get(GpxConstants.PT_HDOP));
+                } else if (colored == ColorMode.QUALITY) {
+                    color = qualityScale.getColor((Integer) trkPnt.get(GpxConstants.RTKLIB_Q));
                 }
                 if (oldWp != null) { // other coloring modes need segment for calcuation
                     double dist = c.greatCircleDistance(oldWp.getCoor());
@@ -1505,6 +1523,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
 
         if (colored == ColorMode.HDOP) {
             hdopScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
+        } else if (colored == ColorMode.QUALITY) {
+            qualityScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
         } else if (colored == ColorMode.VELOCITY) {
             SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
             velocityScale.drawColorBar(g, w-30, 50, 20, 100, som.speedValue);
