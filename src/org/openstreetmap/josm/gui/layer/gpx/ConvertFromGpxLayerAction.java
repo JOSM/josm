@@ -67,15 +67,12 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
                     for (Entry<String, Object> entry : p.attr.entrySet()) {
                         String key = entry.getKey();
                         Object obj = p.get(key);
-                        if (check && !keys.contains(key) && (obj instanceof String || obj instanceof Date)) {
+                        if (check && !keys.contains(key) && (obj instanceof String || obj instanceof Number || obj instanceof Date)) {
                             keys.add(key);
                         }
-                        if (obj instanceof String) {
-                            String str = (String) obj;
-                            if (!none) {
-                                // only convert when required
-                                n.put(key, str);
-                            }
+                        if (!none && (obj instanceof String || obj instanceof Number)) {
+                            // only convert when required
+                            n.put(key, obj.toString());
                         } else if (obj instanceof Date && GpxConstants.PT_TIME.equals(key)) {
                             // timestamps should always be converted
                             Date date = (Date) obj;

@@ -198,5 +198,5 @@ public interface GpxConstants {
     /**
      * The ratio factor of ʺratio‐testʺ for standard integer ambiguity validation strategy.
      * The value means the ratio of the squared sum of the residuals with the second best integer vector to with the best integer vector. */
-    String RTKLIB_RATIO = "ration";
+    String RTKLIB_RATIO = "ratio";
 }
