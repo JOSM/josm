@@ -35,7 +35,7 @@ public final class DateUtils {
     /**
      * The UTC time zone.
      */
-    public static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+    public static final TimeZone UTC = TimeZone.getTimeZone(ZoneOffset.UTC);
 
     /**
      * Property to enable display of ISO dates globally.

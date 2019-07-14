@@ -54,14 +54,14 @@ public class RtkLibPosReaderTest {
         assertEquals(137, in.getNumberOfCoordinates());
 
         List<WayPoint> wayPoints = new ArrayList<>(in.getGpxData().tracks.iterator().next().getSegments().iterator().next().getWayPoints());
-        assertEquals(DateUtils.fromString("2019-06-08T06:23:12.000Z"), wayPoints.get(0).get(GpxConstants.PT_TIME));
-        assertEquals(DateUtils.fromString("2019-06-08T06:23:12.300Z"), wayPoints.get(1).get(GpxConstants.PT_TIME));
-        assertEquals(DateUtils.fromString("2019-06-08T06:23:12.600Z"), wayPoints.get(2).get(GpxConstants.PT_TIME));
+        assertEquals(DateUtils.fromString("2019-06-08T08:23:12.000Z"), wayPoints.get(0).get(GpxConstants.PT_TIME));
+        assertEquals(DateUtils.fromString("2019-06-08T08:23:12.300Z"), wayPoints.get(1).get(GpxConstants.PT_TIME));
+        assertEquals(DateUtils.fromString("2019-06-08T08:23:12.600Z"), wayPoints.get(2).get(GpxConstants.PT_TIME));
         assertEquals(wayPoints.get(0).getDate(), wayPoints.get(0).get(GpxConstants.PT_TIME));
 
-        assertEquals("2019-06-08T06:23:12.000Z", iso8601.format(wayPoints.get(0).getDate()));
-        assertEquals("2019-06-08T06:23:12.300Z", iso8601.format(wayPoints.get(1).getDate()));
-        assertEquals("2019-06-08T06:23:12.600Z", iso8601.format(wayPoints.get(2).getDate()));
+        assertEquals("2019-06-08T08:23:12.000Z", iso8601.format(wayPoints.get(0).getDate()));
+        assertEquals("2019-06-08T08:23:12.300Z", iso8601.format(wayPoints.get(1).getDate()));
+        assertEquals("2019-06-08T08:23:12.600Z", iso8601.format(wayPoints.get(2).getDate()));
 
         assertEquals(new LatLon(46.948881673, -1.484757046), wayPoints.get(0).getCoor());
         assertEquals(5, wayPoints.get(0).get(GpxConstants.RTKLIB_Q));

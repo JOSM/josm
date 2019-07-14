@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.IGpxReader;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -60,6 +61,7 @@ public class RtkLibPosReader implements IGpxReader {
      */
     public RtkLibPosReader(InputStream source) throws IOException {
         this.source = Objects.requireNonNull(source);
+        dateTimeFmt.setTimeZone(DateUtils.UTC);
     }
 
     @Override
