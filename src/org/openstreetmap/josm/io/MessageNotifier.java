@@ -88,8 +88,12 @@ public final class MessageNotifier {
                         lastUnreadCount = unread;
                     }
                 }
-            } catch (OsmTransferException e) {
+            } catch (OsmApiException e) {
+                // We want to explicitely display message to user in some cases like when he has been blocked (#17722)
                 ExceptionDialogUtil.explainOsmTransferException(e);
+            } catch (OsmTransferException e) {
+                // But not message for random network or API issues (like in #17929)
+                Logging.warn(e);
             }
         }
     }
