@@ -4413,7 +4413,7 @@
             <link wiki="Piste_Maps" />
             <space />
             <text key="name" text="Name" />
-            <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,sled,sleigh,snow_park" match="keyvalue"/>
+            <combo key="piste:type" text="Piste type" values="connection,downhill,hike,ice_skate,nordic,playground,skitour,sled,sleigh,snow_park" values_searchable="true" match="keyvalue"/>
             <optional>
                 <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" values_searchable="true" values_sort="false" />
                 <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic+skating,scooter,backcountry" values_context="piste:grooming" />
@@ -7536,7 +7536,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="piste"/>
                 <text key="name" text="Name" />
-                <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" />
+                <combo key="piste:type" text="Piste type" values="connection,downhill,hike,ice_skate,nordic,playground,skitour,sled,sleigh,snow_park" values_searchable="true" />
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
@@ -7556,7 +7556,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="ski"/>
                 <text key="name" text="Name" />
-                <combo key="piste:type" text="Piste type" values="nordic,alpine" />
+                <combo key="piste:type" text="Piste type" values="nordic,alpine" values_searchable="true" />
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
