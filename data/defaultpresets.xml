@@ -4982,7 +4982,7 @@
             <link wiki="Key:bridge:movable" />
             <space />
             <key key="bridge" value="movable" />
-            <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter" match="key" />
+            <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter,retractable,tilt" match="key" />
             <reference ref="optional_bridge" />
         </item> <!-- Movable Bridge -->
         <item name="Bridge Support" icon="presets/transport/bridge/bridge_support.svg" type="node,closedway" preset_name_label="true">
