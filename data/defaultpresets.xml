@@ -478,7 +478,7 @@
     <text key="operator" text="Operator" />
     <text key="network" text="Network" />
     <text key="description" text="Description" />
-    <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+    <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
     <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120" values_no_i18n="true" />
   </chunk>
   <chunk id="climbing_styles">
@@ -2433,7 +2433,7 @@
             <optional>
                 <text key="operator" text="Operator" />
                 <text key="network" text="Network" />
-                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
             </optional>
             <roles>
                 <role key="" text="route variant/direction (at least 2)" requisite="required" type="relation" member_expression="type=route" /> <!-- FIXME: at least 2 members are required -->
@@ -2548,7 +2548,7 @@
                 <text key="operator" text="Operator" />
                 <text key="network" text="Network" />
                 <text key="description" text="Description" />
-                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
             </optional>
             <roles>
                 <role key="" text="route segment" requisite="optional" type="way,closedway" />
@@ -3748,9 +3748,9 @@
                 <!-- <combo key="couplings:type" text="Coupling standard" values="Bayonet,Barcelona,Guillemin,Klaue,Sprawny,Storz,UNI" /> capitalized values which is contrary to general tagging conventions -->
                 <text key="couplings:diameters" text="Each coupling diameter (separated by ;)" />
                 <space />
-                <combo key="colour" text="Colour" values="blue,green,red,yellow,grey" values_context="color" />
-                <combo key="bonnet:colour" text="Colour of the top section (bonnet)" values="blue,green,red,yellow,grey" values_context="color" />
-                <combo key="cap:colour" text="Colour of the caps" values="blue,green,red,yellow,grey" values_context="color" />
+                <combo key="colour" text="Colour" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" values_context="color" />
+                <combo key="bonnet:colour" text="Colour of the top section (bonnet)" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" values_context="color" />
+                <combo key="cap:colour" text="Colour of the caps" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" values_context="color" />
                 <space />
                 <text key="manufacturer" text="Manufacturer" />
                 <text key="operator" text="Operator" />
@@ -4031,7 +4031,7 @@
             <key key="amenity" value="bench" />
             <check key="backrest" text="Backrest" />
             <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
-            <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+            <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
             <combo key="seats" text="Amount of Seats" values="2,3,4,5,6,7,8,9,10" />
         </item> <!-- Bench -->
         <item name="Shelter" icon="presets/accommodation/shelter.svg" type="node,closedway" preset_name_label="true">
@@ -4903,7 +4903,7 @@
                 <combo key="street_cabinet" text="Type" values="cable_tv,gas,postal_service,power,street_lighting,telecom,traffic_control,traffic_monitoring,transport_management,waste,water,water_management" />
                 <reference ref="ref_operator" />
                 <text key="manufacturer" text="Manufacturer" />
-                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
              </optional>
         </item> <!-- Street cabinet -->
         <item name="Monitoring Station" icon="presets/misc/monitoring_station.svg" type="node,closedway" preset_name_label="true">
@@ -5300,7 +5300,7 @@
                 <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110" /> <!-- Recheck values -->
                 <reference ref="ref_operator" />
                 <text key="manufacturer" text="Manufacturer" />
-                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
              </optional>
         </item> <!-- Power Street Cabinet -->
         <separator/>
@@ -5432,7 +5432,7 @@
             <optional>
                 <reference ref="ref_operator" />
                 <text key="manufacturer" text="Manufacturer" />
-                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
              </optional>
         </item> <!-- Telecom Street Cabinet -->
         <item name="Telephone Exchange" icon="presets/telecom/exchange.svg" type="node,closedway" preset_name_label="true">

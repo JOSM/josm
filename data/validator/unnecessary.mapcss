@@ -121,6 +121,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 *[name][name=~/^(?i)(collège)$/][amenity=school]["school:FR"="collège"],
 *[name][name=~/^(?i)(lycée)$/][amenity=school]["school:FR"="lycée"],
 *[name][name=~/^(?i)(Аптека|farmacia|pharmacy|pharmacie)$/][amenity=pharmacy],
+*[name][name=~/^(?i)(hydrant)$/][emergency=fire_hydrant],
 *[name][name=~/^(?i)(АГЗС|АЗС)$/][amenity=fuel] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
