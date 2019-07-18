@@ -613,12 +613,19 @@ way[highway=path][foot=official] {
     color: foot#00ff00;
 }
 way[highway=path][bicycle=designated][foot=designated],
-way[highway=path][bicycle=official][foot=official] {
+way[highway=path][bicycle=official][foot=official],
+way[highway=cycleway][foot=designated] {
     width: 1;
     color: bicycle#b100ff;
     set cyclecolor;
     dashes: 14,14;
     dashes-background-color: foot#00ff00;
+}
+way[highway=footway][bicycle=designated] {
+    width: 1;
+    color: foot#00ff00;
+    dashes: 14,14;
+    dashes-background-color: bicycle#b100ff;
 }
 way[highway=cycleway][foot=yes],
 way[highway=path][bicycle=designated][foot=yes],
