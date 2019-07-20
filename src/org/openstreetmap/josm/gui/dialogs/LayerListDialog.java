@@ -1062,8 +1062,8 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                         AbstractTileSourceLayer<?> abstractTileSourceLayer = (AbstractTileSourceLayer<?>) l;
                         OffsetBookmark offsetBookmark = abstractTileSourceLayer.getDisplaySettings().getOffsetBookmark();
                         if (offsetBookmark != null) {
-                            offsetBookmark.setDisplacement(EastNorth.ZERO);
-                            abstractTileSourceLayer.getDisplaySettings().setOffsetBookmark(offsetBookmark);
+                            abstractTileSourceLayer.getDisplaySettings().setOffsetBookmark(null);
+                            MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
                         }
                     }
                     break;
