@@ -1494,6 +1494,10 @@ node[pipeline=valve] {
     icon-image: "presets/misc/valve.svg";
     set icon_z17;
 }
+node[man_made=manhole] {
+    icon-image: "presets/misc/manhole.svg";
+    set icon_z17;
+}
 node[man_made=breakwater],
 node[man_made=groyne],
 node[man_made=embankment],
