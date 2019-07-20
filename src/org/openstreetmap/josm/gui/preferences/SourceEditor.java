@@ -1054,7 +1054,7 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            activeSourcesModel.move(increment);
+            activeSourcesModel.move(increment, tblActiveSources.getSelectedRows());
         }
 
         @Override
