@@ -45,11 +45,12 @@ public class Mediawiki {
      */
     public Optional<String> findExistingPage(List<String> pages)
             throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        List<String> distinctPages = pages.stream().distinct().collect(Collectors.toList());
         // find a page that actually exists in the wiki
         // API documentation: https://wiki.openstreetmap.org/w/api.php?action=help&modules=query
-        final URL url = new URL(baseUrl + "/w/api.php?action=query&format=xml&titles=" + pages.stream()
+        final URL url = new URL(baseUrl + "/w/api.php?action=query&format=xml&titles=" + distinctPages.stream()
                 .map(Utils::encodeUrl)
-                .collect(Collectors.joining("|"))
+                .collect(Collectors.joining(Utils.encodeUrl("|")))
         );
         final HttpClient.Response conn = HttpClient.create(url).connect();
         final Document document;
@@ -58,7 +59,7 @@ public class Mediawiki {
         }
         conn.disconnect();
         final XPath xPath = XPathFactory.newInstance().newXPath();
-        for (String page : pages) {
+        for (String page : distinctPages) {
             String normalized = xPath.evaluate("/api/query/normalized/n[@from='" + page + "']/@to", document);
             if (normalized == null || normalized.isEmpty()) {
                 normalized = page;
