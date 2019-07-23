@@ -403,20 +403,25 @@ way[type=palm] {
   suggestAlternative: "embankment=yes";
   group: tr("deprecated tagging");
 }
-
 *[bridge=swing] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "bridge:movable=swing";
   suggestAlternative: "bridge:structure=simple-suspension";
   group: tr("deprecated tagging");
 }
-
 *[bridge=suspension] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "bridge=yes + bridge:structure=suspension";
   group: tr("deprecated tagging");
   fixAdd: "bridge=yes";
   fixAdd: "bridge:structure=suspension";
+}
+*[bridge=pontoon] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "bridge=yes + bridge:structure=floating";
+  group: tr("deprecated tagging");
+  fixAdd: "bridge=yes";
+  fixAdd: "bridge:structure=floating";
 }
 
 /* See #10530 - Incorrect tag proposed in internal preset for years */
@@ -960,11 +965,12 @@ node[type][pipeline=marker] {
   suggestAlternative: "amenity=gambling";
   group: tr("deprecated tagging");
 }
+*[office=real_estate],
 *[office=real_estate_agent] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "office=estate_agent ";
+  suggestAlternative: "office=estate_agent";
   group: tr("deprecated tagging");
-  fixAdd: "office=estate_agent ";
+  fixAdd: "office=estate_agent";
 }
 *[shop=glass] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -976,6 +982,7 @@ node[type][pipeline=marker] {
 *[amenity=proposed],
 *[amenity=disused],
 *[shop=disused],
+*[highway=abandoned],
 *[historic=abandoned] {
   throwWarning: tr("{0} is deprecated. Use the {1}: key prefix instead.", "{0.tag}", "{0.value}");
   group: tr("deprecated tagging");
@@ -1472,4 +1479,157 @@ way[/^is_in:.*$/] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   fixRemove: "contact:google_plus";
   group: tr("deprecated tagging");
+}
+
+/* #17370  */
+*[amenity=garages],
+*[amenity=garage] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("building=", "{0.value}");
+  suggestAlternative: "landuse=garages";
+  suggestAlternative: "amenity=parking + parking=garage_boxes";
+  group: tr("deprecated tagging");
+}
+*[shop=winery],
+*[amenity=winery] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "craft=winery";
+  suggestAlternative: "shop=wine";
+  group: tr("deprecated tagging");
+}
+*[amenity=youth_centre] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=community_centre + community_centre=youth_centre";
+  fixAdd: "amenity=community_centre";
+  fixAdd: "community_centre=youth_centre";
+  group: tr("deprecated tagging");
+}
+*[building:type][building=yes],
+*[building:type][!building] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "building";
+  group: tr("deprecated tagging");
+  fixChangeKey: "building:type => building";
+  assertMatch: "way building:type=church";
+  assertMatch: "way building:type=church building=yes";
+  assertNoMatch: "way building:type=church building=supermarket";
+}
+*[building:type][building][building!=yes] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "building";
+  group: tr("deprecated tagging");
+  assertNoMatch: "way building:type=church";
+  assertNoMatch: "way building:type=church building=yes";
+  assertMatch: "way building:type=church building=supermarket";
+}
+*[escalator] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "highway=steps + conveying=*";
+  group: tr("deprecated tagging");
+}
+*[fenced] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "barrier=fence";
+  group: tr("deprecated tagging");
+}
+*[historic_name][!old_name] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "old_name";
+  group: tr("deprecated tagging");
+  fixChangeKey: "historic_name => old_name";
+}
+*[historic_name][old_name] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "old_name";
+  group: tr("deprecated tagging");
+}
+*[landuse=field] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "landuse=farmland";
+  group: tr("deprecated tagging");
+  fixAdd: "landuse=farmland";
+}
+*[leisure=beach] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=beach";
+  suggestAlternative: "leisure=beach_resort";
+  group: tr("deprecated tagging");
+}
+*[leisure=club] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "club=*";
+  group: tr("deprecated tagging");
+}
+*[leisure=video_arcade] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leisure=amusement_arcade";
+  suggestAlternative: "leisure=adult_gaming_centre";
+  group: tr("deprecated tagging");
+}
+*[man_made=jetty] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=pier";
+  group: tr("deprecated tagging");
+  fixAdd: "man_made=pier";
+}
+*[man_made=village_pump] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=water_well";
+  group: tr("deprecated tagging");
+  fixAdd: "man_made=water_well";
+}
+*[man_made=water_tank] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=storage_tank + content=water";
+  group: tr("deprecated tagging");
+  fixAdd: "man_made=storage_tank";
+  fixAdd: "content=water";
+}
+*[natural=moor] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=heath";
+  suggestAlternative: "natural=scrub";
+  suggestAlternative: "natural=grassland";
+  suggestAlternative: "natural=wetland";
+  suggestAlternative: "natural=fell";
+  suggestAlternative: "natural=tundra";
+  suggestAlternative: "landuse=meadow + meadow=agricultural";
+  group: tr("deprecated tagging");
+}
+*[noexit=no][!fixme] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "fixme=continue";
+  group: tr("deprecated tagging");
+  fixAdd: "fixme=continue";
+  fixRemove: "noexit";
+}
+*[noexit=no][fixme] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "fixme=continue";
+  group: tr("deprecated tagging");
+}
+*[shop=dive] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=scuba_diving";
+  group: tr("deprecated tagging");
+  fixAdd: "shop=scuba_diving";
+}
+*[shop=furnace] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=fireplace";
+  suggestAlternative: "craft=plumber";
+  group: tr("deprecated tagging");
+}
+*[sport=paragliding] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "sport=free_flying";
+  group: tr("deprecated tagging");
+  fixAdd: "sport=free_flying";
+}
+*[tourism=bed_and_breakfast] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "tourism=guest_house + guest_house=bed_and_breakfast";
+  group: tr("deprecated tagging");
+  fixAdd: "tourism=guest_house";
+  fixAdd: "guest_house=bed_and_breakfast";
 }

@@ -852,7 +852,7 @@
             <checkgroup columns="3" >
                 <check key="oneway" text="Oneway" />
                 <check key="toll" text="Toll" />
-                <check key="noexit" text="No exit (cul-de-sac)" />
+                <check key="noexit" text="No exit (cul-de-sac)" disable_off="true" />
             </checkgroup>
             <space />
             <label text="Transport mode restrictions" />
@@ -2745,6 +2745,7 @@
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <text key="rooms" text="Rooms" />
             <text key="beds" text="Beds" />
+            <combo key="guest_house" text="Type" values="agritourism,bed_and_breakfast" />
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3491,6 +3492,8 @@
             <space />
             <key key="amenity" value="community_centre" />
             <reference ref="name_operator_oh_wheelchair" />
+            <combo key="community_centre" text="Type" values="club_home,community_hall,cultural_centre,environment_centre,events_venue,family_centre,language_centre,meeting_room,parish_hall,village_hall,youth_centre" />
+            <multiselect key="community_centre:for" text="For" values="child;juvenile;student;girl;boy;man;woman;senior;family;homosexual;multigeneration;disabled;athlete;immigrant;lgbtq" />
             <reference ref="link_contact_address" />
             <preset_link preset_name="Building" />
         </item> <!-- Community Centre -->
