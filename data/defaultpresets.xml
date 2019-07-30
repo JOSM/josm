@@ -3871,10 +3871,10 @@
                 <reference ref="fee" />
                 <text key="operator" text="Operator" />
                 <combo key="toilets:position" text="Usage Position" values="seated,seated;urinal,squat,urinal" />
-                <combo key="diaper" text="Diaper" values="yes,no,room,1,2,3,4,5" text_context="toilets" />
                 <reference ref="wheelchair" />
                 <check key="drinking_water" text="Drinking Water" />
             </optional>
+            <preset_link preset_name="Changing table" />
         </item> <!-- Toilets/Restrooms -->
         <item name="Shower" icon="presets/service/shower.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:amenity=shower" />
@@ -3888,11 +3888,23 @@
                     <check key="unisex" text="Unisex" text_context="restroom" />
                 </checkgroup>
                 <text key="description" text="Description" />
-                <combo key="fee" text="Fee" values="yes,no" />
+                <reference ref="fee" />
                 <text key="operator" text="Operator" />
                 <reference ref="oh_wheelchair" />
             </optional>
         </item> <!-- Shower -->
+        <item name="Changing table" icon="presets/service/changing_table.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Key:changing_table" />
+            <space />
+            <combo key="changing_table" text="Changing table" values="yes,limited,no" default="yes" match="keyvalue!" />
+            <optional>
+                <check key="changing_table:fee" text="Fee" />
+                <combo key="changing_table:count" text="Count" values="1,2,3,4,5" />
+                <multiselect key="changing_table:location" text="Location" text_context="Changing table" values="dedicated_room;female_toilet;male_toilet;room;sales_area;unisex_toilet;wheelchair_toilet" />
+                <text key="operator" text="Operator" />
+                <reference ref="wheelchair" />
+            </optional>
+        </item> <!-- Changing table -->
         <separator/>
         <item name="Post Box" icon="presets/service/post_box.svg" type="node" preset_name_label="true">
             <link wiki="Tag:amenity=post_box" />

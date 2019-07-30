@@ -279,6 +279,20 @@ node[traffic_sign][toll][!is_prop_set(icon-image)] {
     set icon_z17;
 }
 
+/*************************************/
+/* low rendering priority properties */
+/*************************************/
+
+area[changing_table=yes],
+area[changing_table=limited] {
+    fill-color: changing_table#f7efb7; /* same as amenity */
+}
+node[changing_table=yes],
+node[changing_table=limited] {
+    icon-image: "presets/service/changing_table.svg";
+    set icon_z17;
+}
+
 /*****************************/
 /* building/entrance/address */
 /*****************************/

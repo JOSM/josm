@@ -1633,3 +1633,84 @@ way[/^is_in:.*$/] {
   fixAdd: "tourism=guest_house";
   fixAdd: "guest_house=bed_and_breakfast";
 }
+
+/* #17880 */
+*[diaper=yes],
+*[diaper=no] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("changing_table=", "{0.value}");
+  group: tr("deprecated tagging");
+  fixChangeKey: "diaper => changing_table";
+  set diaper_checked;
+}
+*[diaper][diaper =~ /^[1-9][0-9]*$/] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("changing_table=yes + changing_table:count=", "{0.value}");
+  group: tr("deprecated tagging");
+  fixChangeKey: "diaper => changing_table:count";
+  fixAdd: "changing_table=yes";
+  set diaper_checked;
+}
+*[diaper=room] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "changing_table=room";
+  suggestAlternative: "changing_table=dedicated_room";
+  group: tr("deprecated tagging");
+  set diaper_checked;
+}
+*[diaper]!.diaper_checked {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "changing_table";
+  group: tr("deprecated tagging");
+}
+*[diaper:male=yes] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "changing_table:location=male_toilet";
+  group: tr("deprecated tagging");
+  fixAdd: "changing_table:location=male_toilet";
+  fixRemove: "diaper:male";
+  set diaper___checked;
+}
+*[diaper:female=yes] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "changing_table:location=female_toilet";
+  group: tr("deprecated tagging");
+  fixAdd: "changing_table:location=female_toilet";
+  fixRemove: "diaper:female";
+  set diaper___checked;
+}
+*[diaper:unisex=yes] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "changing_table:location=unisex_toilet";
+  group: tr("deprecated tagging");
+  fixAdd: "changing_table:location=unisex_toilet";
+  fixRemove: "diaper:unisex";
+  set diaper___checked;
+}
+*[diaper:wheelchair=yes],
+*[diaper:wheelchair=no] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("changing_table:wheelchair=", "{0.value}");
+  group: tr("deprecated tagging");
+  fixChangeKey: "diaper:wheelchair => changing_table:wheelchair";
+  set diaper___checked;
+}
+*[diaper:fee=yes],
+*[diaper:fee=no] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("changing_table:fee=", "{0.value}");
+  group: tr("deprecated tagging");
+  fixChangeKey: "diaper:fee => changing_table:fee";
+  set diaper___checked;
+}
+*[/^diaper:/]!.diaper___checked {
+  throwWarning: tr("{0} is deprecated", "diaper:*");
+  suggestAlternative: "changing_table:*";
+  group: tr("deprecated tagging");
+}
+*[changing_table][changing_table!~/^(yes|no|limited)$/] {
+  throwWarning: tr("wrong value: {0}", "{0.tag}");
+  suggestAlternative: "changing_table=yes";
+  suggestAlternative: "changing_table=no";
+  suggestAlternative: "changing_table=limited";
+}
