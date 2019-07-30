@@ -592,3 +592,10 @@ area[cemetery=sector][landuse=cemetery] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
 }
+
+/* #17967 */
+*[highway=cycleway][cycleway=track] {
+  throwWarning: tr("{0} together with {1}. Remove {1}.", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+  fixRemove: "cycleway";
+}
