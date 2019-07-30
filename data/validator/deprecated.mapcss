@@ -1714,3 +1714,11 @@ way[/^is_in:.*$/] {
   suggestAlternative: "changing_table=no";
   suggestAlternative: "changing_table=limited";
 }
+
+/* #17990 */
+*[roof:shape=half_hipped] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "roof:shape=half-hipped";
+  group: tr("deprecated tagging");
+  fixAdd: "roof:shape=half-hipped";
+}
