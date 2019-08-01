@@ -1722,3 +1722,11 @@ way[/^is_in:.*$/] {
   group: tr("deprecated tagging");
   fixAdd: "roof:shape=half-hipped";
 }
+
+/* #18003 */
+*[bridge_name] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "bridge:name";
+  group: tr("deprecated tagging");
+  fixChangeKey: "bridge_name => bridge:name";
+}

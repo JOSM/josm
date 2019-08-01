@@ -399,6 +399,7 @@
     <chunk id="optional_bridge">
         <optional>
             <text key="name" text="Name" />
+            <text key="bridge:name" text="Bridge name" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" length="3" />
             <space />
             <text key="maxspeed" text="Max. speed (km/h)" />
