@@ -1730,3 +1730,11 @@ way[/^is_in:.*$/] {
   group: tr("deprecated tagging");
   fixChangeKey: "bridge_name => bridge:name";
 }
+
+/* #18007 */
+*[access=public] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "access=yes";
+  group: tr("deprecated tagging");
+  fixAdd: "access=yes";
+}
