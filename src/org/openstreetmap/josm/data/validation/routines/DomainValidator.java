@@ -420,7 +420,6 @@ public final class DomainValidator extends AbstractValidator {
         "blue", // blue Afilias Limited
         "bms", // bms Bristol-Myers Squibb Company
         "bmw", // bmw Bayerische Motoren Werke Aktiengesellschaft
-        "bnl", // bnl Banca Nazionale del Lavoro
         "bnpparibas", // bnpparibas BNP Paribas
         "boats", // boats DERBoats, LLC
         "boehringer", // boehringer Boehringer Ingelheim International GmbH
@@ -1247,7 +1246,6 @@ public final class DomainValidator extends AbstractValidator {
         "stada", // stada STADA Arzneimittel AG
         "staples", // staples Staples, Inc.
         "star", // star Star India Private Limited
-        "starhub", // starhub StarHub Limited
         "statebank", // statebank STATE BANK OF INDIA
         "statefarm", // statefarm State Farm Mutual Automobile Insurance Company
         "stc", // stc Saudi Telecom Company
