@@ -1096,8 +1096,9 @@
                 <combo key="traffic_signals:direction" text="Direction" values="forward,backward,both" />
             </optional>
             <optional text="Optional crossing attributes:">
-                <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
+                <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,unmarked,no" />
                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
+                <check key="crossing:island" text="With island" />
                 <check key="button_operated" text="Button operated" />
                 <check key="traffic_signals:sound" text="Sound signals" />
                 <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
@@ -1139,12 +1140,12 @@
             <combo key="crossing" text="Pedestrian crossing type" >
                 <list_entry value="uncontrolled" icon="presets/vehicle/crossing.svg" />
                 <list_entry value="traffic_signals" icon="presets/vehicle/crossing_traffic_signals.svg" />
-                <list_entry value="island" icon="presets/vehicle/crossing_island.svg" />
                 <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
             </combo>
             <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
             <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
+            <check key="crossing:island" text="With island" />
             <check key="bicycle" text="Cross by bicycle" />
             <check key="horse" text="Cross on horseback" />
             <label text="In case of traffic signals:" />
@@ -1962,7 +1963,7 @@
             <link wiki="Tag:railway=crossing" />
             <key key="railway" value="crossing" />
             <optional>
-                <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
+                <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals" />
                 <reference ref="supervised" />
                 <check key="horse" text="Cross on horseback" />
                 <check key="bicycle" text="Cross by bicycle" />

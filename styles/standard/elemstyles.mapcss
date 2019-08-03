@@ -731,12 +731,12 @@ node[highway=traffic_signals][crossing][crossing!=no] {
     icon-image: "presets/vehicle/traffic_signals_crossing.svg";
     set icon_z17;
 }
-node[highway=traffic_signals][crossing_ref=zebra] {
-    icon-image: "presets/vehicle/traffic_signals_crossing_ref_zebra.svg";
+node[highway=traffic_signals][crossing:island=yes] {
+    icon-image: "presets/vehicle/traffic_signals_crossing_island.svg";
     set icon_z17;
 }
-node[highway=traffic_signals][crossing=island] {
-    icon-image: "presets/vehicle/traffic_signals_crossing_island.svg";
+node[highway=traffic_signals][crossing_ref=zebra] {
+    icon-image: "presets/vehicle/traffic_signals_crossing_ref_zebra.svg";
     set icon_z17;
 }
 node[highway=traffic_signals][crossing=traffic_signals] {
@@ -767,12 +767,12 @@ node[highway=crossing][crossing!=no] {
     icon-image: "presets/vehicle/crossing.svg";
     set icon_z17;
 }
-node[highway=crossing][crossing=unmarked] {
-    icon-image: "presets/vehicle/crossing_unmarked.svg";
+node[highway=crossing][crossing:island=yes] {
+    icon-image: "presets/vehicle/crossing_island.svg";
     set icon_z17;
 }
-node[highway=crossing][crossing=island] {
-    icon-image: "presets/vehicle/crossing_island.svg";
+node[highway=crossing][crossing=unmarked] {
+    icon-image: "presets/vehicle/crossing_unmarked.svg";
     set icon_z17;
 }
 node[highway=crossing][crossing_ref=zebra] {

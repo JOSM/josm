@@ -1738,3 +1738,12 @@ way[/^is_in:.*$/] {
   group: tr("deprecated tagging");
   fixAdd: "access=yes";
 }
+
+/* #17330 */
+*[crossing=island] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "crossing:island=yes";
+  group: tr("deprecated tagging");
+  fixRemove: "crossing";
+  fixAdd: "crossing:island=yes";
+}
