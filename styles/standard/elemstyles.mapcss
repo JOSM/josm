@@ -4433,12 +4433,10 @@ node[natural=tree] {
     icon-image: "presets/landmark/trees.svg";
     set icon_z17;
 }
-node[natural=tree][type=conifer],
 node[natural=tree][leaf_type=needleleaved] {
     icon-image: "presets/landmark/trees_conifer.svg";
     set icon_z17;
 }
-node[natural=tree][type=broad_leaved],
 node[natural=tree][leaf_type=broadleaved] {
     icon-image: "presets/landmark/trees_broad_leaved.svg";
     set icon_z17;
