@@ -457,7 +457,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Config.getPref().getBoolean("mappaint.gpx.use-antialiasing", false) ?
                     RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
-        if (lineWidth != 0) {
+        if (lineWidth > 0) {
             g.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         }
 
