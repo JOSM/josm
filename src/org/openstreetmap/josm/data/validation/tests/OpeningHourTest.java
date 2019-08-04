@@ -12,12 +12,14 @@ import java.util.List;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
@@ -51,6 +53,9 @@ public class OpeningHourTest extends Test.TagTest {
         if (ENGINE != null) {
             try (CachedFile cf = new CachedFile("resource://data/validator/opening_hours.js");
                  Reader reader = cf.getContentReader()) {
+                ENGINE.eval(
+                        "var global=this;var window=this;var process={env:{}};" +
+                        "var console={};console.debug=print;console.log=print;console.warn=print;console.error=print;");
                 ENGINE.eval(reader);
                 ENGINE.eval("var opening_hours = require('opening_hours');");
                 // fake country/state to not get errors on holidays
@@ -246,6 +251,7 @@ public class OpeningHourTest extends Test.TagTest {
             }
         } catch (ScriptException | NoSuchMethodException ex) {
             Logging.error(ex);
+            new Notification(Utils.getRootCause(ex).getMessage()).setIcon(JOptionPane.ERROR_MESSAGE).show();
         }
         return errors;
     }
