@@ -9,6 +9,7 @@ import static org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context.PRIMI
 
 import java.awt.Color;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Rule;
@@ -404,6 +405,28 @@ public class MapCSSParserTest {
         assertTrue(source.rules.get(0).selector.matches(e));
         source.rules.get(0).declaration.execute(e);
         assertEquals("x2;x10", e.getCascade(Environment.DEFAULT_LAYER).get("refs", null, String.class));
+    }
+
+    @Test
+    public void testSort() throws Exception {
+        assertEquals(Arrays.asList(new String[] {"alpha", "beta"}), Functions.sort("beta", "alpha"));
+        Way way1 = TestUtils.newWay("highway=residential name=Alpha alt_name=Beta ref=\"A9;A8\"", new Node(new LatLon(0.001, 0.001)),
+                new Node(new LatLon(0.002, 0.002)));
+
+        MapCSSStyleSource source = new MapCSSStyleSource("way[highway] {sorted: join_list(\",\", sort(tag(\"alt_name\"), tag(\"name\")));}");
+        source.loadStyleSource();
+        assertEquals(1, source.rules.size());
+        Environment e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        assertTrue(source.rules.get(0).selector.matches(e));
+        source.rules.get(0).declaration.execute(e);
+        assertEquals(Functions.join(",", "Alpha", "Beta"), e.getCascade(Environment.DEFAULT_LAYER).get("sorted", null, String.class));
+
+        source = new MapCSSStyleSource("way[ref] {sorted: join_list(\",\", sort_list(split(\";\", tag(\"ref\"))));}");
+        source.loadStyleSource();
+        e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        assertTrue(source.rules.get(0).selector.matches(e));
+        source.rules.get(0).declaration.execute(e);
+        assertEquals(Functions.join(",", "A8", "A9"), e.getCascade(Environment.DEFAULT_LAYER).get("sorted", null, String.class));
     }
 
     @Test

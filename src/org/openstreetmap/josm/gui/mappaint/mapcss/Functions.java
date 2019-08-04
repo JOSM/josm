@@ -494,6 +494,28 @@ public final class Functions {
     }
 
     /**
+     * Sort an array of strings
+     * @param sortables The array to sort
+     * @return The sorted list
+     * @since 15279
+     */
+    public static List<String> sort(String... sortables) {
+        Arrays.parallelSort(sortables);
+        return Arrays.asList(sortables);
+    }
+
+    /**
+     * Sort a list of strings
+     * @param sortables The list to sort
+     * @return The sorted list
+     * @since 15279
+     */
+    public static List<String> sort_list(List<String> sortables) {
+        Collections.sort(sortables);
+        return sortables;
+    }
+
+    /**
      * Returns the role of current object in parent relation, or role of child if current object is a relation.
      * @param env the environment
      * @return role of current object in parent relation, or role of child if current object is a relation
