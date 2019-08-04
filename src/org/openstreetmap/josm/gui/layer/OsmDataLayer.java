@@ -293,12 +293,27 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
          * Deleted relations that have been visited
          */
         public int deletedRelations;
+        /**
+         * Incomplete nodes that have been visited
+         */
+        public int incompleteNodes;
+        /**
+         * Incomplete ways that have been visited
+         */
+        public int incompleteWays;
+        /**
+         * Incomplete relations that have been visited
+         */
+        public int incompleteRelations;
 
         @Override
         public void visit(final Node n) {
             nodes++;
             if (n.isDeleted()) {
                 deletedNodes++;
+            }
+            if (n.isIncomplete()) {
+                incompleteNodes++;
             }
         }
 
@@ -308,6 +323,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             if (w.isDeleted()) {
                 deletedWays++;
             }
+            if (w.isIncomplete()) {
+                incompleteWays++;
+            }
         }
 
         @Override
@@ -315,6 +333,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             relations++;
             if (r.isDeleted()) {
                 deletedRelations++;
+            }
+            if (r.isIncomplete()) {
+                incompleteRelations++;
             }
         }
     }
@@ -649,6 +670,24 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         }
     }
 
+    private static String counterText(String text, int deleted, int incomplete) {
+        StringBuilder sb = new StringBuilder(text);
+        if (deleted > 0 || incomplete > 0) {
+            sb.append(" (");
+            if (deleted > 0) {
+                sb.append(trn("{0} deleted", "{0} deleted", deleted, deleted));
+            }
+            if (deleted > 0 && incomplete > 0) {
+                sb.append(", ");
+            }
+            if (incomplete > 0) {
+                sb.append(trn("{0} incomplete", "{0} incomplete", incomplete, incomplete));
+            }
+            sb.append(')');
+        }
+        return sb.toString();
+    }
+
     @Override
     public Object getInfoComponent() {
         final DataCountVisitor counter = new DataCountVisitor();
@@ -657,20 +696,12 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         }
         final JPanel p = new JPanel(new GridBagLayout());
 
-        String nodeText = trn("{0} node", "{0} nodes", counter.nodes, counter.nodes);
-        if (counter.deletedNodes > 0) {
-            nodeText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedNodes, counter.deletedNodes)+')';
-        }
-
-        String wayText = trn("{0} way", "{0} ways", counter.ways, counter.ways);
-        if (counter.deletedWays > 0) {
-            wayText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedWays, counter.deletedWays)+')';
-        }
-
-        String relationText = trn("{0} relation", "{0} relations", counter.relations, counter.relations);
-        if (counter.deletedRelations > 0) {
-            relationText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedRelations, counter.deletedRelations)+')';
-        }
+        String nodeText = counterText(trn("{0} node", "{0} nodes", counter.nodes, counter.nodes),
+                counter.deletedNodes, counter.incompleteNodes);
+        String wayText = counterText(trn("{0} way", "{0} ways", counter.ways, counter.ways),
+                counter.deletedWays, counter.incompleteWays);
+        String relationText = counterText(trn("{0} relation", "{0} relations", counter.relations, counter.relations),
+                counter.deletedRelations, counter.incompleteRelations);
 
         p.add(new JLabel(tr("{0} consists of:", getName())), GBC.eol());
         p.add(new JLabel(nodeText, ImageProvider.get("data", "node"), JLabel.HORIZONTAL), GBC.eop().insets(15, 0, 0, 0));
