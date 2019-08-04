@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
@@ -347,8 +348,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     public void removeMembersReferringTo(List<? extends OsmPrimitive> primitives) {
         if (primitives == null)
             return;
-        if (members.removeIf(member -> primitives.contains(member.getMember())))
-            fireTableDataChanged();
+        remove(IntStream.range(0, members.size()).filter(i -> primitives.contains(members.get(i).getMember())).toArray());
     }
 
     /**
