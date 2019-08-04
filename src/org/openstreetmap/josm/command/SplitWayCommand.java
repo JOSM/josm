@@ -64,6 +64,7 @@ public class SplitWayCommand extends SequenceCommand {
     static {
         relationSpecialTypes.put("restriction", "restriction");
         relationSpecialTypes.put("destination_sign", "restriction");
+        relationSpecialTypes.put("connectivity", "restriction");
     }
 
     /**
