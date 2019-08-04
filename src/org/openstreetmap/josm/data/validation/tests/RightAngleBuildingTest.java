@@ -42,7 +42,7 @@ public class RightAngleBuildingTest extends Test {
 
     @Override
     public void visit(Way w) {
-        if (!w.isUsable() || !w.isClosed() || !isBuilding(w)) return;
+        if (!w.isUsable() || !w.isClosed() || !isBuilding(w) || !IN_DOWNLOADED_AREA_STRICT.test(w)) return;
 
         List<Pair<Double, Node>> angles = w.getAngles();
         for (Pair<Double, Node> pair: angles) {
