@@ -338,24 +338,34 @@ public final class ExpressionFactory {
         public Object evaluate(Environment env) {
             Object[] convertedArgs;
 
+            int start = 0;
+            int offset = 0;
             if (needsEnvironment) {
-                convertedArgs = new Object[args.size()+1];
+                start = 1;
+                offset = 1;
+                convertedArgs = new Object[args.size() + 1];
                 convertedArgs[0] = env;
-                for (int i = 1; i < convertedArgs.length; ++i) {
-                    convertedArgs[i] = Cascade.convertTo(args.get(i-1).evaluate(env), expectedParameterTypes[i]);
-                    if (convertedArgs[i] == null && !nullable) {
-                        return null;
-                    }
-                }
             } else {
                 convertedArgs = new Object[args.size()];
-                for (int i = 0; i < convertedArgs.length; ++i) {
-                    convertedArgs[i] = Cascade.convertTo(args.get(i).evaluate(env), expectedParameterTypes[i]);
-                    if (convertedArgs[i] == null && !nullable) {
-                        return null;
+            }
+
+            for (int i = start; i < convertedArgs.length; ++i) {
+                if (!expectedParameterTypes[i].isArray()) {
+                    convertedArgs[i] = Cascade.convertTo(args.get(i - offset).evaluate(env), expectedParameterTypes[i]);
+                } else {
+                    Class<?> clazz = expectedParameterTypes[i].getComponentType();
+                    Object[] varargs = (Object[]) Array.newInstance(clazz, args.size() - i + 1);
+                    for (int j = 0; j < args.size() - i + 1; ++j) {
+                        varargs[j] = Cascade.convertTo(args.get(j + i - 1).evaluate(env), clazz);
                     }
+                    convertedArgs[i] = expectedParameterTypes[i].cast(varargs);
+                    break;
+                }
+                if (convertedArgs[i] == null && !nullable) {
+                    return null;
                 }
             }
+
             Object result = null;
             try {
                 result = m.invoke(null, convertedArgs);

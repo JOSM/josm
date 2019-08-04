@@ -445,6 +445,15 @@ public class MapCSSParserTest {
         /* Check with non-relation */
         e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         assertEquals(0, Functions.count_roles(e, "from", "to"));
+
+        /* Check with actual call to mapcss functions */
+        MapCSSStyleSource source = new MapCSSStyleSource("relation[type=destination_sign] {roles: count_roles(\"from\");}");
+        source.loadStyleSource();
+        assertEquals(1, source.rules.size());
+        e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        assertTrue(source.rules.get(0).selector.matches(e));
+        source.rules.get(0).declaration.execute(e);
+        assertEquals((Integer) 1, e.getCascade(Environment.DEFAULT_LAYER).get("roles", null, Integer.class));
     }
 
     @Test

@@ -504,7 +504,7 @@ public final class Functions {
     }
 
     /**
-     * Returns true if role is in relation. Returns false if not a relation or it does not have the role.
+     * Returns the number of primitives in a relation with the specified roles.
      * @param env the environment
      * @param roles The roles to count in the relation
      * @return The number of relation members with the specified role
