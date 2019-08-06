@@ -52,7 +52,11 @@ way[highway=unclassified][!name][noname!=yes] {
   assertNoMatch: "way highway=unclassified name=Foo";
 }
 
-way.major_road[!ref][!destination:ref][noref!=yes][junction!=roundabout] {
+/* #17970 */
+relation[type=route][route=road][ref] > way.major_road {
+  set road_route_has_ref;
+}
+way.major_road!.road_route_has_ref[!ref][!destination:ref][noref!=yes][junction!=roundabout] {
   throwOther: tr("highway without a reference");
   group: tr("missing tag");
   assertMatch: "way highway=primary";
