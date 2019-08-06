@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Component;
 import java.awt.FileDialog;
-import java.awt.Frame;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class NativeFileChooser extends AbstractFileChooser {
      * @param file the current file/directory to point to
      */
     public NativeFileChooser(File file) {
-        fileDialog = new FileDialog((Frame) MainApplication.getMainFrame());
+        fileDialog = new FileDialog(MainApplication.getMainFrame());
         if (file != null) {
             fileDialog.setDirectory(file.getAbsolutePath());
             if (file.isFile()) {

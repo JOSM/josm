@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultButtonModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -37,7 +38,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JToggleButton.ToggleButtonModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SingleSelectionModel;
 import javax.swing.SwingConstants;
@@ -124,7 +124,7 @@ public class MapPaintDialog extends ToggleDialog {
         wfLabel.setFont(wfLabel.getFont().deriveFont(Font.PLAIN));
         wfLabel.setLabelFor(cbWireframe);
 
-        cbWireframe.setModel(new ToggleButtonModel() {
+        cbWireframe.setModel(new DefaultButtonModel() {
             @Override
             public void setSelected(boolean b) {
                 super.setSelected(b);
