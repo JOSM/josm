@@ -187,6 +187,7 @@ public class SearchDialog extends ExtendedDialog {
                     SearchCompiler.compile(ss);
                     return true;
                 } catch (SearchParseError | MapCSSException e) {
+                    Logging.trace(e);
                     return false;
                 }
             }

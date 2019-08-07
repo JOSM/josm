@@ -1417,8 +1417,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Point fromPnt, Point toPnt, int drawSize, double rmsSizeX, double rmsSizeY, double dropRate) {
 
         // collect frequently used items
-        final int fromX = (int) fromPnt.getX(); final int deltaX = (int) (toPnt.getX() - fromX);
-        final int fromY = (int) fromPnt.getY(); final int deltaY = (int) (toPnt.getY() - fromY);
+        final long fromX = (long) fromPnt.getX(); final long deltaX = (long) (toPnt.getX() - fromX);
+        final long fromY = (long) fromPnt.getY(); final long deltaY = (long) (toPnt.getY() - fromY);
 
         // use same random values for each point
         final Random heatMapRandom = new Random(fromX+fromY+deltaX+deltaY);

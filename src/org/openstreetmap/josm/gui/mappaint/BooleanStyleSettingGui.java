@@ -31,9 +31,9 @@ public class BooleanStyleSettingGui implements StyleSettingGui {
     }
 
     static class BooleanStyleSettingCheckBoxMenuItem extends JCheckBoxMenuItem {
-        boolean noRepaint = false;
+        boolean noRepaint;
 
-        public BooleanStyleSettingCheckBoxMenuItem(BooleanStyleSetting setting) {
+        BooleanStyleSettingCheckBoxMenuItem(BooleanStyleSetting setting) {
             setAction(new AbstractAction(setting.label) {
                 @Override
                 public void actionPerformed(ActionEvent e) {

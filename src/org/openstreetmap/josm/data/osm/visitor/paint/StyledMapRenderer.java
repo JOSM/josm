@@ -756,7 +756,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             } else {
                 g.setColor(color);
             }
-            Rectangle2D rect = new Rectangle2D.Double(p.getInViewX()-radius-1, p.getInViewY()-radius-1, size + 1, size + 1);
+            Rectangle2D rect = new Rectangle2D.Double(p.getInViewX()-radius-1d, p.getInViewY()-radius-1d, size + 1d, size + 1d);
             if (fill) {
                 g.fill(rect);
             } else {
@@ -842,7 +842,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         int drawY = -img.getHeight() / 2 + img.offsetY;
         temporaryGraphics.drawImage(img.getImage(disabled), drawX, drawY, nc);
         if (selected || member) {
-            selectionDrawer.accept(temporaryGraphics, new Rectangle2D.Double(drawX - 2, drawY - 2, img.getWidth() + 4, img.getHeight() + 4));
+            selectionDrawer.accept(temporaryGraphics, new Rectangle2D.Double(drawX - 2d, drawY - 2d, img.getWidth() + 4d, img.getHeight() + 4d));
         }
     }
 

@@ -32,7 +32,7 @@ public final class ColorScale {
     public static ColorScale createFixedScale(Color[] colors) {
         ColorScale sc = new ColorScale();
         sc.colors = Utils.copyArray(colors);
-        sc.setRange(0, colors.length - 1);
+        sc.setRange(0, colors.length - 1d);
         sc.addBounds();
         return sc;
     }

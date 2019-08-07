@@ -117,7 +117,7 @@ public abstract class AbstractMapRenderer implements Rendering {
             }
 
             g.setColor(backgroundColor);
-            g.fill(new Rectangle2D.Double(x-1, y-12, 8*strlen+1, 14));
+            g.fill(new Rectangle2D.Double(x-1, y-12, 8*strlen+1d, 14));
             g.setColor(clr);
             g.drawString(on, (int) x, (int) y);
         }
