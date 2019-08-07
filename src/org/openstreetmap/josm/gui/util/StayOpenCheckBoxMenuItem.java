@@ -9,7 +9,7 @@ import javax.swing.MenuSelectionManager;
 /**
  * An extension of JCheckBoxMenuItem that doesn't close the menu when selected.
  *
- * @author Darryl https://tips4java.wordpress.com/2010/09/12/keeping-menus-open/
+ * @author Darryl Burke https://tips4java.wordpress.com/2010/09/12/keeping-menus-open/
  */
 public class StayOpenCheckBoxMenuItem extends JCheckBoxMenuItem {
 
