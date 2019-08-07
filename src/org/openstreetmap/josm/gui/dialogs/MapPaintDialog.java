@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultButtonModel;
@@ -62,6 +64,8 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting.StyleSettingGroup;
+import org.openstreetmap.josm.gui.mappaint.StyleSettingGroupGui;
 import org.openstreetmap.josm.gui.mappaint.StyleSettingGuiFactory;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
@@ -690,15 +694,20 @@ public class MapPaintDialog extends ToggleDialog {
             setMenu.setToolTipText(tr("Customize the style"));
             add(setMenu);
 
-            int sel = tblStyles.getSelectionModel().getLeadSelectionIndex();
-            StyleSource style = null;
-            if (sel >= 0 && sel < model.getRowCount()) {
-                style = model.getRow(sel);
-            }
+            final int sel = tblStyles.getSelectionModel().getLeadSelectionIndex();
+            final StyleSource style = sel >= 0 && sel < model.getRowCount() ? model.getRow(sel) : null;
             if (style == null || style.settings.isEmpty()) {
                 setMenu.setEnabled(false);
             } else {
-                for (StyleSetting s : style.settings) {
+                // Add settings groups
+                for (Entry<StyleSettingGroup, List<StyleSetting>> e : style.settingGroups.entrySet()) {
+                    new StyleSettingGroupGui(e.getKey(), e.getValue()).addMenuEntry(setMenu);
+                }
+                // Add settings not in groups
+                final List<StyleSetting> allStylesInGroups = style.settingGroups.values().stream()
+                        .flatMap(l -> l.stream()).collect(Collectors.toList());
+                for (StyleSetting s : style.settings.stream()
+                        .filter(s -> !allStylesInGroups.contains(s)).collect(Collectors.toList())) {
                     StyleSettingGuiFactory.getStyleSettingGui(s).addMenuEntry(setMenu);
                 }
             }

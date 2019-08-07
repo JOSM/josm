@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 
@@ -31,19 +30,32 @@ public class BooleanStyleSettingGui implements StyleSettingGui {
         this.setting = Objects.requireNonNull(setting);
     }
 
+    static class BooleanStyleSettingCheckBoxMenuItem extends JCheckBoxMenuItem {
+        boolean noRepaint = false;
+
+        public BooleanStyleSettingCheckBoxMenuItem(BooleanStyleSetting setting) {
+            setAction(new AbstractAction(setting.label) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setting.setValue(isSelected());
+                    if (!noRepaint) {
+                        MainApplication.worker.submit(new MapPaintStyleLoader(Arrays.asList(setting.parentStyle)));
+                    }
+                }
+            });
+            setSelected((boolean) setting.getValue());
+            setUI(new StayOpenCheckBoxMenuItemUI());
+        }
+
+        public void doClickWithoutRepaint(int pressTime) {
+            noRepaint = true;
+            doClick(pressTime);
+            noRepaint = false;
+        }
+    }
+
     @Override
     public void addMenuEntry(JMenu menu) {
-        final JCheckBoxMenuItem item = new JCheckBoxMenuItem();
-        Action a = new AbstractAction(setting.label) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setting.setValue(item.isSelected());
-                MainApplication.worker.submit(new MapPaintStyleLoader(Arrays.asList(setting.parentStyle)));
-            }
-        };
-        item.setAction(a);
-        item.setSelected((boolean) setting.getValue());
-        item.setUI(new StayOpenCheckBoxMenuItemUI());
-        menu.add(item);
+        menu.add(new BooleanStyleSettingCheckBoxMenuItem(setting));
     }
 }

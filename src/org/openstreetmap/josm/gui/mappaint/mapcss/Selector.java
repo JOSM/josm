@@ -74,6 +74,9 @@ public interface Selector {
     /** selector base for artificial bases created to use preferences. */
     String BASE_SETTING = "setting";
 
+    /** selector base for grouping settings. */
+    String BASE_SETTINGS = "settings";
+
     /**
      * Apply the selector to the primitive and check if it matches.
      *
@@ -702,6 +705,7 @@ public interface Selector {
             case "meta": return BASE_META;
             case "canvas": return BASE_CANVAS;
             case "setting": return BASE_SETTING;
+            case "settings": return BASE_SETTINGS;
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
             }
@@ -778,7 +782,7 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return base + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range) + Utils.join("", conds)
+            return base + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range) + (conds != null ? Utils.join("", conds) : "")
                     + (subpart != null && subpart != Subpart.DEFAULT_SUBPART ? ("::" + subpart) : "");
         }
     }

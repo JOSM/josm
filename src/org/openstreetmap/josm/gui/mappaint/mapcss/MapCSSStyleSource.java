@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting.StyleSettingGroup;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
@@ -501,6 +502,7 @@ public class MapCSSStyleSource extends StyleSource {
                         break;
                     case Selector.BASE_META:
                     case Selector.BASE_SETTING:
+                    case Selector.BASE_SETTINGS:
                         break;
                     default:
                         final RuntimeException e = new JosmRuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
@@ -575,29 +577,46 @@ public class MapCSSStyleSource extends StyleSource {
         backgroundColorOverride = c.get("fill-color", null, Color.class);
     }
 
+    private static void loadSettings(MapCSSRule r, GeneralSelector gs, Environment env) {
+        if (gs.matchesConditions(env)) {
+            env.layer = null;
+            env.layer = gs.getSubpart().getId(env);
+            r.execute(env);
+        }
+    }
+
     private void loadSettings() {
         settings.clear();
         settingValues.clear();
+        settingGroups.clear();
         MultiCascade mc = new MultiCascade();
+        MultiCascade mcGroups = new MultiCascade();
         Node n = new Node();
-        String code = LanguageInfo.getJOSMLocaleCode();
-        n.put("lang", code);
+        n.put("lang", LanguageInfo.getJOSMLocaleCode());
         // create a fake environment to read the meta data block
         Environment env = new Environment(n, mc, "default", this);
+        Environment envGroups = new Environment(n, mcGroups, "default", this);
 
+        // Parse rules
         for (MapCSSRule r : rules) {
             if (r.selector instanceof GeneralSelector) {
                 GeneralSelector gs = (GeneralSelector) r.selector;
                 if (Selector.BASE_SETTING.equals(gs.getBase())) {
-                    if (!gs.matchesConditions(env)) {
-                        continue;
-                    }
-                    env.layer = null;
-                    env.layer = gs.getSubpart().getId(env);
-                    r.execute(env);
+                    loadSettings(r, gs, env);
+                } else if (Selector.BASE_SETTINGS.equals(gs.getBase())) {
+                    loadSettings(r, gs, envGroups);
                 }
             }
         }
+        // Load groups
+        for (Entry<String, Cascade> e : mcGroups.getLayers()) {
+            if ("default".equals(e.getKey())) {
+                Logging.warn("settings requires layer identifier e.g. 'settings::settings_group {...}'");
+                continue;
+            }
+            settingGroups.put(StyleSettingGroup.create(e.getValue(), this, e.getKey()), new ArrayList<>());
+        }
+        // Load settings
         for (Entry<String, Cascade> e : mc.getLayers()) {
             if ("default".equals(e.getKey())) {
                 Logging.warn("setting requires layer identifier e.g. 'setting::my_setting {...}'");
@@ -609,11 +628,16 @@ public class MapCSSStyleSource extends StyleSource {
             if ("boolean".equals(type)) {
                 set = BooleanStyleSetting.create(c, this, e.getKey());
             } else {
-                Logging.warn("Unknown setting type: "+type);
+                Logging.warn("Unknown setting type: {0}", type);
             }
             if (set != null) {
                 settings.add(set);
                 settingValues.put(e.getKey(), set.getValue());
+                String groupId = c.get("group", null, String.class);
+                if (groupId != null) {
+                    settingGroups.get(settingGroups.keySet().stream().filter(g -> g.key.equals(groupId)).findAny()
+                            .orElseThrow(() -> new IllegalArgumentException("Unknown settings group: " + groupId))).add(set);
+                }
             }
         }
         settings.sort(null);

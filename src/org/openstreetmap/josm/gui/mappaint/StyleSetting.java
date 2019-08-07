@@ -1,7 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.swing.Icon;
+
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -33,18 +40,60 @@ public interface StyleSetting {
     Object getValue();
 
     /**
+     * Superclass of style settings and groups.
+     * @since 15289
+     */
+    abstract class LabeledStyleSetting implements Comparable<LabeledStyleSetting> {
+        public final StyleSource parentStyle;
+        public final String label;
+
+        LabeledStyleSetting(StyleSource parentStyle, String label) {
+            this.parentStyle = Objects.requireNonNull(parentStyle);
+            this.label = Objects.requireNonNull(label);
+        }
+
+        @Override
+        public int compareTo(LabeledStyleSetting o) {
+            return label.compareTo(o.label);
+        }
+    }
+
+    /**
+     * A style setting group.
+     * @since 15289
+     */
+    class StyleSettingGroup extends LabeledStyleSetting {
+        public final String key;
+        public final Icon icon;
+
+        public StyleSettingGroup(StyleSource parentStyle, String label, String key, Icon icon) {
+            super(parentStyle, label);
+            this.key = Objects.requireNonNull(key);
+            this.icon = icon;
+        }
+
+        public static StyleSettingGroup create(Cascade c, StyleSource parentStyle, String key) {
+            String label = c.get("label", null, String.class);
+            if (label == null) {
+                Logging.warn("property 'label' required for boolean style setting");
+                return null;
+            }
+            Icon icon = Optional.ofNullable(c.get("icon", null, String.class))
+                    .map(s -> ImageProvider.get(s, ImageSizes.MENU)).orElse(null);
+            return new StyleSettingGroup(parentStyle, label, key, icon);
+        }
+    }
+
+    /**
      * A style setting for boolean value (yes / no).
      */
-    class BooleanStyleSetting implements StyleSetting, Comparable<BooleanStyleSetting> {
-        public final StyleSource parentStyle;
+    class BooleanStyleSetting extends LabeledStyleSetting implements StyleSetting {
         public final String prefKey;
-        public final String label;
         public final boolean def;
 
         public BooleanStyleSetting(StyleSource parentStyle, String prefKey, String label, boolean def) {
-            this.parentStyle = parentStyle;
-            this.prefKey = prefKey;
-            this.label = label;
+            super(parentStyle, label);
+            this.prefKey = Objects.requireNonNull(prefKey);
             this.def = def;
         }
 
@@ -80,11 +129,6 @@ public interface StyleSetting {
             } else {
                 Config.getPref().putBoolean(prefKey, b);
             }
-        }
-
-        @Override
-        public int compareTo(BooleanStyleSetting o) {
-            return label.compareTo(o.label);
         }
     }
 }

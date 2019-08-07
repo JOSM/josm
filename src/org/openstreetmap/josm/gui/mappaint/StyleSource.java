@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting.StyleSettingGroup;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -64,6 +66,10 @@ public abstract class StyleSource extends SourceEntry {
      * Values of the settings for efficient lookup.
      */
     public Map<String, Object> settingValues = new HashMap<>();
+    /**
+     * Map of settings per group.
+     */
+    public final Map<StyleSettingGroup, List<StyleSetting>> settingGroups = new TreeMap<>();
 
     /**
      * Constructs a new, active {@link StyleSource}.
