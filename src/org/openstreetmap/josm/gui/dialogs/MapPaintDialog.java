@@ -705,7 +705,7 @@ public class MapPaintDialog extends ToggleDialog {
                 }
                 // Add settings not in groups
                 final List<StyleSetting> allStylesInGroups = style.settingGroups.values().stream()
-                        .flatMap(l -> l.stream()).collect(Collectors.toList());
+                        .flatMap(List<StyleSetting>::stream).collect(Collectors.toList());
                 for (StyleSetting s : style.settings.stream()
                         .filter(s -> !allStylesInGroups.contains(s)).collect(Collectors.toList())) {
                     StyleSettingGuiFactory.getStyleSettingGui(s).addMenuEntry(setMenu);

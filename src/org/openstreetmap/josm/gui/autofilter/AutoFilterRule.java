@@ -96,7 +96,7 @@ public class AutoFilterRule {
             new AutoFilterRule("level", 17),
             new AutoFilterRule("layer", 16),
             new AutoFilterRule("maxspeed", 16)
-                .setValueFormatter(s -> s.replaceAll(" mph", "")),
+                .setValueFormatter(s -> s.replace(" mph", "")),
             new AutoFilterRule("voltage", 5)
                 .setValueFormatter(s -> s.replaceAll("000$", "k") + 'V')
                 .setValueComparator(Comparator.comparingInt(Integer::parseInt))

@@ -228,7 +228,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 String line = exec("lsb_release", "-ds");
                 if (line != null && !line.isEmpty()) {
                     line = line.replaceAll("\"+", "");
-                    line = line.replaceAll("NAME=", ""); // strange code for some Gentoo's
+                    line = line.replace("NAME=", ""); // strange code for some Gentoo's
                     if (line.startsWith("Linux ")) // e.g. Linux Mint
                         return line;
                     else if (!line.isEmpty())

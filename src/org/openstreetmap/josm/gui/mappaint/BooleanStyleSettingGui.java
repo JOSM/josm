@@ -47,7 +47,7 @@ public class BooleanStyleSettingGui implements StyleSettingGui {
             setUI(new StayOpenCheckBoxMenuItemUI());
         }
 
-        public void doClickWithoutRepaint(int pressTime) {
+        void doClickWithoutRepaint(int pressTime) {
             noRepaint = true;
             doClick(pressTime);
             noRepaint = false;

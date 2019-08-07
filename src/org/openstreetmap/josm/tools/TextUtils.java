@@ -18,6 +18,6 @@ public final class TextUtils {
      * @since 13978
      */
     public static String wrapLongUrl(String url) {
-        return url.replaceAll("/", "/\u200b").replaceAll("&", "&\u200b");
+        return url.replace("/", "/\u200b").replace("&", "&\u200b");
     }
 }

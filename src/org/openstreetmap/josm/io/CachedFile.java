@@ -421,7 +421,7 @@ public class CachedFile implements Closeable {
             prefKey.append(destDir).append('.');
         }
         prefKey.append(url.toString().replaceAll("%<(.*)>", ""));
-        return prefKey.toString().replaceAll("=", "_");
+        return prefKey.toString().replace("=", "_");
     }
 
     private File checkLocal(URL url) throws IOException {

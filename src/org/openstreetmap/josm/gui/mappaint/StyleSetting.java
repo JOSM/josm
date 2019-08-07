@@ -53,6 +53,21 @@ public interface StyleSetting {
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(label, parentStyle);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            LabeledStyleSetting other = (LabeledStyleSetting) obj;
+            return Objects.equals(label, other.label) && Objects.equals(parentStyle, other.parentStyle);
+        }
+
+        @Override
         public int compareTo(LabeledStyleSetting o) {
             return label.compareTo(o.label);
         }
@@ -63,7 +78,9 @@ public interface StyleSetting {
      * @since 15289
      */
     class StyleSettingGroup extends LabeledStyleSetting {
+        /** group identifier */
         public final String key;
+        /** group icon (optional) */
         public final Icon icon;
 
         public StyleSettingGroup(StyleSource parentStyle, String label, String key, Icon icon) {
@@ -72,6 +89,13 @@ public interface StyleSetting {
             this.icon = icon;
         }
 
+        /**
+         * Creates a new {@code StyleSettingGroup}.
+         * @param c cascade
+         * @param parentStyle parent style source
+         * @param key group identifier
+         * @return newly created {@code StyleSettingGroup}
+         */
         public static StyleSettingGroup create(Cascade c, StyleSource parentStyle, String key) {
             String label = c.get("label", null, String.class);
             if (label == null) {
@@ -97,6 +121,13 @@ public interface StyleSetting {
             this.def = def;
         }
 
+        /**
+         * Creates a new {@code BooleanStyleSetting}.
+         * @param c cascade
+         * @param parentStyle parent style source
+         * @param key setting identifier
+         * @return newly created {@code BooleanStyleSetting}
+         */
         public static BooleanStyleSetting create(Cascade c, StyleSource parentStyle, String key) {
             String label = c.get("label", null, String.class);
             if (label == null) {

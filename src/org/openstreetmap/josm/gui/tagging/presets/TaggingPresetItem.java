@@ -101,7 +101,7 @@ public abstract class TaggingPresetItem {
     }
 
     protected static String fixPresetString(String s) {
-        return s == null ? s : s.replaceAll("'", "''");
+        return s == null ? s : s.replace("'", "''");
     }
 
     protected static String getLocaleText(String text, String textContext, String defaultText) {

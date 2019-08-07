@@ -65,6 +65,11 @@ public class StayOpenCheckBoxMenuItemUI extends BasicCheckBoxMenuItemUI {
         }
     }
 
+    /**
+     * Creates a new {@code StayOpenCheckBoxMenuItemUI}.
+     * @param c not used
+     * @return newly created {@code StayOpenCheckBoxMenuItemUI}
+     */
     public static ComponentUI createUI(JComponent c) {
         return new StayOpenCheckBoxMenuItemUI();
     }

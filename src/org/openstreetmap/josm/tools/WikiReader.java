@@ -106,7 +106,7 @@ public class WikiReader {
         StringBuilder b = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (!line.contains("[[TranslatedPages]]")) {
-                b.append(line.replaceAll(" />", ">")).append('\n');
+                b.append(line.replace(" />", ">")).append('\n');
             }
         }
         return html ? "<html>" + b + "</html>" : b.toString();
@@ -139,11 +139,11 @@ public class WikiReader {
                 // add a border="0" attribute to images, otherwise the internal help browser
                 // will render a thick  border around images inside an <a> element
                 // remove width information to avoid distorded images (fix #11262)
-                b.append(line.replaceAll("<img ", "<img border=\"0\" ")
+                b.append(line.replace("<img ", "<img border=\"0\" ")
                          .replaceAll("width=\"(\\d+)\"", "")
                          .replaceAll("<span class=\"icon\">.</span>", "")
-                         .replaceAll("href=\"/", "href=\"" + baseurl + '/')
-                         .replaceAll(" />", ">"))
+                         .replace("href=\"/", "href=\"" + baseurl + '/')
+                         .replace(" />", ">"))
                          .append('\n');
             } else if (transl && line.contains("</div>")) {
                 transl = false;

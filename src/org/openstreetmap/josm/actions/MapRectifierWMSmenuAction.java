@@ -203,14 +203,14 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 Matcher m = s.urlRegEx.matcher(text);
                 if (m.find()) {
                     String id = m.group(1);
-                    String newURL = s.wmsUrl.replaceAll("__s__", id);
+                    String newURL = s.wmsUrl.replace("__s__", id);
                     String title = s.name + " (" + id + ')';
                     addWMSLayer(title, newURL);
                     break outer;
                 }
                 // If not, look if it's a valid ID for the selected service
                 if (s.idValidator.matcher(text).matches()) {
-                    String newURL = s.wmsUrl.replaceAll("__s__", text);
+                    String newURL = s.wmsUrl.replace("__s__", text);
                     String title = s.name + " (" + text + ')';
                     addWMSLayer(title, newURL);
                     break outer;

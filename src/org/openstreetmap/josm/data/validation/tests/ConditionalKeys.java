@@ -105,7 +105,7 @@ public class ConditionalKeys extends Test.TagTest {
         if (!key.endsWith(":conditional")) {
             return false;
         }
-        final String[] parts = key.replaceAll(":conditional", "").split(":");
+        final String[] parts = key.replace(":conditional", "").split(":");
         return isKeyValid3Parts(parts) || isKeyValid1Part(parts) || isKeyValid2Parts(parts);
     }
 
