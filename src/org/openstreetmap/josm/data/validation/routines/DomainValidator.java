@@ -295,7 +295,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2019020200, Last Updated Sat Feb  2 07:07:01 2019 UTCs
+        // Taken from Version 2019081000, Last Updated Sat Aug 10 07:07:01 2019 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -703,6 +703,7 @@ public final class DomainValidator extends AbstractValidator {
         "games", // games United TLD Holdco Ltd.
         "gap", // gap The Gap, Inc.
         "garden", // garden Top Level Domain Holdings Limited
+        "gay", // gay Top Level Design, LLC
         "gbiz", // gbiz Charleston Road Registry Inc.
         "gdn", // gdn Joint Stock Company "Navigation-information systems"
         "gea", // gea GEA Group Aktiengesellschaft
