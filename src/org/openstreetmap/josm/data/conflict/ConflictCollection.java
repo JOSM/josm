@@ -290,7 +290,9 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      */
     public void add(ConflictCollection other) {
         for (Conflict<?> c : other) {
-            add(c);
+            if (!hasConflict(c)) {
+                add(c);
+            }
         }
     }
 
