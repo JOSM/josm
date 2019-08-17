@@ -7282,6 +7282,7 @@
             <space />
             <key key="landuse" value="quarry" />
             <reference ref="name_operator" />
+            <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
         </item> <!-- Quarry -->
     </group> <!-- Landuse -->
   </group> <!-- Geography -->
