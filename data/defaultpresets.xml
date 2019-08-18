@@ -7090,7 +7090,7 @@
             <link wiki="Tag:landuse=farmland" />
             <space />
             <key key="landuse" value="farmland" />
-            <combo key="crop" text="Crop" values="corn,grass,rice,wheat,hop,cereal,tea" values_context="crop" />
+            <combo key="crop" text="Crop" values="corn,grass,rice,wheat,hop,cereal,tea,sugarcane" values_context="crop" />
             <reference ref="optional_name" />
         </item> <!-- Farmland -->
         <item name="Meadow" icon="presets/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -7103,7 +7103,7 @@
             <link wiki="Tag:landuse=orchard" />
             <space />
             <key key="landuse" value="orchard" />
-            <combo key="trees" text="Trees" values="almond_trees,apple_trees,banana_plants,cherry_trees,coconut_palms,hazel_plants,oil_palms,olive_trees,orange_trees,peach_trees,persimmon_trees,plum_trees,tea_plants,walnut_trees" />
+            <combo key="trees" text="Trees" values="almond_trees,apple_trees,banana_plants,cherry_trees,coconut_palms,coffea_plants,hazel_plants,oil_palms,olive_trees,orange_trees,peach_trees,persimmon_trees,plum_trees,tea_plants,walnut_trees" />
             <reference ref="optional_name" />
         </item> <!-- Orchard -->
         <item name="Vineyard" icon="presets/landuse/vineyard.svg" type="closedway,multipolygon" preset_name_label="true">
