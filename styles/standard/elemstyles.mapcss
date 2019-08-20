@@ -389,6 +389,7 @@ node[barrier=gate] {
 way[barrier=yes],
 way[barrier=hedge],
 way[barrier=fence],
+way[barrier=handrail],
 way[barrier=wall],
 way[barrier=guard_rail],
 way[barrier=city_wall],

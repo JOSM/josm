@@ -1356,6 +1356,14 @@
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Fence -->
+        <item name="Handrail" icon="presets/barrier/handrail.svg" type="way,closedway" preset_name_label="true">
+            <link wiki="Tag:barrier=handrail" />
+            <key key="barrier" value="handrail" />
+            <optional>
+                <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
+            </optional>
+        </item> <!-- Handrail -->
         <item name="Guard Rail" icon="presets/barrier/guard_rail.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=guard_rail" />
             <key key="barrier" value="guard_rail" />
