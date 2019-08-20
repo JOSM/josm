@@ -1255,12 +1255,35 @@ way[direction=down][incline][incline!=down] {
   group: tr("deprecated tagging");
 }
 
+way[building=true],
+way[building=*],
+way[building=Y],
 way[building=y],
 way[building=1] {
   throwError: tr("{0}", "{0.tag}");
   suggestAlternative: "building=yes";
   group: tr("misspelled value");
   fixAdd: "building=yes";
+}
+
+/* #17786 */
+*[building=abandoned],
+*[building=address],
+*[building=bing],
+*[building=collapsed],
+*[building=damaged],
+*[building=demolished],
+*[building=disused],
+*[building=fixme],
+*[building=occupied],
+*[building=other],
+*[building=razed],
+*[building=unclassified],
+*[building=undefined],
+*[building=unknown],
+*[building=unidentified] {
+  throwWarning: tr("{0} is not a building type.", "{0.tag}");
+  group: tr("deprecated tagging");
 }
 
 /* #15675 */
