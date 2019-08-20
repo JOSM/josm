@@ -269,7 +269,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         ImageryInfo ret = new ImageryInfo(info);
         ret.setUrl(url);
         ret.setImageryType(ImageryType.WMS);
-        ret.setName(info.getName() + selectedLayers);
+        ret.setName(info.getName() + " - " + selectedLayers);
         ret.setServerProjections(wms.getServerProjections(selection.layers));
         return ret;
     }
