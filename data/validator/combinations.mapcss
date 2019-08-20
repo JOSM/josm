@@ -258,7 +258,8 @@ way[highway=footway][oneway=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.tag} together with {1.tag}, see #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186 */
+/* {0.tag} together with {1.tag}, see #17950, #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186 */
+*[amenity=police][police],
 node[highway=crossing][crossing=no],
 node[railway=crossing][crossing=no],
 way[junction=yes][highway],

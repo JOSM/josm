@@ -2479,6 +2479,36 @@ node[emergency=siren] {
 }
 
 /****************/
+/* police tags */
+/****************/
+
+area[police=barracks],
+area[police=car_pound],
+area[police=checkpoint],
+area[police=detention],
+area[police=naval_base],
+area[police=offices],
+area[police=range],
+area[police=storage],
+area[police=training_area],
+area[police=yes] {
+    fill-color: police#ecba52;
+}
+node[police=barracks],
+node[police=car_pound],
+node[police=checkpoint],
+node[police=detention],
+node[police=naval_base],
+node[police=offices],
+node[police=range],
+node[police=storage],
+node[police=training_node],
+node[police=yes] {
+    icon-image: "presets/service/police_non_public.svg";
+    set icon_z17;
+}
+
+/****************/
 /* amenity tags */
 /****************/
 

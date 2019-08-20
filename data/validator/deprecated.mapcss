@@ -457,7 +457,8 @@ way[type=palm] {
   fixAdd: "park_ride=yes";
 }
 
-/* see #10661, #10837, #11737, #12771 */
+/* see #17950, #10661, #10837, #11737, #12771 */
+*[police=yes],
 *[traffic_calming=yes],
 *[access=restricted],
 *[barrier=yes],
