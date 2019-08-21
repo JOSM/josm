@@ -1255,11 +1255,11 @@ way[direction=down][incline][incline!=down] {
   group: tr("deprecated tagging");
 }
 
-way[building=true],
-way[building=*],
-way[building=Y],
-way[building=y],
-way[building=1] {
+*[building=true],
+*[building="*"],
+*[building=Y],
+*[building=y],
+*[building=1] {
   throwError: tr("{0}", "{0.tag}");
   suggestAlternative: "building=yes";
   group: tr("misspelled value");
