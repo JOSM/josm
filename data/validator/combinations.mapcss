@@ -617,3 +617,10 @@ way[highway=cycleway][foot][foot!=no      ][!segregated]!.unpaved_surface {
   throwWarning: tr("Combined foot- and cycleway without {1}.", "{3.key}");
   group: tr("missing tag");
 }
+
+/* #17989 */
+node[emergency_ward_entrance][emergency!=emergency_ward_entrance] {
+  throwWarning: tr("{0} without {1}", "{0.tag}", "{1.tag}");
+  group: tr("missing tag");
+  fixAdd: "emergency=emergency_ward_entrance";
+}
