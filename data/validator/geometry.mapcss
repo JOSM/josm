@@ -3,7 +3,7 @@ node[area=no],
 node[oneway],
 node[bridge],
 node[sidewalk],
-node[footway],
+node[footway][footway!=crossing], /* footway=crossing has own warning in highway.mapcss */
 node[man_made=embankment],
 node[man_made=groyne],
 node[man_made=cutline],

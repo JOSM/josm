@@ -45,6 +45,18 @@ way[railway=level_crossing] {
   assertNoMatch: "node highway=crossing";
 }
 
+/* #18060 */
+node[footway=crossing] {
+  throwWarning: tr("{0} on a node", "{0.tag}");
+  suggestAlternative: "highway=crossing";
+  suggestAlternative: "railway=crossing";
+}
+node[cycleway=crossing] {
+  throwWarning: tr("{0} on a node", "{0.tag}");
+  suggestAlternative: "highway=crossing + bicycle=yes";
+  suggestAlternative: "railway=crossing + bicycle=yes";
+}
+
 way[highway=unclassified][!name][noname!=yes] {
   throwOther: tr("Unnamed unclassified highway");
   assertMatch: "way highway=unclassified";
