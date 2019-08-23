@@ -3622,11 +3622,11 @@ way[railway=rail][service=spur] {
     width: 1;
     color: railyard#552200;
 }
-/* draw tram on top of other way (highway=*) or
+/* draw tram and light_rail on top of other way (highway=*) or
    as a standalone style */
 way[highway][railway=tram]::core_railway,
 way[!highway][railway=tram] {
-    object-z-index: 1;
+    z-index: 1;
     modifier: false; /* don't draw default way if there is no line on default layer */
     width: 1;
     color: railover#202020;
@@ -3648,7 +3648,10 @@ way[!highway][railway=tram][service=spur] {
     casing-dashes: 6,6;
 }
 
-way[railway=light_rail] {
+way[highway][railway=light_rail]::core_railway,
+way[!highway][railway=light_rail] {
+    z-index: 1;
+    modifier: false; /* don't draw default way if there is no line on default layer */
     width: 2;
     color: otherrail#808080;
     dashes: 9,9;
@@ -3766,8 +3769,12 @@ way[railway=construction][construction=rail] {
     dashes: 9,9;
     dashes-background-color: construction#ffff00;
 }
-way[railway=construction][construction=light_rail] {
+way[railway=construction][construction=light_rail][highway]::core_railway,
+way[railway=construction][construction=light_rail][!highway] {
+    z-index: 1;
     width: 2;
+    dashes: 9,9;
+    color: construction#ffff00;
 }
 way[railway=construction][construction=tram][highway]::core_railway,
 way[railway=construction][construction=tram][!highway] {

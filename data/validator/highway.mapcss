@@ -143,8 +143,8 @@ way[footway][footway!=sidewalk][footway!=crossing]!.fixable_footway!.not_fixable
   assertMatch: "way footway=bar";
 }
 
-/* #11270, #9297, #15439, #16424 */
-way[railway =~ /^(light_rail|miniature|narrow_gauge|preserved|rail)$/][!highway] > node { set .is_in_railway }
+/* #11270, #9297, #15439, #16424, #17022 */
+way[railway =~ /^(miniature|narrow_gauge|preserved|rail)$/][!highway] > node { set .is_in_railway }
 way[highway =~ /^(bridleway|cycleway|footway|path|steps)$/] > node { set .is_in_minor_road }
 way[highway =~ /^(bus_guideway|living_street|motorway|motorway_link|pedestrian|primary|primary_link|raceway|residential|road|secondary|secondary_link|service|tertiary|tertiary_link|track|trunk|trunk_link|unclassified)$/] > node { set .is_in_major_road }
 node[railway!=crossing][crossing!=no].is_in_railway.is_in_minor_road!.is_in_major_road {
