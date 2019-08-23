@@ -7677,7 +7677,7 @@
                 <link wiki="Relation:superroute" />
                 <space/>
                 <key key="type" value="superroute"/>
-                <combo key="route" text="Type" values="bicycle,detour,foot,hiking,horse,mtb,piste,power,railway,road,ski" display_values="Bicycle Route,Mountain Biking Route,Hiking Route,Walking Route,Riding Route,Piste Route,Ski Route,Detour Route,Power Route,Railway Route,Road Route" />
+                <combo key="route" text="Type" values="bicycle,detour,foot,hiking,horse,mtb,piste,power,railway,road,ski" display_values="Bicycle Route,Detour Route,Walking Route,Hiking Route,Riding Route,Mountain Biking Route,Piste Route,Power Route,Railway Route,Road Route,Ski Route" />
                 <reference ref="name_ref_operator"/>
                 <roles>
                     <role key="" text="route segment" requisite="required" type="relation" member_expression="type=route"/> <!-- fixme: at least 2 members are required -->
