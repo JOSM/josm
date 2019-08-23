@@ -12,6 +12,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -260,6 +261,40 @@ public class MapCSSParserTest {
         assertTrue(c2.applies(new Environment(w2)));
         w2.put("bar", "^[0-9]$");
         assertFalse(c2.applies(new Environment(w2)));
+    }
+
+    /**
+     * Make certain that getting tags by regex works
+     * @throws Exception if there is an assert error (or another error)
+     */
+    @Test
+    public void testTagRegex() throws Exception {
+        DataSet ds = new DataSet();
+        Way way1 = TestUtils.newWay("old_ref=A1 ref=A2", new Node(new LatLon(1, 1)), new Node(new LatLon(2, 2)));
+        for (Node node : way1.getNodes()) {
+            ds.addPrimitive(node);
+        }
+        ds.addPrimitive(way1);
+
+        tagRegex(way1, "way[ref][count(tag_regex(\"ref\")) > 1] {}", new Boolean[] {true, false, false, true, false});
+        way1.keySet().stream().forEach(key -> way1.put(key, null));
+        way1.put("old_ref", "A1");
+        way1.put("ref", "A2");
+        tagRegex(way1, "way[ref][count(tag_regex(\"ref\", \"i\")) > 1] {}", new Boolean[] {true, false, false, true, true});
+    }
+
+    private void tagRegex(Way way, String parserString, Boolean[] expected) throws Exception {
+        Selector selector = getParser(parserString).selector();
+        Assert.assertEquals(expected[0], selector.matches(new Environment(way)));
+        way.put("old_ref", null);
+        Assert.assertEquals(expected[1], selector.matches(new Environment(way)));
+        way.put("no_match_tag", "false");
+        Assert.assertEquals(expected[2], selector.matches(new Environment(way)));
+        way.put("old_ref", "A22");
+        Assert.assertEquals(expected[3], selector.matches(new Environment(way)));
+        way.put("old_ref", null);
+        way.put("OLD_REF", "A23");
+        Assert.assertEquals(expected[4], selector.matches(new Environment(way)));
     }
 
     @Test

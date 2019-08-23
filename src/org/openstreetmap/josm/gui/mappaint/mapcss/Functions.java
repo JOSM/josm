@@ -9,9 +9,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -386,6 +388,59 @@ public final class Functions {
     }
 
     /**
+     * Get keys that follow a regex
+     * @param env the environment
+     * @param key_regex the pattern that the key must match
+     * @return the values for the keys that match the pattern
+     * @see Functions#tag_regex(Environment, String, String)
+     * @since 15315
+     */
+    public static List<String> tag_regex(final Environment env, String key_regex) { // NO_UCD (unused code)
+        return tag_regex(env, key_regex, "");
+    }
+
+    /**
+     * Get keys that follow a regex
+     * @param env the environment
+     * @param key_regex the pattern that the key must match
+     * @return the values for the keys that match the pattern
+     * @param flags a string that may contain "i" (case insensitive), "m" (multiline) and "s" ("dot all")
+     * @see Pattern#CASE_INSENSITIVE
+     * @see Pattern#DOTALL
+     * @see Pattern#MULTILINE
+     * @since 15315
+     */
+    public static List<String> tag_regex(final Environment env, String key_regex, String flags) { // NO_UCD (unused code)
+        int f = parse_regex_flags(flags);
+        Pattern compiled = Pattern.compile(key_regex, f);
+        return env.osm.getKeys().entrySet().stream()
+                .filter(object -> compiled.matcher(object.getKey()).find())
+                .map(Entry::getValue).collect(Collectors.toList());
+    }
+
+    /**
+     * Parse flags for regex usage. Shouldn't be used in mapcss
+     * @param flags a string that may contain "i" (case insensitive), "m" (multiline) and "s" ("dot all")
+     * @see Pattern#CASE_INSENSITIVE
+     * @see Pattern#DOTALL
+     * @see Pattern#MULTILINE
+     * @return An int that can be used by a {@link Pattern} object
+     */
+    private static final int parse_regex_flags(String flags) {
+        int f = 0;
+        if (flags.contains("i")) {
+            f |= Pattern.CASE_INSENSITIVE;
+        }
+        if (flags.contains("s")) {
+            f |= Pattern.DOTALL;
+        }
+        if (flags.contains("m")) {
+            f |= Pattern.MULTILINE;
+        }
+        return f;
+    }
+
+    /**
      * Gets the first non-null value of the key {@code key} from the object's parent(s).
      * @param env the environment
      * @param key the OSM key
@@ -724,16 +779,7 @@ public final class Functions {
      * @since 5699
      */
     public static boolean regexp_test(String pattern, String target, String flags) { // NO_UCD (unused code)
-        int f = 0;
-        if (flags.contains("i")) {
-            f |= Pattern.CASE_INSENSITIVE;
-        }
-        if (flags.contains("s")) {
-            f |= Pattern.DOTALL;
-        }
-        if (flags.contains("m")) {
-            f |= Pattern.MULTILINE;
-        }
+        int f = parse_regex_flags(flags);
         return Pattern.compile(pattern, f).matcher(target).matches();
     }
 
@@ -751,16 +797,7 @@ public final class Functions {
      * @since 5701
      */
     public static List<String> regexp_match(String pattern, String target, String flags) { // NO_UCD (unused code)
-        int f = 0;
-        if (flags.contains("i")) {
-            f |= Pattern.CASE_INSENSITIVE;
-        }
-        if (flags.contains("s")) {
-            f |= Pattern.DOTALL;
-        }
-        if (flags.contains("m")) {
-            f |= Pattern.MULTILINE;
-        }
+        int f = parse_regex_flags(flags);
         return Utils.getMatches(Pattern.compile(pattern, f).matcher(target));
     }
 
