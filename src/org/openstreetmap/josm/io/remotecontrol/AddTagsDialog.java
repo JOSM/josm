@@ -297,7 +297,10 @@ public class AddTagsDialog extends ExtendedDialog {
                 .map(String::trim)
                 .filter(tag -> !tag.isEmpty() && tag.contains("="))
                 .map(tag -> tag.split("\\s*=\\s*", 2))
-                .map(pair -> {pair[1] = pair.length < 2 ? "" : pair[1]; return pair;})
+                .map(pair -> {
+                    pair[1] = pair.length < 2 ? "" : pair[1];
+                    return pair;
+                })
                 .collect(Collectors.toList()).toArray(new String[][] {});
     }
 
