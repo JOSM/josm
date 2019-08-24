@@ -390,29 +390,29 @@ public final class Functions {
     /**
      * Get keys that follow a regex
      * @param env the environment
-     * @param key_regex the pattern that the key must match
+     * @param keyRegex the pattern that the key must match
      * @return the values for the keys that match the pattern
      * @see Functions#tag_regex(Environment, String, String)
      * @since 15315
      */
-    public static List<String> tag_regex(final Environment env, String key_regex) { // NO_UCD (unused code)
-        return tag_regex(env, key_regex, "");
+    public static List<String> tag_regex(final Environment env, String keyRegex) { // NO_UCD (unused code)
+        return tag_regex(env, keyRegex, "");
     }
 
     /**
      * Get keys that follow a regex
      * @param env the environment
-     * @param key_regex the pattern that the key must match
-     * @return the values for the keys that match the pattern
+     * @param keyRegex the pattern that the key must match
      * @param flags a string that may contain "i" (case insensitive), "m" (multiline) and "s" ("dot all")
+     * @return the values for the keys that match the pattern
      * @see Pattern#CASE_INSENSITIVE
      * @see Pattern#DOTALL
      * @see Pattern#MULTILINE
      * @since 15315
      */
-    public static List<String> tag_regex(final Environment env, String key_regex, String flags) { // NO_UCD (unused code)
+    public static List<String> tag_regex(final Environment env, String keyRegex, String flags) { // NO_UCD (unused code)
         int f = parse_regex_flags(flags);
-        Pattern compiled = Pattern.compile(key_regex, f);
+        Pattern compiled = Pattern.compile(keyRegex, f);
         return env.osm.getKeys().entrySet().stream()
                 .filter(object -> compiled.matcher(object.getKey()).find())
                 .map(Entry::getValue).collect(Collectors.toList());
@@ -421,12 +421,12 @@ public final class Functions {
     /**
      * Parse flags for regex usage. Shouldn't be used in mapcss
      * @param flags a string that may contain "i" (case insensitive), "m" (multiline) and "s" ("dot all")
+     * @return An int that can be used by a {@link Pattern} object
      * @see Pattern#CASE_INSENSITIVE
      * @see Pattern#DOTALL
      * @see Pattern#MULTILINE
-     * @return An int that can be used by a {@link Pattern} object
      */
-    private static final int parse_regex_flags(String flags) {
+    private static int parse_regex_flags(String flags) {
         int f = 0;
         if (flags.contains("i")) {
             f |= Pattern.CASE_INSENSITIVE;
