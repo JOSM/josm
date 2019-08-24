@@ -10,13 +10,14 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
@@ -280,26 +281,24 @@ public class AddTagsDialog extends ExtendedDialog {
     public static void addTags(final Map<String, String> args, final String sender, final Collection<? extends OsmPrimitive> primitives) {
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(() -> {
-                Set<String> tagSet = new LinkedHashSet<>(); // preserve order, see #15704
-                for (String tag1 : args.get("addtags").split("\\|")) {
-                    if (!tag1.trim().isEmpty() && tag1.contains("=")) {
-                        tagSet.add(tag1.trim());
-                    }
-                }
-                if (!tagSet.isEmpty()) {
-                    String[][] keyValue = new String[tagSet.size()][2];
-                    int i = 0;
-                    for (String tag2 : tagSet) {
-                        // support a  =   b===c as "a"="b===c"
-                        String[] pair = tag2.split("\\s*=\\s*", 2);
-                        keyValue[i][0] = pair[0];
-                        keyValue[i][1] = pair.length < 2 ? "" : pair[1];
-                        i++;
-                    }
-                    addTags(keyValue, sender, primitives);
-                }
+                addTags(parseUrlTagsToKeyValues(args.get("addtags")), sender, primitives);
             });
         }
+    }
+
+    /**
+     * Convert a argument from a url to a series of tags
+     * @param urlSection A url section that looks like {@code tag1=value1|tag2=value2}
+     * @return An 2d array in the format of {@code [key][value]}
+     * @since 15316
+     */
+    public static String[][] parseUrlTagsToKeyValues(String urlSection) {
+        return Arrays.stream(urlSection.split("\\|"))
+                .map(String::trim)
+                .filter(tag -> !tag.isEmpty() && tag.contains("="))
+                .map(tag -> tag.split("\\s*=\\s*", 2))
+                .map(pair -> {pair[1] = pair.length < 2 ? "" : pair[1]; return pair;})
+                .collect(Collectors.toList()).toArray(new String[][] {});
     }
 
     /**

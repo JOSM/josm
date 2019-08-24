@@ -224,6 +224,18 @@ public class LoadAndZoomHandler extends RequestHandler {
             zoom(Collections.<OsmPrimitive>emptySet(), bbox);
         }
 
+        // This comes before the other changeset tags, so that they can be overridden
+        if (args.containsKey("changeset_tags")) {
+            MainApplication.worker.submit(() -> {
+                DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+                if (ds != null) {
+                    for (String[] key : AddTagsDialog.parseUrlTagsToKeyValues(args.get("changeset_tags"))) {
+                        ds.addChangeSetTag(key[0], key[1]);
+                    }
+                }
+            });
+        }
+
         // add changeset tags after download if necessary
         if (args.containsKey("changeset_comment") || args.containsKey("changeset_source") || args.containsKey("changeset_hashtags")) {
             MainApplication.worker.submit(() -> {
