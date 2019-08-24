@@ -25,6 +25,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -232,5 +233,17 @@ public class OpeningHourTestTest {
             final List<OpeningHourTest.OpeningHoursTestError> errors = openingHourTest.checkOpeningHourSyntax(t.getKey(), t.getValue());
             assertThat(t + " is valid", errors, isEmpty());
         }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17932">Bug #17932</a>.
+     */
+    @Test
+    public void testTicket17932() {
+        Logging.clearLastErrorAndWarnings();
+        assertTrue(openingHourTest.checkOpeningHourSyntax("opening_hours", "SH off").isEmpty());
+        List<String> errors = Logging.getLastErrorAndWarnings();
+        assertFalse(errors.isEmpty());
+        assertTrue(errors.get(0), errors.get(0).contains("no SH definition"));
     }
 }
