@@ -1191,13 +1191,24 @@ public class MainApplication {
                             if (a.isReachable(1000)) {
                                 /* be sure it REALLY works */
                                 SSLSocketFactory.getDefault().createSocket(a, 443).close();
+                                hasv6 = true;
+                                /* in case of routing problems to the main openstreetmap domain don't enable IPv6 */
+                                for (InetAddress b : InetAddress.getAllByName("api.openstreetmap.org")) {
+                                    if (b instanceof Inet6Address) {
+                                        if (b.isReachable(1000)) {
+                                            SSLSocketFactory.getDefault().createSocket(b, 443).close();
+                                        } else {
+                                            hasv6 = false;
+                                        }
+                                        break; /* we're done */
+                                    }
+                                }
                                 Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
                                 if (!wasv6) {
                                     Logging.info(tr("Detected useable IPv6 network, preferring IPv6 over IPv4 after next restart."));
                                 } else {
                                     Logging.info(tr("Detected useable IPv6 network, preferring IPv6 over IPv4."));
                                 }
-                                hasv6 = true;
                             }
                             break; /* we're done */
                         }
