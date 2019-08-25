@@ -1215,6 +1215,7 @@ public class MainApplication {
                     }
                 } catch (IOException | SecurityException e) {
                     Logging.debug("Exception while checking IPv6 connectivity: {0}", e);
+                    hasv6 = false;
                     Logging.trace(e);
                 }
                 if (wasv6 && !hasv6) {
