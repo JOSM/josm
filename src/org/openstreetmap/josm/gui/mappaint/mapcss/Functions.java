@@ -554,7 +554,7 @@ public final class Functions {
      * @return The sorted list
      * @since 15279
      */
-    public static List<String> sort(String... sortables) {
+    public static List<String> sort(String... sortables) { // NO_UCD (unused code)
         Arrays.parallelSort(sortables);
         return Arrays.asList(sortables);
     }
@@ -565,9 +565,29 @@ public final class Functions {
      * @return The sorted list
      * @since 15279
      */
-    public static List<String> sort_list(List<String> sortables) {
+    public static List<String> sort_list(List<String> sortables) { // NO_UCD (unused code)
         Collections.sort(sortables);
         return sortables;
+    }
+
+    /**
+     * Get unique values
+     * @param values A list of values that may have duplicates
+     * @return A list with no duplicates
+     * @since 15323
+     */
+    public static List<String> uniq(String... values) { // NO_UCD (unused code)
+        return uniq_list(Arrays.asList(values));
+    }
+
+    /**
+     * Get unique values
+     * @param values A list of values that may have duplicates
+     * @return A list with no duplicates
+     * @since 15323
+     */
+    public static List<String> uniq_list(List<String> values) {
+        return values.stream().distinct().collect(Collectors.toList());
     }
 
     /**

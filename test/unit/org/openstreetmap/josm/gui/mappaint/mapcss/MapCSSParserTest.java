@@ -465,6 +465,14 @@ public class MapCSSParserTest {
     }
 
     @Test
+    public void testUniqueValues() throws Exception {
+        assertEquals(Arrays.asList(new String[] {"alpha", "beta"}),
+                Functions.uniq("alpha", "alpha", "alpha", "beta"));
+        assertEquals(Arrays.asList(new String[] {"one", "two", "three"}),
+                Functions.uniq_list(Arrays.asList(new String[] {"one", "one", "two", "two", "two", "three"})));
+    }
+
+    @Test
     public void testCountRoles() throws Exception {
         DataSet ds = new DataSet();
         Way way1 = TestUtils.newWay("highway=residential name=1",
