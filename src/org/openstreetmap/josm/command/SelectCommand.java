@@ -34,6 +34,8 @@ public class SelectCommand extends Command {
         super(dataset);
         if (newSelection == null || newSelection.isEmpty()) {
             this.newSelection = Collections.emptySet();
+        } else if (newSelection.contains(null)) {
+            throw new IllegalArgumentException("null primitive in selection");
         } else {
             this.newSelection = new HashSet<>(newSelection);
         }

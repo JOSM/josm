@@ -160,4 +160,12 @@ public class SelectCommandTest {
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
     }
+
+    /**
+     * Unit test of {@link SelectCommand#SelectCommand}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorIAE() {
+        new SelectCommand(new DataSet(), Arrays.asList(new OsmPrimitive[] {null}));
+    }
 }
