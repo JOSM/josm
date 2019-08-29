@@ -115,7 +115,9 @@ way[cutline                    ][man_made!=cutline],
   group: tr("missing tag");
 }
 
-/* {0.key} without {1.tag} or {2.tag} */
+/* {0.key} without {1.tag} or {2.tag}, #15107 */
+*[iata                         ][aeroway!=aerodrome][aeroway!=helipad],
+*[icao                         ][aeroway!=aerodrome][aeroway!=helipad],
 *[bridge:movable               ][bridge!=movable][man_made!=bridge],
 *[substation                   ][power!=substation][pipeline!=substation],
 *[reservoir_type               ][landuse!=reservoir][water!=reservoir],
@@ -146,7 +148,9 @@ relation[route=ski  ][!piste:type][type=route],
   group: tr("missing tag");
 }
 
-/* {0.tag} without {1.key} (info level) */
+/* {0.tag} without {1.key} (info level), #15107 */
+*[aeroway=runway               ][!ref],
+*[aeroway=runway               ][!surface],
 way[highway=track              ][!tracktype],
 way[power=cable                ][!location],
 node[power=transformer         ][!voltage:primary],

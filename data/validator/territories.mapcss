@@ -29,3 +29,17 @@ relation[type=associatedStreet][inside("DE")] {
   suggestAlternative: "addr:street";
   group: tr("deprecated tagging");
 }
+
+/* #15107 */
+*[aeroway=helipad  ][!faa][inside("US")],
+*[aeroway=aerodrome][!faa][inside("US")] {
+  throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  group: tr("Airport tagging");
+}
+*[aeroway=aerodrome][!icao][faa!~/\d/][inside("US")],
+*[aeroway=aerodrome][!iata][faa!~/\d/][inside("US")] {
+  throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  group: tr("Airport tagging");
+  /* assertNoMatch: "way aeroway=aerodrome faa=OK12"; not properly working due to inside() */
+  /* assertMatch: "way aeroway=aerodrome faa=ORD"; */
+}

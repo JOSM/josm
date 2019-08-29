@@ -2670,6 +2670,9 @@
             <key key="aeroway" value="helipad" />
             <optional>
                 <text key="ref" text="Reference" />
+                <text key="iata" text="IATA" />
+                <text key="icao" text="ICAO" />
+                <text key="wikipedia" text="Wikipedia" />
             </optional>
         </item> <!-- Helipad -->
         <item name="Apron" icon="presets/transport/airport/apron.svg" type="closedway,multipolygon" preset_name_label="true">

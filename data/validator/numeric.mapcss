@@ -374,3 +374,30 @@ node[fire_hydrant:pressure="#"] {
   assertMatch: "way interval=0:5:0";
   assertMatch: "way interval=00:65:00";
 }
+
+/* #15107 */
+*[aeroway=helipad  ][iata][iata!~/^[A-Z]{3}$/],
+*[aeroway=aerodrome][iata][iata!~/^[A-Z]{3}$/] {
+  throwWarning: tr("wrong value: {0}", "{1.tag}");
+  group: tr("Airport tagging");
+  assertNoMatch: "way aeroway=aerodrome iata=BER";
+  assertMatch: "way aeroway=aerodrome iata=BERL";
+  assertMatch: "way aeroway=aerodrome iata=BE";
+  assertMatch: "way aeroway=aerodrome iata=ber";
+}
+*[aeroway=helipad  ][icao][icao!~/^[A-Z]{4}$/],
+*[aeroway=aerodrome][icao][icao!~/^[A-Z]{4}$/] {
+  throwWarning: tr("wrong value: {0}", "{1.tag}");
+  group: tr("Airport tagging");
+  assertNoMatch: "way aeroway=aerodrome icao=EDDB";
+  assertMatch: "way aeroway=aerodrome icao=EDDBA";
+  assertMatch: "way aeroway=aerodrome icao=EDD";
+  assertMatch: "way aeroway=aerodrome icao=eddb";
+}
+*[aeroway=helipad  ][icao][icao!~/^(AG|AN|AY|BG|BI|BK|C|DA|DB|DF|DG|DI|DN|DR|DT|DX|EB|ED|EE|EF|EG|EH|EI|EK|EL|EN|EP|ES|ET|EV|EY|FA|FB|FC|FD|FE|FG|FH|FI|FJ|FK|FL|FM|FN|FO|FP|FQ|FS|FT|FV|FW|FX|FY|FZ|GA|GB|GC|GE|GF|GG|GL|GM|GO|GQ|GS|GU|GV|HA|HB|HC|HD|HE|HH|HK|HL|HR|HS|HT|HU|K|LA|LB|LC|LD|LE|LF|LG|LH|LI|LJ|LK|LL|LM|LN|LO|LP|LQ|LR|LS|LT|LU|LV|LW|LX|LY|LZ|MB|MD|MG|MH|MK|MM|MN|MP|MR|MS|MT|MU|MW|MY|MZ|NC|NF|NG|NI|NL|NS|NT|NV|NW|NZ|OA|OB|OE|OI|OJ|OK|OL|OM|OO|OP|OR|OS|OT|OY|PA|PB|PC|PF|PG|PH|PJ|PK|PL|PM|PO|PP|PT|PW|RC|RJ|RK|RO|RP|SA|SB|SC|SD|SE|SF|SG|SH|SI|SJ|SK|SL|SM|SN|SO|SP|SS|SU|SV|SW|SY|TA|TB|TD|TF|TG|TI|TJ|TK|TL|TN|TQ|TR|TT|TU|TV|TX|U|UA|UB|UC|UD|UG|UK|UM|UT|VA|VC|VD|VE|VG|VH|VI|VL|VM|VN|VO|VQ|VR|VT|VV|VY|WA|WB|WI|WM|WP|WQ|WR|WS|Y|Z|ZK|ZM)/],
+*[aeroway=aerodrome][icao][icao!~/^(AG|AN|AY|BG|BI|BK|C|DA|DB|DF|DG|DI|DN|DR|DT|DX|EB|ED|EE|EF|EG|EH|EI|EK|EL|EN|EP|ES|ET|EV|EY|FA|FB|FC|FD|FE|FG|FH|FI|FJ|FK|FL|FM|FN|FO|FP|FQ|FS|FT|FV|FW|FX|FY|FZ|GA|GB|GC|GE|GF|GG|GL|GM|GO|GQ|GS|GU|GV|HA|HB|HC|HD|HE|HH|HK|HL|HR|HS|HT|HU|K|LA|LB|LC|LD|LE|LF|LG|LH|LI|LJ|LK|LL|LM|LN|LO|LP|LQ|LR|LS|LT|LU|LV|LW|LX|LY|LZ|MB|MD|MG|MH|MK|MM|MN|MP|MR|MS|MT|MU|MW|MY|MZ|NC|NF|NG|NI|NL|NS|NT|NV|NW|NZ|OA|OB|OE|OI|OJ|OK|OL|OM|OO|OP|OR|OS|OT|OY|PA|PB|PC|PF|PG|PH|PJ|PK|PL|PM|PO|PP|PT|PW|RC|RJ|RK|RO|RP|SA|SB|SC|SD|SE|SF|SG|SH|SI|SJ|SK|SL|SM|SN|SO|SP|SS|SU|SV|SW|SY|TA|TB|TD|TF|TG|TI|TJ|TK|TL|TN|TQ|TR|TT|TU|TV|TX|U|UA|UB|UC|UD|UG|UK|UM|UT|VA|VC|VD|VE|VG|VH|VI|VL|VM|VN|VO|VQ|VR|VT|VV|VY|WA|WB|WI|WM|WP|WQ|WR|WS|Y|Z|ZK|ZM)/] {
+  throwWarning: tr("wrong value: {0}", "{1.tag}");
+  group: tr("Airport tagging");
+  assertNoMatch: "way aeroway=aerodrome icao=EDDB";
+  assertMatch: "way aeroway=aerodrome icao=EQQQ";
+}
