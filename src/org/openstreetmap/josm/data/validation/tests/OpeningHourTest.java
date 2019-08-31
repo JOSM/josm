@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
@@ -249,7 +250,7 @@ public class OpeningHourTest extends Test.TagTest {
             }
         } catch (ScriptException | NoSuchMethodException ex) {
             Logging.error(ex);
-            new Notification(Utils.getRootCause(ex).getMessage()).setIcon(JOptionPane.ERROR_MESSAGE).show();
+            GuiHelper.runInEDT(() -> new Notification(Utils.getRootCause(ex).getMessage()).setIcon(JOptionPane.ERROR_MESSAGE).show());
         }
         return errors;
     }
