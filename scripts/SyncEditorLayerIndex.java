@@ -1080,7 +1080,7 @@ public class SyncEditorLayerIndex {
             if (isNotBlank(jt))
                 urls.add(jt);
             jt = getIcon(j);
-            if (isNotBlank(jt) && !jt.startsWith("data:image/png;base64,"))
+            if (isNotBlank(jt) && !jt.startsWith("data:image/"))
                 urls.add(jt);
             Pattern patternU = Pattern.compile("^https?://([^/]+?)(:\\d+)?(/.*)?");
             for (String u : urls) {
