@@ -2,16 +2,16 @@
 package org.openstreetmap.josm.gui.util;
 
 import javax.swing.Action;
-import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
 import javax.swing.MenuElement;
 import javax.swing.MenuSelectionManager;
 
 /**
- * An extension of JCheckBoxMenuItem that doesn't close the menu when selected.
+ * An extension of JMenuItem that doesn't close the menu when selected.
  *
  * @author Darryl Burke https://tips4java.wordpress.com/2010/09/12/keeping-menus-open/
  */
-public class StayOpenCheckBoxMenuItem extends JCheckBoxMenuItem {
+public class StayOpenMenuItem extends JMenuItem {
 
     private static volatile MenuElement[] path;
 
@@ -24,19 +24,18 @@ public class StayOpenCheckBoxMenuItem extends JCheckBoxMenuItem {
     }
 
     /**
-     * Constructs a new initially unselected {@code StayOpenCheckBoxMenuItem} with no set text or icon.
-     * @see JCheckBoxMenuItem#JCheckBoxMenuItem()
+     * Constructs a new {@code StayOpenMenuItem} with no set text or icon.
+     * @see JMenuItem#JMenuItem()
      */
-    public StayOpenCheckBoxMenuItem() {
+    public StayOpenMenuItem() {
         super();
     }
 
     /**
-     * Constructs a new {@code StayOpenCheckBoxMenuItem} whose properties are taken from the Action supplied.
-     * @param a action
-     * @see JCheckBoxMenuItem#JCheckBoxMenuItem(Action)
+     * Constructs a new {@code StayOpenMenuItem} whose properties are taken from the Action supplied.
+     * @see JMenuItem#JMenuItem(javax.swing.Action)
      */
-    public StayOpenCheckBoxMenuItem(Action a) {
+    public StayOpenMenuItem(Action a) {
         super(a);
     }
 
