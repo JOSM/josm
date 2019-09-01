@@ -269,6 +269,9 @@ public class CachedFile implements Closeable {
         if (initialized)
             return cacheFile;
         initialized = true;
+        if (name == null || name.startsWith("resource://")) {
+            return null;
+        }
         URL url;
         try {
             url = new URL(name);
@@ -285,9 +288,7 @@ public class CachedFile implements Closeable {
                 }
             }
         } catch (MalformedURLException e) {
-            if (name == null || name.startsWith("resource://")) {
-                return null;
-            } else if (name.startsWith("josmdir://")) {
+            if (name.startsWith("josmdir://")) {
                 cacheFile = new File(Config.getDirs().getUserDataDirectory(false), name.substring("josmdir://".length()));
             } else if (name.startsWith("josmplugindir://")) {
                 cacheFile = new File(Preferences.main().getPluginsDirectory(), name.substring("josmplugindir://".length()));
