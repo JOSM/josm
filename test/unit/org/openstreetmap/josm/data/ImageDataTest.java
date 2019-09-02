@@ -307,7 +307,7 @@ public class ImageDataTest {
 
     @Test
     public void testActionsWithMultipleImagesSelected() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry(new File("test2")));
         list.add(new ImageEntry(new File("test3")));
         list.add(new ImageEntry(new File("test3")));
@@ -328,7 +328,7 @@ public class ImageDataTest {
 
     @Test
     public void testTriggerListenerWhenNewImageIsSelectedAndRemoved() {
-        List<ImageEntry> list = this.getOneImage();
+        List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry());
         ImageData data = new ImageData(list);
         ImageDataUpdateListener listener = new ImageDataUpdateListener() {
