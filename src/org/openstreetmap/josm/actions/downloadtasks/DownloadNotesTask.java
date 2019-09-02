@@ -52,6 +52,9 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
     private DownloadTask downloadTask;
     private NoteLayer noteLayer;
 
+    /** This allows subclasses to ignore this warning */
+    protected boolean warnAboutEmptyArea = true;
+
     /**
      * Download a specific note by its id.
      * @param id Note identifier
@@ -124,7 +127,13 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
         @Override
         protected void finish() {
             rememberDownloadedData(new NoteData(notesData));
-            if (isCanceled() || isFailed() || notesData == null || notesData.isEmpty()) {
+            if (isCanceled() || isFailed() || notesData == null) {
+                return;
+            }
+            if (notesData.isEmpty()) {
+                if (warnAboutEmptyArea) {
+                    rememberErrorMessage(tr("No notes found in this area."));
+                }
                 return;
             }
             if (Logging.isDebugEnabled()) {
