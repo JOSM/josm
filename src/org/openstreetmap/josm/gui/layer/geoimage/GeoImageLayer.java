@@ -98,6 +98,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     /** Mouse position where the last image was selected. */
     private Point lastSelPos;
+    /** The mouse point */
+    private Point startPoint;
 
     /**
      * Image cycle mode flag.
@@ -152,6 +154,69 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         this.gpxLayer = gpxLayer;
         this.useThumbs = useThumbs;
         this.data.addImageDataUpdateListener(this);
+    }
+
+    private final class ImageMouseListener extends MouseAdapter {
+        private boolean isMapModeOk() {
+            MapMode mapMode = MainApplication.getMap().mapMode;
+            return mapMode == null || isSupportedMapMode(mapMode);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.getButton() != MouseEvent.BUTTON1)
+                return;
+            if (isVisible() && isMapModeOk()) {
+                cycleModeArmed = true;
+                invalidate();
+                startPoint = e.getPoint();
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent ev) {
+            if (ev.getButton() != MouseEvent.BUTTON1)
+                return;
+            if (!isVisible() || !isMapModeOk())
+                return;
+            if (!cycleModeArmed) {
+                return;
+            }
+
+            Rectangle hitBoxClick = new Rectangle((int) startPoint.getX() - 10, (int) startPoint.getY() - 10, 15, 15);
+            if (!hitBoxClick.contains(ev.getPoint())) {
+                return;
+            }
+
+            Point mousePos = ev.getPoint();
+            boolean cycle = cycleModeArmed && lastSelPos != null && lastSelPos.equals(mousePos);
+            final boolean isShift = (ev.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == MouseEvent.SHIFT_DOWN_MASK;
+            final boolean isCtrl = (ev.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == MouseEvent.CTRL_DOWN_MASK;
+            int idx = getPhotoIdxUnderMouse(ev, cycle);
+            if (idx >= 0) {
+                lastSelPos = mousePos;
+                cycleModeArmed = false;
+                ImageEntry img = data.getImages().get(idx);
+                if (isShift) {
+                    if (isCtrl && !data.getSelectedImages().isEmpty()) {
+                        int idx2 = data.getImages().indexOf(data.getSelectedImages().get(data.getSelectedImages().size() - 1));
+                        int startIndex = Math.min(idx, idx2);
+                        int endIndex = Math.max(idx, idx2);
+                        for (int i = startIndex; i <= endIndex; i++) {
+                            data.addImageToSelection(data.getImages().get(i));
+                        }
+                    } else {
+                        if (data.isImageSelected(img)) {
+                            data.removeImageToSelection(img);
+                        } else {
+                            data.addImageToSelection(img);
+                        }
+                    }
+                } else {
+                    data.setSelectedImage(img);
+                }
+            }
+        }
     }
 
     /**
@@ -496,9 +561,9 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 for (ImageEntry e : data.getImages()) {
                     paintImage(e, mv, clip, tempG);
                 }
-                if (data.getSelectedImage() != null) {
+                for (ImageEntry img: this.data.getSelectedImages()) {
                     // Make sure the selected image is on top in case multiple images overlap.
-                    paintImage(data.getSelectedImage(), mv, clip, tempG);
+                    paintImage(img, mv, clip, tempG);
                 }
                 updateOffscreenBuffer = false;
             }
@@ -515,63 +580,64 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             }
         }
 
-        ImageEntry e = data.getSelectedImage();
-        if (e != null && e.getPos() != null) {
-            Point p = mv.getPoint(e.getPos());
+        for (ImageEntry e: data.getSelectedImages()) {
+            if (e != null && e.getPos() != null) {
+                Point p = mv.getPoint(e.getPos());
 
-            int imgWidth;
-            int imgHeight;
-            if (useThumbs && e.hasThumbnail()) {
-                Dimension d = scaledDimension(e.getThumbnail());
-                if (d != null) {
-                    imgWidth = d.width;
-                    imgHeight = d.height;
+                int imgWidth;
+                int imgHeight;
+                if (useThumbs && e.hasThumbnail()) {
+                    Dimension d = scaledDimension(e.getThumbnail());
+                    if (d != null) {
+                        imgWidth = d.width;
+                        imgHeight = d.height;
+                    } else {
+                        imgWidth = -1;
+                        imgHeight = -1;
+                    }
                 } else {
-                    imgWidth = -1;
-                    imgHeight = -1;
+                    imgWidth = selectedIcon.getIconWidth();
+                    imgHeight = selectedIcon.getIconHeight();
                 }
-            } else {
-                imgWidth = selectedIcon.getIconWidth();
-                imgHeight = selectedIcon.getIconHeight();
-            }
 
-            if (e.getExifImgDir() != null) {
-                // Multiplier must be larger than sqrt(2)/2=0.71.
-                double arrowlength = Math.max(25, Math.max(imgWidth, imgHeight) * 0.85);
-                double arrowwidth = arrowlength / 1.4;
+                if (e.getExifImgDir() != null) {
+                    // Multiplier must be larger than sqrt(2)/2=0.71.
+                    double arrowlength = Math.max(25, Math.max(imgWidth, imgHeight) * 0.85);
+                    double arrowwidth = arrowlength / 1.4;
 
-                double dir = e.getExifImgDir();
-                // Rotate 90 degrees CCW
-                double headdir = (dir < 90) ? dir + 270 : dir - 90;
-                double leftdir = (headdir < 90) ? headdir + 270 : headdir - 90;
-                double rightdir = (headdir > 270) ? headdir - 270 : headdir + 90;
+                    double dir = e.getExifImgDir();
+                    // Rotate 90 degrees CCW
+                    double headdir = (dir < 90) ? dir + 270 : dir - 90;
+                    double leftdir = (headdir < 90) ? headdir + 270 : headdir - 90;
+                    double rightdir = (headdir > 270) ? headdir - 270 : headdir + 90;
 
-                double ptx = p.x + Math.cos(Utils.toRadians(headdir)) * arrowlength;
-                double pty = p.y + Math.sin(Utils.toRadians(headdir)) * arrowlength;
+                    double ptx = p.x + Math.cos(Utils.toRadians(headdir)) * arrowlength;
+                    double pty = p.y + Math.sin(Utils.toRadians(headdir)) * arrowlength;
 
-                double ltx = p.x + Math.cos(Utils.toRadians(leftdir)) * arrowwidth/2;
-                double lty = p.y + Math.sin(Utils.toRadians(leftdir)) * arrowwidth/2;
+                    double ltx = p.x + Math.cos(Utils.toRadians(leftdir)) * arrowwidth/2;
+                    double lty = p.y + Math.sin(Utils.toRadians(leftdir)) * arrowwidth/2;
 
-                double rtx = p.x + Math.cos(Utils.toRadians(rightdir)) * arrowwidth/2;
-                double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
+                    double rtx = p.x + Math.cos(Utils.toRadians(rightdir)) * arrowwidth/2;
+                    double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
 
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(new Color(255, 255, 255, 192));
-                int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
-                int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
-                g.fillPolygon(xar, yar, 4);
-                g.setColor(Color.black);
-                g.setStroke(new BasicStroke(1.2f));
-                g.drawPolyline(xar, yar, 3);
-            }
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g.setColor(new Color(255, 255, 255, 192));
+                    int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
+                    int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
+                    g.fillPolygon(xar, yar, 4);
+                    g.setColor(Color.black);
+                    g.setStroke(new BasicStroke(1.2f));
+                    g.drawPolyline(xar, yar, 3);
+                }
 
-            if (useThumbs && e.hasThumbnail()) {
-                g.setColor(new Color(128, 0, 0, 122));
-                g.fillRect(p.x - imgWidth / 2, p.y - imgHeight / 2, imgWidth, imgHeight);
-            } else {
-                selectedIcon.paintIcon(mv, g,
-                        p.x - imgWidth / 2,
-                        p.y - imgHeight / 2);
+                if (useThumbs && e.hasThumbnail()) {
+                    g.setColor(new Color(128, 0, 0, 122));
+                    g.fillRect(p.x - imgWidth / 2, p.y - imgHeight / 2, imgWidth, imgHeight);
+                } else {
+                    selectedIcon.paintIcon(mv, g,
+                            p.x - imgWidth / 2,
+                            p.y - imgHeight / 2);
+                }
             }
         }
     }
@@ -742,39 +808,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     @Override
     public void hookUpMapView() {
-        mouseAdapter = new MouseAdapter() {
-            private boolean isMapModeOk() {
-                MapMode mapMode = MainApplication.getMap().mapMode;
-                return mapMode == null || isSupportedMapMode(mapMode);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (e.getButton() != MouseEvent.BUTTON1)
-                    return;
-                if (isVisible() && isMapModeOk()) {
-                    cycleModeArmed = true;
-                    invalidate();
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent ev) {
-                if (ev.getButton() != MouseEvent.BUTTON1)
-                    return;
-                if (!isVisible() || !isMapModeOk())
-                    return;
-
-                Point mousePos = ev.getPoint();
-                boolean cycle = cycleModeArmed && lastSelPos != null && lastSelPos.equals(mousePos);
-                int idx = getPhotoIdxUnderMouse(ev, cycle);
-                if (idx >= 0) {
-                    lastSelPos = mousePos;
-                    cycleModeArmed = false;
-                    data.setSelectedImage(data.getImages().get(idx));
-                }
-            }
-        };
+        mouseAdapter = new ImageMouseListener();
 
         mouseMotionAdapter = new MouseMotionAdapter() {
             @Override

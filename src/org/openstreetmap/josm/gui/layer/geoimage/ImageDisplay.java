@@ -66,6 +66,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     private final ImgDisplayMouseListener imgMouseListener = new ImgDisplayMouseListener();
 
+    private String emptyText;
     private String osdText;
 
     private static final BooleanProperty AGPIFO_STYLE =
@@ -698,6 +699,16 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     }
 
     /**
+     * Set the message displayed when there is no image to display.
+     * By default it display a simple No image
+     * @param emptyText the string to display
+     * @since 15333
+     */
+    public void setEmptyText(String emptyText) {
+        this.emptyText = emptyText;
+    }
+
+    /**
      * Sets the On-Screen-Display text.
      * @param text text to display on top of the image
      */
@@ -729,7 +740,10 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         Dimension size = getSize();
         if (entry == null) {
             g.setColor(Color.black);
-            String noImageStr = tr("No image");
+            if (emptyText == null) {
+                emptyText = tr("No image");
+            }
+            String noImageStr = emptyText;
             Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(noImageStr, g);
             g.drawString(noImageStr,
                     (int) ((size.width - noImageSize.getWidth()) / 2),

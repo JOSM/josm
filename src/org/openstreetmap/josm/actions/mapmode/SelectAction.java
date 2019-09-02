@@ -539,7 +539,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             int dp = (int) lastMousePos.distance(e.getX(), e.getY());
             if (dp < initialMoveThreshold)
                 return; // ignore small drags
-            initialMoveThresholdExceeded = true; //no more ingnoring uintil nex mouse press
+            initialMoveThresholdExceeded = true; //no more ignoring until next mouse press
         }
         if (e.getPoint().equals(lastMousePos))
             return;

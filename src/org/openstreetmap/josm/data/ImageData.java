@@ -1,9 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
@@ -33,7 +36,7 @@ public class ImageData {
 
     private final List<ImageEntry> data;
 
-    private int selectedImageIndex = -1;
+    private final List<Integer> selectedImagesIndex = new ArrayList<>();
 
     private final ListenerList<ImageDataUpdateListener> listeners = ListenerList.create();
 
@@ -55,6 +58,7 @@ public class ImageData {
         } else {
             this.data = new ArrayList<>();
         }
+        selectedImagesIndex.add(-1);
     }
 
     /**
@@ -106,14 +110,25 @@ public class ImageData {
     }
 
     /**
-     * Return the current selected image
-     * @return the selected image as {@link ImageEntry} or null
+     * Return the first currently selected image
+     * @return the first selected image as {@link ImageEntry} or null
+     * @see #getSelectedImages
      */
     public ImageEntry getSelectedImage() {
+        int selectedImageIndex = selectedImagesIndex.isEmpty() ? -1 : selectedImagesIndex.get(0);
         if (selectedImageIndex > -1) {
             return data.get(selectedImageIndex);
         }
         return null;
+    }
+
+    /**
+     * Return the current selected images
+     * @return the selected images as list {@link ImageEntry}
+     * @since 15333
+     */
+    public List<ImageEntry> getSelectedImages() {
+        return selectedImagesIndex.stream().filter(i -> i > -1).map(data::get).collect(Collectors.toList());
     }
 
     /**
@@ -137,7 +152,7 @@ public class ImageData {
      * @return {@code true} is there is a next image, {@code false} otherwise
      */
     public boolean hasNextImage() {
-        return selectedImageIndex != data.size() - 1;
+        return (selectedImagesIndex.size() == 1 && selectedImagesIndex.get(0) != data.size() - 1);
     }
 
     /**
@@ -145,7 +160,7 @@ public class ImageData {
      */
     public void selectNextImage() {
         if (hasNextImage()) {
-            setSelectedImageIndex(selectedImageIndex + 1);
+            setSelectedImageIndex(selectedImagesIndex.get(0) + 1);
         }
     }
 
@@ -154,7 +169,7 @@ public class ImageData {
      * @return {@code true} is there is a previous image, {@code false} otherwise
      */
     public boolean hasPreviousImage() {
-        return selectedImageIndex - 1 > -1;
+        return (selectedImagesIndex.size() == 1 && selectedImagesIndex.get(0) - 1 > -1);
     }
 
     /**
@@ -164,7 +179,7 @@ public class ImageData {
         if (data.isEmpty()) {
             return;
         }
-        setSelectedImageIndex(Integer.max(0, selectedImageIndex - 1));
+        setSelectedImageIndex(Integer.max(0, selectedImagesIndex.get(0) - 1));
     }
 
     /**
@@ -176,7 +191,36 @@ public class ImageData {
     }
 
     /**
-     * Clear the selected image
+     * Add image to the list of selected images
+     * @param image {@link ImageEntry} the image to add
+     * @since 15333
+     */
+    public void addImageToSelection(ImageEntry image) {
+        int index = data.indexOf(image);
+        if (selectedImagesIndex.get(0) == -1) {
+            setSelectedImage(image);
+        } else if (!selectedImagesIndex.contains(index)) {
+            selectedImagesIndex.add(index);
+            listeners.fireEvent(l -> l.selectedImageChanged(this));
+        }
+    }
+
+    /**
+     * Remove the image from the list of selected images
+     * @param image {@link ImageEntry} the image to remove
+     * @since 15333
+     */
+    public void removeImageToSelection(ImageEntry image) {
+        int index = data.indexOf(image);
+        selectedImagesIndex.remove(selectedImagesIndex.indexOf(index));
+        if (selectedImagesIndex.isEmpty()) {
+            selectedImagesIndex.add(-1);
+        }
+        listeners.fireEvent(l -> l.selectedImageChanged(this));
+    }
+
+    /**
+     * Clear the selected image(s)
      */
     public void clearSelectedImage() {
         setSelectedImageIndex(-1);
@@ -187,10 +231,14 @@ public class ImageData {
     }
 
     private void setSelectedImageIndex(int index, boolean forceTrigger) {
-        if (index == selectedImageIndex && !forceTrigger) {
+        if (selectedImagesIndex.size() > 1) {
+            selectedImagesIndex.clear();
+            selectedImagesIndex.add(-1);
+        }
+        if (index == selectedImagesIndex.get(0) && !forceTrigger) {
             return;
         }
-        selectedImageIndex = index;
+        selectedImagesIndex.set(0, index);
         listeners.fireEvent(l -> l.selectedImageChanged(this));
     }
 
@@ -198,12 +246,30 @@ public class ImageData {
      * Remove the current selected image from the list
      */
     public void removeSelectedImage() {
-        data.remove(getSelectedImage());
-        if (selectedImageIndex == data.size()) {
+        List<ImageEntry> selected = getSelectedImages();
+        if (selected.size() > 1) {
+            throw new IllegalStateException(tr("Multiple images have been selected"));
+        }
+        if (selected.isEmpty()) {
+            return;
+        }
+        data.remove(getSelectedImages().get(0));
+        if (selectedImagesIndex.get(0) == data.size()) {
             setSelectedImageIndex(data.size() - 1);
         } else {
-            setSelectedImageIndex(selectedImageIndex, true);
+            setSelectedImageIndex(selectedImagesIndex.get(0), true);
         }
+    }
+
+    /**
+     * Determines if the image is selected
+     * @param image the {@link ImageEntry} image
+     * @return {@code true} is the image is selected, {@code false} otherwise
+     * @since 15333
+     */
+    public boolean isImageSelected(ImageEntry image) {
+        int index = data.indexOf(image);
+        return selectedImagesIndex.contains(index);
     }
 
     /**

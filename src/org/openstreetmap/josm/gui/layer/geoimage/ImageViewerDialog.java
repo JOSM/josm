@@ -13,6 +13,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.swing.Box;
@@ -376,7 +378,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
      * Displays image for the given data.
      * @param data geo image data
      * @param entry image entry
+     * @deprecated Use {@link #displayImage}
      */
+    @Deprecated
     public static void showImage(ImageData data, ImageEntry entry) {
         getInstance().displayImage(data, entry);
     }
@@ -416,12 +420,24 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private transient ImageEntry currentEntry;
 
     /**
-     * Displays image for the given layer.
+     * Displays a single image for the given layer.
      * @param data the image data
      * @param entry image entry
+     * @see #displayImages
      */
     public void displayImage(ImageData data, ImageEntry entry) {
+        displayImages(data, Collections.singletonList(entry));
+    }
+
+    /**
+     * Displays images for the given layer.
+     * @param data the image data
+     * @param entries image entries
+     * @since 15333
+     */
+    public void displayImages(ImageData data, List<ImageEntry> entries) {
         boolean imageChanged;
+        ImageEntry entry = entries != null && entries.size() == 1 ? entries.get(0) : null;
 
         synchronized (this) {
             // TODO: pop up image dialog but don't load image again
@@ -490,6 +506,13 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             btnDelete.setEnabled(false);
             btnDeleteFromDisk.setEnabled(false);
             btnCopyPath.setEnabled(false);
+            if (entries != null && entries.size() > 1) {
+                imgDisplay.setEmptyText(tr("Multiple images selected"));
+                btnFirst.setEnabled(!isFirstImageSelected(data));
+                btnLast.setEnabled(!isLastImageSelected(data));
+            }
+            imgDisplay.setImage(null);
+            imgDisplay.setOsdText("");
             return;
         }
         if (!isDialogShowing()) {
@@ -501,6 +524,14 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, this);
             }
         }
+    }
+
+    private static boolean isLastImageSelected(ImageData data) {
+        return data.isImageSelected(data.getImages().get(data.getImages().size() - 1));
+    }
+
+    private static boolean isFirstImageSelected(ImageData data) {
+        return data.isImageSelected(data.getImages().get(0));
     }
 
     /**
@@ -561,7 +592,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         if (e.getRemovedLayer() instanceof GeoImageLayer) {
             ImageData removedData = ((GeoImageLayer) e.getRemovedLayer()).getImageData();
             if (removedData == currentData) {
-                displayImage(null, null);
+                displayImages(null, null);
             }
             removedData.removeImageDataUpdateListener(this);
         }
@@ -591,11 +622,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     @Override
     public void selectedImageChanged(ImageData data) {
-        showImage(data, data.getSelectedImage());
+        displayImages(data, data.getSelectedImages());
     }
 
     @Override
     public void imageDataUpdated(ImageData data) {
-        showImage(data, data.getSelectedImage());
+        displayImages(data, data.getSelectedImages());
     }
 }
