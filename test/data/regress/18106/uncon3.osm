@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-151993' action='modify' visible='true' lat='-6.37298855155' lon='-89.28101090197' />
+  <node id='-151995' action='modify' visible='true' lat='-6.37284430385' lon='-89.28088730653' />
+  <node id='-151997' action='modify' visible='true' lat='-6.37284794506' lon='-89.28088216792' />
+  <node id='-151999' action='modify' visible='true' lat='-6.37289236259' lon='-89.28092848459' />
+  <node id='-152001' action='modify' visible='true' lat='-6.37289741983' lon='-89.28092204994' />
+  <node id='-152003' action='modify' visible='true' lat='-6.37287761379' lon='-89.28089921398' />
+  <node id='-152005' action='modify' visible='true' lat='-6.37289334962' lon='-89.28090860684' />
+  <node id='-152269' action='modify' visible='true' lat='-6.37297269834' lon='-89.28099731849' />
+  <way id='-152203' action='modify' visible='true'>
+    <nd ref='-151993' />
+    <nd ref='-152269' />
+    <nd ref='-151999' />
+    <nd ref='-151995' />
+    <tag k='highway' v='residential' />
+  </way>
+  <way id='-152204' action='modify' visible='true'>
+    <nd ref='-151999' />
+    <nd ref='-152001' />
+    <nd ref='-152005' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-152208' action='modify' visible='true'>
+    <nd ref='-152005' />
+    <nd ref='-152003' />
+    <nd ref='-151997' />
+    <tag k='highway' v='footway' />
+  </way>
+</osm>
