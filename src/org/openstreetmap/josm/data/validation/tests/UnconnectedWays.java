@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Checks if a way has an endpoint very near to another way.
@@ -199,8 +199,8 @@ public abstract class UnconnectedWays extends Test {
         dsArea = ds == null ? null : ds.getDataSourceArea();
     }
 
-    protected Map<Node, Way> getWayEndNodesNearOtherHighway() {
-        Map<Node, Way> map = new HashMap<>();
+    protected Map<Node, MyWaySegment> getWayEndNodesNearOtherHighway() {
+        Map<Node, MyWaySegment> map = new HashMap<>();
         for (MyWaySegment s : waySegments) {
             if (isCanceled()) {
                 map.clear();
@@ -216,15 +216,15 @@ public abstract class UnconnectedWays extends Test {
                 }
                 // to handle intersections of 't' shapes and similar
                 if (!en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                    map.put(en, s.w);
+                    addIfNewOrCloser(map, en, s);
                 }
             }
         }
         return map;
     }
 
-    protected Map<Node, Way> getWayEndNodesNearOtherWay() {
-        Map<Node, Way> map = new HashMap<>();
+    protected Map<Node, MyWaySegment> getWayEndNodesNearOtherWay() {
+        Map<Node, MyWaySegment> map = new HashMap<>();
         for (MyWaySegment s : waySegments) {
             if (isCanceled()) {
                 map.clear();
@@ -233,7 +233,7 @@ public abstract class UnconnectedWays extends Test {
             if (!s.concernsArea) {
                 for (Node en : s.nearbyNodes(mindist)) {
                     if (!en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                        map.put(en, s.w);
+                        addIfNewOrCloser(map, en, s);
                     }
                 }
             }
@@ -241,8 +241,8 @@ public abstract class UnconnectedWays extends Test {
         return map;
     }
 
-    protected Map<Node, Way> getWayNodesNearOtherWay() {
-        Map<Node, Way> map = new HashMap<>();
+    protected Map<Node, MyWaySegment> getWayNodesNearOtherWay() {
+        Map<Node, MyWaySegment> map = new HashMap<>();
         for (MyWaySegment s : waySegments) {
             if (isCanceled()) {
                 map.clear();
@@ -250,22 +250,35 @@ public abstract class UnconnectedWays extends Test {
             }
             for (Node en : s.nearbyNodes(minmiddledist)) {
                 if (!en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                    map.put(en, s.w);
+                    addIfNewOrCloser(map, en, s);
                 }
             }
         }
         return map;
     }
 
-    protected final void addErrors(Severity severity, Map<Node, Way> errorMap, String message) {
-        for (Map.Entry<Node, Way> error : errorMap.entrySet()) {
+    private void addIfNewOrCloser(Map<Node, MyWaySegment> map, Node node, MyWaySegment ws) {
+        MyWaySegment old = map.get(node);
+        if (old != null) {
+            double d1 = ws.getDist(node);
+            double d2 = old.getDist(node);
+            if (d1 > d2) {
+                // keep old value
+                return;
+            }
+        }
+        map.put(node, ws);
+    }
+
+    protected final void addErrors(Severity severity, Map<Node, MyWaySegment> errorMap, String message) {
+        for (Entry<Node, MyWaySegment> error : errorMap.entrySet()) {
             Node node = error.getKey();
-            Way way = error.getValue();
-            if (partialSelection && !nodesToTest.contains(node) && !waysToTest.contains(way))
+            MyWaySegment ws = error.getValue();
+            if (partialSelection && !nodesToTest.contains(node) && !waysToTest.contains(ws.w))
                 continue;
             errors.add(TestError.builder(this, severity, code)
                     .message(message)
-                    .primitives(node, way)
+                    .primitives(node, ws.w)
                     .highlight(node)
                     .build());
         }
@@ -327,24 +340,26 @@ public abstract class UnconnectedWays extends Test {
             this.concernsArea = concersArea;
         }
 
-        public boolean nearby(Node n, double dist) {
-            if (w == null) {
-                Logging.debug("way null");
-                return false;
-            }
+        double getDist(Node n) {
+            EastNorth coord = n.getEastNorth();
+            if (coord == null)
+                return Double.NaN;
+            EastNorth en1 = n1.getEastNorth();
+            EastNorth en2 = n2.getEastNorth();
+            return Line2D.ptSegDist(en1.getX(), en1.getY(), en2.getX(), en2.getY(), coord.getX(), coord.getY());
+
+        }
+
+        boolean nearby(Node n, double dist) {
             if (w.containsNode(n))
                 return false;
             if (n.isKeyTrue("noexit"))
                 return false;
-            EastNorth coord = n.getEastNorth();
-            if (coord == null)
-                return false;
-            EastNorth en1 = n1.getEastNorth();
-            EastNorth en2 = n2.getEastNorth();
-            return Line2D.ptSegDist(en1.getX(), en1.getY(), en2.getX(), en2.getY(), coord.getX(), coord.getY()) < dist;
+            double d = getDist(n);
+            return !Double.isNaN(d) && d < dist;
         }
 
-        public BBox getBounds(double fudge) {
+        BBox getBounds(double fudge) {
             double x1 = n1.getCoor().lon();
             double x2 = n2.getCoor().lon();
             if (x1 > x2) {
@@ -364,7 +379,7 @@ public abstract class UnconnectedWays extends Test {
             return new BBox(topLeft, botRight);
         }
 
-        public Collection<Node> nearbyNodes(double dist) {
+        Collection<Node> nearbyNodes(double dist) {
             /*
              * We know that any point near the line segment must be at
              * least as close as the other end of the line, plus
