@@ -13,7 +13,7 @@ import javax.swing.MenuSelectionManager;
  */
 public class StayOpenMenuItem extends JMenuItem {
 
-    private static volatile MenuElement[] path;
+    private MenuElement[] path;
 
     {
         getModel().addChangeListener(e -> {

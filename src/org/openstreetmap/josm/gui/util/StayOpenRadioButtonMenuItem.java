@@ -13,7 +13,7 @@ import javax.swing.MenuSelectionManager;
  */
 public class StayOpenRadioButtonMenuItem extends JRadioButtonMenuItem {
 
-    private static volatile MenuElement[] path;
+    private MenuElement[] path;
 
     {
         getModel().addChangeListener(e -> {
