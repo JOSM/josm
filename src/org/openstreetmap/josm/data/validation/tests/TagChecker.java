@@ -601,7 +601,7 @@ public class TagChecker extends TagTest {
             return;
         if ((containsUnwantedNonPrintingControlCharacter(value)) && !withErrors.contains(p, "ICV")) {
             errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_VALUE)
-                    .message(tr("Tag value contains non-printing character"), s, key)
+                    .message(tr("Tag value contains non-printing (usually invisible) character"), s, key)
                     .primitives(p)
                     .fix(() -> new ChangePropertyCommand(p, key, removeUnwantedNonPrintingControlCharacters(value)))
                     .build());
