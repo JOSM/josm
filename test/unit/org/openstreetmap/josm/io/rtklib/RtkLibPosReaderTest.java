@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io.rtklib;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,7 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
+import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -42,15 +44,20 @@ public class RtkLibPosReaderTest {
         iso8601.setTimeZone(DateUtils.UTC);
     }
 
+    private static RtkLibPosReader read(String path) throws IOException, SAXException {
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
+        RtkLibPosReader in = new RtkLibPosReader(Files.newInputStream(Paths.get(path)));
+        in.parse(true);
+        return in;
+    }
+
     /**
      * Tests reading a RTKLib pos file.
      * @throws Exception if any error occurs
      */
     @Test
     public void testReader() throws Exception {
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
-        RtkLibPosReader in = new RtkLibPosReader(Files.newInputStream(Paths.get("data_nodist/rtklib_example.pos")));
-        in.parse(true);
+        RtkLibPosReader in = read("data_nodist/rtklib_example.pos");
         assertEquals(137, in.getNumberOfCoordinates());
 
         List<WayPoint> wayPoints = new ArrayList<>(in.getGpxData().tracks.iterator().next().getSegments().iterator().next().getWayPoints());
@@ -68,5 +75,15 @@ public class RtkLibPosReaderTest {
         assertEquals("92.3955", wayPoints.get(0).get(GpxConstants.PT_ELE));
         assertEquals("2", wayPoints.get(0).get(GpxConstants.PT_SAT));
         assertEquals("2.2090015", wayPoints.get(0).get(GpxConstants.PT_HDOP).toString().trim());
+    }
+
+    /**
+     * Tests reading another RTKLib pos file with different date format.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testReader2() throws Exception {
+        RtkLibPosReader in = read("data_nodist/rtklib_example2.pos");
+        assertEquals(6, in.getNumberOfCoordinates());
     }
 }

@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -48,7 +49,8 @@ public class RtkLibPosReader implements IGpxReader {
     private static final int IDX_AGE = 13;
     private static final int IDX_RATIO = 14;
 
-    private final SimpleDateFormat dateTimeFmt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS", Locale.ENGLISH); // 2019/06/08 08:23:15.000
+    private final SimpleDateFormat dateTimeFmtS = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.ENGLISH); // 2019/06/08 08:23:15
+    private final SimpleDateFormat dateTimeFmtL = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS", Locale.ENGLISH); // 2019/06/08 08:23:15.000
 
     private final InputStream source;
     private GpxData data;
@@ -61,7 +63,12 @@ public class RtkLibPosReader implements IGpxReader {
      */
     public RtkLibPosReader(InputStream source) throws IOException {
         this.source = Objects.requireNonNull(source);
-        dateTimeFmt.setTimeZone(DateUtils.UTC);
+        dateTimeFmtS.setTimeZone(DateUtils.UTC);
+        dateTimeFmtL.setTimeZone(DateUtils.UTC);
+    }
+
+    private Date parseDate(String date) throws ParseException {
+        return (date.length() > 20 ? dateTimeFmtL : dateTimeFmtS).parse(date);
     }
 
     @Override
@@ -83,7 +90,7 @@ public class RtkLibPosReader implements IGpxReader {
                                     Double.parseDouble(fields[IDX_LAT]),
                                     Double.parseDouble(fields[IDX_LON])));
                             currentwp.put(GpxConstants.PT_ELE, fields[IDX_HEIGHT]);
-                            currentwp.setTime(dateTimeFmt.parse(fields[IDX_DATE]+" "+fields[IDX_TIME]));
+                            currentwp.setTime(parseDate(fields[IDX_DATE]+" "+fields[IDX_TIME]));
                             currentwp.put(GpxConstants.RTKLIB_Q, Integer.parseInt(fields[IDX_Q]));
                             currentwp.put(GpxConstants.PT_SAT, fields[IDX_NS]);
                             currentwp.put(GpxConstants.RTKLIB_SDN, fields[IDX_SDN]);
