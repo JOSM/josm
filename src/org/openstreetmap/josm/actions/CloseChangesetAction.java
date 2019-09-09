@@ -99,7 +99,9 @@ public class CloseChangesetAction extends JosmAction {
         @Override
         protected void cancel() {
             this.canceled = true;
-            reader.cancel();
+            if (reader != null) {
+                reader.cancel();
+            }
         }
 
         @Override
