@@ -20,7 +20,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTaskList;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadAlongPanel;
@@ -86,6 +88,18 @@ public abstract class DownloadAlongAction extends JosmAction {
             addToDownload(tmp, r1, results, maxArea);
             addToDownload(tmp, r2, results, maxArea);
         } else {
+            DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+            if (ds != null) {
+                Collection<Bounds> existing = ds.getDataSourceBounds();
+                if (existing != null) {
+                    double p = LatLon.MAX_SERVER_PRECISION;
+                    LatLon min = new LatLon(bounds.getY()+p, bounds.getX()+p);
+                    LatLon max = new LatLon(bounds.getY()+bounds.getHeight()-p, bounds.getX()+bounds.getWidth()-p);
+                    if(existing.stream().anyMatch(current -> (current.contains(min) && current.contains(max)))) {
+                        return; /* skip this one, already downloaded */
+                    }
+                }
+            }
             results.add(bounds);
         }
     }
@@ -101,7 +115,7 @@ public abstract class DownloadAlongAction extends JosmAction {
      * between the rectangle and the actual desired area. For example, if you have a track
      * that goes like this: +----+ | /| | / | | / | |/ | +----+ then we would first look at
      * downloading the whole rectangle (assume it's too big), after that we split it in half
-     * (upper and lower half), but we donot request the full upper and lower rectangle, only
+     * (upper and lower half), but we do not request the full upper and lower rectangle, only
      * the part of the upper/lower rectangle that actually has something in it.
      *
      * This functions calculates the rectangles, asks the user to continue and downloads
