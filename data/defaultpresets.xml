@@ -6625,7 +6625,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Window construction -->
-    <item name="Carpenter" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Carpenter" icon="presets/craft/carpenter.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=carpenter" />
         <space />
         <key key="craft" value="carpenter" />
@@ -6697,7 +6697,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Blacksmith -->
-    <item name="Metal construction" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Metal construction" icon="presets/craft/metal_construction.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=metal_construction" />
         <space />
         <key key="craft" value="metal_construction" />

@@ -3118,8 +3118,8 @@ area[craft=upholsterer],
 area[craft=tiler] {
     fill-color: craft#999900;
 }
-node[craft=carpenter][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=carpenter] {
+    icon-image: "presets/craft/carpenter.svg";
     set icon_z17;
 }
 node[craft=shoemaker][!is_prop_set(icon-image)] {
@@ -3130,8 +3130,8 @@ node[craft=photographer][!is_prop_set(icon-image)] {
     icon-image: "presets/misc/no_icon.svg";
     set icon_z17;
 }
-node[craft=metal_construction][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=metal_construction] {
+    icon-image: "presets/craft/metal_construction.svg";
     set icon_z17;
 }node[craft=electrician] {
     icon-image: "presets/craft/electrician.svg";
