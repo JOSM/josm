@@ -168,11 +168,6 @@ public final class Geometry {
                                     seg2Node1.getEastNorth(), seg2Node2.getEastNorth());
 
                             if (intersection != null) {
-                                if (test) {
-                                    intersectionNodes.add(seg2Node1);
-                                    return intersectionNodes;
-                                }
-
                                 Node newNode = new Node(ProjectionRegistry.getProjection().eastNorth2latlon(intersection));
                                 Node intNode = newNode;
                                 boolean insertInSeg1 = false;
@@ -195,6 +190,11 @@ public final class Geometry {
                                     intNode = seg2Node2;
                                 } else {
                                     insertInSeg2 = true;
+                                }
+
+                                if (test) {
+                                    intersectionNodes.add(intNode);
+                                    return intersectionNodes;
                                 }
 
                                 if (insertInSeg1) {

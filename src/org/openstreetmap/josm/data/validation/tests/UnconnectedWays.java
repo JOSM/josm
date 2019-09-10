@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.data.validation.tests.CrossingWays.RAILWAY;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Area;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -24,6 +25,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
@@ -33,6 +35,8 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Checks if a way has an endpoint very near to another way.
@@ -48,6 +52,15 @@ public abstract class UnconnectedWays extends Test {
     private final boolean isHighwayTest;
 
     protected abstract boolean isCandidate(OsmPrimitive p);
+
+    /**
+     * Check if unconnected end node should be ignored.
+     * @param n the node
+     * @return true if node should be ignored
+     */
+    protected boolean ignoreUnconnectedEndNode(Node n) {
+        return false;
+    }
 
     @Override
     public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -71,6 +84,15 @@ public abstract class UnconnectedWays extends Test {
         protected boolean isCandidate(OsmPrimitive p) {
             return p.hasKey(HIGHWAY);
         }
+
+        @Override
+        protected boolean ignoreUnconnectedEndNode(Node n) {
+            return n.hasTag(HIGHWAY, "turning_circle", "bus_stop")
+                    || n.hasTag("amenity", "parking_entrance")
+                    || n.isKeyTrue("noexit")
+                    || n.hasKey("entrance", "barrier")
+                    || n.getParentWays().stream().anyMatch(Test::isBuilding);
+        }
     }
 
     /**
@@ -87,7 +109,12 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean isCandidate(OsmPrimitive p) {
-            return p.hasKey(RAILWAY) && !p.hasTag(RAILWAY, "abandoned");
+            return p.hasTagDifferent(RAILWAY, "abandoned");
+        }
+
+        @Override
+        protected boolean ignoreUnconnectedEndNode(Node n) {
+            return n.hasTag(RAILWAY, "buffer_stop");
         }
     }
 
@@ -123,7 +150,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean isCandidate(OsmPrimitive p) {
-            return p.hasKey("natural", "landuse") && !p.hasTag("natural", "tree_row", "cliff");
+            return p.hasKey("landuse") || p.hasTagDifferent("natural", "tree_row", "cliff");
         }
     }
 
@@ -143,6 +170,11 @@ public abstract class UnconnectedWays extends Test {
         protected boolean isCandidate(OsmPrimitive p) {
             return p.hasTag("power", "line", "minor_line", "cable");
         }
+
+        @Override
+        protected boolean ignoreUnconnectedEndNode(Node n) {
+            return n.hasTag("power", "terminal");
+        }
     }
 
     protected static final int UNCONNECTED_WAYS = 1301;
@@ -159,6 +191,7 @@ public abstract class UnconnectedWays extends Test {
 
     private double mindist;
     private double minmiddledist;
+    private double maxLen; // maximum length of allowed detour to reach the unconnected node
     private DataSet ds;
 
     /**
@@ -188,6 +221,7 @@ public abstract class UnconnectedWays extends Test {
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         waySegments = new ArrayList<>();
+        searchNodes = new QuadBuckets<>();
         waysToTest = new HashSet<>();
         nodesToTest = new HashSet<>();
         endnodes = new HashSet<>();
@@ -199,24 +233,28 @@ public abstract class UnconnectedWays extends Test {
         dsArea = ds == null ? null : ds.getDataSourceArea();
     }
 
-    protected Map<Node, MyWaySegment> getWayEndNodesNearOtherHighway() {
+    protected Map<Node, MyWaySegment> getHighwayEndNodesNearOtherHighway() {
         Map<Node, MyWaySegment> map = new HashMap<>();
         for (MyWaySegment s : waySegments) {
             if (isCanceled()) {
                 map.clear();
                 return map;
             }
-            for (Node en : s.nearbyNodes(mindist)) {
-                if (en.hasTag(HIGHWAY, "turning_circle", "bus_stop")
-                        || en.hasTag("amenity", "parking_entrance")
-                        || en.hasTag(RAILWAY, "buffer_stop")
-                        || en.isKeyTrue("noexit")
-                        || en.hasKey("entrance", "barrier")) {
-                    continue;
-                }
-                // to handle intersections of 't' shapes and similar
-                if (!en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                    addIfNewOrCloser(map, en, s);
+            for (Node endnode : s.nearbyNodes(mindist)) {
+                Way parentWay = getWantedParentWay(endnode);
+                if (parentWay != null) {
+                    if (!Objects.equals(OsmUtils.getLayer(s.w), OsmUtils.getLayer(parentWay))) {
+                        continue; // ignore ways with different layer tag
+                    }
+
+                    // to handle intersections of 't' shapes and similar
+                    if (!s.isConnectedTo(endnode)) {
+                        if (parentWay.hasTag(HIGHWAY, "platform") || s.w.hasTag(HIGHWAY, "platform")
+                                || s.barrierBetween(endnode)) {
+                            continue;
+                        }
+                        addIfNewOrCloser(map, endnode, s);
+                    }
                 }
             }
         }
@@ -225,15 +263,31 @@ public abstract class UnconnectedWays extends Test {
 
     protected Map<Node, MyWaySegment> getWayEndNodesNearOtherWay() {
         Map<Node, MyWaySegment> map = new HashMap<>();
+
         for (MyWaySegment s : waySegments) {
             if (isCanceled()) {
                 map.clear();
                 return map;
             }
             if (!s.concernsArea) {
-                for (Node en : s.nearbyNodes(mindist)) {
-                    if (!en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                        addIfNewOrCloser(map, en, s);
+                for (Node endnode : s.nearbyNodes(mindist)) {
+                    if (!s.isConnectedTo(endnode)) {
+                        if (s.w.hasTag("power")) {
+                            boolean badConnection = false;
+                            Way otherWay = getWantedParentWay(endnode);
+                            if (otherWay != null) {
+                                for (String key : Arrays.asList("voltage", "frequency")) {
+                                    String v1 = s.w.get(key);
+                                    String v2 = otherWay.get(key);
+                                    if (v1 != null && v2 != null && !v1.equals(v2)) {
+                                        badConnection = true;
+                                    }
+                                }
+                            }
+                            if (badConnection)
+                                continue;
+                        }
+                        addIfNewOrCloser(map, endnode, s);
                     }
                 }
             }
@@ -249,7 +303,7 @@ public abstract class UnconnectedWays extends Test {
                 return map;
             }
             for (Node en : s.nearbyNodes(minmiddledist)) {
-                if (!en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                if (!s.isConnectedTo(en)) {
                     addIfNewOrCloser(map, en, s);
                 }
             }
@@ -257,7 +311,24 @@ public abstract class UnconnectedWays extends Test {
         return map;
     }
 
+    /**
+     * An unconnected node might have multiple parent ways, e.g. a highway and a landuse way.
+     * Make sure we get the one that was analysed before.
+     * @param endnode the node which is known to be an end node of the wanted way
+     * @return the wanted way
+     */
+    private Way getWantedParentWay(Node endnode) {
+        for (Way w : endnode.getParentWays()) {
+            if (isCandidate(w))
+                return w;
+        }
+        Logging.error("end node without matching parent way");
+        return null;
+    }
+
     private void addIfNewOrCloser(Map<Node, MyWaySegment> map, Node node, MyWaySegment ws) {
+        if (partialSelection && !nodesToTest.contains(node) && !waysToTest.contains(ws.w))
+            return;
         MyWaySegment old = map.get(node);
         if (old != null) {
             double d1 = ws.getDist(node);
@@ -274,8 +345,6 @@ public abstract class UnconnectedWays extends Test {
         for (Entry<Node, MyWaySegment> error : errorMap.entrySet()) {
             Node node = error.getKey();
             MyWaySegment ws = error.getValue();
-            if (partialSelection && !nodesToTest.contains(node) && !waysToTest.contains(ws.w))
-                continue;
             errors.add(TestError.builder(this, severity, code)
                     .message(message)
                     .primitives(node, ws.w)
@@ -290,33 +359,32 @@ public abstract class UnconnectedWays extends Test {
             return;
 
         for (Way w : ds.getWays()) {
-            if (w.isUsable() && isCandidate(w) && w.getRealNodesCount() > 1
-                    // don't complain about highways ending near platforms
-                    && !w.hasTag(HIGHWAY, "platform") && !w.hasTag(RAILWAY, "platform", "platform_edge")
-                    ) {
+            if (w.isUsable() && isCandidate(w) && w.getRealNodesCount() > 1) {
                 waySegments.addAll(getWaySegments(w));
                 addNode(w.firstNode(), endnodes);
                 addNode(w.lastNode(), endnodes);
             }
         }
-        searchNodes = new QuadBuckets<>();
-        searchNodes.addAll(endnodes);
-        if (isHighwayTest) {
-            addErrors(Severity.WARNING, getWayEndNodesNearOtherHighway(), tr("Way end node near other highway"));
-        } else {
-            addErrors(Severity.WARNING, getWayEndNodesNearOtherWay(), tr("Way end node near other way"));
+        fillSearchNodes(endnodes);
+        if (!searchNodes.isEmpty()) {
+            maxLen = 4 * mindist;
+            if (isHighwayTest) {
+                addErrors(Severity.WARNING, getHighwayEndNodesNearOtherHighway(), tr("Way end node near other highway"));
+            } else {
+                addErrors(Severity.WARNING, getWayEndNodesNearOtherWay(), tr("Way end node near other way"));
+            }
         }
 
-        /* the following two use a shorter distance */
+        /* the following two should use a shorter distance */
         boolean includeOther = isBeforeUpload ? ValidatorPrefHelper.PREF_OTHER_UPLOAD.get() : ValidatorPrefHelper.PREF_OTHER.get();
         if (minmiddledist > 0.0 && includeOther) {
-            searchNodes.clear();
-            searchNodes.addAll(middlenodes);
+            maxLen = 4 * minmiddledist;
+            fillSearchNodes(middlenodes);
             addErrors(Severity.OTHER, getWayNodesNearOtherWay(), tr("Way node near other way"));
-            searchNodes.clear();
-            searchNodes.addAll(othernodes);
+            fillSearchNodes(othernodes);
             addErrors(Severity.OTHER, getWayNodesNearOtherWay(), tr("Connected way end node near other way"));
         }
+
         waySegments = null;
         endnodes = null;
         middlenodes = null;
@@ -325,6 +393,15 @@ public abstract class UnconnectedWays extends Test {
         dsArea = null;
         ds = null;
         super.endTest();
+    }
+
+    private void fillSearchNodes(Collection<Node> nodes) {
+        searchNodes.clear();
+        for (Node n : nodes) {
+            if (!ignoreUnconnectedEndNode(n) && n.getCoor().isIn(dsArea)) {
+                searchNodes.add(n);
+            }
+        }
     }
 
     private class MyWaySegment {
@@ -340,20 +417,69 @@ public abstract class UnconnectedWays extends Test {
             this.concernsArea = concersArea;
         }
 
+        /**
+         * Check if the given node is connected to this segment using a reasonable short way.
+         * @param startNode the node
+         * @return true if a reasonable connection was found
+         */
+        boolean isConnectedTo(Node startNode) {
+            return isConnectedTo(startNode, null, new HashSet<>(), 0);
+        }
+
+        /**
+         * Check if the given node is connected to this segment using a reasonable short way.
+         * @param node the given node
+         * @param startWay previously visited way or null if first
+         * @param visited set of visited nodes
+         * @param len length of the travelled route
+         * @return true if a reasonable connection was found
+         */
+        boolean isConnectedTo(Node node, Way startWay, Set<Node> visited, double len) {
+            if (n1 == node || n2 == node) {
+                return true;
+            }
+            if (len > maxLen) {
+                return false;
+            }
+            if (visited != null) {
+                visited.add(node);
+                for (final Way way : node.getParentWays()) {
+                    if (isCandidate(way)) {
+                        List<Node> nextNodes = new ArrayList<>();
+                        int pos = way.getNodes().indexOf(node);
+                        if (pos > 0) {
+                            nextNodes.add(way.getNode(pos - 1));
+                        }
+                        if (pos + 1 < way.getNodesCount()) {
+                            nextNodes.add(way.getNode(pos + 1));
+                        }
+                        for (Node next : nextNodes) {
+                            final boolean containsN = visited.contains(next);
+                            visited.add(next);
+                            if (!containsN && isConnectedTo(next, way, visited,
+                                    len + node.getCoor().greatCircleDistance(next.getCoor()))) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         double getDist(Node n) {
             EastNorth coord = n.getEastNorth();
             if (coord == null)
                 return Double.NaN;
-            EastNorth en1 = n1.getEastNorth();
-            EastNorth en2 = n2.getEastNorth();
-            return Line2D.ptSegDist(en1.getX(), en1.getY(), en2.getX(), en2.getY(), coord.getX(), coord.getY());
+            EastNorth closest = Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), coord);
+            Node x = new Node();
+            x.setEastNorth(closest);
+            return x.getCoor().greatCircleDistance(n.getCoor());
 
         }
 
         boolean nearby(Node n, double dist) {
             if (w.containsNode(n))
-                return false;
-            if (n.isKeyTrue("noexit"))
                 return false;
             double d = getDist(n);
             return !Double.isNaN(d) && d < dist;
@@ -390,7 +516,7 @@ public abstract class UnconnectedWays extends Test {
             List<Node> result = null;
             List<Node> foundNodes = searchNodes.search(bounds);
             for (Node n : foundNodes) {
-                if (!nearby(n, dist) || !n.getCoor().isIn(dsArea)) {
+                if (!nearby(n, dist)) {
                     continue;
                 }
                 // It is actually very rare for us to find a node
@@ -403,6 +529,25 @@ public abstract class UnconnectedWays extends Test {
             }
             return result == null ? Collections.emptyList() : result;
         }
+
+        private boolean barrierBetween(Node endnode) {
+            EastNorth closest = Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), endnode.getEastNorth());
+            Node x = new Node();
+            x.setEastNorth(closest);
+            BBox bbox = new BBox(endnode.getCoor(), x.getCoor());
+            for (Way nearbyWay: ds.searchWays(bbox)) {
+                if (nearbyWay != w && nearbyWay.hasTag("barrier") && !endnode.getParentWays().contains(nearbyWay)) {
+                    //make sure that the barrier is really between the two nodes, not just close to them
+                    Way directWay = new Way();
+                    directWay.addNode(endnode);
+                    directWay.addNode(x);
+                    if (!Geometry.addIntersections(Arrays.asList(nearbyWay, directWay), true, new ArrayList<>()).isEmpty())
+                        return true;
+                }
+            }
+            return false;
+        }
+
     }
 
     List<MyWaySegment> getWaySegments(Way w) {
