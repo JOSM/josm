@@ -961,7 +961,6 @@ public final class DomainValidator extends AbstractValidator {
         "mma", // mma MMA IARD
         "mobi", // mobi Afilias Technologies Limited dba dotMobi
         "mobile", // mobile Dish DBS Corporation
-        "mobily", // mobily GreenTech Consultancy Company W.L.L.
         "moda", // moda United TLD Holdco Ltd.
         "moe", // moe Interlink Co., Ltd.
         "moi", // moi Amazon Registry Services, Inc.
@@ -1476,7 +1475,6 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbah1a3hjkrd", // موريتانيا Université de Nouakchott Al Aasriya
         "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
-        "xn--mgbb9fbpob", // موبايلي GreenTech Consultancy Company W.L.L.
         "xn--mgbbh1a", // بارت National Internet eXchange of India
         "xn--mgbca7dzdo", // ابوظبي Abu Dhabi Systems and Information Centre
         "xn--mgbgu82a", // ڀارت National Internet eXchange of India
