@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -288,39 +289,43 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageRemoveAction extends JosmAction {
         ImageRemoveAction() {
-            super(null, new ImageProvider("dialogs", "delete"), tr("Remove photo from layer"), Shortcut.registerShortcut(
-                    "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", tr("Remove photo from layer")), KeyEvent.VK_DELETE, Shortcut.SHIFT),
+            super(null, new ImageProvider("dialogs", "delete"), tr("Remove photo(s) from layer"), Shortcut.registerShortcut(
+                    "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", tr("Remove photo(s) from layer")), KeyEvent.VK_DELETE, Shortcut.SHIFT),
                   false, null, false);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentData != null) {
-                currentData.removeSelectedImage();
+                currentData.removeSelectedImages();
             }
         }
     }
 
     private class ImageRemoveFromDiskAction extends JosmAction {
         ImageRemoveFromDiskAction() {
-            super(null, new ImageProvider("dialogs", "geoimage/deletefromdisk"), tr("Delete image file from disk"),
+            super(null, new ImageProvider("dialogs", "geoimage/deletefromdisk"), tr("Delete photo file(s) from disk"),
                   Shortcut.registerShortcut(
-                    "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete File from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT),
+                    "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete file(s) from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT),
                   false, null, false);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentData != null && currentData.getSelectedImage() != null) {
-                ImageEntry toDelete = currentData.getSelectedImage();
+                List<ImageEntry> toDelete = currentData.getSelectedImages();
+                int size = toDelete.size();
 
                 int result = new ExtendedDialog(
                         MainApplication.getMainFrame(),
                         tr("Delete image file from disk"),
                         tr("Cancel"), tr("Delete"))
                         .setButtonIcons("cancel", "dialogs/delete")
-                        .setContent(new JLabel("<html><h3>" + tr("Delete the file {0} from disk?", toDelete.getFile().getName())
-                                + "<p>" + tr("The image file will be permanently lost!") + "</h3></html>",
+                        .setContent(new JLabel("<html><h3>"
+                                + trn("Delete the file from disk?",
+                                      "Delete the {0} files from disk?", size, size)
+                                + "<p>" + trn("The image file will be permanently lost!",
+                                              "The images files will be permanently lost!", size) + "</h3></html>",
                                 ImageProvider.get("dialogs/geoimage/deletefromdisk"), SwingConstants.LEFT))
                         .toggleEnable("geoimage.deleteimagefromdisk")
                         .setCancelButton(1)
@@ -329,17 +334,18 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         .getValue();
 
                 if (result == 2) {
-                    currentData.removeSelectedImage();
-
-                    if (Utils.deleteFile(toDelete.getFile())) {
-                        Logging.info("File " + toDelete.getFile() + " deleted.");
-                    } else {
-                        JOptionPane.showMessageDialog(
-                                MainApplication.getMainFrame(),
-                                tr("Image file could not be deleted."),
-                                tr("Error"),
-                                JOptionPane.ERROR_MESSAGE
-                                );
+                    currentData.removeSelectedImages();
+                    for (ImageEntry delete : toDelete) {
+                        if (Utils.deleteFile(delete.getFile())) {
+                            Logging.info("File " + delete.getFile() + " deleted.");
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    MainApplication.getMainFrame(),
+                                    tr("Image file could not be deleted."),
+                                    tr("Error"),
+                                    JOptionPane.ERROR_MESSAGE
+                                    );
+                        }
                     }
                 }
             }
@@ -496,6 +502,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
             imgDisplay.setOsdText(osd.toString());
         } else {
+            boolean hasMultipleImages = entries != null && entries.size() > 1;
             // if this method is called to reinitialize dialog content with a blank image,
             // do not actually show the dialog again with a blank image if currently hidden (fix #10672)
             setTitle(tr("Geotagged Images"));
@@ -503,10 +510,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             imgDisplay.setOsdText("");
             setNextEnabled(false);
             setPreviousEnabled(false);
-            btnDelete.setEnabled(false);
-            btnDeleteFromDisk.setEnabled(false);
+            btnDelete.setEnabled(hasMultipleImages);
+            btnDeleteFromDisk.setEnabled(hasMultipleImages);
             btnCopyPath.setEnabled(false);
-            if (entries != null && entries.size() > 1) {
+            if (hasMultipleImages) {
                 imgDisplay.setEmptyText(tr("Multiple images selected"));
                 btnFirst.setEnabled(!isFirstImageSelected(data));
                 btnLast.setEnabled(!isLastImageSelected(data));

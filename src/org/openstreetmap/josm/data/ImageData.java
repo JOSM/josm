@@ -262,6 +262,21 @@ public class ImageData {
     }
 
     /**
+     * Remove the current selected image from the list
+     * @since 15348
+     */
+    public void removeSelectedImages() {
+        List<ImageEntry> selected = getSelectedImages();
+        if (selected.isEmpty()) {
+            return;
+        }
+        for (ImageEntry img: getSelectedImages()) {
+            data.remove(img);
+        }
+        setSelectedImageIndex(-1, true);
+    }
+
+    /**
      * Determines if the image is selected
      * @param image the {@link ImageEntry} image
      * @return {@code true} is the image is selected, {@code false} otherwise

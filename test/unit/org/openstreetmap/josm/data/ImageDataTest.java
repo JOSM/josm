@@ -182,7 +182,20 @@ public class ImageDataTest {
     }
 
     @Test
-    public void testRemoveSelectedWithImageTriggerListener() {
+    public void testRemoveSelectedImages() {
+        List<ImageEntry> list = getOneImage();
+        list.add(new ImageEntry());
+
+        ImageData data = new ImageData(list);
+        data.selectFirstImage();
+        data.addImageToSelection(list.get(1));
+        data.removeSelectedImages();
+        assertEquals(0, data.getImages().size());
+        assertEquals(0, data.getSelectedImages().size());
+    }
+
+    @Test
+    public void testRemoveSelectedImageTriggerListener() {
         List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry());
         ImageData data = new ImageData(list);
@@ -199,6 +212,26 @@ public class ImageDataTest {
         data.addImageDataUpdateListener(listener);
         data.selectFirstImage();
         data.removeSelectedImage();
+    }
+
+    @Test
+    public void testRemoveSelectedImagesTriggerListener() {
+        List<ImageEntry> list = getOneImage();
+        list.add(new ImageEntry());
+        ImageData data = new ImageData(list);
+        ImageDataUpdateListener listener = new ImageDataUpdateListener() {
+            @Override
+            public void selectedImageChanged(ImageData data) {}
+
+            @Override
+            public void imageDataUpdated(ImageData data) {}
+        };
+        new Expectations(listener) {{
+            listener.selectedImageChanged(data); times = 2;
+        }};
+        data.addImageDataUpdateListener(listener);
+        data.selectFirstImage();
+        data.removeSelectedImages();
     }
 
     @Test
