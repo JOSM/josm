@@ -34,8 +34,9 @@ public class ConditionalKeys extends Test.TagTest {
             "delivery", "customers", "permissive", "private", "agricultural", "forestry", "no"));
     private static final Set<String> TRANSPORT_MODES = new HashSet<>(Arrays.asList("access", "foot", "ski", "inline_skates", "ice_skates",
             "horse", "vehicle", "bicycle", "carriage", "trailer", "caravan", "motor_vehicle", "motorcycle", "moped", "mofa",
-            "motorcar", "motorhome", "psv", "bus", "taxi", "tourist_bus", "goods", "hgv", "agricultural", "atv", "snowmobile"
-            /*,"hov","emergency","hazmat","disabled"*/));
+            "motorcar", "motorhome", "psv", "bus", "taxi", "tourist_bus", "goods", "hgv", "agricultural", "atv", "snowmobile",
+            "hgv_articulated", "ski:nordic", "ski:alpine", "ski:telemark", "coach", "golf_cart"
+            /*,"minibus","share_taxi","hov","car_sharing","emergency","hazmat","disabled"*/));
 
     private static final Pattern CONDITIONAL_PATTERN;
     static {
