@@ -95,8 +95,8 @@ public abstract class DownloadAlongAction extends JosmAction {
                     double p = LatLon.MAX_SERVER_PRECISION;
                     LatLon min = new LatLon(bounds.getY()+p, bounds.getX()+p);
                     LatLon max = new LatLon(bounds.getY()+bounds.getHeight()-p, bounds.getX()+bounds.getWidth()-p);
-                    if(existing.stream().anyMatch(current -> (current.contains(min) && current.contains(max)))) {
-                        return; /* skip this one, already downloaded */
+                    if (existing.stream().anyMatch(current -> (current.contains(min) && current.contains(max)))) {
+                        return; // skip this one, already downloaded
                     }
                 }
             }
