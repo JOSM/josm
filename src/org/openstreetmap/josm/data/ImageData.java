@@ -246,19 +246,11 @@ public class ImageData {
      * Remove the current selected image from the list
      */
     public void removeSelectedImage() {
-        List<ImageEntry> selected = getSelectedImages();
-        if (selected.size() > 1) {
+        List<ImageEntry> selectedImages = getSelectedImages();
+        if (selectedImages.size() > 1) {
             throw new IllegalStateException(tr("Multiple images have been selected"));
         }
-        if (selected.isEmpty()) {
-            return;
-        }
-        data.remove(getSelectedImages().get(0));
-        if (selectedImagesIndex.get(0) == data.size()) {
-            setSelectedImageIndex(data.size() - 1);
-        } else {
-            setSelectedImageIndex(selectedImagesIndex.get(0), true);
-        }
+        removeImages(selectedImages);
     }
 
     /**
@@ -266,14 +258,22 @@ public class ImageData {
      * @since 15348
      */
     public void removeSelectedImages() {
-        List<ImageEntry> selected = getSelectedImages();
-        if (selected.isEmpty()) {
+        List<ImageEntry> selectedImages = getSelectedImages();
+        removeImages(selectedImages);
+    }
+
+    private void removeImages(List<ImageEntry> selectedImages) {
+        if (selectedImages.isEmpty()) {
             return;
         }
         for (ImageEntry img: getSelectedImages()) {
             data.remove(img);
         }
-        setSelectedImageIndex(-1, true);
+        if (selectedImagesIndex.get(0) == data.size()) {
+            setSelectedImageIndex(data.size() - 1);
+        } else {
+            setSelectedImageIndex(selectedImagesIndex.get(0), true);
+        }
     }
 
     /**
