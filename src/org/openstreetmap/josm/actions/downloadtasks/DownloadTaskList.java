@@ -251,10 +251,7 @@ public class DownloadTaskList {
                     return;
                 }
             }
-            Set<Object> errors = new LinkedHashSet<>();
-            for (DownloadTask dt : tasks) {
-                errors.addAll(dt.getErrorObjects());
-            }
+            Set<Object> errors = tasks.stream().flatMap(t -> t.getErrorObjects().stream()).collect(Collectors.toSet());
             if (!errors.isEmpty()) {
                 final Collection<String> items = new ArrayList<>();
                 for (Object error : errors) {
@@ -289,18 +286,28 @@ public class DownloadTaskList {
                         return;
                 }
             }
-            final OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-            if (editLayer != null && osmData) {
-                final Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.getDataSet());
-                for (DownloadTask task : tasks) {
-                    if (task instanceof DownloadOsmTask) {
-                        DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
-                        if (ds != null) {
-                            // myPrimitives.removeAll(ds.allPrimitives()) will do the same job but much slower
-                            for (OsmPrimitive primitive: ds.allPrimitives()) {
-                                myPrimitives.remove(primitive);
-                            }
-                        }
+            final DataSet editDataSet = MainApplication.getLayerManager().getEditDataSet();
+            if (editDataSet != null && osmData) {
+                final List<DownloadOsmTask> osmTasks = tasks.stream()
+                        .filter(t -> t instanceof DownloadOsmTask).map(t -> (DownloadOsmTask) t)
+                        .filter(t -> t.getDownloadedData() != null)
+                        .collect(Collectors.toList());
+                final Set<Bounds> tasksBounds = osmTasks.stream()
+                        .flatMap(t -> t.getDownloadedData().getDataSourceBounds().stream())
+                        .collect(Collectors.toSet());
+                final Set<Bounds> layerBounds = new LinkedHashSet<>(editDataSet.getDataSourceBounds());
+                final Set<OsmPrimitive> myPrimitives = new LinkedHashSet<>();
+                if (layerBounds.equals(tasksBounds)) {
+                    // the full edit layer is updated (we have downloaded again all its current bounds)
+                    myPrimitives.addAll(getCompletePrimitives(editDataSet));
+                    for (DownloadOsmTask task : osmTasks) {
+                        // myPrimitives.removeAll(ds.allPrimitives()) will do the same job but much slower
+                        task.getDownloadedData().allPrimitives().forEach(myPrimitives::remove);
+                    }
+                } else {
+                    // partial update, only check what has been downloaded
+                    for (DownloadOsmTask task : osmTasks) {
+                        myPrimitives.addAll(task.searchPotentiallyDeletedPrimitives(editDataSet));
                     }
                 }
                 if (!myPrimitives.isEmpty()) {

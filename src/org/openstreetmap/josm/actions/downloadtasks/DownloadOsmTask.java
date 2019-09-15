@@ -202,6 +202,10 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         return downloadTask != null ? downloadTask.computeBbox(currentBounds).orElse(null) : null;
     }
 
+    protected Collection<OsmPrimitive> searchPotentiallyDeletedPrimitives(DataSet ds) {
+        return downloadTask.searchPrimitivesToUpdate(currentBounds, ds);
+    }
+
     /**
      * Superclass of internal download task.
      * @since 7636
@@ -375,7 +379,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          * @param ds existing data set
          * @return the primitives to update
          */
-        private Collection<OsmPrimitive> searchPrimitivesToUpdate(Bounds bounds, DataSet ds) {
+        protected Collection<OsmPrimitive> searchPrimitivesToUpdate(Bounds bounds, DataSet ds) {
             if (bounds == null)
                 return Collections.emptySet();
             Collection<OsmPrimitive> col = new ArrayList<>();
