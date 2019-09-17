@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.CustomMatchers.hasSize;
 import static org.CustomMatchers.isEmpty;
 import static org.junit.Assert.assertThat;
 
@@ -59,7 +60,7 @@ public class UnconnectedWaysTest {
     }
 
     /**
-     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/6313">Bug #18051</a>.
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18051">Bug #18051</a>.
      * @throws IOException if any I/O error occurs
      * @throws IllegalDataException if the OSM data cannot be parsed
      * @throws FileNotFoundException if the data file cannot be found
@@ -79,7 +80,7 @@ public class UnconnectedWaysTest {
     }
 
     /**
-     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/6313">Bug #18106</a>.
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18136">Bug #18106</a>.
      * @throws IOException if any I/O error occurs
      * @throws IllegalDataException if the OSM data cannot be parsed
      * @throws FileNotFoundException if the data file cannot be found
@@ -95,6 +96,26 @@ public class UnconnectedWaysTest {
             bib.visit(ds.allPrimitives());
             bib.endTest();
             assertThat(bib.getErrors(), isEmpty());
+        }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18137">Bug #18137</a>.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if the OSM data cannot be parsed
+     * @throws FileNotFoundException if the data file cannot be found
+     */
+    @Test
+    public void testTicket18137() throws IOException, IllegalDataException, FileNotFoundException {
+        try (InputStream fis = TestUtils.getRegressionDataStream(18137, "18137_npe.osm")) {
+            final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+            MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));
+
+            bib.startTest(null);
+            bib.setBeforeUpload(true);
+            bib.visit(ds.allPrimitives());
+            bib.endTest();
+            assertThat(bib.getErrors(), hasSize(2));
         }
     }
 }

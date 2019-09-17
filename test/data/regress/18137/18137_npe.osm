@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='1246222601' timestamp='2019-05-24T11:26:45Z' uid='1238662' user='Krawujewatz' visible='true' version='3' changeset='70582944' lat='-34.5234417' lon='-56.271612' />
+  <node id='1246222713' timestamp='2016-03-11T22:39:49Z' uid='3692997' user='somethingsimple' visible='true' version='2' changeset='37774325' lat='-34.5231675' lon='-56.274427' />
+  <node id='1246222715' timestamp='2016-03-11T22:39:49Z' uid='3692997' user='somethingsimple' visible='true' version='2' changeset='37774325' lat='-34.5231654' lon='-56.274368' />
+  <node id='1246222784' timestamp='2019-05-24T11:26:45Z' uid='1238662' user='Krawujewatz' visible='true' version='4' changeset='70582944' lat='-34.5232394' lon='-56.2731331' />
+  <node id='1246222884' timestamp='2016-03-11T22:39:49Z' uid='3692997' user='somethingsimple' visible='true' version='2' changeset='37774325' lat='-34.5232261' lon='-56.2745249' />
+  <node id='1246222886' timestamp='2019-05-24T11:26:46Z' uid='1238662' user='Krawujewatz' visible='true' version='4' changeset='70582944' lat='-34.5233254' lon='-56.2731422' />
+  <node id='1246222919' timestamp='2019-05-24T11:26:46Z' uid='1238662' user='Krawujewatz' visible='true' version='3' changeset='70582944' lat='-34.5234266' lon='-56.271804' />
+  <node id='4055582019' timestamp='2016-03-11T22:39:42Z' uid='3692997' user='somethingsimple' visible='true' version='1' changeset='37774325' lat='-34.5231757' lon='-56.2744644' />
+  <node id='4055582020' timestamp='2016-03-11T22:39:42Z' uid='3692997' user='somethingsimple' visible='true' version='1' changeset='37774325' lat='-34.5231978' lon='-56.2744925' />
+  <way id='108684706' timestamp='2019-05-24T11:26:50Z' uid='1238662' user='Krawujewatz' visible='true' version='3' changeset='70582944'>
+    <nd ref='1245692411' />
+    <nd ref='1246222640' />
+    <nd ref='1246222919' />
+    <tag k='highway' v='residential' />
+    <tag k='name' v='Colombes' />
+  </way>
+  <way id='108684713' timestamp='2019-09-15T11:55:39Z' uid='337684' user='felipeedwards' visible='true' version='3' changeset='74494767'>
+    <nd ref='1246222601' />
+    <nd ref='1246222919' />
+    <nd ref='1246222886' />
+    <tag k='highway' v='residential' />
+    <tag k='name' v='Juan Tolentino González' />
+  </way>
+  <way id='108684723' timestamp='2016-03-11T22:39:48Z' uid='3692997' user='somethingsimple' visible='true' version='3' changeset='37774325'>
+    <nd ref='1246222884' />
+    <nd ref='1246222902' />
+    <nd ref='4055582022' />
+    <nd ref='1246222517' />
+    <nd ref='1246222654' />
+    <nd ref='1246222952' />
+    <nd ref='1246223049' />
+    <nd ref='1246222860' />
+    <tag k='highway' v='residential' />
+  </way>
+  <way id='108684728' timestamp='2019-09-15T11:55:39Z' uid='337684' user='felipeedwards' visible='true' version='3' changeset='74494767'>
+    <nd ref='1246222784' />
+    <nd ref='1246222715' />
+    <nd ref='1246222713' />
+    <nd ref='4055582019' />
+    <nd ref='4055582020' />
+    <nd ref='1246222884' />
+    <tag k='highway' v='residential' />
+    <tag k='name' v='Juan Tolentino González' />
+  </way>
+  <way id='108684738' timestamp='2013-08-17T22:07:54Z' uid='755114' user='muralito' visible='true' version='4' changeset='17389549'>
+    <nd ref='1759328016' />
+    <nd ref='2019163284' />
+    <nd ref='1246222784' />
+    <nd ref='1246222886' />
+    <nd ref='1246222916' />
+    <nd ref='1246223019' />
+    <tag k='highway' v='residential' />
+    <tag k='name' v='De los campeones' />
+  </way>
+</osm>

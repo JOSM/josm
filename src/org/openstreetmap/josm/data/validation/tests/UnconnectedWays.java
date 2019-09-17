@@ -53,6 +53,10 @@ public abstract class UnconnectedWays extends Test {
 
     protected abstract boolean isCandidate(OsmPrimitive p);
 
+    protected boolean isWantedWay(Way w) {
+        return w.isUsable() && isCandidate(w);
+    }
+
     /**
      * Check if unconnected end node should be ignored.
      * @param n the node
@@ -319,7 +323,7 @@ public abstract class UnconnectedWays extends Test {
      */
     private Way getWantedParentWay(Node endnode) {
         for (Way w : endnode.getParentWays()) {
-            if (isCandidate(w))
+            if (isWantedWay(w))
                 return w;
         }
         Logging.error("end node without matching parent way");
@@ -359,7 +363,7 @@ public abstract class UnconnectedWays extends Test {
             return;
 
         for (Way w : ds.getWays()) {
-            if (w.isUsable() && isCandidate(w) && w.getRealNodesCount() > 1) {
+            if (isWantedWay(w) && w.getRealNodesCount() > 1) {
                 waySegments.addAll(getWaySegments(w));
                 addNode(w.firstNode(), endnodes);
                 addNode(w.lastNode(), endnodes);
@@ -444,7 +448,7 @@ public abstract class UnconnectedWays extends Test {
             if (visited != null) {
                 visited.add(node);
                 for (final Way way : node.getParentWays()) {
-                    if (isCandidate(way)) {
+                    if (isWantedWay(way)) {
                         List<Node> nextNodes = new ArrayList<>();
                         int pos = way.getNodes().indexOf(node);
                         if (pos > 0) {
