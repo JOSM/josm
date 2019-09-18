@@ -235,7 +235,7 @@ public class RelationListDialog extends ToggleDialog
         MainApplication.getLayerManager().addActiveLayerChangeListener(newAction);
         MapView.addZoomChangeListener(this);
         newAction.updateEnabledState();
-        DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
+        DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(addSelectionToRelations);
         dataChanged(null);
     }
