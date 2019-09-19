@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
@@ -425,9 +426,8 @@ public class SplitWayCommand extends SequenceCommand {
         String role = rm.getRole();
         String type = Optional.ofNullable(r.get("type")).orElse("");
         if ("from".equals(role) || "to".equals(role)) {
-            OsmPrimitive via = findVia(r, type);
             List<Node> nodes = new ArrayList<>();
-            if (via != null) {
+            for (OsmPrimitive via : findVias(r, type)) {
                 if (via instanceof Node) {
                     nodes.add((Node) via);
                 } else if (via instanceof Way) {
@@ -467,24 +467,26 @@ public class SplitWayCommand extends SequenceCommand {
         return relationInformation;
     }
 
-    static OsmPrimitive findVia(Relation r, String type) {
+    static List<OsmPrimitive> findVias(Relation r, String type) {
         if (type != null) {
             switch (type) {
+            case "connectivity":
             case "restriction":
-                return findRelationMember(r, "via").orElse(null);
+                return findRelationMembers(r, "via");
             case "destination_sign":
                 // Prefer intersection over sign, see #12347
-                return findRelationMember(r, "intersection").orElse(findRelationMember(r, "sign").orElse(null));
+                List<OsmPrimitive> intersections = findRelationMembers(r, "intersection");
+                return intersections.isEmpty() ? findRelationMembers(r, "sign") : intersections;
             default:
-                return null;
+                break;
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
-    static Optional<OsmPrimitive> findRelationMember(Relation r, String role) {
+    static List<OsmPrimitive> findRelationMembers(Relation r, String role) {
         return r.getMembers().stream().filter(rmv -> role.equals(rmv.getRole()))
-                .map(RelationMember::getMember).findAny();
+                .map(RelationMember::getMember).collect(Collectors.toList());
     }
 
     /**

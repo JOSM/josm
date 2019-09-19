@@ -2,11 +2,11 @@
 package org.openstreetmap.josm.command;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.junit.Rule;
@@ -37,35 +37,35 @@ public final class SplitWayCommandTest {
     public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
-     * Unit test of {@link SplitWayCommand#findVia}.
+     * Unit test of {@link SplitWayCommand#findVias}.
      */
     @Test
-    public void testFindVia() {
+    public void testFindVias() {
         // empty relation
-        assertNull(SplitWayCommand.findVia(new Relation(), null));
+        assertTrue(SplitWayCommand.findVias(new Relation(), null).isEmpty());
         // restriction relation without via member
         Relation r = new Relation();
         r.addMember(new RelationMember("", new Node()));
-        assertNull(SplitWayCommand.findVia(r, "restriction"));
+        assertTrue(SplitWayCommand.findVias(r, "restriction").isEmpty());
         // restriction relation with via member
         r = new Relation();
         OsmPrimitive via = new Node();
         r.addMember(new RelationMember("via", via));
-        assertEquals(via, SplitWayCommand.findVia(r, "restriction"));
+        assertEquals(Collections.singletonList(via), SplitWayCommand.findVias(r, "restriction"));
         // destination_sign relation without sign nor intersection
         r = new Relation();
         r.addMember(new RelationMember("", new Node()));
-        assertNull(SplitWayCommand.findVia(r, "destination_sign"));
+        assertTrue(SplitWayCommand.findVias(r, "destination_sign").isEmpty());
         // destination_sign with sign
         r = new Relation();
         via = new Node();
         r.addMember(new RelationMember("sign", via));
-        assertEquals(via, SplitWayCommand.findVia(r, "destination_sign"));
+        assertEquals(Collections.singletonList(via), SplitWayCommand.findVias(r, "destination_sign"));
         // destination_sign with intersection
         r = new Relation();
         via = new Node();
         r.addMember(new RelationMember("intersection", via));
-        assertEquals(via, SplitWayCommand.findVia(r, "destination_sign"));
+        assertEquals(Collections.singletonList(via), SplitWayCommand.findVias(r, "destination_sign"));
     }
 
     /**
