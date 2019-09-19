@@ -96,7 +96,7 @@ public class Highways extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (w.isClosed() && w.hasTag(HIGHWAY, CLASSIFIED_HIGHWAYS) && w.hasTag("junction", "roundabout")
+            if (w.isClosed() && w.hasTag(HIGHWAY, CLASSIFIED_HIGHWAYS) && w.hasTag("junction", "circular", "roundabout")
                     && IN_DOWNLOADED_AREA_STRICT.test(w)) {
                 // TODO: find out how to handle splitted roundabouts (see #12841)
                 testWrongRoundabout(w);
@@ -190,7 +190,7 @@ public class Highways extends Test {
             // in roundabout designs that physically separate a specific turn from the main roundabout
             // But if we have more than a single adjacent class, and one of them is a roundabout, that's an error
             for (Way w : sameClass) {
-                if (w.hasTag("junction", "roundabout")) {
+                if (w.hasTag("junction", "circular", "roundabout")) {
                     return false;
                 }
             }

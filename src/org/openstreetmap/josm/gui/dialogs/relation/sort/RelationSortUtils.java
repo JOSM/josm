@@ -31,7 +31,7 @@ final class RelationSortUtils {
     }
 
     static Direction roundaboutType(Way w) {
-        if (w != null && w.hasTag("junction", "roundabout")) {
+        if (w != null && w.hasTag("junction", "circular", "roundabout")) {
             int nodesCount = w.getNodesCount();
             if (nodesCount > 2 && nodesCount < 200) {
                 Node n1 = w.getNode(0);

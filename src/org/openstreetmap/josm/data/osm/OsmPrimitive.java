@@ -73,7 +73,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
                 "(aerialway=platter & -oneway=no) | "+
                 "waterway=stream | waterway=river | waterway=ditch | waterway=drain | "+
                 "(\"piste:type\"=downhill & -area=yes) | (\"piste:type\"=sled & -area=yes) | (man_made=\"piste:halfpipe\" & -area=yes) | "+
-                "junction=roundabout | (highway=motorway & -oneway=no & -oneway=reversible) | "+
+                "junction=circular | junction=roundabout | (highway=motorway & -oneway=no & -oneway=reversible) | "+
                 "(highway=motorway_link & -oneway=no & -oneway=reversible)";
 
         reversedDirectionKeys = compileDirectionKeys("tags.reversed_direction", reversedDirectionDefault);
