@@ -122,8 +122,10 @@ public abstract class DownloadAlongAction extends JosmAction {
      * @param osmDownload Set to true if OSM data should be downloaded
      * @param gpxDownload Set to true if GPX data should be downloaded
      * @param title the title string for the confirmation dialog
+     * @param newLayer Set to true if all areas should be put into a single new layer
      */
-    protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title) {
+    protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title,
+            boolean newLayer) {
         List<Rectangle2D> toDownload = new ArrayList<>();
         addToDownload(a, a.getBounds(), toDownload, maxArea);
         if (toDownload.isEmpty()) {
@@ -139,7 +141,7 @@ public abstract class DownloadAlongAction extends JosmAction {
         }
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
         final Future<?> future = new DownloadTaskList(Config.getPref().getBoolean("download.along.zoom-after-download"))
-                .download(false, toDownload, osmDownload, gpxDownload, monitor);
+                .download(newLayer, toDownload, osmDownload, gpxDownload, monitor);
         waitFuture(future, monitor);
     }
 
@@ -178,9 +180,10 @@ public abstract class DownloadAlongAction extends JosmAction {
      * @param alongPath the path along which the areas are to be downloaded
      * @param panel the panel that was displayed to the user and now contains his selections
      * @param confirmTitle the title to display in the confirmation panel
+     * @param newLayer Set to true if all areas should be put into a single new layer
      * @return the task or null if canceled by user
      */
-    protected PleaseWaitRunnable createCalcTask(Path2D alongPath, DownloadAlongPanel panel, String confirmTitle) {
+    protected PleaseWaitRunnable createCalcTask(Path2D alongPath, DownloadAlongPanel panel, String confirmTitle, boolean newLayer) {
         /*
          * Find the average latitude for the data we're contemplating, so we can know how many
          * metres per degree of longitude we have.
@@ -220,12 +223,14 @@ public abstract class DownloadAlongAction extends JosmAction {
         class CalculateDownloadArea extends PleaseWaitRunnable {
 
             private final Path2D downloadPath = new Path2D.Double();
+            private final boolean newLayer;
             private boolean cancel;
             private int ticks;
             private final Rectangle2D r = new Rectangle2D.Double();
 
-            CalculateDownloadArea() {
+            CalculateDownloadArea(boolean newLayer) {
                 super(tr("Calculating Download Area"), displayProgress ? null : NullProgressMonitor.INSTANCE, false);
+                this.newLayer = newLayer;
             }
 
             @Override
@@ -244,7 +249,7 @@ public abstract class DownloadAlongAction extends JosmAction {
                     return;
                 }
                 confirmAndDownloadAreas(new Area(downloadPath), maxArea, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
-                        confirmTitle);
+                        confirmTitle, newLayer);
             }
 
             /**
@@ -290,7 +295,7 @@ public abstract class DownloadAlongAction extends JosmAction {
             }
         }
 
-        return new CalculateDownloadArea();
+        return new CalculateDownloadArea(newLayer);
     }
 
     @Override

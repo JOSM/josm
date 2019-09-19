@@ -171,6 +171,12 @@ public class DownloadAlongPanel extends JPanel {
                         null // no specific help text
                 ),
                 new ButtonSpec(
+                        tr("Download as new layer"),
+                        new ImageProvider("download_new_layer"),
+                        tr("Click to download into a new data layer"),
+                        null // no specific help text
+                ),
+                new ButtonSpec(
                         tr("Cancel"),
                         new ImageProvider("cancel"),
                         tr("Click to cancel"),
@@ -182,7 +188,7 @@ public class DownloadAlongPanel extends JPanel {
 
         int ret = HelpAwareOptionPane.showOptionDialog(MainApplication.getMainFrame(), this, title,
                     JOptionPane.QUESTION_MESSAGE, null, options, options[0], helpTopic);
-        if (0 == ret) {
+        if (0 == ret || 1 == ret) {
             rememberSettings();
         }
 

@@ -53,7 +53,8 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
                 PREF_DOWNLOAD_ALONG_WAY_OSM, PREF_DOWNLOAD_ALONG_WAY_GPS,
                 PREF_DOWNLOAD_ALONG_WAY_DISTANCE, PREF_DOWNLOAD_ALONG_WAY_AREA, null);
 
-        if (0 != panel.showInDownloadDialog(tr("Download from OSM along selected ways"), HelpUtil.ht("/Tools/DownloadAlong"))) {
+        int ret = panel.showInDownloadDialog(tr("Download from OSM along selected ways"), HelpUtil.ht("/Tools/DownloadAlong"));
+        if (0 != ret && 1 != ret) {
             return null;
         }
 
@@ -70,8 +71,7 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
                 }
             }
         }
-        return createCalcTask(alongPath, panel, tr("Download from OSM along selected ways"));
-
+        return createCalcTask(alongPath, panel, tr("Download from OSM along selected ways"), 1 == ret);
     }
 
     @Override

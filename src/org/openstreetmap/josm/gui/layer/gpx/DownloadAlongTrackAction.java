@@ -49,7 +49,8 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
                 PREF_DOWNLOAD_ALONG_TRACK_OSM, PREF_DOWNLOAD_ALONG_TRACK_GPS,
                 PREF_DOWNLOAD_ALONG_TRACK_DISTANCE, PREF_DOWNLOAD_ALONG_TRACK_AREA, PREF_DOWNLOAD_ALONG_TRACK_NEAR);
 
-        if (0 != panel.showInDownloadDialog(tr("Download from OSM along this track"), HelpUtil.ht("/Action/DownloadAlongTrack"))) {
+        int ret = panel.showInDownloadDialog(tr("Download from OSM along this track"), HelpUtil.ht("/Action/DownloadAlongTrack"));
+        if (0 != ret && 1 != ret) {
             return null;
         }
 
@@ -78,6 +79,6 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
                 gpxPath.closePath();
             }
         }
-        return createCalcTask(gpxPath, panel, tr("Download from OSM along this track"));
+        return createCalcTask(gpxPath, panel, tr("Download from OSM along this track"), 1 == ret);
     }
 }
