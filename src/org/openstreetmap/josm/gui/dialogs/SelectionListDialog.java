@@ -745,7 +745,7 @@ public class SelectionListDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(s);
+            org.openstreetmap.josm.actions.search.SearchAction.searchStateless(s);
         }
     }
 

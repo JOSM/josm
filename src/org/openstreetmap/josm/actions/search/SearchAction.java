@@ -223,7 +223,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     public static void searchWithHistory(SearchSetting s) {
         saveToHistory(s);
         lastSearch = new SearchSetting(s);
-        search(s);
+        searchStateless(s);
     }
 
     /**
@@ -233,7 +233,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      */
     public static void searchWithoutHistory(SearchSetting s) {
         lastSearch = new SearchSetting(s);
-        search(s);
+        searchStateless(s);
     }
 
     /**
@@ -246,10 +246,16 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         final SearchSetting searchSetting = new SearchSetting();
         searchSetting.text = search;
         searchSetting.mode = mode;
-        search(searchSetting);
+        searchStateless(searchSetting);
     }
 
-    static void search(SearchSetting s) {
+    /**
+     * Performs a stateless search specified by the settings in <code>s</code>.
+     *
+     * @param s search settings
+     * @since 15356
+     */
+    public static void searchStateless(SearchSetting s) {
         SearchTask.newSearchTask(s, new SelectSearchReceiver()).run();
     }
 

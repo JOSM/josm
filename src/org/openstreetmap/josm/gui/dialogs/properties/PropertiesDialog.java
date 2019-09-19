@@ -1191,7 +1191,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             if (sel.isEmpty())
                 return;
             final SearchSetting ss = createSearchSetting(key, sel, sameType);
-            org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
+            org.openstreetmap.josm.actions.search.SearchAction.searchStateless(ss);
         }
     }
 
