@@ -4,12 +4,14 @@ package org.openstreetmap.josm.gui.dialogs.relation.sort;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -25,7 +27,7 @@ import org.openstreetmap.josm.tools.AlphanumComparator;
 public class RelationSorter {
 
     private interface AdditionalSorter {
-        boolean acceptsMember(RelationMember m);
+        boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m);
 
         List<RelationMember> sortMembers(List<RelationMember> list);
     }
@@ -34,7 +36,8 @@ public class RelationSorter {
         // first adequate sorter is used, so order matters
         new AssociatedStreetRoleStreetSorter(),
         new AssociatedStreetRoleAddressHouseSorter(),
-        new PublicTransportRoleStopPlatformSorter()
+        new PublicTransportRoleStopPlatformSorter(),
+        new FromViaToSorter()
     );
 
     /**
@@ -44,7 +47,7 @@ public class RelationSorter {
     private static class AssociatedStreetRoleStreetSorter implements AdditionalSorter {
 
         @Override
-        public boolean acceptsMember(RelationMember m) {
+        public boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m) {
             return "street".equals(m.getRole());
         }
 
@@ -61,7 +64,7 @@ public class RelationSorter {
     private static class AssociatedStreetRoleAddressHouseSorter implements AdditionalSorter {
 
         @Override
-        public boolean acceptsMember(RelationMember m) {
+        public boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m) {
             return "address".equals(m.getRole()) || "house".equals(m.getRole());
         }
 
@@ -89,7 +92,7 @@ public class RelationSorter {
     private static class PublicTransportRoleStopPlatformSorter implements AdditionalSorter {
 
         @Override
-        public boolean acceptsMember(RelationMember m) {
+        public boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m) {
             return m.getRole() != null && (m.getRole().startsWith("platform") || m.getRole().startsWith("stop"));
         }
 
@@ -132,6 +135,27 @@ public class RelationSorter {
     }
 
     /**
+     * Class that sorts the {@code from}, {@code via} and {@code to} members of
+     * {@code type=restriction} relations.
+     */
+    private static class FromViaToSorter implements AdditionalSorter {
+
+        private static final List<String> ROLES = Arrays.asList("from", "via", "to");
+
+        @Override
+        public boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m) {
+            return ROLES.contains(m.getRole())
+                    && relationMembers.stream().map(RelationMember::getRole).collect(Collectors.toSet()).containsAll(ROLES);
+        }
+
+        @Override
+        public List<RelationMember> sortMembers(List<RelationMember> list) {
+            list.sort(Comparator.comparingInt(m -> ROLES.indexOf(m.getRole())));
+            return list;
+        }
+    }
+
+    /**
      * Sort a collection of relation members by the way they are linked.
      *
      * @param relationMembers collection of relation members
@@ -149,7 +173,7 @@ public class RelationSorter {
         for (RelationMember m : relationMembers) {
             boolean wasAdded = false;
             for (AdditionalSorter sorter : ADDITIONAL_SORTERS) {
-                if (sorter.acceptsMember(m)) {
+                if (sorter.acceptsMember(relationMembers, m)) {
                     wasAdded = customMap.computeIfAbsent(sorter, k -> new LinkedList<>()).add(m);
                     break;
                 }

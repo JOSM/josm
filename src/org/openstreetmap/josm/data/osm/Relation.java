@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
@@ -539,13 +540,6 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
      * @since 7556
      */
     public Set<String> getMemberRoles() {
-        Set<String> result = new HashSet<>();
-        for (RelationMember rm : members) {
-            String role = rm.getRole();
-            if (!role.isEmpty()) {
-                result.add(role);
-            }
-        }
-        return result;
+        return Stream.of(members).map(RelationMember::getRole).filter(role -> !role.isEmpty()).collect(Collectors.toSet());
     }
 }
