@@ -222,8 +222,8 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
 
         layerList.getColumnModel().getColumn(3).setCellRenderer(new LayerVisibleCellRenderer());
         layerList.getColumnModel().getColumn(3).setCellEditor(new LayerVisibleCellEditor(new LayerVisibleCheckBox()));
-        layerList.getColumnModel().getColumn(3).setMaxWidth(16);
-        layerList.getColumnModel().getColumn(3).setPreferredWidth(16);
+        layerList.getColumnModel().getColumn(3).setMaxWidth(48);
+        layerList.getColumnModel().getColumn(3).setPreferredWidth(48);
         layerList.getColumnModel().getColumn(3).setResizable(false);
 
         layerList.getColumnModel().getColumn(4).setCellRenderer(new LayerNameCellRenderer());
@@ -448,6 +448,9 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         public void updateStatus(Layer layer) {
             boolean visible = layer.isVisible();
             setSelected(visible);
+            List<Layer> layers = MainApplication.getLayerManager().getLayers();
+            int num = layers.size() - layers.indexOf(layer);
+            setText(String.format("%s[%d]", num < 10 ? " " : "", num));
             setTranslucent(layer.getOpacity() < 1.0);
             setToolTipText(visible ?
                 tr("layer is currently visible (click to hide layer)") :
