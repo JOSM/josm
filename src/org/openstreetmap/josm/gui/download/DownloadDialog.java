@@ -434,7 +434,7 @@ public class DownloadDialog extends JDialog {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            btnDownloadNewLayer.setVisible(
+            btnDownloadNewLayer.setEnabled(
                     !MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class).isEmpty());
             new WindowGeometry(
                     getClass().getName() + ".geometry",
