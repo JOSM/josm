@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.swing.AbstractAction;
@@ -347,8 +348,12 @@ public class ImageryProvidersPanel extends JPanel {
             } else if (!e.getValueIsAdjusting()) {
                 // Only process complete (final) selection events
                 for (int i = e.getFirstIndex(); i <= e.getLastIndex(); i++) {
-                    updateBoundsAndShapes(defaultTable.convertRowIndexToModel(i));
+                    if (i < defaultTable.getRowCount()) {
+                        updateBoundsAndShapes(defaultTable.convertRowIndexToModel(i));
+                    }
                 }
+                // Cleanup residual selected bounds which may have disappeared after a filter
+                cleanupResidualBounds();
                 // If needed, adjust map to show all map rectangles and polygons
                 if (!mapRectangles.isEmpty() || !mapPolygons.isEmpty()) {
                     defaultMap.setDisplayToFitMapElements(false, true, true);
@@ -403,6 +408,20 @@ public class ImageryProvidersPanel extends JPanel {
                     }
                 }
             }
+        }
+
+        private <T> void doCleanupResidualBounds(Map<Integer, T> map, Consumer<T> removalEffect) {
+            for (Integer i : map.keySet()) {
+                int viewIndex = defaultTable.convertRowIndexToView(i);
+                if (!defaultTable.getSelectionModel().isSelectedIndex(viewIndex)) {
+                    removalEffect.accept(map.remove(i));
+                }
+            }
+        }
+
+        private void cleanupResidualBounds() {
+            doCleanupResidualBounds(mapPolygons, l -> l.forEach(defaultMap::removeMapPolygon));
+            doCleanupResidualBounds(mapRectangles, defaultMap::removeMapRectangle);
         }
     }
 
