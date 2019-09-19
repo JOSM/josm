@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
@@ -33,6 +34,8 @@ public class PostDownloadHandler implements Runnable {
     private final Future<?> future;
     private Consumer<Collection<Object>> errorReporter;
 
+    private static final Set<String> NO_DATA_ERROR_MESSAGES = new HashSet<>();
+
     /**
      * Creates a new {@link PostDownloadHandler}
      * @param task the asynchronous download task
@@ -53,6 +56,26 @@ public class PostDownloadHandler implements Runnable {
     public PostDownloadHandler(DownloadTask task, Future<?> future, Consumer<Collection<Object>> errorReporter) {
         this(task, future);
         this.errorReporter = errorReporter;
+    }
+
+    /**
+     * Adds a new translated error message indicating that no data has been downloaded.
+     * @param message new translated error message indicating that no data has been downloaded.
+     * @return {@code true} if the message was not already known
+     * @since 15358
+     */
+    public static boolean addNoDataErrorMessage(String message) {
+        return NO_DATA_ERROR_MESSAGES.add(message);
+    }
+
+    /**
+     * Determines if a translated error message indicates that no data has been downloaded.
+     * @param message translated error message to check
+     * @return {@code true} if the message indicates that no data has been downloaded
+     * @since 15358
+     */
+    public static boolean isNoDataErrorMessage(Object message) {
+        return NO_DATA_ERROR_MESSAGES.contains(message);
     }
 
     @Override
@@ -86,7 +109,7 @@ public class PostDownloadHandler implements Runnable {
                 SwingUtilities.invokeLater(() -> {
                     if (error instanceof Exception) {
                         ExceptionDialogUtil.explainException((Exception) error);
-                    } else if (tr("No data found in this area.").equals(error)) {
+                    } else if (isNoDataErrorMessage(error)) {
                         new Notification(error.toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                     } else {
                         JOptionPane.showMessageDialog(

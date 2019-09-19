@@ -263,7 +263,7 @@ public class DownloadTaskList {
                 }
 
                 GuiHelper.runInEDT(() -> {
-                    if (items.size() == 1 && tr("No data found in this area.").equals(items.iterator().next())) {
+                    if (items.size() == 1 && PostDownloadHandler.isNoDataErrorMessage(items.iterator().next())) {
                         new Notification(items.iterator().next()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                     } else {
                         JOptionPane.showMessageDialog(MainApplication.getMainFrame(), "<html>"

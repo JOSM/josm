@@ -63,6 +63,11 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
     protected static final String OVERPASS_INTERPRETER_DATA = "interpreter?data=";
 
+    private static final String NO_DATA_FOUND = tr("No data found in this area.");
+    static {
+        PostDownloadHandler.addNoDataErrorMessage(NO_DATA_FOUND);
+    }
+
     @Override
     public String[] getPatterns() {
         if (this.getClass() == DownloadOsmTask.class) {
@@ -465,7 +470,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 return; // user canceled download or error occurred
             if (dataSet.allPrimitives().isEmpty()) {
                 if (warnAboutEmptyArea) {
-                    rememberErrorMessage(tr("No data found in this area."));
+                    rememberErrorMessage(NO_DATA_FOUND);
                 }
                 String remark = dataSet.getRemark();
                 if (remark != null && !remark.isEmpty()) {

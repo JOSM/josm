@@ -48,6 +48,10 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
     public static final IntegerProperty DAYS_CLOSED = new IntegerProperty("osm.notes.daysClosed", 7);
 
     private static final String PATTERN_COMPRESS = "https?://.*/(.*\\.osn.(gz|xz|bz2?|zip))";
+    private static final String NO_NOTES_FOUND = tr("No notes found in this area.");
+    static {
+        PostDownloadHandler.addNoDataErrorMessage(NO_NOTES_FOUND);
+    }
 
     private DownloadTask downloadTask;
     private NoteLayer noteLayer;
@@ -132,7 +136,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             }
             if (notesData.isEmpty()) {
                 if (warnAboutEmptyArea) {
-                    rememberErrorMessage(tr("No notes found in this area."));
+                    rememberErrorMessage(NO_NOTES_FOUND);
                 }
                 return;
             }
