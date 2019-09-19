@@ -40,6 +40,6 @@ relation[type=associatedStreet][inside("DE")] {
 *[aeroway=aerodrome][!iata][faa!~/\d/][inside("US")] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
   group: tr("Airport tagging");
-  /* assertNoMatch: "way aeroway=aerodrome faa=OK12"; not properly working due to inside() */
-  /* assertMatch: "way aeroway=aerodrome faa=ORD"; */
+  assertNoMatch: "way aeroway=aerodrome faa=OK12";
+  assertMatch: "way aeroway=aerodrome faa=ORD";
 }

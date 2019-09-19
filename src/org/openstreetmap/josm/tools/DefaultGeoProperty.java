@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.data.osm.Way;
 public class DefaultGeoProperty implements GeoProperty<Boolean> {
 
     private final Area area;
+    private LatLon random;
 
     /**
      * Create DefaultGeoProperty based on a collection of closed ways.
@@ -66,5 +68,24 @@ public class DefaultGeoProperty implements GeoProperty<Boolean> {
      */
     public final Area getArea() {
         return area;
+    }
+
+    /**
+     * Returns a random lat/lon in the area.
+     * @return a random lat/lon in the area
+     * @since 15359
+     */
+    public final synchronized LatLon getRandomLatLon() {
+        if (random == null) {
+            Rectangle r = area.getBounds();
+            double x, y;
+            do {
+                x = r.getX() + r.getWidth() * Math.random();
+                y = r.getY() + r.getHeight() * Math.random();
+            } while (!area.contains(x, y));
+
+            random = new LatLon(y, x);
+        }
+        return random;
     }
 }

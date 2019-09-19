@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -897,8 +896,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             if (index != null) {
                 GeoProperty<Boolean> prop = index.getGeoProperty();
                 if (prop instanceof DefaultGeoProperty) {
-                    Rectangle bounds = ((DefaultGeoProperty) prop).getArea().getBounds();
-                    return new LatLon(bounds.getCenterY(), bounds.getCenterX());
+                    return ((DefaultGeoProperty) prop).getRandomLatLon();
                 }
             }
         }
