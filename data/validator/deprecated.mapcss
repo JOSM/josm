@@ -1771,3 +1771,11 @@ way[/^is_in:.*$/] {
   fixRemove: "crossing";
   fixAdd: "crossing:island=yes";
 }
+
+/* #18152 */
+*[recycling:metal] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "recycling:scrap_metal";
+  group: tr("deprecated tagging");
+  fixChangeKey: "recycling:metal => recycling:scrap_metal";
+}
