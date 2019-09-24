@@ -28,9 +28,9 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
@@ -50,8 +50,6 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
@@ -66,7 +64,6 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable.MapViewEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
@@ -818,21 +815,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @return A String of sources separated by ';'
      */
     public String getLayerInformationForSourceTag() {
-        final Set<String> layerInfo = new TreeSet<>();
-        if (!layerManager.getLayersOfType(GpxLayer.class).isEmpty()) {
-            // no i18n for international values
-            layerInfo.add("survey");
-        }
-        for (final GeoImageLayer i : layerManager.getLayersOfType(GeoImageLayer.class)) {
-            if (i.isVisible()) {
-                layerInfo.add(i.getName());
-            }
-        }
-        for (final ImageryLayer i : layerManager.getLayersOfType(ImageryLayer.class)) {
-            if (i.isVisible()) {
-                layerInfo.add(i.getInfo().getSourceName());
-            }
-        }
+        final Set<String> layerInfo = layerManager.getVisibleLayersInZOrder().stream()
+                .filter(layer -> layer.getChangesetSourceTag() != null && !layer.getChangesetSourceTag().trim().isEmpty())
+                .map(layer -> layer.getChangesetSourceTag().trim()).distinct().collect(Collectors.toSet());
         return Utils.join("; ", layerInfo);
     }
 

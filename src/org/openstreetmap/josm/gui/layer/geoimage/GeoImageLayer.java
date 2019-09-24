@@ -1010,4 +1010,9 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     public void imageDataUpdated(ImageData data) {
         updateBufferAndRepaint();
     }
+
+    @Override
+    public String getChangesetSourceTag() {
+        return getName();
+    }
 }

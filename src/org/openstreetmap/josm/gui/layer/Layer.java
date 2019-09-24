@@ -674,6 +674,15 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
         return v.getBounds();
     }
 
+    /**
+     * Get the source for the layer
+     * @return The string for the changeset source tag or {@code null}
+     * @since 15371
+     */
+    public String getChangesetSourceTag() {
+        return null;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [name=" + name + ", associatedFile=" + associatedFile + ']';

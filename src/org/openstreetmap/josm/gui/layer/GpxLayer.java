@@ -473,4 +473,10 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
     public void expertChanged(boolean isExpert) {
         this.isExpertMode = isExpert;
     }
+
+    @Override
+    public String getChangesetSourceTag() {
+        // no i18n for international values
+        return "survey";
+    }
 }

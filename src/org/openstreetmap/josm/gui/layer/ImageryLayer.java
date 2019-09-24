@@ -354,4 +354,9 @@ public abstract class ImageryLayer extends Layer {
     public String toString() {
         return getClass().getSimpleName() + " [info=" + info + ']';
     }
+
+    @Override
+    public String getChangesetSourceTag() {
+        return getInfo().getSourceName();
+    }
 }
