@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -53,6 +54,8 @@ public class OverlappingWays extends Test {
             "overlapping-ways.ignored-keys", Arrays.asList(
                     "barrier", "building", "building:part", "historic:building", "demolished:building",
                     "removed:building", "disused:building", "abandoned:building", "proposed:building", "man_made"));
+    protected static final Predicate<OsmPrimitive> IGNORED = primitive ->
+            IGNORED_KEYS.get().stream().anyMatch(primitive::hasKey) || primitive.hasTag("tourism", "camp_site");
 
     /** Constructor */
     public OverlappingWays() {
@@ -152,13 +155,7 @@ public class OverlappingWays extends Test {
         // see ticket #9598 - only report if at least 3 segments are shared, except for overlapping ways, i.e warnings (see #9820)
         for (TestError error : preliminaryErrors) {
             if (error.getSeverity() == Severity.WARNING || error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
-                boolean ignore = false;
-                for (String ignoredKey : IGNORED_KEYS.get()) {
-                    if (error.getPrimitives().stream().anyMatch(p -> p.hasKey(ignoredKey))) {
-                        ignore = true;
-                        break;
-                    }
-                }
+                boolean ignore = error.getPrimitives().stream().anyMatch(IGNORED);
                 if (!ignore) {
                     errors.add(error);
                 }
