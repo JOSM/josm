@@ -109,14 +109,14 @@ public class DuplicateRelation extends Test {
      * Class to store relation members
      */
     private static class RelationMembers {
-        /** List of member objects of the relation */
-        private final List<RelMember> members;
+        /** Set of member objects of the relation */
+        private final Set<RelMember> members;
 
         /** Store relation information
          * @param members The list of relation members
          */
         RelationMembers(List<RelationMember> members) {
-            this.members = new ArrayList<>(members.size());
+            this.members = new HashSet<>(members.size());
             for (RelationMember member : members) {
                 this.members.add(new RelMember(member));
             }
