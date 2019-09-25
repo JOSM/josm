@@ -196,7 +196,7 @@ way[class] {
   fixAdd: "location=roof";
 }
 
-*[generator:location=*] {
+*[generator:location] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "location";
   group: tr("deprecated tagging");
