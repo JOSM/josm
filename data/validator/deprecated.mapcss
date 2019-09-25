@@ -188,7 +188,21 @@ way[class] {
   group: tr("deprecated tagging");
   fixAdd: "power=substation";
 }
-  
+
+*[location=rooftop] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "location=roof";
+  group: tr("deprecated tagging");
+  fixAdd: "location=roof";
+}
+
+*[generator:location=*] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "location";
+  group: tr("deprecated tagging");
+  fixChangeKey: "generator:location => location";
+}
+
 *[generator:method=dam] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "generator:method=water-storage";

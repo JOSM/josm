@@ -295,7 +295,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2019091200, Last Updated Thu Sep 12 07:07:02 2019 UTC
+        // Taken from Version 2019092301, Last Updated Tue Sep 24 07:07:01 2019 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -543,6 +543,7 @@ public final class DomainValidator extends AbstractValidator {
         "coupon", // coupon Amazon Registry Services, Inc.
         "coupons", // coupons Black Island, LLC
         "courses", // courses OPEN UNIVERSITIES AUSTRALIA PTY LTD
+        "cpa", // cpa American Institute of Certified Public Accountants
         "credit", // credit Snow Shadow, LLC
         "creditcard", // creditcard Binky Frostbite, LLC
         "creditunion", // creditunion CUNA Performance Resources, LLC
