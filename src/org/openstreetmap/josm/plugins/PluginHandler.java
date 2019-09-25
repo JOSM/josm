@@ -308,12 +308,13 @@ public final class PluginHandler {
     private static PluginDownloadTask pluginDownloadTask;
 
     /**
-     * Returns the list of currently installed and loaded plugins.
-     * @return the list of currently installed and loaded plugins
+     * Returns the list of currently installed and loaded plugins, sorted by name.
+     * @return the list of currently installed and loaded plugins, sorted by name
      * @since 10982
      */
     public static List<PluginInformation> getPlugins() {
-        return pluginList.stream().map(PluginProxy::getPluginInformation).collect(Collectors.toList());
+        return pluginList.stream().map(PluginProxy::getPluginInformation)
+                .sorted(Comparator.comparing(PluginInformation::getName)).collect(Collectors.toList());
     }
 
     /**
@@ -1561,10 +1562,9 @@ public final class PluginHandler {
      */
     public static JPanel getInfoPanel() {
         JPanel pluginTab = new JPanel(new GridBagLayout());
-        for (final PluginProxy p : pluginList) {
-            final PluginInformation info = p.getPluginInformation();
+        for (final PluginInformation info : getPlugins()) {
             String name = info.name
-            + (info.version != null && !info.version.isEmpty() ? " Version: " + info.version : "");
+            + (info.localversion != null && !info.localversion.isEmpty() ? " Version: " + info.localversion : "");
             pluginTab.add(new JLabel(name), GBC.std());
             pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
             pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());
