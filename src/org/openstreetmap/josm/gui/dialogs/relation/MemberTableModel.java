@@ -173,7 +173,12 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
 
     @Override
     public void wayNodesChanged(WayNodesChangedEvent event) {
-        // ignore
+        if (hasMembersReferringTo(Collections.singleton(event.getChangedWay()))) {
+            // refresh connectivity
+            for (int i = 0; i < members.size(); i++) {
+                fireTableCellUpdated(i, 2 /* the column with the connectivity arrow */);
+            }
+        }
     }
 
     @Override
@@ -665,15 +670,8 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     public static boolean hasMembersReferringTo(Collection<RelationMember> members, Collection<OsmPrimitive> primitives) {
         if (primitives == null || primitives.isEmpty())
             return false;
-        Set<OsmPrimitive> referrers = new HashSet<>();
-        for (RelationMember member : members) {
-            referrers.add(member.getMember());
-        }
-        for (OsmPrimitive referred : primitives) {
-            if (referrers.contains(referred))
-                return true;
-        }
-        return false;
+        Set<OsmPrimitive> referrers = members.stream().map(RelationMember::getMember).collect(Collectors.toSet());
+        return primitives.stream().anyMatch(referrers::contains);
     }
 
     /**

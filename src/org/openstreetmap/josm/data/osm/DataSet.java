@@ -929,6 +929,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
 
     private void fireEventToListeners(AbstractDatasetChangedEvent event) {
         for (DataSetListener listener : listeners) {
+            Logging.trace("Firing {0} to {1} (dataset)", event, listener);
             event.fire(listener);
         }
     }

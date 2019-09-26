@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This class allows to add DatasetListener to currently active dataset. If active
@@ -196,6 +197,7 @@ public class DatasetEventManager implements ActiveLayerChangeListener, Listener 
     private static void fireEvents(List<ListenerInfo> listeners, AbstractDatasetChangedEvent event) {
         for (ListenerInfo listener: listeners) {
             if (!listener.consolidate) {
+                Logging.trace("Firing {0} to {1} (normal)", event, listener.listener);
                 event.fire(listener.listener);
             }
         }
@@ -204,6 +206,7 @@ public class DatasetEventManager implements ActiveLayerChangeListener, Listener 
     private static void fireConsolidatedEvents(List<ListenerInfo> listeners, AbstractDatasetChangedEvent event) {
         for (ListenerInfo listener: listeners) {
             if (listener.consolidate) {
+                Logging.trace("Firing {0} to {1} (consolidated)", event, listener.listener);
                 event.fire(listener.listener);
             }
         }
