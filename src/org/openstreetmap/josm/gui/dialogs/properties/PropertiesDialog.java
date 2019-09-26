@@ -69,6 +69,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Tags;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
@@ -713,16 +714,26 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     }
 
     /**
-     * Returns the selected tag.
+     * Returns the selected tag. Value is empty if several tags are selected for a given key.
      * @return The current selected tag
      */
     public Tag getSelectedProperty() {
+        Tags tags = getSelectedProperties();
+        return tags == null ? null : new Tag(
+                tags.getKey(),
+                tags.getValues().size() > 1 ? "" : tags.getValues().iterator().next());
+    }
+
+    /**
+     * Returns the selected tags. Contains all values if several are selected for a given key.
+     * @return The current selected tags
+     * @since 15376
+     */
+    public Tags getSelectedProperties() {
         int row = tagTable.getSelectedRow();
         if (row == -1) return null;
         Map<String, Integer> map = editHelper.getDataValues(row);
-        return new Tag(
-                editHelper.getDataKey(row),
-                map.size() > 1 ? "" : map.keySet().iterator().next());
+        return new Tags(editHelper.getDataKey(row), map.keySet());
     }
 
     /**
