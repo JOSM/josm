@@ -805,6 +805,8 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.ejml.*"/>
             <ignore classname="org.fusesource.*"/>
             <ignore classname="org.gdal.*"/>
+            <ignore classname="org.geotools.data.h2.*"/>
+            <ignore classname="org.geotools.gce.imagemosaic.*"/>
             <ignore classname="org.hibernate.*"/>
             <ignore classname="org.hsqldb.*"/>
             <ignore classname="org.ibex.*"/>

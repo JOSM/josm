@@ -28,10 +28,33 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
 
     @Override
     public Layer load(Element elem, ImportSupport support, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
+        checkMetaVersion(elem);
+        String fileStr = extractFileName(elem, support);
+        return importData(new OsmImporter(), support, fileStr, progressMonitor);
+    }
+
+    /**
+     * Checks that element defines the expected version number.
+     * @param elem element to check
+     * @throws IllegalDataException if version is not the expected one
+     * @since 15377
+     */
+    public static void checkMetaVersion(Element elem) throws IllegalDataException {
         String version = elem.getAttribute("version");
         if (!"0.1".equals(version)) {
             throw new IllegalDataException(tr("Version ''{0}'' of meta data for osm data layer is not supported. Expected: 0.1", version));
         }
+    }
+
+    /**
+     * Extract file name from element.
+     * @param elem element to parse
+     * @param support import/export support
+     * @return file name, if present
+     * @throws IllegalDataException if file name missing or empty
+     * @since 15377
+     */
+    public static String extractFileName(Element elem, ImportSupport support) throws IllegalDataException {
         try {
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xpath = xPathFactory.newXPath();
@@ -40,17 +63,31 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
             if (fileStr == null || fileStr.isEmpty()) {
                 throw new IllegalDataException(tr("File name expected for layer no. {0}", support.getLayerIndex()));
             }
-
-            OsmImporter importer = new OsmImporter();
-            try (InputStream in = support.getInputStream(fileStr)) {
-                OsmImporter.OsmImporterData importData = importer.loadLayer(in, support.getFile(fileStr), support.getLayerName(),
-                        progressMonitor);
-
-                support.addPostLayersTask(importData.getPostLayerTask());
-                return importData.getLayer();
-            }
+            return fileStr;
         } catch (XPathExpressionException e) {
             throw new IllegalDataException(e);
+        }
+    }
+
+    /**
+     * Import data as a new layer.
+     * @param osmImporter OSM importer
+     * @param support import/export support
+     * @param fileStr file name to import
+     * @param progressMonitor progress monitor
+     * @return new layer
+     * @throws IOException in case of I/O error
+     * @throws IllegalDataException in case of illegal data
+     * @since 15377
+     */
+    public static Layer importData(OsmImporter osmImporter, ImportSupport support, String fileStr, ProgressMonitor progressMonitor)
+            throws IOException, IllegalDataException {
+        try (InputStream in = support.getInputStream(fileStr)) {
+            OsmImporter.OsmImporterData importData = osmImporter.loadLayer(
+                    in, support.getFile(fileStr), support.getLayerName(), progressMonitor);
+
+            support.addPostLayersTask(importData.getPostLayerTask());
+            return importData.getLayer();
         }
     }
 }

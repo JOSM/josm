@@ -41,4 +41,24 @@ public class Tags implements Serializable {
     public Set<String> getValues() {
         return values;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, values);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Tags other = (Tags) obj;
+        return Objects.equals(key, other.key) && Objects.equals(values, other.values);
+    }
+
+    @Override
+    public String toString() {
+        return "Tags [key=" + key + ", values=" + values + ']';
+    }
 }
