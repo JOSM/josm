@@ -197,7 +197,7 @@ Build-Date: ${build.tstamp}
                 <attribute name="Codebase" value="josm.openstreetmap.de"/>
                 <attribute name="Application-Name" value="JOSM - Java OpenStreetMap Editor"/>
                 <!-- Java 9 stuff. Entries are safely ignored by Java 8 -->
-                <attribute name="Add-Exports" value="java.base/sun.security.util java.base/sun.security.x509 java.desktop/com.apple.eawt java.desktop/com.sun.imageio.spi javafx.graphics/com.sun.javafx.application jdk.deploy/com.sun.deploy.config" />
+                <attribute name="Add-Exports" value="java.base/sun.security.util java.base/sun.security.x509 java.desktop/com.apple.eawt java.desktop/com.sun.imageio.spi java.desktop/com.sun.imageio.plugins.jpeg javafx.graphics/com.sun.javafx.application jdk.deploy/com.sun.deploy.config" />
                 <attribute name="Add-Opens" value="java.base/java.lang java.base/java.nio java.base/jdk.internal.loader java.base/jdk.internal.ref java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
             </manifest>
             <service type="java.text.spi.DecimalFormatSymbolsProvider" provider="org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider" />
