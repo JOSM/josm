@@ -12,7 +12,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -47,9 +46,10 @@ public class WayConnectionTypeCalculator {
         for (int i = 0; i < members.size(); ++i) {
             try {
                 lastWct = updateLinksFor(con, lastWct, i);
-            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+            } catch (RuntimeException e) {
                 int index = i;
-                throw BugReport.intercept(e).put("i", i).put("member", () -> members.get(index)).put("con", con);
+                throw BugReport.intercept(e).put("i", i).put("member", () -> members.get(index)).put("con", con)
+                    .put("members", members).put("lastWct", lastWct).put("firstGroupIdx", firstGroupIdx);
             }
         }
         makeLoopIfNeeded(con, members.size()-1);
