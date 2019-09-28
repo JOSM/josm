@@ -28,16 +28,16 @@ public class OsmDataSessionExporter extends GenericSessionExporter<OsmDataLayer>
 
     @Override
     protected void addDataFile(OutputStream out) {
-        export(layer.data, out);
+        exportData(layer.data, out);
     }
 
     /**
      * Exports OSM data to the given output stream.
      * @param data data set
      * @param out output stream
-     * @since 15377
+     * @since 15386
      */
-    public static void export(DataSet data, OutputStream out) {
+    public static void exportData(DataSet data, OutputStream out) {
         Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, data.getVersion());
         data.getReadLock().lock();
