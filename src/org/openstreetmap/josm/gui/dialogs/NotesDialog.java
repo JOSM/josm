@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -154,12 +155,15 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
         if (e.getRemovedLayer() instanceof NoteLayer) {
-            noteData.removeNoteDataUpdateListener(this);
-            noteData = null;
-            model.clearData();
-            MapFrame map = MainApplication.getMap();
-            if (map.mapMode instanceof AddNoteAction) {
-                map.selectMapMode(map.mapModeSelect);
+            NoteData removedNoteData = ((NoteLayer) e.getRemovedLayer()).getNoteData();
+            removedNoteData.removeNoteDataUpdateListener(this);
+            if (Objects.equals(noteData, removedNoteData)) {
+                noteData = null;
+                model.clearData();
+                MapFrame map = MainApplication.getMap();
+                if (map.mapMode instanceof AddNoteAction) {
+                    map.selectMapMode(map.mapModeSelect);
+                }
             }
         }
     }
