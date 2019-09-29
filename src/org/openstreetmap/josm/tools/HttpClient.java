@@ -68,6 +68,7 @@ public abstract class HttpClient {
     private String outputMessage = tr("Uploading data ...");
     private Response response;
     private boolean finishOnCloseOutput = true;
+    private boolean debug;
 
     // Pattern to detect Tomcat error message. Be careful with change of format:
     // CHECKSTYLE.OFF: LineLength
@@ -141,7 +142,7 @@ public abstract class HttpClient {
             try {
                 cr = performConnection();
                 final boolean hasReason = reasonForRequest != null && !reasonForRequest.isEmpty();
-                Logging.info("{0} {1}{2} -> {3} {4}{5}",
+                logRequest("{0} {1}{2} -> {3} {4}{5}",
                         getRequestMethod(), getURL(), hasReason ? (" (" + reasonForRequest + ')') : "",
                         cr.getResponseVersion(), cr.getResponseCode(),
                         cr.getContentLengthLong() > 0
@@ -159,7 +160,7 @@ public abstract class HttpClient {
                     DefaultAuthenticator.getInstance().addFailedCredentialHost(url.getHost());
                 }
             } catch (IOException | RuntimeException e) {
-                Logging.info("{0} {1} -> !!!", requestMethod, url);
+                logRequest("{0} {1} -> !!!", requestMethod, url);
                 Logging.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 NetworkManager.addNetworkError(url, Utils.getRootCause(e));
@@ -174,7 +175,7 @@ public abstract class HttpClient {
                 } else if (maxRedirects > 0) {
                     url = new URL(url, redirectLocation);
                     maxRedirects--;
-                    Logging.info(tr("Download redirected to ''{0}''", redirectLocation));
+                    logRequest(tr("Download redirected to ''{0}''", redirectLocation));
                     response = connect();
                     successfulConnection = true;
                     return response;
@@ -206,8 +207,16 @@ public abstract class HttpClient {
         progressMonitor.indeterminateSubTask(null);
     }
 
+    protected final void logRequest(String pattern, Object... args) {
+        if (debug) {
+            Logging.debug(pattern, args);
+        } else {
+            Logging.info(pattern, args);
+        }
+    }
+
     protected final void logRequestBody() {
-        Logging.info("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
+        logRequest("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
         if (Logging.isTraceEnabled() && hasRequestBody()) {
             Logging.trace("BODY: {0}", new String(requestBody, StandardCharsets.UTF_8));
         }
@@ -797,6 +806,17 @@ public abstract class HttpClient {
      */
     public final HttpClient setFinishOnCloseOutput(boolean finishOnCloseOutput) {
         this.finishOnCloseOutput = finishOnCloseOutput;
+        return this;
+    }
+
+    /**
+     * Sets the connect log at DEBUG level instead of the default INFO level.
+     * @param debug {@code true} to set the connect log at DEBUG level
+     * @return {@code this}
+     * @since 15389
+     */
+    public final HttpClient setLogAtDebug(boolean debug) {
+        this.debug = debug;
         return this;
     }
 
