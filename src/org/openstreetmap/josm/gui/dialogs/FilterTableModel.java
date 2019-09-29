@@ -163,26 +163,6 @@ public class FilterTableModel extends AbstractTableModel implements SortableTabl
     }
 
     /**
-     * Moves down the filter in the given row.
-     * @param rowIndex The filter row
-     * @deprecated Use {@link #moveDown(int...)}
-     */
-    @Deprecated
-    public void moveDownFilter(int rowIndex) {
-        moveDown(rowIndex);
-    }
-
-    /**
-     * Moves up the filter in the given row
-     * @param rowIndex The filter row
-     * @deprecated Use {@link #moveUp(int...)}
-     */
-    @Deprecated
-    public void moveUpFilter(int rowIndex) {
-        moveUp(rowIndex);
-    }
-
-    /**
      * Removes the filter that is displayed in the given row
      * @param rowIndex The index of the filter to remove
      */
@@ -194,17 +174,6 @@ public class FilterTableModel extends AbstractTableModel implements SortableTabl
         }
     }
 
-    /**
-     * Sets/replaces the filter for a given row.
-     * @param rowIndex The row index
-     * @param filter The filter that should be placed in that row
-     * @deprecated Use {@link #setValue}
-     */
-    @Deprecated
-    public void setFilter(int rowIndex, Filter filter) {
-        setValue(rowIndex, filter);
-    }
-
     @Override
     public Filter setValue(int rowIndex, Filter filter) {
         Filter result = model.setValue(rowIndex, filter);
@@ -212,17 +181,6 @@ public class FilterTableModel extends AbstractTableModel implements SortableTabl
         updateFilters();
         fireTableRowsUpdated(rowIndex, rowIndex);
         return result;
-    }
-
-    /**
-     * Gets the filter by row index
-     * @param rowIndex The row index
-     * @return The filter in that row
-     * @deprecated Use {@link #getValue}
-     */
-    @Deprecated
-    public Filter getFilter(int rowIndex) {
-        return getValue(rowIndex);
     }
 
     @Override

@@ -280,34 +280,11 @@ public class FilterModel implements SortableModel<Filter> {
         return result;
     }
 
-    /**
-     * Sets/replaces the filter for a given row.
-     * @param rowIndex The row index
-     * @param filter The filter that should be placed in that row
-     * @return the filter previously at the specified position
-     * @deprecated Use {@link #setValue}
-     */
-    @Deprecated
-    public Filter setFilter(int rowIndex, Filter filter) {
-        return setValue(rowIndex, filter);
-    }
-
     @Override
     public Filter setValue(int rowIndex, Filter filter) {
         Filter result = filters.set(rowIndex, filter);
         updateFilterMatcher();
         return result;
-    }
-
-    /**
-     * Gets the filter by row index
-     * @param rowIndex The row index
-     * @return The filter in that row
-     * @deprecated Use {@link #getValue}
-     */
-    @Deprecated
-    public Filter getFilter(int rowIndex) {
-        return getValue(rowIndex);
     }
 
     @Override

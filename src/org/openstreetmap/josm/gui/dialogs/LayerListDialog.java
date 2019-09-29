@@ -33,8 +33,6 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -357,34 +355,6 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
      */
     public LayerListModel getModel() {
         return model;
-    }
-
-    /**
-     * Wires <code>listener</code> to <code>listSelectionModel</code> in such a way, that
-     * <code>listener</code> receives a {@link IEnabledStateUpdating#updateEnabledState()}
-     * on every {@link ListSelectionEvent}.
-     *
-     * @param listener  the listener
-     * @param listSelectionModel  the source emitting {@link ListSelectionEvent}s
-     * @deprecated Use {@link TableHelper#adaptTo}
-     */
-    @Deprecated
-    protected void adaptTo(final IEnabledStateUpdating listener, ListSelectionModel listSelectionModel) {
-        TableHelper.adaptTo(listener, listSelectionModel);
-    }
-
-    /**
-     * Wires <code>listener</code> to <code>listModel</code> in such a way, that
-     * <code>listener</code> receives a {@link IEnabledStateUpdating#updateEnabledState()}
-     * on every {@link ListDataEvent}.
-     *
-     * @param listener the listener
-     * @param listModel the source emitting {@link ListDataEvent}s
-     * @deprecated Use {@link TableHelper#adaptTo}
-     */
-    @Deprecated
-    protected void adaptTo(final IEnabledStateUpdating listener, LayerListModel listModel) {
-        TableHelper.adaptTo(listener, listModel);
     }
 
     @Override

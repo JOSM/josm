@@ -381,17 +381,6 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     }
 
     /**
-     * Displays image for the given data.
-     * @param data geo image data
-     * @param entry image entry
-     * @deprecated Use {@link #displayImage}
-     */
-    @Deprecated
-    public static void showImage(ImageData data, ImageEntry entry) {
-        getInstance().displayImage(data, entry);
-    }
-
-    /**
      * Enables (or disables) the "Previous" button.
      * @param value {@code true} to enable the button, {@code false} otherwise
      */

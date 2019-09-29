@@ -3,8 +3,6 @@ package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -20,17 +18,6 @@ import org.openstreetmap.josm.data.osm.Way;
  * @author Giuseppe Bilotta
  */
 public class RemoveNodesCommand extends AbstractNodesCommand<Set<Node>> {
-
-    /**
-     * Constructs a new {@code RemoveNodesCommand}.
-     * @param way The way to modify. Must not be null, and belong to a data set
-     * @param rmNodes The list of nodes to remove
-     * @deprecated Use {@link #RemoveNodesCommand(Way, Set)}
-     */
-    @Deprecated
-    public RemoveNodesCommand(Way way, List<Node> rmNodes) {
-        super(way.getDataSet(), way, new HashSet<>(rmNodes));
-    }
 
     /**
      * Constructs a new {@code RemoveNodesCommand}.
