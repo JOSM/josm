@@ -786,11 +786,13 @@ Build-Date: ${build.tstamp}
             <ignore classname="io.*"/>
             <ignore classname="it.*"/>
             <ignore classname="java.lang.invoke.MethodHandle"/>
+            <ignore classname="java.util.list.kotlin.*"/>
             <ignore classname="javax.*"/>
             <ignore classname="jdk.swing.interop.*"/>
             <ignore classname="jogamp.*"/>
             <ignore classname="junit.*"/>
             <ignore classname="kdu_jni.*"/>
+            <ignore classname="kotlin.*"/>
             <ignore classname="net.*"/>
             <ignore classname="netscape.*"/>
             <ignore classname="nu.*"/>
@@ -825,6 +827,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.jvnet.*"/>
             <ignore classname="org.kxml2.*"/>
             <ignore classname="org.objectweb.*"/>
+            <ignore classname="org.opentest4j.*"/>
             <ignore classname="org.osgi.*"/>
             <ignore classname="org.postgresql.*"/>
             <ignore classname="org.python.*"/>
