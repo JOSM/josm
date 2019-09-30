@@ -391,7 +391,7 @@ public final class I18n {
 
         /* try initial language settings, may be changed later again */
         if (!load(LanguageInfo.getJOSMLocaleCode())) {
-            Locale.setDefault(Locale.ENGLISH);
+            Locale.setDefault(new Locale("en", Locale.getDefault().getCountry()));
         }
     }
 

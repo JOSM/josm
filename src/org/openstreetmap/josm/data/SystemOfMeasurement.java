@@ -4,12 +4,13 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.text.NumberFormat;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -22,12 +23,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
  * @since 6992 (extraction in this package)
  */
 public class SystemOfMeasurement {
-
-    /**
-     * Preferences entry for system of measurement.
-     * @since 12674 (moved from ProjectionPreference)
-     */
-    public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
 
     /**
      * Interface to notify listeners of the change of the system of measurement.
@@ -48,7 +43,7 @@ public class SystemOfMeasurement {
      * Metric system (international standard).
      * @since 3406
      */
-    public static final SystemOfMeasurement METRIC = new SystemOfMeasurement(1, "m", 1000, "km", "km/h", 3.6, 10_000, "ha");
+    public static final SystemOfMeasurement METRIC = new SystemOfMeasurement(marktr("Metric"), 1, "m", 1000, "km", "km/h", 3.6, 10_000, "ha");
 
     /**
      * Chinese system.
@@ -56,34 +51,35 @@ public class SystemOfMeasurement {
      * <a href="https://en.wikipedia.org/wiki/Chinese_units_of_measurement#Chinese_area_units_effective_in_1930">area units</a>
      * @since 3406
      */
-    public static final SystemOfMeasurement CHINESE = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */,
-            "km/h", 3.6, 666.0 + 2.0/3.0, "\u4ea9" /* mu */);
+    public static final SystemOfMeasurement CHINESE = new SystemOfMeasurement(marktr("Chinese"),
+            1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */, "km/h", 3.6, 666.0 + 2.0/3.0, "\u4ea9" /* mu */);
 
     /**
      * Imperial system (British Commonwealth and former British Empire).
      * @since 3406
      */
-    public static final SystemOfMeasurement IMPERIAL = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi", "mph", 2.23694, 4046.86, "ac");
+    public static final SystemOfMeasurement IMPERIAL = new SystemOfMeasurement(marktr("Imperial"),
+            0.3048, "ft", 1609.344, "mi", "mph", 2.23694, 4046.86, "ac");
 
     /**
      * Nautical mile system (navigation, polar exploration).
      * @since 5549
      */
-    public static final SystemOfMeasurement NAUTICAL_MILE = new SystemOfMeasurement(185.2, "kbl", 1852, "NM", "kn", 1.94384);
+    public static final SystemOfMeasurement NAUTICAL_MILE = new SystemOfMeasurement(marktr("Nautical Mile"),
+            185.2, "kbl", 1852, "NM", "kn", 1.94384);
 
     /**
      * Known systems of measurement.
      * @since 3406
      */
-    public static final Map<String, SystemOfMeasurement> ALL_SYSTEMS;
-    static {
-        Map<String, SystemOfMeasurement> map = new LinkedHashMap<>();
-        map.put(marktr("Metric"), METRIC);
-        map.put(marktr("Chinese"), CHINESE);
-        map.put(marktr("Imperial"), IMPERIAL);
-        map.put(marktr("Nautical Mile"), NAUTICAL_MILE);
-        ALL_SYSTEMS = Collections.unmodifiableMap(map);
-    }
+    public static final Map<String, SystemOfMeasurement> ALL_SYSTEMS = Stream.of(METRIC, CHINESE, IMPERIAL, NAUTICAL_MILE)
+            .collect(Collectors.toMap(SystemOfMeasurement::getName, Function.identity()));
+
+    /**
+     * Preferences entry for system of measurement.
+     * @since 12674 (moved from ProjectionPreference)
+     */
+    public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", getDefault().getName());
 
     private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<>();
 
@@ -141,6 +137,8 @@ public class SystemOfMeasurement {
         }
     }
 
+    /** Translated name of this system of measurement. */
+    private final String name;
     /** First value, in meters, used to translate unit according to above formula. */
     public final double aValue;
     /** Second value, in meters, used to translate unit according to above formula. */
@@ -168,16 +166,17 @@ public class SystemOfMeasurement {
      * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
      * x_a == x_m / aValue
      *
+     * @param name Translated name of this system of measurement
      * @param aValue First value, in meters, used to translate unit according to above formula.
      * @param aName First unit used to format text.
      * @param bValue Second value, in meters, used to translate unit according to above formula.
      * @param bName Second unit used to format text.
      * @param speedName the most common speed symbol (kmh/h, mph, kn, etc.)
      * @param speedValue the speed value for the most common speed symbol, for 1 meter per second
-     * @since 10175
+     * @since 15395
      */
-    public SystemOfMeasurement(double aValue, String aName, double bValue, String bName, String speedName, double speedValue) {
-        this(aValue, aName, bValue, bName, speedName, speedValue, -1, null);
+    public SystemOfMeasurement(String name, double aValue, String aName, double bValue, String bName, String speedName, double speedValue) {
+        this(name, aValue, aName, bValue, bName, speedName, speedValue, -1, null);
     }
 
     /**
@@ -186,6 +185,7 @@ public class SystemOfMeasurement {
      * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
      * x_a == x_m / aValue
      *
+     * @param name Translated name of this system of measurement
      * @param aValue First value, in meters, used to translate unit according to above formula.
      * @param aName First unit used to format text.
      * @param bValue Second value, in meters, used to translate unit according to above formula.
@@ -196,10 +196,11 @@ public class SystemOfMeasurement {
      *                        Set to {@code -1} if not used.
      * @param areaCustomName Specific optional area unit. Set to {@code null} if not used.
      *
-     * @since 10175
+     * @since 15395
      */
-    public SystemOfMeasurement(double aValue, String aName, double bValue, String bName, String speedName, double speedValue,
+    public SystemOfMeasurement(String name, double aValue, String aName, double bValue, String bName, String speedName, double speedValue,
             double areaCustomValue, String areaCustomName) {
+        this.name = name;
         this.aValue = aValue;
         this.aName = aName;
         this.bValue = bValue;
@@ -268,6 +269,31 @@ public class SystemOfMeasurement {
             return "< " + formatText(threshold, aName + '\u00b2', format);
         else
             return formatText(a, aName + '\u00b2', format);
+    }
+
+    /**
+     * Returns the translated name of this system of measurement.
+     * @return the translated name of this system of measurement
+     * @since 15395
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns the default system of measurement for the current country.
+     * @return the default system of measurement for the current country
+     * @since 15395
+     */
+    public static SystemOfMeasurement getDefault() {
+        switch (Locale.getDefault().getCountry()) {
+            case "US":
+                // https://en.wikipedia.org/wiki/Metrication_in_the_United_States#Current_use
+                // Imperial units still used in transportation and Earth sciences
+                return IMPERIAL;
+            default:
+                return METRIC;
+        }
     }
 
     private static String formatText(double v, String unit, NumberFormat format) {

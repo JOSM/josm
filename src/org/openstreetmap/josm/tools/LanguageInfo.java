@@ -202,7 +202,7 @@ public final class LanguageInfo {
         } else if (country > 0) {
             l = new Locale(localeName.substring(0, country), localeName.substring(country + 1));
         } else {
-            l = new Locale(localeName);
+            l = new Locale(localeName, Locale.getDefault().getCountry());
         }
         return l;
     }
