@@ -709,9 +709,9 @@ public class GpxData extends WithAttributes implements Data {
     /**
     * Returns minimum and maximum timestamps for all tracks
     * Warning: there are lot of track with broken timestamps,
-    * so we just ingore points from future and from year before 1970 in this method
-    * works correctly @since 5815
+    * so we just ignore points from future and from year before 1970 in this method
     * @return minimum and maximum dates in array of 2 elements
+    * @since 7319
     */
     public synchronized Date[] getMinMaxTimeForAllTracks() {
         long now = System.currentTimeMillis();

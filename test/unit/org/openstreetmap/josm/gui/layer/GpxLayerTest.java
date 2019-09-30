@@ -15,7 +15,7 @@ import java.util.TimeZone;
 
 import javax.swing.JScrollPane;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -47,8 +47,8 @@ public class GpxLayerTest {
     /**
      * Setup test
      */
-    @BeforeClass
-    public static void beforeClass() {
+    @Before
+    public void before() {
         // Make sure we don't rely on a specific country, for distance units
         Locale.setDefault(Locale.ENGLISH);
     }
