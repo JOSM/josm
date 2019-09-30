@@ -555,8 +555,8 @@ way["addr:housenumber"][!building][!"building:part"][!"demolished:building"][!no
   group: tr("missing tag");
 }
 
-/* #14125, #14323 */
-way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][junction!=roundabout][lanes>2][get(split(".", tag(lanes)/2), 1)=5] {
+/* #14125, #14323, #18185 */
+way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][oneway!=reversible][junction!=roundabout][lanes>2][get(split(".", tag(lanes)/2), 1)=5] {
   throwWarning: tr("street with odd number of {0}, but without {1} and {2} or {3}", "{1.key}", "{2.key}", "{3.key}", "{4.key}");
   group: tr("missing tag");
   assertNoMatch: "way highway=primary lanes=2";
