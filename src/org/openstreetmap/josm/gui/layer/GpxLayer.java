@@ -426,7 +426,7 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            layer.data.splitTrackSegmentsToTracks();
+            layer.data.splitTrackSegmentsToTracks(!layer.getName().isEmpty() ? layer.getName() : "GPX split result");
             layer.invalidate();
         }
 
@@ -459,7 +459,7 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            layer.data.splitTracksToLayers();
+            layer.data.splitTracksToLayers(!layer.getName().isEmpty() ? layer.getName() : "GPX split result");
             // layer is not modified by this action
         }
 

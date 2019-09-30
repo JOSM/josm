@@ -437,16 +437,17 @@ public class GpxData extends WithAttributes implements Data {
     /**
      * @param attrs attributes of/for an gpx track, written to if the name appeared previously in {@code counts}.
      * @param counts a {@code HashMap} of previously seen names, associated with their count.
+     * @param srcLayerName Source layer name
      * @return the unique name for the gpx track.
      *
-     * @since 13210
+     * @since 15397
      */
-    public static String ensureUniqueName(Map<String, Object> attrs, Map<String, Integer> counts) {
-        String name = attrs.getOrDefault("name", "GPX split result").toString();
+    public static String ensureUniqueName(Map<String, Object> attrs, Map<String, Integer> counts, String srcLayerName) {
+        String name = attrs.getOrDefault("name", srcLayerName).toString().replaceFirst(" #\\d+$", "");
         Integer count = counts.getOrDefault(name, 0) + 1;
         counts.put(name, count);
 
-        attrs.put("name", MessageFormat.format("{0}{1}", name, (count > 1) ? " #"+count : ""));
+        attrs.put("name", MessageFormat.format("{0}{1}", name, " #" + count));
         return attrs.get("name").toString();
     }
 
@@ -454,15 +455,17 @@ public class GpxData extends WithAttributes implements Data {
      * Split tracks so that only single-segment tracks remain.
      * Each segment will make up one individual track after this operation.
      *
-     * @since 13210
+     * @param srcLayerName Source layer name
+     *
+     * @since 15397
      */
-    public synchronized void splitTrackSegmentsToTracks() {
+    public synchronized void splitTrackSegmentsToTracks(String srcLayerName) {
         final HashMap<String, Integer> counts = new HashMap<>();
 
         List<GpxTrack> trks = getTracks().stream()
             .flatMap(trk -> trk.getSegments().stream().map(seg -> {
                     HashMap<String, Object> attrs = new HashMap<>(trk.getAttributes());
-                    ensureUniqueName(attrs, counts);
+                    ensureUniqueName(attrs, counts, srcLayerName);
                     return new ImmutableGpxTrack(Arrays.asList(seg), attrs);
                 }))
             .collect(Collectors.toCollection(ArrayList<GpxTrack>::new));
@@ -478,9 +481,11 @@ public class GpxData extends WithAttributes implements Data {
      * The new GpxLayers are added to the LayerManager, the original GpxLayer
      * is untouched as to preserve potential route or wpt parts.
      *
-     * @since 13210
+     * @param srcLayerName Source layer name
+     *
+     * @since 15397
      */
-    public synchronized void splitTracksToLayers() {
+    public synchronized void splitTracksToLayers(String srcLayerName) {
         final HashMap<String, Integer> counts = new HashMap<>();
 
         getTracks().stream()
@@ -489,7 +494,7 @@ public class GpxData extends WithAttributes implements Data {
                 HashMap<String, Object> attrs = new HashMap<>(trk.getAttributes());
                 GpxData d = new GpxData();
                 d.addTrack(trk);
-                return new GpxLayer(d, ensureUniqueName(attrs, counts));
+                return new GpxLayer(d, ensureUniqueName(attrs, counts, srcLayerName));
             })
             .forEachOrdered(layer -> MainApplication.getLayerManager().addLayer(layer));
     }
@@ -706,7 +711,7 @@ public class GpxData extends WithAttributes implements Data {
     * Warning: there are lot of track with broken timestamps,
     * so we just ingore points from future and from year before 1970 in this method
     * works correctly @since 5815
-     * @return minimum and maximum dates in array of 2 elements
+    * @return minimum and maximum dates in array of 2 elements
     */
     public synchronized Date[] getMinMaxTimeForAllTracks() {
         long now = System.currentTimeMillis();

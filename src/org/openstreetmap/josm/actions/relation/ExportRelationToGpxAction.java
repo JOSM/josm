@@ -165,10 +165,10 @@ public class ExportRelationToGpxAction extends GpxExportAction
                                 .filter(relsFound::contains)
                                 .findFirst()
                                 .ifPresent(r -> {
-                                    trkAttr.put("name", r.getName() != null ? r.getName() : r.getId());
+                                    trkAttr.put("name", r.getName() != null ? r.getName() : Long.toString(r.getId()));
                                     trkAttr.put("desc", tr("based on osm route relation data, timestamps are synthetic"));
                                 });
-                        GpxData.ensureUniqueName(trkAttr, names);
+                        GpxData.ensureUniqueName(trkAttr, names, (String) trkAttr.get("name"));
                     }
                     List<Node> ln = flat.get(i).getWay().getNodes();
                     if (wayConnectionType.direction == WayConnectionType.Direction.BACKWARD)
