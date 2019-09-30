@@ -137,7 +137,7 @@ public class SystemOfMeasurement {
         }
     }
 
-    /** Translated name of this system of measurement. */
+    /** Translatable name of this system of measurement. */
     private final String name;
     /** First value, in meters, used to translate unit according to above formula. */
     public final double aValue;
@@ -166,7 +166,7 @@ public class SystemOfMeasurement {
      * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
      * x_a == x_m / aValue
      *
-     * @param name Translated name of this system of measurement
+     * @param name Translatable name of this system of measurement
      * @param aValue First value, in meters, used to translate unit according to above formula.
      * @param aName First unit used to format text.
      * @param bValue Second value, in meters, used to translate unit according to above formula.
@@ -185,7 +185,7 @@ public class SystemOfMeasurement {
      * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
      * x_a == x_m / aValue
      *
-     * @param name Translated name of this system of measurement
+     * @param name Translatable name of this system of measurement
      * @param aValue First value, in meters, used to translate unit according to above formula.
      * @param aName First unit used to format text.
      * @param bValue Second value, in meters, used to translate unit according to above formula.
@@ -272,8 +272,8 @@ public class SystemOfMeasurement {
     }
 
     /**
-     * Returns the translated name of this system of measurement.
-     * @return the translated name of this system of measurement
+     * Returns the translatable name of this system of measurement.
+     * @return the translatable name of this system of measurement
      * @since 15395
      */
     public String getName() {
