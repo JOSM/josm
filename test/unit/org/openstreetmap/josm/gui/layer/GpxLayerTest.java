@@ -10,12 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.swing.JScrollPane;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -43,15 +41,6 @@ public class GpxLayerTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().i18n();
-
-    /**
-     * Setup test
-     */
-    @Before
-    public void before() {
-        // Make sure we don't rely on a specific country, for distance units
-        Locale.setDefault(Locale.ENGLISH);
-    }
 
     private static String getHtml(GpxLayer layer) {
         return ((HtmlPanel) ((JScrollPane) layer.getInfoComponent()).getViewport().getView()).getEditorPane().getText();

@@ -33,6 +33,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.User;
@@ -498,6 +499,9 @@ public class JOSMTestRules implements TestRule {
             // We force the use of a wrong API server, just in case anyone attempts an upload
             Config.getPref().put("osm-server.url", "http://invalid");
         }
+
+        // Make sure we're using the metric system
+        SystemOfMeasurement.setSystemOfMeasurement(SystemOfMeasurement.METRIC.getName());
 
         if (useHttps) {
             try {
