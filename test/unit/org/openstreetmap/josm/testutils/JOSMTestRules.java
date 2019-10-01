@@ -100,6 +100,7 @@ public class JOSMTestRules implements TestRule {
     private boolean useHttps;
     private boolean territories;
     private boolean rlTraffic;
+    private boolean metric;
     private boolean main;
 
     /**
@@ -282,6 +283,16 @@ public class JOSMTestRules implements TestRule {
     public JOSMTestRules rlTraffic() {
         territories();
         rlTraffic = true;
+        return this;
+    }
+
+    /**
+     * Force metric measurement system.
+     * @return this instance, for easy chaining
+     * @since 15400
+     */
+    public JOSMTestRules metricSystem() {
+        metric = true;
         return this;
     }
 
@@ -501,7 +512,9 @@ public class JOSMTestRules implements TestRule {
         }
 
         // Make sure we're using the metric system
-        SystemOfMeasurement.setSystemOfMeasurement(SystemOfMeasurement.METRIC.getName());
+        if (metric) {
+            SystemOfMeasurement.setSystemOfMeasurement(SystemOfMeasurement.METRIC.getName());
+        }
 
         if (useHttps) {
             try {
