@@ -619,7 +619,7 @@ area[cemetery=sector][landuse=cemetery] {
 way[highway=path    ][foot][foot!=no      ][foot!=use_sidepath   ][!segregated][bicycle][bicycle!=no][bicycle!=use_sidepath]!.unpaved_surface,
 way[highway=footway ][bicycle][bicycle!=no][bicycle!=use_sidepath][!segregated]!.unpaved_surface,
 way[highway=cycleway][foot][foot!=no      ][foot!=use_sidepath   ][!segregated]!.unpaved_surface {
-  throwWarning: tr("Combined foot- and cycleway without {1}.", "{4.key}");
+  throwWarning: tr("Combined foot- and cycleway without {0}.", "{4.key}");
   group: tr("missing tag");
 }
 
