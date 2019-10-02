@@ -615,11 +615,11 @@ area[cemetery=sector][landuse=cemetery] {
   fixRemove: "cycleway";
 }
 
-/* #17973 */
-way[highway=path    ][foot][foot!=no      ][!segregated][bicycle][bicycle!=no]!.unpaved_surface,
-way[highway=footway ][bicycle][bicycle!=no][!segregated]!.unpaved_surface,
-way[highway=cycleway][foot][foot!=no      ][!segregated]!.unpaved_surface {
-  throwWarning: tr("Combined foot- and cycleway without {1}.", "{3.key}");
+/* #17973, #18183 */
+way[highway=path    ][foot][foot!=no      ][foot!=use_sidepath   ][!segregated][bicycle][bicycle!=no][bicycle!=use_sidepath]!.unpaved_surface,
+way[highway=footway ][bicycle][bicycle!=no][bicycle!=use_sidepath][!segregated]!.unpaved_surface,
+way[highway=cycleway][foot][foot!=no      ][foot!=use_sidepath   ][!segregated]!.unpaved_surface {
+  throwWarning: tr("Combined foot- and cycleway without {1}.", "{4.key}");
   group: tr("missing tag");
 }
 
