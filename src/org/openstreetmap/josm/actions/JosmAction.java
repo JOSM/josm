@@ -218,8 +218,8 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     protected void installAdapters() {
         // make this action listen to layer change and selection change events
         if (listenToLayerChange()) {
-            layerChangeAdapter = new LayerChangeAdapter();
-            activeLayerChangeAdapter = new ActiveLayerChangeAdapter();
+            layerChangeAdapter = buildLayerChangeAdapter();
+            activeLayerChangeAdapter = buildActiveLayerChangeAdapter();
             getLayerManager().addLayerChangeListener(layerChangeAdapter);
             getLayerManager().addActiveLayerChangeListener(activeLayerChangeAdapter);
         }
@@ -228,6 +228,24 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
             SelectionEventManager.getInstance().addSelectionListenerForEdt(selectionChangeAdapter);
         }
         initEnabledState();
+    }
+
+    /**
+     * Override this if calling {@link #updateEnabledState()} on layer change events is not enough.
+     * @return the {@link LayerChangeAdapter} that will be called on layer change events
+     * @since 15404
+     */
+    protected LayerChangeAdapter buildLayerChangeAdapter() {
+        return new LayerChangeAdapter();
+    }
+
+    /**
+     * Override this if calling {@link #updateEnabledState()} on active layer change event is not enough.
+     * @return the {@link LayerChangeAdapter} that will be called on active layer change event
+     * @since 15404
+     */
+    protected ActiveLayerChangeAdapter buildActiveLayerChangeAdapter() {
+        return new ActiveLayerChangeAdapter();
     }
 
     /**

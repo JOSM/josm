@@ -824,11 +824,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
 
     @Override
     public boolean isModified() {
-        for (OsmPrimitive p : allPrimitives) {
-            if (p.isModified())
-                return true;
-        }
-        return false;
+        return allPrimitives.parallelStream().anyMatch(OsmPrimitive::isModified);
     }
 
     /**
@@ -837,11 +833,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * @since 13161
      */
     public boolean requiresUploadToServer() {
-        for (OsmPrimitive p : allPrimitives) {
-            if (APIOperation.of(p) != null)
-                return true;
-        }
-        return false;
+        return allPrimitives.parallelStream().anyMatch(p -> APIOperation.of(p) != null);
     }
 
     /**

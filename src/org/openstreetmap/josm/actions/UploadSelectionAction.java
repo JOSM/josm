@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.APIDataSet;
@@ -25,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.UploadSelectionDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -64,7 +64,10 @@ public class UploadSelectionAction extends JosmAction {
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         updateEnabledStateOnModifiableSelection(selection);
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
-        if (editLayer != null && !editLayer.isUploadable()) {
+        if (isEnabled() && editLayer != null && !editLayer.isUploadable()) {
+            setEnabled(false);
+        }
+        if (isEnabled() && selection.stream().noneMatch(OsmPrimitive::isModified)) {
             setEnabled(false);
         }
     }
@@ -92,12 +95,7 @@ public class UploadSelectionAction extends JosmAction {
         Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(editLayer.data.getAllSelected());
         Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(editLayer.getDataSet());
         if (modifiedCandidates.isEmpty() && deletedCandidates.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    MainApplication.getMainFrame(),
-                    tr("No changes to upload."),
-                    tr("Warning"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            new Notification(tr("No changes to upload.")).show();
             return;
         }
         UploadSelectionDialog dialog = new UploadSelectionDialog();
@@ -110,12 +108,7 @@ public class UploadSelectionAction extends JosmAction {
             return;
         Collection<OsmPrimitive> toUpload = new UploadHullBuilder().build(dialog.getSelectedPrimitives());
         if (toUpload.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    MainApplication.getMainFrame(),
-                    tr("No changes to upload."),
-                    tr("Warning"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            new Notification(tr("No changes to upload.")).show();
             return;
         }
         uploadPrimitives(editLayer, toUpload);

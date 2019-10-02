@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,13 @@ import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.io.AsynchronousUploadPrimitivesTask;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetUpdater;
@@ -40,7 +44,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Action that opens a connection to the osm server and uploads all changes.
  *
- * An dialog is displayed asking the user to specify a rectangle to grab.
+ * A dialog is displayed asking the user to specify a rectangle to grab.
  * The url and account settings from the preferences are used.
  *
  * If the upload fails this action offers various options to resolve conflicts.
@@ -89,6 +93,12 @@ public class UploadAction extends JosmAction {
          */
         LATE_UPLOAD_HOOKS.add(new DiscardTagsHook());
     }
+
+    private final PropertyChangeListener updateOnRequireUploadChange = evt -> {
+        if (OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP.equals(evt.getPropertyName())) {
+            updateEnabledState();
+        }
+    };
 
     /**
      * Registers an upload hook. Adds the hook at the first position of the upload hooks.
@@ -145,9 +155,30 @@ public class UploadAction extends JosmAction {
     }
 
     @Override
+    protected LayerChangeAdapter buildLayerChangeAdapter() {
+        return new LayerChangeAdapter() {
+            @Override
+            public void layerAdded(LayerAddEvent e) {
+                if (e.getAddedLayer() instanceof OsmDataLayer) {
+                    e.getAddedLayer().addPropertyChangeListener(updateOnRequireUploadChange);
+                }
+                super.layerAdded(e);
+            }
+
+            @Override
+            public void layerRemoving(LayerRemoveEvent e) {
+                if (e.getRemovedLayer() instanceof OsmDataLayer) {
+                    e.getRemovedLayer().removePropertyChangeListener(updateOnRequireUploadChange);
+                }
+                super.layerRemoving(e);
+            }
+        };
+    }
+
+    @Override
     protected void updateEnabledState() {
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
-        setEnabled(editLayer != null && editLayer.isUploadable());
+        setEnabled(editLayer != null && editLayer.requiresUploadToServer());
     }
 
     /**
@@ -231,12 +262,7 @@ public class UploadAction extends JosmAction {
      */
     public void uploadData(final OsmDataLayer layer, APIDataSet apiData) {
         if (apiData.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    MainApplication.getMainFrame(),
-                    tr("No changes to upload."),
-                    tr("Warning"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            new Notification(tr("No changes to upload.")).show();
             return;
         }
         if (!checkPreUploadConditions(layer, apiData))
@@ -291,12 +317,7 @@ public class UploadAction extends JosmAction {
         if (!isEnabled())
             return;
         if (MainApplication.getMap() == null) {
-            JOptionPane.showMessageDialog(
-                    MainApplication.getMainFrame(),
-                    tr("Nothing to upload. Get some data first."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
+            new Notification(tr("Nothing to upload. Get some data first.")).show();
             return;
         }
         APIDataSet apiData = new APIDataSet(getLayerManager().getEditDataSet());

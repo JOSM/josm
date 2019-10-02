@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.SaveToFile;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
@@ -72,7 +73,7 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
          */
         LayerSaveAction() {
             new ImageProvider("save").getResource().attachImageIcon(this);
-            putValue(SHORT_DESCRIPTION, ((AbstractModifiableLayer) layer).requiresSaveToFile() ?
+            putValue(SHORT_DESCRIPTION, ((SaveToFile) layer).requiresSaveToFile() ?
                     tr("Layer contains unsaved data - save to file.") :
                     tr("Layer does not contain unsaved data."));
             updateEnabledState();
@@ -85,7 +86,7 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
         }
 
         public final void updateEnabledState() {
-            setEnabled(((AbstractModifiableLayer) layer).requiresSaveToFile());
+            setEnabled(((SaveToFile) layer).requiresSaveToFile());
         }
     }
 

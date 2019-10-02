@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.SaveToFile;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -72,7 +73,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
     public boolean doSave(Layer layer) {
         if (!layer.checkSaveConditions())
             return false;
-        return doInternalSave(layer, getFile(layer));
+        final boolean requiresSave = layer instanceof SaveToFile && ((SaveToFile) layer).requiresSaveToFile();
+        final boolean result = doInternalSave(layer, getFile(layer));
+        if (!requiresSave) {
+            updateEnabledState();
+        }
+        return result;
     }
 
     /**
@@ -121,7 +127,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
             if (layer instanceof OsmDataLayer) {
                 ((OsmDataLayer) layer).onPostSaveToFile();
             }
-            MainApplication.getMainFrame().repaint();
         } catch (IOException | InvalidPathException e) {
             showAndLogException(e);
             return false;
@@ -132,10 +137,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
     protected abstract File getFile(Layer layer);
 
-    /**
-     * Refreshes the enabled state
-     *
-     */
     @Override
     protected void updateEnabledState() {
         Layer activeLayer = getLayerManager().getActiveLayer();

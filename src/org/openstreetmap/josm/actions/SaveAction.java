@@ -5,12 +5,17 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.SaveToFile;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -20,6 +25,12 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class SaveAction extends SaveActionBase {
     private static SaveAction instance = new SaveAction();
+
+    private final PropertyChangeListener updateOnRequireSaveChange = evt -> {
+        if (OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP.equals(evt.getPropertyName())) {
+            updateEnabledState();
+        }
+    };
 
     /**
      * Construct the action with "Save" as label.
@@ -38,7 +49,37 @@ public final class SaveAction extends SaveActionBase {
         return instance;
     }
 
-    @Override public File getFile(Layer layer) {
+    @Override
+    protected LayerChangeAdapter buildLayerChangeAdapter() {
+        return new LayerChangeAdapter() {
+            @Override
+            public void layerAdded(LayerAddEvent e) {
+                if (e.getAddedLayer() instanceof OsmDataLayer) {
+                    e.getAddedLayer().addPropertyChangeListener(updateOnRequireSaveChange);
+                }
+                super.layerAdded(e);
+            }
+
+            @Override
+            public void layerRemoving(LayerRemoveEvent e) {
+                if (e.getRemovedLayer() instanceof OsmDataLayer) {
+                    e.getRemovedLayer().removePropertyChangeListener(updateOnRequireSaveChange);
+                }
+                super.layerRemoving(e);
+            }
+        };
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        Layer activeLayer = getLayerManager().getActiveLayer();
+        setEnabled(activeLayer != null && activeLayer.isSavable()
+                && (!(activeLayer.getAssociatedFile() != null
+                    && activeLayer instanceof SaveToFile && !((SaveToFile) activeLayer).requiresSaveToFile())));
+    }
+
+    @Override
+    public File getFile(Layer layer) {
         File f = layer.getAssociatedFile();
         if (f != null && !f.exists()) {
             f = null;
