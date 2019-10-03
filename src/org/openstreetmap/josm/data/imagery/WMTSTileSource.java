@@ -375,7 +375,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 if (info.getBounds() != null && first.getBbox() != null) {
                     LatLon center = info.getBounds().getCenter();
                     if (!first.getBbox().bounds(center)) {
-                        first = layers.stream().filter(l -> l.getBbox().bounds(center)).findFirst().orElse(first);
+                        final Layer ffirst = first;
+                        first = layers.stream()
+                                .filter(l -> l.getMaxZoom() >= info.getMaxZoom() && l.getBbox() != null && l.getBbox().bounds(center)).findFirst()
+                                .orElseGet(() -> layers.stream().filter(l -> l.getBbox() != null && l.getBbox().bounds(center)).findFirst()
+                                        .orElse(ffirst));
                     }
                 }
                 this.defaultLayer = new DefaultLayer(info.getImageryType(), first.identifier, first.style, first.tileMatrixSet.identifier);
