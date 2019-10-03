@@ -182,6 +182,15 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         public String getCrs() {
             return crs;
         }
+
+        /**
+         * Returns tile matrix max zoom. Assumes first zoom starts at 0, with continuous zoom levels.
+         * @return tile matrix max zoom
+         * @since 15409
+         */
+        public int getMaxZoom() {
+            return tileMatrix.size() - 1;
+        }
     }
 
     private static class Dimension {
@@ -258,6 +267,15 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         public TileMatrixSet getTileMatrixSet() {
             return tileMatrixSet;
         }
+
+        /**
+         * Returns layer max zoom.
+         * @return layer max zoom
+         * @since 15409
+         */
+        public int getMaxZoom() {
+            return tileMatrixSet != null ? tileMatrixSet.getMaxZoom() : 0;
+        }
     }
 
     /**
@@ -333,6 +351,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             Logging.warn(tr("No default layer selected, choosing first layer."));
             if (!layers.isEmpty()) {
                 Layer first = layers.iterator().next();
+                // If max zoom lower than expected, try to find a better layer
+                if (first.getMaxZoom() < info.getMaxZoom()) {
+                    first = layers.stream().filter(l -> l.getMaxZoom() >= info.getMaxZoom()).findFirst().orElse(first);
+                }
                 this.defaultLayer = new DefaultLayer(info.getImageryType(), first.identifier, first.style, first.tileMatrixSet.identifier);
             } else {
                 this.defaultLayer = null;
@@ -942,7 +964,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     @Override
     public int getMaxZoom() {
         if (this.currentTileMatrixSet != null) {
-            return this.currentTileMatrixSet.tileMatrix.size()-1;
+            return this.currentTileMatrixSet.getMaxZoom();
         }
         return 0;
     }
