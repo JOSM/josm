@@ -1656,7 +1656,7 @@ public class ImageProvider {
 
         int roundedWidth = Math.round(realWidth);
         int roundedHeight = Math.round(realHeight);
-        if (roundedWidth <= 0 || roundedHeight <= 0) {
+        if (roundedWidth <= 0 || roundedHeight <= 0 || roundedWidth >= Integer.MAX_VALUE || roundedHeight >= Integer.MAX_VALUE) {
             Logging.error("createImageFromSvg: {0} {1} realWidth={2} realHeight={3}",
                     svg.getXMLBase(), dim, Float.toString(realWidth), Float.toString(realHeight));
             return null;
