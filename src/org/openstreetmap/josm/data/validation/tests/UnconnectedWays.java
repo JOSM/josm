@@ -540,7 +540,7 @@ public abstract class UnconnectedWays extends Test {
             x.setEastNorth(closest);
             BBox bbox = new BBox(endnode.getCoor(), x.getCoor());
             for (Way nearbyWay: ds.searchWays(bbox)) {
-                if (nearbyWay != w && nearbyWay.hasTag("barrier") && !endnode.getParentWays().contains(nearbyWay)) {
+                if (nearbyWay != w && nearbyWay.isUsable() && nearbyWay.hasTag("barrier") && !endnode.getParentWays().contains(nearbyWay)) {
                     //make sure that the barrier is really between the two nodes, not just close to them
                     Way directWay = new Way();
                     directWay.addNode(endnode);
