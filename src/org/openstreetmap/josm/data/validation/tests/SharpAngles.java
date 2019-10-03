@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * Find highways that have sharp angles
  * @author Taylor Smock
- * @since xxx
+ * @since 15406
  */
 public class SharpAngles extends Test {
     private static final int SHARPANGLESCODE = 3800;
