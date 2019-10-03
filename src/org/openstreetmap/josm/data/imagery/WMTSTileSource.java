@@ -5,10 +5,13 @@ import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_
 import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_GET;
 import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_HTTP;
 import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER;
+import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_LOWER_CORNER;
 import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_OPERATION;
 import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_OPERATIONS_METADATA;
 import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_SUPPORTED_CRS;
 import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_TITLE;
+import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_UPPER_CORNER;
+import static org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.QN_OWS_WGS84_BOUNDING_BOX;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
@@ -32,6 +35,7 @@ import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -55,6 +59,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.GetCapabilitiesParseHelper.TransferMode;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -210,6 +215,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private TileMatrixSet tileMatrixSet;
         private String baseUrl;
         private String style;
+        private BBox bbox;
         private final Collection<String> tileMatrixSetLinks = new ArrayList<>();
         private final Collection<Dimension> dimensions = new ArrayList<>();
 
@@ -220,6 +226,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             title = l.title;
             baseUrl = l.baseUrl;
             style = l.style;
+            bbox = l.bbox;
             tileMatrixSet = new TileMatrixSet(l.tileMatrixSet);
             dimensions.addAll(l.dimensions);
         }
@@ -275,6 +282,15 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
          */
         public int getMaxZoom() {
             return tileMatrixSet != null ? tileMatrixSet.getMaxZoom() : 0;
+        }
+
+        /**
+         * Returns the WGS84 bounding box.
+         * @return WGS84 bounding box
+         * @since 15410
+         */
+        public BBox getBbox() {
+            return bbox;
         }
     }
 
@@ -354,6 +370,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 // If max zoom lower than expected, try to find a better layer
                 if (first.getMaxZoom() < info.getMaxZoom()) {
                     first = layers.stream().filter(l -> l.getMaxZoom() >= info.getMaxZoom()).findFirst().orElse(first);
+                }
+                // If center of josm bbox not in layer bbox, try to find a better layer
+                if (info.getBounds() != null && first.getBbox() != null) {
+                    LatLon center = info.getBounds().getCenter();
+                    if (!first.getBbox().bounds(center)) {
+                        first = layers.stream().filter(l -> l.getBbox().bounds(center)).findFirst().orElse(first);
+                    }
                 }
                 this.defaultLayer = new DefaultLayer(info.getImageryType(), first.identifier, first.style, first.tileMatrixSet.identifier);
             } else {
@@ -567,6 +590,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                         layer.dimensions.add(parseDimension(reader));
                     } else if (QN_TILEMATRIX_SET_LINK.equals(qName)) {
                         layer.tileMatrixSetLinks.add(parseTileMatrixSetLink(reader));
+                    } else if (QN_OWS_WGS84_BOUNDING_BOX.equals(qName)) {
+                        layer.bbox = parseBoundingBox(reader);
                     } else {
                         GetCapabilitiesParseHelper.moveReaderToEndCurrentTag(reader);
                     }
@@ -687,12 +712,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 } else if (QN_SCALE_DENOMINATOR.equals(qName)) {
                     ret.scaleDenominator = Double.parseDouble(reader.getElementText());
                 } else if (QN_TOPLEFT_CORNER.equals(qName)) {
-                    String[] topLeftCorner = reader.getElementText().split(" ");
-                    if (matrixProj.switchXY()) {
-                        ret.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[1]), Double.parseDouble(topLeftCorner[0]));
-                    } else {
-                        ret.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[0]), Double.parseDouble(topLeftCorner[1]));
-                    }
+                    ret.topLeftCorner = parseEastNorth(reader.getElementText(), matrixProj.switchXY());
                 } else if (QN_TILE_HEIGHT.equals(qName)) {
                     ret.tileHeight = Integer.parseInt(reader.getElementText());
                 } else if (QN_TILE_WIDTH.equals(qName)) {
@@ -709,6 +729,51 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                     ret.tileHeight, ret.tileWidth, ret.identifier));
         }
         return ret;
+    }
+
+    private static <T> T parseCoor(String coor, boolean switchXY, BiFunction<String, String, T> function) {
+        String[] parts = coor.split(" ");
+        if (switchXY) {
+            return function.apply(parts[1], parts[0]);
+        } else {
+            return function.apply(parts[0], parts[1]);
+        }
+    }
+
+    private static EastNorth parseEastNorth(String coor, boolean switchXY) {
+        return parseCoor(coor, switchXY, (e, n) -> new EastNorth(Double.parseDouble(e), Double.parseDouble(n)));
+    }
+
+    private static LatLon parseLatLon(String coor, boolean switchXY) {
+        return parseCoor(coor, switchXY, (lon, lat) -> new LatLon(Double.parseDouble(lat), Double.parseDouble(lon)));
+    }
+
+    /**
+     * Parses WGS84BoundingBox section. Returns when reader is on WGS84BoundingBox closing tag.
+     * @param reader StAX reader instance
+     * @return WGS84 bounding box
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static BBox parseBoundingBox(XMLStreamReader reader) throws XMLStreamException {
+        LatLon lowerCorner = null;
+        LatLon upperCorner = null;
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
+                        QN_OWS_WGS84_BOUNDING_BOX.equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT) {
+                QName qName = reader.getName();
+                if (QN_OWS_LOWER_CORNER.equals(qName)) {
+                    lowerCorner = parseLatLon(reader.getElementText(), false);
+                } else if (QN_OWS_UPPER_CORNER.equals(qName)) {
+                    upperCorner = parseLatLon(reader.getElementText(), false);
+                }
+            }
+        }
+        if (lowerCorner != null && upperCorner != null) {
+            return new BBox(lowerCorner, upperCorner);
+        }
+        return null;
     }
 
     /**

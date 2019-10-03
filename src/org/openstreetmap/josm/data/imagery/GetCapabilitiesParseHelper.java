@@ -62,11 +62,14 @@ public final class GetCapabilitiesParseHelper {
     static final QName QN_OWS_GET                 = new QName(OWS_NS_URL, "Get");
     static final QName QN_OWS_HTTP                = new QName(OWS_NS_URL, "HTTP");
     static final QName QN_OWS_IDENTIFIER          = new QName(OWS_NS_URL, "Identifier");
+    static final QName QN_OWS_LOWER_CORNER        = new QName(OWS_NS_URL, "LowerCorner");
     static final QName QN_OWS_OPERATION           = new QName(OWS_NS_URL, "Operation");
     static final QName QN_OWS_OPERATIONS_METADATA = new QName(OWS_NS_URL, "OperationsMetadata");
     static final QName QN_OWS_SUPPORTED_CRS       = new QName(OWS_NS_URL, "SupportedCRS");
     static final QName QN_OWS_TITLE               = new QName(OWS_NS_URL, "Title");
+    static final QName QN_OWS_UPPER_CORNER        = new QName(OWS_NS_URL, "UpperCorner");
     static final QName QN_OWS_VALUE               = new QName(OWS_NS_URL, "Value");
+    static final QName QN_OWS_WGS84_BOUNDING_BOX  = new QName(OWS_NS_URL, "WGS84BoundingBox");
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private GetCapabilitiesParseHelper() {
