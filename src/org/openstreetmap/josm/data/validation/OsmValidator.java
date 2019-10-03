@@ -61,6 +61,7 @@ import org.openstreetmap.josm.data.validation.tests.PublicTransportRouteTest;
 import org.openstreetmap.josm.data.validation.tests.RelationChecker;
 import org.openstreetmap.josm.data.validation.tests.RightAngleBuildingTest;
 import org.openstreetmap.josm.data.validation.tests.SelfIntersectingWay;
+import org.openstreetmap.josm.data.validation.tests.SharpAngles;
 import org.openstreetmap.josm.data.validation.tests.SimilarNamedWays;
 import org.openstreetmap.josm.data.validation.tests.TagChecker;
 import org.openstreetmap.josm.data.validation.tests.TurnrestrictionTest;
@@ -148,6 +149,7 @@ public final class OsmValidator {
         LongSegment.class, // 3500 .. 3599
         PublicTransportRouteTest.class, // 3600 .. 3699
         RightAngleBuildingTest.class, // 3700 .. 3799
+        SharpAngles.class, // 3800 .. 3899
     };
 
     /**
