@@ -32,7 +32,7 @@ public class SharpAnglesTest {
      * Check a closed loop with no sharp angles
      */
     @Test
-    public void closedLoopNoSharpAngles() {
+    public void testClosedLoopNoSharpAngles() {
         Way way = TestUtils.newWay("highway=residential",
                 new Node(new LatLon(0, 0)), new Node(new LatLon(0.1, 0.1)),
                 new Node(new LatLon(0.1, -0.2)), new Node(new LatLon(-0.1, -0.1)));
@@ -45,7 +45,7 @@ public class SharpAnglesTest {
      * Check a closed loop with a sharp angle
      */
     @Test
-    public void closedLoopSharpAngles() {
+    public void testClosedLoopSharpAngles() {
         Way way = TestUtils.newWay("highway=residential",
                 new Node(new LatLon(0, 0)), new Node(new LatLon(0.1, 0.1)),
                 new Node(new LatLon(0.1, -0.2)));
