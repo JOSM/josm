@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
@@ -34,13 +35,15 @@ import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.PlatformManager;
+import org.openstreetmap.josm.tools.ResourceProvider;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Downloads a file and caches it on disk in order to reduce network load.
  *
  * Supports URLs, local files, and a custom scheme (<code>resource:</code>) to get
- * resources from the current *.jar file. (Local caching is only done for URLs.)
+ * resources from the current JOSM *.jar file as well as plugins *.jar files.
+ * (Local caching is only done for URLs.)
  * <p>
  * The mirrored file is only downloaded if it has been more than 7 days since
  * last download. (Time can be configured.)
@@ -224,12 +227,8 @@ public class CachedFile implements Closeable {
         File file = getFile();
         if (file == null) {
             if (name != null && name.startsWith("resource://")) {
-                String resourceName = name.substring("resource:/".length());
-                InputStream is = Utils.getResourceAsStream(getClass(), resourceName);
-                if (is == null) {
-                    throw new IOException(tr("Failed to open input stream for resource ''{0}''", name));
-                }
-                return is;
+                return Optional.ofNullable(ResourceProvider.getResourceAsStream(name.substring("resource:/".length())))
+                        .orElseThrow(() -> new IOException(tr("Failed to open input stream for resource ''{0}''", name)));
             } else {
                 throw new IOException("No file found for: "+name);
             }

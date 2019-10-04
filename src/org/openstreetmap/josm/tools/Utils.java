@@ -1882,19 +1882,33 @@ public final class Utils {
 
     /**
      * Finds a resource with a given name, with robustness to known JDK bugs.
-     * @param klass class on which {@link Class#getResourceAsStream} will be called
+     * @param klass class on which {@link ClassLoader#getResourceAsStream} will be called
      * @param path name of the desired resource
      * @return  A {@link java.io.InputStream} object or {@code null} if no resource with this name is found
      * @since 14480
      */
     public static InputStream getResourceAsStream(Class<?> klass, String path) {
+        return getResourceAsStream(klass.getClassLoader(), path);
+    }
+
+    /**
+     * Finds a resource with a given name, with robustness to known JDK bugs.
+     * @param cl classloader on which {@link ClassLoader#getResourceAsStream} will be called
+     * @param path name of the desired resource
+     * @return  A {@link java.io.InputStream} object or {@code null} if no resource with this name is found
+     * @since 15416
+     */
+    public static InputStream getResourceAsStream(ClassLoader cl, String path) {
         try {
-            return klass.getResourceAsStream(path);
+            if (path != null && path.startsWith("/")) {
+                path = path.substring(1); // See Class#resolveName
+            }
+            return cl.getResourceAsStream(path);
         } catch (InvalidPathException e) {
             Logging.error("Cannot open {0}: {1}", path, e.getMessage());
             Logging.trace(e);
             try {
-                URL betterUrl = betterJarUrl(klass.getResource(path));
+                URL betterUrl = betterJarUrl(cl.getResource(path));
                 if (betterUrl != null) {
                     return betterUrl.openStream();
                 }

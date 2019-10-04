@@ -72,6 +72,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.ResourceProvider;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -885,7 +886,7 @@ public final class PluginHandler {
             }
 
             extendJoinedPluginResourceCL(toLoad);
-            ImageProvider.addAdditionalClassLoaders(getResourceClassLoaders());
+            ResourceProvider.addAdditionalClassLoaders(getResourceClassLoaders());
             monitor.setTicksCount(toLoad.size());
             for (PluginInformation info : toLoad) {
                 monitor.setExtraText(tr("Loading plugin ''{0}''...", info.name));

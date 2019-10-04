@@ -34,17 +34,14 @@ import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -261,21 +258,6 @@ public class ImageProvider {
      * @since 7132
      */
     public static final String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
-
-    /** set of class loaders to take images from */
-    private static final Set<ClassLoader> classLoaders = Collections.synchronizedSet(new HashSet<>());
-    static {
-        try {
-            classLoaders.add(ClassLoader.getSystemClassLoader());
-        } catch (SecurityException e) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to get system classloader", e);
-        }
-        try {
-            classLoaders.add(ImageProvider.class.getClassLoader());
-        } catch (SecurityException e) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to get application classloader", e);
-        }
-    }
 
     /** directories in which images are searched */
     protected Collection<String> dirs;
@@ -616,9 +598,11 @@ public class ImageProvider {
      * @param additionalClassLoader class loader to add to the internal set
      * @return {@code true} if the set changed as a result of the call
      * @since 12870
+     * @deprecated Use ResourceProvider#addAdditionalClassLoader
      */
+    @Deprecated
     public static boolean addAdditionalClassLoader(ClassLoader additionalClassLoader) {
-        return classLoaders.add(additionalClassLoader);
+        return ResourceProvider.addAdditionalClassLoader(additionalClassLoader);
     }
 
     /**
@@ -626,9 +610,11 @@ public class ImageProvider {
      * @param additionalClassLoaders class loaders to add to the internal set
      * @return {@code true} if the set changed as a result of the call
      * @since 12870
+     * @deprecated Use ResourceProvider#addAdditionalClassLoaders
      */
+    @Deprecated
     public static boolean addAdditionalClassLoaders(Collection<ClassLoader> additionalClassLoaders) {
-        return classLoaders.addAll(additionalClassLoaders);
+        return ResourceProvider.addAdditionalClassLoaders(additionalClassLoaders);
     }
 
     /**
@@ -1211,14 +1197,7 @@ public class ImageProvider {
 
     private static URL getImageUrl(String path, String name) {
         if (path != null && path.startsWith("resource://")) {
-            String p = path.substring("resource://".length());
-            synchronized (classLoaders) {
-                for (ClassLoader source : classLoaders) {
-                    URL res;
-                    if ((res = source.getResource(p + name)) != null)
-                        return res;
-                }
-            }
+            return ResourceProvider.getResource(path.substring("resource://".length()) + name);
         } else {
             File f = new File(path, name);
             try {
