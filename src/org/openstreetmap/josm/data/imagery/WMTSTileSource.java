@@ -368,8 +368,9 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             if (!layers.isEmpty()) {
                 Layer first = layers.iterator().next();
                 // If max zoom lower than expected, try to find a better layer
-                if (first.getMaxZoom() < info.getMaxZoom()) {
-                    first = layers.stream().filter(l -> l.getMaxZoom() >= info.getMaxZoom()).findFirst().orElse(first);
+                final int maxZoom = info.getMaxZoom();
+                if (first.getMaxZoom() < maxZoom) {
+                    first = layers.stream().filter(l -> l.getMaxZoom() >= maxZoom).findFirst().orElse(first);
                 }
                 // If center of josm bbox not in layer bbox, try to find a better layer
                 if (info.getBounds() != null && first.getBbox() != null) {
@@ -377,7 +378,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                     if (!first.getBbox().bounds(center)) {
                         final Layer ffirst = first;
                         first = layers.stream()
-                                .filter(l -> l.getMaxZoom() >= info.getMaxZoom() && l.getBbox() != null && l.getBbox().bounds(center)).findFirst()
+                                .filter(l -> l.getMaxZoom() >= maxZoom && l.getBbox() != null && l.getBbox().bounds(center)).findFirst()
                                 .orElseGet(() -> layers.stream().filter(l -> l.getBbox() != null && l.getBbox().bounds(center)).findFirst()
                                         .orElse(ffirst));
                     }
