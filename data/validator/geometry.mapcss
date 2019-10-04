@@ -336,8 +336,8 @@ way[!power][!building] > node.node_in_power_way {
   throwWarning: tr("Node connects a power line or cable with an object which is not related to the power infrastructure.");
 }
 
-/* #12646, #12992 */
-way[waterway=~/^(stream|ditch|river|drain)$/]!:closed >[index=-1] node[natural!=sinkhole][natural!=cave_entrance]!:connection:in-downloaded-area { 
+/* #12646, #12992, #16334 */
+way[waterway=~/^(stream|river|drain)$/]!:closed >[index=-1] node[natural!=sinkhole][natural!=cave_entrance]!:connection:in-downloaded-area { 
   throwWarning: tr("Waterway ends without a connection to another waterway or the direction of the waterway is wrong.");
 }
 
