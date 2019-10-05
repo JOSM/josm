@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -31,7 +32,7 @@ public class GeoJSONServerReader extends OsmServerReader {
         try {
             progressMonitor.beginTask(tr("Contacting Server…"), 10);
             return new GeoJSONImporter().parseDataSet(url);
-        } catch (Exception e) {
+        } catch (IOException | IllegalDataException e) {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();

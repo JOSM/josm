@@ -51,7 +51,7 @@ public class GeoJSONImporter extends FileImporter {
             DataSet data = GeoJSONReader.parseDataSet(fileInputStream, progressMonitor);
             progressMonitor.worked(1);
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(data, file.getName(), file));
-        } catch (final Exception e) {
+        } catch (IOException | IllegalDataException e) {
             Logging.error("Error while reading json file!");
             Logging.error(e);
             GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(

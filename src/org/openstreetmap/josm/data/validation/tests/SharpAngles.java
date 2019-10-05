@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -19,7 +20,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Geometry;
-import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Find highways that have sharp angles
@@ -55,9 +56,8 @@ public class SharpAngles extends Test {
                     !ignoreHighways.contains(way.get("highway"))) {
             try {
                 checkWayForSharpAngles(way);
-            } catch (Exception e) {
-                Logging.error("Way https://osm.org/way/{0} caused an error ({1})", way.getUniqueId(), e);
-                throw e;
+            } catch (RuntimeException e) {
+                throw BugReport.intercept(e).put("way", way);
             }
         }
     }
@@ -158,5 +158,21 @@ public class SharpAngles extends Test {
         severityBreakPoints.put(maxAngle, Severity.OTHER);
         severityBreakPoints.put(maxAngle * 2 / 3, Severity.WARNING);
     }
-}
 
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + Objects.hash(ignoreHighways, maxAngle, maxLength);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj) || getClass() != obj.getClass())
+            return false;
+        SharpAngles other = (SharpAngles) obj;
+        return Objects.equals(ignoreHighways, other.ignoreHighways)
+                && Double.doubleToLongBits(maxAngle) == Double.doubleToLongBits(other.maxAngle)
+                && Double.doubleToLongBits(maxLength) == Double.doubleToLongBits(other.maxLength);
+    }
+}

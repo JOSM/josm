@@ -139,7 +139,7 @@ public class XmlObjectParser implements Iterable<Object> {
                     "new".equals(fieldName) || "null".equals(fieldName)) {
                 fieldName += '_';
             }
-            fieldName = fieldName.replaceAll(":", "_");
+            fieldName = fieldName.replace(':', '_');
             try {
                 Object c = current.peek();
                 Field f = entry.getField(fieldName);

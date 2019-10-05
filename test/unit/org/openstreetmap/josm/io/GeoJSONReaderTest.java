@@ -38,7 +38,7 @@ public class GeoJSONReaderTest {
      * @throws Exception in case of error
      */
     @Test
-    public void test() throws Exception {
+    public void testReadGeoJson() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "geo.json"))) {
             final List<OsmPrimitive> primitives = new ArrayList<>(new GeoJSONReader()
                 .doParseDataSet(in, null)

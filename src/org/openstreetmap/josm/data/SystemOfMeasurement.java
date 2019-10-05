@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -72,8 +73,9 @@ public class SystemOfMeasurement {
      * Known systems of measurement.
      * @since 3406
      */
-    public static final Map<String, SystemOfMeasurement> ALL_SYSTEMS = Stream.of(METRIC, CHINESE, IMPERIAL, NAUTICAL_MILE)
-            .collect(Collectors.toMap(SystemOfMeasurement::getName, Function.identity()));
+    public static final Map<String, SystemOfMeasurement> ALL_SYSTEMS = Collections.unmodifiableMap(
+            Stream.of(METRIC, CHINESE, IMPERIAL, NAUTICAL_MILE)
+            .collect(Collectors.toMap(SystemOfMeasurement::getName, Function.identity())));
 
     /**
      * Preferences entry for system of measurement.

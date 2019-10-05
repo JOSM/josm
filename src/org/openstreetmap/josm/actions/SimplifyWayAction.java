@@ -183,10 +183,7 @@ public class SimplifyWayAction extends JosmAction {
             }
 
             String lengthstr = SystemOfMeasurement.getSystemOfMeasurement().getDistText(
-                    ways.stream().collect(
-                            Collectors.summingDouble(w -> {
-                                return w.getLength();
-                            })));
+                    ways.stream().mapToDouble(Way::getLength).sum());
 
             double err = askSimplifyWays(trn(
                     "You are about to simplify {0} way with a total length of {1}.",

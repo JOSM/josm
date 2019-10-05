@@ -435,6 +435,7 @@ public class GpxData extends WithAttributes implements Data {
     }
 
     /**
+     * Ensures a unique name among gpx layers
      * @param attrs attributes of/for an gpx track, written to if the name appeared previously in {@code counts}.
      * @param counts a {@code HashMap} of previously seen names, associated with their count.
      * @param srcLayerName Source layer name

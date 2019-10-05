@@ -88,11 +88,11 @@ public class GeoJSONReader extends AbstractReader {
 
     private void parseFeature(final JsonObject feature) {
         JsonValue geometry = feature.get(GEOMETRY);
-        if (geometry != null && geometry.getValueType().equals(JsonValue.ValueType.OBJECT)) {
+        if (geometry != null && geometry.getValueType() == JsonValue.ValueType.OBJECT) {
             parseGeometry(feature, geometry.asJsonObject());
         } else {
             JsonValue properties = feature.get(PROPERTIES);
-            if (properties != null && properties.getValueType().equals(JsonValue.ValueType.OBJECT)) {
+            if (properties != null && properties.getValueType() == JsonValue.ValueType.OBJECT) {
                 parseNonGeometryFeature(feature, properties.asJsonObject());
             } else {
                 Logging.warn(tr("Relation/non-geometry feature without properties found: {0}", feature));
@@ -103,7 +103,7 @@ public class GeoJSONReader extends AbstractReader {
     private void parseNonGeometryFeature(final JsonObject feature, final JsonObject properties) {
         // get relation type
         JsonValue type = properties.get(TYPE);
-        if (type == null || properties.getValueType().equals(JsonValue.ValueType.STRING)) {
+        if (type == null || properties.getValueType() == JsonValue.ValueType.STRING) {
             Logging.warn(tr("Relation/non-geometry feature without type found: {0}", feature));
             return;
         }
@@ -257,26 +257,26 @@ public class GeoJSONReader extends AbstractReader {
         return Optional.of(way);
     }
 
-    private void fillTagsFromFeature(final JsonObject feature, final OsmPrimitive primitive) {
+    private static void fillTagsFromFeature(final JsonObject feature, final OsmPrimitive primitive) {
         if (feature != null) {
             primitive.setKeys(getTags(feature));
         }
     }
 
-    private void parseUnknown(final JsonObject object) {
+    private static void parseUnknown(final JsonObject object) {
         Logging.warn(tr("Unknown json object found {0}", object));
     }
 
-    private void parseNullGeometry(JsonObject feature) {
+    private static void parseNullGeometry(JsonObject feature) {
         Logging.warn(tr("Geometry of feature {0} is null", feature));
     }
 
-    private Map<String, String> getTags(final JsonObject feature) {
+    private static Map<String, String> getTags(final JsonObject feature) {
         final Map<String, String> tags = new TreeMap<>();
 
         if (feature.containsKey(PROPERTIES) && !feature.isNull(PROPERTIES)) {
             JsonValue properties = feature.get(PROPERTIES);
-            if (properties != null && JsonValue.ValueType.OBJECT.equals(properties.getValueType())) {
+            if (properties != null && properties.getValueType() == JsonValue.ValueType.OBJECT) {
                 for (Map.Entry<String, JsonValue> stringJsonValueEntry : properties.asJsonObject().entrySet()) {
                     final JsonValue value = stringJsonValueEntry.getValue();
 
