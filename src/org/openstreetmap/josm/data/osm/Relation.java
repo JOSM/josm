@@ -542,4 +542,11 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     public Set<String> getMemberRoles() {
         return Stream.of(members).map(RelationMember::getRole).filter(role -> !role.isEmpty()).collect(Collectors.toSet());
     }
+
+    @Override
+    public List<? extends OsmPrimitive> findRelationMembers(String role) {
+        return IRelation.super.findRelationMembers(role).stream()
+                .filter(m -> m instanceof OsmPrimitive)
+                .map(m -> (OsmPrimitive) m).collect(Collectors.toList());
+    }
 }

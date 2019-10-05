@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.APIDataSet.APIOperation;
@@ -213,11 +214,9 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             }
             for (Relation r : relations) {
                 Relation newRelation = (Relation) primMap.get(r);
-                List<RelationMember> newMembers = new ArrayList<>();
-                for (RelationMember rm : r.getMembers()) {
-                    newMembers.add(new RelationMember(rm.getRole(), primMap.get(rm.getMember())));
-                }
-                newRelation.setMembers(newMembers);
+                newRelation.setMembers(r.getMembers().stream()
+                        .map(rm -> new RelationMember(rm.getRole(), primMap.get(rm.getMember())))
+                        .collect(Collectors.toList()));
             }
             for (DataSource source : copyFrom.dataSources) {
                 dataSources.add(new DataSource(source));

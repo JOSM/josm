@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.tools.Utils;
 
@@ -122,5 +123,16 @@ public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
             ret.add(rm.getMember());
         }
         return ret;
+    }
+
+    /**
+     * Returns a list of relation members having the specified role.
+     * @param role role
+     * @return a list of relation members having the specified role
+     * @since 15418
+     */
+    default List<? extends IPrimitive> findRelationMembers(String role) {
+        return getMembers().stream().filter(rmv -> role.equals(rmv.getRole()))
+                .map(IRelationMember::getMember).collect(Collectors.toList());
     }
 }

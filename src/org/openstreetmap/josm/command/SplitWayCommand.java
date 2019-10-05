@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
@@ -467,26 +466,21 @@ public class SplitWayCommand extends SequenceCommand {
         return relationInformation;
     }
 
-    static List<OsmPrimitive> findVias(Relation r, String type) {
+    static List<? extends OsmPrimitive> findVias(Relation r, String type) {
         if (type != null) {
             switch (type) {
             case "connectivity":
             case "restriction":
-                return findRelationMembers(r, "via");
+                return r.findRelationMembers("via");
             case "destination_sign":
                 // Prefer intersection over sign, see #12347
-                List<OsmPrimitive> intersections = findRelationMembers(r, "intersection");
-                return intersections.isEmpty() ? findRelationMembers(r, "sign") : intersections;
+                List<? extends OsmPrimitive> intersections = r.findRelationMembers("intersection");
+                return intersections.isEmpty() ? r.findRelationMembers("sign") : intersections;
             default:
                 break;
             }
         }
         return Collections.emptyList();
-    }
-
-    static List<OsmPrimitive> findRelationMembers(Relation r, String role) {
-        return r.getMembers().stream().filter(rmv -> role.equals(rmv.getRole()))
-                .map(RelationMember::getMember).collect(Collectors.toList());
     }
 
     /**

@@ -4,11 +4,13 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -316,26 +318,20 @@ public class RelationChecker extends Test {
         }
         // verify unwanted members
         for (String key : map.keySet()) {
-            boolean found = false;
-            for (Role r: allroles.keySet()) {
-                if (r.isRole(key)) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
+            if (allroles.keySet().stream().noneMatch(role -> role.isRole(key))) {
                 String templates = allroles.keySet().stream().map(r -> r.key).collect(Collectors.joining("/"));
+                List<OsmPrimitive> primitives = new ArrayList<>(n.findRelationMembers(key));
+                primitives.add(0, n);
 
                 if (!key.isEmpty()) {
                     errors.add(TestError.builder(this, Severity.WARNING, ROLE_UNKNOWN)
                             .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role ''{0}'' is not in templates ''{1}''"), key, templates)
-                            .primitives(n)
+                            .primitives(primitives)
                             .build());
                 } else {
                     errors.add(TestError.builder(this, Severity.WARNING, ROLE_EMPTY)
                             .message(ROLE_VERIF_PROBLEM_MSG, marktr("Empty role found when expecting one of ''{0}''"), templates)
-                            .primitives(n)
+                            .primitives(primitives)
                             .build());
                 }
             }

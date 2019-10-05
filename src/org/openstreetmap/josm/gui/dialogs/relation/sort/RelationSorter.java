@@ -65,7 +65,7 @@ public class RelationSorter {
 
         @Override
         public boolean acceptsMember(List<RelationMember> relationMembers, RelationMember m) {
-            return "address".equals(m.getRole()) || "house".equals(m.getRole());
+            return m.hasRole("address", "house");
         }
 
         @Override

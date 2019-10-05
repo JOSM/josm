@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -50,11 +51,9 @@ public class RelationMemberTransferable implements Transferable {
          * @return The data.
          */
         public static Data getData(Collection<RelationMember> members) {
-            final Collection<RelationMemberData> r = new ArrayList<>(members.size());
-            for (RelationMember member : members) {
-                r.add(new RelationMemberData(member.getRole(), member.getType(), member.getUniqueId()));
-            }
-            return new Data(r);
+            return new Data(members.stream()
+                    .map(m -> new RelationMemberData(m.getRole(), m.getType(), m.getUniqueId()))
+                    .collect(Collectors.toList()));
         }
     }
 

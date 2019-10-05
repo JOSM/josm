@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -99,12 +100,9 @@ public class MergeSourceBuildingVisitor implements OsmPrimitiveVisitor {
             mappedPrimitives.put(r, clone);
         }
 
-        List<RelationMemberData> newMembers = new ArrayList<>();
-        for (RelationMember member: r.getMembers()) {
-            newMembers.add(new RelationMemberData(member.getRole(), mappedPrimitives.get(member.getMember())));
-
-        }
-        clone.setMembers(newMembers);
+        clone.setMembers(r.getMembers().stream()
+                .map(m -> new RelationMemberData(m.getRole(), mappedPrimitives.get(m.getMember())))
+                .collect(Collectors.toList()));
     }
 
     protected void rememberRelationPartial(Relation r) {

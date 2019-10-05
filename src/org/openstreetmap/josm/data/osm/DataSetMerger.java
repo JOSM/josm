@@ -273,8 +273,7 @@ public class DataSetMerger {
             if (targetMember == null)
                 throw new IllegalStateException(tr("Missing merge target of type {0} with id {1}",
                         sourceMember.getType(), sourceMember.getUniqueId()));
-            RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
-            newMembers.add(newMember);
+            newMembers.add(new RelationMember(sourceMember.getRole(), targetMember));
             if (targetMember.isDeleted() && !conflicts.hasConflictForMy(targetMember)) {
                 addConflict(new Conflict<>(targetMember, sourceMember.getMember(), true));
                 targetMember.setDeleted(false);
