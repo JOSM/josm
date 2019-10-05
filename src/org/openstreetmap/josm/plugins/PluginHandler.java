@@ -149,7 +149,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("lakewalker", tr("replaced by new {0} plugin", "scanaerial")),
             new DeprecatedPlugin("download_along", inCore),
             new DeprecatedPlugin("plastic_laf", tr("no longer required")),
-            new DeprecatedPlugin("osmarender", tr("no longer required"))
+            new DeprecatedPlugin("osmarender", tr("no longer required")),
+            new DeprecatedPlugin("geojson", inCore)
         );
     }
 
