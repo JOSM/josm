@@ -124,6 +124,7 @@ public class GpxLayerTest {
                      "    \n" +
                      "  </head>\n" +
                      "  <body>\n" +
+                     "    Creator: MapSource 6.16.3<br>\n\n" +
                      "    <table>\n" +
                      "      <tr align=\"center\">\n" +
                      "        <td colspan=\"5\">\n" +
