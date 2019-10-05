@@ -932,9 +932,16 @@ public class MapCSSTagChecker extends Test.TagTest {
                 @SuppressWarnings({"EqualsBetweenInconvertibleTypes", "EqualsIncompatibleType"})
                 final boolean isError = pErrors.stream().anyMatch(e -> e.getTester().equals(check.rule));
                 if (isError != i.getValue()) {
-                    final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
-                            check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
-                    assertionErrors.add(error);
+                    assertionErrors.add(MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
+                            check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys()));
+                }
+                if (isError) {
+                    // Check that autofix works as expected
+                    Command fix = check.fixPrimitive(p);
+                    if (fix != null && fix.executeCommand() && !getErrorsForPrimitive(p, true, checksToRun).isEmpty()) {
+                        assertionErrors.add(MessageFormat.format("Autofix does not work for test ''{0}'' (i.e., {1})",
+                                check.getMessage(p), check.rule.selectors));
+                    }
                 }
                 ds.removePrimitive(p);
             }
