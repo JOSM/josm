@@ -160,16 +160,6 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
-     * Enable {@code Main#platform} global variable.
-     * @return this instance, for easy chaining
-     * @deprecated Not needed anymore
-     */
-    @Deprecated
-    public JOSMTestRules platform() {
-        return this;
-    }
-
-    /**
      * Mock this test's assumed JOSM version (as reported by {@link Version}).
      * @param revisionProperties mock contents of JOSM's {@code REVISION} properties file
      * @return this instance, for easy chaining
@@ -373,7 +363,6 @@ public class JOSMTestRules implements TestRule {
         final Runnable mapViewStateMockingRunnable,
         final Runnable navigableComponentMockingRunnable
     ) {
-        platform();
         this.main = true;
         this.mapViewStateMockingRunnable = mapViewStateMockingRunnable;
         this.navigableComponentMockingRunnable = navigableComponentMockingRunnable;
