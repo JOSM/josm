@@ -816,13 +816,13 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
     /**
      * Reads the Gpx key from the given {@link OsmPrimitive}, with or without &quot;gpx:&quot; prefix
-     * @param node
-     * @param key
+     * @param prim OSM primitive
+     * @param key GPX key without prefix
      * @return the value or <code>null</code> if not present
      * @since 15419
      */
-    public static String gpxVal(OsmPrimitive node, String key) {
-        return Optional.ofNullable(node.get(GpxConstants.GPX_PREFIX + key)).orElse(node.get(key));
+    public static String gpxVal(OsmPrimitive prim, String key) {
+        return Optional.ofNullable(prim.get(GpxConstants.GPX_PREFIX + key)).orElse(prim.get(key));
     }
 
     /**
