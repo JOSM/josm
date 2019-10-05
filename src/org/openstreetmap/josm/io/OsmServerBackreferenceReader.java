@@ -41,6 +41,8 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     private OsmPrimitiveType primitiveType;
     /** true if this reader should complete incomplete primitives */
     private boolean readFull;
+    /** true if this reader should allow incomplete parent ways */
+    private boolean allowIncompleteParentWays;
 
     /**
      * constructor
@@ -112,12 +114,35 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     }
 
     /**
-     * Set true if this reader should reads immediate children of referring primitives too. False, otherweise.
+     * Set true if this reader should reads immediate children of referring primitives too. False, otherwise.
      *
-     * @param readFull true if this reader should reads immediate children of referring primitives too. False, otherweise.
+     * @param readFull true if this reader should reads immediate children of referring primitives too. False, otherwise.
+     * @return {@code this}, for easy chaining
+     * @since 15426
      */
-    public void setReadFull(boolean readFull) {
+    public OsmServerBackreferenceReader setReadFull(boolean readFull) {
         this.readFull = readFull;
+        return this;
+    }
+
+    /**
+     * Determines if this reader allows to return incomplete parent ways of a node.
+     * @return {@code true} if this reader allows to return incomplete parent ways of a node
+     * @since 15426
+     */
+    public boolean isAllowIncompleteParentWays() {
+        return allowIncompleteParentWays;
+    }
+
+    /**
+     * Sets whether this reader allows to return incomplete parent ways of a node.
+     * @param allowIncompleteWays {@code true} if this reader allows to return incomplete parent ways of a node
+     * @return {@code this}, for easy chaining
+     * @since 15426
+     */
+    public OsmServerBackreferenceReader setAllowIncompleteParentWays(boolean allowIncompleteWays) {
+        this.allowIncompleteParentWays = allowIncompleteWays;
+        return this;
     }
 
     private DataSet getReferringPrimitives(ProgressMonitor progressMonitor, String type, String message) throws OsmTransferException {
@@ -174,7 +199,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      *
      * <ul>
      *   <li>if this reader reads referers for a {@link org.openstreetmap.josm.data.osm.Node}, referring ways are always
-     *     read individually from the server</li>
+     *     read fully, unless {@link #setAllowIncompleteParentWays(boolean)} is set to true.</li>
      *   <li>if this reader reads referers for an {@link Way} or a {@link Relation}, referring relations
      *    are only read fully if {@link #setReadFull(boolean)} is set to true.</li>
      * </ul>
@@ -190,7 +215,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
         progressMonitor.beginTask(null, 2);
         try {
             Collection<Way> waysToCheck = new ArrayList<>(ds.getWays());
-            if (isReadFull() || primitiveType == OsmPrimitiveType.NODE) {
+            if (isReadFull() || (primitiveType == OsmPrimitiveType.NODE && !isAllowIncompleteParentWays())) {
                 for (Way way: waysToCheck) {
                     if (!way.isNew() && way.hasIncompleteNodes()) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(way.getId(), OsmPrimitiveType.from(way), true /* read full */);

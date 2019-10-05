@@ -67,19 +67,19 @@ public class UploadSelectionAction extends JosmAction {
         if (isEnabled() && editLayer != null && !editLayer.isUploadable()) {
             setEnabled(false);
         }
-        if (isEnabled() && selection.stream().noneMatch(OsmPrimitive::isModified)) {
+        if (isEnabled() && selection.parallelStream().noneMatch(OsmPrimitive::isModified)) {
             setEnabled(false);
         }
     }
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {
-        return ds.allPrimitives().stream()
+        return ds.allPrimitives().parallelStream()
                 .filter(p -> p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified())
                 .collect(Collectors.toSet());
     }
 
     protected Set<OsmPrimitive> getModifiedPrimitives(Collection<OsmPrimitive> primitives) {
-        return primitives.stream()
+        return primitives.parallelStream()
                 .filter(p -> p.isNewOrUndeleted() || (p.isModified() && !p.isIncomplete()))
                 .collect(Collectors.toSet());
     }
@@ -123,11 +123,7 @@ public class UploadSelectionAction extends JosmAction {
      * <code>primitives</code>
      */
     protected boolean hasPrimitivesToDelete(Collection<OsmPrimitive> primitives) {
-        for (OsmPrimitive p: primitives) {
-            if (p.isDeleted() && p.isModified() && !p.isNew())
-                return true;
-        }
-        return false;
+        return primitives.parallelStream().anyMatch(p -> p.isDeleted() && p.isModified() && !p.isNew());
     }
 
     /**
@@ -239,7 +235,7 @@ public class UploadSelectionAction extends JosmAction {
         private OsmServerBackreferenceReader reader;
 
         /**
-         *
+         * Constructs a new {@code DeletedParentsChecker}.
          * @param layer the data layer for which a collection of selected primitives is uploaded
          * @param toUpload the collection of primitives to upload
          */
@@ -277,7 +273,7 @@ public class UploadSelectionAction extends JosmAction {
          * @return primitives to check
          */
         protected Set<OsmPrimitive> getPrimitivesToCheckForParents() {
-            return toUpload.stream().filter(p -> p.isDeleted() && !p.isNewOrUndeleted()).collect(Collectors.toSet());
+            return toUpload.parallelStream().filter(p -> p.isDeleted() && !p.isNewOrUndeleted()).collect(Collectors.toSet());
         }
 
         @Override
@@ -290,7 +286,7 @@ public class UploadSelectionAction extends JosmAction {
                     if (canceled) return;
                     OsmPrimitive current = toCheck.pop();
                     synchronized (this) {
-                        reader = new OsmServerBackreferenceReader(current);
+                        reader = new OsmServerBackreferenceReader(current).setAllowIncompleteParentWays(true);
                     }
                     getProgressMonitor().subTask(tr("Reading parents of ''{0}''", current.getDisplayName(DefaultNameFormatter.getInstance())));
                     DataSet ds = reader.parseOsm(getProgressMonitor().createSubTaskMonitor(1, false));
@@ -301,6 +297,7 @@ public class UploadSelectionAction extends JosmAction {
                     getProgressMonitor().subTask(tr("Checking for deleted parents in the local dataset"));
                     for (OsmPrimitive p: ds.allPrimitives()) {
                         if (canceled) return;
+                        if (p instanceof Node || (p instanceof Way && !(current instanceof Node))) continue;
                         OsmPrimitive myDeletedParent = layer.data.getPrimitiveById(p);
                         // our local dataset includes a deleted parent of a primitive we want
                         // to delete. Include this parent in the collection of uploaded primitives

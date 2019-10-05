@@ -241,9 +241,7 @@ public class OsmServerBackreferenceReaderTest {
         Way w = lookupWay(ds, 0);
         assertNotNull(w);
 
-        OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(n);
-        reader.setReadFull(false);
-        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        DataSet referers = new OsmServerBackreferenceReader(n).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
         printNumberOfPrimitives(referers);
 
         Set<Long> expectedNodeIds = new HashSet<>();
@@ -297,9 +295,7 @@ public class OsmServerBackreferenceReaderTest {
         Node n = lookupNode(ds, 0);
         assertNotNull(n);
 
-        OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(n);
-        reader.setReadFull(true);
-        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        DataSet referers = new OsmServerBackreferenceReader(n).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
         printNumberOfPrimitives(referers);
 
         Set<Long> expectedNodeIds = new HashSet<>();
@@ -348,9 +344,7 @@ public class OsmServerBackreferenceReaderTest {
         // way with name "way-1" is referred to by two relations
         //
 
-        OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(w);
-        reader.setReadFull(false);
-        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        DataSet referers = new OsmServerBackreferenceReader(w).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
         printNumberOfPrimitives(referers);
 
         Set<Long> expectedNodeIds = new HashSet<>();
@@ -393,9 +387,7 @@ public class OsmServerBackreferenceReaderTest {
         // way with name "way-1" is referred to by two relations
         //
 
-        OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(w);
-        reader.setReadFull(true);
-        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        DataSet referers = new OsmServerBackreferenceReader(w).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(6, referers.getWays().size());  // 6 ways referred by two relations
         for (Way w1 : referers.getWays()) {
             assertFalse(w1.isIncomplete());
@@ -433,9 +425,7 @@ public class OsmServerBackreferenceReaderTest {
         //    relation-6, relation-7, relation-8, relation-9
         //
 
-        OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(r);
-        reader.setReadFull(false);
-        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        DataSet referers = new OsmServerBackreferenceReader(r).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
         printNumberOfPrimitives(referers);
 
         Set<Long> referringRelationsIds = new HashSet<>();
@@ -553,9 +543,7 @@ public class OsmServerBackreferenceReaderTest {
         //    relation-6, relation-7, relation-8, relation-9
         //
 
-        OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(r);
-        reader.setReadFull(true);
-        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        DataSet referers = new OsmServerBackreferenceReader(r).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
 
         r = lookupRelation(referers, 6);
         assertNotNull(r);
