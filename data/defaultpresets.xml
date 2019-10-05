@@ -4314,6 +4314,7 @@
         <item name="Scuba Diving" icon="presets/sport/scuba_diving.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=scuba_diving" />
             <space />
+            <key key="amenity" value="dive_centre" />
             <key key="sport" value="scuba_diving" />
             <text key="name" text="Name" />
         </item> <!-- Scuba Diving -->
