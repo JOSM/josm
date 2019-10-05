@@ -7,6 +7,7 @@ import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -27,8 +28,11 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
+import org.openstreetmap.josm.gui.tagging.presets.items.Link;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
@@ -112,10 +116,24 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
         Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, true);
         assertFalse(presets.isEmpty());
         // wait for asynchronous icon loading
-        presets.stream().map(TaggingPreset::getIconLoadingTask).filter(Objects::nonNull).forEach(t -> {
+        presets.parallelStream().map(TaggingPreset::getIconLoadingTask).filter(Objects::nonNull).forEach(t -> {
             try {
                 t.get(30, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                Logging.error(e);
+            }
+        });
+        // check that links are correct and not redirections
+        presets.parallelStream().flatMap(x -> x.data.stream().filter(i -> i instanceof Link).map(i -> ((Link) i).getUrl())).forEach(u -> {
+            try {
+                Response cr = HttpClient.create(new URL(u)).setMaxRedirects(-1).connect();
+                final int code = cr.getResponseCode();
+                if (HttpClient.isRedirect(code)) {
+                    addOrIgnoreError(messages, "Found HTTP redirection for " + u + " -> " + code + " -> " + cr.getHeaderField("Location"));
+                } else if (code >= 400) {
+                    addOrIgnoreError(messages, "Found HTTP error for " + u + " -> " + code);
+                }
+            } catch (IOException e) {
                 Logging.error(e);
             }
         });
@@ -124,15 +142,19 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
         for (String message : errorsAndWarnings) {
             if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX)) {
                 error = true;
-                if (isIgnoredSubstring(message)) {
-                    ignoredErrors.add(message);
-                } else {
-                    messages.add(message);
-                }
+                addOrIgnoreError(messages, message);
             }
         }
         if (error) {
             Logging.clearLastErrorAndWarnings();
+        }
+    }
+
+    void addOrIgnoreError(Set<String> messages, String message) {
+        if (isIgnoredSubstring(message)) {
+            ignoredErrors.add(message);
+        } else {
+            messages.add(message);
         }
     }
 }

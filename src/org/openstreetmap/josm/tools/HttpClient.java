@@ -820,7 +820,13 @@ public abstract class HttpClient {
         return this;
     }
 
-    private static boolean isRedirect(final int statusCode) {
+    /**
+     * Determines if the given status code is an HTTP redirection.
+     * @param statusCode HTTP status code
+     * @return {@code true} if the given status code is an HTTP redirection
+     * @since 15423
+     */
+    public static boolean isRedirect(final int statusCode) {
         switch (statusCode) {
             case HttpURLConnection.HTTP_MOVED_PERM: // 301
             case HttpURLConnection.HTTP_MOVED_TEMP: // 302

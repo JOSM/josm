@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JPanel;
@@ -21,6 +20,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Hyperlink type.
+ * @since 8863
  */
 public class Link extends TextItem {
 
@@ -36,29 +36,44 @@ public class Link extends TextItem {
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
         initializeLocaleText(tr("More information about this feature"));
+        Optional.ofNullable(buildUrlLabel()).ifPresent(label -> p.add(label, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL)));
+        return false;
+    }
+
+    protected UrlLabel buildUrlLabel() {
+        final String url = getUrl();
         if (wiki != null) {
-            final String url = Config.getUrls().getOSMWiki() + "/wiki/" + wiki;
-            final UrlLabel label = new UrlLabel(url, locale_text, 2) {
+            return new UrlLabel(url, locale_text, 2) {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (SwingUtilities.isLeftMouseButton(e)) {
                         // Open localized page if exists
-                        final List<String> pages = Arrays.asList(
+                        HelpAction.displayHelp(Arrays.asList(
                                 LanguageInfo.getWikiLanguagePrefix(LanguageInfo.LocaleType.OSM_WIKI) + wiki,
-                                wiki);
-                        HelpAction.displayHelp(pages);
+                                wiki));
                     } else {
                         super.mouseClicked(e);
                     }
                 }
             };
-            p.add(label, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL));
         } else if (href != null || locale_href != null) {
-            final String url = Optional.ofNullable(locale_href).orElse(href);
-            final UrlLabel label = new UrlLabel(url, locale_text, 2);
-            p.add(label, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL));
+            return new UrlLabel(url, locale_text, 2);
         }
-        return false;
+        return null;
+    }
+
+    /**
+     * Returns the link URL.
+     * @return the link URL
+     * @since 15423
+     */
+    public String getUrl() {
+        if (wiki != null) {
+            return Config.getUrls().getOSMWiki() + "/wiki/" + wiki;
+        } else if (href != null || locale_href != null) {
+            return Optional.ofNullable(locale_href).orElse(href);
+        }
+        return null;
     }
 
     @Override
