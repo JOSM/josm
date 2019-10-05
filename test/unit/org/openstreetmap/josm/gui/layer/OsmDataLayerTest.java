@@ -215,12 +215,12 @@ public class OsmDataLayerTest {
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<osm version='0.6' upload='false' generator='JOSM'>\n" +
                 "  <node id='-546306' timestamp='2018-08-01T10:00:00Z' lat='47.0' lon='9.0'>\n" +
-                "    <tag k='ele' v='123' />\n" +
-                "    <tag k='time' v='2018-08-01T10:00:00Z' />\n" +
+                "    <tag k='gpx:ele' v='123' />\n" +
+                "    <tag k='gpx:time' v='2018-08-01T10:00:00Z' />\n" +
                 "  </node>\n" +
                 "  <node id='-546307' timestamp='2018-08-01T10:01:00Z' lat='47.1' lon='9.1'>\n" +
                 "    <tag k='ele' v='456' />\n" +
-                "    <tag k='time' v='2018-08-01T10:01:00Z' />\n" +
+                "    <tag k='gpx:time' v='2018-08-01T10:01:00Z' />\n" +
                 "  </node>\n" +
                 "  <node id='-546308' timestamp='2018-08-01T10:02:00Z' lat='47.05' lon='9.05'>\n" +
                 "    <tag k='ele' v='789' />\n" +

@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -779,7 +780,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             Collection<Collection<WayPoint>> trk = new ArrayList<>();
             Map<String, Object> trkAttr = new HashMap<>();
 
-            String name = w.get("name");
+            String name = gpxVal(w, "name");
             if (name != null) {
                 trkAttr.put("name", name);
             }
@@ -806,11 +807,22 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
     private static boolean containsOnlyGpxTags(Tagged t) {
         for (String key : t.getKeys().keySet()) {
-            if (!GpxConstants.WPT_KEYS.contains(key)) {
+            if (!GpxConstants.WPT_KEYS.contains(key) && !key.startsWith(GpxConstants.GPX_PREFIX)) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Reads the Gpx key from the given {@link OsmPrimitive}, with or without &quot;gpx:&quot; prefix
+     * @param node
+     * @param key
+     * @return the value or <code>null</code> if not present
+     * @since 15419
+     */
+    public static String gpxVal(OsmPrimitive node, String key) {
+        return Optional.ofNullable(node.get(GpxConstants.GPX_PREFIX + key)).orElse(node.get(key));
     }
 
     /**
@@ -836,10 +848,11 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
 
         try {
+            String v;
             if (time > Long.MIN_VALUE) {
                 wpt.setTimeInMillis(time);
-            } else if (n.hasKey(GpxConstants.PT_TIME)) {
-                wpt.setTimeInMillis(DateUtils.tsFromString(n.get(GpxConstants.PT_TIME)));
+            } else if ((v = gpxVal(n, GpxConstants.PT_TIME)) != null) {
+                wpt.setTimeInMillis(DateUtils.tsFromString(v));
             } else if (!n.isTimestampEmpty()) {
                 wpt.setTime(Integer.toUnsignedLong(n.getRawTimestamp()));
             }
@@ -859,7 +872,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
         Collection<GpxLink> links = new ArrayList<>();
         for (String key : new String[]{"link", "url", "website", "contact:website"}) {
-            String value = n.get(key);
+            String value = gpxVal(n, key);
             if (value != null) {
                 links.add(new GpxLink(value));
             }
@@ -897,7 +910,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
-            String value = p.get(key);
+            String value = gpxVal(p, key);
             if (value != null) {
                 try {
                     int i = Integer.parseInt(value);
@@ -918,7 +931,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
-            String value = p.get(key);
+            String value = gpxVal(p, key);
             if (value != null) {
                 try {
                     double d = Double.parseDouble(value);
@@ -938,7 +951,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
-            String value = p.get(key);
+            String value = gpxVal(p, key);
             // Sanity checks
             if (value != null && (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value))) {
                 wpt.put(gpxKey, value);

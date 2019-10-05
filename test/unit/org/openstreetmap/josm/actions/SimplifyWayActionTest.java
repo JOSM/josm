@@ -129,7 +129,7 @@ public final class SimplifyWayActionTest {
         final Way w = new Way();
         Stream.of(n1, n2, n3, n4, w).forEach(ds::addPrimitive);
         Stream.of(n1, n2, n3, n4, n1).forEach(w::addNode);
-        final SequenceCommand command = action.simplifyWay(w);
+        final SequenceCommand command = SimplifyWayAction.createSimplifyCommand(w, 3);
         assertNotNull(command);
         assertEquals(2, command.getChildren().size());
         final Collection<DeleteCommand> deleteCommands = Utils.filteredCollection(command.getChildren(), DeleteCommand.class);

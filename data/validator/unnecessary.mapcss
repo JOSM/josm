@@ -165,3 +165,12 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertNoMatch: "way name=house building=house";
   assertMatch: "way name=house building=yes";
 }
+
+/* #2760 */
+*[/^gpx:/] {
+  throwWarning: tr("{0} should not be uploaded", "{0.key}");
+  group: tr("unnecessary tag");
+  fixRemove: "{0.key}";
+  assertMatch: "node gpx:time=2018-01-01T12:00:00Z";
+  assertNoMatch: "node source=gpx:foo";
+}

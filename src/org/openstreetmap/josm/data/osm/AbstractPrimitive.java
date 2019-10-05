@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiPredicate;
 
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -740,7 +741,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         if (uninteresting == null) {
             List<String> l = new LinkedList<>(Arrays.asList(
                 "source", "source_ref", "source:", "comment",
-                "watch", "watch:", "description", "attribution"));
+                "watch", "watch:", "description", "attribution", GpxConstants.GPX_PREFIX));
             l.addAll(getDiscardableKeys());
             l.addAll(getWorkInProgressKeys());
             uninteresting = new HashSet<>(Config.getPref().getList("tags.uninteresting", l));

@@ -14,6 +14,9 @@ import org.openstreetmap.josm.spi.preferences.Config;
  */
 public interface GpxConstants {
 
+    /** Prefix used for attributes when converting to OSM data */
+    String GPX_PREFIX = "gpx:";
+
     /** GPS name of the element. This field will be transferred to and from the GPS.
      *  GPX does not place restrictions on the length of this field or the characters contained in it.
      *  It is up to the receiving application to validate the field before sending it to the GPS. */

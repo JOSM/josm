@@ -54,7 +54,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
     public DataSet convert() {
         final DataSet ds = new DataSet();
 
-        List<String> keys = new ArrayList<>();
+        List<String> keys = new ArrayList<>(); // note that items in this list don't have the GPX_PREFIX
         String convertTags = Config.getPref().get(GPX_SETTING, "ask");
         boolean check = "list".equals(convertTags) || "ask".equals(convertTags);
         boolean none = "no".equals(convertTags); // no need to convert tags when no dialog will be shown anyways
@@ -72,12 +72,12 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
                         }
                         if (!none && (obj instanceof String || obj instanceof Number)) {
                             // only convert when required
-                            n.put(key, obj.toString());
+                            n.put(GpxConstants.GPX_PREFIX + key, obj.toString());
                         } else if (obj instanceof Date && GpxConstants.PT_TIME.equals(key)) {
                             // timestamps should always be converted
                             Date date = (Date) obj;
                             if (!none) { //... but the tag will only be set when required
-                                n.put(key, DateUtils.fromDate(date));
+                                n.put(GpxConstants.GPX_PREFIX + key, DateUtils.fromDate(date));
                             }
                             n.setTimestamp(date);
                         }
@@ -125,7 +125,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
     /**
      * Filters the tags of the given {@link DataSet}
      * @param ds The {@link DataSet}
-     * @param listPos A {@code List<String>} containing the tags to be kept, can be {@code null} if all tags are to be removed
+     * @param listPos A {@code List<String>} containing the tags (without prefix) to be kept, can be {@code null} if all tags are to be removed
      * @return The {@link DataSet}
      * @since 14103
      */
@@ -133,7 +133,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
         Collection<Node> nodes = ds.getNodes();
         for (Node n : nodes) {
             for (String key : n.keySet()) {
-                if (listPos == null || !listPos.contains(key)) {
+                if (listPos == null || !listPos.contains(key.substring(GpxConstants.GPX_PREFIX.length()))) {
                     n.put(key, null);
                 }
             }

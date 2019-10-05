@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -17,24 +18,34 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IPreferences;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -93,6 +104,69 @@ public class SimplifyWayAction extends JosmAction {
                 );
     }
 
+    /**
+     * Asks the user for max-err value used to simplify ways, if not remembered before
+     * @param text the text being shown
+     * @param auto whether it's called automatically (conversion) or by the user
+     * @return the max-err value or -1 if canceled
+     * @since 15419
+     */
+    public static double askSimplifyWays(String text, boolean auto) {
+        IPreferences s = Config.getPref();
+        String key = "simplify-way." + (auto ? "auto." : "");
+        String keyRemember = key + "remember";
+        String keyError = key + "max-error";
+
+        String r = s.get(keyRemember, "ask");
+        if (auto && "no".equals(r)) {
+            return -1;
+        } else if ("yes".equals(r)) {
+            return s.getDouble(keyError, 3.0);
+        }
+
+        JPanel p = new JPanel(new GridBagLayout());
+        p.add(new JLabel("<html><body style=\"width: 375px;\">" + text + "<br><br>" +
+                tr("This reduces unnecessary nodes along the way and is especially recommended if GPS tracks were recorded by time "
+                 + "(e.g. one point per second) or when the accuracy was low (reduces \"zigzag\" tracks).")
+                + "</body></html>"), GBC.eol());
+        p.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 5));
+        JPanel q = new JPanel(new GridBagLayout());
+        q.add(new JLabel(tr("Maximum error (meters): ")));
+        JSpinner n = new JSpinner(new SpinnerNumberModel(
+                s.getDouble(keyError, 3.0), 0.01, 100, 0.5));
+        q.add(n);
+        q.setBorder(BorderFactory.createEmptyBorder(14, 0, 10, 0));
+        p.add(q, GBC.eol());
+        JCheckBox c = new JCheckBox(tr("Do not ask again"));
+        p.add(c, GBC.eol());
+
+        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
+                tr("Simplify way"), tr("Simplify"),
+                auto ? tr("Proceed without simplifying") : tr("Cancel"))
+                .setContent(p)
+                .configureContextsensitiveHelp(("Action/SimplifyWay"), true);
+        if (auto) {
+            ed.setButtonIcons("simplify", "ok");
+        } else {
+            ed.setButtonIcons("ok", "cancel");
+        }
+
+        int ret = ed.showDialog().getValue();
+        double val = (double) n.getValue();
+        if (ret == 1) {
+            s.putDouble(keyError, val);
+            if (c.isSelected()) {
+                s.put(keyRemember, "yes");
+            }
+            return val;
+        } else {
+            if (auto && c.isSelected()) { //do not remember cancel for manual simplify, otherwise nothing would happen
+                s.put(keyRemember, "no");
+            }
+            return -1;
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         DataSet ds = getLayerManager().getEditDataSet();
@@ -108,20 +182,20 @@ public class SimplifyWayAction extends JosmAction {
                 return;
             }
 
-            Collection<Command> allCommands = new LinkedList<>();
-            for (Way way: ways) {
-                SequenceCommand simplifyCommand = simplifyWay(way);
-                if (simplifyCommand == null) {
-                    continue;
-                }
-                allCommands.add(simplifyCommand);
+            String lengthstr = SystemOfMeasurement.getSystemOfMeasurement().getDistText(
+                    ways.stream().collect(
+                            Collectors.summingDouble(w -> {
+                                return w.getLength();
+                            })));
+
+            double err = askSimplifyWays(trn(
+                    "You are about to simplify {0} way with a total length of {1}.",
+                    "You are about to simplify {0} ways with a total length of {1}.",
+                    ways.size(), ways.size(), lengthstr), false);
+
+            if (err > 0) {
+                simplifyWays(ways, err);
             }
-            if (allCommands.isEmpty()) return;
-            SequenceCommand rootCommand = new SequenceCommand(
-                    trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
-                    allCommands
-                    );
-            UndoRedoHandler.getInstance().add(rootCommand);
         } finally {
             ds.endUpdate();
         }
@@ -156,17 +230,6 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     /**
-     * Simplifies a way with default threshold (read from preferences).
-     *
-     * @param w the way to simplify
-     * @return The sequence of commands to run
-     * @since 6411
-     */
-    public final SequenceCommand simplifyWay(Way w) {
-        return simplifyWay(w, Config.getPref().getDouble("simplify-way.max-error", 3.0));
-    }
-
-    /**
      * Calculate a set of nodes which occurs more than once in the way
      * @param w the way
      * @return a set of nodes which occurs more than once in the way
@@ -182,14 +245,76 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     /**
-     * Simplifies a way with a given threshold.
+     * Runs the commands to simplify the ways with the given threshold
+     *
+     * @param ways the ways to simplify
+     * @param threshold the max error threshold
+     * @since 15419
+     */
+    public static void simplifyWays(List<Way> ways, double threshold) {
+        Collection<Command> allCommands = new LinkedList<>();
+        for (Way way : ways) {
+            SequenceCommand simplifyCommand = createSimplifyCommand(way, threshold);
+            if (simplifyCommand == null) {
+                continue;
+            }
+            allCommands.add(simplifyCommand);
+        }
+        if (allCommands.isEmpty())
+            return;
+        SequenceCommand rootCommand = new SequenceCommand(
+                trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
+                allCommands);
+        UndoRedoHandler.getInstance().add(rootCommand);
+    }
+
+    /**
+     * Creates the SequenceCommand to simplify a way with default threshold.
+     *
+     * @param w the way to simplify
+     * @return The sequence of commands to run
+     * @since 6411
+     * @deprecated Replaced by {@link #createSimplifyCommand(Way)}. You can also use {@link #simplifyWays(List, double)} directly.
+     */
+    @Deprecated
+    public final SequenceCommand simplifyWay(Way w) {
+        return createSimplifyCommand(w);
+    }
+
+    /**
+     * Creates the SequenceCommand to simplify a way with a given threshold.
      *
      * @param w the way to simplify
      * @param threshold the max error threshold
      * @return The sequence of commands to run
      * @since 6411
+     * @deprecated Replaced by {@link #createSimplifyCommand(Way, double)}. You can also use {@link #simplifyWays(List, double)} directly.
      */
+    @Deprecated
     public static SequenceCommand simplifyWay(Way w, double threshold) {
+        return createSimplifyCommand(w, threshold);
+    }
+
+    /**
+     * Creates the SequenceCommand to simplify a way with default threshold.
+     *
+     * @param w the way to simplify
+     * @return The sequence of commands to run
+     * @since 15419
+     */
+    public final SequenceCommand createSimplifyCommand(Way w) {
+        return createSimplifyCommand(w, Config.getPref().getDouble("simplify-way.max-error", 3.0));
+    }
+
+    /**
+     * Creates the SequenceCommand to simplify a way with a given threshold.
+     *
+     * @param w the way to simplify
+     * @param threshold the max error threshold
+     * @return The sequence of commands to run
+     * @since 15419
+     */
+    public static SequenceCommand createSimplifyCommand(Way w, double threshold) {
         int lower = 0;
         int i = 0;
 
