@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.layer.gpx.ImportImagesAction;
 import org.openstreetmap.josm.gui.layer.gpx.MarkersFromNamedPointsAction;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -155,6 +156,10 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
 
         if (data.attr.containsKey("desc")) {
             info.append(tr("Description: {0}", data.get(GpxConstants.META_DESC))).append("<br>");
+        }
+
+        if (!Utils.isStripEmpty(data.creator)) {
+            info.append(tr("Creator: {0}", data.creator)).append("<br>");
         }
 
         if (!data.getTracks().isEmpty()) {
