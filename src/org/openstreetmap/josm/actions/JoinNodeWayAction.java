@@ -11,12 +11,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -97,34 +99,28 @@ public class JoinNodeWayAction extends JosmAction {
         MapView mapView = MainApplication.getMap().mapView;
         for (Node node : selectedNodes) {
             List<WaySegment> wss = mapView.getNearestWaySegments(mapView.getPoint(node), OsmPrimitive::isSelectable);
-            MultiMap<Way, Integer> insertPoints = new MultiMap<>();
+            Set<Way> seenWays = new HashSet<>();
             for (WaySegment ws : wss) {
                 // Maybe cleaner to pass a "isSelected" predicate to getNearestWaySegments, but this is less invasive.
                 if (restrictToSelectedWays && !ws.way.isSelected()) {
                     continue;
                 }
-
-                if (!ws.getFirstNode().equals(node) && !ws.getSecondNode().equals(node)) {
-                    insertPoints.put(ws.way, ws.lowerIndex);
-                }
-            }
-            for (Map.Entry<Way, Set<Integer>> entry : insertPoints.entrySet()) {
-                final Way w = entry.getKey();
-                final Set<Integer> insertPointsForWay = entry.getValue();
-                for (int i : pruneSuccs(insertPointsForWay)) {
-                    MultiMap<Integer, Node> innerMap;
-                    if (!data.containsKey(w)) {
+                // only use the closest WaySegment of each way and ignore those that already contain the node
+                if (!ws.getFirstNode().equals(node) && !ws.getSecondNode().equals(node)
+                        && !seenWays.contains(ws.way)) {
+                    MultiMap<Integer, Node> innerMap = data.get(ws.way);
+                    if (innerMap == null) {
                         innerMap = new MultiMap<>();
-                    } else {
-                        innerMap = data.get(w);
+                        data.put(ws.way, innerMap);
                     }
-                    innerMap.put(i, node);
-                    data.put(w, innerMap);
+                    innerMap.put(ws.lowerIndex, node);
+                    seenWays.add(ws.way);
                 }
             }
         }
 
         // Execute phase: traverse the structure "data" and finally put the nodes into place
+        Map<Node, EastNorth> movedNodes = new HashMap<>();
         for (Map.Entry<Way, MultiMap<Integer, Node>> entry : data.entrySet()) {
             final Way w = entry.getKey();
             final MultiMap<Integer, Node> innerEntry = entry.getValue();
@@ -142,12 +138,20 @@ public class JoinNodeWayAction extends JosmAction {
                                 w.getNode(segmentIndex).getEastNorth(),
                                 w.getNode(segmentIndex+1).getEastNorth(),
                                 node.getEastNorth());
-                        MoveCommand c = new MoveCommand(
-                                node, ProjectionRegistry.getProjection().eastNorth2latlon(newPosition));
-                        // Avoid moving a given node several times at the same position in case of overlapping ways
-                        if (!cmds.contains(c)) {
-                            cmds.add(c);
+                        EastNorth prevMove = movedNodes.get(node);
+                        if (prevMove != null) {
+                            if (!prevMove.equalsEpsilon(newPosition, 1e-4)) {
+                                new Notification(tr("Multiple target ways, no common point found. Nothing was changed."))
+                                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                                        .show();
+                                return;
+                            }
+                            continue;
                         }
+                        MoveCommand c = new MoveCommand(node,
+                                ProjectionRegistry.getProjection().eastNorth2latlon(newPosition));
+                        cmds.add(c);
+                        movedNodes.put(node, newPosition);
                     }
                 }
                 List<Node> nodesToAdd = new LinkedList<>();
@@ -163,16 +167,6 @@ public class JoinNodeWayAction extends JosmAction {
 
         if (cmds.isEmpty()) return;
         UndoRedoHandler.getInstance().add(new SequenceCommand(getValue(NAME).toString(), cmds));
-    }
-
-    private static SortedSet<Integer> pruneSuccs(Collection<Integer> is) {
-        SortedSet<Integer> is2 = new TreeSet<>();
-        for (int i : is) {
-            if (!is2.contains(i - 1) && !is2.contains(i + 1)) {
-                is2.add(i);
-            }
-        }
-        return is2;
     }
 
     /**

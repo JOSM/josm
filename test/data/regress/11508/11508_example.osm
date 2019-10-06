@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <bounds minlat='47.5627143' minlon='8.7998664' maxlat='47.5636555' maxlon='8.8013148' origin='CGImap 0.4.0 (30121 thorn-01.openstreetmap.org)' />
+  <bounds minlat='47.5627143' minlon='8.7998664' maxlat='47.5636555' maxlon='8.8013148' origin='OpenStreetMap server' />
+  <node id='-150' action='modify' visible='true' lat='47.5632954399' lon='8.80074575728' />
+  <node id='-149' action='modify' visible='true' lat='47.56334946504' lon='8.80075650412' />
+  <node id='-95' action='modify' visible='true' lat='47.56329197754' lon='8.80078398419' />
+  <node id='-94' action='modify' visible='true' lat='47.56328823282' lon='8.80082532865' />
+  <node id='-93' action='modify' visible='true' lat='47.56334225796' lon='8.80083607549' />
+  <node id='-92' action='modify' visible='true' lat='47.56334600268' lon='8.80079473103' />
+  <node id='-21' action='modify' visible='true' lat='47.56331891179' lon='8.8007846789'>
+    <tag k='name' v='select me and press N' />
+  </node>
+  <way id='-151' action='modify' visible='true'>
+    <nd ref='-95' />
+    <nd ref='-150' />
+    <nd ref='-149' />
+    <nd ref='-92' />
+    <nd ref='-95' />
+    <tag k='name' v='b1' />
+    <tag k='building' v='yes' />
+  </way>
+  <way id='-91' visible='true'>
+    <nd ref='-92' />
+    <nd ref='-93' />
+    <nd ref='-94' />
+    <nd ref='-95' />
+    <nd ref='-92' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='b2' />
+  </way>
+</osm>
