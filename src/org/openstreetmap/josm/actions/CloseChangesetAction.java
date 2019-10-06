@@ -27,7 +27,9 @@ import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
@@ -139,6 +141,9 @@ public class CloseChangesetAction extends JosmAction {
                         query,
                         getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)
                 );
+            } catch (OsmTransferCanceledException e) {
+                Logging.trace(e);
+                cancel();
             } catch (OsmTransferException | IllegalArgumentException e) {
                 if (canceled)
                     return;
