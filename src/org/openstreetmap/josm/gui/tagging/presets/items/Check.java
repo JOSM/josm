@@ -1,16 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
+import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.widgets.QuadStateCheckBox;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -29,6 +36,10 @@ public class Check extends KeyedItem {
     public boolean disable_off; // NOSONAR
     /** "on" or "off" or unset (default is unset) */
     public String default_; // only used for tagless objects // NOSONAR
+    /** The location of icon file to display */
+    public String icon; // NOSONAR
+    /** The size of displayed icon. If not set, default is 16px */
+    public String icon_size; // NOSONAR
 
     private QuadStateCheckBox check;
     private QuadStateCheckBox.State initialState;
@@ -79,12 +90,25 @@ public class Check extends KeyedItem {
         if (!disable_off || value_off.equals(oneValue))
             allowedStates.add(QuadStateCheckBox.State.NOT_SELECTED);
         allowedStates.add(QuadStateCheckBox.State.UNSET);
-        check = new QuadStateCheckBox(locale_text, initialState,
+        check = new QuadStateCheckBox(icon == null ? locale_text : null, initialState,
                 allowedStates.toArray(new QuadStateCheckBox.State[0]));
         check.setPropertyText(key);
         check.setState(check.getState()); // to update the tooltip text
 
-        p.add(check, GBC.eol()); // Do not fill, see #15104
+        JPanel checkPanel = new JPanel(new GridBagLayout());
+        checkPanel.add(check, GBC.std());
+        if (icon != null) {
+            JLabel label = new JLabel(locale_text, getIcon(), SwingConstants.LEFT);
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    check.getMouseAdapter().mousePressed(e);
+                }
+            });
+            checkPanel.add(label);
+            checkPanel.add(new JLabel(), GBC.eol().fill());
+        }
+        p.add(checkPanel, GBC.eol()); // Do not fill, see #15104
         return true;
     }
 
@@ -103,6 +127,16 @@ public class Check extends KeyedItem {
     @Override
     public MatchType getDefaultMatch() {
         return MatchType.NONE;
+    }
+
+    /**
+     * Returns the entry icon, if any.
+     * @return the entry icon, or {@code null}
+     * @since 15437
+     */
+    public ImageIcon getIcon() {
+        Integer size = parseInteger(icon_size);
+        return icon == null ? null : loadImageIcon(icon, TaggingPresetReader.getZipIcons(), size != null ? size : 16);
     }
 
     @Override

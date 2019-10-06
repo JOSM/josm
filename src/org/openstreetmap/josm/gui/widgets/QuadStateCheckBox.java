@@ -44,6 +44,13 @@ public class QuadStateCheckBox extends JCheckBox {
 
     private final transient QuadStateDecorator cbModel;
     private State[] allowed;
+    private final MouseListener mouseAdapter = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            grabFocus();
+            cbModel.nextState();
+        }
+    };
 
     /**
      * Constructs a new {@code QuadStateCheckBox}.
@@ -56,12 +63,7 @@ public class QuadStateCheckBox extends JCheckBox {
         super(text, icon);
         this.allowed = Utils.copyArray(allowed);
         // Add a listener for when the mouse is pressed
-        super.addMouseListener(new MouseAdapter() {
-            @Override public void mousePressed(MouseEvent e) {
-                grabFocus();
-                cbModel.nextState();
-            }
-        });
+        super.addMouseListener(mouseAdapter);
         // Reset the keyboard action map
         ActionMap map = new ActionMapUIResource();
         map.put("pressed", new AbstractAction() {
@@ -93,6 +95,15 @@ public class QuadStateCheckBox extends JCheckBox {
     @Override
     public synchronized void addMouseListener(MouseListener l) {
         // Do nothing
+    }
+
+    /**
+     * Returns the internal mouse listener.
+     * @return the internal mouse listener
+     * @since 15437
+     */
+    public MouseListener getMouseAdapter() {
+        return mouseAdapter;
     }
 
     /**

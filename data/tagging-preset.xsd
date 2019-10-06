@@ -269,6 +269,8 @@
         <attribute name="value_off" type="string" />
         <attribute name="disable_off" type="boolean" />
         <attribute name="match" type="tns:match" />
+        <attribute name="icon" type="string" />
+        <attribute name="icon_size" type="integer" />
 
         <attribute name="name" use="prohibited" />
         <attribute name="type" use="prohibited" />
