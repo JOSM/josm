@@ -9,10 +9,14 @@ import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -115,6 +119,7 @@ import org.openstreetmap.josm.actions.audio.AudioNextAction;
 import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
+import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.gui.dialogs.MenuItemSearchDialog;
@@ -336,31 +341,35 @@ public class MainMenu extends JMenuBar {
      */
     public final JMenu viewMenu = addMenu("View", /* I18N: mnemonic: V */ trc("menu", "View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
     /**
+     * modeMenu contains map modes
+     */
+    public final JMenu modeMenu = addMenu("Mode", /* I18N: mnemonic: M */ trc("menu", "Mode"), KeyEvent.VK_M, 3, ht("/Menu/Mode"));
+    /**
      * toolsMenu contains different geometry manipulation actions from JOSM core (most used)
      * The plugins should use other menus
      */
-    public final JMenu toolsMenu = addMenu("Tools", /* I18N: mnemonic: T */ trc("menu", "Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
+    public final JMenu toolsMenu = addMenu("Tools", /* I18N: mnemonic: T */ trc("menu", "Tools"), KeyEvent.VK_T, 4, ht("/Menu/Tools"));
     /**
      * moreToolsMenu contains geometry-related actions from all the plugins
      * @since 6082 (moved from Utilsplugin2)
      */
     // CHECKSTYLE.OFF: LineLength
-    public final JMenu moreToolsMenu = addMenu("More tools", /* I18N: mnemonic: M */ trc("menu", "More tools"), KeyEvent.VK_M, 4, ht("/Menu/MoreTools"));
+    public final JMenu moreToolsMenu = addMenu("More tools", /* I18N: mnemonic: O */ trc("menu", "More tools"), KeyEvent.VK_O, 5, ht("/Menu/MoreTools"));
     /**
      * dataMenu contains plugin actions that are related to certain tagging schemes (addressing opening hours),
      * importing external data and using external web APIs
      * @since 6082
      */
-    public final JMenu dataMenu = addMenu("Data", /* I18N: mnemonic: D */ trc("menu", "Data"), KeyEvent.VK_D, 5, ht("/Menu/Data"));
+    public final JMenu dataMenu = addMenu("Data", /* I18N: mnemonic: D */ trc("menu", "Data"), KeyEvent.VK_D, 6, ht("/Menu/Data"));
     /**
      * selectionMenu contains all actions related to selecting different objects
      * @since 6082 (moved from Utilsplugin2)
      */
-    public final JMenu selectionMenu = addMenu("Selection", /* I18N: mnemonic: N */ trc("menu", "Selection"), KeyEvent.VK_N, 6, ht("/Menu/Selection"));
+    public final JMenu selectionMenu = addMenu("Selection", /* I18N: mnemonic: N */ trc("menu", "Selection"), KeyEvent.VK_N, 7, ht("/Menu/Selection"));
     /**
      * presetsMenu contains presets actions (search, presets tree)
      */
-    public final JMenu presetsMenu = addMenu("Presets", /* I18N: mnemonic: P */ trc("menu", "Presets"), KeyEvent.VK_P, 7, ht("/Menu/Presets"));
+    public final JMenu presetsMenu = addMenu("Presets", /* I18N: mnemonic: P */ trc("menu", "Presets"), KeyEvent.VK_P, 8, ht("/Menu/Presets"));
     /**
      * submenu in Imagery menu that contains plugin-managed additional imagery layers
      * @since 6097
@@ -369,20 +378,20 @@ public class MainMenu extends JMenuBar {
     /**
      * imageryMenu contains all imagery-related actions
      */
-    public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), /* untranslated name */ "Imagery", KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
+    public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), /* untranslated name */ "Imagery", KeyEvent.VK_I, 9, ht("/Menu/Imagery"));
     // CHECKSTYLE.ON: LineLength
     /**
      * gpsMenu contains all plugin actions that are related
      * to using GPS data, including opening, uploading and real-time tracking
      * @since 6082
      */
-    public final JMenu gpsMenu = addMenu("GPS", /* I18N: mnemonic: G */ trc("menu", "GPS"), KeyEvent.VK_G, 9, ht("/Menu/GPS"));
+    public final JMenu gpsMenu = addMenu("GPS", /* I18N: mnemonic: G */ trc("menu", "GPS"), KeyEvent.VK_G, 10, ht("/Menu/GPS"));
     /** the window menu is split into several groups. The first is for windows that can be opened from
      * this menu any time, e.g. the changeset editor. The second group is for toggle dialogs and the third
      * group is for currently open windows that cannot be toggled, e.g. relation editors. It's recommended
      * to use WINDOW_MENU_GROUP to determine the group integer.
      */
-    public final JMenu windowMenu = addMenu("Windows", /* I18N: mnemonic: W */ trc("menu", "Windows"), KeyEvent.VK_W, 10, ht("/ToggleDialogs"));
+    public final JMenu windowMenu = addMenu("Windows", /* I18N: mnemonic: W */ trc("menu", "Windows"), KeyEvent.VK_W, 11, ht("/ToggleDialogs"));
 
     /**
      * audioMenu contains all audio-related actions. Be careful, this menu is not guaranteed to be displayed at all
@@ -391,9 +400,9 @@ public class MainMenu extends JMenuBar {
     /**
      * helpMenu contains JOSM general actions (Help, About, etc.)
      */
-    public final JMenu helpMenu = addMenu("Help", /* I18N: mnemonic: H */ trc("menu", "Help"), KeyEvent.VK_H, 11, ht("/Menu/Help"));
+    public final JMenu helpMenu = addMenu("Help", /* I18N: mnemonic: H */ trc("menu", "Help"), KeyEvent.VK_H, 12, ht("/Menu/Help"));
 
-    private static final int defaultMenuPos = 11;
+    private static final int defaultMenuPos = 12;
 
     /** Move the selection up */
     public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
@@ -846,7 +855,7 @@ public class MainMenu extends JMenuBar {
 
         windowMenu.addMenuListener(menuSeparatorHandler);
 
-        new PresetsMenuEnabler(presetsMenu);
+        new EditLayerMenuEnabler(Arrays.asList(modeMenu, presetsMenu));
     }
     // CHECKSTYLE.ON: ExecutableStatementCountCheck
 
@@ -866,6 +875,20 @@ public class MainMenu extends JMenuBar {
             }
         }
         return result;
+    }
+
+    /**
+     * Returns the {@link JCheckBoxMenuItem} for the given {@link MapMode}.
+     * @param mode map mode
+     * @return the {@code JCheckBoxMenuItem} for the given {@code MapMode}
+     * @since 15438
+     */
+    public Optional<JCheckBoxMenuItem> findMapModeMenuItem(MapMode mode) {
+        return Arrays.stream(modeMenu.getMenuComponents())
+                .filter(m -> m instanceof JCheckBoxMenuItem)
+                .map(m -> (JCheckBoxMenuItem) m)
+                .filter(m -> Objects.equals(mode, m.getAction()))
+                .findFirst();
     }
 
     /**
@@ -911,17 +934,17 @@ public class MainMenu extends JMenuBar {
         }
     }
 
-    static class PresetsMenuEnabler implements ActiveLayerChangeListener {
-        private final JMenu presetsMenu;
+    static class EditLayerMenuEnabler implements ActiveLayerChangeListener {
+        private final Collection<JMenu> menus;
 
-        PresetsMenuEnabler(JMenu presetsMenu) {
-            this.presetsMenu = presetsMenu;
+        EditLayerMenuEnabler(Collection<JMenu> menus) {
+            this.menus = Objects.requireNonNull(menus);
             MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(this);
         }
 
         @Override
         public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-            presetsMenu.setEnabled(e.getSource().getEditLayer() != null);
+            menus.forEach(m -> m.setEnabled(e.getSource().getEditLayer() != null));
         }
     }
 }

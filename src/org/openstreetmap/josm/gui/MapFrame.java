@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -82,6 +83,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -344,6 +346,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     public void destroy() {
         MainApplication.getLayerManager().removeLayerChangeListener(this);
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
+        MainApplication.getMenu().modeMenu.removeAll();
         dialogsPanel.destroy();
         Config.getPref().removePreferenceChangeListener(sidetoolbarPreferencesChangedListener);
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i) {
@@ -435,6 +438,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     public void addMapMode(IconToggleButton b) {
         if (!(b.getAction() instanceof MapMode))
             throw new IllegalArgumentException("MapMode action must be subclass of MapMode");
+        MainApplication.getMenu().modeMenu.add(new JCheckBoxMenuItem(b.getAction()));
         allMapModeButtons.add(b);
         toolBarActionsGroup.add(b);
         toolBarActions.add(b);
@@ -480,13 +484,18 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         if (newMapMode == null || !newMapMode.layerIsSupported(newLayer)) {
             newMapMode = null;
         }
+        Logging.info("Switching map mode from {0} to {1}",
+                Optional.ofNullable(oldMapMode).map(m -> m.getClass().getSimpleName()).orElse("(none)"),
+                Optional.ofNullable(newMapMode).map(m -> m.getClass().getSimpleName()).orElse("(none)"));
 
         if (oldMapMode != null) {
+            MainApplication.getMenu().findMapModeMenuItem(oldMapMode).ifPresent(m -> m.setSelected(false));
             oldMapMode.exitMode();
         }
         this.mapMode = newMapMode;
         if (newMapMode != null) {
             newMapMode.enterMode();
+            MainApplication.getMenu().findMapModeMenuItem(newMapMode).ifPresent(m -> m.setSelected(true));
         }
         lastMapMode.put(newLayer, newMapMode);
         fireMapModeChanged(oldMapMode, newMapMode);
