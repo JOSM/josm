@@ -2038,6 +2038,7 @@ area[shop=video],
 area[shop=bookmaker],
 area[shop=lottery],
 area[shop=pet],
+area[shop=pet_grooming],
 area[shop=photo],
 area[shop=ticket],
 area[shop=carpet],
@@ -2351,6 +2352,10 @@ node[shop=lottery] {
 }
 node[shop=pet] {
     icon-image: "presets/shop/pet.svg";
+    set icon_z17;
+}
+node[shop=pet_grooming] {
+    icon-image: "presets/shop/pet_grooming.svg";
     set icon_z17;
 }
 node[shop=photo] {
