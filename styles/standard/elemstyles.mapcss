@@ -3911,6 +3911,11 @@ way[aerialway=goods] {
     color: aerialway#663300;
     dashes: 2,2;
 }
+way[aerialway=zip_line] {
+    width: 1;
+    color: aerialway#663300;
+    dashes: 3,3;
+}
 area[aerialway=station] {
     fill-color: aerialway#663300;
 }
@@ -3932,7 +3937,8 @@ node[aerialway=j-bar],
 node[aerialway=platter],
 node[aerialway=magic_carpet],
 node[aerialway=rope_tow],
-node[aerialway=goods] {
+node[aerialway=goods],
+node[aerialway=zip_line] {
     icon-image: "presets/misc/deprecated.svg";
     set icon_z17;
 }

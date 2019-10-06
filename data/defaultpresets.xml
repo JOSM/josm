@@ -854,6 +854,8 @@
                 <check key="oneway" text="Oneway" />
                 <check key="toll" text="Toll" />
                 <check key="noexit" text="No exit (cul-de-sac)" disable_off="true" />
+                <check key="winter_road" text="Winter road" disable_off="true" />
+                <check key="ice_road" text="Ice road" disable_off="true" />
             </checkgroup>
             <space />
             <label text="Transport mode restrictions" />
@@ -2094,6 +2096,18 @@
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
             </optional>
         </item> <!-- Goods -->
+        <item name="Zip line" icon="presets/transport/aerialway/zip_line.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:aerialway=zip_line" />
+            <space />
+            <key key="aerialway" value="zip_line" />
+            <optional>
+                <reference ref="name_ref_operator" />
+                <reference ref="oh" />
+                <reference ref="fee" />
+                <reference ref="min_age" />
+                <text key="maxweight" text="Max. weight (tonnes)" />
+            </optional>
+        </item> <!-- Zip line -->
         <separator/>
         <item name="Station" name_context="aerialway" icon="presets/transport/aerialway/station.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:aerialway=station" />

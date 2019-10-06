@@ -93,6 +93,7 @@ way[lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1],
 }
 
 /* {0.key} without {1.tag}, #17997 */
+node[railway:switch            ][railway!=switch],
 *[generator:source             ][power!=generator],
 *[generator:method             ][power!=generator],
 *[generator:type               ][power!=generator],
