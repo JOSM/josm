@@ -51,7 +51,7 @@ public class GpxImageCorrelationTest {
     @Test
     public void testMatchGpxTrack() throws Exception {
         IPreferences s = Config.getPref();
-        final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "ImageCorrelationTest.gpx");
+        final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "tracks/tracks.gpx");
         assertEquals(5, gpx.tracks.size());
         assertEquals(1, gpx.tracks.iterator().next().getSegments().size());
         assertEquals(128, gpx.tracks.iterator().next().getSegments().iterator().next().getWayPoints().size());

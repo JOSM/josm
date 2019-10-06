@@ -5,15 +5,29 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.TagMap;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
+import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.xml.sax.SAXException;
 
@@ -43,6 +57,71 @@ public class ConvertToDataLayerActionTest {
         assertEquals(1, osm.getNodes().size());
         assertEquals(new TagMap("name", "Schranke", "description", "Pfad", "note", "Pfad", "gpxicon", "Toll Booth"),
                 osm.getNodes().iterator().next().getKeys());
+    }
+
+    /**
+     * Tests conversions from GPX tracks to OSM datasets
+     * @throws Exception if the parsing fails
+     */
+    @Test
+    public void testFromTrack() throws Exception {
+        Config.getPref().put("gpx.convert-tags", "no");
+        testFromTrack("tracks");
+
+        Config.getPref().put("gpx.convert-tags", "yes");
+        testFromTrack("tracks-ele-time");
+
+        Config.getPref().put("gpx.convert-tags", "list");
+        Config.getPref().putList("gpx.convert-tags.list.yes", Arrays.asList("ele"));
+        Config.getPref().putList("gpx.convert-tags.list.no", Arrays.asList("time"));
+        testFromTrack("tracks-ele");
+
+
+        Config.getPref().putList("gpx.convert-tags.list.yes", Arrays.asList("time"));
+        Config.getPref().putList("gpx.convert-tags.list.no", Arrays.asList("ele"));
+        testFromTrack("tracks-time");
+    }
+
+    private class genericNode {
+        public genericNode(Node n) {
+            coor = n.getCoor().getRoundedToOsmPrecision();
+            tags = n.getKeys();
+        }
+        public LatLon coor;
+        public Map<String, String> tags;
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof genericNode)) {
+                return false;
+            }
+            genericNode other = (genericNode) obj;
+            return coor.equals(other.coor) && tags.equals(other.tags);
+        }
+        @Override
+        public int hashCode() {
+            return Objects.hash(coor, tags);
+        }
+    }
+
+    private void testFromTrack(String expected) throws IOException, SAXException, IllegalDataException {
+        final GpxData data = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "tracks/tracks.gpx");
+        final DataSet osmExpected = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "tracks/" + expected + ".osm")), null);
+        final GpxLayer layer = new GpxLayer(data);
+        final DataSet osm = new ConvertFromGpxLayerAction(layer).convert();
+        //compare sorted coordinates/tags and total amount of primitives, because IDs and order will vary after reload
+
+        List<genericNode> nodes = osm.getNodes().stream()
+                .map(genericNode::new)
+                .sorted(Comparator.comparing(g -> g.coor.hashCode()))
+                .collect(Collectors.toList());
+
+        List<genericNode> nodesExpected = osmExpected.getNodes().stream()
+                .map(genericNode::new)
+                .sorted(Comparator.comparing(g -> g.coor.hashCode()))
+                .collect(Collectors.toList());
+
+        assertEquals(nodesExpected, nodes);
+        assertEquals(osmExpected.allPrimitives().size(), osm.allPrimitives().size());
     }
 
     /**

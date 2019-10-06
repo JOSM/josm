@@ -299,7 +299,7 @@ public class SimplifyWayAction extends JosmAction {
      * @return The sequence of commands to run
      * @since 15419
      */
-    public final SequenceCommand createSimplifyCommand(Way w) {
+    public static SequenceCommand createSimplifyCommand(Way w) {
         return createSimplifyCommand(w, Config.getPref().getDouble("simplify-way.max-error", 3.0));
     }
 

@@ -3,15 +3,22 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -19,7 +26,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -51,69 +59,32 @@ public final class SimplifyWayActionTest {
         }
     }
 
-    private static Way createWaySelected(DataSet ds, double latStart) {
-        Node n1 = new Node(new LatLon(latStart, 1.0));
-        ds.addPrimitive(n1);
-        Node n2 = new Node(new LatLon(latStart+1.0, 1.0));
-        ds.addPrimitive(n2);
-        Way w = new Way();
-        w.addNode(n1);
-        w.addNode(n2);
-        ds.addPrimitive(w);
-        ds.addSelected(w);
-        return w;
+    private DataSet getDs(String file) throws IllegalDataException, IOException {
+        return OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "tracks/" + file + ".osm")), null);
     }
 
     /**
-     * Test without any selection.
+     * Tests simplification
+     * @throws IOException
+     * @throws IllegalDataException
      */
     @Test
-    public void testSelectionEmpty() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            assertTrue(ds.getSelected().isEmpty());
-            action.actionPerformed(null);
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
-    }
-
-    /**
-     * Test with a single way.
-     */
-    @Test
-    public void testSingleWay() {
-        DataSet ds = new DataSet();
-        createWaySelected(ds, 0.0);
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            assertEquals(1, ds.getSelected().size());
-            action.actionPerformed(null);
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
-    }
-
-    /**
-     * Test with more than 10 ways.
-     */
-    @Test
-    public void testMoreThanTenWays() {
-        DataSet ds = new DataSet();
-        for (int i = 0; i < 11; i++) {
-            createWaySelected(ds, i);
-        }
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            assertEquals(11, ds.getSelected().size());
-            action.actionPerformed(null);
-        } finally {
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+    public void testSimplify() throws IllegalDataException, IOException {
+        DataSet DsSimplify = getDs("tracks");
+        DataSet DsExpected = getDs("tracks-simplify15");
+        SimplifyWayAction.simplifyWays(new ArrayList<>(DsSimplify.getWays()), 15);
+        DsSimplify.cleanupDeletedPrimitives();
+        //compare sorted Coordinates and total amount of primitives, because IDs and order will vary after reload
+        List<LatLon> CoorSimplify = DsSimplify.getNodes().stream()
+                .map(Node::getCoor)
+                .sorted(Comparator.comparing(LatLon::hashCode))
+                .collect(Collectors.toList());
+        List<LatLon> CoorExpected = DsExpected.getNodes().stream()
+                .map(Node::getCoor)
+                .sorted(Comparator.comparing(LatLon::hashCode))
+                .collect(Collectors.toList());
+        assertEquals(CoorExpected, CoorSimplify);
+        assertEquals(DsExpected.allPrimitives().size(), DsSimplify.allPrimitives().size());
     }
 
     /**
