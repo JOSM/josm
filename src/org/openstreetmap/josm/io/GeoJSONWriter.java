@@ -4,11 +4,14 @@ package org.openstreetmap.josm.io;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.json.Json;
@@ -47,6 +50,8 @@ public class GeoJSONWriter {
     private final DataSet data;
     private final Projection projection;
     private static final BooleanProperty SKIP_EMPTY_NODES = new BooleanProperty("geojson.export.skip-empty-nodes", true);
+    private static final BooleanProperty UNTAGGED_CLOSED_IS_POLYGON = new BooleanProperty("geojson.export.untagged-closed-is-polygon", false);
+    private static final Set<Way> processedMultipolygonWays = new HashSet<>();
 
     /**
      * Constructs a new {@code GeoJSONWriter}.
@@ -107,11 +112,16 @@ public class GeoJSONWriter {
         @Override
         public void visit(Way w) {
             if (w != null) {
+                if (!w.isTagged() && processedMultipolygonWays.contains(w)) {
+                    // no need to write this object again
+                    return;
+                }
                 final JsonArrayBuilder array = getCoorsArray(w.getNodes());
-                if (w.isClosed() && ElemStyles.hasAreaElemStyle(w, false)) {
-                    final JsonArrayBuilder container = Json.createArrayBuilder().add(array);
+                boolean writeAsPolygon = w.isClosed() && ((!w.isTagged() && UNTAGGED_CLOSED_IS_POLYGON.get())
+                        || ElemStyles.hasAreaElemStyle(w, false));
+                if (writeAsPolygon) {
                     geomObj.add("type", "Polygon");
-                    geomObj.add("coordinates", container);
+                    geomObj.add("coordinates", Json.createArrayBuilder().add(array));
                 } else {
                     geomObj.add("type", "LineString");
                     geomObj.add("coordinates", array);
@@ -135,10 +145,22 @@ public class GeoJSONWriter {
                 geomObj.add("type", "MultiPolygon");
                 final JsonArrayBuilder multiPolygon = Json.createArrayBuilder().add(polygon);
                 geomObj.add("coordinates", multiPolygon);
+                processedMultipolygonWays.addAll(r.getMemberPrimitives(Way.class));
             } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
                 Logging.warn("GeoJSON: Failed to export multipolygon {0}", r.getUniqueId());
                 Logging.warn(ex);
             }
+        }
+
+        private JsonArrayBuilder getCoorsArray(Iterable<Node> nodes) {
+            final JsonArrayBuilder builder = Json.createArrayBuilder();
+            for (Node n : nodes) {
+                LatLon ll = n.getCoor();
+                if (ll != null) {
+                    builder.add(getCoorArray(null, ll));
+                }
+            }
+            return builder;
         }
     }
 
@@ -150,17 +172,6 @@ public class GeoJSONWriter {
         return (builder != null ? builder : Json.createArrayBuilder())
                 .add(BigDecimal.valueOf(c.getX()).setScale(11, RoundingMode.HALF_UP))
                 .add(BigDecimal.valueOf(c.getY()).setScale(11, RoundingMode.HALF_UP));
-    }
-
-    private JsonArrayBuilder getCoorsArray(Iterable<Node> nodes) {
-        final JsonArrayBuilder builder = Json.createArrayBuilder();
-        for (Node n : nodes) {
-            LatLon ll = n.getCoor();
-            if (ll != null) {
-                builder.add(getCoorArray(null, ll));
-            }
-        }
-        return builder;
     }
 
     protected void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {
@@ -181,11 +192,13 @@ public class GeoJSONWriter {
         p.accept(new GeometryPrimitiveVisitor(geomObj));
         final JsonObject geom = geomObj.build();
 
-        // Build primitive JSON object
-        array.add(Json.createObjectBuilder()
-                .add("type", "Feature")
-                .add("properties", prop.isEmpty() ? JsonValue.NULL : prop)
-                .add("geometry", geom.isEmpty() ? JsonValue.NULL : geom));
+        if (!geom.isEmpty()) {
+            // Build primitive JSON object
+            array.add(Json.createObjectBuilder()
+                    .add("type", "Feature")
+                    .add("properties", prop.isEmpty() ? JsonValue.NULL : prop)
+                    .add("geometry", geom.isEmpty() ? JsonValue.NULL : geom));
+        }
     }
 
     protected void appendLayerBounds(DataSet ds, JsonObjectBuilder object) {
@@ -213,7 +226,18 @@ public class GeoJSONWriter {
     protected void appendLayerFeatures(DataSet ds, JsonObjectBuilder object) {
         JsonArrayBuilder array = Json.createArrayBuilder();
         if (ds != null) {
-            ds.allNonDeletedPrimitives().forEach(p -> appendPrimitive(p, array));
+            processedMultipolygonWays.clear();
+            Collection<OsmPrimitive> primitives = ds.allNonDeletedPrimitives();
+            // Relations first
+            for (OsmPrimitive p : primitives) {
+                if (p instanceof Relation)
+                    appendPrimitive(p, array);
+            }
+            for (OsmPrimitive p : primitives) {
+                if (!(p instanceof Relation))
+                    appendPrimitive(p, array);
+            }
+            processedMultipolygonWays.clear();
         }
         object.add("features", array);
     }
