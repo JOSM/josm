@@ -588,11 +588,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      * @since 2587
      */
     public boolean hasIncompleteNodes() {
-        for (Node node : nodes) {
-            if (node.isIncomplete())
-                return true;
-        }
-        return false;
+        return Arrays.stream(nodes).anyMatch(Node::isIncomplete);
     }
 
     /**
@@ -601,11 +597,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      * @since 13033
      */
     public boolean hasOnlyLocatableNodes() {
-        for (Node node : nodes) {
-            if (!node.isLatLonKnown())
-                return false;
-        }
-        return true;
+        return Arrays.stream(nodes).allMatch(Node::isLatLonKnown);
     }
 
     @Override
@@ -712,12 +704,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
 
     @Override
     public boolean isOutsideDownloadArea() {
-        for (final Node n : nodes) {
-            if (n.isOutsideDownloadArea()) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(nodes).anyMatch(Node::isOutsideDownloadArea);
     }
 
     @Override
