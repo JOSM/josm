@@ -82,21 +82,24 @@ public class ConvertToDataLayerActionTest {
         testFromTrack("tracks-time");
     }
 
-    private class genericNode {
-        public genericNode(Node n) {
+    private static class GenericNode {
+        final LatLon coor;
+        final Map<String, String> tags;
+
+        GenericNode(Node n) {
             coor = n.getCoor().getRoundedToOsmPrecision();
             tags = n.getKeys();
         }
-        public LatLon coor;
-        public Map<String, String> tags;
+
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof genericNode)) {
+            if (!(obj instanceof GenericNode)) {
                 return false;
             }
-            genericNode other = (genericNode) obj;
+            GenericNode other = (GenericNode) obj;
             return coor.equals(other.coor) && tags.equals(other.tags);
         }
+
         @Override
         public int hashCode() {
             return Objects.hash(coor, tags);
@@ -105,18 +108,19 @@ public class ConvertToDataLayerActionTest {
 
     private void testFromTrack(String expected) throws IOException, SAXException, IllegalDataException {
         final GpxData data = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "tracks/tracks.gpx");
-        final DataSet osmExpected = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "tracks/" + expected + ".osm")), null);
+        final DataSet osmExpected = OsmReader.parseDataSet(Files.newInputStream(
+                Paths.get(TestUtils.getTestDataRoot(), "tracks/" + expected + ".osm")), null);
         final GpxLayer layer = new GpxLayer(data);
         final DataSet osm = new ConvertFromGpxLayerAction(layer).convert();
         //compare sorted coordinates/tags and total amount of primitives, because IDs and order will vary after reload
 
-        List<genericNode> nodes = osm.getNodes().stream()
-                .map(genericNode::new)
+        List<GenericNode> nodes = osm.getNodes().stream()
+                .map(GenericNode::new)
                 .sorted(Comparator.comparing(g -> g.coor.hashCode()))
                 .collect(Collectors.toList());
 
-        List<genericNode> nodesExpected = osmExpected.getNodes().stream()
-                .map(genericNode::new)
+        List<GenericNode> nodesExpected = osmExpected.getNodes().stream()
+                .map(GenericNode::new)
                 .sorted(Comparator.comparing(g -> g.coor.hashCode()))
                 .collect(Collectors.toList());
 

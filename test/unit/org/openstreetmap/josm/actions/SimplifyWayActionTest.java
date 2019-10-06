@@ -65,11 +65,10 @@ public final class SimplifyWayActionTest {
 
     /**
      * Tests simplification
-     * @throws IOException
-     * @throws IllegalDataException
+     * @throws Exception in case of error
      */
     @Test
-    public void testSimplify() throws IllegalDataException, IOException {
+    public void testSimplify() throws Exception {
         DataSet DsSimplify = getDs("tracks");
         DataSet DsExpected = getDs("tracks-simplify15");
         SimplifyWayAction.simplifyWays(new ArrayList<>(DsSimplify.getWays()), 15);
