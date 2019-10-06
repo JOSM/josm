@@ -1793,3 +1793,11 @@ way[/^is_in:.*$/] {
   group: tr("deprecated tagging");
   fixChangeKey: "recycling:metal => recycling:scrap_metal";
 }
+
+/* #18154 */
+*[shop=dog_grooming] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=pet_grooming";
+  fixAdd: "shop=pet_grooming";
+  group: tr("deprecated tagging");
+}
