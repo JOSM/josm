@@ -19,6 +19,7 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -26,6 +27,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
@@ -36,12 +39,16 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class GeoJSONReader extends AbstractReader {
 
+    private static final String CRS = "crs";
+    private static final String NAME = "name";
+    private static final String LINK = "link";
     private static final String COORDINATES = "coordinates";
     private static final String FEATURES = "features";
     private static final String PROPERTIES = "properties";
     private static final String GEOMETRY = "geometry";
     private static final String TYPE = "type";
     private JsonParser parser;
+    private Projection projection = Projections.getProjectionByCode("EPSG:4326"); // WGS 84
 
     GeoJSONReader() {
         // Restricts visibility
@@ -51,7 +58,7 @@ public class GeoJSONReader extends AbstractReader {
         this.parser = parser;
     }
 
-    private void parse() {
+    private void parse() throws IllegalDataException {
         while (parser.hasNext()) {
             Event event = parser.next();
             if (event == Event.START_OBJECT) {
@@ -61,7 +68,8 @@ public class GeoJSONReader extends AbstractReader {
         parser.close();
     }
 
-    private void parseRoot(final JsonObject object) {
+    private void parseRoot(final JsonObject object) throws IllegalDataException {
+        parseCrs(object.getJsonObject(CRS));
         switch (object.getString(TYPE)) {
             case "FeatureCollection":
                 parseFeatureCollection(object.getJsonArray(FEATURES));
@@ -77,11 +85,43 @@ public class GeoJSONReader extends AbstractReader {
         }
     }
 
+    /**
+     * Parse CRS as per https://geojson.org/geojson-spec.html#coordinate-reference-system-objects.
+     * CRS are obsolete in RFC7946 but still allowed for interoperability with older applications.
+     * Only named CRS are supported.
+     *
+     * @param crs CRS JSON object
+     * @throws IllegalDataException in case of error
+     */
+    private void parseCrs(final JsonObject crs) throws IllegalDataException {
+        if (crs != null) {
+            // Inspired by https://github.com/JOSM/geojson/commit/f13ceed4645244612a63581c96e20da802779c56
+            JsonObject properties = crs.getJsonObject("properties");
+            if (properties != null) {
+                switch (crs.getString(TYPE)) {
+                    case NAME:
+                        String crsName = properties.getString(NAME);
+                        if ("urn:ogc:def:crs:OGC:1.3:CRS84".equals(crsName)) {
+                            // https://osgeo-org.atlassian.net/browse/GEOT-1710
+                            crsName = "EPSG:4326";
+                        } else if (crsName.startsWith("urn:ogc:def:crs:EPSG:")) {
+                            crsName = crsName.replace("urn:ogc:def:crs:", "");
+                        }
+                        projection = Optional.ofNullable(Projections.getProjectionByCode(crsName))
+                                .orElse(Projections.getProjectionByCode("EPSG:4326")); // WGS84
+                        break;
+                    case LINK: // Not supported (security risk)
+                    default:
+                        throw new IllegalDataException(crs.toString());
+                }
+            }
+        }
+    }
+
     private void parseFeatureCollection(final JsonArray features) {
         for (JsonValue feature : features) {
             if (feature instanceof JsonObject) {
-                JsonObject item = (JsonObject) feature;
-                parseFeature(item);
+                parseFeature((JsonObject) feature);
             }
         }
     }
@@ -116,8 +156,7 @@ public class GeoJSONReader extends AbstractReader {
     }
 
     private void parseGeometryCollection(final JsonObject feature, final JsonObject geometry) {
-        JsonArray geometries = geometry.getJsonArray("geometries");
-        for (JsonValue jsonValue : geometries) {
+        for (JsonValue jsonValue : geometry.getJsonArray("geometries")) {
             parseGeometry(feature, jsonValue.asJsonObject());
         }
     }
@@ -155,47 +194,48 @@ public class GeoJSONReader extends AbstractReader {
         }
     }
 
+    private LatLon getLatLon(final JsonArray coordinates) {
+        return projection.eastNorth2latlon(new EastNorth(
+                coordinates.getJsonNumber(0).doubleValue(),
+                coordinates.getJsonNumber(1).doubleValue()));
+    }
+
     private void parsePoint(final JsonObject feature, final JsonArray coordinates) {
-        double lat = coordinates.getJsonNumber(1).doubleValue();
-        double lon = coordinates.getJsonNumber(0).doubleValue();
-        Node node = createNode(lat, lon);
-        fillTagsFromFeature(feature, node);
+        fillTagsFromFeature(feature, createNode(getLatLon(coordinates)));
     }
 
     private void parseMultiPoint(final JsonObject feature, final JsonObject geometry) {
-        JsonArray coordinates = geometry.getJsonArray(COORDINATES);
-        for (JsonValue coordinate : coordinates) {
+        for (JsonValue coordinate : geometry.getJsonArray(COORDINATES)) {
             parsePoint(feature, coordinate.asJsonArray());
         }
     }
 
     private void parseLineString(final JsonObject feature, final JsonArray coordinates) {
-        if (coordinates.isEmpty()) {
-            return;
+        if (!coordinates.isEmpty()) {
+            createWay(coordinates, false)
+                .ifPresent(way -> fillTagsFromFeature(feature, way));
         }
-        createWay(coordinates, false)
-            .ifPresent(way -> fillTagsFromFeature(feature, way));
     }
 
     private void parseMultiLineString(final JsonObject feature, final JsonObject geometry) {
-        JsonArray coordinates = geometry.getJsonArray(COORDINATES);
-        for (JsonValue coordinate : coordinates) {
+        for (JsonValue coordinate : geometry.getJsonArray(COORDINATES)) {
             parseLineString(feature, coordinate.asJsonArray());
         }
     }
 
     private void parsePolygon(final JsonObject feature, final JsonArray coordinates) {
-        if (coordinates.size() == 1) {
+        final int size = coordinates.size();
+        if (size == 1) {
             createWay(coordinates.getJsonArray(0), true)
                 .ifPresent(way -> fillTagsFromFeature(feature, way));
-        } else if (coordinates.size() > 1) {
+        } else if (size > 1) {
             // create multipolygon
             final Relation multipolygon = new Relation();
             multipolygon.put(TYPE, "multipolygon");
             createWay(coordinates.getJsonArray(0), true)
                 .ifPresent(way -> multipolygon.addMember(new RelationMember("outer", way)));
 
-            for (JsonValue interiorRing : coordinates.subList(1, coordinates.size())) {
+            for (JsonValue interiorRing : coordinates.subList(1, size)) {
                 createWay(interiorRing.asJsonArray(), true)
                     .ifPresent(way -> multipolygon.addMember(new RelationMember("inner", way)));
             }
@@ -206,14 +246,13 @@ public class GeoJSONReader extends AbstractReader {
     }
 
     private void parseMultiPolygon(final JsonObject feature, final JsonObject geometry) {
-        JsonArray coordinates = geometry.getJsonArray(COORDINATES);
-        for (JsonValue coordinate : coordinates) {
+        for (JsonValue coordinate : geometry.getJsonArray(COORDINATES)) {
             parsePolygon(feature, coordinate.asJsonArray());
         }
     }
 
-    private Node createNode(final double lat, final double lon) {
-        final Node node = new Node(new LatLon(lat, lon));
+    private Node createNode(final LatLon latlon) {
+        final Node node = new Node(latlon);
         getDataSet().addPrimitive(node);
         return node;
     }
@@ -223,13 +262,8 @@ public class GeoJSONReader extends AbstractReader {
             return Optional.empty();
         }
 
-        final List<LatLon> latlons = coordinates.stream().map(coordinate -> {
-            final JsonArray jsonValues = coordinate.asJsonArray();
-            return new LatLon(
-                jsonValues.getJsonNumber(1).doubleValue(),
-                jsonValues.getJsonNumber(0).doubleValue()
-            );
-        }).collect(Collectors.toList());
+        final List<LatLon> latlons = coordinates.stream().map(
+                coordinate -> getLatLon(coordinate.asJsonArray())).collect(Collectors.toList());
 
         final int size = latlons.size();
         final boolean doAutoclose;

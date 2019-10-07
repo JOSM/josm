@@ -116,10 +116,27 @@ public class GeoJSONReaderTest {
         }
     }
 
+    /**
+     * Test reading a GeoJSON file with a named CRS.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testReadGeoJsonNamedCrs() throws Exception {
+        try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "geocrs.json"))) {
+            final List<OsmPrimitive> primitives = new ArrayList<>(new GeoJSONReader()
+                    .doParseDataSet(in, null)
+                    .getPrimitives(it -> true));
+                assertEquals(24, primitives.size());
+                assertTrue(primitives.stream()
+                        .filter(it -> areEqualNodes(it, new Node(new LatLon(52.5840213, 13.1724145))))
+                        .findAny().isPresent());
+        }
+    }
+
     private static boolean areEqualNodes(final OsmPrimitive p1, final OsmPrimitive p2) {
         return (p1 instanceof Node)
             && (p2 instanceof Node)
-            && ((Node) p1).getCoor().equals(((Node) p2).getCoor());
+            && ((Node) p1).getCoor().equalsEpsilon(((Node) p2).getCoor());
     }
 
     private static boolean areEqualWays(final OsmPrimitive p1, final OsmPrimitive p2) {
