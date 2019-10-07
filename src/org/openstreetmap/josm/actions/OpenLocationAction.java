@@ -22,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.actions.downloadtasks.DownloadGeoJsonTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesUrlBoundsTask;
@@ -100,6 +101,7 @@ public class OpenLocationAction extends JosmAction {
         addDownloadTaskClass(DownloadSessionTask.class);
         addDownloadTaskClass(DownloadNotesUrlBoundsTask.class);
         addDownloadTaskClass(DownloadNotesUrlIdTask.class);
+        addDownloadTaskClass(DownloadGeoJsonTask.class);
     }
 
     /**

@@ -95,9 +95,9 @@ public class Check extends KeyedItem {
         check.setPropertyText(key);
         check.setState(check.getState()); // to update the tooltip text
 
-        JPanel checkPanel = new JPanel(new GridBagLayout());
-        checkPanel.add(check, GBC.std());
         if (icon != null) {
+            JPanel checkPanel = new JPanel(new GridBagLayout());
+            checkPanel.add(check, GBC.std());
             JLabel label = new JLabel(locale_text, getIcon(), SwingConstants.LEFT);
             label.addMouseListener(new MouseAdapter() {
                 @Override
@@ -107,8 +107,10 @@ public class Check extends KeyedItem {
             });
             checkPanel.add(label);
             checkPanel.add(new JLabel(), GBC.eol().fill());
+            p.add(checkPanel, GBC.eol()); // Do not fill, see #15104
+        } else {
+            p.add(check, GBC.eol()); // Do not fill, see #15104
         }
-        p.add(checkPanel, GBC.eol()); // Do not fill, see #15104
         return true;
     }
 
