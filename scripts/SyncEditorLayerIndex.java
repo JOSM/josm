@@ -53,6 +53,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.validation.routines.DomainValidator;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.OptionParser.OptionCount;
@@ -1080,8 +1081,18 @@ public class SyncEditorLayerIndex {
             if (isNotBlank(jt))
                 urls.add(jt);
             jt = getIcon(j);
-            if (isNotBlank(jt) && !jt.startsWith("data:image/"))
-                urls.add(jt);
+            if (isNotBlank(jt)) {
+                if(!jt.startsWith("data:image/"))
+                    urls.add(jt);
+                else {
+                    try
+                    {
+                      new ImageProvider(jt).get();
+                    } catch(Exception e) {
+                        myprintln("* Strange Icon: "+getDescription(j));
+                    }
+                }
+            }
             Pattern patternU = Pattern.compile("^https?://([^/]+?)(:\\d+)?(/.*)?");
             for (String u : urls) {
                 if (!patternU.matcher(u).matches() || u.matches(".*[ \t]+$")) {
