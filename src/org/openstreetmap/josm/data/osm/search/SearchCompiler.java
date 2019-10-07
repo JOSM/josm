@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -710,61 +711,44 @@ public class SearchCompiler {
 
         @Override
         public boolean match(Tagged osm) {
-
             if (keyPattern != null) {
-                if (!osm.hasKeys())
-                    return false;
-
-                /* The string search will just get a key like
-                 * 'highway' and look that up as osm.get(key). But
-                 * since we're doing a regex match we'll have to loop
-                 * over all the keys to see if they match our regex,
-                 * and only then try to match against the value
-                 */
-
-                for (String k: osm.keySet()) {
-                    String v = osm.get(k);
-
-                    Matcher matcherKey = keyPattern.matcher(k);
-                    boolean matchedKey = matcherKey.find();
-
-                    if (matchedKey) {
-                        Matcher matcherValue = valuePattern.matcher(v);
-                        boolean matchedValue = matcherValue.find();
-
-                        if (matchedValue)
+                if (osm.hasKeys()) {
+                    // The string search will just get a key like 'highway' and look that up as osm.get(key).
+                    // But since we're doing a regex match we'll have to loop over all the keys to see if they match our regex,
+                    // and only then try to match against the value
+                    for (String k: osm.keySet()) {
+                        if (keyPattern.matcher(k).find() && valuePattern.matcher(osm.get(k)).find()) {
                             return true;
-                    }
-                }
-            } else {
-                String mv;
-
-                if ("timestamp".equals(key) && osm instanceof OsmPrimitive) {
-                    mv = DateUtils.fromTimestamp(((OsmPrimitive) osm).getRawTimestamp());
-                } else {
-                    mv = osm.get(key);
-                    if (!caseSensitive && mv == null) {
-                        for (String k: osm.keySet()) {
-                            if (key.equalsIgnoreCase(k)) {
-                                mv = osm.get(k);
-                                break;
-                            }
                         }
                     }
                 }
-
-                if (mv == null)
-                    return false;
-
-                String v1 = caseSensitive ? mv : mv.toLowerCase(Locale.ENGLISH);
-                String v2 = caseSensitive ? value : value.toLowerCase(Locale.ENGLISH);
-
-                v1 = Normalizer.normalize(v1, Normalizer.Form.NFC);
-                v2 = Normalizer.normalize(v2, Normalizer.Form.NFC);
-                return v1.indexOf(v2) != -1;
+            } else {
+                String mv = getMv(osm);
+                if (mv != null) {
+                    String v1 = Normalizer.normalize(caseSensitive ? mv : mv.toLowerCase(Locale.ENGLISH), Normalizer.Form.NFC);
+                    String v2 = Normalizer.normalize(caseSensitive ? value : value.toLowerCase(Locale.ENGLISH), Normalizer.Form.NFC);
+                    return v1.indexOf(v2) != -1;
+                }
             }
-
             return false;
+        }
+
+        private String getMv(Tagged osm) {
+            String mv;
+            if ("timestamp".equals(key) && osm instanceof OsmPrimitive) {
+                mv = DateUtils.fromTimestamp(((OsmPrimitive) osm).getRawTimestamp());
+            } else {
+                mv = osm.get(key);
+                if (!caseSensitive && mv == null) {
+                    for (String k: osm.keySet()) {
+                        if (key.equalsIgnoreCase(k)) {
+                            mv = osm.get(k);
+                            break;
+                        }
+                    }
+                }
+            }
+            return mv;
         }
 
         @Override
@@ -774,14 +758,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + (caseSensitive ? 1231 : 1237);
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime * result + ((keyPattern == null) ? 0 : keyPattern.hashCode());
-            result = prime * result + ((value == null) ? 0 : value.hashCode());
-            result = prime * result + ((valuePattern == null) ? 0 : valuePattern.hashCode());
-            return result;
+            return Objects.hash(caseSensitive, key, keyPattern, value, valuePattern);
         }
 
         @Override
@@ -791,29 +768,11 @@ public class SearchCompiler {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             KeyValue other = (KeyValue) obj;
-            if (caseSensitive != other.caseSensitive)
-                return false;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
-                return false;
-            if (keyPattern == null) {
-                if (other.keyPattern != null)
-                    return false;
-            } else if (!keyPattern.equals(other.keyPattern))
-                return false;
-            if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            if (valuePattern == null) {
-                if (other.valuePattern != null)
-                    return false;
-            } else if (!valuePattern.equals(other.valuePattern))
-                return false;
-            return true;
+            return caseSensitive == other.caseSensitive
+                    && Objects.equals(key, other.key)
+                    && Objects.equals(keyPattern, other.keyPattern)
+                    && Objects.equals(value, other.value)
+                    && Objects.equals(valuePattern, other.valuePattern);
         }
     }
 

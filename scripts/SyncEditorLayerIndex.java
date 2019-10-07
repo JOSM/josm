@@ -1082,13 +1082,12 @@ public class SyncEditorLayerIndex {
                 urls.add(jt);
             jt = getIcon(j);
             if (isNotBlank(jt)) {
-                if(!jt.startsWith("data:image/"))
+                if (!jt.startsWith("data:image/"))
                     urls.add(jt);
                 else {
-                    try
-                    {
-                      new ImageProvider(jt).get();
-                    } catch(Exception e) {
+                    try {
+                        new ImageProvider(jt).get();
+                    } catch (RuntimeException e) {
                         myprintln("* Strange Icon: "+getDescription(j));
                     }
                 }

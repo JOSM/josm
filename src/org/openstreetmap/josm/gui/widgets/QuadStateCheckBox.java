@@ -44,7 +44,7 @@ public class QuadStateCheckBox extends JCheckBox {
 
     private final transient QuadStateDecorator cbModel;
     private State[] allowed;
-    private final MouseListener mouseAdapter = new MouseAdapter() {
+    private final transient MouseListener mouseAdapter = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
             grabFocus();
