@@ -2496,14 +2496,9 @@
                 <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             </optional>
             <space />
-            <checkgroup columns="2">
-                <check key="bus" text="Bus" icon="presets/transport/bus.svg" />
-                <check key="highway" value_on="bus_stop" value_off="" text="Bus stop (legacy)" icon="presets/transport/bus.svg" />
-                <check key="tram" text="Tram" icon="presets/transport/railway/tram.svg" />
-                <check key="railway" value_on="tram_stop" value_off="" text="Tram stop (legacy)" icon="presets/transport/railway/tram.svg" />
-                <check key="train" text="Train" icon="presets/transport/train.svg" />
-                <check key="railway" value_on="halt" value_off="" text="Railway halt (legacy)" icon="presets/transport/train.svg" />
-            </checkgroup>
+            <check key="bus" text="Bus" icon="presets/transport/bus.svg" />
+            <check key="tram" text="Tram" icon="presets/transport/railway/tram.svg" />
+            <check key="train" text="Train" icon="presets/transport/train.svg" />
             <check key="trolleybus" text="Trolleybus" icon="presets/transport/trolleybus.svg" />
             <check key="share_taxi" text="Share taxi" icon="presets/transport/share_taxi.svg" />
             <check key="subway" text="Subway" icon="presets/transport/railway/subway.svg" />
