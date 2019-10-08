@@ -52,7 +52,8 @@ public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
     @Override
     public boolean executeCommand() {
         super.executeCommand();
-        if (!conflict.getMy().isNew() && conflict.getMy().hasEqualSemanticAttributes(conflict.getTheir())) {
+        if (!conflict.getMy().isNew() && !conflict.getMy().isDeleted()
+                && conflict.getMy().hasEqualSemanticAttributes(conflict.getTheir())) {
             conflict.getMy().setModified(conflict.getTheir().isModified());
         }
         getAffectedDataSet().getConflicts().remove(conflict);

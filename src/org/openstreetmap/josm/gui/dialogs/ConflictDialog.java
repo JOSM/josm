@@ -322,7 +322,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
     @Override
     public void onConflictsRemoved(ConflictCollection conflicts) {
-        Logging.info("1 conflict has been resolved.");
+        Logging.debug("1 conflict has been resolved.");
         refreshView();
     }
 
