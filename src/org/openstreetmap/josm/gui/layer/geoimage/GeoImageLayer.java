@@ -35,8 +35,8 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.actions.LassoModeAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.actions.mapmode.SelectLassoAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -786,14 +786,14 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     /**
      * Determines if the functionality of this layer is available in
-     * the specified map mode. {@link SelectAction} and {@link LassoModeAction} are supported by default,
+     * the specified map mode. {@link SelectAction} and {@link SelectLassoAction} are supported by default,
      * other map modes can be registered.
      * @param mapMode Map mode to be checked
      * @return {@code true} if the map mode is supported,
      *         {@code false} otherwise
      */
     private static boolean isSupportedMapMode(MapMode mapMode) {
-        if (mapMode instanceof SelectAction || mapMode instanceof LassoModeAction) {
+        if (mapMode instanceof SelectAction || mapMode instanceof SelectLassoAction) {
             return true;
         }
         if (supportedMapModes != null) {

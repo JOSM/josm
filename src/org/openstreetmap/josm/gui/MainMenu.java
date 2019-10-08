@@ -343,7 +343,7 @@ public class MainMenu extends JMenuBar {
     /**
      * modeMenu contains map modes
      */
-    public final JMenu modeMenu = addMenu("Mode", /* I18N: mnemonic: M */ trc("menu", "Mode"), KeyEvent.VK_M, 3, ht("/Menu/Mode"));
+    public final JMenu modeMenu = addMenu(new ModeMenu(), /* I18N: mnemonic: M */ trc("menu", "Mode"), KeyEvent.VK_M, 3, ht("/Menu/Mode"));
     /**
      * toolsMenu contains different geometry manipulation actions from JOSM core (most used)
      * The plugins should use other menus

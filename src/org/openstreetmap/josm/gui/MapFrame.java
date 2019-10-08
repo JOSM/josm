@@ -43,7 +43,6 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
-import org.openstreetmap.josm.actions.LassoModeAction;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
@@ -51,6 +50,7 @@ import org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.ParallelWayAction;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
+import org.openstreetmap.josm.actions.mapmode.SelectLassoAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -175,7 +175,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     /** Delete mode */
     public final DeleteAction mapModeDelete;
     /** Select Lasso mode */
-    public LassoModeAction mapModeSelectLasso;
+    public final SelectLassoAction mapModeSelectLasso;
 
     private final transient Map<Layer, MapMode> lastMapMode = new HashMap<>();
 
@@ -240,7 +240,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
         // toolBarActions, map mode buttons
         mapModeSelect = new SelectAction(this);
-        mapModeSelectLasso = new LassoModeAction();
+        mapModeSelectLasso = new SelectLassoAction();
         mapModeDraw = new DrawAction();
         mapModeZoom = new ZoomAction(this);
         mapModeDelete = new DeleteAction();
@@ -438,7 +438,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     public void addMapMode(IconToggleButton b) {
         if (!(b.getAction() instanceof MapMode))
             throw new IllegalArgumentException("MapMode action must be subclass of MapMode");
-        MainApplication.getMenu().modeMenu.add(new JCheckBoxMenuItem(b.getAction()));
+        MainMenu.add(MainApplication.getMenu().modeMenu, (MapMode) b.getAction());
         allMapModeButtons.add(b);
         toolBarActionsGroup.add(b);
         toolBarActions.add(b);
