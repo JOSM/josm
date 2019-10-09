@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Lasso selection mode: select objects within a hand-drawn region.
- * @since 5152
+ * @since 15445
  */
 public class SelectLassoAction extends MapMode {
 
