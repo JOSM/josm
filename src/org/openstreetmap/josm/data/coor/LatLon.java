@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -192,7 +193,9 @@ public class LatLon extends Coordinate implements ILatLon {
     /**
      * Determines if this lat/lon is outside of the world
      * @return <code>true</code>, if the coordinate is outside the world, compared by using lat/lon.
+     * @deprecated use {@link Node#isOutSideWorld} instead, see also #13538.
      */
+    @Deprecated
     public boolean isOutSideWorld() {
         Bounds b = ProjectionRegistry.getProjection().getWorldBoundsLatLon();
         return lat() < b.getMinLat() || lat() > b.getMaxLat() ||

@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
@@ -410,8 +411,10 @@ public final class Node extends OsmPrimitive implements INode {
     public boolean isOutSideWorld() {
         LatLon ll = getCoor();
         if (ll != null) {
-            if (ll.isOutSideWorld())
+            Bounds b = ProjectionRegistry.getProjection().getWorldBoundsLatLon();
+            if (lat() < b.getMinLat() || lat() > b.getMaxLat() || lon() < b.getMinLon() || lon() > b.getMaxLon()) {
                 return true;
+            }
             if (!ProjectionRegistry.getProjection().latlon2eastNorth(ll).equalsEpsilon(getEastNorth(), 1.0)) {
                 // we get here if a node was moved or created left from -180 or right from +180
                 return true;
