@@ -47,7 +47,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
             warnNoTargetLayersForSourceLayer(editLayer);
             return;
         }
-        Layer targetLayer = askTargetLayer(targetLayers);
+        Layer targetLayer = askTargetLayer(targetLayers, false, null, false, tr("Merge selection")).selectedTargetLayer;
         if (targetLayer == null)
             return;
         if (editLayer.isUploadDiscouraged() && targetLayer instanceof OsmDataLayer

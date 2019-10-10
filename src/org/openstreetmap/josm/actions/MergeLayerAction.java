@@ -54,7 +54,7 @@ public class MergeLayerAction extends AbstractMergeAction {
         final boolean onlygpx = targetLayers.stream().noneMatch(l -> !(l instanceof GpxLayer));
         final TargetLayerDialogResult<Layer> res = askTargetLayer(targetLayers, onlygpx,
                 tr("Cut timewise overlapping parts of tracks"),
-                onlygpx && Config.getPref().getBoolean("mergelayer.gpx.cut", false));
+                onlygpx && Config.getPref().getBoolean("mergelayer.gpx.cut", false), tr("Merge layer"));
         final Layer targetLayer = res.selectedTargetLayer;
         if (targetLayer == null)
             return null;

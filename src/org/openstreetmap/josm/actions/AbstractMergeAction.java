@@ -123,9 +123,11 @@ public abstract class AbstractMergeAction extends JosmAction {
      * Ask user to choose the target layer.
      * @param targetLayers list of candidate target layers.
      * @return the chosen layer
+     * @deprecated
      */
+    @Deprecated
     protected static Layer askTargetLayer(List<Layer> targetLayers) {
-        return askTargetLayer(targetLayers, false, null, false).selectedTargetLayer;
+        return askTargetLayer(targetLayers, false, null, false, tr("Merge")).selectedTargetLayer;
     }
 
     /**
@@ -134,9 +136,11 @@ public abstract class AbstractMergeAction extends JosmAction {
      * @param checkbox The text of the checkbox shown to the user.
      * @param checkboxDefault whether the checkbox is ticked by default
      * @return The {@link TargetLayerDialogResult} containing the chosen target layer and the state of the checkbox
+     * @deprecated
      */
+    @Deprecated
     protected static TargetLayerDialogResult<Layer> askTargetLayer(List<Layer> targetLayers, String checkbox, boolean checkboxDefault) {
-        return askTargetLayer(targetLayers, true, checkbox, checkboxDefault);
+        return askTargetLayer(targetLayers, true, checkbox, checkboxDefault, tr("Merge"));
     }
 
     /**
@@ -145,14 +149,16 @@ public abstract class AbstractMergeAction extends JosmAction {
      * @param showCheckbox whether the checkbox is shown
      * @param checkbox The text of the checkbox shown to the user.
      * @param checkboxDefault whether the checkbox is ticked by default
+     * @param buttonText text of button used to select target layer
      * @return The {@link TargetLayerDialogResult} containing the chosen target layer and the state of the checkbox
+     * @since 15450
      */
     protected static TargetLayerDialogResult<Layer> askTargetLayer(List<Layer> targetLayers, boolean showCheckbox,
-            String checkbox, boolean checkboxDefault) {
+            String checkbox, boolean checkboxDefault, String buttonText) {
         return askTargetLayer(targetLayers.toArray(new Layer[0]),
                 tr("Please select the target layer."), checkbox,
                 tr("Select target layer"),
-                tr("Merge"), "dialogs/mergedown", showCheckbox, checkboxDefault);
+                buttonText, "dialogs/mergedown", showCheckbox, checkboxDefault);
     }
 
     /**
