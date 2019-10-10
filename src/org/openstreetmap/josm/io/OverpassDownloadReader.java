@@ -30,11 +30,13 @@ import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.gui.download.OverpassDownloadSource;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.NameFinder.SearchResult;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -384,25 +386,30 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
 
         DataSet ds = super.parseOsm(progressMonitor);
+        if (!considerAsFullDownload()) {
+            DataSet noBounds = new DataSet();
+            DataSetMerger dsm = new DataSetMerger(noBounds, ds);
+            dsm.merge(null, false);
+            return dsm.getTargetDataSet();
+        } else {
+            // add bounds if necessary (note that Overpass API does not return bounds in the response XML)
+            if (ds != null && ds.getDataSources().isEmpty() && overpassQuery.contains("{{bbox}}")) {
+                if (crosses180th) {
+                    Bounds bounds = new Bounds(lat1, lon1, lat2, 180.0);
+                    DataSource src = new DataSource(bounds, getBaseUrl());
+                    ds.addDataSource(src);
 
-        // add bounds if necessary (note that Overpass API does not return bounds in the response XML)
-        if (ds != null && ds.getDataSources().isEmpty() && overpassQuery.contains("{{bbox}}")) {
-            if (crosses180th) {
-                Bounds bounds = new Bounds(lat1, lon1, lat2, 180.0);
-                DataSource src = new DataSource(bounds, getBaseUrl());
-                ds.addDataSource(src);
-
-                bounds = new Bounds(lat1, -180.0, lat2, lon2);
-                src = new DataSource(bounds, getBaseUrl());
-                ds.addDataSource(src);
-            } else {
-                Bounds bounds = new Bounds(lat1, lon1, lat2, lon2);
-                DataSource src = new DataSource(bounds, getBaseUrl());
-                ds.addDataSource(src);
+                    bounds = new Bounds(lat1, -180.0, lat2, lon2);
+                    src = new DataSource(bounds, getBaseUrl());
+                    ds.addDataSource(src);
+                } else {
+                    Bounds bounds = new Bounds(lat1, lon1, lat2, lon2);
+                    DataSource src = new DataSource(bounds, getBaseUrl());
+                    ds.addDataSource(src);
+                }
             }
+            return ds;
         }
-
-        return ds;
     }
 
     /**
@@ -415,5 +422,10 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         return query == null ? query : query
                 .replaceAll("out( body| skel| ids)?( id| qt)?;", "out meta$2;")
                 .replaceAll("(?s)\\[out:(csv)[^\\]]*\\]", "[out:xml]");
+    }
+
+    @Override
+    public boolean considerAsFullDownload() {
+        return overpassQuery.equals(OverpassDownloadSource.FULL_DOWNLOAD_QUERY);
     }
 }

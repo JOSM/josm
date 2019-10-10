@@ -51,6 +51,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 12652
  */
 public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSource.OverpassDownloadData> {
+    /** Overpass query to retrieve all nodes and related parent objects, */
+    public static final String FULL_DOWNLOAD_QUERY = "[out:xml]; \n"
+            + "(\n"
+            + "    node({{bbox}});\n"
+            + "<;\n"
+            + ");\n"
+            + "(._;>;);"
+            + "out meta;";
 
     @Override
     public AbstractDownloadSourcePanel<OverpassDownloadData> createPanel(DownloadDialog dialog) {
@@ -248,15 +256,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
                         JOptionPane.QUESTION_MESSAGE,
                         JOptionPane.YES_OPTION);
                 if (doFix) {
-                    String repairedQuery = "[out:xml]; \n"
-                            + query + "\n"
-                            + "(\n"
-                            + "    node({{bbox}});\n"
-                            + "<;\n"
-                            + ");\n"
-                            + "(._;>;);"
-                            + "out meta;";
-                    this.overpassQuery.setText(repairedQuery);
+                    this.overpassQuery.setText(FULL_DOWNLOAD_QUERY);
                 } else {
                     return false;
                 }

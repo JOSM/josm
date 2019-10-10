@@ -255,4 +255,12 @@ public class BoundingBoxDownloader extends OsmServerReader {
             this.limit = limit;
         }
     }
+
+    /**
+     * @return true if download is complete for the given bounding box (not filtered)
+     */
+    public boolean considerAsFullDownload() {
+        return true;
+    }
+
 }
