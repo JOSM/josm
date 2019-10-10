@@ -220,8 +220,10 @@ public class LatLonTest {
 
     /**
      * Test {@link LatLon#isOutSideWorld}
+     * @deprecated to remove
      */
     @Test
+    @Deprecated
     public void testIsOutSideWorld() {
         assertFalse(LatLon.ZERO.isOutSideWorld());
         assertTrue(LatLon.NORTH_POLE.isOutSideWorld());
