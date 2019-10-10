@@ -5,9 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeSet;
 
@@ -16,6 +13,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -35,8 +33,6 @@ public class SharpAngles extends Test {
     private double maxAngle = 45.0; // degrees
     /** The length that at least one way segment must be shorter than */
     private double maxLength = 10.0; // meters
-    /** The stepping points for severity */
-    private Map<Double, Severity> severityBreakPoints = new LinkedHashMap<>();
     /** Specific highway types to ignore */
     private Collection<String> ignoreHighways = new TreeSet<>(
             Arrays.asList("platform", "rest_area", "services", "via_ferrata"));
@@ -46,20 +42,28 @@ public class SharpAngles extends Test {
      */
     public SharpAngles() {
         super(tr("Sharp angles"), tr("Check for sharp angles on roads"));
-        setBreakPoints();
     }
 
     @Override
     public void visit(Way way) {
         if (!way.isUsable()) return;
-        if (way.hasKey("highway") && !way.hasTag("area", "yes") &&
-                    !ignoreHighways.contains(way.get("highway"))) {
+        if (shouldBeTestedForSharpAngles(way)) {
             try {
                 checkWayForSharpAngles(way);
             } catch (RuntimeException e) {
                 throw BugReport.intercept(e).put("way", way);
             }
         }
+    }
+
+    /**
+     * Check whether or not a way should be checked for sharp angles
+     * @param way The way that needs to be checked
+     * @return {@code true} if the way should be checked.
+     */
+    public boolean shouldBeTestedForSharpAngles(Way way) {
+        return (way.hasKey("highway") && !way.hasTag("area", "yes") && !way.hasKey("via_ferrata_scale") &&
+                !ignoreHighways.contains(way.get("highway")));
     }
 
     /**
@@ -108,21 +112,19 @@ public class SharpAngles extends Test {
     }
 
     private void createNearlyOverlappingError(double angle, Way way, OsmPrimitive primitive) {
-        TestError.Builder testError = TestError.builder(this, getSeverity(angle), SHARP_ANGLES)
-                .primitives(way)
-                .highlight(primitive)
-                .message(tr("Sharp angle"));
-        errors.add(testError.build());
+        Severity severity = getSeverity(angle);
+        if (severity != Severity.OTHER || (ValidatorPrefHelper.PREF_OTHER.get() || ValidatorPrefHelper.PREF_OTHER_UPLOAD.get())) {
+            int addCode = severity == Severity.OTHER ? 1 : 0;
+            TestError.Builder testError = TestError.builder(this, severity, SHARP_ANGLES + addCode)
+                    .primitives(way)
+                    .highlight(primitive)
+                    .message(tr("Sharp angle"));
+            errors.add(testError.build());
+        }
     }
 
     private Severity getSeverity(double angle) {
-        Severity rSeverity = Severity.OTHER;
-        for (Entry<Double, Severity> entry : severityBreakPoints.entrySet()) {
-            if (angle < entry.getKey()) {
-                rSeverity = entry.getValue();
-            }
-        }
-        return rSeverity;
+        return angle < maxAngle * 2 / 3 ? Severity.WARNING : Severity.OTHER;
     }
 
     /**
@@ -147,16 +149,6 @@ public class SharpAngles extends Test {
      */
     public void setMaxAngle(double angle) {
         maxAngle = angle;
-        setBreakPoints();
-    }
-
-    /**
-     * Set the breakpoints for the test
-     */
-    private void setBreakPoints() {
-        severityBreakPoints.clear();
-        severityBreakPoints.put(maxAngle, Severity.OTHER);
-        severityBreakPoints.put(maxAngle * 2 / 3, Severity.WARNING);
     }
 
     @Override
