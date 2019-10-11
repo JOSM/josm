@@ -95,6 +95,7 @@ node[restriction] {
 }
 
 /* {0} on a way, should be a node */
+way[line_attachment],
 way[emergency=fire_hydrant],
 way[entrance],
 way[door],

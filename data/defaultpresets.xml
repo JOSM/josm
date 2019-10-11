@@ -372,6 +372,7 @@
     <chunk id="power_pole">
         <text key="height" text="Height (meters)" />
         <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+        <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
         <check key="location:transition" text="Location transition" disable_off="true" />
         <reference ref="ref_operator" />
     </chunk>
@@ -5377,6 +5378,7 @@
             <space />
             <key key="power" value="terminal" />
             <optional>
+                <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
                 <text key="ref" text="Reference" />
                 <text key="operator" text="Operator" />
             </optional>
@@ -5391,6 +5393,7 @@
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
             <reference ref="ref_operator" />
             <combo key="design" text="Portal design" values="portal,portal_two-level,portal_three-level" values_context="power" />
+            <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
         </item> <!-- Power Portal -->
         <item name="Power Tower" icon="presets/power/tower.svg" type="node" preset_name_label="true">
             <link wiki="Tag:power=tower" />
@@ -5402,9 +5405,10 @@
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
             <reference ref="ref_operator" />
             <optional>
-                <combo key="tower:type" text="Tower type" values="suspension,anchor,termination,branch,transposing,crossing,transition" text_context="power" values_context="power" />
+                <combo key="tower:type" text="Tower type" values="termination,branch,transposing,crossing,transition" text_context="power" values_context="power" />
                 <combo key="branch:type" text="Branch tower type" values="tap,split,loop,cross" values_context="power" />
                 <combo key="design" text="Tower design" values="one-level,two-level,donau,three-level,barrel,asymmetric,triangle,flag,donau;one-level,four-level,six-level,nine-level,delta,delta_two-level,y-frame,x-frame,h-frame,guyed_h-frame,portal,portal_two-level,portal_three-level,guyed_v-frame,bipole,monopolar" values_context="power" />
+                <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
                 <check key="triple_tower" text="Triple tower" />
                 <check key="design:incomplete" text="Incomplete tower" />
                 <check key="location:transition" text="Location transition" disable_off="true" />
@@ -5455,6 +5459,7 @@
             <link wiki="Tag:power=insulator" />
             <space />
             <key key="power" value="insulator" />
+            <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
             <reference ref="ref_operator" />
         </item> <!-- Insulator -->
         <item name="Power Line" icon="presets/power/line.svg" type="way" preset_name_label="true">

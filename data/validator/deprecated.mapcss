@@ -1801,3 +1801,12 @@ way[/^is_in:.*$/] {
   fixAdd: "shop=pet_grooming";
   group: tr("deprecated tagging");
 }
+
+/* #17984 */
+*[tower:type=anchor],
+*[tower:type=suspension] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("line_attachment=", "{0.value}");
+  fixChangeKey: "tower:type => line_attachment";
+  group: tr("deprecated tagging");
+}
