@@ -7662,7 +7662,8 @@
                 <key key="route" value="power"/>
                 <reference ref="name_ref_operator"/>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way" member_expression="power"/>
+                    <role key="line" text="route segment" requisite="required" type="way" member_expression="power=line|power=cable"/>
+                    <role key="substation" text="Power Substation" requisite="optional" type="way,closedway,multipolygon" member_expression="power"/>
                 </roles>
             </item> <!-- Power Route -->
             <item name="Railway Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
