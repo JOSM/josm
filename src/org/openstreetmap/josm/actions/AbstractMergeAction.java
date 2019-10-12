@@ -123,7 +123,7 @@ public abstract class AbstractMergeAction extends JosmAction {
      * Ask user to choose the target layer.
      * @param targetLayers list of candidate target layers.
      * @return the chosen layer
-     * @deprecated
+     * @deprecated to be removed
      */
     @Deprecated
     protected static Layer askTargetLayer(List<Layer> targetLayers) {
@@ -136,7 +136,7 @@ public abstract class AbstractMergeAction extends JosmAction {
      * @param checkbox The text of the checkbox shown to the user.
      * @param checkboxDefault whether the checkbox is ticked by default
      * @return The {@link TargetLayerDialogResult} containing the chosen target layer and the state of the checkbox
-     * @deprecated
+     * @deprecated to be removed
      */
     @Deprecated
     protected static TargetLayerDialogResult<Layer> askTargetLayer(List<Layer> targetLayers, String checkbox, boolean checkboxDefault) {

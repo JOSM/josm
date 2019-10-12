@@ -136,8 +136,9 @@ public class RelationCheckerTest {
         r.addMember(new RelationMember("", new Way()));
 
         List<TestError> errors = testRelation(r);
-        assertEquals(1, errors.size());
-        assertEquals("Role of relation member does not match template expression 'power' in preset Power Route", errors.get(0).getDescription());
+        assertEquals(2, errors.size());
+        assertEquals("Role 'line' missing", errors.get(0).getDescription());
+        assertEquals("Empty role found when expecting one of 'line/substation'", errors.get(1).getDescription());
     }
 
     @Test

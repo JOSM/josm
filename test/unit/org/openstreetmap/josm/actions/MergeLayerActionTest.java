@@ -1,22 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
@@ -35,7 +35,7 @@ public class MergeLayerActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * MergeLayerExtendedDialog mocker.
@@ -107,7 +107,7 @@ public class MergeLayerActionTest {
     public void testMergeTwoEmptyLayers() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final MergeLayerExtendedDialogMocker edMocker = new MergeLayerExtendedDialogMocker();
-        edMocker.getMockResultMap().put("Please select the target layer.", "Merge");
+        edMocker.getMockResultMap().put("Please select the target layer.", "Merge layer");
 
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "1", null);
         OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "2", null);
