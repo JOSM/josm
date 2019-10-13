@@ -149,7 +149,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     /** maximum zoom level supported */
     public static final int MAX_ZOOM = 30;
-    /** minium zoom level supported */
+    /** minimum zoom level supported */
     public static final int MIN_ZOOM = 2;
     private static final Font InfoFont = new Font("sansserif", Font.BOLD, 13);
 

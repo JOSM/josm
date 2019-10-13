@@ -35,7 +35,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.AddImageryLayerAction.LayerSelection;
@@ -46,6 +45,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.data.imagery.JosmTemplatedTMSTileSource;
 import org.openstreetmap.josm.data.imagery.LayerDetails;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoaderJob;
@@ -365,7 +365,7 @@ public class ImageryPreferenceTestIT {
             case SCANEX:
                 return new ScanexTileSource(info);
             case TMS:
-                return new TemplatedTMSTileSource(info);
+                return new JosmTemplatedTMSTileSource(info);
             case WMS_ENDPOINT:
                 info = convertWmsEndpointToWms(info); // fall-through
             case WMS:

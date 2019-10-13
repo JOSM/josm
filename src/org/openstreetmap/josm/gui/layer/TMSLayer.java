@@ -6,16 +6,17 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.jcs.access.CacheAccess;
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.CachedAttributionBingAerialTileSource;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.JosmTemplatedTMSTileSource;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -44,6 +45,9 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     /** shall TMS layers be added to download dialog */
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser",
             true);
+    /** override minimum/maximum zoom level with those supported by JMapViewer, as these might be used in slippymap chooser */
+    public static final int MAX_ZOOM = JMapViewer.MAX_ZOOM;
+    public static final int MIN_ZOOM = JMapViewer.MIN_ZOOM;
 
     private static final ScaleList nativeScaleList = initNativeScaleList();
 
@@ -111,8 +115,8 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
      */
     public static TMSTileSource getTileSourceStatic(ImageryInfo info, Runnable attributionLoadedTask) {
         if (info.getImageryType() == ImageryType.TMS) {
-            TemplatedTMSTileSource.checkUrl(info.getUrl());
-            TMSTileSource t = new TemplatedTMSTileSource(info);
+            JosmTemplatedTMSTileSource.checkUrl(info.getUrl());
+            TMSTileSource t = new JosmTemplatedTMSTileSource(info);
             info.setAttribution(t);
             return t;
         } else if (info.getImageryType() == ImageryType.BING) {

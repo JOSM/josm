@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * {@code JPanel} giving access to TMS settings.
@@ -39,9 +40,13 @@ public class TMSSettingsPanel extends JPanel {
     public TMSSettingsPanel() {
         super(new GridBagLayout());
         minZoomLvl = new JSpinner(new SpinnerNumberModel(
-                TMSLayer.PROP_MIN_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
+                Utils.clamp(TMSLayer.PROP_MIN_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM),
+                TMSLayer.MIN_ZOOM,
+                TMSLayer.MAX_ZOOM, 1));
         maxZoomLvl = new JSpinner(new SpinnerNumberModel(
-                TMSLayer.PROP_MAX_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
+                Utils.clamp(TMSLayer.PROP_MAX_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM),
+                TMSLayer.MIN_ZOOM,
+                TMSLayer.MAX_ZOOM, 1));
         maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(
                 TMSCachedTileLoader.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
         maxDownloadsPerHost = new JSpinner(new SpinnerNumberModel(
