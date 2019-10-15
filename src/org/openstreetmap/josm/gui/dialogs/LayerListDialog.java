@@ -38,10 +38,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
+import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListener;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -96,6 +99,8 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
     /** the unique instance of the dialog */
     private static volatile LayerListDialog instance;
 
+    private static final BooleanProperty DISPLAY_NUMBERS = new BooleanProperty("layerlist.display.numbers", true);
+
     /**
      * Creates the instance of the dialog. It's connected to the layer manager
      *
@@ -126,6 +131,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
 
     /** the list of layers (technically its a JTable, but appears like a list) */
     private final LayerList layerList;
+    private final ValueChangeListener<? super Boolean> displayNumbersPrefListener;
 
     private final ActivateLayerAction activateLayerAction;
     private final ShowHideLayerAction showHideLayerAction;
@@ -218,10 +224,11 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         layerList.getColumnModel().getColumn(2).setPreferredWidth(16);
         layerList.getColumnModel().getColumn(2).setResizable(false);
 
+        int width = getLayerNumberWidth();
         layerList.getColumnModel().getColumn(3).setCellRenderer(new LayerVisibleCellRenderer());
         layerList.getColumnModel().getColumn(3).setCellEditor(new LayerVisibleCellEditor(new LayerVisibleCheckBox()));
-        layerList.getColumnModel().getColumn(3).setMaxWidth(48);
-        layerList.getColumnModel().getColumn(3).setPreferredWidth(48);
+        layerList.getColumnModel().getColumn(3).setMaxWidth(width);
+        layerList.getColumnModel().getColumn(3).setPreferredWidth(width);
         layerList.getColumnModel().getColumn(3).setResizable(false);
 
         layerList.getColumnModel().getColumn(4).setCellRenderer(new LayerNameCellRenderer());
@@ -245,6 +252,14 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         }) {
             layerList.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ks, new Object());
         }
+
+        displayNumbersPrefListener = change -> {
+            int numberWidth = getLayerNumberWidth();
+            layerList.getColumnModel().getColumn(3).setMaxWidth(numberWidth);
+            layerList.getColumnModel().getColumn(3).setPreferredWidth(numberWidth);
+            repaint();
+        };
+        DISPLAY_NUMBERS.addListener(displayNumbersPrefListener);
 
         // init the model
         //
@@ -325,6 +340,14 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         createVisibilityToggleShortcuts();
     }
 
+    private static boolean displayLayerNumbers() {
+        return ExpertToggleAction.isExpert() && DISPLAY_NUMBERS.get();
+    }
+
+    private static int getLayerNumberWidth() {
+        return displayLayerNumbers() ? 48 : 16;
+    }
+
     /**
      * Gets the layer manager this dialog is for.
      * @return The layer manager.
@@ -366,6 +389,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         MultikeyActionsHandler.getInstance().removeAction(showHideLayerAction);
         JumpToMarkerActions.unregisterActions();
         layerList.setTransferHandler(null);
+        DISPLAY_NUMBERS.removeListener(displayNumbersPrefListener);
         super.destroy();
         instance = null;
     }
@@ -418,9 +442,13 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         public void updateStatus(Layer layer) {
             boolean visible = layer.isVisible();
             setSelected(visible);
-            List<Layer> layers = MainApplication.getLayerManager().getLayers();
-            int num = layers.size() - layers.indexOf(layer);
-            setText(String.format("%s[%d]", num < 10 ? " " : "", num));
+            if (displayLayerNumbers()) {
+                List<Layer> layers = MainApplication.getLayerManager().getLayers();
+                int num = layers.size() - layers.indexOf(layer);
+                setText(String.format("%s[%d]", num < 10 ? " " : "", num));
+            } else {
+                setText(null);
+            }
             setTranslucent(layer.getOpacity() < 1.0);
             setToolTipText(visible ?
                 tr("layer is currently visible (click to hide layer)") :
