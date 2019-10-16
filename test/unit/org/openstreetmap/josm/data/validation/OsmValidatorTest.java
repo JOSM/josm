@@ -32,6 +32,7 @@ public class OsmValidatorTest {
     public void setUp() throws Exception {
         OsmValidator.clearIgnoredErrors();
     }
+
     /**
      * Tests that {@code OsmValidator} satisfies utility class criterias.
      * @throws ReflectiveOperationException if an error occurs

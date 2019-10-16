@@ -8,13 +8,13 @@ import org.openstreetmap.josm.gui.layer.TMSLayer;
 
 /**
  * JOSM wrapper class that uses min/max zoom settings from imagery settings instead of JMapViewer defaults
- *
+ * @since 15456
  */
 public class JosmTemplatedTMSTileSource extends TemplatedTMSTileSource {
 
     /**
      * Creates TMS tilesource based on tilesource info
-     * @param info
+     * @param info tile source info
      */
     public JosmTemplatedTMSTileSource(TileSourceInfo info) {
         super(info);

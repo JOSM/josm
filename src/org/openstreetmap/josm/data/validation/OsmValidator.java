@@ -261,7 +261,7 @@ public final class OsmValidator {
     /**
      *  Make sure that we don't keep single entries for a "group ignore".
      */
-    protected static void cleanupIgnoredErrors() {
+    static void cleanupIgnoredErrors() {
         if (ignoredErrors.size() > 1) {
             List<String> toRemove = new ArrayList<>();
 
@@ -660,7 +660,7 @@ public final class OsmValidator {
     /**
      * For unit tests
      */
-    protected static void clearIgnoredErrors() {
+    static void clearIgnoredErrors() {
         ignoredErrors.clear();
     }
 }
