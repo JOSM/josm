@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -535,18 +536,23 @@ public abstract class UnconnectedWays extends Test {
         }
 
         private boolean barrierBetween(Node endnode) {
-            EastNorth closest = Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), endnode.getEastNorth());
-            Node x = new Node();
-            x.setEastNorth(closest);
+            EastNorth en = endnode.getEastNorth();
+            EastNorth closest = Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), en);
+            Node x = new Node(closest);
             BBox bbox = new BBox(endnode.getCoor(), x.getCoor());
-            for (Way nearbyWay: ds.searchWays(bbox)) {
-                if (nearbyWay != w && nearbyWay.isUsable() && nearbyWay.hasTag("barrier") && !endnode.getParentWays().contains(nearbyWay)) {
-                    //make sure that the barrier is really between the two nodes, not just close to them
-                    Way directWay = new Way();
-                    directWay.addNode(endnode);
-                    directWay.addNode(x);
-                    if (!Geometry.addIntersections(Arrays.asList(nearbyWay, directWay), true, new ArrayList<>()).isEmpty())
-                        return true;
+            for (Way nearbyWay : ds.searchWays(bbox)) {
+                if (nearbyWay != w && nearbyWay.isUsable() && nearbyWay.hasTag("barrier")
+                        && !endnode.getParentWays().contains(nearbyWay)) {
+                    //make sure that the barrier is really between endnode and the highway segment, not just close to or around them
+                    Iterator<Node> iter = nearbyWay.getNodes().iterator();
+                    EastNorth prev = iter.next().getEastNorth();
+                    while (iter.hasNext()) {
+                        EastNorth curr = iter.next().getEastNorth();
+                        if (Geometry.getSegmentSegmentIntersection(closest, en, prev, curr) != null) {
+                            return true;
+                        }
+                        prev = curr;
+                    }
                 }
             }
             return false;
