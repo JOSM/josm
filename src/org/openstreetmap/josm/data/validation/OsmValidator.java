@@ -259,21 +259,20 @@ public final class OsmValidator {
     }
 
     /**
-     *  Make sure that we don't keep single entries for a "group ignore" or
-     *  multiple different entries for the single entries that are in the same group.
+     *  Make sure that we don't keep single entries for a "group ignore".
      */
-    private static void cleanupIgnoredErrors() {
+    protected static void cleanupIgnoredErrors() {
         if (ignoredErrors.size() > 1) {
             List<String> toRemove = new ArrayList<>();
 
             Iterator<Entry<String, String>> iter = ignoredErrors.entrySet().iterator();
-            Entry<String, String> last = iter.next();
+            String lastKey = iter.next().getKey();
             while (iter.hasNext()) {
-                Entry<String, String> entry = iter.next();
-                if (entry.getKey().startsWith(last.getKey())) {
-                    toRemove.add(entry.getKey());
+                String currKey = iter.next().getKey();
+                if (currKey.startsWith(lastKey) && sameCode(currKey, lastKey)) {
+                    toRemove.add(currKey);
                 } else {
-                    last = entry;
+                    lastKey = currKey;
                 }
             }
             toRemove.forEach(ignoredErrors::remove);
@@ -284,6 +283,28 @@ public final class OsmValidator {
             ignoredErrors.clear();
             ignoredErrors.putAll(tmap);
         }
+    }
+
+    private static boolean sameCode(String key1, String key2) {
+        return extractCodeFromIgnoreKey(key1).equals(extractCodeFromIgnoreKey(key2));
+    }
+
+    /**
+     * Extract the leading digits building the code for the error key.
+     * @param key the error key
+     * @return the leading digits
+     */
+    private static String extractCodeFromIgnoreKey(String key) {
+        int lenCode = 0;
+
+        for (int i = 0; i < key.length(); i++) {
+            if (key.charAt(i) >= '0' && key.charAt(i) <= '9') {
+                lenCode++;
+            } else {
+                break;
+            }
+        }
+        return key.substring(0, lenCode);
     }
 
     /**
@@ -313,8 +334,11 @@ public final class OsmValidator {
         final Pattern elemId2Pattern = Pattern.compile("^[0-9]+$");
         for (Entry<String, String> e: ignoredErrors.entrySet()) {
             String key = e.getKey();
-            String value = e.getValue();
-            ArrayList<String> ignoredWayList = new ArrayList<>();
+            // key starts with a code, it maybe followed by a string (eg. a MapCSS rule) and
+            // optionally with a list of one or more OSM element IDs
+            String description = e.getValue();
+
+            ArrayList<String> ignoredElementList = new ArrayList<>();
             String[] osmobjects = elemId1Pattern.split(key);
             for (int i = 1; i < osmobjects.length; i++) {
                 String osmid = osmobjects[i];
@@ -323,26 +347,34 @@ public final class OsmValidator {
                     int index = key.indexOf(osmid);
                     if (index < key.lastIndexOf(']')) continue;
                     char type = key.charAt(index - 1);
-                    ignoredWayList.add(type + osmid);
+                    ignoredElementList.add(type + osmid);
                 }
             }
-            for (String osmignore : ignoredWayList) {
+            for (String osmignore : ignoredElementList) {
                 key = key.replace(':' + osmignore, "");
             }
 
             DefaultMutableTreeNode trunk;
             DefaultMutableTreeNode branch;
 
-            if (value != null && !value.isEmpty()) {
-                trunk = inTree(root, value);
+            if (description != null && !description.isEmpty()) {
+                trunk = inTree(root, description);
                 branch = inTree(trunk, key);
                 trunk.add(branch);
             } else {
                 trunk = inTree(root, key);
                 branch = trunk;
             }
-            ignoredWayList.forEach(osmignore -> branch.add(new DefaultMutableTreeNode(osmignore)));
-
+            if (!ignoredElementList.isEmpty()) {
+                String item;
+                if (ignoredElementList.size() == 1) {
+                    item = ignoredElementList.iterator().next();
+                } else {
+                    // combination of two or more objects, keep them together
+                    item = ignoredElementList.toString(); // [ID1, ID2, ..., IDn]
+                }
+                branch.add(new DefaultMutableTreeNode(item));
+            }
             root.add(trunk);
         }
         return new JTree(root);
@@ -377,37 +409,46 @@ public final class OsmValidator {
     private static Map<String, String> buildIgnore(TreeModel model, DefaultMutableTreeNode node) {
         HashMap<String, String> rHashMap = new HashMap<>();
 
-        String osmids = node.getUserObject().toString();
-        String description = "";
-
-        if (!model.getRoot().equals(node)) {
-            description = ((DefaultMutableTreeNode) node.getParent()).getUserObject().toString();
-        } else {
-            description = node.getUserObject().toString();
-        }
-        if (tr("Ignore list").equals(description)) description = "";
-        if (!osmids.matches("^[0-9]+(_.*|$)")) {
-            description = osmids;
-            osmids = "";
-        }
-
-
-        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < model.getChildCount(node); i++) {
             DefaultMutableTreeNode child = (DefaultMutableTreeNode) model.getChild(node, i);
             if (model.getChildCount(child) == 0) {
-                String ignoreName = child.getUserObject().toString();
-                if (ignoreName.matches("^(r|w|n)_.*")) {
-                    sb.append(':').append(child.getUserObject().toString());
-                } else if (ignoreName.matches("^[0-9]+(_.*|)$")) {
-                    rHashMap.put(ignoreName, description);
+                // create an entry for the error list
+                String key = node.getUserObject().toString();
+                String description;
+
+                if (!model.getRoot().equals(node)) {
+                    description = ((DefaultMutableTreeNode) node.getParent()).getUserObject().toString();
+                } else {
+                    description = key; // we get here when reading old file ignorederrors
+                }
+                if (tr("Ignore list").equals(description))
+                    description = "";
+                if (!key.matches("^[0-9]+(_.*|$)")) {
+                    description = key;
+                    key = "";
+                }
+
+                String item = child.getUserObject().toString();
+                String entry = null;
+                if (item.matches("^\\[(r|w|n)_.*")) {
+                    // list of elements (produced with list.toString() method)
+                    entry = key + ":" + item.substring(1, item.lastIndexOf(']')).replace(", ", ":");
+                } else if (item.matches("^(r|w|n)_.*")) {
+                    // single element
+                    entry = key + ":" + item;
+                } else if (item.matches("^[0-9]+(_.*|)$")) {
+                    // no element ids
+                    entry = item;
+                }
+                if (entry != null) {
+                    rHashMap.put(entry, description);
+                } else {
+                    Logging.warn("ignored unexpected item in validator ignore list management dialog:'" + item + "'");
                 }
             } else {
                 rHashMap.putAll(buildIgnore(model, child));
             }
         }
-        osmids += sb.toString();
-        if (!osmids.isEmpty() && osmids.indexOf(':') != 0) rHashMap.put(osmids, description);
         return rHashMap;
     }
 
@@ -614,5 +655,12 @@ public final class OsmValidator {
                                         () -> new TreeMap<>(AlphanumComparator.getInstance()),
                                         Collectors.toList()
                                 ))));
+    }
+
+    /**
+     * For unit tests
+     */
+    protected static void clearIgnoredErrors() {
+        ignoredErrors.clear();
     }
 }
