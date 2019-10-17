@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -410,6 +411,7 @@ public abstract class UnconnectedWays extends Test {
     }
 
     private class MyWaySegment {
+        /** the way */
         public final Way w;
         private final Node n1;
         private final Node n2;
@@ -428,18 +430,17 @@ public abstract class UnconnectedWays extends Test {
          * @return true if a reasonable connection was found
          */
         boolean isConnectedTo(Node startNode) {
-            return isConnectedTo(startNode, null, new HashSet<>(), 0);
+            return isConnectedTo(startNode, new HashSet<>(), 0);
         }
 
         /**
          * Check if the given node is connected to this segment using a reasonable short way.
          * @param node the given node
-         * @param startWay previously visited way or null if first
          * @param visited set of visited nodes
          * @param len length of the travelled route
          * @return true if a reasonable connection was found
          */
-        boolean isConnectedTo(Node node, Way startWay, Set<Node> visited, double len) {
+        private boolean isConnectedTo(Node node, Set<Node> visited, double len) {
             if (n1 == node || n2 == node) {
                 return true;
             }
@@ -461,7 +462,7 @@ public abstract class UnconnectedWays extends Test {
                         for (Node next : nextNodes) {
                             final boolean containsN = visited.contains(next);
                             visited.add(next);
-                            if (!containsN && isConnectedTo(next, way, visited,
+                            if (!containsN && isConnectedTo(next, visited,
                                     len + node.getCoor().greatCircleDistance(next.getCoor()))) {
                                 return true;
                             }
@@ -477,20 +478,17 @@ public abstract class UnconnectedWays extends Test {
             if (coord == null)
                 return Double.NaN;
             EastNorth closest = Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), coord);
-            Node x = new Node();
-            x.setEastNorth(closest);
-            return x.getCoor().greatCircleDistance(n.getCoor());
-
+            return n.getCoor().greatCircleDistance(ProjectionRegistry.getProjection().eastNorth2latlon(closest));
         }
 
-        boolean nearby(Node n, double dist) {
+        private boolean nearby(Node n, double dist) {
             if (w.containsNode(n))
                 return false;
             double d = getDist(n);
             return !Double.isNaN(d) && d < dist;
         }
 
-        BBox getBounds(double fudge) {
+        private BBox getBounds(double fudge) {
             double x1 = n1.getCoor().lon();
             double x2 = n2.getCoor().lon();
             if (x1 > x2) {
@@ -538,8 +536,7 @@ public abstract class UnconnectedWays extends Test {
         private boolean barrierBetween(Node endnode) {
             EastNorth en = endnode.getEastNorth();
             EastNorth closest = Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), en);
-            Node x = new Node(closest);
-            BBox bbox = new BBox(endnode.getCoor(), x.getCoor());
+            BBox bbox = new BBox(endnode.getCoor(), ProjectionRegistry.getProjection().eastNorth2latlon(closest));
             for (Way nearbyWay : ds.searchWays(bbox)) {
                 if (nearbyWay != w && nearbyWay.isUsable() && nearbyWay.hasTag("barrier")
                         && !endnode.getParentWays().contains(nearbyWay)) {
@@ -557,7 +554,6 @@ public abstract class UnconnectedWays extends Test {
             }
             return false;
         }
-
     }
 
     List<MyWaySegment> getWaySegments(Way w) {
