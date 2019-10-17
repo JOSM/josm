@@ -826,6 +826,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.junit.*"/>
             <ignore classname="org.jvnet.*"/>
             <ignore classname="org.kxml2.*"/>
+            <ignore classname="org.mozilla.*"/>
             <ignore classname="org.objectweb.*"/>
             <ignore classname="org.opentest4j.*"/>
             <ignore classname="org.osgi.*"/>
