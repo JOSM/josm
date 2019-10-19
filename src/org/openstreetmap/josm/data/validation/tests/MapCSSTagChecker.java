@@ -681,18 +681,6 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         @Override
-        public synchronized boolean equals(Object obj) {
-            return super.equals(obj)
-                    || (obj instanceof TagCheck && rule.equals(((TagCheck) obj).rule))
-                    || (obj instanceof GroupedMapCSSRule && rule.equals(obj));
-        }
-
-        @Override
-        public synchronized int hashCode() {
-            return Objects.hash(super.hashCode(), rule);
-        }
-
-        @Override
         public String toString() {
             return "MapCSSTagCheckerAndRule [rule=" + rule + ']';
         }
@@ -929,8 +917,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                 addPrimitive(ds, p);
                 final Collection<TestError> pErrors = getErrorsForPrimitive(p, true, checksToRun);
                 Logging.debug("- Errors: {0}", pErrors);
-                @SuppressWarnings({"EqualsBetweenInconvertibleTypes", "EqualsIncompatibleType"})
-                final boolean isError = pErrors.stream().anyMatch(e -> e.getTester().equals(check.rule));
+                final boolean isError = pErrors.stream().anyMatch(e -> e.getTester() instanceof MapCSSTagCheckerAndRule
+                        && ((MapCSSTagCheckerAndRule) e.getTester()).rule.equals(check.rule));
                 if (isError != i.getValue()) {
                     assertionErrors.add(MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
                             check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys()));
@@ -956,20 +944,6 @@ public class MapCSSTagChecker extends Test.TagTest {
             ((Relation) p).getMembers().forEach(m -> addPrimitive(ds, m.getMember()));
         }
         ds.addPrimitive(p);
-    }
-
-    @Override
-    public synchronized int hashCode() {
-        return Objects.hash(super.hashCode(), checks);
-    }
-
-    @Override
-    public synchronized boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (!super.equals(obj)) return false;
-        MapCSSTagChecker that = (MapCSSTagChecker) obj;
-        return Objects.equals(checks, that.checks);
     }
 
     /**

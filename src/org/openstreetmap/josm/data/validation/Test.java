@@ -7,7 +7,6 @@ import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -38,7 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author frsantos
  */
-public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
+public class Test implements OsmPrimitiveVisitor {
 
     protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new NotOutsideDataSourceArea();
     protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA_STRICT = new InDataSourceArea(true);
@@ -362,25 +361,6 @@ public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
      */
     protected static final boolean isResidentialArea(OsmPrimitive p) {
         return p.hasTag("landuse", "residential");
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, description);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Test test = (Test) obj;
-        return Objects.equals(name, test.name) &&
-               Objects.equals(description, test.description);
-    }
-
-    @Override
-    public int compareTo(Test t) {
-        return name.compareTo(t.name);
     }
 
     /**

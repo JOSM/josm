@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.TreeSet;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -151,20 +150,4 @@ public class SharpAngles extends Test {
         maxAngle = angle;
     }
 
-    @Override
-    public int hashCode() {
-        return 31 * super.hashCode() + Objects.hash(ignoreHighways, maxAngle, maxLength);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj) || getClass() != obj.getClass())
-            return false;
-        SharpAngles other = (SharpAngles) obj;
-        return Objects.equals(ignoreHighways, other.ignoreHighways)
-                && Double.doubleToLongBits(maxAngle) == Double.doubleToLongBits(other.maxAngle)
-                && Double.doubleToLongBits(maxLength) == Double.doubleToLongBits(other.maxLength);
-    }
 }
