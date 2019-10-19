@@ -1810,3 +1810,10 @@ way[/^is_in:.*$/] {
   fixChangeKey: "tower:type => line_attachment";
   group: tr("deprecated tagging");
 }
+node[pole:type=anchor],
+node[pole:type=suspension] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("line_attachment=", "{0.value}");
+  fixChangeKey: "pole:type => line_attachment";
+  group: tr("deprecated tagging");
+}
