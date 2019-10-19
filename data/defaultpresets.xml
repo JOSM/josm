@@ -6111,6 +6111,13 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Tobacco -->
+        <item name="E-cigarette" icon="presets/shop/e-cigarette.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=e-cigarette" />
+            <space />
+            <key key="shop" value="e-cigarette" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- E-cigarette -->
         <item name="Hairdresser/Barber" icon="presets/shop/hairdresser.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=hairdresser" />
             <space />

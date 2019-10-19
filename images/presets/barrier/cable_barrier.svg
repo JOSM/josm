@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="cable_barrier3.svg">
+   sodipodi:docname="cable_barrier.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="24.296875"
-     inkscape:cx="5.4318085"
-     inkscape:cy="8.3709857"
+     inkscape:cx="6.0697506"
+     inkscape:cy="5.5722719"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
@@ -90,18 +90,6 @@
        x="13"
        y="1044.3622"
        ry="0.5" />
-    <path
-       style="fill:none;stroke:#666666;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m -4,1035.8623 c 2.2324577,0.8386 4.39518274,0.4723 6.5517685,0 2.9006649,0.8773 6.0089953,1.5163 11.0302255,0 1.720411,0.8318 3.562515,0.481 5.418006,0"
-       id="path820"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="fill:none;stroke:#666666;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m -4,1038.8623 c 2.1367973,0.827 4.39815715,0.4871 6.6752412,0 4.8649488,1.3225 7.8505658,0.6456 10.8244368,0 1.356101,0.4734 2.822122,0.8378 5.500322,0"
-       id="path822"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#666666;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -2,1045.8622 c 20,0 20,0 20,0"
