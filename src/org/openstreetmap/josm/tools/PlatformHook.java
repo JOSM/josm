@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -161,23 +160,6 @@ public interface PlatformHook {
      */
     default String getOSBuildNumber() {
         return "";
-    }
-
-    /**
-     * Setup system keystore to add JOSM HTTPS certificate (for remote control).
-     * @param entryAlias The entry alias to use
-     * @param trustedCert the JOSM certificate for localhost
-     * @return {@code true} if something has changed as a result of the call (certificate installation, etc.)
-     * @throws KeyStoreException in case of error
-     * @throws IOException in case of error
-     * @throws CertificateException in case of error
-     * @throws NoSuchAlgorithmException in case of error
-     * @since 7343
-     */
-    default boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        // TODO setup HTTPS certificate on Unix and OS X systems
-        return false;
     }
 
     /**

@@ -26,12 +26,9 @@ import java.nio.file.Paths;
 import java.security.AllPermission;
 import java.security.CodeSource;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.Policy;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -927,17 +924,6 @@ public class MainApplication {
         }
 
         SwingUtilities.invokeLater(new GuiFinalizationWorker(args, proxySelector));
-
-        if (PlatformManager.isPlatformWindows()) {
-            try {
-                // Check for insecure certificates to remove.
-                // This is Windows-dependant code but it can't go to preStartupHook (need i18n)
-                // neither startupHook (need to be called before remote control)
-                PlatformHookWindows.removeInsecureCertificates();
-            } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
-                Logging.error(e);
-            }
-        }
 
         if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
             RemoteControl.start();

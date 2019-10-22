@@ -40,15 +40,6 @@ public class PlatformHookOsxTest {
     }
 
     /**
-     * Test method for {@code PlatformHookOsx#setupHttpsCertificate}
-     * @throws Exception if an error occurs
-     */
-    @Test
-    public void testSetupHttpsCertificate() throws Exception {
-        assertFalse(hook.setupHttpsCertificate(null, null));
-    }
-
-    /**
      * Test method for {@code PlatformHookOsx#afterPrefStartupHook}
      */
     @Test

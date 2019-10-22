@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Manager class for remote control operations.
@@ -27,14 +26,6 @@ public class RemoteControl {
     public static final BooleanProperty PROP_REMOTECONTROL_ENABLED = new BooleanProperty("remotecontrol.enabled", false);
 
     /**
-     * If the remote control feature is enabled or disabled for HTTPS. If disabled,
-     * only HTTP access will be available.
-     * @since 7335
-     */
-    public static final BooleanProperty PROP_REMOTECONTROL_HTTPS_ENABLED = new BooleanProperty(
-            "remotecontrol.https.enabled", false);
-
-    /**
      * RemoteControl HTTP protocol version. Change minor number for compatible
      * interface extensions. Change major number in case of incompatible
      * changes.
@@ -47,9 +38,6 @@ public class RemoteControl {
      */
     public static void start() {
         RemoteControlHttpServer.restartRemoteControlHttpServer();
-        if (supportsHttps()) {
-            RemoteControlHttpsServer.restartRemoteControlHttpsServer();
-        }
     }
 
     /**
@@ -58,23 +46,6 @@ public class RemoteControl {
      */
     public static void stop() {
         RemoteControlHttpServer.stopRemoteControlHttpServer();
-        if (supportsHttps()) {
-            RemoteControlHttpsServer.stopRemoteControlHttpsServer();
-        }
-    }
-
-    /**
-     * Determines if the current JVM support HTTPS remote control.
-     * @return {@code true} if the JVM provides {@code sun.security.x509} classes
-     * @since 12703
-     */
-    public static boolean supportsHttps() {
-        try {
-            return Class.forName("sun.security.x509.GeneralName") != null;
-        } catch (ClassNotFoundException | SecurityException e) {
-            Logging.trace(e);
-            return false;
-        }
     }
 
     /**

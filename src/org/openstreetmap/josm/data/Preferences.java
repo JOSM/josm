@@ -82,6 +82,8 @@ import org.xml.sax.SAXException;
 public class Preferences extends AbstractPreferences {
 
     private static final String[] OBSOLETE_PREF_KEYS = {
+        "remotecontrol.https.enabled", /* remove entry after Dec. 2019 */
+        "remotecontrol.https.port", /* remove entry after Dec. 2019 */
     };
 
     private static final long MAX_AGE_DEFAULT_PREFERENCES = TimeUnit.DAYS.toSeconds(50);

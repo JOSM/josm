@@ -6,14 +6,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
 import static org.junit.Assert.fail;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.security.KeyStore;
-import java.security.KeyStore.TrustedCertificateEntry;
 import java.security.KeyStoreException;
 import java.util.Collection;
 
@@ -21,8 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
-import org.openstreetmap.josm.io.remotecontrol.RemoteControlTest;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 import mockit.Expectations;
@@ -63,48 +58,6 @@ public class PlatformHookWindowsTest {
         } else {
             try {
                 PlatformHookWindows.getRootKeystore();
-                fail("Expected KeyStoreException");
-            } catch (KeyStoreException e) {
-                Logging.info(e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Test method for {@code PlatformHookWindows#removeInsecureCertificates}
-     * @throws Exception if an error occurs
-     */
-    @Test
-    public void testRemoveInsecureCertificates() throws Exception {
-        if (PlatformManager.isPlatformWindows()) {
-            PlatformHookWindows.removeInsecureCertificates();
-        } else {
-            try {
-                PlatformHookWindows.removeInsecureCertificates();
-                fail("Expected KeyStoreException");
-            } catch (KeyStoreException e) {
-                Logging.info(e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Test method for {@code PlatformHookWindows#setupHttpsCertificate}
-     * @throws Exception if an error occurs
-     */
-    @Test
-    public void testSetupHttpsCertificate() throws Exception {
-        // appveyor doesn't like us tinkering with the root keystore
-        assumeFalse(PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR")));
-
-        RemoteControlTest.deleteKeystore();
-        KeyStore ks = RemoteControlHttpsServer.loadJosmKeystore();
-        TrustedCertificateEntry trustedCert = new KeyStore.TrustedCertificateEntry(ks.getCertificate(ks.aliases().nextElement()));
-        if (PlatformManager.isPlatformWindows()) {
-            hook.setupHttpsCertificate(RemoteControlHttpsServer.ENTRY_ALIAS, trustedCert);
-        } else {
-            try {
-                hook.setupHttpsCertificate(RemoteControlHttpsServer.ENTRY_ALIAS, trustedCert);
                 fail("Expected KeyStoreException");
             } catch (KeyStoreException e) {
                 Logging.info(e.getMessage());
