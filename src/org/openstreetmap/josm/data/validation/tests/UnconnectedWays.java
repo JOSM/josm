@@ -93,7 +93,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean ignoreUnconnectedEndNode(Node n) {
-            return n.hasTag(HIGHWAY, "turning_circle", "bus_stop")
+            return n.hasTag(HIGHWAY, "turning_circle", "bus_stop", "elevator")
                     || n.hasTag("amenity", "parking_entrance")
                     || n.isKeyTrue("noexit")
                     || n.hasKey("entrance", "barrier")
