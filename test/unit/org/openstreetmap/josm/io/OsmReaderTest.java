@@ -12,11 +12,13 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -73,6 +75,16 @@ public class OsmReaderTest {
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
             assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE).allPrimitives().isEmpty());
         }
+        testUnknown(osm, true);
+        testUnknown(osm, false);
+    }
+
+    private static void testUnknown(String osm, boolean parseUnknownAttributes) throws Exception {
+        try (InputStream in = new ByteArrayInputStream(
+                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
+            assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, parseUnknownAttributes).allPrimitives()
+                    .isEmpty());
+        }
     }
 
     /**
@@ -126,6 +138,20 @@ public class OsmReaderTest {
     }
 
     /**
+     * Test valid data.
+     * @param osm OSM data without XML prefix
+     * @param parseUnknownAttributes if true, attempt to parse unknown xml attributes
+     * @return parsed data set
+     * @throws Exception if any error occurs
+     */
+    private static DataSet testValidData(String osm, boolean parseUnknownAttributes) throws Exception {
+        try (InputStream in = new ByteArrayInputStream(
+                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
+            return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, parseUnknownAttributes);
+        }
+    }
+
+    /**
      * Test invalid data.
      * @param osm OSM data without XML prefix
      * @param expectedError expected error message
@@ -135,6 +161,28 @@ public class OsmReaderTest {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
             OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+            fail("should throw exception");
+        } catch (IllegalDataException e) {
+            assertEquals(expectedError, e.getMessage());
+        }
+        testInvalidData(osm, expectedError, true);
+        testInvalidData(osm, expectedError, false);
+    }
+
+    /**
+     * Test invalid data.
+     *
+     * @param osm                    OSM data without XML prefix
+     * @param expectedError          expected error message
+     * @param parseUnknownAttributes if true, attempt to parse unknown xml
+     *                               attributes
+     * @throws Exception if any error occurs
+     */
+    private static void testInvalidData(String osm, String expectedError, boolean parseUnknownAttributes)
+            throws Exception {
+        try (InputStream in = new ByteArrayInputStream(
+                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
+            OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, parseUnknownAttributes);
             fail("should throw exception");
         } catch (IllegalDataException e) {
             assertEquals(expectedError, e.getMessage());
@@ -274,7 +322,10 @@ public class OsmReaderTest {
      */
     @Test
     public void testGdprChangeset() throws Exception {
-        testValidData("<osm version='0.6'><node id='1' version='1' changeset='0'/></osm>");
+        String gdprChangeset = "<osm version='0.6'><node id='1' version='1' changeset='0'/></osm>";
+        testValidData(gdprChangeset);
+        testValidData(gdprChangeset, true);
+        testValidData(gdprChangeset, false);
     }
 
     /**
@@ -349,12 +400,33 @@ public class OsmReaderTest {
      */
     @Test
     public void testRemark() throws Exception {
-        DataSet ds = testValidData(
-                "<osm version=\"0.6\" generator=\"Overpass API 0.7.55.4 3079d8ea\">\r\n" +
+        String query = "<osm version=\"0.6\" generator=\"Overpass API 0.7.55.4 3079d8ea\">\r\n" +
                 "<note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>\r\n" +
                 "<meta osm_base=\"2018-08-30T12:46:02Z\" areas=\"2018-08-30T12:40:02Z\"/>\r\n" +
                 "<remark>runtime error: Query ran out of memory in \"query\" at line 5.</remark>\r\n" +
-                "</osm>");
-        assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
+                "</osm>";
+        for (DataSet ds : Arrays.asList(testValidData(query), testValidData(query, true), testValidData(query, false))) {
+            assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
+        }
+    }
+
+    /**
+     * Test reading a file with unknown attributes in osm primitives
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testUnknownAttributeTags() throws Exception {
+        String testData = "<osm version=\"0.6\" generator=\"fake generator\">"
+                + "<node id='1' version='1' visible='true' changeset='82' randomkey='randomvalue'></node>" + "</osm>";
+        DataSet ds = testValidData(testData);
+        assertEquals(0, ds.getNodes().iterator().next().getKeys().size());
+
+        ds = testValidData(testData, true);
+        Node firstNode = ds.getNodes().iterator().next();
+        assertEquals(1, firstNode.getKeys().size());
+        assertEquals("randomvalue", firstNode.get("randomkey"));
+
+        ds = testValidData(testData, false);
+        assertEquals(0, ds.getNodes().iterator().next().getKeys().size());
     }
 }

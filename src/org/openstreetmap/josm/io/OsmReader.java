@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,13 +41,42 @@ public class OsmReader extends AbstractReader {
 
     protected XMLStreamReader parser;
 
+    protected boolean convertUnknownToTags;
+
+    private static final Set<String> COMMON_XML_ATTRIBUTES = new TreeSet<>();
+
+    static {
+        COMMON_XML_ATTRIBUTES.add("id");
+        COMMON_XML_ATTRIBUTES.add("timestamp");
+        COMMON_XML_ATTRIBUTES.add("user");
+        COMMON_XML_ATTRIBUTES.add("uid");
+        COMMON_XML_ATTRIBUTES.add("visible");
+        COMMON_XML_ATTRIBUTES.add("version");
+        COMMON_XML_ATTRIBUTES.add("action");
+        COMMON_XML_ATTRIBUTES.add("changeset");
+        COMMON_XML_ATTRIBUTES.add("lat");
+        COMMON_XML_ATTRIBUTES.add("lon");
+    }
+
     /**
      * constructor (for private and subclasses use only)
      *
      * @see #parseDataSet(InputStream, ProgressMonitor)
      */
     protected OsmReader() {
+        this(false);
+    }
+
+    /**
+     * constructor (for private and subclasses use only)
+     * @param convertUnknownToTags if true, keep unknown xml attributes as tags
+     *
+     * @see #parseDataSet(InputStream, ProgressMonitor)
+     * @since 15470
+     */
+    protected OsmReader(boolean convertUnknownToTags) {
         // Restricts visibility
+        this.convertUnknownToTags = convertUnknownToTags;
     }
 
     protected void setParser(XMLStreamReader parser) {
@@ -393,6 +424,14 @@ public class OsmReader extends AbstractReader {
             parseVersion(current, parser.getAttributeValue(null, "version"));
             parseAction(current, parser.getAttributeValue(null, "action"));
             parseChangeset(current, parser.getAttributeValue(null, "changeset"));
+
+            if (convertUnknownToTags) {
+                for (int i = 0; i < parser.getAttributeCount(); i++) {
+                    if (!COMMON_XML_ATTRIBUTES.contains(parser.getAttributeLocalName(i))) {
+                        parseTag(current, parser.getAttributeLocalName(i), parser.getAttributeValue(i));
+                    }
+                }
+            }
         } catch (UncheckedParseException | XMLStreamException e) {
             throw new IllegalDataException(e);
         }
@@ -457,6 +496,23 @@ public class OsmReader extends AbstractReader {
      * @throws IllegalArgumentException if source is null
      */
     public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
-        return new OsmReader().doParseDataSet(source, progressMonitor);
+        return parseDataSet(source, progressMonitor, false);
+    }
+
+    /**
+     * Parse the given input source and return the dataset.
+     *
+     * @param source the source input stream. Must not be null.
+     * @param progressMonitor the progress monitor. If null, {@link NullProgressMonitor#INSTANCE} is assumed
+     * @param convertUnknownToTags true if unknown xml attributes should be kept as tags
+     *
+     * @return the dataset with the parsed data
+     * @throws IllegalDataException if an error was found while parsing the data from the source
+     * @throws IllegalArgumentException if source is null
+     * @since 15470
+     */
+    public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor, boolean convertUnknownToTags)
+            throws IllegalDataException {
+        return new OsmReader(convertUnknownToTags).doParseDataSet(source, progressMonitor);
     }
 }
