@@ -142,7 +142,8 @@ public interface Tagged {
      * @since 13668
      */
     default boolean hasTag(String key, Collection<String> values) {
-        return values.contains(get(key));
+        String v = get(key);
+        return v != null && values.contains(v);
     }
 
     /**
