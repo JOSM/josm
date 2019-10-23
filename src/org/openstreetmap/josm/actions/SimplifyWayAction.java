@@ -133,7 +133,8 @@ public class SimplifyWayAction extends JosmAction {
         JPanel q = new JPanel(new GridBagLayout());
         q.add(new JLabel(tr("Maximum error (meters): ")));
         JSpinner n = new JSpinner(new SpinnerNumberModel(
-                s.getDouble(keyError, 3.0), 0.01, 100, 0.5));
+                s.getDouble(keyError, 3.0), 0.01, null, 0.5));
+        ((JSpinner.DefaultEditor) n.getEditor()).getTextField().setColumns(4);
         q.add(n);
         q.setBorder(BorderFactory.createEmptyBorder(14, 0, 10, 0));
         p.add(q, GBC.eol());
