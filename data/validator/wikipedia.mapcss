@@ -1,4 +1,4 @@
-/* validation for the wikipedia=* tag - see tickets #8383, #14425 */
+/* validation for the wikipedia=* tag - see tickets #8383, #14425, #18251 */
 
 /* If there is no language at all, this is broken. Also catches 'wikipedia' used as 'email', 'website', 'ele' [sic!] ... */
 *[wikipedia][wikipedia !~ /(?i)^[-a-z]{2,12}:/] {
@@ -51,6 +51,14 @@
   fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("wikipedia")),1), trim(replace(URL_decode(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),2)), "_", " ")));
   assertMatch: "node wikipedia=en:Foo%27s";
   assertNoMatch: "node wikipedia=en:Foo";
+}
+
+*[/^wikipedia:[-a-z]{2,12}$/][/^wikipedia:[-a-z]{2,12}$/ =~ /(?i).*%[0-9A-F][0-9A-F]/] {
+  throwError: tr("{0} tag should not have URL-encoded values like ''%27''", "{0.key}");
+  /* fixAdd: concat("{0.key}", "=", get(regexp_match("(?i)^([-a-z]+:)(.*)$", tag("{0.key}")),1), trim(replace(URL_decode(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("{0.key}")),2)), "_", " "))); */
+    /* tag("{0.key}") is not yet supported */
+  assertMatch: "node wikipedia:de=Foo%27s";
+  assertNoMatch: "node wikipedia:de=Foo";
 }
 
 *[wikipedia =~ /(?i)^[-a-z]{2,12}: /] {
@@ -137,9 +145,9 @@
   assertNoMatch: "node foo=bar";
 }
 
-/* Wikipedia without wikidata */
+/* Wikipedia:lang without wikipedia */
 *[!wikipedia][/^wikipedia:/] {
-  throwWarning: tr("wikipedia tag is not set, but a ''{0}'' tag is. Make sure to use wikipedia=language:value together with wikidata tag.", "{1.key}");
+  throwWarning: tr("''{0}'' tag is set, but no ''{1}'' tag. Make sure to set ''wikipedia=language:value'' for the main article and optional ''wikipedia:language=value'' only for additional articles that are not just other language variants of the main article.", "{1.key}", "{0.key}");
   assertMatch: "node wikipedia:en=a";
   assertNoMatch: "node wikipedia=a wikipedia:en=b";
   assertNoMatch: "node wikipedia=Foo";
