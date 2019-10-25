@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -178,6 +178,12 @@ public final class LanguageInfo {
      * @since 8232
      */
     public static String getDisplayName(Locale locale) {
+        String currentCountry = Locale.getDefault().getCountry();
+        String localeCountry = locale.getCountry();
+        // Don't display locale country if country has been forced to current country at JOSM startup
+        if (currentCountry.equals(localeCountry) && !I18n.hasCode(getLanguageCodes(locale).get(0))) {
+            return new Locale(locale.getLanguage(), "", locale.getVariant()).getDisplayName();
+        }
         return locale.getDisplayName();
     }
 
@@ -262,8 +268,8 @@ public final class LanguageInfo {
      * @return list of codes
      * @since 8283
      */
-    public static Collection<String> getLanguageCodes(Locale l) {
-        Collection<String> list = new LinkedList<>();
+    public static List<String> getLanguageCodes(Locale l) {
+        List<String> list = new LinkedList<>();
         if (l == null)
             l = Locale.getDefault();
         String lang = l.getLanguage();
