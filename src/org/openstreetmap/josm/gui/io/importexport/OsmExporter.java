@@ -65,25 +65,25 @@ public class OsmExporter extends FileExporter {
      * Exports OSM data to the given file.
      * @param file Output file
      * @param layer Data layer. Must be an instance of {@link OsmDataLayer}.
-     * @param noBackup if {@code true}, the potential backup file created if the output file already exists will be deleted
-     *                 after a successful export
+     * @param isAutosave if {@code true}, the potential backup file created if the output file already exists will be deleted
+     *                   after a successful export and post-save events won't be fired
      * @throws IOException in case of IO errors
      * @throws InvalidPathException when file name cannot be converted into a Path
      * @throws IllegalArgumentException if {@code layer} is not an instance of {@code OsmDataLayer}
      */
-    public void exportData(File file, Layer layer, boolean noBackup) throws IOException {
+    public void exportData(File file, Layer layer, boolean isAutosave) throws IOException {
         if (!(layer instanceof OsmDataLayer)) {
             throw new IllegalArgumentException(
                     MessageFormat.format("Expected instance of OsmDataLayer. Got ''{0}''.", layer.getClass().getName()));
         }
-        save(file, (OsmDataLayer) layer, noBackup);
+        save(file, (OsmDataLayer) layer, isAutosave);
     }
 
     protected static OutputStream getOutputStream(File file) throws IOException {
         return Compression.getCompressedFileOutputStream(file);
     }
 
-    private void save(File file, OsmDataLayer layer, boolean noBackup) throws IOException {
+    private void save(File file, OsmDataLayer layer, boolean isAutosave) throws IOException {
         File tmpFile = null;
         try {
             if (file.exists() && !file.canWrite()) {
@@ -98,10 +98,12 @@ public class OsmExporter extends FileExporter {
             }
 
             doSave(file, layer);
-            if ((noBackup || !Config.getPref().getBoolean("save.keepbackup", false)) && tmpFile != null) {
+            if ((isAutosave || !Config.getPref().getBoolean("save.keepbackup", false)) && tmpFile != null) {
                 Utils.deleteFile(tmpFile);
             }
-            layer.onPostSaveToFile();
+            if (!isAutosave) {
+                layer.onPostSaveToFile();
+            }
         } catch (IOException | InvalidPathException e) {
             Logging.error(e);
 
