@@ -11,9 +11,12 @@ import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.OsmData;
+import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Ancestor for all actions that want to work with relation collection and
@@ -51,6 +54,11 @@ public abstract class AbstractRelationAction extends AbstractAction implements I
         setEnabled(!relations.isEmpty());
     }
 
+    protected final boolean canModify() {
+        SubclassFilteredCollection<IRelation<?>, Relation> filteredRelations = Utils.filteredCollection(relations, Relation.class);
+        return OsmUtils.isOsmCollectionEditable(filteredRelations) && filteredRelations.parallelStream().anyMatch(r -> !r.isDeleted());
+    }
+
     protected final boolean canDownload() {
         if (relations.isEmpty()) {
             return false;
@@ -59,7 +67,7 @@ public abstract class AbstractRelationAction extends AbstractAction implements I
         return !NetworkManager.isOffline(OnlineResource.OSM_API)
             && ds != null && !ds.isLocked() && DownloadPolicy.BLOCKED != ds.getDownloadPolicy();
     }
-    
+
     protected void setHelpId(String helpId) {
         putValue("help", helpId);
     }

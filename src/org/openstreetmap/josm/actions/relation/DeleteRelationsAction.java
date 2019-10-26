@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.util.Collection;
 
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
-import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -51,6 +50,6 @@ public class DeleteRelationsAction extends AbstractRelationAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(OsmUtils.isOsmCollectionEditable(relations));
+        setEnabled(canModify());
     }
 }

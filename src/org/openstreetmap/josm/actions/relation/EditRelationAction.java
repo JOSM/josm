@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -86,16 +85,6 @@ public class EditRelationAction extends AbstractRelationAction {
 
     @Override
     protected void updateEnabledState() {
-        boolean enabled = false;
-        SubclassFilteredCollection<IRelation<?>, Relation> filteredRelations = Utils.filteredCollection(relations, Relation.class);
-        if (OsmUtils.isOsmCollectionEditable(filteredRelations)) {
-            for (Relation r : filteredRelations) {
-                if (!r.isDeleted()) {
-                    enabled = true;
-                    break;
-                }
-            }
-        }
-        setEnabled(enabled);
+        setEnabled(canModify());
     }
 }
