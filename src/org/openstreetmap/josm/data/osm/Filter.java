@@ -56,6 +56,19 @@ public class Filter extends SearchSetting implements Comparable<Filter> {
     }
 
     /**
+     * Constructs a new {@code Filter} from a {@code SearchSetting} and filter-specific fields from an existing Filter.
+     * @param setting {@code SearchSetting} to construct information from
+     * @param f {@code Filter} to construct filter-specific fields from
+     * @since 15477
+     */
+    public Filter(SearchSetting setting, Filter f) {
+        super(setting);
+        this.enable = f.enable;
+        this.hiding = f.hiding;
+        this.inverted = f.inverted;
+    }
+
+    /**
      * Constructs a new {@code Filter} from a preference entry.
      * @param e preference entry
      */

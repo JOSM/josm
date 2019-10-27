@@ -163,7 +163,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             Filter f = filterModel.getValue(index);
             SearchSetting searchSetting = SearchAction.showSearchDialog(f);
             if (searchSetting != null) {
-                filterModel.setValue(index, new Filter(searchSetting));
+                filterModel.setValue(index, new Filter(searchSetting, f));
             }
         }
     }
