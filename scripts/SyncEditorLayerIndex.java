@@ -49,6 +49,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.validation.routines.DomainValidator;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
@@ -117,6 +118,7 @@ public class SyncEditorLayerIndex {
     public static void main(String[] args) throws IOException, SAXException, ReflectiveOperationException {
         Locale.setDefault(Locale.ROOT);
         parseCommandLineArguments(args);
+        Config.setUrlsProvider(JosmUrls.getInstance());
         Preferences pref = new Preferences(JosmBaseDirectories.getInstance());
         Config.setPreferencesInstance(pref);
         pref.init(false);
