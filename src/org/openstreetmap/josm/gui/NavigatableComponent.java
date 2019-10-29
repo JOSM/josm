@@ -738,13 +738,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param newCenter new east/north center
      */
     public void smoothScrollTo(EastNorth newCenter) {
-        // FIXME make these configurable.
-        final int fps = 20;     // animation frames per second
-        final int speed = 1500; // milliseconds for full-screen-width pan
         final EastNorth oldCenter = getCenter();
         if (!newCenter.equals(oldCenter)) {
+            final int fps = Config.getPref().getInt("smooth.scroll.fps", 20);     // animation frames per second
+            final int speed = Config.getPref().getInt("smooth.scroll.speed", 1500); // milliseconds for full-screen-width pan
+            final int maxtime = Config.getPref().getInt("smooth.scroll.maxtime", 5000); // milliseconds maximum scroll time
             final double distance = newCenter.distance(oldCenter) / getScale();
             final double milliseconds = distance / getWidth() * speed;
+            if (milliseconds > maxtime) { // prevent overlong scroll time, speed up if necessary
+                milliseconds = maxtime;
+            }
             final double frames = milliseconds * fps / 1000;
             final EastNorth finalNewCenter = newCenter;
 
@@ -752,7 +755,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 @Override
                 public void run() {
                     for (int i = 0; i < frames; i++) {
-                        // FIXME - not use zoom history here
+                        // FIXME - do not use zoom history here
                         zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
                         try {
                             Thread.sleep(1000L / fps);
