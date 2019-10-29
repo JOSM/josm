@@ -744,7 +744,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             final int speed = Config.getPref().getInt("smooth.scroll.speed", 1500); // milliseconds for full-screen-width pan
             final int maxtime = Config.getPref().getInt("smooth.scroll.maxtime", 5000); // milliseconds maximum scroll time
             final double distance = newCenter.distance(oldCenter) / getScale();
-            final double milliseconds = distance / getWidth() * speed;
+            double milliseconds = distance / getWidth() * speed;
             if (milliseconds > maxtime) { // prevent overlong scroll time, speed up if necessary
                 milliseconds = maxtime;
             }
