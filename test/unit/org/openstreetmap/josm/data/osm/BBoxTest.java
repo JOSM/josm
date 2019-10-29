@@ -39,6 +39,26 @@ public class BBoxTest {
     }
 
     /**
+     * Unit test of method {@link BBox#bboxesAreFunctionallyEqual}
+     */
+    @Test
+    public void testBboxesAreFunctionallyEqual() {
+        BBox bbox1 = new BBox(0, 1, 1, 0);
+        BBox bbox2 = new BBox(0.1, 0.9, 0.9, 0.1);
+
+        assertFalse(BBox.bboxesAreFunctionallyEqual(bbox1, null, null));
+        assertFalse(BBox.bboxesAreFunctionallyEqual(null, bbox2, null));
+        assertFalse(BBox.bboxesAreFunctionallyEqual(null, null, null));
+
+        assertFalse(bbox1.bboxesAreFunctionallyEqual(bbox2, null));
+        assertTrue(bbox1.bboxesAreFunctionallyEqual(bbox2, 0.1));
+        bbox1.add(0, 1.1);
+        assertFalse(bbox1.bboxesAreFunctionallyEqual(bbox2, 0.1));
+        bbox1.add(2, 0);
+        assertFalse(bbox1.bboxesAreFunctionallyEqual(bbox2, 0.1));
+    }
+
+    /**
      * Test LatLon constructor which might result in invalid bbox
      */
     @Test

@@ -336,6 +336,36 @@ public class BBox {
     }
 
     /**
+     * Check if bboxes are functionally equal
+     * @param other The other bbox to compare with
+     * @param maxDifference The maximum difference (in degrees) between the bboxes. May be null.
+     * @return true if they are functionally equivalent
+     * @since 15483
+     */
+    public boolean bboxesAreFunctionallyEqual(BBox other, Double maxDifference) {
+        return bboxesAreFunctionallyEqual(this, other, maxDifference);
+    }
+
+    /**
+     * Check if bboxes are functionally equal
+     * @param bbox1 A bbox to compare with another bbox
+     * @param bbox2 The other bbox to compare with
+     * @param maxDifference The maximum difference (in degrees) between the bboxes. May be null.
+     * @return true if they are functionally equivalent
+     * @since 15483
+     */
+    public static boolean bboxesAreFunctionallyEqual(BBox bbox1, BBox bbox2, Double maxDifference) {
+        if (maxDifference == null) {
+            maxDifference = LatLon.MAX_SERVER_PRECISION;
+        }
+        return (bbox1 != null && bbox2 != null)
+                && (Math.abs(bbox1.getBottomRightLat() - bbox2.getBottomRightLat()) <= maxDifference
+                        && Math.abs(bbox1.getBottomRightLon() - bbox2.getBottomRightLon()) <= maxDifference
+                        && Math.abs(bbox1.getTopLeftLat() - bbox2.getTopLeftLat()) <= maxDifference
+                        && Math.abs(bbox1.getTopLeftLon() - bbox2.getTopLeftLon()) <= maxDifference);
+    }
+
+    /**
      * @return true if the bbox covers a part of the planets surface
      * Height and width must be non-negative, but may (both) be 0.
      * @since 11269
