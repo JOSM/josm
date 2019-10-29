@@ -175,7 +175,6 @@ public final class OsmValidator {
      * Initializes {@code OsmValidator}.
      */
     public static void initialize() {
-        checkValidatorDir();
         initializeGridDetail();
         loadIgnoredErrors();
     }
@@ -192,20 +191,6 @@ public final class OsmValidator {
         } catch (SecurityException e) {
             Logging.log(Logging.LEVEL_ERROR, null, e);
             return dir.getPath();
-        }
-    }
-
-    /**
-     * Check if validator directory exists (store ignored errors file)
-     */
-    private static void checkValidatorDir() {
-        File pathDir = new File(getValidatorDir());
-        try {
-            if (!pathDir.exists()) {
-                Utils.mkDirs(pathDir);
-            }
-        } catch (SecurityException e) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to check validator directory", e);
         }
     }
 
