@@ -340,9 +340,9 @@ public class BBox {
      * @param other The other bbox to compare with
      * @param maxDifference The maximum difference (in degrees) between the bboxes. May be null.
      * @return true if they are functionally equivalent
-     * @since 15483
+     * @since 15486
      */
-    public boolean bboxesAreFunctionallyEqual(BBox other, Double maxDifference) {
+    public boolean bboxIsFunctionallyEqual(BBox other, Double maxDifference) {
         return bboxesAreFunctionallyEqual(this, other, maxDifference);
     }
 
