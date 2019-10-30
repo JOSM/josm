@@ -50,12 +50,12 @@ public class BBoxTest {
         assertFalse(BBox.bboxesAreFunctionallyEqual(null, bbox2, null));
         assertFalse(BBox.bboxesAreFunctionallyEqual(null, null, null));
 
-        assertFalse(bbox1.bboxesAreFunctionallyEqual(bbox2, null));
-        assertTrue(bbox1.bboxesAreFunctionallyEqual(bbox2, 0.1));
+        assertFalse(bbox1.bboxIsFunctionallyEqual(bbox2, null));
+        assertTrue(bbox1.bboxIsFunctionallyEqual(bbox2, 0.1));
         bbox1.add(0, 1.1);
-        assertFalse(bbox1.bboxesAreFunctionallyEqual(bbox2, 0.1));
+        assertFalse(bbox1.bboxIsFunctionallyEqual(bbox2, 0.1));
         bbox1.add(2, 0);
-        assertFalse(bbox1.bboxesAreFunctionallyEqual(bbox2, 0.1));
+        assertFalse(bbox1.bboxIsFunctionallyEqual(bbox2, 0.1));
     }
 
     /**
