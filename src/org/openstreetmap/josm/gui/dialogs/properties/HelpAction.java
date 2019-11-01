@@ -76,10 +76,10 @@ public class HelpAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         if (tagTable.getSelectedRowCount() == 1) {
             int row = tagTable.getSelectedRow();
-            String key = Utils.encodeUrl(tagKeySupplier.apply(row));
+            String key = tagKeySupplier.apply(row);
             Map<String, Integer> m = tagValuesSupplier.apply(row);
             if (!m.isEmpty()) {
-                String val = Utils.encodeUrl(m.entrySet().iterator().next().getKey());
+                String val = m.entrySet().iterator().next().getKey();
                 MainApplication.worker.execute(() -> displayTagHelp(key, val));
             }
         } else if (membershipTable != null && membershipTable.getSelectedRowCount() == 1) {
