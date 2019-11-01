@@ -9,9 +9,11 @@ ALTERNATIVE_JDK="`readlink -n -f /etc/alternatives/java`"
 # Let's get the current architecture -- needed for multiarchified Java
 ARCH="`dpkg --print-architecture 2> /dev/null || true`"
 
+JAVA_CMDS="$JAVA_HOME/bin/java"
+
 # If OpenJDK is only available headless, do not try it
-if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null ; then
-	JAVA_CMDS="$JAVA_HOME/bin/java"
+if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null \
+|| dpkg --get-selections 'openjdk-*-jre:$ARCH' | grep install$ > /dev/null ; then
 	# LTS versions in decreased order
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java"
@@ -22,9 +24,9 @@ if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null ; then
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-9-openjdk/bin/java /usr/lib/jvm/java-9-openjdk-$ARCH/bin/java"
 	# Development version
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-14-openjdk/bin/java /usr/lib/jvm/java-14-openjdk-$ARCH/bin/java"
-else
-	JAVA_CMDS="$JAVA_HOME/bin/java /usr/bin/java"
 fi
+# Undetermined version
+JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/default-java/bin/java /usr/bin/java"
 
 if [ -f /etc/default/josm ]; then
     . /etc/default/josm
