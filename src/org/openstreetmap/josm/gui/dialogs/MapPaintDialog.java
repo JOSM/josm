@@ -36,7 +36,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -73,6 +72,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.StayOpenPopupMenu;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -680,7 +680,7 @@ public class MapPaintDialog extends ToggleDialog {
     /**
      * The popup menu displayed when right-clicking a map paint entry
      */
-    public class MapPaintPopup extends JPopupMenu {
+    public class MapPaintPopup extends StayOpenPopupMenu {
         /**
          * Constructs a new {@code MapPaintPopup}.
          */
