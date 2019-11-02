@@ -52,12 +52,12 @@ public class StayOpenPopupMenu extends JPopupMenu {
         // and makes the popup menu disappear. Probably related to https://bugs.openjdk.java.net/browse/JDK-8225698
         if (PlatformManager.isPlatformOsx()) {
             try {
-                Class<?> AppContextClass = Class.forName("sun.awt.AppContext");
-                Field tableField = AppContextClass.getDeclaredField("table");
+                Class<?> appContextClass = Class.forName("sun.awt.AppContext");
+                Field tableField = appContextClass.getDeclaredField("table");
                 ReflectionUtils.setObjectsAccessible(tableField);
                 Object mouseGrabber = null;
                 for (Entry<?, ?> e : ((Map<?, ?>)
-                        tableField.get(AppContextClass.getMethod("getAppContext").invoke(AppContextClass))).entrySet()) {
+                        tableField.get(appContextClass.getMethod("getAppContext").invoke(appContextClass))).entrySet()) {
                     if (MOUSE_GRABBER_KEY.equals(Objects.toString(e.getKey()))) {
                         mouseGrabber = e.getValue();
                         break;

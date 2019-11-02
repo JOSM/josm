@@ -41,7 +41,7 @@ public interface IGpxTrack extends IWithAttributes {
 
     /**
      * Sets the color of this track. Not necessarily supported by all implementations.
-     * @param color
+     * @param color color of this track
      * @since 15496
      */
     default void setColor(Color color) {}

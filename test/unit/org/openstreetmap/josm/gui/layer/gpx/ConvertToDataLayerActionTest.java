@@ -140,18 +140,21 @@ public class ConvertToDataLayerActionTest {
         assertEquals("Conversion " + originalGpx + " -> " + expectedOsm + " didn't match!", nodesExpected, nodes);
 
         List<String> ways = osm.getWays().stream()
-                .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).collect(Collectors.toList()).toString())
+                .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream()
+                        .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).collect(Collectors.toList()).toString())
                 .sorted()
                 .collect(Collectors.toList());
 
         List<String> waysExpected = osmExpected.getWays().stream()
-                .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).collect(Collectors.toList()).toString())
+                .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream()
+                        .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).collect(Collectors.toList()).toString())
                 .sorted()
                 .collect(Collectors.toList());
 
         assertEquals("Conversion " + originalGpx + " -> " + expectedOsm + " didn't match!", waysExpected, ways);
 
-        assertEquals("Conversion " + originalGpx + " -> " + expectedOsm + " didn't match!", osmExpected.allPrimitives().size(), osm.allPrimitives().size());
+        assertEquals("Conversion " + originalGpx + " -> " + expectedOsm + " didn't match!", osmExpected.allPrimitives().size(),
+                osm.allPrimitives().size());
     }
 
     /**

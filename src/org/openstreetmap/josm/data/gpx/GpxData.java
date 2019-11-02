@@ -1207,9 +1207,9 @@ public class GpxData extends WithAttributes implements Data {
         /**
          * Creates a schema with prefix, URI and location.
          * Does NOT try to determine prefix from URI!
-         * @param prefix
-         * @param uri
-         * @param location
+         * @param prefix XML namespace prefix
+         * @param uri XML namespace URI
+         * @param location XML namespace location
          */
         public XMLNamespace(String prefix, String uri, String location) {
             this.prefix = prefix;

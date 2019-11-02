@@ -174,7 +174,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * Used to temporarily store namespaces from the GPX file in case the user converts back and forth.
      * Will not be saved to .osm files, but that's not necessary because GPX files won't automatically be overridden after that.
      */
-    private List<XMLNamespace> GPXNamespaces;
+    private List<XMLNamespace> gpxNamespaces;
 
     /**
      * Constructs a new {@code DataSet}.
@@ -1205,15 +1205,15 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * @return the GPXNamespaces or <code>null</code>
      */
     public List<XMLNamespace> getGPXNamespaces() {
-        return GPXNamespaces;
+        return gpxNamespaces;
     }
 
     /**
      * Sets the GPX (XML) namespaces
-     * @param GPXNamespaces the GPXNamespaces to set
+     * @param gpxNamespaces the GPXNamespaces to set
      */
-    public void setGPXNamespaces(List<XMLNamespace> GPXNamespaces) {
-        this.GPXNamespaces = GPXNamespaces;
+    public void setGPXNamespaces(List<XMLNamespace> gpxNamespaces) {
+        this.gpxNamespaces = gpxNamespaces;
     }
 
     /**

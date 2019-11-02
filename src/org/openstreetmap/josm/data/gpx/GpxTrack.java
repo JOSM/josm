@@ -94,9 +94,9 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
     }
 
     private void setColorExtension(Color color) {
-        getExtensions().findAndRemove("gpxx",  "DisplayColor");
+        getExtensions().findAndRemove("gpxx", "DisplayColor");
         if (color == null) {
-            getExtensions().findAndRemove("gpxd",  "color");
+            getExtensions().findAndRemove("gpxd", "color");
         } else {
             getExtensions().addOrUpdate("gpxd", "color", String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue()));
         }

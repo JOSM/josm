@@ -75,7 +75,8 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        GPXSettingsPanel panel = new GPXSettingsPanel(layers.stream().filter(l -> l instanceof GpxLayer).map(l -> (GpxLayer) l).collect(Collectors.toList()));
+        GPXSettingsPanel panel = new GPXSettingsPanel(
+                layers.stream().filter(l -> l instanceof GpxLayer).map(l -> (GpxLayer) l).collect(Collectors.toList()));
         JScrollPane scrollpane = GuiHelper.embedInVerticalScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         int screenHeight = GuiHelper.getScreenSize().height;

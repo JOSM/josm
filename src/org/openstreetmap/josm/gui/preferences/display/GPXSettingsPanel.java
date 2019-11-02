@@ -103,7 +103,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final boolean hasLocalFile; // flag to display LocalOnly checkbooks
     private final boolean hasNonLocalFile; // flag to display AllLines checkbox
 
-    private final static Map<String, Object> DEFAULT_PREFS = getDefaultPrefs();
+    private static final Map<String, Object> DEFAULT_PREFS = getDefaultPrefs();
 
     private static Map<String, Object> getDefaultPrefs() {
         HashMap<String, Object> m = new HashMap<>();
@@ -262,7 +262,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      * @param value the value or <code>null</code> to remove key
      */
     public static void putLayerPrefLocal(GpxData data, String key, String value) {
-        if (value == null || value.trim().isEmpty() || (getLayerPref(null, key).equals(value) && DEFAULT_PREFS.get(key) != null && DEFAULT_PREFS.get(key).toString().equals(value))) {
+        if (value == null || value.trim().isEmpty() ||
+                (getLayerPref(null, key).equals(value) && DEFAULT_PREFS.get(key) != null && DEFAULT_PREFS.get(key).toString().equals(value))) {
             data.getLayerPrefs().remove(key);
         } else {
             data.getLayerPrefs().put(key, value);

@@ -131,7 +131,7 @@ public class Preferences extends AbstractPreferences {
     );
 
     /** rename keys that equal */
-    private final static Map<String, String> UPDATE_PREF_KEYS = getUpdatePrefKeys();
+    private static final Map<String, String> UPDATE_PREF_KEYS = getUpdatePrefKeys();
 
     private static Map<String, String> getUpdatePrefKeys() {
         HashMap<String, String> m = new HashMap<>();

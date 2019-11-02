@@ -102,9 +102,12 @@ public class GpxWriterTest {
     @Test
     public void testExtensions() throws IOException {
         GpxData data = new GpxData();
-        data.getNamespaces().add(new XMLNamespace("test", "http://example.com/testURI")); //only namespace, no location printed
-        data.getNamespaces().add(new XMLNamespace("knownprefix", "http://example.com/URI", "http://example.com/location.xsd")); //printed
-        data.getNamespaces().add(new XMLNamespace("notpresent", "http://example.com/notpresent", "http://example.com/notpresent.xsd")); //NOT printed
+        // only namespace, no location printed
+        data.getNamespaces().add(new XMLNamespace("test", "http://example.com/testURI"));
+        // printed
+        data.getNamespaces().add(new XMLNamespace("knownprefix", "http://example.com/URI", "http://example.com/location.xsd"));
+        // NOT printed
+        data.getNamespaces().add(new XMLNamespace("notpresent", "http://example.com/notpresent", "http://example.com/notpresent.xsd"));
 
         GpxExtensionCollection exts = data.getExtensions();
         data.fromServer = true; //printed
@@ -126,6 +129,8 @@ public class GpxWriterTest {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         GpxWriter writer = new GpxWriter(baos);
+
+        // CHECKSTYLE.OFF: LineLength
 
         writer.write(data);
         assertEquals("<?xml version='1.0' encoding='UTF-8'?>\n" +
@@ -273,6 +278,8 @@ public class GpxWriterTest {
                 "    </trkseg>\n" +
                 "  </trk>\n" +
                 "</gpx>", baos.toString());
+
+        // CHECKSTYLE.ON: LineLength
 
         writer.close();
     }

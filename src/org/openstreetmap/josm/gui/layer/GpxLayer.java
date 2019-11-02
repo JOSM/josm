@@ -305,7 +305,8 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
 
         if (Logging.isDebugEnabled() && !data.getLayerPrefs().isEmpty()) {
             info.append("<br><br>")
-                .append(String.join("<br>", data.getLayerPrefs().entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList())));
+                .append(String.join("<br>", data.getLayerPrefs().entrySet().stream()
+                        .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList())));
         }
 
         info.append("<br></html>");

@@ -278,7 +278,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
         }
 
         String labelText = getText();
-        if ((labelText != null) && showTextOrIcon) {
+        if (!labelText.isEmpty() && showTextOrIcon) {
             g.drawString(labelText, screen.x+4, screen.y+2);
         }
     }
@@ -320,7 +320,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
 
     private String getDefaultTextTemplate() {
         if (cachedDefaultTemplate == null) {
-            cachedDefaultTemplate = GPXSettingsPanel.getLayerPref(null,  getTextTemplateKey());
+            cachedDefaultTemplate = GPXSettingsPanel.getLayerPref(null, getTextTemplateKey());
         }
         return cachedDefaultTemplate;
     }

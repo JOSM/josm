@@ -263,6 +263,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     states.push(currentState);
                     currentState = State.EXT;
                     break;
+                default: // Do nothing
                 }
                 break;
             case WPT:

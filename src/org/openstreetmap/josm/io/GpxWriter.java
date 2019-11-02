@@ -127,13 +127,13 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"");
 
-        String schemaLocations = "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd";
+        StringBuilder schemaLocations = new StringBuilder("http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
 
         for (XMLNamespace n : namespaces) {
             if (n.getURI() != null && n.getPrefix() != null && !n.getPrefix().isEmpty()) {
                 out.println(String.format("    xmlns:%s=\"%s\"", n.getPrefix(), n.getURI()));
                 if (n.getLocation() != null) {
-                    schemaLocations += " " + n.getURI() + " " + n.getLocation();
+                    schemaLocations.append(' ').append(n.getURI()).append(' ').append(n.getLocation());
                 }
             }
         }
@@ -393,7 +393,8 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 // this might lead to loss of an unknown extension *after* the file was saved as .osm,
                 // but otherwise the file is invalid and can't even be parsed by SAX anymore
                 String k = (e.getPrefix().isEmpty() ? "" : e.getPrefix() + ":") + e.getKey();
-                String attr = String.join(" ", e.getAttributes().entrySet().stream().map(a -> encode(a.getKey()) + "=\"" + encode(a.getValue().toString()) + "\"").sorted().collect(Collectors.toList()));
+                String attr = String.join(" ", e.getAttributes().entrySet().stream()
+                        .map(a -> encode(a.getKey()) + "=\"" + encode(a.getValue().toString()) + "\"").sorted().collect(Collectors.toList()));
                 if (e.getValue() == null && e.getExtensions().isEmpty()) {
                     inline(k, attr);
                 } else if (e.getExtensions().isEmpty()) {

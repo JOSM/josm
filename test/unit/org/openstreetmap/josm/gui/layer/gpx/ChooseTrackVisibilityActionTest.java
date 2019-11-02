@@ -44,7 +44,8 @@ public class ChooseTrackVisibilityActionTest {
         edMocker.getMockResultMap().put(
                 "<html>Select all tracks that you want to be displayed. " +
                         "You can drag select a range of tracks or use CTRL+Click to select specific ones. " +
-                        "The map is updated live in the background. Open the URLs by double clicking them, edit name and description by double clicking the cell.</html>",
+                        "The map is updated live in the background. "+
+                        "Open the URLs by double clicking them, edit name and description by double clicking the cell.</html>",
                         "Show all"
                 );
 

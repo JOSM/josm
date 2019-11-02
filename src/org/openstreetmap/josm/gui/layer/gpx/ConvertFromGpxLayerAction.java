@@ -148,7 +148,8 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
                 if (pre == null || pre.isEmpty()) {
                     pre = "other";
                 }
-                String segpre = seg ? "segment:" : ""; //needs to be distinguished since both track and segment extensions are applied to the resulting way
+                // needs to be distinguished since both track and segment extensions are applied to the resulting way
+                String segpre = seg ? "segment:" : "";
                 String key = ext.getFlatKey();
                 String fullkey = GpxConstants.GPX_PREFIX + extpre + pre + ":" + segpre + key;
                 if (GpxConstants.EXTENSION_ABBREVIATIONS.containsKey(fullkey)) {

@@ -194,15 +194,16 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         });
 
         garmin.addActionListener(l -> {
-            if (garmin.isSelected() &&
-                    !ConditionalOptionPaneUtil.showConfirmationDialog(
-                            "gpx_color_garmin",
-                            ed,
-                            new JLabel(tr("<html>Garmin track extensions only support 16 colors.<br>If you continue, the closest supported track color will be used.</html>")),
-                            tr("Information"),
-                            JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE,
-                            JOptionPane.OK_OPTION)) {
+            if (garmin.isSelected() && !ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "gpx_color_garmin",
+                    ed,
+                    new JLabel("<html>" + tr("Garmin track extensions only support 16 colors.") + "<br>"
+                                        + tr("If you continue, the closest supported track color will be used.")
+                             + "</html>"),
+                    tr("Information"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    JOptionPane.OK_OPTION)) {
                 garmin.setSelected(false);
             }
         });

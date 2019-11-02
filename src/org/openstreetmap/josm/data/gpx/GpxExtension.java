@@ -11,7 +11,7 @@ import org.xml.sax.Attributes;
  * A GpxExtension that has attributes and child extensions (implements {@link IWithAttributes}).
  * @since 15496
  */
-public class GpxExtension extends WithAttributes implements IWithAttributes, GpxConstants {
+public class GpxExtension extends WithAttributes implements GpxConstants {
     private final String qualifiedName, prefix, key;
     private IWithAttributes parent;
     private String value;
@@ -59,7 +59,7 @@ public class GpxExtension extends WithAttributes implements IWithAttributes, Gpx
 
     /**
      * Finds the default prefix used by JOSM for the given namespaceURI as the document is free specify another one.
-     * @param namespaceURI
+     * @param namespaceURI namespace URI
      * @return the prefix
      */
     public static String findPrefix(String namespaceURI) {
