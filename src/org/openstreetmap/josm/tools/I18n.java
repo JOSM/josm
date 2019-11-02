@@ -122,6 +122,7 @@ public final class I18n {
         // fully supported only with Java 8 and later (needs CLDR)
         languages.put("km", PluralMode.MODE_NONE);
         languages.put("lt", PluralMode.MODE_LT);
+        languages.put("mr", PluralMode.MODE_NOTONE);
         languages.put("nb", PluralMode.MODE_NOTONE);
         languages.put("nl", PluralMode.MODE_NOTONE);
         languages.put("pl", PluralMode.MODE_PL);
@@ -608,7 +609,7 @@ public final class I18n {
 
     private static int pluralEval(long n) {
         switch(pluralMode) {
-        case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, es, et, eu, fi, gl, is, it, iw_IL, nb, nl, sv */
+        case MODE_NOTONE: /* bg, da, de, el, en, en_AU, en_CA, en_GB, es, et, eu, fi, gl, is, it, iw_IL, mr, nb, nl, sv */
             return (n != 1) ? 1 : 0;
         case MODE_NONE: /* id, vi, ja, km, tr, zh_CN, zh_TW */
             return 0;
